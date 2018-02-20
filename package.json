@@ -1,0 +1,17 @@
+{
+  "name": "slang",
+  "version": "0.0.1",
+  "description": "An open-source interpreter for The Source",
+  "main": "slang.js",
+  "bin": {
+    "slang": "./slang.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ningyuansg/slang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ningyuansg/slang/issues"
+  },
+  "homepage": "https://github.com/ningyuansg/slang#readme"
+}
