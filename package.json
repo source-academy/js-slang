@@ -2,6 +2,9 @@
   "name": "slang",
   "version": "0.0.1",
   "description": "An open-source interpreter for The Source",
+  "dependencies": {
+    "commander": "^2.14.1"
+  },
   "main": "slang.js",
   "bin": {
     "slang": "./slang.js"
