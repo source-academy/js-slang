@@ -1,4 +1,7 @@
 #! /usr/bin/env node
 'use strict';
 
-console.log("Nifty tricks");
+const program = require('commander');
+program
+  .version('slang 0.0.1a', '-v, --version')
+  .parse(process.argv);
