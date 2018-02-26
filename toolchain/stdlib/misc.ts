@@ -3,18 +3,8 @@ import { toString } from '../interop'
 
 export function display(value: Value) {
   const output = toString(value)
-  if (typeof window.__REDUX_STORE__ !== 'undefined') {
-    window.__REDUX_STORE__.dispatch({
-      type: 'CREATE_INTERPRETER_OUTPUT',
-      payload: output
-    })
-  } else {
-    // tslint:disable-next-line:no-console
-    console.log(output)
-  }
+  console.log(output)
 }
-window.display = display
-display.__SOURCE__ = 'display(v)'
 
 // tslint:disable-next-line:no-any
 export function timed(this: any, f: Function) {
