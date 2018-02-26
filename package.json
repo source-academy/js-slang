@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
-    "commander": "^2.14.1"
+    "commander": "^2.14.1",
+    "@types/estree": "0.0.37"
   },
   "main": "slang.js",
   "bin": {
