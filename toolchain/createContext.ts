@@ -108,13 +108,6 @@ export const importBuiltins = (context: Context) => {
     defineSymbol(context, 'accumulate', list.accumulate)
     defineSymbol(context, 'prompt', prompt)
     defineSymbol(context, 'parseInt', parseInt)
-    if (window.ListVisualizer) {
-      defineSymbol(context, 'draw', window.ListVisualizer.draw)
-    } else {
-      defineSymbol(context, 'draw', function() {
-        throw new Error('List visualizer is not enabled')
-      })
-    }
   }
   if (context.week >= 6) {
     defineSymbol(context, 'is_number', misc.is_number)
