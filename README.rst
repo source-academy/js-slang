@@ -8,5 +8,5 @@ Usage
 
   $ git clone https://github.com/ningyuansg/slang.git
   $ cd slang
-  $ npm install -g
-  $ slang
+  $ npm install
+  $ tsc
