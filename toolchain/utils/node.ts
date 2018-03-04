@@ -80,14 +80,14 @@ const createLiteralNode = (value: {}): es.Node => {
       type: 'Identifier',
       name: 'undefined',
       __id: freshId()
-    }
+    } as es.Node
   } else {
     return {
       type: 'Literal',
       value,
       raw: value,
       __id: freshId()
-    }
+    } as es.Node
   }
 }
 
