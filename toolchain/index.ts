@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import { Context, Scheduler, SourceError, Result } from './types'
 import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
