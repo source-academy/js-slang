@@ -2,3 +2,4 @@ node_modules
 toolchain/*.js
 toolchain/*/*.js
 *.map
+lib/
