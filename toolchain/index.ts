@@ -1,5 +1,6 @@
 import 'babel-polyfill'
 import { Context, Scheduler, SourceError, Result } from './types'
+import createContext from './createContext'
 import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
@@ -57,4 +58,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { toString, Context, Result }
+export { createContext, toString, Context, Result }
