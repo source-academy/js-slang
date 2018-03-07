@@ -3,11 +3,23 @@
   "version": "0.0.1",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
-    "commander": "^2.14.1"
+    "@types/acorn": "^4.0.2",
+    "@types/common-tags": "^1.4.0",
+    "@types/estree": "0.0.37",
+    "@types/invariant": "^2.2.29",
+    "acorn": "^5.1.2",
+    "astring": "^1.2.0",
+    "babel-cli": "^6.26.0",
+    "commander": "^2.14.1",
+    "common-tags": "^1.4.0",
+    "invariant": "^2.2.2"
   },
   "main": "slang.js",
   "bin": {
     "slang": "./slang.js"
+  },
+  "scripts": {
+    "build": "tsc; babel toolchain -d lib"
   },
   "repository": {
     "type": "git",
@@ -16,5 +28,11 @@
   "bugs": {
     "url": "https://github.com/ningyuansg/slang/issues"
   },
-  "homepage": "https://github.com/ningyuansg/slang#readme"
+  "homepage": "https://github.com/ningyuansg/slang#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  }
 }
