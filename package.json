@@ -1,6 +1,6 @@
 {
   "name": "slang",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
     "@types/acorn": "^4.0.2",
@@ -16,7 +16,7 @@
   },
   "main": "slang.js",
   "bin": {
-    "slang": "./slang.js"
+    "slang": "slang.js"
   },
   "scripts": {
     "build": "tsc; babel toolchain -d lib"

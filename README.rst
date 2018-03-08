@@ -14,15 +14,11 @@ To install,
   $ cd slang
   $ npm install
   $ npm run build
+  $ npm install -g
 
-To evaluate a source program, we access the `runInContext` function,
+To invoke the repl, run the command `slang` anywhere:
 
 .. code-block::
 
-  $ node  # or nodejs if debian or similar 
-  > const source = require('./lib/index.js');
-  > const ctxt = source.createContext();
-  > const promise = source.runInContext('2 + 2 - 1;', ctxt);
-  > promise.then((result) => { 
-      console.log(result);
-    });
+  $ slang
+  > 
