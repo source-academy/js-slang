@@ -11,13 +11,9 @@ function sourceEval(cmd: string, context: any, filename: any, callback: any): an
 }
 
 export function startRepl() {
-  const repl_obj = repl.start({
+  repl.start({
     prompt: '>>> ',
       eval: sourceEval
   })
-
-  Object.defineProperty(repl_obj.context, 'WEEK', {
-    configurable: false,
-    value: sourceCtxt.week
-  })
+  runInContext('var __week__ = ' + sourceCtxt.week + ';', sourceCtxt)
 }
