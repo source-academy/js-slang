@@ -9,7 +9,11 @@ function sourceEval(cmd: string, context: any, filename: any, callback: any): an
     if (obj.status == 'finished') {
       callback(null, obj.value)
     } else {
-      callback(obj.status, null)
+      // callback(obj.status, null)
+      callback(
+        JSON.stringify(sourceCtxt, null, 2)
+        , null
+        )
     }
   })
 }
