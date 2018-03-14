@@ -6,7 +6,11 @@ const sourceCtxt = createContext()
 function sourceEval(cmd: string, context: any, filename: any, callback: any): any {
   let promise = runInContext(cmd, sourceCtxt)
   promise.then((obj) => {
-    callback(null, obj)
+    if (obj.status == 'finished') {
+      callback(null, obj.value)
+    } else {
+      callback(obj.status, null)
+    }
   })
 }
 
