@@ -136,3 +136,24 @@ export class VariableRedeclaration implements SourceError {
     return 'TODO'
   }
 }
+
+export class MutableVariableDeclarationError implements SourceError {
+  type = ErrorType.RUNTIME
+  severity = ErrorSeverity.ERROR
+  location: es.SourceLocation
+
+  constructor(node: es.Node, private kind: string) {
+    this.location = node.loc!
+  }
+
+  explain() {
+    return `Forbidden declaration of mutable variables 
+      + using "${this.kind}" keyword`
+  }
+
+  elaborate() {
+      return `Variable declarations must be done with the "const" keyword 
+        so as to maintain immuability.`
+  }
+}
+

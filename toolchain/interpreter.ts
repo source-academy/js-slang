@@ -64,7 +64,8 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function defineVariable(context: Context, name: string, value: Value) {
+function defineVariable(context: Context, kind: string | undefined, 
+    name: string, value: Value) {
   const frame = context.runtime.frames[0]
 
   if (frame.environment.hasOwnProperty(name)) {
@@ -72,7 +73,13 @@ function defineVariable(context: Context, name: string, value: Value) {
       context,
       new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
     )
+  } else if (kind === "let" || kind === "var") {
+    handleError(
+      context,
+      new errors.MutableVariableDeclarationError(context.runtime.nodes[0]!, kind)
+    )
   }
+
   frame.environment[name] = value
 
   return frame
@@ -274,9 +281,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     context: Context
   ) {
     const declaration = node.declarations[0]
+    const kind = node.kind;
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
-    defineVariable(context, id.name, value)
+    defineVariable(context, kind, id.name, value)
     return undefined
   },
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
@@ -360,7 +368,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
-    defineVariable(context, id.name, closure)
+    defineVariable(context, undefined, id.name, closure)
     return undefined
   },
   IfStatement: function*(node: es.IfStatement, context: Context) {
