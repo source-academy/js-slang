@@ -138,7 +138,7 @@ for (const type of Object.keys(syntaxTypes)) {
 
 const createAcornParserOptions = (context: Context): AcornOptions => ({
   sourceType: 'script',
-  ecmaVersion: 5,
+  ecmaVersion: 6,
   locations: true,
   // tslint:disable-next-line:no-any
   onInsertedSemicolon(end: any, loc: any) {
