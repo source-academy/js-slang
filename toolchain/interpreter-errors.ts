@@ -121,7 +121,7 @@ export class InvalidNumberOfArguments implements SourceError {
 
 export class VariableRedeclaration implements SourceError {
   type = ErrorType.RUNTIME
-  severity = ErrorSeverity.WARNING
+  severity = ErrorSeverity.ERROR
   location: es.SourceLocation
 
   constructor(node: es.Node, private name: string) {
