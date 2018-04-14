@@ -156,4 +156,3 @@ export class MutableVariableDeclarationError implements SourceError {
         so as to maintain immuability.`
   }
 }
-

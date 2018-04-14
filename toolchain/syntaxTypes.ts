@@ -12,6 +12,7 @@ const syntaxTypes: { [nodeName: string]: number } = {
   LogicalExpression: 3,
   ConditionalExpression: 3,
   FunctionExpression: 3,
+  ArrowFunctionExpression: 3,
   Identifier: 3,
   Literal: 3,
 
