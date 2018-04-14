@@ -133,7 +133,7 @@ const setVariable = (context: Context, name: string, value: any) => {
 
 const checkNumberOfArguments = (
   context: Context,
-  callee: Closure,
+  callee: ArrowClosure | Closure,
   args: Value[],
   exp: es.CallExpression
 ) => {
@@ -497,6 +497,15 @@ export function* apply(
         result = new ReturnValue(undefined)
       }
     } else if (fun instanceof ArrowClosure) {
+      checkNumberOfArguments(context, fun, args, node!)
+      const frame = createFrame(fun, args, node)
+      frame.thisContext = thisContext
+      if (result instanceof TailCallReturnValue) {
+        replaceFrame(context, frame)
+      } else {
+        pushFrame(context, frame)
+        total++
+      }
       result =  new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {

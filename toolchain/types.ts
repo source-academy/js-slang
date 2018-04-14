@@ -142,9 +142,11 @@ export class Closure {
     context: Context
   ) {
     this.node = node
-    if (this.node.id) {
-      this.name = this.node.id.name
-    } else {
+    try {
+      if (this.node.id) {
+        this.name = this.node.id.name
+      }
+    } catch (e) {
       this.name = `Anonymous${++Closure.lambdaCtr}`
     }
     this.name = `Anonymous${++Closure.lambdaCtr}`
@@ -166,7 +168,7 @@ export class ArrowClosure {
   public fun: Function
 
   constructor(
-    public node: es.Function,
+    public node: es.Function
     public frame: Frame,
     context: Context
   ) {
