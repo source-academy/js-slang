@@ -147,8 +147,51 @@ export class Closure {
     } else {
       this.name = `Anonymous${++Closure.lambdaCtr}`
     }
+    this.name = `Anonymous${++Closure.lambdaCtr}`
     this.fun = closureToJS(this, context, this.name)
   }
+}
+
+/**
+ * Modified from class Closure, for construction of arrow functions.
+ */
+export class ArrowClosure {
+  /** Keep track how many lambdas are created */
+  private static arrowCtr = 0
+
+  /** Unique ID defined for anonymous closure */
+  public name: string
+
+  /** Fake closure function */
+  public fun: Function
+
+  constructor(
+    public node: es.Function,
+    public frame: Frame,
+    context: Context
+  ) {
+    this.name = `Anonymous${++ArrowClosure.arrowCtr}`
+    this.fun = closureToJS(this, context, this.name)
+  }
+
+//private function expressionToBlockReturn(expression: Expression): BlockStatement {
+//  /* Nests an Expression into a ReturnStatement, then into a BlockStatement */
+//  const start: number = Expression.start
+//  const end: number = Expression.end
+//  const argument: Expression = expression
+//  const _return: ReturnStatement = {
+//    type: 'ReturnStatement',
+//    start,
+//    end,
+//    argument
+//  }
+//  return {
+//    type: 'BlockStatement',
+//    start,
+//    end,
+//    body: [_return]
+//  }
+//}
 }
 
 type Error = {

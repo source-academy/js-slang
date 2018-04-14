@@ -1,5 +1,6 @@
 import * as es from 'estree'
 import {
+  ArrowClosure,
   Closure,
   Frame,
   Value,
@@ -176,6 +177,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
     return new Closure(node, currentFrame(context), context)
+  },
+  ArrowFunctionExpression: function*(node: es.Function, context: Context) {
+    return new ArrowClosure(node, currentFrame(context), context)
   },
   Identifier: function*(node: es.Identifier, context: Context) {
     return getVariable(context, node.name)
@@ -464,7 +468,7 @@ export function* evaluate(node: es.Node, context: Context) {
 
 export function* apply(
   context: Context,
-  fun: Closure | Value,
+  fun: ArrowClosure | Closure | Value,
   args: Value[],
   node?: es.CallExpression,
   thisContext?: Value
@@ -492,6 +496,8 @@ export function* apply(
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
       }
+    } else if (fun instanceof ArrowClosure) {
+      result =  new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {
         const as = args.map(a => toJS(a, context))
