@@ -17,8 +17,7 @@ function sourceEval(cmd: string, context: any, filename: any, callback: any): an
     if (obj.status == 'finished') {
       callback(null, obj.value)
     } else {
-      callback(JSON.stringify(sourceCtxt.errors[0], null, 2), null)
-      //callback(fmtError(obj), null)
+      callback(fmtError(obj), null)
     }
   })
 }

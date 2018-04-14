@@ -168,32 +168,13 @@ export class ArrowClosure {
   public fun: Function
 
   constructor(
-    public node: es.Function
+    public node: es.Function,
     public frame: Frame,
     context: Context
   ) {
     this.name = `Anonymous${++ArrowClosure.arrowCtr}`
     this.fun = closureToJS(this, context, this.name)
   }
-
-//private function expressionToBlockReturn(expression: Expression): BlockStatement {
-//  /* Nests an Expression into a ReturnStatement, then into a BlockStatement */
-//  const start: number = Expression.start
-//  const end: number = Expression.end
-//  const argument: Expression = expression
-//  const _return: ReturnStatement = {
-//    type: 'ReturnStatement',
-//    start,
-//    end,
-//    argument
-//  }
-//  return {
-//    type: 'BlockStatement',
-//    start,
-//    end,
-//    body: [_return]
-//  }
-//}
 }
 
 type Error = {
