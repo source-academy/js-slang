@@ -1,5 +1,4 @@
 import * as es from 'estree'
-import { generate } from 'astring'
 
 import { SourceError, Rule, ErrorSeverity, ErrorType } from '../types'
 
@@ -17,7 +16,7 @@ export class NoBlockArrowFunction implements SourceError {
   }
 
   elaborate() {
-    this.explain()
+    return this.explain()
   }
 }
 

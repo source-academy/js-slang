@@ -31,7 +31,7 @@ class TailCallReturnValue {
 }
 
 const createFrame = (
-  closure: Closure,
+  closure: ArrowClosure | Closure,
   args: Value[],
   callExpression?: es.CallExpression
 ): Frame => {
