@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
-    "@types/acorn": "^4.0.2",
-    "@types/common-tags": "^1.4.0",
-    "@types/estree": "0.0.37",
-    "@types/invariant": "^2.2.29",
-    "@types/node": "^9.4.7",
     "acorn": "^5.1.2",
     "astring": "^1.2.0",
     "babel-cli": "^6.26.0",
@@ -24,13 +19,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ningyuansg/slang.git"
+    "url": "git+https://github.com/source-academy/js-slang.git"
   },
   "bugs": {
-    "url": "https://github.com/ningyuansg/slang/issues"
+    "url": "https://github.com/source-academy/js-slang/issues"
   },
-  "homepage": "https://github.com/ningyuansg/slang#readme",
+  "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
+    "@types/acorn": "^4.0.2",
+    "@types/common-tags": "^1.4.0",
+    "@types/estree": "0.0.37",
+    "@types/invariant": "^2.2.29",
+    "@types/node": "^9.4.7",
     "babel-core": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
