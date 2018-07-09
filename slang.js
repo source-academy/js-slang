@@ -3,7 +3,7 @@
 
 'use strict';
 
-const repl = require('./lib/repl.js')
+const repl = require('./dist/repl.js')
 const program = require('commander');
 program
   .version('slang 0.1.0', '-v, --version')
