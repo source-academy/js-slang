@@ -1,9 +1,10 @@
+/* tslint:disable: max-classes-per-file */
 import * as es from 'estree'
-import { Scheduler, Value, Context, Result } from './types'
 import { MaximumStackLimitExceeded } from './interpreter-errors'
+import { Context, Result, Scheduler, Value } from './types'
 
 export class AsyncScheduler implements Scheduler {
-  run(it: IterableIterator<Value>, context: Context): Promise<Result> {
+  public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
@@ -27,7 +28,7 @@ export class AsyncScheduler implements Scheduler {
 export class PreemptiveScheduler implements Scheduler {
   constructor(public steps: number) {}
 
-  run(it: IterableIterator<Value>, context: Context): Promise<Result> {
+  public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
@@ -45,9 +46,7 @@ export class PreemptiveScheduler implements Scheduler {
             for (let i = 1; i <= 3; i++) {
               stacks.push(context.runtime.frames[i - 1].callExpression!)
             }
-            context.errors.push(
-              new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
-            )
+            context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
           }
           context.runtime.isRunning = false
           clearInterval(interval)

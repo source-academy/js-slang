@@ -1,10 +1,10 @@
-import * as invariant from 'invariant'
+import { base, recursive, Walker, Walkers } from 'acorn/dist/walk'
 import * as es from 'estree'
-import { recursive, Walkers, Walker, base } from 'acorn/dist/walk'
+import * as invariant from 'invariant'
 
-import { composeWalker } from './utils/node'
-import { Context, CFG } from './types'
 import { Types } from './constants'
+import { CFG, Context } from './types'
+import { composeWalker } from './utils/node'
 
 const freshLambda = (() => {
   let id = 0
@@ -16,7 +16,7 @@ const freshLambda = (() => {
 
 const walkers: Walkers<{}> = {}
 
-let nodeStack: Array<es.Node> = []
+let nodeStack: es.Node[] = []
 let scopeQueue: CFG.Scope[] = []
 let edgeLabel: CFG.EdgeLabel = 'next'
 
@@ -55,11 +55,7 @@ const exitScope = (context: Context) => {
 walkers.ExpressionStatement = composeWalker(connect, base.ExpressionStatement)
 walkers.VariableDeclaration = composeWalker(connect, base.VariableDeclaration)
 
-const walkIfStatement: Walker<es.IfStatement, Context> = (
-  node,
-  context,
-  recurse
-) => {
+const walkIfStatement: Walker<es.IfStatement, Context> = (node, context, recurse) => {
   const test = node.test as es.Node
   let consequentExit
   let alternateExit
@@ -88,22 +84,17 @@ const walkIfStatement: Walker<es.IfStatement, Context> = (
 }
 walkers.IfStatement = walkIfStatement
 
-const walkReturnStatement: Walker<es.ReturnStatement, Context> = (
-  node,
-  state
-) => {
+const walkReturnStatement: Walker<es.ReturnStatement, Context> = (node, state) => {
   connect(node, state)
   exitScope(state)
 }
-walkers.ReturnStatement = composeWalker(
-  base.ReturnStatement,
-  walkReturnStatement
-)
+walkers.ReturnStatement = composeWalker(base.ReturnStatement, walkReturnStatement)
 
-const walkFunction: Walker<
-  es.FunctionDeclaration | es.FunctionExpression,
-  Context
-> = (node, context, recurse) => {
+const walkFunction: Walker<es.FunctionDeclaration | es.FunctionExpression, Context> = (
+  node,
+  context,
+  recurse
+) => {
   // Check whether function declaration is from outer scope or its own
   if (scopeQueue[0].node !== node) {
     connect(node, context)

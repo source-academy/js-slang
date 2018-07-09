@@ -1,38 +1,42 @@
-import 'babel-polyfill'
-import { Context, Scheduler, SourceError, Result } from './types'
 import createContext from './createContext'
+import { toString } from './interop'
 import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { toString } from './interop'
+import { Context, Result, Scheduler, SourceError } from './types'
 
-export type Options = {
-  scheduler: 'preemptive' | 'async',
+export interface IOptions {
+  scheduler: 'preemptive' | 'async'
   steps: number
 }
 
-const DEFAULT_OPTIONS: Options = {
+const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000
 }
 
-export class ParseError {
-  constructor(public errors: SourceError[]) {
-  }
+export function parseError(errors: SourceError[]): string {
+  const errorMessagesArr = errors.map(error => {
+    const line = error.location ? error.location.start.line : '<unknown>'
+    const explanation = error.explain()
+    return `Line ${line}: ${explanation}`
+  })
+  return errorMessagesArr.join('\n')
 }
 
 export function runInContext(
   code: string,
   context: Context,
-  options: Partial<Options> = {}): Promise<Result> {
-  const theOptions: Options = {...options, ...DEFAULT_OPTIONS}
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
   const program = parse(code, context)
   if (program) {
     const it = evaluate(program, context)
     let scheduler: Scheduler
-    if (options.scheduler === 'async') {
+    if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
     } else {
       scheduler = new PreemptiveScheduler(theOptions.steps)

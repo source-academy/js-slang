@@ -1,23 +1,20 @@
-import * as es from 'estree'
 import { generate } from 'astring'
 import { stripIndent } from 'common-tags'
+import * as es from 'estree'
 
-import { SourceError, Rule, ErrorSeverity, ErrorType } from '../types'
+import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 
 export class BracesAroundIfElseError implements SourceError {
-  type = ErrorType.SYNTAX
-  severity = ErrorSeverity.ERROR
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
 
-  constructor(
-    public node: es.IfStatement,
-    private branch: 'consequent' | 'alternate'
-  ) {}
+  constructor(public node: es.IfStatement, private branch: 'consequent' | 'alternate') {}
 
   get location() {
     return this.node.loc!
   }
 
-  explain() {
+  public explain() {
     if (this.branch === 'consequent') {
       return 'Missing curly braces around "if" block'
     } else {
@@ -25,7 +22,7 @@ export class BracesAroundIfElseError implements SourceError {
     }
   }
 
-  elaborate() {
+  public elaborate() {
     let ifOrElse
     let header
     let body

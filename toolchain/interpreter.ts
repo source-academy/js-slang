@@ -1,18 +1,12 @@
+/* tslint:disable: max-classes-per-file */
+/* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
-import {
-  ArrowClosure,
-  Closure,
-  Frame,
-  Value,
-  Context,
-  SourceError,
-  ErrorSeverity
-} from './types'
-import { toJS } from './interop'
-import { createNode } from './utils/node'
 import * as constants from './constants'
-import * as rttc from './utils/rttc'
+import { toJS } from './interop'
 import * as errors from './interpreter-errors'
+import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value } from './types'
+import { createNode } from './utils/node'
+import * as rttc from './utils/rttc'
 
 class ReturnValue {
   constructor(public value: Value) {}
@@ -23,11 +17,7 @@ class BreakValue {}
 class ContinueValue {}
 
 class TailCallReturnValue {
-  constructor(
-    public callee: Closure,
-    public args: Value[],
-    public node: es.CallExpression
-  ) {}
+  constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
 
 const createFrame = (
@@ -56,8 +46,7 @@ const createFrame = (
 const handleError = (context: Context, error: SourceError) => {
   context.errors.push(error)
   if (error.severity === ErrorSeverity.ERROR) {
-    const globalFrame =
-      context.runtime.frames[context.runtime.frames.length - 1]
+    const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
     context.runtime.frames = [globalFrame]
     throw error
   } else {
@@ -65,20 +54,11 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function defineVariable(context: Context, kind: string | undefined, 
-    name: string, value: Value) {
+function defineVariable(context: Context, name: string, value: Value) {
   const frame = context.runtime.frames[0]
 
   if (frame.environment.hasOwnProperty(name)) {
-    handleError(
-      context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
-    )
-  } else if (kind === "let" || kind === "var") {
-    handleError(
-      context,
-      new errors.MutableVariableDeclarationError(context.runtime.nodes[0]!, kind)
-    )
+    handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
   frame.environment[name] = value
@@ -94,11 +74,9 @@ function* leave(context: Context) {
   yield context
 }
 const currentFrame = (context: Context) => context.runtime.frames[0]
-const replaceFrame = (context: Context, frame: Frame) =>
-  (context.runtime.frames[0] = frame)
+const replaceFrame = (context: Context, frame: Frame) => (context.runtime.frames[0] = frame)
 const popFrame = (context: Context) => context.runtime.frames.shift()
-const pushFrame = (context: Context, frame: Frame) =>
-  context.runtime.frames.unshift(frame)
+const pushFrame = (context: Context, frame: Frame) => context.runtime.frames.unshift(frame)
 
 const getVariable = (context: Context, name: string) => {
   let frame: Frame | null = context.runtime.frames[0]
@@ -109,10 +87,7 @@ const getVariable = (context: Context, name: string) => {
       frame = frame.parent
     }
   }
-  handleError(
-    context,
-    new errors.UndefinedVariable(name, context.runtime.nodes[0])
-  )
+  handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const setVariable = (context: Context, name: string, value: any) => {
@@ -125,10 +100,7 @@ const setVariable = (context: Context, name: string, value: any) => {
       frame = frame.parent
     }
   }
-  handleError(
-    context,
-    new errors.UndefinedVariable(name, context.runtime.nodes[0])
-  )
+  handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const checkNumberOfArguments = (
@@ -138,11 +110,7 @@ const checkNumberOfArguments = (
   exp: es.CallExpression
 ) => {
   if (callee.node.params.length !== args.length) {
-    const error = new errors.InvalidNumberOfArguments(
-      exp,
-      callee.node.params.length,
-      args.length
-    )
+    const error = new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
     handleError(context, error)
   }
 }
@@ -155,11 +123,18 @@ function* getArgs(context: Context, call: es.CallExpression) {
   return args
 }
 
-export type Evaluator<T extends es.Node> = (
-  node: T,
-  context: Context
-) => IterableIterator<Value>
+export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
+/**
+ * WARNING: Do not use object literal shorthands, e.g.
+ *   {
+ *     *Literal(node: es.Literal, ...) {...},
+ *     *ThisExpression(node: es.ThisExpression, ..._ {...},
+ *     ...
+ *   }
+ * They do not minify well, raising uncaught syntax errors in production.
+ * See: https://github.com/webpack/webpack/issues/7566
+ */
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
   Literal: function*(node: es.Literal, context: Context) {
@@ -187,7 +162,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   CallExpression: function*(node: es.CallExpression, context: Context) {
     const callee = yield* evaluate(node.callee, context)
     const args = yield* getArgs(context, node)
-    let thisContext = undefined
+    let thisContext
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
     }
@@ -212,6 +187,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
+
+    const error = rttc.checkUnaryExpression(context, node.operator, value)
+    if (error) {
+      handleError(context, error)
+      return undefined
+    }
+
     if (node.operator === '!') {
       return !value
     } else if (node.operator === '-') {
@@ -224,7 +206,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    rttc.checkBinaryExpression(context, node.operator, left, right)
+    const error = rttc.checkBinaryExpression(context, node.operator, left, right)
+    if (error) {
+      handleError(context, error)
+      return undefined
+    }
 
     let result
     switch (node.operator) {
@@ -266,29 +252,34 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
     return result
   },
-  ConditionalExpression: function*(
-    node: es.ConditionalExpression,
-    context: Context
-  ) {
+  ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
     return yield* this.IfStatement(node, context)
   },
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
     const left = yield* evaluate(node.left, context)
-    if ((node.operator === '&&' && left) || (node.operator === '||' && !left)) {
-      return yield* evaluate(node.right, context)
+    let error = rttc.checkLogicalExpression(context, left, true)
+    if (error) {
+      handleError(context, error)
+      return undefined
+    } else if ((node.operator === '&&' && left) || (node.operator === '||' && !left)) {
+      // only evaluate right if required (lazy); but when we do, check typeof right
+      const right = yield* evaluate(node.right, context)
+      error = rttc.checkLogicalExpression(context, left, right)
+      if (error) {
+        handleError(context, error)
+        return undefined
+      } else {
+        return right
+      }
     } else {
       return left
     }
   },
-  VariableDeclaration: function*(
-    node: es.VariableDeclaration,
-    context: Context
-  ) {
+  VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
-    const kind = node.kind;
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
-    defineVariable(context, kind, id.name, value)
+    defineVariable(context, id.name, value)
     return undefined
   },
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
@@ -342,13 +333,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
     }
   },
-  AssignmentExpression: function*(
-    node: es.AssignmentExpression,
-    context: Context
-  ) {
+  AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
     if (node.left.type === 'MemberExpression') {
       const left = node.left
-      let obj = yield* evaluate(left.object, context)
+      const obj = yield* evaluate(left.object, context)
       let prop
       if (left.computed) {
         prop = yield* evaluate(left.property, context)
@@ -365,18 +353,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     setVariable(context, id.name, value)
     return value
   },
-  FunctionDeclaration: function*(
-    node: es.FunctionDeclaration,
-    context: Context
-  ) {
+  FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
-    defineVariable(context, undefined, id.name, closure)
+    defineVariable(context, id.name, closure)
     return undefined
   },
-  IfStatement: function*(node: es.IfStatement, context: Context) {
+  *IfStatement(node: es.IfStatement, context: Context) {
     const test = yield* evaluate(node.test, context)
+
+    const error = rttc.checkIfStatement(context, test)
+    if (error) {
+      handleError(context, error)
+      return undefined
+    }
+
     if (test) {
       return yield* evaluate(node.consequent, context)
     } else if (node.alternate) {
@@ -385,13 +377,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       return undefined
     }
   },
-  ExpressionStatement: function*(
-    node: es.ExpressionStatement,
-    context: Context
-  ) {
+  ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
     return yield* evaluate(node.expression, context)
   },
-  ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
+  *ReturnStatement(node: es.ReturnStatement, context: Context) {
     if (node.argument) {
       if (node.argument.type === 'CallExpression') {
         const callee = yield* evaluate(node.argument.callee, context)
@@ -408,6 +397,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let value: any // tslint:disable-line
     let test
     while (
+      // tslint:disable-next-line
       (test = yield* evaluate(node.test, context)) &&
       !(value instanceof ReturnValue) &&
       !(value instanceof BreakValue) &&
@@ -422,7 +412,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
     const obj = {}
-    for (let prop of node.properties) {
+    for (const prop of node.properties) {
       let key
       if (prop.key.type === 'Identifier') {
         key = prop.key.name
@@ -506,7 +496,7 @@ export function* apply(
         pushFrame(context, frame)
         total++
       }
-      result =  new ReturnValue(yield* evaluate(fun.node.body, context))
+      result = new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {
         const as = args.map(a => toJS(a, context))
@@ -514,8 +504,7 @@ export function* apply(
         break
       } catch (e) {
         // Recover from exception
-        const globalFrame =
-          context.runtime.frames[context.runtime.frames.length - 1]
+        const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
         context.runtime.frames = [globalFrame]
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
         handleError(context, new errors.ExceptionError(e, loc))

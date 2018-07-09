@@ -1,7 +1,8 @@
 import { generate } from 'astring'
-import { Closure, Context, Value } from './types'
-import { apply } from './interpreter'
+
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
+import { apply } from './interpreter'
+import { ArrowClosure, Closure, Context, Value } from './types'
 
 export const closureToJS = (value: Value, context: Context, klass: string) => {
   function DummyClass(this: Value) {
@@ -16,20 +17,21 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   Object.defineProperty(DummyClass, 'name', {
     value: klass
   })
+  Object.setPrototypeOf(DummyClass, () => {})
   Object.defineProperty(DummyClass, 'Inherits', {
     value: (Parent: Value) => {
-        DummyClass.prototype = Object.create(Parent.prototype)
-        DummyClass.prototype.constructor = DummyClass
+      DummyClass.prototype = Object.create(Parent.prototype)
+      DummyClass.prototype.constructor = DummyClass
     }
   })
-  DummyClass.call = function(thisArg: Value, ...args: Value[]) {
+  DummyClass.call = (thisArg: Value, ...args: Value[]) => {
     return DummyClass.apply(thisArg, args)
   }
   return DummyClass
 }
 
 export const toJS = (value: Value, context: Context, klass?: string) => {
-  if (value instanceof Closure) {
+  if (value instanceof Closure || value instanceof ArrowClosure) {
     return value.fun
   } else {
     return value
@@ -52,15 +54,12 @@ const arrayToString = (value: Value[], length: number) => {
   } else if (value.length === 0) {
     return '[]'
   } else {
-    return `[${toString(value[0], length + 1)}, ${toString(
-      value[1],
-      length + 1
-    )}]`
+    return `[${toString(value[0], length + 1)}, ${toString(value[1], length + 1)}]`
   }
 }
 
 export const toString = (value: Value, length = 0): string => {
-  if (value instanceof Closure) {
+  if (value instanceof ArrowClosure || value instanceof Closure) {
     return generate(value.node)
   } else if (Array.isArray(value)) {
     if (length > MAX_LIST_DISPLAY_LENGTH) {
