@@ -9,7 +9,7 @@ import { closureToJS } from './interop'
  * Defines functions that act as built-ins, but might rely on
  * different implementations. e.g display() in a web application.
  */
-export interface BuiltIns {
+export interface CustomBuiltIns {
   display: (value: Value, externalContext: any) => void
 }
 

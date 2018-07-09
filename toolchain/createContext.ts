@@ -1,6 +1,6 @@
 import * as list from './stdlib/list'
 import * as misc from './stdlib/misc'
-import { BuiltIns, Context, Value } from './types'
+import { Context, CustomBuiltIns, Value } from './types'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -54,7 +54,7 @@ export const importExternals = (context: Context, externals: string[]) => {
   })
 }
 
-export const importBuiltins = (context: Context, externalBuiltIns: BuiltIns) => {
+export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
   if (context.chapter >= 1) {
@@ -133,11 +133,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: BuiltIns) => 
 }
 
 
-const defaultBuiltIns: BuiltIns = {
+const defaultBuiltIns: CustomBuiltIns = {
   display: misc.display
 }
 
-const createContext = <T>(chapter = 1, externals = [], externalContext?: T, externalBuiltIns: BuiltIns = defaultBuiltIns) => {
+const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
   const context = createEmptyContext(chapter, externalContext)
 
   importBuiltins(context, externalBuiltIns)
