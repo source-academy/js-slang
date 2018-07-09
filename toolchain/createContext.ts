@@ -1,6 +1,6 @@
 import * as list from './stdlib/list'
 import * as misc from './stdlib/misc'
-import { Context, Value } from './types'
+import { BuiltIns, Context, Value } from './types'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -132,9 +132,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: BuiltIns) => 
   }
 }
 
-type BuiltIns = {
-  display: (value: Value, externalContext: any) => void
-}
 
 const defaultBuiltIns: BuiltIns = {
   display: misc.display

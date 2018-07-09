@@ -5,6 +5,10 @@ import * as es from 'estree'
 
 import { closureToJS } from './interop'
 
+export interface BuiltIns {
+  display: (value: Value, externalContext: any) => void
+}
+
 export enum ErrorType {
   SYNTAX = 'Syntax',
   TYPE = 'Type',
