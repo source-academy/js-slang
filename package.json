@@ -9,7 +9,7 @@
     "common-tags": "^1.4.0",
     "invariant": "^2.2.2"
   },
-  "main": "src/index.ts",
+  "main": "index.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest"
