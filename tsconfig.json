@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "module": "esnext",
     "target": "es2016",
     "lib": [
@@ -12,8 +13,8 @@
     "allowJs": false,
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react",
     "moduleResolution": "node",
+    "rootDir": "toolchain",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
