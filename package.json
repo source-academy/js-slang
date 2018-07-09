@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
-    "@types/acorn": "^4.0.2",
-    "@types/common-tags": "^1.4.0",
-    "@types/estree": "0.0.37",
-    "@types/invariant": "^2.2.29",
-    "@types/node": "^9.4.7",
     "acorn": "^5.1.2",
     "astring": "^1.2.0",
     "babel-cli": "^6.26.0",
@@ -20,21 +15,35 @@
     "slang": "slang.js"
   },
   "scripts": {
-    "build": "tsc; babel toolchain -d lib"
+    "build": "tsc; babel toolchain -d lib",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ningyuansg/slang.git"
+    "url": "git+https://github.com/source-academy/js-slang.git"
   },
   "bugs": {
-    "url": "https://github.com/ningyuansg/slang/issues"
+    "url": "https://github.com/source-academy/js-slang/issues"
   },
-  "homepage": "https://github.com/ningyuansg/slang#readme",
+  "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
+    "@types/acorn": "^4.0.2",
+    "@types/common-tags": "^1.4.0",
+    "@types/estree": "0.0.37",
+    "@types/invariant": "^2.2.29",
+    "@types/jest": "^23.1.4",
+    "@types/node": "^9.4.7",
     "babel-core": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "jest": "^23.3.0",
+    "ts-jest": "^23.0.0",
     "typescript": "^2.7.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [ "ts", "js" ],
+    "transform": {"\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"},
+    "testRegex": "/__tests__/.*\\.ts$"
   }
 }

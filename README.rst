@@ -6,19 +6,18 @@ Usage
 -----
 The REPL is still under development.
 
-To install,
+To build,
 
 .. code-block::
 
-  $ git clone https://github.com/ningyuansg/slang.git
+  $ git clone https://github.com/source-academy/js-slang.git
   $ cd slang
-  $ npm install
-  $ npm run build
-  $ npm install -g
+  $ yarn
+  $ yarn build
 
-To invoke the repl, run the command `slang` anywhere:
+To invoke the repl, run the built `slang.js`,
 
 .. code-block::
 
-  $ slang
-  > 
+  $ ./slang.js
+  >
