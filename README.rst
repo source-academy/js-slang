@@ -4,7 +4,7 @@ An open-source interpreter for *The Source*.
 
 Usage
 -----
-The REPL is still under development.
+The REPL is still under development, and is under the `source-academy/slang` repository.
 
 To build,
 
@@ -14,10 +14,3 @@ To build,
   $ cd slang
   $ yarn
   $ yarn build
-
-To invoke the repl, run the built `slang.js`,
-
-.. code-block::
-
-  $ ./slang.js
-  >
