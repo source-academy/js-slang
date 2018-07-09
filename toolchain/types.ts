@@ -10,7 +10,8 @@ import { closureToJS } from './interop'
  * different implementations. e.g display() in a web application.
  */
 export interface CustomBuiltIns {
-  display: (value: Value, externalContext: any) => void
+  display: (value: Value, externalContext: any) => void,
+  prompt: (value: Value) => string | null
 }
 
 export enum ErrorType {
