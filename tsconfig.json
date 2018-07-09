@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "outDir": "./dist",
+    "module": "CommonJS",
     "target": "es2016",
     "lib": [
+      "es2017.object",
       "es2016",
       "es2015",
       "dom"
@@ -11,8 +13,8 @@
     "allowJs": false,
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react",
     "moduleResolution": "node",
+    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
