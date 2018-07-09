@@ -54,12 +54,12 @@ export const importExternals = (context: Context, externals: string[]) => {
   })
 }
 
-export const importBuiltins = (context: Context) => {
+export const importBuiltins = (context: Context, externalBuiltIns: BuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', (value: Value) => misc.display(value, context.externalContext))
+    defineSymbol(context, 'display', externalBuiltIns.display)
     defineSymbol(context, 'error', misc.error_message)
     defineSymbol(context, 'prompt', prompt)
     defineSymbol(context, 'parse_int', misc.parse_int)
@@ -111,7 +111,7 @@ export const importBuiltins = (context: Context) => {
     defineSymbol(context, 'alert', alert)
     defineSymbol(context, 'math_floor', Math.floor)
     // tslint:disable-next-line:ban-types
-    defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext))
+    defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
     if (window.hasOwnProperty('ListVisualizer')) {
@@ -132,10 +132,18 @@ export const importBuiltins = (context: Context) => {
   }
 }
 
-const createContext = <T>(chapter = 1, externals = [], externalContext?: T) => {
+type BuiltIns = {
+  display: (value: Value, externalContext: any) => void
+}
+
+const defaultBuiltIns: BuiltIns = {
+  display: misc.defaultDisplay
+}
+
+const createContext = <T>(chapter = 1, externals = [], externalContext?: T, externalBuiltIns: BuiltIns = defaultBuiltIns) => {
   const context = createEmptyContext(chapter, externalContext)
 
-  importBuiltins(context)
+  importBuiltins(context, externalBuiltIns)
   importExternals(context, externals)
 
   return context
