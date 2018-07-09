@@ -37,8 +37,13 @@
     "typescript": "^2.7.2"
   },
   "jest": {
-    "moduleFileExtensions": [ "ts", "js" ],
-    "transform": {"\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"},
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
     "testRegex": "/__tests__/.*\\.ts$"
   }
 }
