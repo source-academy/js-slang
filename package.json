@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "An open-source interpreter for The Source",
   "dependencies": {
-    "acorn": "^5.1.2",
+    "acorn": "^5.7.1",
     "astring": "^1.2.0",
     "babel-cli": "^6.26.0",
     "commander": "^2.14.1",
@@ -15,7 +15,7 @@
     "slang": "slang.js"
   },
   "scripts": {
-    "build": "tsc; babel toolchain -d lib",
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {
@@ -27,9 +27,9 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/acorn": "^4.0.2",
+    "@types/acorn": "^4.0.3",
     "@types/common-tags": "^1.4.0",
-    "@types/estree": "0.0.37",
+    "@types/estree": "0.0.39",
     "@types/invariant": "^2.2.29",
     "@types/jest": "^23.1.4",
     "@types/node": "^9.4.7",

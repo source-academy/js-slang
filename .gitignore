@@ -1,5 +1,4 @@
 node_modules
-toolchain/*.js
-toolchain/*/*.js
+*.js
 *.map
-lib/
+dist/
