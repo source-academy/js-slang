@@ -14,7 +14,7 @@
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "rootDir": "toolchain",
+    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
