@@ -2,14 +2,16 @@
 import { toString } from '../interop'
 import { Context, Value } from '../types'
 
-import { handleConsoleLog } from '../../actions'
-
-export function display(value: Value, location: any) {
+/**
+ * A function that displays to console.log by default (for a REPL).
+ *
+ * @param value the value to be represented and displayed.
+ * @param externalContext a property of Context that can hold
+ *   any information required for external use (optional).
+ */
+export function display(value: Value, externalContext: any) {
   const output = toString(value)
-  // TODO in 2019: fix this hack
-  if (typeof (window as any).__REDUX_STORE__ !== 'undefined') {
-    ;(window as any).__REDUX_STORE__.dispatch(handleConsoleLog(output, location))
-  }
+  console.log(output)
 }
 display.__SOURCE__ = 'display(a)'
 
@@ -20,12 +22,12 @@ export function error_message(value: Value) {
 error_message.__SOURCE__ = 'error(a)'
 
 // tslint:disable-next-line:no-any
-export function timed(context: Context, f: Function, location: any) {
+export function timed(context: Context, f: Function, externalContext: any, display: (value: Value, externalContext: any) => void) {
   return (...args: any[]) => {
     const start = runtime()
     const result = f(...args)
     const diff = runtime() - start
-    display('Duration: ' + Math.round(diff) + 'ms', location)
+    display('Duration: ' + Math.round(diff) + 'ms', externalContext)
     return result
   }
 }
