@@ -1,6 +1,7 @@
 import * as list from './stdlib/list'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
+import { toString } from '.';
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -61,7 +62,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'runtime', misc.runtime)
     defineSymbol(context, 'display', externalBuiltIns.display)
     defineSymbol(context, 'error', misc.error_message)
-    defineSymbol(context, 'prompt', prompt)
+    defineSymbol(context, 'prompt', externalBuiltIns.prompt)
     defineSymbol(context, 'parse_int', misc.parse_int)
     defineSymbol(context, 'undefined', undefined)
     defineSymbol(context, 'NaN', NaN)
@@ -132,9 +133,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   }
 }
 
-
 const defaultBuiltIns: CustomBuiltIns = {
-  display: misc.display
+  display: misc.display,
+  // See issue #5
+  prompt: (v: Value) => toString(v)
 }
 
 const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 
