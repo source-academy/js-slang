@@ -137,7 +137,7 @@ type BuiltIns = {
 }
 
 const defaultBuiltIns: BuiltIns = {
-  display: misc.defaultDisplay
+  display: misc.display
 }
 
 const createContext = <T>(chapter = 1, externals = [], externalContext?: T, externalBuiltIns: BuiltIns = defaultBuiltIns) => {

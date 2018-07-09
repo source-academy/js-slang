@@ -11,12 +11,9 @@ import { Context, Value } from '../types'
  * @param externalContext a property of Context that can hold
  *   any information required for external use (optional).
  */
-export function defaultDisplay(value: Value, externalContext: any) {
+export function display(value: Value, externalContext: any) {
   const output = toString(value)
-  // TODO in 2019: fix this hack
-  if (typeof (window as any).__REDUX_STORE__ !== 'undefined') {
-    ;(window as any).__REDUX_STORE__.dispatch(handleConsoleLog(output, location))
-  }
+  console.log(output)
 }
 display.__SOURCE__ = 'display(a)'
 
