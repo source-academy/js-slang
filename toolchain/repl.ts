@@ -27,5 +27,5 @@ export function startRepl() {
     prompt: '>>> ',
       eval: sourceEval
   })
-  runInContext('var __week__ = ' + sourceCtxt.week + ';', sourceCtxt)
+  runInContext('var __week__ = ' + sourceCtxt.chapter + ';', sourceCtxt)
 }
