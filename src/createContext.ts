@@ -60,7 +60,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', externalBuiltIns.display)
+    defineSymbol(context, 'display', (v: Value) => externalBuiltIns.display(v, context.externalContext))
     defineSymbol(context, 'error', misc.error_message)
     defineSymbol(context, 'prompt', externalBuiltIns.prompt)
     defineSymbol(context, 'parse_int', misc.parse_int)
