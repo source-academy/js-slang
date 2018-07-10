@@ -9,8 +9,13 @@
     "common-tags": "^1.4.0",
     "invariant": "^2.2.2"
   },
-  "main": "src/index.ts",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "prepublishOnly": "tsc",
     "build": "tsc",
     "test": "jest"
   },
