@@ -191,7 +191,7 @@ export class ArrowClosure {
   }
 }
 
-interface Error {
+export interface Error {
   status: 'error'
 }
 

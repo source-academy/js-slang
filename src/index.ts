@@ -4,7 +4,7 @@ import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { Context, Result, Scheduler, SourceError } from './types'
+import { Context, Error, Finished, Result, Scheduler, SourceError } from './types'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -47,7 +47,7 @@ export function runInContext(
   }
 }
 
-export function resume(result: Result) {
+export function resume(result: Result): Finished | Error | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
   } else {
