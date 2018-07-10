@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "CommonJS",
+    "declaration": true,
     "target": "es2016",
     "lib": [
       "es2017.object",
@@ -24,7 +25,8 @@
     "noUnusedLocals": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ],
   "types": [
     "typePatches"

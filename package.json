@@ -1,7 +1,11 @@
 {
-  "name": "slang",
+  "name": "@source-academy/js-slang",
   "version": "0.1.0",
   "description": "Javascript-based interpreter for slang, written in Typescript",
+  "author": { 
+    "name" : "Source Academy",
+    "url" : "https://github.com/source-academy/"
+  },
   "dependencies": {
     "acorn": "^5.7.1",
     "astring": "^1.2.0",
@@ -9,11 +13,13 @@
     "common-tags": "^1.4.0",
     "invariant": "^2.2.2"
   },
-  "main": "slang.js",
-  "bin": {
-    "slang": "slang.js"
-  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "prepublishOnly": "tsc",
     "build": "tsc",
     "test": "jest"
   },
