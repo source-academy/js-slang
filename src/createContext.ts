@@ -60,9 +60,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', (v: Value) => externalBuiltIns.display(v, context.externalContext))
+    defineSymbol(context, 'display', 
+      (v: Value) => externalBuiltIns.display(v, context.externalContext))
     defineSymbol(context, 'error', misc.error_message)
-    defineSymbol(context, 'prompt', externalBuiltIns.prompt)
+    defineSymbol(context, 'prompt', 
+      (v: Value) => externalBuiltIns.prompt(v, context.externalContext))
     defineSymbol(context, 'parse_int', misc.parse_int)
     defineSymbol(context, 'undefined', undefined)
     defineSymbol(context, 'NaN', NaN)
@@ -109,7 +111,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= Infinity) {
     // previously week 4
-    defineSymbol(context, 'alert', alert)
+    defineSymbol(context, 'alert', 
+      (v: Value) => externalBuiltIns.alert(v, context.externalContext))
     defineSymbol(context, 'math_floor', Math.floor)
     // tslint:disable-next-line:ban-types
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
@@ -136,7 +139,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 const defaultBuiltIns: CustomBuiltIns = {
   display: misc.display,
   // See issue #5
-  prompt: (v: Value) => toString(v)
+  prompt: (v: Value, e: any) => toString(v),
+  // See issue #11
+  alert: misc.display
 }
 
 const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 
