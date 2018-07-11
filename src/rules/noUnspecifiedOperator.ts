@@ -29,28 +29,30 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
 
   checkers: {
     BinaryExpression(node: es.BinaryExpression) {
-      const unspecifiedOperators = [
-        '==',
-        '!=',
-        '<<',
-        '>>',
-        '>>>',
-        '**',
-        '|',
-        '^',
-        '&',
-        'in',
-        'instanceof'
+      const permittedOperators = [
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+        '===',
+        '!==',
+        '<',
+        '>',
+        '<=',
+        '>=',
+        '&&',
+        '||',
       ]
-      if (unspecifiedOperators.filter(op => op === node.operator).length > 0) {
+      if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
       } else {
         return []
       }
     },
     UnaryExpression(node: es.UnaryExpression) {
-      const unspecifiedOperators = ['~', 'typeof', 'void', 'delete']
-      if (unspecifiedOperators.filter(op => op === node.operator).length > 0) {
+      const permittedOperators = ['-', '!']
+      if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
       } else {
         return []
