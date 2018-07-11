@@ -118,13 +118,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
-    if (window.hasOwnProperty('ListVisualizer')) {
-      defineSymbol(context, 'draw', (window as any).ListVisualizer.draw)
-    } else {
-      defineSymbol(context, 'draw', () => {
-        throw new Error('List visualizer is not enabled')
-      })
-    }
+    defineSymbol(context, 'draw', 
+      (list: any) => externalBuiltIns.visualiseList(list, context.externalContext))
     // previously week 6
     defineSymbol(context, 'is_number', misc.is_number)
     // previously week 8
