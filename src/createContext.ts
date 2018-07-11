@@ -55,14 +55,31 @@ export const importExternals = (context: Context, externals: string[]) => {
   })
 }
 
+/**
+ * Imports builtins from standard and external libraries.
+ *
+ * For externalBuiltIns that need to be curried, the __SOURCE__
+ * property must be defined in the currying function.
+ */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
+  /* Defining the __SOURCE__ property in the curried functions. */
+  let display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
+  display.__SOURCE__ = externalBuiltIns.display.__SOURCE__
+  let prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
+  prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
+  let alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
+  let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
+  visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
+ 
+
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', externalBuiltIns.display)
+    defineSymbol(context, 'display', display)
     defineSymbol(context, 'error', misc.error_message)
-    defineSymbol(context, 'prompt', externalBuiltIns.prompt)
+    defineSymbol(context, 'prompt', prompt)
     defineSymbol(context, 'parse_int', misc.parse_int)
     defineSymbol(context, 'undefined', undefined)
     defineSymbol(context, 'NaN', NaN)
@@ -115,13 +132,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
-    if (window.hasOwnProperty('ListVisualizer')) {
-      defineSymbol(context, 'draw', (window as any).ListVisualizer.draw)
-    } else {
-      defineSymbol(context, 'draw', () => {
-        throw new Error('List visualizer is not enabled')
-      })
-    }
+    defineSymbol(context, 'draw', visualiseList)
     // previously week 6
     defineSymbol(context, 'is_number', misc.is_number)
     // previously week 8
@@ -136,7 +147,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 const defaultBuiltIns: CustomBuiltIns = {
   display: misc.display,
   // See issue #5
-  prompt: (v: Value) => toString(v)
+  prompt: (v: Value, e: any) => toString(v),
+  // See issue #11
+  alert: misc.display,
+  visualiseList: (list: any) => {
+    throw new Error('List visualizer is not enabled')}
 }
 
 const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 

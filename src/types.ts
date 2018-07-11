@@ -11,7 +11,10 @@ import { closureToJS } from './interop'
  */
 export interface CustomBuiltIns {
   display: (value: Value, externalContext: any) => void,
-  prompt: (value: Value) => string | null
+  prompt: (value: Value, externalContext: any) => string | null,
+  alert: (value: Value, externalContext: any) => void,
+  /* Used for list visualisation. See #12 */
+  visualiseList: (list: any, externalContext: any) => void
 }
 
 export enum ErrorType {
@@ -200,7 +203,7 @@ export interface Finished {
   value: Value
 }
 
-interface Suspended {
+export interface Suspended {
   status: 'suspended'
   it: IterableIterator<Value>
   scheduler: Scheduler
