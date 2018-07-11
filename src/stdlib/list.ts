@@ -14,7 +14,7 @@ declare global {
 // Author: Martin Henz
 // Translated to TypeScript by Evan Sebastian
 
-type List = Value[]
+export type List = Value[]
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)
