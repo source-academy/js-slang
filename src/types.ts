@@ -12,7 +12,7 @@ import { closureToJS } from './interop'
 export interface CustomBuiltIns {
   display: (value: Value, externalContext: any) => void,
   prompt: (value: value, externalContext: any) => string | null,
-  alert: (value: value, externalContext: any) => null,
+  alert: (value: value, externalContext: any) => void,
   /* Used for list visualisation. See #12 */
   visualiseList: (list: any, externalContext: any) => null
 }
