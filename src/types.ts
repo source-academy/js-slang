@@ -203,7 +203,7 @@ export interface Finished {
   value: Value
 }
 
-interface Suspended {
+export interface Suspended {
   status: 'suspended'
   it: IterableIterator<Value>
   scheduler: Scheduler
