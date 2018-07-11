@@ -141,7 +141,9 @@ const defaultBuiltIns: CustomBuiltIns = {
   // See issue #5
   prompt: (v: Value, e: any) => toString(v),
   // See issue #11
-  alert: misc.display
+  alert: misc.display,
+  visualiseList: (list: any) => {
+    throw new Error('List visualizer is not enabled')}
 }
 
 const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 
