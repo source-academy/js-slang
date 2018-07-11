@@ -55,16 +55,31 @@ export const importExternals = (context: Context, externals: string[]) => {
   })
 }
 
+/**
+ * Imports builtins from standard and external libraries.
+ *
+ * For externalBuiltIns that need to be curried, the __SOURCE__
+ * property must be defined in the currying function.
+ */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
+  /* Defining the __SOURCE__ property in the curried functions. */
+  let display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
+  display.__SOURCE__ = externalBuiltIns.display.__SOURCE__
+  let prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
+  prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
+  let alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
+  let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
+  visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
+ 
+
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', 
-      (v: Value) => externalBuiltIns.display(v, context.externalContext))
+    defineSymbol(context, 'display', display)
     defineSymbol(context, 'error', misc.error_message)
-    defineSymbol(context, 'prompt', 
-      (v: Value) => externalBuiltIns.prompt(v, context.externalContext))
+    defineSymbol(context, 'prompt', prompt)
     defineSymbol(context, 'parse_int', misc.parse_int)
     defineSymbol(context, 'undefined', undefined)
     defineSymbol(context, 'NaN', NaN)
@@ -111,15 +126,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= Infinity) {
     // previously week 4
-    defineSymbol(context, 'alert', 
-      (v: Value) => externalBuiltIns.alert(v, context.externalContext))
+    defineSymbol(context, 'alert', alert)
     defineSymbol(context, 'math_floor', Math.floor)
     // tslint:disable-next-line:ban-types
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
-    defineSymbol(context, 'draw', 
-      (list: any) => externalBuiltIns.visualiseList(list, context.externalContext))
+    defineSymbol(context, 'draw', visualiseList)
     // previously week 6
     defineSymbol(context, 'is_number', misc.is_number)
     // previously week 8
