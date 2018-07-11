@@ -11,7 +11,8 @@ import { closureToJS } from './interop'
  */
 export interface CustomBuiltIns {
   display: (value: Value, externalContext: any) => void,
-  prompt: (value: Value) => string | null
+  prompt: (value: value) => string | null,
+  alert: (value: value) => null
 }
 
 export enum ErrorType {
