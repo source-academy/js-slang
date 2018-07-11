@@ -43,7 +43,6 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
         '>=',
         '&&',
         '||',
-        '-',
       ]
       if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
