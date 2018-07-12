@@ -1,10 +1,15 @@
-slang
-=====
+js-slang
+========
+
+.. image:: https://travis-ci.org/source-academy/js-slang.svg?branch=master
+    :target: https://travis-ci.org/source-academy/js-slang
+.. image:: https://coveralls.io/repos/github/source-academy/js-slang/badge.svg?branch=master
+    :target: https://coveralls.io/github/source-academy/js-slang?branch=master
+
 An open-source interpreter for *The Source*.
 
 Usage
 -----
-The REPL is still under development, and is under the `source-academy/slang` repository.
 
 To build,
 
