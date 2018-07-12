@@ -23,7 +23,8 @@
   "scripts": {
     "prepublishOnly": "tsc",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "@types/invariant": "^2.2.29",
     "@types/jest": "^23.1.4",
     "@types/node": "^9.4.7",
+    "coveralls": "^3.0.1",
     "jest": "^23.3.0",
     "ts-jest": "^23.0.0",
     "typescript": "^2.7.2"
@@ -50,6 +52,14 @@
     "transform": {
       "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "/__tests__/.*\\.ts$"
+    "testRegex": "/__tests__/.*\\.ts$",
+    "testPathIgnorePatterns": [
+        "/dist/"
+    ],
+    "coveragePathIgnorePatterns": [
+        "/node_modules/",
+        "/src/typings/",
+        "/dist/"
+    ]
   }
 }
