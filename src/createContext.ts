@@ -154,7 +154,7 @@ const defaultBuiltIns: CustomBuiltIns = {
     throw new Error('List visualizer is not enabled')}
 }
 
-const createContext = <T>(chapter = 1, externals = [], externalContext?: T, 
+const createContext = <T>(chapter = 1, externals: string[] = [], externalContext?: T, 
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
   const context = createEmptyContext(chapter, externalContext)
 
