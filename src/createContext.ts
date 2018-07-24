@@ -47,7 +47,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
   globalFrame.environment[name] = value
 }
 
-export const importExternals = (context: Context, externals: string[]) => {
+export const importExternalSymbols = (context: Context, externals: string[]) => {
   ensureGlobalEnvironmentExist(context)
 
   externals.forEach(symbol => {
@@ -159,7 +159,7 @@ const createContext = <T>(chapter = 1, externals: string[] = [], externalContext
   const context = createEmptyContext(chapter, externalContext)
 
   importBuiltins(context, externalBuiltIns)
-  importExternals(context, externals)
+  importExternalSymbols(context, externals)
 
   return context
 }
