@@ -47,10 +47,10 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
   globalFrame.environment[name] = value
 }
 
-export const importExternalSymbols = (context: Context, externals: string[]) => {
+export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
   ensureGlobalEnvironmentExist(context)
 
-  externals.forEach(symbol => {
+  externalSymbols.forEach(symbol => {
     defineSymbol(context, symbol, GLOBAL[symbol])
   })
 }
@@ -154,12 +154,12 @@ const defaultBuiltIns: CustomBuiltIns = {
     throw new Error('List visualizer is not enabled')}
 }
 
-const createContext = <T>(chapter = 1, externals: string[] = [], externalContext?: T, 
+const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T, 
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
   const context = createEmptyContext(chapter, externalContext)
 
   importBuiltins(context, externalBuiltIns)
-  importExternalSymbols(context, externals)
+  importExternalSymbols(context, externalSymbols)
 
   return context
 }
