@@ -18,8 +18,9 @@ const createEmptyRuntime = () => ({
   nodes: []
 })
 
-export const createEmptyContext = <T>(chapter: number, externalContext?: T): Context<T> => ({
+export const createEmptyContext = <T>(chapter: number, externalSymbols: string[], externalContext?: T): Context<T> => ({
   chapter,
+  externalSymbols,
   errors: [],
   externalContext,
   cfg: createEmptyCFG(),
@@ -47,10 +48,10 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
   globalFrame.environment[name] = value
 }
 
-export const importExternals = (context: Context, externals: string[]) => {
+export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
   ensureGlobalEnvironmentExist(context)
 
-  externals.forEach(symbol => {
+  externalSymbols.forEach(symbol => {
     defineSymbol(context, symbol, GLOBAL[symbol])
   })
 }
@@ -154,12 +155,12 @@ const defaultBuiltIns: CustomBuiltIns = {
     throw new Error('List visualizer is not enabled')}
 }
 
-const createContext = <T>(chapter = 1, externals: string[] = [], externalContext?: T, 
+const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T, 
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
-  const context = createEmptyContext(chapter, externalContext)
+  const context = createEmptyContext(chapter, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
-  importExternals(context, externals)
+  importExternalSymbols(context, externalSymbols)
 
   return context
 }
