@@ -18,8 +18,9 @@ const createEmptyRuntime = () => ({
   nodes: []
 })
 
-export const createEmptyContext = <T>(chapter: number, externalContext?: T): Context<T> => ({
+export const createEmptyContext = <T>(chapter: number, externalSymbols: string[], externalContext?: T): Context<T> => ({
   chapter,
+  externalSymbols,
   errors: [],
   externalContext,
   cfg: createEmptyCFG(),
@@ -156,7 +157,7 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T, 
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
-  const context = createEmptyContext(chapter, externalContext)
+  const context = createEmptyContext(chapter, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
   importExternalSymbols(context, externalSymbols)
