@@ -107,6 +107,9 @@ export interface Context<T = any> {
   /** The source version used */
   chapter: number
 
+  /** The external symbols that exist in the Context. */
+  externalSymbols: string[]
+
   /** All the errors gathered */
   errors: SourceError[]
 
