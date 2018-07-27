@@ -1,0 +1,158 @@
+\input source_header.tex
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2018}{Source}{\S 4}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input source_intro.tex
+
+\section*{Changes}
+
+Source \S 4 adds the functions \lstinline{parse},
+\lstinline{apply_in_underlying_javascript}, and
+\lstinline{JSON.stringify}.
+Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
+\lstinline{is_string}, \lstinline{is_function}, \lstinline{is_object} and
+\lstinline{is_array} are available, with their obvious meaning.
+Following JavaScript, \lstinline{is_object} returns \lstinline{true} when
+applied to arrays. For details, see 
+Section ``Interpreter Support'' below.
+
+
+\input source_bnf.tex
+
+\begin{alignat*}{9}
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{constant declaration} \\
+&&                       && |   &\quad && \textbf{\texttt{let}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{variable declaration} \\
+&&                       && |   &\quad && \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{variable assignment} \\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}}
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{array/object assignment} \\
+&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
+&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                                           && \textrm{function declaration}\\
+&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{return statement}\\
+&&                       && |   &\quad && \textit{if-statement} \quad
+                                                           && \textrm{conditional statement}\\
+&&                       && |   &\quad && \textbf{\texttt{while}}\  
+                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}}\\
+&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                                           && \textrm{while loop}\\
+&&                       && |   &\quad && \textbf{\texttt{for}}\  
+                                   \textbf{\texttt{(}}\  \textit{expression} \
+                                   \textbf{\texttt{;}} \  \textit{expression} \
+                                   \textbf{\texttt{;}} \  \textit{expression} \
+                                   \textbf{\texttt{)}}\\
+&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                                           && \textrm{for loop}\\
+&&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
+                                                           && \textrm{break statement}\\
+&&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
+                                                           && \textrm{continue statement}\\
+&&                       && |   &\quad &&  \textit{statement} \ 
+                                    \textit{statement}     && \textrm{statement sequence} \\
+&&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{expression statement} \\[1mm] 
+&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
+                                                            && \textrm{function parameters}   \\[1mm]
+&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
+                                   \textbf{\texttt{\{}}\ \textit{statement} \ \textbf{\texttt{\}}}\\
+&&                       &&     &      && \textbf{\texttt{else}}\
+                                          (\ \textbf{\texttt{\{}}\ \textit{statement}\ \textbf{\texttt{\}}}
+                                          \ | \
+                                          \textit{if-statement} \ )
+                                                            && \textrm{conditional statement}   \\[1mm]
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
+&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
+                                                           && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{binary operator combination}\\
+&&                       && |   &\quad &&   \textit{unary-operator} \ 
+                                            \textit{expression}
+                                                           && \textrm{unary operator combination}\\
+&&                       && |   &\quad &&   \textit{expression} \ 
+                                            \textbf{\texttt{(}}\ \textit{expressions}\
+                                            \textbf{\texttt{)}}
+                                                           && \textrm{(compound) function application}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{expression}
+                                                           && \textrm{function definition expression}\\
+&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
+                                            \textit{expression}
+                                            \ \textbf{\texttt{:}}\
+                                            \textit{expression}\
+                                                           && \textrm{conditional expression}\\
+&&                       && |   &\quad &&   \textbf{\texttt{[]}}
+                                                           && \textrm{empty list/array expression}\\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}}
+                                                           && \textrm{array/object access} \\
+&&                       && |   &\quad &&   \textbf{\texttt{\{}}\ 
+                                            \textit{properties}\
+                                            \textbf{\texttt{\}}}
+                                                           && \textrm{literal object expression}\\
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+                                            \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
+&& \textit{binary-operator}    \ 
+                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
+&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}\  \\[1mm]
+&& \textit{unary-operator}    
+                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}\\[1mm]
+&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{expression} \ 
+                                                                      )\ \ldots
+                                                            && \textrm{argument expressions} \\[1mm]
+&& \textit{properties}  && ::= &\quad && \epsilon\ | \ \textit{property}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{property} \ 
+                                                                      )\ \ldots
+                                                            && \textrm{object properties} \\[1mm]
+&& \textit{property}  && ::= &\quad && (\ \textit{string}\ |\ \textit{name}\ ) 
+                                        \ \textbf{\texttt{:}} \ \textit{expression} 
+                                                            && \textrm{object property}
+\end{alignat*}
+
+\input source_return
+
+\input source_names
+
+\input source_lists
+
+\input source_array_support
+
+\input source_numbers
+
+\input source_strings
+
+\input source_arrays
+
+\input source_objects
+
+\input source_typing
+
+\input source_interpreter
+
+\input source_comments
+
+
+    \end{document}

@@ -1,0 +1,105 @@
+\input source_header.tex
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2018}{Source}{\S 2}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input source_intro.tex
+
+\section*{Changes}
+
+Compared to Source \S 1, Source \S 2 has the following changes:
+\begin{itemize}
+\item \lstinline{[]}: Empty list.
+\item List library: Functions for creating, accessing and processing lists.
+\end{itemize}
+
+\input source_bnf.tex
+
+\begin{alignat*}{9}
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{constant declaration} \\
+&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
+&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+                                                           && \textrm{function declaration}\\
+&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{return statement}\\
+&&                       && |   &\quad && \textit{if-statement} \quad
+                                                           && \textrm{conditional statement}\\
+&&                       && |   &\quad &&  \textit{statement} \ 
+                                    \textit{statement}     && \textrm{statement sequence} \\
+&&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{expression statement} \\[1mm] 
+&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
+                                                            && \textrm{function parameters}   \\[1mm]
+&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
+                                   \textbf{\texttt{\{}}\ \textit{statement} \ \textbf{\texttt{\}}}\\
+&&                       &&     &      && \textbf{\texttt{else}}\
+                                          (\ \textbf{\texttt{\{}}\ \textit{statement}\ \textbf{\texttt{\}}}
+                                          \ | \
+                                          \textit{if-statement} \ )
+                                                            && \textrm{conditional statement}   \\[1mm]
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
+&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
+                                                           && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{binary operator combination}\\
+&&                       && |   &\quad &&   \textit{unary-operator} \ 
+                                            \textit{expression}
+                                                           && \textrm{unary operator combination}\\
+&&                       && |   &\quad &&   \textit{expression} \ 
+                                            \textbf{\texttt{(}}\ \textit{expressions}\
+                                            \textbf{\texttt{)}}
+                                                           && \textrm{(compound) function application}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{expression}
+                                                           && \textrm{function definition expression}\\
+&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
+                                            \textit{expression}
+                                            \ \textbf{\texttt{:}}\
+                                            \textit{expression}\
+                                                           && \textrm{conditional expression}\\
+&&                       && |   &\quad &&   \textbf{\texttt{[]}}
+                                                           && \textrm{primitive empty list expression}\\
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+                                            \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
+&& \textit{binary-operator}    \ 
+                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
+&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}\  \\[1mm]
+&& \textit{unary-operator}    
+                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}\\[1mm]
+&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{expression} \ 
+                                                                      )\ \ldots
+                                                            && \textrm{argument expressions} 
+\end{alignat*}
+
+\input source_return
+
+\input source_names
+
+\input source_lists
+
+\input source_numbers
+
+\input source_strings
+
+\input source_typing
+
+\input source_comments
+
+
+    \end{document}

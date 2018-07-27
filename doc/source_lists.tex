@@ -1,0 +1,88 @@
+\subsection*{List Support}
+
+The following list processing functions are supported:
+
+\begin{itemize}
+\item \lstinline{pair(x, y)}: Makes a pair from \lstinline{x} and \lstinline{y}.
+\item \lstinline{is_pair(x)}: Returns \lstinline{true} if \lstinline{x} is a
+  pair and \lstinline{false} otherwise.
+\item \lstinline{head(x)}: Returns the head (first component) of the pair \lstinline{x}.
+\item \lstinline{tail(x)}: Returns the tail (second component) of the
+  pair \lstinline{x}.
+\item \lstinline{is_empty_list(xs)}: Returns \lstinline{true} if \lstinline{xs} is the
+  empty list, and \lstinline{false} otherwise.
+\item \lstinline{is_list(x)}: Returns \lstinline{true} if
+  \lstinline{x} is a list as defined in the lectures, and
+  \lstinline{false} otherwise. Iterative process; 
+time: $O(n)$, space: $O(1)$, where $n$ is the length of the 
+chain of \lstinline{tail} operations that can be applied to \lstinline{x}.
+\item \lstinline{list(x1, x2,..., xn)}: Returns a list with $n$ elements. The
+first element is \lstinline{x1}, the second \lstinline{x2}, etc. Iterative
+process; time: $O(n)$, space: $O(n)$, since the constructed list data structure
+consists of $n$ pairs, each of which takes up a constant amount of space.
+\item \lstinline{equal(x1, x2)}: Returns \lstinline{true} if both
+have the same structure and the same numbers, boolean values, functions or empty list
+at corresponding leaf positions, and \lstinline{false} otherwise.
+\item \lstinline{length(xs)}: Returns the length of the list
+  \lstinline{xs}. 
+Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{map(f, xs)}: Returns a list that results from list
+  \lstinline{xs} by element-wise application of \lstinline{f}. 
+Recursive process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{build_list(n, f)}: Makes a list with \lstinline{n}
+elements by applying the unary function \lstinline{f} to the numbers 0 to \lstinline{n - 1}.
+Recursive process; time: $O(n)$, space: $O(n)$.
+\item \lstinline{for_each(f, xs)}: Applies \lstinline{f} to every
+  element of the list \lstinline{xs}, and then returns
+  \lstinline{true}. 
+Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{list_to_string(xs)}: Returns a string that represents
+list \lstinline{xs} using the text-based box-and-pointer notation \lstinline{[...]}.
+\item \lstinline{reverse(xs)}: Returns list \lstinline{xs} in reverse
+  order. Iterative process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+The process is iterative, but consumes space $O(n)$ because of the result list.
+\item \lstinline{append(xs, ys)}: Returns a list that results from 
+appending the list \lstinline{ys} to the list \lstinline{xs}.
+Recursive process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{member(x, xs)}: Returns first postfix sublist
+whose head is identical to
+\lstinline{x} (\lstinline{===}); returns \lstinline{[]} if the
+element does not occur in the list.
+Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{remove(x, xs)}: Returns a list that results from
+\lstinline{xs} by removing the first item from \lstinline{xs} that
+is identical (\lstinline{===}) to \lstinline{x}. Recursive process;
+time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{remove_all(x, xs)}: Returns a list that results from
+\lstinline{xs} by removing all items from \lstinline{xs} that
+are identical (\lstinline{===}) to \lstinline{x}.
+Recursive process;
+time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{filter(pred, xs)}: Returns a list that contains
+only those elements for which the one-argument function
+\lstinline{pred}
+returns \lstinline{true}.
+Recursive process;
+time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{enum_list(start, end)}: Returns a list that enumerates
+numbers starting from \lstinline{start} using a step size of 1, until
+the number exceeds (\lstinline{>}) \lstinline{end}.
+Recursive process;
+time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{list_ref(xs, n)}: Returns the element
+of list \lstinline{xs} at position \lstinline{n}, 
+where the first element has index 0.
+Iterative process;
+time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+\item \lstinline{accumulate(op, initial, xs)}: Applies binary
+function \lstinline{op} to the elements of \lstinline{xs} from
+right-to-left order, first applying \lstinline{op} to the last element
+and the value \lstinline{initial}, resulting in $r_1$, then to the 
+second-last element and $r_1$, resulting in $r_2$, etc, and finally
+to the first element and $r_{n-1}$, where $n$ is the length of the
+list. Thus, \lstinline{accumulate(op,zero,list(1,2,3))} results in
+\lstinline{op(1, op(2, op(3, zero)))}.
+Recursive process;
+time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs},
+assuming \lstinline{op} takes constant time.
+\end{itemize}
