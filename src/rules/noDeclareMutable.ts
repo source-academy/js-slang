@@ -27,6 +27,7 @@ export class NoDeclareMutableError implements SourceError {
 
 const noDeclareMutable: Rule<es.VariableDeclaration> = {
   name: 'no-declare-mutable',
+  disableOn: 3,
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration) {
