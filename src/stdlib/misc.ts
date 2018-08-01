@@ -98,8 +98,3 @@ export function runtime() {
   return new Date().getTime()
 }
 runtime.__SOURCE__ = 'runtime()'
-
-export function error(s: Value) {
-  display(s)
-}
-error.__SOURCE__ = 'error(v)'
