@@ -135,7 +135,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   }
 
   if (context.chapter >= 4) {
-    defineSymbol(context, 'JSON.stringify', JSON.stringify)
+    defineSymbol(context, 'stringify', JSON.stringify)
     defineSymbol(context, 'parse', () => 
       context.metaCircularParser.parse.apply(context.metaCircularParser, arguments))
     defineSymbol(context, 'apply_in_underlying_javascript', function(
