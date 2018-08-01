@@ -1,5 +1,3 @@
-import Parser from 'jison'
-
 import * as list from './stdlib/list'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
@@ -27,6 +25,7 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   externalContext,
   cfg: createEmptyCFG(),
   runtime: createEmptyRuntime(),
+  // TODO import from other file
   metaCircularParser: new Parser()
 })
 
