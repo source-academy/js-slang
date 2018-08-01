@@ -1,3 +1,5 @@
+import Parser from 'jison'
+
 import * as list from './stdlib/list'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
@@ -24,7 +26,8 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   errors: [],
   externalContext,
   cfg: createEmptyCFG(),
-  runtime: createEmptyRuntime()
+  runtime: createEmptyRuntime(),
+  metaCircularParser: new Parser()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -133,6 +136,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 4) {
     defineSymbol(context, 'JSON.stringify', JSON.stringify)
+    defineSymbol(context, 'parse', () => 
+      context.metaCircularParser.parse.apply(context.metaCircularParser, arguments))
     defineSymbol(context, 'apply_in_underlying_javascript', function(
       fun: Function,
       args: Value
