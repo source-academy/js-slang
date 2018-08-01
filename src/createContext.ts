@@ -125,10 +125,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'equal', list.equal)
   }
 
+  if (context.chapter >= 3) {
+    defineSymbol(context, 'set_head', list.set_head)
+    defineSymbol(context, 'set_tail', list.set_tail)
+    defineSymbol(context, 'array_length', misc.array_length)
+  }
+
   if (context.chapter >= Infinity) {
     // previously week 4
     defineSymbol(context, 'alert', alert)
-    defineSymbol(context, 'math_floor', Math.floor)
     // tslint:disable-next-line:ban-types
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
@@ -136,12 +141,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'draw', visualiseList)
     // previously week 6
     defineSymbol(context, 'is_number', misc.is_number)
-    // previously week 8
-    defineSymbol(context, 'undefined', undefined)
-    defineSymbol(context, 'set_head', list.set_head)
-    defineSymbol(context, 'set_tail', list.set_tail)
-    // previously week 9
-    defineSymbol(context, 'array_length', misc.array_length)
   }
 }
 
