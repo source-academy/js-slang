@@ -3,6 +3,10 @@ import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
 import { toString } from '.';
 
+/** Import meta-circular parser */
+const createParserModule = require('./stdlib/parser')
+const createParser = createParserModule.default
+
 const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyCFG = () => ({
@@ -25,8 +29,7 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   externalContext,
   cfg: createEmptyCFG(),
   runtime: createEmptyRuntime(),
-  // TODO import from other file
-  metaCircularParser: new Parser()
+  metaCircularParser: createParser()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -135,8 +138,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
-    defineSymbol(context, 'parse', () => 
-      context.metaCircularParser.parse.apply(context.metaCircularParser, arguments))
+    defineSymbol(context, 'parse',
+      function () { 
+        return context.metaCircularParser
+          .parse.apply(context.metaCircularParser, arguments)
+      });
     defineSymbol(context, 'apply_in_underlying_javascript', function(
       fun: Function,
       args: Value
