@@ -141,7 +141,7 @@ export class VariableRedeclaration implements SourceError {
   }
 
   public explain() {
-    return `Redeclaring variable ${this.name}`
+    return `Redeclaring name ${this.name}`
   }
 
   public elaborate() {
