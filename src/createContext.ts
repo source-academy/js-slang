@@ -123,7 +123,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'list_ref', list.list_ref)
     defineSymbol(context, 'accumulate', list.accumulate)
     defineSymbol(context, 'equal', list.equal)
-    defineSymbol(context, 'draw', visualiseList)
+    defineSymbol(context, 'draw_list', visualiseList)
   }
 
   if (context.chapter >= 3) {
