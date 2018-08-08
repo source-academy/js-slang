@@ -123,6 +123,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'list_ref', list.list_ref)
     defineSymbol(context, 'accumulate', list.accumulate)
     defineSymbol(context, 'equal', list.equal)
+    defineSymbol(context, 'draw_list', visualiseList)
   }
 
   if (context.chapter >= 3) {
@@ -138,7 +139,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
-    defineSymbol(context, 'draw', visualiseList)
     // previously week 6
     defineSymbol(context, 'is_number', misc.is_number)
   }
