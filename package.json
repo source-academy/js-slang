@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "prepublishOnly": "tsc",
-    "build": "tsc",
+    "build": "scripts/build.sh",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
