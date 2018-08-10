@@ -1,6 +1,6 @@
 PDFLATEX = pdflatex
 
-SPECSNUMS = 1 2 3 4
+SPECSNUMS = 1 2 3 4 styleguide
 
 SPECS = $(SPECSNUMS:%=source_%)
 
