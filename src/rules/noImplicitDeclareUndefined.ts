@@ -22,7 +22,7 @@ export class NoImplicitDeclareUndefinedError implements SourceError {
       A variable declaration assigns a value to a name.
       For instance, to assign 20 to ${this.node.name}, you can write:
 
-        var ${this.node.name} = 20;
+        let ${this.node.name} = 20;
 
         ${this.node.name} + ${this.node.name}; // 40
     `

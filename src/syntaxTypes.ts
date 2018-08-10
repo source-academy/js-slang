@@ -19,21 +19,21 @@ const syntaxTypes: { [nodeName: string]: number } = {
   // Chapter 2
   ArrayExpression: 2,
 
+  // Chapter 3
+  AssignmentExpression: 3,
+  ForStatement: 3,
+  WhileStatement: 3,
+  BreakStatement: 3,
+  ContinueStatement: 3,
+  ThisExpression: 3,
+  ObjectExpression: 3,
+  MemberExpression: 3,
+  Property: 3,
+  UpdateExpression: 3,
+
   // Week 5
   EmptyStatement: 5,
-  // preivously Week 8
-  AssignmentExpression: 8,
-  WhileStatement: 8,
-  // previously Week 9
-  ForStatement: 9,
-  BreakStatement: 9,
-  ContinueStatement: 9,
-  MemberExpression: 9,
   // previously Week 10
-  ThisExpression: 10,
-  ObjectExpression: 10,
-  Property: 10,
-  UpdateExpression: 10,
   NewExpression: 10,
   // Disallowed Forever
   SwitchStatement: Infinity,
