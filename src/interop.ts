@@ -77,6 +77,8 @@ export const toString = (value: Value, length = 0): string => {
     } else {
       return stripBody(value.toString())
     }
+  } else if (value === null) {
+    return 'null'
   } else {
     return value.toString()
   }
