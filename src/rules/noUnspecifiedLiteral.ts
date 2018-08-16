@@ -23,7 +23,7 @@ export class NoUnspecifiedLiteral implements SourceError {
       : this.node.value instanceof RegExp ? 'RegExp'
       : ''
     return (
-      `A literal '${literal}' value is not allowed. Only string, boolean, and number literal values are allowed.`
+      `'${literal}' literals are not allowed`
     )
   }
 
