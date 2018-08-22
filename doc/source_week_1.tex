@@ -2,10 +2,10 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2018}{Source}{\S 1}
+	\docheader{2018}{Source}{Week 1}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input source_intro.tex
+%\input source_intro.tex
 
 \input source_bnf.tex
 
@@ -14,9 +14,12 @@
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
-                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\ \textbf{\texttt{return}}\  \textit{expression}   \ \textbf{\texttt{\}}} \quad
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textbf{\texttt{\{}}\\
+&&                       &&     &      && \ \ \ \ \ \ \ \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}} \\
+&&                       &&     &      && \textbf{\texttt{\}}} 
                                                            && \textrm{function declaration}\\
+&&                       && |   &\quad &&  \textit{statement} \ 
+                                    \textit{statement}     && \textrm{statement sequence} \\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{expression statement} \\[1mm] 
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
@@ -57,7 +60,7 @@
                                                             && \textrm{argument expressions} 
 \end{alignat*}
 
-\input source_names
+\input source_names_week_1
 
 \input source_numbers
 

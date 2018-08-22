@@ -1,3 +1,9 @@
+### Naming 
+- The official specifications for Source § X is `source_X.pdf`.
+- Other `.tex` files are used as imports within the specs.
+- `source_week_X.pdf` is an *internal reference* for the staff, to aid with discussion groups.
+
+### Generating PDFs
 Required for making the documents is a LaTeX installation.
 
 Just try

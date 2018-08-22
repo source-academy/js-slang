@@ -1,0 +1,39 @@
+\section*{Names}
+
+Names\footnote{
+In
+\href{http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf}{
+ECMAScript 2016 ($7^{\textrm{th}}$ Edition)},
+these names are called \emph{identifiers}.
+} start with \verb@_@, \verb@$@ or a
+letter\footnote{
+By \emph{letter}
+we mean \href{http://unicode.org/reports/tr44/}{Unicode} letters (L) or letter numbers (NI).
+} and contain only \verb@_@, \verb@$@,
+letters or digits\footnote{
+By \emph{digit} we mean characters in the
+\href{http://unicode.org/reports/tr44/}{Unicode} categories
+Nd (including the decimal digits 0, 1, 2, 3, 4, 5, 6, 7, 8, 9), Mn, Mc  and Pc. 
+}. Reserved words\footnote{
+By \emph{Reserved word} we mean any of:
+$\textbf{\texttt{break}}$, $\textbf{\texttt{case}}$, $\textbf{\texttt{catch}}$, $\textbf{\texttt{continue}}$, $\textbf{\texttt{debugger}}$, $\textbf{\texttt{default}}$, $\textbf{\texttt{delete}}$, $\textbf{\texttt{do}}$, $\textbf{\texttt{else}}$, $\textbf{\texttt{finally}}$, $\textbf{\texttt{for}}$, $\textbf{\texttt{function}}$, $\textbf{\texttt{if}}$, $\textbf{\texttt{in}}$, $\textbf{\texttt{instanceof}}$, $\textbf{\texttt{new}}$, $\textbf{\texttt{return}}$, $\textbf{\texttt{switch}}$, $\textbf{\texttt{this}}$, $\textbf{\texttt{throw}}$, $\textbf{\texttt{try}}$, $\textbf{\texttt{typeof}}$, $\textbf{\texttt{var}}$, $\textbf{\texttt{void}}$, $\textbf{\texttt{while}}$, $\textbf{\texttt{with}}$, $\textbf{\texttt{class}}$, $\textbf{\texttt{const}}$, $\textbf{\texttt{enum}}$, $\textbf{\texttt{export}}$, $\textbf{\texttt{extends}}$, $\textbf{\texttt{import}}$, $\textbf{\texttt{super}}$, $\textbf{\texttt{implements}}$, $\textbf{\texttt{interface}}$, $\textbf{\texttt{let}}$, $\textbf{\texttt{package}}$, $\textbf{\texttt{private}}$, $\textbf{\texttt{protected}}$, $\textbf{\texttt{public}}$, $\textbf{\texttt{static}}$, $\textbf{\texttt{yield}}$, $\textbf{\texttt{null}}$, $\textbf{\texttt{true}}$, $\textbf{\texttt{false}}$.
+} such as keywords are not allowed as names.
+
+Valid names are \verb@x@, \verb@_45@, \verb@$$@ and $\mathtt{\pi}$,
+but always keep in mind that programming is communicating, and therefore the familiarity of the
+audience with the characters used in names is an important aspect of program readability.
+
+The following names can be used, in addition to names that
+are declared using \texttt{\textbf{const}}, \texttt{\textbf{function}} and
+$\texttt{\textbf{=>}}$:
+\begin{itemize}
+\item \lstinline{math_}$\textit{name}$,
+where $\textit{name}$ is any name specified in the
+JavaScript
+\texttt{Math} library, see\\
+\href{https://www.ecma-international.org/ecma-262/8.0/index.html#sec-math-object}{\color{DarkBlue}ECMAScript Specification, Section 20.2}. Examples:
+\begin{itemize}
+\item \verb#math_PI#: Refers to the mathematical constant $\pi$,
+\item \verb#math_sqrt#\texttt{(n)}: Returns the square root of the \emph{number} \texttt{n}.
+\end{itemize}
+\end{itemize}
