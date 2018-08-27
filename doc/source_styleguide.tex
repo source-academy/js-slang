@@ -145,6 +145,30 @@ function count_buttons(garment) {
                           garment));
 }
 
+// good style
+function count_buttons(garment) {
+    return accumulate((sleaves, total) =>
+                          delicate_calculation(sleaves + total),
+                      0, 
+		      map(jacket =>
+                              is_checkered(jacket)
+                              ? count_buttons(jacket)
+                              : 1,
+                          garment));
+}
+
+// bad style
+function count_buttons(garment) {
+    return accumulate((sleaves, total) =>
+                      delicate_calculation(sleaves + total),
+                      0, 
+		      map(jacket =>
+                          is_checkered(jacket)
+                          ? count_buttons(jacket)
+                          : 1,
+                          garment));
+}
+
 // no newline allowed between parameters and =>
 function count_buttons(garment) {
     return accumulate((sleaves, total)
