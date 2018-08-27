@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{beta release}{Source}{Style Guide}
+	\docheader{Version 1.0}{Source}{Style Guide}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This is the style guide for the language Source,
@@ -104,10 +104,10 @@ const x = 1 + 1;
 const x=1+1;
 
 // good style
-return (x === 0) ? "zero" : "not zero";
+return x === 0 ? "zero" : "not zero";
 
 // bad style
-return (x === 0)?"zero":"not zero";
+return x === 0?"zero":"not zero";
 \end{lstlisting}
 	
 	Do not leave a space between unary operators and the variable involved.
@@ -120,30 +120,32 @@ const negative_x = -x;
 const negative_x = - x;
 \end{lstlisting}
 
-\subsection*{Function Definitions}
+\subsection*{Function Definition Expressions}
 
 Keep the parameters and the body expression of a function definition expression
 in one line, if they are short enough.
 
 If they are lengthy, use
-indentation. The indentation starts just below the first character of the \textit{parameter},
-or the open parenthesis, if there are multiple parameters. If the body expression does not
-fit in one line, use indentation so that the subsequent lines start after the blank character
-after the arrow.
+indentation. The indentation starts four characters after first character of
+the \textit{parameter}, if there is only one,
+or four characters after the open parenthesis,
+if there are multiple parameters. If the body expression does not
+fit in one line, use indentation following the first line of the body
+expression. 
 
 \begin{lstlisting}
 // good style
 function count_buttons(garment) {
     return accumulate((sleaves, total) => sleaves + total,
                       0, 
-		      map(jacket
-		          => is_checkered(jacket)
-		             ? count_buttons(jacket)
-                             : 1,
-			  garment));
+		      map(jacket =>
+                              is_checkered(jacket)
+                              ? count_buttons(jacket)
+                              : 1,
+                          garment));
 }
 
-// bad style
+// no newline allowed between parameters and =>
 function count_buttons(garment) {
     return accumulate((sleaves, total)
                       =>
@@ -175,7 +177,8 @@ const aspect_ratio = landscape
 \end{lstlisting}
 
 If the \textit{consequent-expression} or \textit{alternative-expression} are lengthy, use
-indentation. The indentation starts just below the \textit{predicate}.
+indentation. The indentation starts just below the beginning of the
+\textit{predicate}.
 
 \begin{lstlisting}
 // good style
@@ -275,12 +278,14 @@ if (x === 1) {
 
   Clean up \emph{all trailing whitespace} before submitting your program.
 
-\section*{Variables}
-\subsection*{Naming}
-When naming variables, use \emph{underscores} to separate words. Examples: \lstinline{my_variable}, \lstinline{x}, \lstinline{rcross_bb}.
+\section*{Names}
+\subsection*{Choice of names}
+When naming constants or variables,
+use \emph{underscores} to separate words.
+Examples: \lstinline{my_variable}, \lstinline{x}, \lstinline{rcross_bb}.
 
 \subsection*{Nesting}
-Do not use the same variable name for nested scope. Examples:
+Do not use the same name for nested scope. Examples:
 \begin{lstlisting}
 // bad program
 const x = 1;
