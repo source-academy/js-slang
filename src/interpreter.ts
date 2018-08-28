@@ -43,6 +43,20 @@ const createFrame = (
   return frame
 }
 
+const createBlockFrame = (
+  context: Context,
+  vars: es.Identifier[],
+  args: Value[],
+): Frame => {
+  const frame: Frame = {
+    name: 'ifStatementBlock',
+    parent: currentFrame(context),
+    environment: {},
+    thisContext: context
+  }
+  return frame
+}
+
 const handleError = (context: Context, error: SourceError) => {
   context.errors.push(error)
   if (error.severity === ErrorSeverity.ERROR) {
@@ -369,10 +383,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       return undefined
     }
 
+    // Create a new frame (block scoping)
+    const frame = createBlockFrame(context, [], [])
+    pushFrame(context, frame)
+
     if (test) {
-      return yield* evaluate(node.consequent, context)
+      const result = yield* evaluate(node.consequent, context)
+      popFrame(context)
+      return result
     } else if (node.alternate) {
-      return yield* evaluate(node.alternate, context)
+      const result = yield* evaluate(node.alternate, context)
+      popFrame(context)
+      return result
     } else {
       return undefined
     }
