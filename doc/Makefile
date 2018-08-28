@@ -19,4 +19,4 @@ clean:
 	rm -f *~ *.dvi *.aux *.log *.ps *.out
 
 install: $(PDFSPECS)
-	scp *.pdf cs1101s@sunfire.comp.nus.edu.sg:public_html/source/.
+	scp $(PDFSPECS) cs1101s@sunfire.comp.nus.edu.sg:public_html/source/.
