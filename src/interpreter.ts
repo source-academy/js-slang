@@ -7,6 +7,7 @@ import * as errors from './interpreter-errors'
 import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
+import {HOISTED_BUT_NOT_YET_ASSIGNED} from "./constants";
 
 class ReturnValue {
   constructor(public value: Value) {}
@@ -68,10 +69,22 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
+function hoistVariableDeclaration(context: Context, name: string, node: es.Node) {
+  const frame = currentFrame(context);
+
+  if (frame.environment.hasOwnProperty(name)) {
+    handleError(context, new errors.VariableRedeclaration(node!, name))
+  }
+
+  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED;
+
+  return frame;
+}
+
 function defineVariable(context: Context, name: string, value: Value) {
   const frame = context.runtime.frames[0]
 
-  if (frame.environment.hasOwnProperty(name)) {
+  if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
@@ -96,7 +109,11 @@ const getVariable = (context: Context, name: string) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      return frame.environment[name]
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break;
+      } else {
+        return frame.environment[name]
+      }
     } else {
       frame = frame.parent
     }
@@ -371,6 +388,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
+    hoistVariableDeclaration(context, id.name, node)
     defineVariable(context, id.name, closure)
     return undefined
   },
@@ -384,16 +402,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, [], [])
-    pushFrame(context, frame)
+    //const frame = createBlockFrame(context, [], [])
+    // pushFrame(context, frame)
 
     if (test) {
       const result = yield* evaluate(node.consequent, context)
-      popFrame(context)
+      //popFrame(context)
       return result
     } else if (node.alternate) {
       const result = yield* evaluate(node.alternate, context)
-      popFrame(context)
+      //popFrame(context)
       return result
     } else {
       return undefined
@@ -420,11 +438,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let test
     while (
       // tslint:disable-next-line
-      (test = yield* evaluate(node.test, context)) &&
-      !(value instanceof ReturnValue) &&
-      !(value instanceof BreakValue) &&
-      !(value instanceof TailCallReturnValue)
-    ) {
+    (test = yield* evaluate(node.test, context)) &&
+    !(value instanceof ReturnValue) &&
+    !(value instanceof BreakValue) &&
+    !(value instanceof TailCallReturnValue)
+      ) {
       value = yield* evaluate(node.body, context)
     }
     if (value instanceof BreakValue) {
@@ -446,8 +464,31 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return obj
   },
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
+    const frame = createBlockFrame(context, [], [])
+    pushFrame(context, frame)
     let result: Value
+    let notFunctionDeclarationStatements: es.Node[] = []
     for (const statement of node.body) {
+      if (statement.type === "FunctionDeclaration") {
+        result = yield* evaluate(statement, context)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      } else {
+        notFunctionDeclarationStatements.push(statement);
+      }
+    }
+    for (const statement of notFunctionDeclarationStatements) {
+      if (statement.type === "VariableDeclaration") {
+        const declaration = statement.declarations[0]
+        const id = declaration.id as es.Identifier
+        result = hoistVariableDeclaration(context, id.name, node)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      }
+    }
+    for (const statement of notFunctionDeclarationStatements) {
       result = yield* evaluate(statement, context)
       if (
         result instanceof ReturnValue ||
@@ -457,11 +498,33 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
     }
+    popFrame(context);
     return result
   },
   Program: function*(node: es.BlockStatement, context: Context) {
     let result: Value
+    let notFunctionDeclarationStatements: es.Node[] = []
     for (const statement of node.body) {
+      if (statement.type === "FunctionDeclaration") {
+        result = yield* evaluate(statement, context)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      } else {
+        notFunctionDeclarationStatements.push(statement);
+      }
+    }
+    for (const statement of notFunctionDeclarationStatements) {
+      if (statement.type === "VariableDeclaration") {
+        const declaration = statement.declarations[0]
+        const id = declaration.id as es.Identifier
+        result = hoistVariableDeclaration(context, id.name, statement)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      }
+    }
+    for (const statement of notFunctionDeclarationStatements) {
       result = yield* evaluate(statement, context)
       if (result instanceof ReturnValue) {
         break
