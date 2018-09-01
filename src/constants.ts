@@ -8,6 +8,7 @@ export const Types = {
   BOOLEAN: { name: 'boolean' } as CFG.Type,
   ANY: { name: 'any' } as CFG.Type
 }
+export const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol("Used to implement hoisting")
 export const MAX_LIST_DISPLAY_LENGTH = 100
 export const UNKNOWN_LOCATION: es.SourceLocation = {
   start: {
