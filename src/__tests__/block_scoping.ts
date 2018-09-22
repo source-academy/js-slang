@@ -73,9 +73,9 @@ test("interior of for loops don't affect loop variables", () => {
   const code = `
     function test(){
       let result = 0;
-      for (let x = 4; x > 0; x = x - 1) {
+      for (let x = 4; ; x = x - 1) {
         result = result + 1;
-        x = 0;
+        break;
       }
       return result;
     }
