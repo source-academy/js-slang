@@ -1,6 +1,5 @@
-import { stripIndent } from "common-tags";
 import { mockContext } from "../mocks/context";
-import { parseError, runInContext } from "../index";
+import { runInContext } from "../index";
 import { Finished } from "../types";
 
 // This is bad practice. Don't do this!
