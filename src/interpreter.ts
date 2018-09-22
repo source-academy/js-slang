@@ -303,23 +303,39 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return new BreakValue()
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
-    if (node.init) {
+    const hasDeclaration = Boolean(node.init);
+    if (hasDeclaration) {
       // Create a new block scope for the loop variables
       const frame = createBlockFrame(context, [], [])
       pushFrame(context, frame)
-      yield* evaluate(node.init, context)
+      yield* evaluate(node.init!, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
     while (test) {
-      // create block context
-      const frame = createBlockFrame(context, [], [])
-      pushFrame(context, frame)
+      const parentFrame = currentFrame(context)
+      const bodyFrame = createBlockFrame(context, [], []);
 
+      // new frame for each iteration's closure, if variables have been declared.
+      const freshlyBoundFrame = createBlockFrame(context, [], []);
+      if (hasDeclaration) {
+        // copy any declared variables during init into the newly bound frame
+        freshlyBoundFrame.environment = {...parentFrame.environment}
+        pushFrame(context, freshlyBoundFrame)
+      }
+      // new frame for body block of the loop
+      pushFrame(context, bodyFrame)
       value = yield* evaluate(node.body, context)
 
       // Remove block context
       popFrame(context);
+      // Remove newly bound frame if variables have been declared.
+      if (hasDeclaration) {
+        // copy the the declared variables back into the parent frame.
+        parentFrame.environment = {...freshlyBoundFrame.environment}
+        popFrame(context)
+      }
+
       if (value instanceof ContinueValue) {
         value = undefined
       }
