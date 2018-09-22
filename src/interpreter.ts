@@ -304,12 +304,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
     if (node.init) {
+      // Create a new block scope for the loop variables
+      const frame = createBlockFrame(context, [], [])
+      pushFrame(context, frame)
       yield* evaluate(node.init, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
     while (test) {
+      // create block context
+      const frame = createBlockFrame(context, [], [])
+      pushFrame(context, frame)
+
       value = yield* evaluate(node.body, context)
+
+      // Remove block context
+      popFrame(context);
       if (value instanceof ContinueValue) {
         value = undefined
       }
@@ -325,6 +335,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
       test = node.test ? yield* evaluate(node.test, context) : true
     }
+    // pop the loop var context if we added it
+    if (node.init) {
+      console.log('init context pop')
+      popFrame(context);
+    }
+
     if (value instanceof BreakValue) {
       return undefined
     }
@@ -425,7 +441,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
+      // Create a new frame (block scoping)
+      const frame = createBlockFrame(context, [], [])
+      pushFrame(context, frame)
+
       value = yield* evaluate(node.body, context)
+
+      popFrame(context)
     }
     if (value instanceof BreakValue) {
       return undefined
