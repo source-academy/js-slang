@@ -259,4 +259,11 @@ Object {
 }
 `;
 
+exports[`let uses block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
 exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
