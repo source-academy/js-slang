@@ -75,7 +75,7 @@ test("interior of for loops don't affect loop variables", () => {
       let result = 0;
       for (let x = 4; x > 0; x = x - 1) {
         result = result + 1;
-        let x = 0;
+        x = 0;
       }
       return result;
     }
@@ -111,3 +111,25 @@ test("while loops use block scoping instead of function scoping", () => {
     expect((obj as Finished).value).toBe(true);
   });
 });
+
+test("for loop `let` variables are copied into the block scope", () => {
+  // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
+  // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+  const code = `
+  function test(){
+        let z = [];
+        for (let x = 0; x < 2; x = x + 1) {
+          z[x] = () => x;
+        }
+        return z[1]();
+  }
+  test();
+  `;
+  const context = mockContext(4);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("finished");
+    expect(obj).toMatchSnapshot();
+    expect((obj as Finished).value).toBe(1);
+  });
+})
