@@ -4,7 +4,7 @@ import * as es from 'estree'
 import * as constants from './constants'
 import { toJS } from './interop'
 import * as errors from './interpreter-errors'
-import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value } from './types'
+import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
@@ -42,20 +42,19 @@ const createFrame = (
   })
   return frame
 }
-
 const createBlockFrame = (
   context: Context,
-  vars: es.Identifier[],
-  args: Value[],
+  name = "blockFrame",
+  environment: Environment = {}
 ): Frame => {
   const frame: Frame = {
-    name: 'ifStatementBlock',
+    name,
     parent: currentFrame(context),
-    environment: {},
+    environment,
     thisContext: context
-  }
-  return frame
-}
+  };
+  return frame;
+};
 
 const handleError = (context: Context, error: SourceError) => {
   context.errors.push(error)
@@ -303,17 +302,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return new BreakValue()
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
+    // Create a new block scope for the loop variables
+    const frame = createBlockFrame(context, "forLoopFrame")
+    pushFrame(context, frame)
+
     if (node.init) {
-      // Create a new block scope for the loop variables
-      const frame = createBlockFrame(context, [], [])
-      pushFrame(context, frame)
       yield* evaluate(node.init, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
     while (test) {
-      // create block context
-      const frame = createBlockFrame(context, [], [])
+      // create block context and shallow copy loop frame environment
+      // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
+      // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+      const bound_env = { ...currentFrame(context).environment }
+      const frame = createBlockFrame(context, "forBlockFrame", bound_env)
       pushFrame(context, frame)
 
       value = yield* evaluate(node.body, context)
@@ -335,11 +338,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
       test = node.test ? yield* evaluate(node.test, context) : true
     }
-    // pop the loop var context if we added it
-    if (node.init) {
-      console.log('init context pop')
-      popFrame(context);
-    }
+
+    popFrame(context);
 
     if (value instanceof BreakValue) {
       return undefined
@@ -400,7 +400,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, [], [])
+    const frame = createBlockFrame(context, "ifBlockFrame")
     pushFrame(context, frame)
 
     if (test) {
@@ -442,7 +442,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof TailCallReturnValue)
     ) {
       // Create a new frame (block scoping)
-      const frame = createBlockFrame(context, [], [])
+      const frame = createBlockFrame(context, "whileBlockFrame")
       pushFrame(context, frame)
 
       value = yield* evaluate(node.body, context)
