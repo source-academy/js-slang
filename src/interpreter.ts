@@ -312,6 +312,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
     while (test) {
+
       // new frame for each iteration's closure
       const freshlyBoundFrame = createBlockFrame(context, [], [])
       // new frame for body of the loop
@@ -322,12 +323,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       pushFrame(context, freshlyBoundFrame)
 
       pushFrame(context, bodyFrame)
+
       value = yield* evaluate(node.body, context)
 
       // Remove block context
       popFrame(context);
+
       // Remove fresh frame context
       popFrame(context);
+      
       if (value instanceof ContinueValue) {
         value = undefined
       }
@@ -449,7 +453,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
+      // Create a new frame (block scoping)
+      const frame = createBlockFrame(context, [], [])
+      pushFrame(context, frame)
+
       value = yield* evaluate(node.body, context)
+
+      popFrame(context)
     }
     if (value instanceof BreakValue) {
       return undefined
