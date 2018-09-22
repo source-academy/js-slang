@@ -105,7 +105,7 @@ export class UndefinedVariable implements SourceError {
   }
 
   public explain() {
-    return `Undefined Variable ${this.name}`
+    return `Name ${this.name} not declared`
   }
 
   public elaborate() {
