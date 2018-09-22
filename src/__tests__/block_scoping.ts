@@ -70,6 +70,28 @@ test("for loops use block scoping instead of function scoping", () => {
 });
 
 // This is bad practice. Don't do this!
+test("interior of for loops don't affect loop variables", () => {
+  const code = `
+    function test(){
+      let result = 0;
+      for (let x = 4; x > 0; x = x - 1) {
+        result = result + 1;
+        let x = 0;
+      }
+      return result;
+    }
+    test();
+  `;
+  const context = mockContext(4);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("finished");
+    expect(obj).toMatchSnapshot();
+    expect((obj as Finished).value).toBe(4);
+  });
+});
+
+// This is bad practice. Don't do this!
 test("while loops use block scoping instead of function scoping", () => {
   const code = `
     function test(){

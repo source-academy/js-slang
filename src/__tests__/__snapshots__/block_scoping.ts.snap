@@ -14,6 +14,13 @@ Object {
 }
 `;
 
+exports[`interior of for loops don't affect loop variables 1`] = `
+Object {
+  "status": "finished",
+  "value": 4,
+}
+`;
+
 exports[`let uses block scoping instead of function scoping 1`] = `
 Object {
   "status": "finished",
