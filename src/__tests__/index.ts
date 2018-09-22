@@ -131,26 +131,3 @@ test(
   },
   30000
 )
-
-// This is bad practice. Don't do this!
-test('const uses block scoping instead of function scoping', () => {
-  const code = `
-    function test(){
-      const x = true;
-      if(true) {
-          const x = false;
-      } else {
-          const x = false;
-      }
-      return x;
-    }
-    test();
-  `;
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
-})
