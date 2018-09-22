@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`const uses block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`for loops use block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`let uses block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`while loops use block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
