@@ -308,7 +308,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // Create a new block scope for the loop variables
       const frame = createBlockFrame(context, [], [])
       pushFrame(context, frame)
-      yield* evaluate(node.init, context)
+      yield* evaluate(node.init!, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
