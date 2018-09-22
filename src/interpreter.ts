@@ -312,14 +312,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let test = node.test ? yield* evaluate(node.test, context) : true
     let value
     while (test) {
-      // create block context
-      const frame = createBlockFrame(context, [], [])
-      pushFrame(context, frame)
+
+      // new frame for each iteration's closure
+      const freshlyBoundFrame = createBlockFrame(context, [], [])
+      // new frame for body of the loop
+      const bodyFrame = createBlockFrame(context, [], []);
+
+      // copy any declared variables during init into the new frame
+      freshlyBoundFrame.environment = {...currentFrame(context).environment}
+      pushFrame(context, freshlyBoundFrame)
+
+      pushFrame(context, bodyFrame)
 
       value = yield* evaluate(node.body, context)
 
       // Remove block context
       popFrame(context);
+
+      // Remove fresh frame context
+      popFrame(context);
+      
       if (value instanceof ContinueValue) {
         value = undefined
       }
