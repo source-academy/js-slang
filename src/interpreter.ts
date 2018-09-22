@@ -457,7 +457,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
+      // Create a new frame (block scoping)
+      const frame = createBlockFrame(context, [], [])
+      pushFrame(context, frame)
+
       value = yield* evaluate(node.body, context)
+
+      popFrame(context)
     }
     if (value instanceof BreakValue) {
       return undefined
