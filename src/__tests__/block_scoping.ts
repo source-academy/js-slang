@@ -73,20 +73,20 @@ test("interior of for loops don't affect loop variables", () => {
   const code = `
     function test(){
       let result = 0;
-      for (let x = 4; ; x = x - 1) {
+      for (let x = 4; x > 0; x = x - 1) {
         result = result + 1;
-        break;
+        x = 0;
       }
       return result;
     }
     test();
   `;
-  const context = mockContext(4);
+  const context = mockContext(3);
   const promise = runInContext(code, context, { scheduler: "preemptive" });
   return promise.then(obj => {
     expect(obj.status).toBe("finished");
     expect(obj).toMatchSnapshot();
-    expect((obj as Finished).value).toBe(4);
+    expect((obj as Finished).value).toBe(1);
   });
 });
 

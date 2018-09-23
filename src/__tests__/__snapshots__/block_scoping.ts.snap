@@ -24,7 +24,7 @@ Object {
 exports[`interior of for loops don't affect loop variables 1`] = `
 Object {
   "status": "finished",
-  "value": 4,
+  "value": 1,
 }
 `;
 
