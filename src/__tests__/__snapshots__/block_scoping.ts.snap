@@ -7,13 +7,6 @@ Object {
 }
 `;
 
-exports[`for loop \`let\` variables are copied into the block scope 1`] = `
-Object {
-  "status": "finished",
-  "value": 1,
-}
-`;
-
 exports[`for loops use block scoping instead of function scoping 1`] = `
 Object {
   "status": "finished",
@@ -21,7 +14,7 @@ Object {
 }
 `;
 
-exports[`interior of for loops don't affect loop variables 1`] = `
+exports[`interior declarations for loops don't affect loop variables 1`] = `
 Object {
   "status": "finished",
   "value": 4,
