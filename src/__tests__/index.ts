@@ -70,7 +70,7 @@ test('list now uses Source toString instead of native when +ed with another stri
 })
 
 test('__SOURCE__ functions now uses Source toString instead of native when +ed with another string', () => {
-  const code = '"123" + pair;'
+  const code = ' pair + "123";'
   const context = mockContext(2)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {

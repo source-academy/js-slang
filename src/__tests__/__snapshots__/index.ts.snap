@@ -3,9 +3,9 @@
 exports[`__SOURCE__ functions now uses Source toString instead of native when +ed with another string 1`] = `
 Object {
   "status": "finished",
-  "value": "123function pair(x, xs) {
+  "value": "function pair(x, xs) {
 	[implementation hidden]
-}",
+}123",
 }
 `;
 

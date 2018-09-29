@@ -326,25 +326,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // create block context and shallow copy loop frame environment
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+      const bound_env = { ...currentFrame(context).environment }
+      const frame = createBlockFrame(context, "forBlockFrame", bound_env)
+      pushFrame(context, frame)
 
-      if (node.init) {
-        const bound_env = {...currentFrame(context).environment}
-        const frame = createBlockFrame(context, "forBlockFrame", bound_env)
-        pushFrame(context, frame)
-      }
-
-      const block_scope = createBlockFrame(context)
-      pushFrame(context, block_scope);
       value = yield* evaluate(node.body, context)
 
       // Remove block context
       popFrame(context);
-
-      // Remove bound loop variables
-      if (node.init) {
-        const bound_env = popFrame(context)!.environment
-        currentFrame(context).environment = {...bound_env}
-      }
       if (value instanceof ContinueValue) {
         value = undefined
       }

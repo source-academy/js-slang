@@ -118,8 +118,9 @@ test("for loop `let` variables are copied into the block scope", () => {
   const code = `
   function test(){
         let z = [];
-        for (let x = 0; x < 2; x = x + 1) {
+        for (let x = 0; x < 10; x = x + 1) {
           z[x] = () => x;
+          x = x + 1
         }
         return z[1]();
   }
