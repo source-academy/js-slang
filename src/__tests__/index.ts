@@ -110,11 +110,27 @@ test("Cannot overwrite consts even when assignment is allowed", () => {
   return promise.then(obj => {
     expect(obj.status).toBe("error");
     const errors = parseError(context.errors)
-    console.log(errors)
-      // expect(errors).toMatchSnapshot()
+    expect(errors).toMatchSnapshot()
   });
 });
 
+
+test("Can overwrite lets when assignment is allowed", () => {
+  const code = `
+  function test(){
+    let variable = false;
+    variable = true;
+    return variable;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  });
+});
 
 test(
   'Inifinite recursion with list args represents CallExpression well',

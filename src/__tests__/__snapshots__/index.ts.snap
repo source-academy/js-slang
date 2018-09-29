@@ -207,6 +207,8 @@ ArrowClosure {
 }
 `;
 
+exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
+
 exports[`Empty code returns undefined 1`] = `
 Object {
   "status": "finished",
