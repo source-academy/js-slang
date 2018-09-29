@@ -67,14 +67,22 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function defineVariable(context: Context, name: string, value: Value) {
+function defineVariable(context: Context, name: string, value: Value, constant=false) {
   const frame = context.runtime.frames[0]
 
   if (frame.environment.hasOwnProperty(name)) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
-  frame.environment[name] = value
+  Object.defineProperty(
+    frame.environment,
+    name,
+    {
+      value,
+      writable: !constant,
+      enumerable: true
+    }
+  )
 
   return frame
 }
@@ -290,9 +298,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
+    const constant = (node.kind == "const")
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
-    defineVariable(context, id.name, value)
+    defineVariable(context, id.name, value, constant)
     return undefined
   },
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
