@@ -317,8 +317,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
     // Create a new block scope for the loop variables
-    const frame = createBlockFrame(context, "forLoopFrame")
-    pushFrame(context, frame)
+    const loopFrame = createBlockFrame(context, "forLoopFrame")
+    pushFrame(context, loopFrame)
 
     if (node.init) {
       yield* evaluate(node.init, context)
@@ -329,9 +329,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // create block context and shallow copy loop frame environment
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-      const bound_env = { ...currentFrame(context).environment }
-      const frame = createBlockFrame(context, "forBlockFrame", bound_env)
+      // We copy this as a const to avoid ES6 funkiness when mutating loop vars
+      // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
+      const frame = createBlockFrame(context, "forBlockFrame")
       pushFrame(context, frame)
+      for(let name in loopFrame.environment) {
+        defineVariable(context, name, loopFrame.environment[name], true)
+      }
 
       value = yield* evaluate(node.body, context)
 
