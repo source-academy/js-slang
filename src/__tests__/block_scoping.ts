@@ -112,25 +112,45 @@ test("while loops use block scoping instead of function scoping", () => {
   });
 });
 
-// see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
-// and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-// Disabled, since this behaviour makes it more difficult to explain the environment model and is probably less intuitive anyway
-// test("for loop `let` variables are copied into the block scope", () => {
-//   const code = `
-//   function test(){
-//         let z = [];
-//         for (let x = 0; x < 2; x = x + 1) {
-//           z[x] = () => x;
-//         }
-//         return z[1]();
-//   }
-//   test();
-//   `;
-//   const context = mockContext(4);
-//   const promise = runInContext(code, context, { scheduler: "preemptive" });
-//   return promise.then(obj => {
-//     expect(obj.status).toBe("finished");
-//     expect(obj).toMatchSnapshot();
-//     expect((obj as Finished).value).toBe(1);
-//   });
-// });
+//see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
+//and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+test("for loop `let` variables are copied into the block scope", () => {
+  const code = `
+  function test(){
+        let z = [];
+        for (let x = 0; x < 2; x = x + 1) {
+          z[x] = () => x;
+        }
+        return z[1]();
+  }
+  test();
+  `;
+  const context = mockContext(4);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("finished");
+    expect((obj as Finished).value).toBe(1);
+    expect(obj).toMatchSnapshot();
+  });
+});
+
+test("Cannot overwrite loop variables within a block", () => {
+  const code = `
+  function test(){
+      let z = [];
+      for (let x = 0; x < 2; x = x + 1) {
+        x = 1;
+      }
+      return false;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  });
+});
+
