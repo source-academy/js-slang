@@ -115,8 +115,13 @@ const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      frame.environment[name] = value
-      return
+      const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
+      if(descriptors[name].writable) {
+        frame.environment[name] = value
+        return
+      }
+      const error = new errors.ConstAssignment(context.runtime.nodes[0]!, name)
+      handleError(context, error)
     } else {
       frame = frame.parent
     }

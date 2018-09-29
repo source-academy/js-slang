@@ -148,3 +148,21 @@ export class VariableRedeclaration implements SourceError {
     return 'TODO'
   }
 }
+
+export class ConstAssignment implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private name: string) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign new value to constant ${this.name}`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
