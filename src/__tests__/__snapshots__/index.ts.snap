@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`__SOURCE__ functions now uses Source toString instead of native when +ed with another string 1`] = `
+Object {
+  "status": "finished",
+  "value": "123function pair(x, xs) {
+	[implementation hidden]
+}",
+}
+`;
+
 exports[`Arrow function definition returns itself 1`] = `
 Object {
   "status": "finished",
@@ -249,6 +258,13 @@ exports[`Single string self-evaluates to itself 1`] = `
 Object {
   "status": "finished",
   "value": "42",
+}
+`;
+
+exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
+Object {
+  "status": "finished",
+  "value": "123[4, [5, [6, []]]]",
 }
 `;
 

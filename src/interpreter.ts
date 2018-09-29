@@ -2,11 +2,12 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toJS } from './interop'
+import { toJS, toString } from './interop'
 import * as errors from './interpreter-errors'
 import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
+import {is_empty_list, is_pair} from './stdlib/list'
 
 class ReturnValue {
   constructor(public value: Value) {}
@@ -102,7 +103,9 @@ const getVariable = (context: Context, name: string) => {
   }
   handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
-
+const toStringMethod = function(this: any) {
+  return toString(this)
+}
 const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
@@ -224,7 +227,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       handleError(context, error)
       return undefined
     }
-
+    if (is_pair(left) || is_empty_list(left)) {
+      left.toString = toStringMethod
+    } else if (is_pair(right) || is_empty_list(right)) {
+      right.toString = toStringMethod
+    } else if (left && left.__SOURCE__) {
+      left.toString = toStringMethod
+    } else if (right && right.__SOURCE__) {
+      right.toString = toStringMethod
+    }
     let result
     switch (node.operator) {
       case '+':

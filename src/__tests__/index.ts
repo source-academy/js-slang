@@ -58,12 +58,33 @@ test('Arrow function definition returns itself', () => {
   })
 })
 
+test('list now uses Source toString instead of native when +ed with another string', () => {
+  const code = '"123" + list(4, 5, 6);'
+  const context = mockContext(2)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe("123[4, [5, [6, []]]]")
+  })
+})
+
+test('__SOURCE__ functions now uses Source toString instead of native when +ed with another string', () => {
+  const code = '"123" + pair;'
+  const context = mockContext(2)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+  })
+})
+
 test('Factorial arrow function', () => {
   const code = stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  const context = mockContext()
+  const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
