@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Undefined variable error is thrown 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Undefined variable error is thrown 2`] = `
+Array [
+  UndefinedVariable {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "name": "im_undefined",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
