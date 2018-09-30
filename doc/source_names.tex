@@ -38,7 +38,8 @@ JavaScript
 \end{itemize}
 \item \texttt{runtime()}: Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
 \item \texttt{display(a)}: Displays \emph{any} value \texttt{a} in the console; returns \texttt{undefined}.
-\item \texttt{error(a)}: Displays \emph{any} value \texttt{a} in the console with error flag; returns \texttt{undefined}.
+\item \texttt{error(a)}: Displays \emph{any} value \texttt{a} in the console with error flag. The evaluation
+  of any call of \texttt{error} aborts the running program immediately.
 \item \texttt{prompt(s)}: Pops up a window that displays the \emph{string} \texttt{s}, provides
 an input line for the user to enter a text and an ``OK'' button. The call of \texttt{prompt}
 suspends execution of the program until the ``OK'' button is pressed, at which point it
