@@ -9,7 +9,11 @@
 
 \section*{Changes}
 
-Source \S 4 adds the functions \lstinline{parse},
+Compared to Source \S 3, Source \S 4 has the following changes:
+\begin{itemize}
+\item literal object expressions
+\item dot abbreviation (see Section \textbf{Objects})
+\item Source \S 4 adds the functions \lstinline{parse},
 \lstinline{apply_in_underlying_javascript}, and
 \lstinline{JSON.stringify}.
 Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
@@ -18,7 +22,7 @@ Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
 Following JavaScript, \lstinline{is_object} returns \lstinline{true} when
 applied to arrays. For details, see 
 Section ``Interpreter Support'' below.
-
+\end{itemize}
 
 \input source_bnf.tex
 
@@ -26,11 +30,9 @@ Section ``Interpreter Support'' below.
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
-&&                       && |   &\quad && \textbf{\texttt{let}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+&&                       && |   &\quad && \textit{declaration} 
                                                            && \textrm{variable declaration} \\
-&&                       && |   &\quad && \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+&&                       && |   &\quad && \textit{assignment}
                                                            && \textrm{variable assignment} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
@@ -45,15 +47,14 @@ Section ``Interpreter Support'' below.
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{conditional statement}\\
 &&                       && |   &\quad && \textbf{\texttt{while}}\  
-                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
+                                   \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
                                                            && \textrm{while loop}\\
-&&                       && |   &\quad && \textbf{\texttt{for}}\  
-                                   \textbf{\texttt{(}}\  \textit{expression} \
-                                   \textbf{\texttt{;}} \  \textit{expression} \
-                                   \textbf{\texttt{;}} \  \textit{expression} \
-                                   \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+                                          (\ \textit{assignment} \ | \  \textit{declaration}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
+                                            \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
                                                            && \textrm{for loop}\\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
                                                            && \textrm{break statement}\\
@@ -74,6 +75,12 @@ Section ``Interpreter Support'' below.
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
+&& \textit{declaration}   && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                            && \textrm{variable declaration}   \\[1mm]
+&& \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                            && \textrm{variable assignment}   \\[1mm]
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
@@ -88,7 +95,7 @@ Section ``Interpreter Support'' below.
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{(compound) function application}\\
+                                                           && \textrm{function application}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
@@ -132,11 +139,13 @@ Section ``Interpreter Support'' below.
                                                             && \textrm{object property}
 \end{alignat*}
 
-\input source_return
+\input source_return_3
 
 \input source_names
 
 \input source_lists
+
+\input source_pair_mutators
 
 \input source_array_support
 

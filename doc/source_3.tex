@@ -13,13 +13,11 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 \begin{itemize}
 \item variable declaration
 \item variable assignment
-\item array/object assignment
+\item array assignment
 \item \textbf{\texttt{while}} loops
 \item \textbf{\texttt{for}} loops
 \item \textbf{\texttt{break}} and \textbf{\texttt{continue}}
-\item array/object access expressions
-\item literal object expressions
-\item dot abbreviation (see Section \textbf{Objects})
+\item array access expressions
 \end{itemize}
 
 \input source_bnf.tex
@@ -28,16 +26,14 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
-&&                       && |   &\quad && \textbf{\texttt{let}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+&&                       && |   &\quad && \textit{declaration} 
                                                            && \textrm{variable declaration} \\
-&&                       && |   &\quad && \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+&&                       && |   &\quad && \textit{assignment}
                                                            && \textrm{variable assignment} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{array/object assignment} \\
+                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
 &&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
@@ -47,15 +43,14 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{conditional statement}\\
 &&                       && |   &\quad && \textbf{\texttt{while}}\  
-                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
+                                   \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
                                                            && \textrm{while loop}\\
-&&                       && |   &\quad && \textbf{\texttt{for}}\  
-                                   \textbf{\texttt{(}}\  \textit{expression} \
-                                   \textbf{\texttt{;}} \  \textit{expression} \
-                                   \textbf{\texttt{;}} \  \textit{expression} \
-                                   \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+                                          (\ \textit{assignment} \ | \  \textit{declaration}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
+                                            \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
                                                            && \textrm{for loop}\\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
                                                            && \textrm{break statement}\\
@@ -76,6 +71,12 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
+&& \textit{declaration}   && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                            && \textrm{variable declaration}   \\[1mm]
+&& \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                            && \textrm{variable assignment}   \\[1mm]
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
@@ -90,7 +91,7 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{(compound) function application}\\
+                                                           && \textrm{function application}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
@@ -105,11 +106,7 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                            && \textrm{empty list/array expression}\\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
-                                                           && \textrm{array/object access} \\
-&&                       && |   &\quad &&   \textbf{\texttt{\{}}\ 
-                                            \textit{properties}\
-                                            \textbf{\texttt{\}}}
-                                                           && \textrm{literal object expression}\\
+                                                           && \textrm{array access} \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
 && \textit{binary-operator}    \ 
@@ -123,22 +120,16 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
-                                                            && \textrm{argument expressions} \\[1mm]
-&& \textit{properties}  && ::= &\quad && \epsilon\ | \ \textit{property}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{property} \ 
-                                                                      )\ \ldots
-                                                            && \textrm{object properties} \\[1mm]
-&& \textit{property}  && ::= &\quad && (\ \textit{string}\ |\ \textit{name}\ ) 
-                                        \ \textbf{\texttt{:}} \ \textit{expression} 
-                                                            && \textrm{object property}
+                                                            && \textrm{argument expressions}
 \end{alignat*}
 
-\input source_return
+\input source_return_3
 
 \input source_names
 
 \input source_lists
+
+\input source_pair_mutators
 
 \input source_array_support
 
@@ -147,8 +138,6 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 \input source_strings
 
 \input source_arrays
-
-\input source_objects
 
 \input source_typing
 
