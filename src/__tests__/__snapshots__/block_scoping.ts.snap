@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Cannot leave blank expressions in for loops 1`] = `"Line 2: For statement cannot have empty init expression."`;
+
+exports[`Cannot leave blank expressions in for loops 2`] = `"Line 2: For statement cannot have empty test expression."`;
+
+exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: For statement cannot have empty update expression."`;
+
+exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: For statement cannot have empty init,test,update expressions."`;
+
+exports[`Cannot overwrite loop variables within a block 1`] = `"Line 5: Cannot assign new value to constant x"`;
+
 exports[`const uses block scoping instead of function scoping 1`] = `
 Object {
   "status": "finished",
@@ -18,13 +28,6 @@ exports[`for loops use block scoping instead of function scoping 1`] = `
 Object {
   "status": "finished",
   "value": true,
-}
-`;
-
-exports[`interior of for loops don't affect loop variables 1`] = `
-Object {
-  "status": "finished",
-  "value": 4,
 }
 `;
 
