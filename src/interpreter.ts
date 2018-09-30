@@ -405,7 +405,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
-    defineVariable(context, id.name, closure)
+    defineVariable(context, id.name, closure, true)
     return undefined
   },
   *IfStatement(node: es.IfStatement, context: Context) {
