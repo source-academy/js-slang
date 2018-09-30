@@ -316,6 +316,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return new BreakValue()
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
+    // Check that all 3 expressions are not empty in a for loop
+    const missing_parts = ["init", "test", "update"].filter(
+      part => node[part] === null
+    );
+    if (missing_parts.length > 0) {
+      const error = new errors.EmptyForExpression(node, missing_parts);
+      handleError(context, error);
+    }
+
     // Create a new block scope for the loop variables
     const loopFrame = createBlockFrame(context, "forLoopFrame")
     pushFrame(context, loopFrame)
