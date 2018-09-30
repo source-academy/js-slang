@@ -1,4 +1,4 @@
-\section*{\textrm{return} statements and function definition expressions}
+\section*{Restrictions}
 
 \begin{itemize}
 \item Return statements are only allowed in bodies of functions.
@@ -8,5 +8,6 @@ $\textbf{\texttt{return}}$ and $\textit{expression}$ in return statements.
   $(\ \textit{name}\ | \ \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\ )$
                                                and
 $\texttt{\textbf{=>}}$ in function definition expressions.
-                                               
+\item Local functions within an outer function
+  must precede all other statements in body of the outer function.
 \end{itemize}
