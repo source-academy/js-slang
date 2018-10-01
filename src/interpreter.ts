@@ -425,18 +425,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       handleError(context, error)
       return undefined
     }
-
-    // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, "ifBlockFrame")
-    pushFrame(context, frame)
-
     if (test) {
       const result = yield* evaluate(node.consequent, context)
-      popFrame(context)
       return result
     } else if (node.alternate) {
       const result = yield* evaluate(node.alternate, context)
-      popFrame(context)
       return result
     } else {
       return undefined
@@ -468,13 +461,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
-      // Create a new frame (block scoping)
-      const frame = createBlockFrame(context, "whileBlockFrame")
-      pushFrame(context, frame)
-
       value = yield* evaluate(node.body, context)
-
-      popFrame(context)
     }
     if (value instanceof BreakValue) {
       return undefined
@@ -496,6 +483,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
     let result: Value
+
+    // Create a new frame (block scoping)
+    const frame = createBlockFrame(context, "blockFrame")
+    pushFrame(context, frame)
+
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (
@@ -506,6 +498,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
     }
+    popFrame(context)
     return result
   },
   Program: function*(node: es.BlockStatement, context: Context) {

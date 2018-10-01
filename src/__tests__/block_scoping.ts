@@ -3,6 +3,27 @@ import { parseError, runInContext } from "../index";
 import { Finished } from "../types";
 
 // This is bad practice. Don't do this!
+test("standalone block statements", () => {
+  const code = `
+    function test(){
+      const x = true;
+      {
+          const x = false;
+      }
+      return x;
+    }
+    test();
+  `;
+  const context = mockContext();
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot();
+    expect(obj.status).toBe("finished");
+    expect((obj as Finished).value).toBe(true);
+  });
+});
+
+// This is bad practice. Don't do this!
 test("const uses block scoping instead of function scoping", () => {
   const code = `
     function test(){
