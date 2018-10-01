@@ -20,23 +20,24 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 \item array access expressions
 \end{itemize}
 
+\newpage
+
 \input source_bnf.tex
 
 \begin{alignat*}{9}
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
-&&                       && |   &\quad && \textit{declaration} 
+&&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
                                                            && \textrm{variable declaration} \\
-&&                       && |   &\quad && \textit{assignment}
+&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
                                                            && \textrm{variable assignment} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
-                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{function declaration}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{return statement}\\
@@ -44,13 +45,13 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                            && \textrm{conditional statement}\\
 &&                       && |   &\quad && \textbf{\texttt{while}}\  
                                    \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
-                                   \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                   \textit{block}
                                                            && \textrm{while loop}\\
 &&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
-                                          (\ \textit{assignment} \ | \  \textit{declaration}\ ) \textbf{\texttt{;}} \\
+                                          (\ \textit{assignment} \ | \  \textit{let}\ ) \textbf{\texttt{;}} \\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
-                                            \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} 
+                                            \textit{block}
                                                            && \textrm{for loop}\\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
                                                            && \textrm{break statement}\\
@@ -58,6 +59,8 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                            && \textrm{continue statement}\\
 &&                       && |   &\quad &&  \textit{statement} \ 
                                     \textit{statement}     && \textrm{statement sequence} \\
+&&                       && |   &\quad &&  \textit{block} 
+                                                           && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{expression statement} \\[1mm] 
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
@@ -65,17 +68,19 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                             && \textrm{function parameters}   \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
-                                   \textbf{\texttt{\{}}\ \textit{statement} \ \textbf{\texttt{\}}}\\
+                                   \textit{block} \\
 &&                       &&     &      && \textbf{\texttt{else}}\
-                                          (\ \textbf{\texttt{\{}}\ \textit{statement}\ \textbf{\texttt{\}}}
+                                          (\ \textit{block}
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
-&& \textit{declaration}   && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+                                                           && \textrm{block statement}\\[1mm]         
+&& \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} 
                                                             && \textrm{variable declaration}   \\[1mm]
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                           \textbf{\texttt{=}}\  \textit{expression} 
                                                             && \textrm{variable assignment}   \\[1mm]
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
@@ -122,6 +127,8 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                                       )\ \ldots
                                                             && \textrm{argument expressions}
 \end{alignat*}
+
+\newpage
 
 \input source_return_3
 
