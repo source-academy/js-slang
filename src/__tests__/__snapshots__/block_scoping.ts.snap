@@ -34,11 +34,7 @@ Object {
 exports[`let uses block scoping instead of function scoping 1`] = `
 Object {
   "status": "finished",
-
-
-
   "value": true,
-
 }
 `;
 
