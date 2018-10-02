@@ -212,45 +212,20 @@ test('const uses block scoping instead of function scoping', () => {
   })
 })
 
-test(
-  'Hoisting of function declarations',
-  () => {
-    const code = `
-      const v = f();
-      function f() {
-        return 1;
-      }
-      v;
-    `
-    const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-      expect(obj).toMatchSnapshot()
-      expect(obj.status).toBe('finished')
-      expect((obj as Finished).value).toBe(1)
-    })
-  },
-  30000
-)
-test(
-  'In a block, every going-to-be-defined variable in the current scope that shadows another variable with the same name in an outer scope cannot be accessed until it has been defined in the current scope.',
-  () => {
-    const code = `
-      
-      const a = 1;
-      {
-        a + a;
-        const a = 10;
-      }
-    `
-    const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-      const errors = parseError(context.errors)
-      expect(errors).toEqual(
-        expect.stringMatching(/^Line 5: Undefined Variable a/)
-      )
-    })
-  },
-  30000
-)
+test("Cannot redeclare variable", () => {
+  const code = `
+  function test(){
+    let variable = false;
+    let variable = true;
+    return variable;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    const errors = parseError(context.errors)
+    expect(obj.status).toBe('error')
+    expect(errors).toMatchSnapshot()
+  });
+});

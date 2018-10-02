@@ -436,7 +436,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
-    hoistVariableDeclaration(context, id.name, node)
     defineVariable(context, id.name, closure, true)
     return undefined
   },
@@ -510,29 +509,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new frame (block scoping)
     const frame = createBlockFrame(context, "blockFrame")
     pushFrame(context, frame)
-
-    let notFunctionDeclarationStatements: es.Node[] = []
     for (const statement of node.body) {
-      if (statement.type === "FunctionDeclaration") {
-        result = yield* evaluate(statement, context)
-        if (result instanceof ReturnValue) {
-          break
-        }
-      } else {
-        notFunctionDeclarationStatements.push(statement);
-      }
-    }
-    for (const statement of notFunctionDeclarationStatements) {
+      let identifier: es.Identifier
       if (statement.type === "VariableDeclaration") {
-        const declaration = statement.declarations[0]
-        const id = declaration.id as es.Identifier
-        result = hoistVariableDeclaration(context, id.name, node)
+        identifier = statement.declarations[0].id as es.Identifier
+      } else if (statement.type === "FunctionDeclaration") {
+        identifier = statement.id!
+      }
+      if (identifier!) {
+        result = hoistVariableDeclaration(context, identifier!.name, node)
         if (result instanceof ReturnValue) {
           break
         }
       }
     }
-    for (const statement of notFunctionDeclarationStatements) {
+    for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (
         result instanceof ReturnValue ||
@@ -547,28 +538,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   Program: function*(node: es.BlockStatement, context: Context) {
     let result: Value
-    let notFunctionDeclarationStatements: es.Node[] = []
     for (const statement of node.body) {
-      if (statement.type === "FunctionDeclaration") {
-        result = yield* evaluate(statement, context)
-        if (result instanceof ReturnValue) {
-          break
-        }
-      } else {
-        notFunctionDeclarationStatements.push(statement);
-      }
-    }
-    for (const statement of notFunctionDeclarationStatements) {
+      let identifier: es.Identifier
       if (statement.type === "VariableDeclaration") {
-        const declaration = statement.declarations[0]
-        const id = declaration.id as es.Identifier
-        result = hoistVariableDeclaration(context, id.name, statement)
+        identifier = statement.declarations[0].id as es.Identifier
+      } else if (statement.type === "FunctionDeclaration") {
+        identifier = statement.id!
+      }
+      if (identifier!) {
+        result = hoistVariableDeclaration(context, identifier!.name, node)
         if (result instanceof ReturnValue) {
           break
         }
       }
     }
-    for (const statement of notFunctionDeclarationStatements) {
+    for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (result instanceof ReturnValue) {
         break
