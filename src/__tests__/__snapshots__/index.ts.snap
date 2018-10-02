@@ -218,6 +218,8 @@ ArrowClosure {
 
 exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
 
+exports[`Cannot redeclare variable 1`] = `"Line 4: SyntaxError: Identifier 'variable' has already been declared (4:8)"`;
+
 exports[`Empty code returns undefined 1`] = `
 Object {
   "status": "finished",
@@ -260,6 +262,13 @@ exports[`Single string self-evaluates to itself 1`] = `
 Object {
   "status": "finished",
   "value": "42",
+}
+`;
+
+exports[`const uses block scoping instead of function scoping 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
 }
 `;
 
