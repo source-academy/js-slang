@@ -80,12 +80,16 @@ test("for loops use block scoping instead of function scoping", () => {
     }
     test();
   `;
-  const context = mockContext(4);
+  const context = mockContext(3);
   const promise = runInContext(code, context, { scheduler: "preemptive" });
   return promise.then(obj => {
     expect(obj.status).toBe("finished");
     expect(obj).toMatchSnapshot();
+
+
+
     expect((obj as Finished).value).toBe(true);
+
   });
 });
 
@@ -116,11 +120,20 @@ test("while loops use block scoping instead of function scoping", () => {
 test("for loop `let` variables are copied into the block scope", () => {
   const code = `
   function test(){
+
+
+
+
+
+
+
+
     let z = [];
     for (let x = 0; x < 2; x = x + 1) {
       z[x] = () => x;
     }
     return z[1]();
+
   }
   test();
   `;
