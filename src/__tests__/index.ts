@@ -188,3 +188,69 @@ test(
   },
   30000
 )
+
+// This is bad practice. Don't do this!
+test('const uses block scoping instead of function scoping', () => {
+  const code = `
+    function test(){
+      const x = true;
+      if(true) {
+          const x = false;
+      } else {
+          const x = false;
+      }
+      return x;
+    }
+    test();
+  `;
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test(
+  'Hoisting of function declarations',
+  () => {
+    const code = `
+      const v = f();
+      function f() {
+        return 1;
+      }
+      v;
+    `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      expect(obj).toMatchSnapshot()
+      expect(obj.status).toBe('finished')
+      expect((obj as Finished).value).toBe(1)
+    })
+  },
+  30000
+)
+test(
+  'In a block, every going-to-be-defined variable in the current scope that shadows another variable with the same name in an outer scope cannot be accessed until it has been defined in the current scope.',
+  () => {
+    const code = `
+      
+      const a = 1;
+      {
+        a + a;
+        const a = 10;
+      }
+    `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toEqual(
+        expect.stringMatching(/^Line 5: Undefined Variable a/)
+      )
+    })
+  },
+  30000
+)
