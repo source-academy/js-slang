@@ -352,6 +352,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     pushFrame(context, loopFrame)
 
     if (node.init) {
+      if (node.init.type === "VariableDeclaration") {
+        for (let declaration of node.init.declarations) {
+          hoistVariableDeclaration(context, (declaration.id as es.Identifier).name, node)
+        }
+      }
       yield* evaluate(node.init, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
@@ -365,6 +370,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const frame = createBlockFrame(context, "forBlockFrame")
       pushFrame(context, frame)
       for(let name in loopFrame.environment) {
+        hoistVariableDeclaration(context, name, node)
         defineVariable(context, name, loopFrame.environment[name], true)
       }
 
