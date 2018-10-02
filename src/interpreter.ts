@@ -2,7 +2,7 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toJS } from './interop'
+import { toJS, toString } from './interop'
 import * as errors from './interpreter-errors'
 import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
@@ -110,7 +110,6 @@ const getVariable = (context: Context, name: string) => {
   }
   handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
-
 const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
@@ -229,18 +228,24 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    const right = yield* evaluate(node.right, context)
+    let left = yield* evaluate(node.left, context)
+    let right = yield* evaluate(node.right, context)
 
     const error = rttc.checkBinaryExpression(context, node.operator, left, right)
     if (error) {
       handleError(context, error)
       return undefined
     }
-
     let result
     switch (node.operator) {
       case '+':
+        let isLeftString = typeof left === 'string'
+        let isRightString = typeof right === 'string';
+        if (isLeftString && !isRightString) {
+          right = toString(right)
+        } else if (isRightString && !isLeftString) {
+          left = toString(left)
+        }
         result = left + right
         break
       case '-':
