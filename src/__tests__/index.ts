@@ -58,12 +58,33 @@ test('Arrow function definition returns itself', () => {
   })
 })
 
+test('list now uses Source toString instead of native when +ed with another string', () => {
+  const code = '"123" + list(4, 5, 6);'
+  const context = mockContext(2)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe("123[4, [5, [6, []]]]")
+  })
+})
+
+test('__SOURCE__ functions now uses Source toString instead of native when +ed with another string', () => {
+  const code = ' pair + "123";'
+  const context = mockContext(2)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+  })
+})
+
 test('Factorial arrow function', () => {
   const code = stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  const context = mockContext()
+  const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -96,6 +117,42 @@ test(
   30000
 )
 
+test("Cannot overwrite consts even when assignment is allowed", () => {
+  const code = `
+  function test(){
+    const constant = 3;
+    constant = 4;
+    return constant;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  });
+});
+
+
+test("Can overwrite lets when assignment is allowed", () => {
+  const code = `
+  function test(){
+    let variable = false;
+    variable = true;
+    return variable;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  });
+});
+
 test(
   'Inifinite recursion with list args represents CallExpression well',
   () => {
@@ -126,72 +183,6 @@ test(
       const errors = parseError(context.errors)
       expect(errors).toEqual(
         expect.stringMatching(/^Line 2: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/)
-      )
-    })
-  },
-  30000
-)
-
-// This is bad practice. Don't do this!
-test('const uses block scoping instead of function scoping', () => {
-  const code = `
-    function test(){
-      const x = true;
-      if(true) {
-          const x = false;
-      } else {
-          const x = false;
-      }
-      return x;
-    }
-    test();
-  `;
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
-})
-
-test(
-  'Hoisting of function declarations',
-  () => {
-    const code = `
-      const v = f();
-      function f() {
-        return 1;
-      }
-      v;
-    `
-    const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-      expect(obj).toMatchSnapshot()
-      expect(obj.status).toBe('finished')
-      expect((obj as Finished).value).toBe(1)
-    })
-  },
-  30000
-)
-test(
-  'In a block, every going-to-be-defined variable in the current scope that shadows another variable with the same name in an outer scope cannot be accessed until it has been defined in the current scope.',
-  () => {
-    const code = `
-      
-      const a = 1;
-      {
-        a + a;
-        const a = 10;
-      }
-    `
-    const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-      const errors = parseError(context.errors)
-      expect(errors).toEqual(
-        expect.stringMatching(/^Line 5: Undefined Variable a/)
       )
     })
   },
