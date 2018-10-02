@@ -212,7 +212,7 @@ test('const uses block scoping instead of function scoping', () => {
   })
 })
 
-test("Cannot redeclare variable", () => {
+test("Variables may not be redeclared", () => {
   const code = `
   function test(){
     let variable = false;
