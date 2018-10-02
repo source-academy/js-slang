@@ -7,6 +7,7 @@ import * as errors from './interpreter-errors'
 import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
+import {HOISTED_BUT_NOT_YET_ASSIGNED} from "./constants";
 
 class ReturnValue {
   constructor(public value: Value) {}
@@ -67,10 +68,22 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
+function hoistVariableDeclaration(context: Context, name: string, node: es.Node) {
+  const frame = currentFrame(context);
+
+  if (frame.environment.hasOwnProperty(name)) {
+    handleError(context, new errors.VariableRedeclaration(node!, name))
+  }
+
+  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED;
+
+  return frame;
+}
+
 function defineVariable(context: Context, name: string, value: Value, constant=false) {
   const frame = context.runtime.frames[0]
 
-  if (frame.environment.hasOwnProperty(name)) {
+  if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
@@ -103,7 +116,11 @@ const getVariable = (context: Context, name: string) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      return frame.environment[name]
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break;
+      } else {
+        return frame.environment[name]
+      }
     } else {
       frame = frame.parent
     }
@@ -492,7 +509,20 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new frame (block scoping)
     const frame = createBlockFrame(context, "blockFrame")
     pushFrame(context, frame)
-
+    for (const statement of node.body) {
+      let identifier: es.Identifier
+      if (statement.type === "VariableDeclaration") {
+        identifier = statement.declarations[0].id as es.Identifier
+      } else if (statement.type === "FunctionDeclaration") {
+        identifier = statement.id!
+      }
+      if (identifier!) {
+        result = hoistVariableDeclaration(context, identifier!.name, node)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      }
+    }
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (
@@ -508,6 +538,20 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   Program: function*(node: es.BlockStatement, context: Context) {
     let result: Value
+    for (const statement of node.body) {
+      let identifier: es.Identifier
+      if (statement.type === "VariableDeclaration") {
+        identifier = statement.declarations[0].id as es.Identifier
+      } else if (statement.type === "FunctionDeclaration") {
+        identifier = statement.id!
+      }
+      if (identifier!) {
+        result = hoistVariableDeclaration(context, identifier!.name, node)
+        if (result instanceof ReturnValue) {
+          break
+        }
+      }
+    }
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (result instanceof ReturnValue) {
