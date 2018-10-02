@@ -15,6 +15,8 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 \item List library: Functions for creating, accessing and processing lists.
 \end{itemize}
 
+\newpage
+
 \input source_bnf.tex
 
 \begin{alignat*}{9}
@@ -22,8 +24,7 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
-                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\\
-&&                       &&     &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{function declaration}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{return statement}\\
@@ -31,6 +32,8 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                                            && \textrm{conditional statement}\\
 &&                       && |   &\quad &&  \textit{statement} \ 
                                     \textit{statement}     && \textrm{statement sequence} \\
+&&                       && |   &\quad &&  \textit{block} 
+                                                           && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{expression statement} \\[1mm] 
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
@@ -38,12 +41,14 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                                             && \textrm{function parameters}   \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
-                                   \textbf{\texttt{\{}}\ \textit{statement} \ \textbf{\texttt{\}}}\\
+                                   \textit{block} \\
 &&                       &&     &      && \textbf{\texttt{else}}\
-                                          (\ \textbf{\texttt{\{}}\ \textit{statement}\ \textbf{\texttt{\}}}
+                                          (\ \textit{block}
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+                                                           && \textrm{block statement}\\[1mm]         
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
@@ -58,7 +63,7 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{(compound) function application}\\
+                                                           && \textrm{function application}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
