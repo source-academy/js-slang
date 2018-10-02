@@ -67,14 +67,22 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function defineVariable(context: Context, name: string, value: Value) {
+function defineVariable(context: Context, name: string, value: Value, constant=false) {
   const frame = context.runtime.frames[0]
 
   if (frame.environment.hasOwnProperty(name)) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
-  frame.environment[name] = value
+  Object.defineProperty(
+    frame.environment,
+    name,
+    {
+      value,
+      writable: !constant,
+      enumerable: true
+    }
+  )
 
   return frame
 }
@@ -106,8 +114,13 @@ const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      frame.environment[name] = value
-      return
+      const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
+      if(descriptors[name].writable) {
+        frame.environment[name] = value
+        return
+      }
+      const error = new errors.ConstAssignment(context.runtime.nodes[0]!, name)
+      handleError(context, error)
     } else {
       frame = frame.parent
     }
@@ -295,9 +308,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
+    const constant = (node.kind == "const")
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
-    defineVariable(context, id.name, value)
+    defineVariable(context, id.name, value, constant)
     return undefined
   },
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
@@ -307,9 +321,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return new BreakValue()
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
+    // Check that all 3 expressions are not empty in a for loop
+    const missing_parts = ["init", "test", "update"].filter(
+      part => node[part] === null
+    );
+    if (missing_parts.length > 0) {
+      const error = new errors.EmptyForExpression(node, missing_parts);
+      handleError(context, error);
+    }
+
     // Create a new block scope for the loop variables
-    const frame = createBlockFrame(context, "forLoopFrame")
-    pushFrame(context, frame)
+    const loopFrame = createBlockFrame(context, "forLoopFrame")
+    pushFrame(context, loopFrame)
 
     if (node.init) {
       yield* evaluate(node.init, context)
@@ -320,9 +343,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // create block context and shallow copy loop frame environment
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-      const bound_env = { ...currentFrame(context).environment }
-      const frame = createBlockFrame(context, "forBlockFrame", bound_env)
+      // We copy this as a const to avoid ES6 funkiness when mutating loop vars
+      // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
+      const frame = createBlockFrame(context, "forBlockFrame")
       pushFrame(context, frame)
+      for(let name in loopFrame.environment) {
+        defineVariable(context, name, loopFrame.environment[name], true)
+      }
 
       value = yield* evaluate(node.body, context)
 
@@ -392,7 +419,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node as any, currentFrame(context), context)
-    defineVariable(context, id.name, closure)
+    defineVariable(context, id.name, closure, true)
     return undefined
   },
   *IfStatement(node: es.IfStatement, context: Context) {
@@ -403,18 +430,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       handleError(context, error)
       return undefined
     }
-
-    // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, "ifBlockFrame")
-    pushFrame(context, frame)
-
     if (test) {
       const result = yield* evaluate(node.consequent, context)
-      popFrame(context)
       return result
     } else if (node.alternate) {
       const result = yield* evaluate(node.alternate, context)
-      popFrame(context)
       return result
     } else {
       return undefined
@@ -446,13 +466,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
-      // Create a new frame (block scoping)
-      const frame = createBlockFrame(context, "whileBlockFrame")
-      pushFrame(context, frame)
-
       value = yield* evaluate(node.body, context)
-
-      popFrame(context)
     }
     if (value instanceof BreakValue) {
       return undefined
@@ -474,6 +488,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
     let result: Value
+
+    // Create a new frame (block scoping)
+    const frame = createBlockFrame(context, "blockFrame")
+    pushFrame(context, frame)
+
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (
@@ -484,6 +503,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
     }
+    popFrame(context)
     return result
   },
   Program: function*(node: es.BlockStatement, context: Context) {
