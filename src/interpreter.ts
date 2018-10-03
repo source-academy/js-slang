@@ -68,16 +68,32 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function hoistVariableDeclaration(context: Context, name: string, node: es.Node) {
+function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const frame = currentFrame(context);
-
   if (frame.environment.hasOwnProperty(name)) {
     handleError(context, new errors.VariableRedeclaration(node!, name))
   }
-
-  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED;
-
+  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return frame;
+}
+
+function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+  for (const declaration of node.declarations) {
+    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+  }
+}
+
+function hoistFunctionsAndVariableDeclarationsIdentifiers(context: Context, node: es.BlockStatement) {
+  for (const statement of node.body) {
+    switch (statement.type) {
+      case 'VariableDeclaration':
+        hoistVariableDeclarations(context, statement)
+        break
+      case 'FunctionDeclaration':
+        hoistIdentifier(context, statement.id!.name, node)
+        break
+    }
+  }
 }
 
 function defineVariable(context: Context, name: string, value: Value, constant=false) {
@@ -346,19 +362,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       part => node[part] === null
     );
     if (missing_parts.length > 0) {
-      const error = new errors.EmptyForExpression(node, missing_parts);
-      handleError(context, error);
+      const error = new errors.EmptyForExpression(node, missing_parts)
+      handleError(context, error)
     }
 
     // Create a new block scope for the loop variables
-    const loopFrame = createBlockFrame(context, "forLoopFrame")
+    const loopFrame = createBlockFrame(context, 'forLoopFrame')
     pushFrame(context, loopFrame)
 
     if (node.init) {
-      if (node.init.type === "VariableDeclaration") {
-        for (let declaration of node.init.declarations) {
-          hoistVariableDeclaration(context, (declaration.id as es.Identifier).name, node)
-        }
+      if (node.init.type === 'VariableDeclaration') {
+        hoistVariableDeclarations(context, node.init)
       }
       yield* evaluate(node.init, context)
     }
@@ -370,10 +384,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
       // We copy this as a const to avoid ES6 funkiness when mutating loop vars
       // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
-      const frame = createBlockFrame(context, "forBlockFrame")
+      const frame = createBlockFrame(context, 'forBlockFrame')
       pushFrame(context, frame)
       for(let name in loopFrame.environment) {
-        hoistVariableDeclaration(context, name, node)
+        hoistIdentifier(context, name, node)
         defineVariable(context, name, loopFrame.environment[name], true)
       }
 
@@ -471,12 +485,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   *ReturnStatement(node: es.ReturnStatement, context: Context) {
     if (node.argument) {
-      if (node.argument.type === 'CallExpression') {
-        const callee = yield* evaluate(node.argument.callee, context)
-        const args = yield* getArgs(context, node.argument)
-        return new TailCallReturnValue(callee, args, node.argument)
+      const arg = node.argument
+      if (arg.type === 'CallExpression') {
+        const callee = yield* evaluate(arg.callee, context)
+        const args = yield* getArgs(context, arg)
+        return new TailCallReturnValue(callee, args, arg)
       } else {
-        return new ReturnValue(yield* evaluate(node.argument, context))
+        return new ReturnValue(yield* evaluate(arg, context))
       }
     } else {
       return new ReturnValue(undefined)
@@ -518,20 +533,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new frame (block scoping)
     const frame = createBlockFrame(context, "blockFrame")
     pushFrame(context, frame)
-    for (const statement of node.body) {
-      let identifier: es.Identifier
-      if (statement.type === "VariableDeclaration") {
-        identifier = statement.declarations[0].id as es.Identifier
-      } else if (statement.type === "FunctionDeclaration") {
-        identifier = statement.id!
-      }
-      if (identifier!) {
-        result = hoistVariableDeclaration(context, identifier!.name, node)
-        if (result instanceof ReturnValue) {
-          break
-        }
-      }
-    }
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (
@@ -547,20 +549,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   Program: function*(node: es.BlockStatement, context: Context) {
     let result: Value
-    for (const statement of node.body) {
-      let identifier: es.Identifier
-      if (statement.type === "VariableDeclaration") {
-        identifier = statement.declarations[0].id as es.Identifier
-      } else if (statement.type === "FunctionDeclaration") {
-        identifier = statement.id!
-      }
-      if (identifier!) {
-        result = hoistVariableDeclaration(context, identifier!.name, node)
-        if (result instanceof ReturnValue) {
-          break
-        }
-      }
-    }
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
       if (result instanceof ReturnValue) {

@@ -237,6 +237,8 @@ exports[`Inifinite recursion with list args represents CallExpression well 1`] =
   f([1, [2, []]])..  f([1, [2, []]])..  f([1, [2, []]]).."
 `;
 
+exports[`Shadowed variables may not be assigned to until declared in the current scope 1`] = `"Line 4: Name variable not declared"`;
+
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
   x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
