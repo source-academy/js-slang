@@ -131,6 +131,9 @@ const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break;
+      }
       const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
       if(descriptors[name].writable) {
         frame.environment[name] = value
