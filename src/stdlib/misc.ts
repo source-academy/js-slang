@@ -43,13 +43,16 @@ export function array_length(xs: Value[]) {
 }
 array_length.__SOURCE__ = 'array_length(xs)'
 
-export function parse_int(inputString: string, radix: number) {
-  const parsed = parseInt(inputString, radix)
-  if (inputString && radix && parsed) {
-    // the two arguments are provided, and parsed is not NaN
-    return parsed
+/**
+ * Source version of parseInt. Both arguments are required.
+ *
+ * @param str
+ */
+export function parse_int(str: string, radix: number) {
+  if (typeof(str) === 'string' && typeof(radix) === 'number' && Number.isInteger(radix) && 2 <= radix && radix <= 36) {
+    return parseInt(str, radix)
   } else {
-    throw new Error('parse_int expects two arguments a string s, and a positive integer i')
+    throw new Error('parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.')
   }
 }
 parse_int.__SOURCE__ = 'parse_int(s, i)'
