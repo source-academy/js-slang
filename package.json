@@ -24,6 +24,7 @@
     "prepublishOnly": "tsc",
     "build": "tsc",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "format:ci": "prettier --list-different 'src/**/*.{ts,tsx}'",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
