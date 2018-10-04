@@ -1,6 +1,6 @@
 import { mockContext } from "../../mocks/context"
 import { parseError, runInContext } from "../../index"
-import { SourceError } from "../../types"
+import { Finished } from "../../types";
 
 test("parse_int with valid args is ok, radix 2", () => {
   const program = `
@@ -11,7 +11,7 @@ test("parse_int with valid args is ok, radix 2", () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect(obj.value).toBe(parseInt('1100101010101', 2))
+    expect((obj as Finished).value).toBe(parseInt('1100101010101', 2))
   })
 })
 
@@ -24,7 +24,7 @@ test("parse_int with valid args is ok, radix 36", () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect(obj.value).toBe(parseInt('uu1', 36))
+    expect((obj as Finished).value).toBe(parseInt('uu1', 36))
   })
 })
 
@@ -37,7 +37,7 @@ test("parse_int with valid args is ok, but invalid str for radix", () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect(obj.value).toBe(parseInt('uu1', 2))
+    expect((obj as Finished).value).toBe(parseInt('uu1', 2))
   })
 })
 
