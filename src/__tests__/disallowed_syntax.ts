@@ -1,8 +1,5 @@
-import { stripIndent } from 'common-tags'
 import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
-import { Finished } from '../types'
-
 
 test("Cannot leave blank expressions in for loops", () => {
   const code = [
