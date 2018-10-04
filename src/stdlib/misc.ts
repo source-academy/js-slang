@@ -46,7 +46,11 @@ array_length.__SOURCE__ = 'array_length(xs)'
 /**
  * Source version of parseInt. Both arguments are required.
  *
- * @param str
+ * @param str String representation of the integer to be parsed. Required.
+ * @param radix Base to parse the given `str`. Required.
+ *
+ * An error is thrown if `str` is not of type string, or `radix` is not an
+ * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: string, radix: number) {
   if (typeof(str) === 'string' && typeof(radix) === 'number' && Number.isInteger(radix) && 2 <= radix && radix <= 36) {
