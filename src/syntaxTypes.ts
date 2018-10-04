@@ -29,9 +29,9 @@ const syntaxTypes: { [nodeName: string]: number } = {
   ObjectExpression: 3,
   MemberExpression: 3,
   Property: 3,
-  UpdateExpression: 3,
 
   // Week 5
+  UpdateExpression: 5,
   EmptyStatement: 5,
   // previously Week 10
   NewExpression: 10,
