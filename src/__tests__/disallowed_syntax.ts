@@ -57,8 +57,7 @@ test("Cannot use update expressions", () => {
   });
 });
 
-
-test("Compound assignment not allowed", () => {
+test("Compound assignment not allowed when not allowed", () => {
   const code = `
     let x = 1;
 	x += 1;
@@ -70,5 +69,20 @@ test("Compound assignment not allowed", () => {
     expect(obj.status).toBe("error")
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe("Line 3: Compound assignment '+=' not allowed")
+  })
+})
+
+test("Compound assignment not allowed even though it is allowed", () => {
+  const code = `
+    let x = 1;
+	x |= 1;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: "preemptive" })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe("error")
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe("Line 3: Compound assignment '|=' not allowed")
   })
 })

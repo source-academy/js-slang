@@ -10,13 +10,39 @@ exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: For stateme
 
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
 
-exports[`Compound assignment not allowed 1`] = `
+exports[`Compound assignment not allowed even though it is allowed 1`] = `
 Object {
   "status": "error",
 }
 `;
 
-exports[`Compound assignment not allowed 2`] = `
+exports[`Compound assignment not allowed even though it is allowed 2`] = `
+Array [
+  CallingCompoundAssignment {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 7,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 1,
+        "line": 3,
+      },
+    },
+    "name": "|=",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Compound assignment not allowed when not allowed 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Compound assignment not allowed when not allowed 2`] = `
 Array [
   CallingCompoundAssignment {
     "location": SourceLocation {
