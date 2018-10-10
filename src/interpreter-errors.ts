@@ -193,12 +193,12 @@ export class CallingCompoundAssignment implements SourceError {
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
-  constructor(node: es.Node) {
+  constructor(node: es.Node, private name: string) {
     this.location = node.loc!
   }
 
   public explain() {
-    return `Compound assignment expressions are not allowed`
+    return `Compound assignment '${this.name}' not allowed`
   }
 
   public elaborate() {

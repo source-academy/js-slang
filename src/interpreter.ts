@@ -396,7 +396,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-    if(node.operator === '='){
+    if(context.chapter >= constants.COMPOUND_ASSIGNMENT_ALLOWED_WEEK){
 		if (node.left.type === 'MemberExpression') {
 		  const left = node.left
 		  const obj = yield* evaluate(left.object, context)
@@ -412,11 +412,68 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 		}
 		const id = node.left as es.Identifier
 		// Make sure it exist
-		const value = yield* evaluate(node.right, context)
-		setVariable(context, id.name, value)
-		return value
+		const left = getVariable(context, id.name)
+		const right = yield* evaluate(node.right, context)
+		let result
+		switch (node.operator) {
+		  case '=':
+		    result = right
+			setVariable(context, id.name, result)
+			break
+		  case '+=':
+			let isLeftString = typeof left === 'string'
+			let isRightString = typeof right === 'string';
+			if (isLeftString && !isRightString) {
+			  right = toString(right)
+			} else if (isRightString && !isLeftString) {
+			  left = toString(left)
+			}
+			result = left + right
+			setVariable(context, id.name, result)
+			break
+		  case '-=':
+			result = left - right
+			setVariable(context, id.name, result)
+			break
+		  case '*=':
+			result = left * right
+			setVariable(context, id.name, result)
+			break
+		  case '/=':
+			result = left / right
+			setVariable(context, id.name, result)
+			break
+		  case '%=':
+			result = left % right
+			setVariable(context, id.name, result)
+			break
+		  default:
+			handleError(context, new errors.CallingCompoundAssignment(context.runtime.nodes[0]!, node.operator))
+			result = undefined
+		}
+		return result
 	} else {
-		handleError(context, new errors.CallingCompoundAssignment(context.runtime.nodes[0]!))
+		if(node.operator === '='){
+			if (node.left.type === 'MemberExpression') {
+			  const left = node.left
+			  const obj = yield* evaluate(left.object, context)
+			  let prop
+			  if (left.computed) {
+				prop = yield* evaluate(left.property, context)
+			  } else {
+				prop = (left.property as es.Identifier).name
+			  }
+			  const val = yield* evaluate(node.right, context)
+			  obj[prop] = val
+			  return val
+			}
+			const id = node.left as es.Identifier
+			// Make sure it exist
+			const value = yield* evaluate(node.right, context)
+			setVariable(context, id.name, value)
+			return value
+		}
+		handleError(context, new errors.CallingCompoundAssignment(context.runtime.nodes[0]!, node.operator))
 		return undefined
 	}
   },
