@@ -256,6 +256,13 @@ Object {
 }
 `;
 
+exports[`Single number self-evaluates to itself and more 1`] = `
+Object {
+  "status": "finished",
+  "value": 2,
+}
+`;
+
 exports[`Single string self-evaluates to itself 1`] = `
 Object {
   "status": "finished",

@@ -9,6 +9,7 @@ export const Types = {
   ANY: { name: 'any' } as CFG.Type
 }
 export const MAX_LIST_DISPLAY_LENGTH = 100
+export const COMPOUND_ASSIGNMENT_ALLOWED_WEEK = 5
 export const UNKNOWN_LOCATION: es.SourceLocation = {
   start: {
     line: -1,
