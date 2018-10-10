@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`__SOURCE__ functions now uses Source toString instead of native when +ed with another string 1`] = `
+Object {
+  "status": "finished",
+  "value": "function pair(x, xs) {
+	[implementation hidden]
+}123",
+}
+`;
+
 exports[`Arrow function definition returns itself 1`] = `
 Object {
   "status": "finished",
@@ -207,6 +216,8 @@ ArrowClosure {
 }
 `;
 
+exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
+
 exports[`Empty code returns undefined 1`] = `
 Object {
   "status": "finished",
@@ -245,6 +256,13 @@ Object {
 }
 `;
 
+exports[`Single number self-evaluates to itself and more 1`] = `
+Object {
+  "status": "finished",
+  "value": 2,
+}
+`;
+
 exports[`Single string self-evaluates to itself 1`] = `
 Object {
   "status": "finished",
@@ -252,10 +270,10 @@ Object {
 }
 `;
 
-exports[`const uses block scoping instead of function scoping 1`] = `
+exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
 Object {
   "status": "finished",
-  "value": true,
+  "value": "123[4, [5, [6, []]]]",
 }
 `;
 
