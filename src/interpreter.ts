@@ -412,8 +412,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 		}
 		const id = node.left as es.Identifier
 		// Make sure it exist
-		const left = getVariable(context, id.name)
-		const right = yield* evaluate(node.right, context)
+		let left = getVariable(context, id.name)
+		let right = yield* evaluate(node.right, context)
 		let result
 		switch (node.operator) {
 		  case '=':
