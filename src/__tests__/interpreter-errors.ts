@@ -15,6 +15,7 @@ test("Undefined variable error is thrown", () => {
   })
 })
 
+
 test("Compound assignment not allowed", () => {
   const code = `
     let x = 1;

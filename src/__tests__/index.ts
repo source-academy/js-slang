@@ -203,3 +203,4 @@ test('Single number self-evaluates to itself and more', () => {
     expect((obj as Finished).value).toBe(2)
   })
 })
+
