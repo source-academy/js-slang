@@ -204,3 +204,33 @@ test('Single number self-evaluates to itself and more', () => {
   })
 })
 
+test("Evaluating compound assignments for numbers", () => {
+  const code = `
+    let x = 1;
+	x += 2;	
+	x;
+  `
+  const context = mockContext(10)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(3)
+  })
+})
+
+test("Evaluating compound assignments for strings", () => {
+  const code = `
+    let x = "onety ";
+	x += "one";	
+	x;
+  `
+  const context = mockContext(10)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe("onety one")
+  })
+})
+

@@ -225,6 +225,20 @@ Object {
 }
 `;
 
+exports[`Evaluating compound assignments for numbers 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Evaluating compound assignments for strings 1`] = `
+Object {
+  "status": "finished",
+  "value": "onety one",
+}
+`;
+
 exports[`Factorial arrow function 1`] = `
 Object {
   "status": "finished",
