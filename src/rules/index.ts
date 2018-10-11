@@ -11,6 +11,7 @@ import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
 import noNonEmptyList from './noNonEmptyList'
+import noUnspecifiedCompoundAssignment from './noUnspecifiedCompoundAssignment'
 import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
 import singleVariableDeclaration from './singleVariableDeclaration'
@@ -26,6 +27,7 @@ const rules: Array<Rule<es.Node>> = [
   noBlockArrowFunction,
   noDeclareReserved,
   noDeclareMutable,
+  noUnspecifiedCompoundAssignment,
   noUnspecifiedLiteral,
   noUnspecifiedOperator
 ]

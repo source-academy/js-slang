@@ -68,7 +68,7 @@ test("Compound assignment not allowed when not allowed", () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe("error")
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe("Line 3: Compound assignment '+=' not allowed")
+    expect(parseError(context.errors)).toBe("Line 3: Operator '+=' is not allowed.")
   })
 })
 
@@ -77,12 +77,12 @@ test("Compound assignment not allowed even though it is allowed", () => {
     let x = 1;
 	x |= 1;
   `
-  const context = mockContext(3)
+  const context = mockContext(10)
   const promise = runInContext(code, context, { scheduler: "preemptive" })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe("error")
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe("Line 3: Compound assignment '|=' not allowed")
+    expect(parseError(context.errors)).toBe("Line 3: Operator '|=' is not allowed.")
   })
 })

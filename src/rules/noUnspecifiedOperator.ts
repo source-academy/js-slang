@@ -7,7 +7,7 @@ export class NoUnspecifiedOperatorError implements SourceError {
   public severity = ErrorSeverity.ERROR
   public unspecifiedOperator: string
 
-  constructor(public node: es.BinaryExpression | es.UnaryExpression) {
+  constructor(public node: es.BinaryExpression | es.UnaryExpression | es.AssignmentExpression) {
     this.unspecifiedOperator = node.operator
   }
 
@@ -24,7 +24,7 @@ export class NoUnspecifiedOperatorError implements SourceError {
   }
 }
 
-const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
+const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.AssignmentExpression> = {
   name: 'no-unspecified-operator',
 
   checkers: {
@@ -52,6 +52,14 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
     },
     UnaryExpression(node: es.UnaryExpression) {
       const permittedOperators = ['-', '!']
+      if (!permittedOperators.includes(node.operator)) {
+        return [new NoUnspecifiedOperatorError(node)]
+      } else {
+        return []
+      }
+    },
+    AssignmentExpression(node: es.AssignmentExpression) {
+      const permittedOperators = ['=', '+=', '-=', '*=', '/=', '%=']
       if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
       } else {

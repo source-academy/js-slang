@@ -186,22 +186,3 @@ export class EmptyForExpression implements SourceError {
   }
 
 }
-
-
-export class CallingCompoundAssignment implements SourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
-  constructor(node: es.Node, private name: string) {
-    this.location = node.loc!
-  }
-
-  public explain() {
-    return `Compound assignment '${this.name}' not allowed`
-  }
-
-  public elaborate() {
-    return 'TODO'
-  }
-}

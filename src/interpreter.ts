@@ -396,7 +396,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-    if(context.chapter >= constants.COMPOUND_ASSIGNMENT_ALLOWED_WEEK){
 		if (node.left.type === 'MemberExpression') {
 		  const left = node.left
 		  const obj = yield* evaluate(left.object, context)
@@ -452,30 +451,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 			result = undefined
 		}
 		return result
-	} else {
-		if(node.operator === '='){
-			if (node.left.type === 'MemberExpression') {
-			  const left = node.left
-			  const obj = yield* evaluate(left.object, context)
-			  let prop
-			  if (left.computed) {
-				prop = yield* evaluate(left.property, context)
-			  } else {
-				prop = (left.property as es.Identifier).name
-			  }
-			  const val = yield* evaluate(node.right, context)
-			  obj[prop] = val
-			  return val
-			}
-			const id = node.left as es.Identifier
-			// Make sure it exist
-			const value = yield* evaluate(node.right, context)
-			setVariable(context, id.name, value)
-			return value
-		}
-		handleError(context, new errors.CallingCompoundAssignment(context.runtime.nodes[0]!, node.operator))
-		return undefined
-	}
+	
   },
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier

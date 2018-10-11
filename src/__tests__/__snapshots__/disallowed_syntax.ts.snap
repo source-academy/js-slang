@@ -18,20 +18,61 @@ Object {
 
 exports[`Compound assignment not allowed even though it is allowed 2`] = `
 Array [
-  CallingCompoundAssignment {
-    "location": SourceLocation {
-      "end": Position {
-        "column": 7,
-        "line": 3,
+  NoUnspecifiedOperatorError {
+    "node": Node {
+      "__id": "node_48",
+      "end": 23,
+      "left": Node {
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 2,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 1,
+            "line": 3,
+          },
+        },
+        "name": "x",
+        "start": 17,
+        "type": "Identifier",
       },
-      "start": Position {
-        "column": 1,
-        "line": 3,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 1,
+          "line": 3,
+        },
       },
+      "operator": "|=",
+      "right": Node {
+        "__id": "node_47",
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "raw": "1",
+        "start": 22,
+        "type": "Literal",
+        "value": 1,
+      },
+      "start": 17,
+      "type": "AssignmentExpression",
     },
-    "name": "|=",
     "severity": "Error",
-    "type": "Runtime",
+    "type": "Syntax",
+    "unspecifiedOperator": "|=",
   },
 ]
 `;
@@ -44,20 +85,61 @@ Object {
 
 exports[`Compound assignment not allowed when not allowed 2`] = `
 Array [
-  CallingCompoundAssignment {
-    "location": SourceLocation {
-      "end": Position {
-        "column": 7,
-        "line": 3,
+  NoUnspecifiedCompoundAssignmentError {
+    "node": Node {
+      "__id": "node_42",
+      "end": 23,
+      "left": Node {
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 2,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 1,
+            "line": 3,
+          },
+        },
+        "name": "x",
+        "start": 17,
+        "type": "Identifier",
       },
-      "start": Position {
-        "column": 1,
-        "line": 3,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 1,
+          "line": 3,
+        },
       },
+      "operator": "+=",
+      "right": Node {
+        "__id": "node_41",
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "raw": "1",
+        "start": 22,
+        "type": "Literal",
+        "value": 1,
+      },
+      "start": 17,
+      "type": "AssignmentExpression",
     },
-    "name": "+=",
     "severity": "Error",
-    "type": "Runtime",
+    "type": "Syntax",
+    "unspecifiedOperator": "+=",
   },
 ]
 `;
