@@ -234,3 +234,17 @@ test("Evaluating compound assignments for strings", () => {
   })
 })
 
+test("Evaluating compound assignment to object property", () => {
+  const code = `
+    let x = pair(1,2);
+	x[0] += 2;	
+	x;
+  `
+  const context = mockContext(10)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})

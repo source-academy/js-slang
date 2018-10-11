@@ -396,61 +396,61 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-		if (node.left.type === 'MemberExpression') {
-		  const left = node.left
-		  const obj = yield* evaluate(left.object, context)
-		  let prop
-		  if (left.computed) {
-			prop = yield* evaluate(left.property, context)
-		  } else {
-			prop = (left.property as es.Identifier).name
-		  }
-		  const val = yield* evaluate(node.right, context)
-		  obj[prop] = val
-		  return val
+	let is_left_member = false
+	const id = node.left as es.Identifier
+	// Make sure it exist
+	let left, obj, prop
+	if (node.left.type === 'MemberExpression') {
+		is_left_member = true
+		const left_member = node.left
+		obj = yield* evaluate(left_member.object, context)
+		if (left_member.computed) {
+			prop = yield* evaluate(left_member.property, context)
+		} else {
+			prop = (left_member.property as es.Identifier).name
 		}
-		const id = node.left as es.Identifier
-		// Make sure it exist
-		let left = getVariable(context, id.name)
-		let right = yield* evaluate(node.right, context)
-		let result
-		switch (node.operator) {
-		  case '=':
-		    result = right
-			setVariable(context, id.name, result)
-			break
-		  case '+=':
-			let isLeftString = typeof left === 'string'
-			let isRightString = typeof right === 'string';
-			if (isLeftString && !isRightString) {
-			  right = toString(right)
-			} else if (isRightString && !isLeftString) {
-			  left = toString(left)
-			}
-			result = left + right
-			setVariable(context, id.name, result)
-			break
-		  case '-=':
-			result = left - right
-			setVariable(context, id.name, result)
-			break
-		  case '*=':
-			result = left * right
-			setVariable(context, id.name, result)
-			break
-		  case '/=':
-			result = left / right
-			setVariable(context, id.name, result)
-			break
-		  case '%=':
-			result = left % right
-			setVariable(context, id.name, result)
-			break
-		  default:
-			result = undefined
+		left = obj[prop]
+	}else{
+		left = getVariable(context, id.name)
+	}
+	let right = yield* evaluate(node.right, context)
+	let result
+	switch (node.operator) {
+	  case '=':
+		result = right
+		setVariable(context, id.name, result)
+		break
+	  case '+=':
+		let isLeftString = typeof left === 'string'
+		let isRightString = typeof right === 'string';
+		if (isLeftString && !isRightString) {
+		  right = toString(right)
+		} else if (isRightString && !isLeftString) {
+		  left = toString(left)
 		}
-		return result
-	
+		result = left + right
+		break
+	  case '-=':
+		result = left - right
+		break
+	  case '*=':
+		result = left * right
+		break
+	  case '/=':
+		result = left / right
+		break
+	  case '%=':
+		result = left % right
+		break
+	  default:
+		result = undefined
+	}
+	if(is_left_member){
+		obj[prop] = result;
+	}else{
+		setVariable(context, id.name, result)
+	}
+	return result
   },
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier

@@ -225,6 +225,23 @@ Object {
 }
 `;
 
+exports[`Evaluating compound assignment to object property 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    3,
+    2,
+  ],
+}
+`;
+
+exports[`Evaluating compound assignment to object property 2`] = `
+Array [
+  3,
+  2,
+]
+`;
+
 exports[`Evaluating compound assignments for numbers 1`] = `
 Object {
   "status": "finished",
