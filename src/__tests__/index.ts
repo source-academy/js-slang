@@ -153,8 +153,8 @@ test("Cannot overwrite consts even when assignment is allowed", () => {
 test("Can overwrite lets when assignment is allowed", () => {
   const code = `
   function test(){
-    let variable = 1;
-    variable += 9;
+    let variable = false;
+    variable = true;
     return variable;
   }
   test();
