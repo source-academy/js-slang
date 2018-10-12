@@ -50,7 +50,7 @@ const stripBody = (body: string) => {
 const arrayToString = (value: Value[], length: number) => {
   // Normal Array
   if (value.length > 2 || value.length === 1) {
-    return `[${value}]`
+    return `[${value.map(v => toString(v, length + 1)).join(', ')}]`
   } else if (value.length === 0) {
     return '[]'
   } else {

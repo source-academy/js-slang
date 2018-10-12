@@ -25,6 +25,20 @@ test('Single string self-evaluates to itself', () => {
   })
 })
 
+test('Multi-dimensional arrays display properly', () => {
+  const code = `
+    function a() {} 
+    ""+[1, a, 3, [() => 1, 5]];
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
+  })
+})
+
 test('Single number self-evaluates to itself', () => {
   const code = '42;'
   const context = mockContext()
@@ -139,8 +153,8 @@ test("Cannot overwrite consts even when assignment is allowed", () => {
 test("Can overwrite lets when assignment is allowed", () => {
   const code = `
   function test(){
-    let variable = false;
-    variable = true;
+    let variable = 1;
+    variable += 9;
     return variable;
   }
   test();
