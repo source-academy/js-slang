@@ -30,13 +30,7 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   return DummyClass
 }
 
-export const toJS = (value: Value, context: Context, klass?: string) => {
-  if (value instanceof Closure || value instanceof ArrowClosure) {
-    return value.fun
-  } else {
-    return value
-  }
-}
+
 
 const stripBody = (body: string) => {
   const lines = body.split(/\n/)

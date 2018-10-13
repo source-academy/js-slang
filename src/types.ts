@@ -1,4 +1,4 @@
-/* tslint:disable:interface-name max-classes-per-file */
+/* tslint:disable:interface-functionName max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
@@ -150,50 +150,65 @@ export interface Frame {
   thisContext?: Value
 }
 
+class Callable extends Function {
+  constructor(f: any) {
+    super();
+    return Object.setPrototypeOf(f, new.target.prototype);
+  }
+}
+
 /**
  * Models function value in the interpreter environment.
  */
-export class Closure {
+export class Closure extends Callable {
   /** Keep track how many lambdas are created */
   private static lambdaCtr = 0
 
   /** Unique ID defined for anonymous closure */
-  public name: string
+  public functionName: string
 
   /** Fake closure function */
-  // tslint:disable-next-line:ban-types
+    // tslint:disable-next-line:ban-types
   public fun: Function
 
   constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
+    super(function (this: any, ...args: any[]) {
+      return funJS.apply(this, args)
+    })
     this.node = node
     try {
       if (this.node.id) {
-        this.name = this.node.id.name
+        this.functionName = this.node.id.name
       }
     } catch (e) {
-      this.name = `Anonymous${++Closure.lambdaCtr}`
+      this.functionName = `Anonymous${++Closure.lambdaCtr}`
     }
-    this.fun = closureToJS(this, context, this.name)
+    const funJS = closureToJS(this, context, this.functionName)
+    this.fun = funJS
   }
 }
 
 /**
  * Modified from class Closure, for construction of arrow functions.
  */
-export class ArrowClosure {
+export class ArrowClosure extends Callable{
   /** Keep track how many lambdas are created */
   private static arrowCtr = 0
 
   /** Unique ID defined for anonymous closure */
-  public name: string
+  public functionName: string
 
   /** Fake closure function */
   // tslint:disable-next-line:ban-types
   public fun: Function
 
   constructor(public node: es.Function, public frame: Frame, context: Context) {
-    this.name = `Anonymous${++ArrowClosure.arrowCtr}`
-    this.fun = closureToJS(this, context, this.name)
+    super(function (this: any, ...args: any[]) {
+      return funJS.apply(this, args)
+    })
+    this.functionName = `Anonymous${++ArrowClosure.arrowCtr}`
+    const funJS = closureToJS(this, context, this.functionName)
+    this.fun = funJS
   }
 }
 

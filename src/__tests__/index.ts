@@ -202,3 +202,18 @@ test(
   },
   30000
 )
+
+test("Functions passed into non-source functions remain equal", () => {
+  const code = `
+  function t(x, y, z) {
+    return x + y + z;
+  }
+  head(pair(t, t)) === t && t(1, 2, 3) === 6;
+  `;
+  const context = mockContext(4);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  });
+});
