@@ -62,7 +62,9 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{expression statement} \\[1mm] 
+                                                           && \textrm{expression statement} \\
+&&                       && |   &\quad &&  \epsilon
+                                                           && \textrm{empty statement} \\[1mm] 
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \textrm{function parameters}   \\[1mm]
@@ -130,6 +132,10 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 
 \newpage
 
+\input source_boolean_operators
+
+\input source_loops
+
 \input source_return_3
 
 \input source_names
@@ -150,5 +156,8 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 
 \input source_comments
 
+\newpage
+
+\input source_list_library
 
     \end{document}
