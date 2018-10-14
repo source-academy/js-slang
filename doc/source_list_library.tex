@@ -13,9 +13,11 @@ function is_list(xs) {
 // over its arguments
 
 function equal(item1, item2){
-    return (is_pair(item1) && is_pair(item2))
-        || (is_empty_list(item1) && is_empty_list(item2))
-        || item1 === item2;
+    return (is_pair(item1) && is_pair(item2)) 
+        ? (equal(head(item1), head(item2)) &&
+           equal(tail(item1), tail(item2)))
+        : (is_empty_list(item1) && is_empty_list(item2))
+          || item1 === item2;
 }
 
 // returns the length of a given argument list
@@ -24,7 +26,7 @@ function equal(item1, item2){
 function length(xs) {
     return is_empty_list(xs) 
 	? 0
-        : length(tail(xs));
+        : 1 + length(tail(xs));
 }
 
 // map applies first arg f, assumed to be a unary function,
