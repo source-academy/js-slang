@@ -1,0 +1,90 @@
+\subsection*{Stream Support}
+
+The following stream processing functions are supported:
+
+\begin{itemize}
+\item \lstinline{stream_tail(x)}: \textit{Builtin}, assumes that the tail (second component) of the
+  pair \lstinline{x} is a nullary function, and returns the result of
+  applying that function.\\
+\emph{Laziness:}  Yes: \lstinline{stream_tail} only forces the direct tail of a given
+stream,
+but not the rest of the stream, i.e. not the tail of the tail, etc.
+\item \lstinline{is_stream(x)}: \textit{Builtin}, returns \lstinline{true} if
+  \lstinline{x} is a stream as defined in the lectures, and
+  \lstinline{false} otherwise.\\
+\emph{Laziness:}  No: \lstinline{is_stream} needs to force the given stream.
+\item \lstinline{stream(x1, x2,..., xn)}: \textit{Builtin}, returns a stream with $n$ elements. The
+first element is \lstinline{x1}, the second \lstinline{x2}, etc.\\
+\emph{Laziness:}  No: In this implementation, we generate first a
+           complete list, and then a stream using \lstinline{list_to_stream}.
+\item \lstinline{list_to_stream(xs)}: transforms a given list to a stream.\\
+\emph{Laziness:}  Yes: \lstinline{list_to_stream} goes down the list only when forced.
+\item \lstinline{stream_to_list(s)}: transforms a given stream to a list.\\
+\emph{Laziness:}  No: \lstinline{stream_to_list} needs to force the whole stream.
+\item \lstinline{stream_length(s)}: Returns the length of the stream
+  \lstinline{s}.\\
+\emph{Laziness:}  No: The function needs to force the whole stream.
+\item \lstinline{stream_map(f, s)}: Returns a stream that results from stream
+  \lstinline{s} by element-wise application of \lstinline{f}.\\
+\emph{Laziness:}  Yes: The argument stream is only explored as forced by
+           the result stream.
+\item \lstinline{build_stream(n, f)}: Makes a stream with \lstinline{n}
+elements by applying the unary function \lstinline{f} to the numbers 0
+to \lstinline{n - 1}.\\
+\emph{Laziness:}  Yes: The result stream forces the applications of fun
+            for the next element.
+\item \lstinline{stream_for_each(f, s)}: Applies \lstinline{f} to every
+  element of the stream \lstinline{s}, and then returns
+  \lstinline{true}.\\
+\emph{Laziness:}  No: \lstinline{stream_for_each} forces the exploration of the entire stream.
+\item \lstinline{stream_reverse(s)}: Returns finite stream \lstinline{s} in reverse
+  order. Does not terminate for infinite streams.\\
+\emph{Laziness:}  No: \lstinline{stream_reverse} forces the exploration of the entire stream.
+\item \lstinline{stream_append(xs, ys)}: Returns a stream that results from 
+appending the stream \lstinline{ys} to the stream \lstinline{xs}.\\
+\emph{Laziness:}  Yes: Forcing the result stream activates the actual append operation.
+\item \lstinline{stream_member(x, s)}: Returns first postfix substream
+whose head is equal to
+\lstinline{x} (\lstinline{===}); returns \lstinline{[]} if the
+element does not occur in the stream.\\
+ \emph{Laziness:}  Sort-of: \lstinline{stream_member} forces the stream only until the element is found.
+\item \lstinline{stream_remove(x, s)}: Returns a stream that results from
+given stream \lstinline{s} by removing the first item from \lstinline{s} that
+is equal (\lstinline{===}) to \lstinline{x}.
+Returns the original list
+if there is no occurrence.\\
+\emph{Laziness:}  Yes: Forcing the result stream leads to construction of each next element.
+\item \lstinline{stream_remove_all(x, s)}: Returns a stream that results from
+given stream \lstinline{s} by removing all items from \lstinline{s} that
+are equal (\lstinline{===}) to \lstinline{x}.\\
+\emph{Laziness:}  Yes: The result stream forces the construction of each next element.
+\item \lstinline{stream_filter(pred, s)}: Returns a stream that contains
+only those elements for which the one-argument function
+\lstinline{pred}
+returns \lstinline{true}.\\
+\emph{Laziness:}  Yes: The result stream forces the construction of
+            each next element. Of course, the construction
+            of the next element needs to go down the stream
+            until an element is found for which \lstinline{pred} holds.
+\item \lstinline{enum_stream(start, end)}: Returns a stream that enumerates
+numbers starting from \lstinline{start} using a step size of 1, until
+the number exceeds (\lstinline{>}) \lstinline{end}.\\
+ \emph{Laziness:}  Yes: Forcing the result stream leads to the construction of
+            each next element.
+\item \lstinline{integers_from(n)}: Constructs an infinite stream of integers
+starting at a given number \lstinline{n}.\\
+ \emph{Laziness:}  Yes: Forcing the result stream leads to the construction of 
+            each next element.
+\item \lstinline{eval_stream(s, n)}: Constructs the list
+of the first \lstinline{n} elements
+of a given stream \lstinline{s}.\\
+\emph{Laziness:}  Sort-of: \lstinline{eval_stream} only forces the computation of
+                the first \lstinline{n} elements, and leaves the rest of
+                the stream untouched.
+\item \lstinline{stream_ref(s, n)}: Returns the element
+of stream \lstinline{s} at position \lstinline{n}, 
+where the first element has index 0.\\
+ \emph{Laziness:}  Sort-of: \lstinline{stream_ref} only forces the computation of
+                the first \lstinline{n} elements, and leaves the rest of
+                the stream untouched.
+\end{itemize}
