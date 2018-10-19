@@ -11,7 +11,6 @@ const syntaxTypes: { [nodeName: string]: number } = {
   BinaryExpression: 1,
   LogicalExpression: 1,
   ConditionalExpression: 1,
-  FunctionExpression: 1,
   ArrowFunctionExpression: 1,
   Identifier: 1,
   Literal: 1,
@@ -45,7 +44,9 @@ const syntaxTypes: { [nodeName: string]: number } = {
   CatchClause: Infinity,
   DoWhileStatement: Infinity,
   ForInStatement: Infinity,
-  SequenceExpression: Infinity
+  SequenceExpression: Infinity,
+  FunctionExpression: Infinity,
+
 }
 
 export default syntaxTypes
