@@ -8,4 +8,8 @@ exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: For stateme
 
 exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: For statement cannot have empty init,test,update expressions."`;
 
+exports[`Cannot use js function expressions 1`] = `"Line 2: Function expressions are not allowed"`;
+
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
+
+exports[`DEFINITELY CANNOT use named function declarations as expressions 1`] = `"Line 2: Function expressions are not allowed"`;
