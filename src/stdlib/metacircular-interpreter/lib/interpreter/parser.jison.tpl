@@ -19,20 +19,21 @@
 "else"                                        return 'else'
 "while"                                       return 'while'
 "for"                                         return 'for'
-"case"                                        return 'case'
-"default"                                     return 'default'
-"new"                                         return 'new'
 "break"                                       return 'break'
 "continue"                                    return 'continue'
-"var"                                         return 'var'
+"let"                                         return 'let'
+"const"                                       return 'const'
 "==="                                         return '==='
+"=>"                                          return '=>'
 "="                                           return '='
 "{"                                           return '{'
 "}"                                           return '}'
 ";"                                           return ';'
 ","                                           return ','
-"tru"                                         return 'true'
+"true"                                        return 'true'
 "false"                                       return 'false'
+"NaN"                                         return 'NaN'
+"Infinity"                                    return 'Infinity'
 "[]"                                          return 'emptylist'
 "["                                           return '['
 "]"                                           return ']'
@@ -82,6 +83,7 @@
 
 %left  ';'
 %right '='
+%left  '=>' ARROW
 %right '?' ':'
 %left  '||'
 %left  '&&'
@@ -107,8 +109,6 @@ statements
 		{ $$ = []; }
 	| statement statements
 		{ $$ = pair($1, $2); }
-	| '{' statements '}'
-		{ $$ = $2; }
 	;
 
 statement
@@ -123,11 +123,10 @@ statement
 	| 'function' identifier '(' identifiers ')' '{' statements '}'
 		{{
 			$$ = {
-				tag: 'var_definition',
-				variable: $2,
+				tag: 'constant_declaration',
+				name: $2,
 				value: {
 					tag: 'function_definition',
-					name: $2,
 					parameters: $4,
 					body: $7,
 					line: yylineno,
@@ -141,7 +140,15 @@ statement
 				line: yylineno
 			};
 		}}
-	| vardefinition
+	| constdeclaration
+	| letdeclaration
+	| '{' statements '}'
+	      {{
+			$$ = {
+			         tag: 'block',
+				 body: $2
+ 			     };
+	      }}
 {{if week|ormore>8}}
 	| assignment ';'
 {{/if}}
@@ -172,13 +179,26 @@ statement
 {{/if}}
 	;
 
-vardefinition
+letdeclaration
 	:
-	'var' identifier '=' expression ';'
+	'let' identifier '=' expression ';'
 		{{
 			$$ = {
-				tag: 'var_definition',
-				variable: $2,
+				tag: 'variable_declaration',
+				name: $2,
+				value: $4,
+				line: yylineno
+			};
+		}}
+	;
+
+constdeclaration
+	:
+	'const' identifier '=' expression ';'
+		{{
+			$$ = {
+				tag: 'constant_declaration',
+				name: $2,
 				value: $4,
 				line: yylineno
 			};
@@ -190,10 +210,10 @@ assignment
 	:
 	expression '=' expression
 		{{
-			if ($1.tag === 'variable') {
+			if ($1.tag === 'name') {
 				$$$ = {
 					tag: 'assignment',
-					variable: $1,
+					name: $1,
 					value: $3,
 					line: yylineno
 				};
@@ -218,19 +238,19 @@ ifstatement
 	'if' '(' expression ')' '{' statements '}' 'else' '{' statements '}'
 		{{
 			$$ = {
-				tag: 'if',
+				tag: 'conditional_statement',
 				predicate: $3,
-				consequent: $6,
-				alternative: $10,
+				consequent: { tag: 'block', body: $6 },
+				alternative: { tag: 'block', body: $10 },
 				line: yylineno
 			};
 		}}
 	| 'if' '(' expression ')' '{' statements '}' 'else' ifstatement
 		{{
 			$$ = {
-				tag: 'if',
+				tag: 'conditional_statement',
 				predicate: $3,
-				consequent: $6,
+				consequent: { tag: 'block', body: $6 },
 				alternative: pair($9, []),
 				line: yylineno
 			};
@@ -243,9 +263,9 @@ whilestatement
 	'while' '(' expression ')' '{' statements '}'
 		{{
 			$$$ = {
-				tag: 'while',
+				tag: 'while_loop',
 				predicate: $3,
-				statements: $6,
+				statements: { tag: 'block', body: $6 },
 				line: yylineno
 			};
 		}}
@@ -256,11 +276,11 @@ forstatement
 		'for' '(' forinitialiser expression ';' forfinaliser ')' '{' statements '}'
 		{{
 			$$$ = {
-				tag: 'for',
+				tag: 'for_loop',
 				initialiser: $3,
 				predicate: $4,
 				finaliser: $6,
-				statements: $9,
+				statements: { tag: 'block', body: $9 },
 				line: yylineno
 			};
 		}}
@@ -268,17 +288,13 @@ forstatement
 
 forinitialiser
 	:
-	expression ';'
-	| vardefinition
+	letdeclaration
 	| assignment ';'
-	| ';'
 	;
 
 forfinaliser
 	:
 	assignment
-	| expression
-	|
 	;
 {{/if}}
 
@@ -289,7 +305,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -302,7 +318,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -315,7 +331,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -328,7 +344,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -341,7 +357,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -354,7 +370,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $1,
 					line: yylineno
 				},
@@ -367,7 +383,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $1,
 					line: yylineno
 				},
@@ -380,7 +396,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $1,
 					line: yylineno
 				},
@@ -391,7 +407,7 @@ expression
 	| expression '&&' expression
 		{{
 			$$ = {
-				tag: 'boolean_op',
+				tag: 'boolean_operation',
 				operator: $2,
 				operands: [$1, [$3, []]],
 				line: yylineno
@@ -400,7 +416,7 @@ expression
 	| expression '||' expression
 		{{
 			$$ = {
-				tag: 'boolean_op',
+				tag: 'boolean_operation',
 				operator: $2,
 				operands: [$1, [$3, []]],
 				line: yylineno
@@ -411,7 +427,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -424,7 +440,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -437,7 +453,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -450,7 +466,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -463,7 +479,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
@@ -476,12 +492,44 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $2,
 					line: yylineno
 				},
 				operands: [$1, [$3, []]],
 				line: yylineno
+			};
+		}}
+	| '(' identifiers ')' '=>' expression    %prec ARROW
+		{{
+			$$ = {
+				tag: 'function_definition',
+				parameters: $2,
+				body: { tag: 'return_statement', expression: $5,
+					line: yylineno },
+				line: yylineno,
+				location: {
+					start_line: @1.first_line,
+					start_col: @1.first_column,
+					end_line: @5.first_line,
+					end_col: @5.first_column
+			     	}
+			};
+		}}
+	| identifier '=>' expression
+		{{
+			$$ = {
+				tag: 'function_definition',
+				parameters: [$1, [] ],
+				body: { tag: 'return_statement', expression: $3,
+					line: yylineno },
+				line: yylineno,
+				location: {
+					start_line: @1.first_line,
+					start_col: @1.first_column,
+					end_line: @5.first_line,
+					end_col: @5.first_column
+			     	}
 			};
 		}}
 {{if week|ormore>10}}
@@ -515,7 +563,7 @@ expression
 	| identifier
 		{{
 			$$ = {
-				tag: 'variable',
+				tag: 'name',
 				name: $1,
 				line: yylineno
 			};
@@ -534,7 +582,7 @@ expression
 	| '[' expressions ']'
 		{{
 			$$$ = {
-				tag: 'arrayinit',
+				tag: 'array_expression',
 				elements: $2,
 				line: yylineno
 			};
@@ -542,7 +590,7 @@ expression
 	| '{' pairs '}'
 		{{
 			$$$ = {
-				tag: 'object',
+				tag: 'object_expression',
 				pairs: $2,
 				line: yylineno
 			};
@@ -553,7 +601,7 @@ expression
 			$$ = {
 				tag: 'application',
 				operator: {
-					tag: 'variable',
+					tag: 'name',
 					name: $1,
 					line: yylineno
 				},
@@ -561,50 +609,11 @@ expression
 				line: yylineno
 			};
 		}}
-{{if week|ormore>4}}
-	| expression '.' identifier '(' expressions ')'
-		{{
-			$$$ = {
-				tag: 'object_method_application',
-				object: $1,
-				property: $3,
-				operands: $5,
-				line: yylineno
-			};
-		}}
-{{/if}}
-{{if week|ormore>10}}
-	| new identifier '(' expressions ')'
-		{{
-			$$$ = {
-				tag: 'construction',
-				type: $2,
-				operands: $4,
-				line: yylineno
-			};
-		}}
-{{/if}}
-	| 'function' '(' identifiers ')' '{' statements '}'
-		{{
-			$$ = {
-				tag: 'function_definition',
-				name: 'lambda',
-				parameters: $3,
-				body: $6,
-				line: yylineno,
-				location: {
-					start_line: @1.first_line,
-					start_col: @1.first_column,
-					end_line: @7.first_line,
-					end_col: @7.first_column
-				}
-			};
-		}}
 
 	| expression '?' expression ':' expression
 		{{
 			$$ = {
-				tag: 'ternary',
+				tag: 'conditional_expression',
 				predicate: $1,
 				consequent: $3,
 				alternative: $5,
@@ -626,6 +635,12 @@ constants
 
 	| 'false'
 		{ $$ = false; }
+
+	| 'NaN'
+		{ $$ = NaN; }
+
+	| 'Infinity'
+		{ $$ = Infinity; }
 
 	| quotedstring
 
