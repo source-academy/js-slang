@@ -3,6 +3,10 @@ import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
 import { toString } from '.';
 
+/** Import meta-circular parser */
+const createParserModule = require('./stdlib/parser')
+const createParser = createParserModule.default
+
 const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyCFG = () => ({
@@ -24,7 +28,8 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   errors: [],
   externalContext,
   cfg: createEmptyCFG(),
-  runtime: createEmptyRuntime()
+  runtime: createEmptyRuntime(),
+  metaCircularParser: createParser()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -132,6 +137,34 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'array_length', misc.array_length)
   }
 
+  if (context.chapter >= 4) {
+    defineSymbol(context, 'stringify', JSON.stringify)
+    defineSymbol(context, 'parse',
+      function () { 
+        return context.metaCircularParser
+          .parse.apply(context.metaCircularParser, arguments)
+      });
+    defineSymbol(context, 'apply_in_underlying_javascript', function(
+      fun: Function,
+      args: Value
+    ) {
+      const res = []
+      var i = 0
+      while (!(args.length === 0)) {
+        res[i] = args[0]
+        i = i + 1
+        args = args[1]
+      }
+      return fun.apply(fun, res)
+    })
+    defineSymbol(context, 'is_number', misc.is_number)
+    defineSymbol(context, 'is_array', misc.is_array)
+    defineSymbol(context, 'is_object', misc.is_object)
+    defineSymbol(context, 'is_string', misc.is_string)
+    defineSymbol(context, 'is_function', misc.is_function)
+    defineSymbol(context, 'is_boolean', misc.is_boolean)
+  }
+
   if (context.chapter >= Infinity) {
     // previously week 4
     defineSymbol(context, 'alert', alert)
@@ -140,7 +173,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
     // previously week 6
-    defineSymbol(context, 'is_number', misc.is_number)
   }
 }
 

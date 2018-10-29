@@ -38,6 +38,46 @@ export function is_number(v: Value) {
 }
 is_number.__SOURCE__ = 'is_number(v)'
 
+export function is_undefined(xs: Value) {
+  return typeof xs === 'undefined'
+}
+is_undefined.__SOURCE__ = 'is_undefined(xs)'
+
+export function is_string(xs: Value) {
+  return typeof xs === 'string'
+}
+is_string.__SOURCE__ = 'is_string(xs)'
+
+export function is_boolean(xs: Value) {
+  return typeof xs === 'boolean'
+}
+is_boolean.__SOURCE__ = 'is_boolean(xs)'
+
+export function is_object(xs: Value) {
+  return typeof xs === 'object' || is_function(xs)
+}
+is_object.__SOURCE__ = 'is_object(xs)'
+
+export function is_function(xs: Value) {
+  return typeof xs === 'function'
+}
+is_function.__SOURCE__ = 'is_function(xs)'
+
+export function is_NaN(x: Value) {
+  return is_number(x) && isNaN(x)
+}
+is_NaN.__SOURCE__ = 'is_NaN(x)'
+
+export function has_own_property(obj: Value, p: Value) {
+  return obj.hasOwnProperty(p)
+}
+has_own_property.__SOURCE__ = 'has_own_property(obj, p)'
+
+export function is_array(a: Value) {
+  return a instanceof Array
+}
+is_array.__SOURCE__ = 'is_array(a)'
+
 export function array_length(xs: Value[]) {
   return xs.length
 }

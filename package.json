@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "prepublishOnly": "tsc",
-    "build": "tsc",
+    "build": "scripts/build.sh",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
@@ -39,6 +39,8 @@
     "@types/invariant": "^2.2.29",
     "@types/jest": "^23.1.4",
     "@types/node": "^9.4.7",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "coveralls": "^3.0.1",
     "jest": "^23.3.0",
     "ts-jest": "^23.0.0",
@@ -50,7 +52,8 @@
       "js"
     ],
     "transform": {
-      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "\\.js$": "<rootDir>/node_modules/babel-jest"
     },
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
