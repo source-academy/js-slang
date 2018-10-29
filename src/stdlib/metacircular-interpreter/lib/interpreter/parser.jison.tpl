@@ -31,7 +31,7 @@
 "}"                                           return '}'
 ";"                                           return ';'
 ","                                           return ','
-"true"                                        return 'true'
+"tru"                                         return 'true'
 "false"                                       return 'false'
 "[]"                                          return 'emptylist'
 "["                                           return '['

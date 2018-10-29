@@ -10,14 +10,15 @@ PARSER = lib/interpreter/parser.js
 
 all: environment
 
-environment: lib/interpreter/parser.js ../list.js ../object.js ../stream.js
+# removed from dependencies for environment: ../list.js ../object.js ../stream.js
+environment: lib/interpreter/parser.js 
 
 clean:
 	rm -f jediscript-*.js
 
 distclean: clean
 	rm -f lib/*.js
-	
+
 academy: environment
 	node generate.js --interpreter 5 --without_jquery
 	node generate.js --interpreter 8 --without_jquery
