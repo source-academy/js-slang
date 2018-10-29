@@ -107,10 +107,9 @@ case 9:
 
 			this.$ = {
 				tag: 'constant_declaration',
-				variable: $$[$0-6],
+				name: $$[$0-6],
 				value: {
 					tag: 'function_definition',
-					name: $$[$0-6],
 					parameters: $$[$0-4],
 					body: $$[$0-1],
 					line: yylineno,
@@ -154,7 +153,7 @@ case 17:
 
 			this.$ = {
 				tag: 'variable_declaration',
-				variable: $$[$0-3],
+				name: $$[$0-3],
 				value: $$[$0-1],
 				line: yylineno
 			};
@@ -164,7 +163,7 @@ case 18:
 
 			this.$ = {
 				tag: 'constant_declaration',
-				variable: $$[$0-3],
+				name: $$[$0-3],
 				value: $$[$0-1],
 				line: yylineno
 			};
@@ -175,7 +174,7 @@ case 19:
 			if ($$[$0-2].tag === 'name') {
 				this.$ = {
 					tag: 'assignment',
-					variable: $$[$0-2],
+					name: $$[$0-2],
 					value: $$[$0],
 					line: yylineno
 				};
@@ -294,7 +293,6 @@ case 43:
 
 			this.$ = {
 				tag: 'function_definition',
-				name: '_lambda',
 				parameters: $$[$0-3],
 				body: { tag: 'return_statement', expression: $$[$0],
 					line: yylineno },
@@ -312,7 +310,6 @@ case 44:
 
 			this.$ = {
 				tag: 'function_definition',
-				name: '_lambda',
 				parameters: [$$[$0-2], [] ],
 				body: { tag: 'return_statement', expression: $$[$0],
 					line: yylineno },
@@ -1010,86 +1007,88 @@ case 19:return 69
 break;
 case 20:return 59
 break;
-case 21:return 61
+case 21:return 60
 break;
-case 22:return 62
+case 22:return 61
 break;
-case 23:return 64
+case 23:return 62
 break;
-case 24:return 49
+case 24:return 64
 break;
-case 25:return 50
+case 25:return 49
 break;
-case 26:return 51
+case 26:return 50
 break;
-case 27:return 65
+case 27:return 51
 break;
 case 28:return 65
 break;
-case 29:this.begin('DoubleQuotedString');
+case 29:return 65
 break;
-case 30:this.begin('SingleQuotedString');
+case 30:this.begin('DoubleQuotedString');
 break;
-case 31:this.begin('QuotedStringEscape');
+case 31:this.begin('SingleQuotedString');
 break;
-case 32:this.popState();
+case 32:this.begin('QuotedStringEscape');
 break;
 case 33:this.popState();
 break;
-case 34: this.popState(); return 67; 
+case 34:this.popState();
 break;
-case 35:return 66;
+case 35: this.popState(); return 67; 
 break;
 case 36:return 66;
 break;
-case 37:return 73 /* TODO: non-ASCII identifiers */
+case 37:return 66;
 break;
-case 38:return 57 /* 3.1, 3.1e-7 */
+case 38:return 73 /* TODO: non-ASCII identifiers */
 break;
-case 39:return 58
+case 39:return 57 /* 3.1, 3.1e-7 */
 break;
-case 40:return 34
+case 40:return 58
 break;
-case 41:return 35
+case 41:return 34
 break;
-case 42:return 36
+case 42:return 35
 break;
-case 43:return 37
+case 43:return 36
 break;
-case 44:return 38
+case 44:return 37
 break;
-case 45:return 43
+case 45:return 38
 break;
-case 46:return 47
+case 46:return 43
 break;
-case 47:return 46
+case 47:return 47
 break;
-case 48:return 45
+case 48:return 46
 break;
-case 49:return 44
+case 49:return 45
 break;
-case 50:return 39
+case 50:return 44
 break;
-case 51:return 40
+case 51:return 39
 break;
-case 52:return 41
+case 52:return 40
 break;
-case 53:return 15
+case 53:return 41
 break;
-case 54:return 17
+case 54:return 15
 break;
-case 55:return 55
+case 55:return 17
 break;
-case 56:return 56
+case 56:return 55
 break;
-case 57:return 5
+case 57:return 56
 break;
-case 58:return 'INVALID'
+case 58:return 5
+break;
+case 59:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\/\/([^\n\r]*))/,/^(?:\/\*([\u0000-\uffff]*?)\*\/)/,/^(?:\s+)/,/^(?:function\b)/,/^(?:return\b)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:for\b)/,/^(?:break\b)/,/^(?:continue\b)/,/^(?:let\b)/,/^(?:const\b)/,/^(?:===)/,/^(?:=>)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:,)/,/^(?:true\b)/,/^(?:NaN\b)/,/^(?:Infinity\b)/,/^(?:\[\])/,/^(?:\[)/,/^(?:\])/,/^(?:\.)/,/^(?:"")/,/^(?:'')/,/^(?:")/,/^(?:')/,/^(?:\\)/,/^(?:")/,/^(?:')/,/^(?:(.|\r\n|\n))/,/^(?:[^"\\]*)/,/^(?:[^'\\]*)/,/^(?:[A-Za-z_][A-Za-z0-9_]*)/,/^(?:[0-9]+(\.[0-9]+)?([eE][\-+]?[0-9]+)?\b)/,/^(?:[0-9]+\b)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:!==)/,/^(?:<=)/,/^(?:>=)/,/^(?:<)/,/^(?:>)/,/^(?:!)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:\()/,/^(?:\))/,/^(?:\?)/,/^(?::)/,/^(?:$)/,/^(?:.)/],
-conditions: {"QuotedStringEscape":{"rules":[34],"inclusive":false},"SingleQuotedString":{"rules":[31,33,36],"inclusive":false},"DoubleQuotedString":{"rules":[31,32,35],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58],"inclusive":true}}
+rules: [/^(?:\/\/([^\n\r]*))/,/^(?:\/\*([\u0000-\uffff]*?)\*\/)/,/^(?:\s+)/,/^(?:function\b)/,/^(?:return\b)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:for\b)/,/^(?:break\b)/,/^(?:continue\b)/,/^(?:let\b)/,/^(?:const\b)/,/^(?:===)/,/^(?:=>)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:,)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:NaN\b)/,/^(?:Infinity\b)/,/^(?:\[\])/,/^(?:\[)/,/^(?:\])/,/^(?:\.)/,/^(?:"")/,/^(?:'')/,/^(?:")/,/^(?:')/,/^(?:\\)/,/^(?:")/,/^(?:')/,/^(?:(.|\r\n|\n))/,/^(?:[^"\\]*)/,/^(?:[^'\\]*)/,/^(?:[A-Za-z_][A-Za-z0-9_]*)/,/^(?:[0-9]+(\.[0-9]+)?([eE][\-+]?[0-9]+)?\b)/,/^(?:[0-9]+\b)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:!==)/,/^(?:<=)/,/^(?:>=)/,/^(?:<)/,/^(?:>)/,/^(?:!)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:\()/,/^(?:\))/,/^(?:\?)/,/^(?::)/,/^(?:$)/,/^(?:.)/],
+conditions: {"QuotedStringEscape":{"rules":[35],"inclusive":false},"SingleQuotedString":{"rules":[32,34,37],"inclusive":false},"DoubleQuotedString":{"rules":[32,33,36],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59],"inclusive":true}}
 });
 return lexer;
 })();
