@@ -5,7 +5,7 @@ import { toString } from '.';
 
 /** Import meta-circular parser */
 const createParserModule = require('./stdlib/parser')
-const createParser = createParserModule.default
+const createParser = createParserModule.createParser
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
