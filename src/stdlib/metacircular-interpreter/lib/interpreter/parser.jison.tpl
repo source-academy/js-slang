@@ -516,21 +516,24 @@ expression
 			     	}
 			};
 		}}
-	| identifier '=>' expression
+	| expression '=>' expression
 		{{
-			$$ = {
-				tag: 'function_definition',
-				parameters: [$1, [] ],
-				body: { tag: 'return_statement', expression: $3,
-					line: yylineno },
-				line: yylineno,
-				location: {
+		             if ($1.tag === 'name) {
+			        $$ = {
+				   tag: 'function_definition',
+				   parameters: [$1, [] ],
+				   body: { tag: 'return_statement', expression: $3,
+					   line: yylineno },
+				   line: yylineno,
+				   location: {
 					start_line: @1.first_line,
 					start_col: @1.first_column,
 					end_line: @5.first_line,
 					end_col: @5.first_column
-			     	}
-			};
+			     	};
+			     } else {
+				error('expecting name before => ' + yylineno + ": " + yytext);
+			     }
 		}}
 {{if week|ormore>10}}
 	| expression '[' expression ']'
