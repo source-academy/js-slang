@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "tsc",
+    "prepublishOnly": "scripts/build.sh",
     "build": "scripts/build.sh",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
