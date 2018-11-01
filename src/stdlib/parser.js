@@ -84,13 +84,13 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return $$[$0-1]; 
+ return $$[$0-1];
 break;
 case 2: case 3: case 69: case 73: case 78:
- this.$ = []; 
+ this.$ = [];
 break;
 case 4:
- this.$ = pair($$[$0-1], $$[$0]); 
+ this.$ = pair($$[$0-1], $$[$0]);
 break;
 case 8:
 
@@ -111,7 +111,7 @@ case 8:
 				},
 				line: yylineno
 			};
-		
+
 break;
 case 11:
 
@@ -119,7 +119,7 @@ case 11:
 			         tag: 'block',
 				 body: $$[$0-1]
  			     };
-	      
+
 break;
 case 14:
 
@@ -128,7 +128,7 @@ case 14:
 				expression: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 15:
 
@@ -136,7 +136,7 @@ case 15:
 				tag: 'break_statement',
 				line: yylineno
 			};
-		
+
 break;
 case 16:
 
@@ -144,7 +144,7 @@ case 16:
 				tag: 'continue_statement',
 				line: yylineno
 			};
-		
+
 break;
 case 17:
 
@@ -154,7 +154,7 @@ case 17:
 				value: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 18:
 
@@ -164,7 +164,7 @@ case 18:
 				value: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 19:
 
@@ -188,7 +188,7 @@ case 19:
 			} else {
 				error('parse error in line ' + yylineno + ": " + yytext);
 			}
-		
+
 break;
 case 20:
 
@@ -199,7 +199,7 @@ case 20:
 				alternative: { tag: 'block', body: $$[$0-1] },
 				line: yylineno
 			};
-		
+
 break;
 case 21:
 
@@ -210,7 +210,7 @@ case 21:
 				alternative: pair($$[$0], []),
 				line: yylineno
 			};
-		
+
 break;
 case 22:
 
@@ -220,7 +220,7 @@ case 22:
 				statements: { tag: 'block', body: $$[$0-1] },
 				line: yylineno
 			};
-		
+
 break;
 case 23:
 
@@ -232,7 +232,7 @@ case 23:
 				statements: { tag: 'block', body: $$[$0-1] },
 				line: yylineno
 			};
-		
+
 break;
 case 27: case 28: case 29: case 30: case 31: case 37: case 38: case 39: case 40: case 41: case 42:
 
@@ -246,7 +246,7 @@ case 27: case 28: case 29: case 30: case 31: case 37: case 38: case 39: case 40:
 				operands: [$$[$0-2], [$$[$0], []]],
 				line: yylineno
 			};
-		
+
 break;
 case 32: case 33:
 
@@ -260,7 +260,7 @@ case 32: case 33:
 				operands: [0, [$$[$0], []]],
 				line: yylineno
 			};
-		
+
 break;
 case 34:
 
@@ -274,7 +274,7 @@ case 34:
 				operands: [$$[$0], []],
 				line: yylineno
 			};
-		
+
 break;
 case 35: case 36:
 
@@ -284,7 +284,7 @@ case 35: case 36:
 				operands: [$$[$0-2], [$$[$0], []]],
 				line: yylineno
 			};
-		
+
 break;
 case 43:
 
@@ -301,27 +301,30 @@ case 43:
 					end_col: _$[$0].first_column
 			     	}
 			};
-		
+
 break;
 case 44:
+  if ($$[$0 - 2].tag === "name") {
+    this.$ = {
+      tag: "function_definition",
+      parameters: [$$[$0 - 2], []],
+      body: {
+        tag: "return_statement",
+        expression: $$[$0],
+        line: yylineno
+      },
+      line: yylineno,
+      location: {
+        start_line: _$[$0 - 2].first_line,
+        start_col: _$[$0 - 2].first_column,
+        end_line: _$[$02].first_line,
+        end_col: _$[$02].first_column
+      }
+    };
+  } else {
+    error("expecting name before => " + yylineno + ": " + yytext);
+}
 
-		             if ($$[$0-2].tag === 'name') {
-			        this.$ = {
-				   tag: 'function_definition',
-				   parameters: [$$[$0-2], [] ],
-				   body: { tag: 'return_statement', expression: $$[$0],
-					   line: yylineno },
-				   line: yylineno,
-				   location: {
-					start_line: _$[$0-2].first_line,
-					start_col: _$[$0-2].first_column,
-					end_line: _$[$02].first_line,
-					end_col: _$[$02].first_column
-			     	};
-			     } else {
-				error('expecting name before => ' + yylineno + ": " + yytext);
-			     }
-		
 break;
 case 45:
 
@@ -331,7 +334,7 @@ case 45:
 				property: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 46:
 
@@ -341,7 +344,7 @@ case 46:
 				property: $$[$0],
 				line: yylineno
 			};
-		
+
 break;
 case 47:
 this.$ = $$[$0-1];
@@ -353,7 +356,7 @@ case 49:
 				name: $$[$0],
 				line: yylineno
 			};
-		
+
 break;
 case 50:
 
@@ -363,7 +366,7 @@ case 50:
 				operands: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 51:
 
@@ -372,7 +375,7 @@ case 51:
 				elements: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 52:
 
@@ -381,7 +384,7 @@ case 52:
 				pairs: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 53:
 
@@ -395,7 +398,7 @@ case 53:
 				operands: $$[$0-1],
 				line: yylineno
 			};
-		
+
 break;
 case 54:
 
@@ -406,33 +409,33 @@ case 54:
 				alternative: $$[$0],
 				line: yylineno
 			};
-		
+
 break;
 case 55:
- this.$ = parseFloat(yytext); 
+ this.$ = parseFloat(yytext);
 break;
 case 56:
- this.$ = parseInt(yytext, 10); 
+ this.$ = parseInt(yytext, 10);
 break;
 case 57:
- this.$ = true; 
+ this.$ = true;
 break;
 case 58:
- this.$ = false; 
+ this.$ = false;
 break;
 case 59:
- this.$ = NaN; 
+ this.$ = NaN;
 break;
 case 60:
- this.$ = Infinity; 
+ this.$ = Infinity;
 break;
 case 62:
- this.$ = { tag: 'empty_list', line: yylineno }; 
+ this.$ = { tag: 'empty_list', line: yylineno };
 break;
 case 63:
 
 		this.$ = '';
-	
+
 break;
 case 65:
 
@@ -449,7 +452,7 @@ case 65:
 			case '\r\n':	this.$ = ''; break;
 			default:		this.$ = '\\' + $$[$0]; break;
 		}
-	
+
 break;
 case 66:
 
@@ -467,24 +470,24 @@ case 66:
 			default:		this.$ = '\\' + $$[$0-1]; break;
 		}
 		this.$ += $$[$0];
-	
+
 break;
 case 67:
 
 		this.$ = $$[$0-1] + $$[$0];
-	
+
 break;
 case 68: case 72: case 77:
- this.$ = $$[$0]; 
+ this.$ = $$[$0];
 break;
 case 70: case 74: case 76: case 79:
- this.$ = [ $$[$0-2], $$[$0] ]; 
+ this.$ = [ $$[$0-2], $$[$0] ];
 break;
 case 71: case 75: case 80:
- this.$ = [ $$[$0], [] ]; 
+ this.$ = [ $$[$0], [] ];
 break;
 case 81:
- this.$ = yytext; 
+ this.$ = yytext;
 break;
 }
 },
@@ -1036,7 +1039,7 @@ case 33:this.popState();
 break;
 case 34:this.popState();
 break;
-case 35: this.popState(); return 67; 
+case 35: this.popState(); return 67;
 break;
 case 36:return 66;
 break;
