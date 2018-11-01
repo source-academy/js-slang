@@ -519,7 +519,7 @@ expression
 	| expression '=>' expression
 		{{
 		             if ($1.tag === 'name') {
-			        $$ = {
+			        $$$ = {
 				   tag: 'function_definition',
 				   parameters: [$1, [] ],
 				   body: { tag: 'return_statement', expression: $3,
@@ -528,9 +528,9 @@ expression
 				   location: {
 					start_line: @1.first_line,
 					start_col: @1.first_column,
-					end_line: @5.first_line,
-					end_col: @5.first_column
-			     	};
+					end_line: @3.first_line,
+					end_col: @3.first_column
+			     		};
 			     } else {
 				error('expecting name before => ' + yylineno + ": " + yytext);
 			     }

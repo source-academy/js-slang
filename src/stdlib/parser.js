@@ -306,7 +306,7 @@ break;
 case 44:
 
 		             if ($$[$0-2].tag === 'name') {
-			        this.$ = {
+			        this.$$ = {
 				   tag: 'function_definition',
 				   parameters: [$$[$0-2], [] ],
 				   body: { tag: 'return_statement', expression: $$[$0],
@@ -315,9 +315,9 @@ case 44:
 				   location: {
 					start_line: _$[$0-2].first_line,
 					start_col: _$[$0-2].first_column,
-					end_line: _$[$02].first_line,
-					end_col: _$[$02].first_column
-			     	};
+					end_line: _$[$0].first_line,
+					end_col: _$[$0].first_column
+			     		};
 			     } else {
 				error('expecting name before => ' + yylineno + ": " + yytext);
 			     }
