@@ -518,7 +518,7 @@ expression
 		}}
 	| expression '=>' expression
 		{{
-		             if ($1.tag === 'name) {
+		             if ($1.tag === 'name') {
 			        $$ = {
 				   tag: 'function_definition',
 				   parameters: [$1, [] ],

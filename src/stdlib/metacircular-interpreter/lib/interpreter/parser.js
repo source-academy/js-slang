@@ -305,7 +305,7 @@ case 43:
 break;
 case 44:
 
-		             if ($$[$0-2].tag === 'name) {
+		             if ($$[$0-2].tag === 'name') {
 			        this.$ = {
 				   tag: 'function_definition',
 				   parameters: [$$[$0-2], [] ],
