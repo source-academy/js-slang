@@ -1,5 +1,6 @@
 import { mockContext } from '../mocks/context'
-import { parse, Parser } from '../stdlib/parser'
+//@ts-ignore
+import { Parser } from '../stdlib/parser.js'
 
 const parser = new Parser();
 
