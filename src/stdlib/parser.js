@@ -90,7 +90,7 @@ case 2: case 3: case 69: case 73: case 78:
  this.$ = [];
 break;
 case 4:
- this.$ = pair($$[$0-1], $$[$0]);
+ this.$ = [$$[$0-1], $$[$0]];
 break;
 case 8:
 
@@ -207,7 +207,7 @@ case 21:
 				tag: 'conditional_statement',
 				predicate: $$[$0-6],
 				consequent: { tag: 'block', body: $$[$0-3] },
-				alternative: pair($$[$0], []),
+				alternative: [$$[$0], []],
 				line: yylineno
 			};
 
@@ -317,8 +317,8 @@ case 44:
       location: {
         start_line: _$[$0 - 2].first_line,
         start_col: _$[$0 - 2].first_column,
-        end_line: _$[$02].first_line,
-        end_col: _$[$02].first_column
+        end_line: _$[$0 - 2].first_line,
+        end_col: _$[$0 - 2].first_column
       }
     };
   } else {
