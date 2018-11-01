@@ -18,3 +18,9 @@ test('Parse a single number', () => {
   const program = parse('42;', context)
   expect(program).toMatchSnapshot()
 })
+
+test('Parse an arrow function', () => {
+  const context = mockContext()
+  const program = parse('x => x + 1;', context)
+  expect(program).toMatchSnapshot()
+})

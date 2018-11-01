@@ -5,7 +5,7 @@ import { toString } from '.';
 
 /** Import meta-circular parser */
 const createParserModule = require('./stdlib/parser')
-const createParser = createParserModule.createParser
+const Parser = createParserModule.Parser
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -29,7 +29,7 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   externalContext,
   cfg: createEmptyCFG(),
   runtime: createEmptyRuntime(),
-  metaCircularParser: createParser()
+  metaCircularParser: new Parser()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -79,7 +79,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
   let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
   visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
- 
+
 
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
@@ -140,7 +140,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
     defineSymbol(context, 'parse',
-      function () { 
+      function () {
         return context.metaCircularParser
           .parse.apply(context.metaCircularParser, arguments)
       });
@@ -186,7 +186,7 @@ const defaultBuiltIns: CustomBuiltIns = {
     throw new Error('List visualizer is not enabled')}
 }
 
-const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T, 
+const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
   const context = createEmptyContext(chapter, externalSymbols, externalContext)
 
