@@ -251,6 +251,13 @@ Object {
 }
 `;
 
+exports[`Multi-dimensional arrays display properly 1`] = `
+Object {
+  "status": "finished",
+  "value": "[1, function a() {}, 3, [() => 1, 5]]",
+}
+`;
+
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
   x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
