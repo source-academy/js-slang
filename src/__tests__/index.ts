@@ -208,3 +208,17 @@ test('Metacircular Interpreter parses Arrow Function Assignments properly', () =
     expect(obj.status).toBe('finished')
   })
 })
+
+test('Multi-dimensional arrays display properly', () => {
+  const code = `
+    function a() {} 
+    ""+[1, a, 3, [() => 1, 5]];
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
+  })
+})
