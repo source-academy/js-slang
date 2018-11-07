@@ -42,6 +42,21 @@ test("Cannot leave blank expressions in for loops", () => {
   });
 });
 
+test("Cannot leave while loop predicate blank", () => {
+  const code = `
+  while() {
+    x;
+  }
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
 test("Cannot use update expressions", () => {
   const code = `
   let x = 3;
@@ -98,11 +113,82 @@ test("Cannot use assignment expressions", () => {
   });
 });
 
+test("Cannot use assignment expressions", () => {
+  const code = `
+  let x = 3;
+  let y = 4;
+  x = y = 5;
+  x;
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use assignment expressions", () => {
+  const code = `
+  let y = 4;
+  for (let x = y = 1; x < 1; x = x + 1) {
+    y;
+  }
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
 test("Cannot use update statements", () => {
   const code = `
   let x = 3;
   x += 5;
   x;
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use function expressions", () => {
+  const code = `
+  (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use function expressions", () => {
+  const code = `
+  (function(x) { return x + 1; })(4);
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use arrow block function expressions", () => {
+  const code = `
+  (x => { return x + 1; })(4);
   `;
   const context = mockContext(3);
   const promise = runInContext(code, context, { scheduler: "preemptive" });

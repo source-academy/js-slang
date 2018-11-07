@@ -12,7 +12,17 @@ exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: For stateme
 
 exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: For statement cannot have empty init,test,update expressions."`;
 
+exports[`Cannot leave while loop predicate blank 1`] = `"Line 2: SyntaxError: Unexpected token (2:8)"`;
+
+exports[`Cannot use arrow block function expressions 1`] = `"Line 2: Function definition expressions may only end with an expression."`;
+
 exports[`Cannot use assignment expressions 1`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use assignment expressions 2`] = `"Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use assignment expressions 3`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use function expressions 1`] = `"Line 2: Name fib not declared"`;
 
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
 
