@@ -14,15 +14,48 @@ declare global {
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
+function transformAssignment(node: es.AssignmentExpression): Value {
+  if (node.operator !== "=") {
+    throw new SyntaxError("Update statements not allowed >:(")
+  }
+  if (node.left.type === 'Identifier') {
+    return ({
+      tag: "assignment",
+      name: transform(node.left as es.Identifier),
+      value: transform(node.right),
+      loc: node.loc
+    })
+  } else if (node.left.type === 'MemberExpression') {
+    return ({
+      tag: "property_assignment",
+      object: transform(node.left as es.Expression),
+      value: transform(node.right),
+      loc: node.loc
+    })
+  } else {
+    throw new SyntaxError("wat :C")
+  }
+}
+
 let transformers: ASTTransformers
 transformers = new Map([
   ["Program", (node: es.Node) => {
     node = <es.Program> node
     return vector_to_list(node.body.map(transform))
   }],
+  ["BlockStatement", (node: es.Node) => {
+    node = <es.BlockStatement> node
+    return ({
+      tag: "block",
+      body: vector_to_list(node.body.map(transform))
+  })}],
   ["ExpressionStatement", (node: es.Node) => {
     node = <es.ExpressionStatement> node
-    return transform(node.expression)
+    if (node.expression.type === "AssignmentExpression") {
+      return transformAssignment(node.expression);
+    } else {
+      return transform(node.expression)
+    }
   }],
   ["IfStatement", (node: es.Node) => {
     node = <es.IfStatement> node
@@ -179,30 +212,29 @@ transformers = new Map([
     }
   }],
   ["AssignmentExpression", (node: es.Node) => {
-    node = <es.AssignmentExpression> node
-    if (node.left.type === 'Identifier') {
-      return ({
-        tag: "assignment",
-        name: transform(node.left as es.Identifier),
-        value: transform(node.right)
-      })
-    } else if (node.left.type === 'MemberExpression') {
-      return ({
-        tag: "property_assignment",
-        object: transform(node.left as es.Expression),
-        value: transform(node.right)
-      })
-    } else {
-      throw new SyntaxError("wat :C")
-    }
+    throw new SyntaxError("not allowed :/")
   }],
   ["ForStatement", (node: es.Node) => {
     node = <es.ForStatement> node
+    let init = node.init as es.Node
+    let initialiser: Value
+    if (init.type === "AssignmentExpression") {
+      initialiser = transformAssignment(init)
+    } else {
+      initialiser = transform(init)
+    }
+    let update = node.update as es.Node
+    let finaliser: Value
+    if (update.type === "AssignmentExpression") {
+      finaliser = transformAssignment(update)
+    } else {
+      finaliser = transform(update)
+    }
     return ({
       tag: "for_loop",
-      initialiser: transform(node.init as es.VariableDeclaration | es.Expression),
+      initialiser: initialiser,
       predicate: transform(node.test as es.Expression),
-      finaliser: transform(node.update as es.Expression),
+      finaliser: finaliser,
       statements: transform(node.body)
   })}],
   ["WhileStatement", (node: es.Node) => {
@@ -272,7 +304,7 @@ function transform(node: es.Node) {
     }
     return transformed
   } else {
-    throw new SyntaxError("ugh")
+    throw new SyntaxError("ugh, unknown type: " + node.type)
   }
 }
 
