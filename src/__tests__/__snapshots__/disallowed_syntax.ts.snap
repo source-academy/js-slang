@@ -22,7 +22,9 @@ exports[`Cannot use assignment expressions 2`] = `"Line 4: Assignment inside an 
 
 exports[`Cannot use assignment expressions 3`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
 
-exports[`Cannot use function expressions 1`] = `"Line 2: Name fib not declared"`;
+exports[`Cannot use function expressions 1`] = `"Line 2: Function expressions are not allowed"`;
+
+exports[`Cannot use function expressions 2`] = `"Line 2: Function expressions are not allowed"`;
 
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
 

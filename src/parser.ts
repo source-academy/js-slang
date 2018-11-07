@@ -159,7 +159,7 @@ function createWalkers(
   syntaxPairs.map(pair => {
     const syntax = pair[0]
     const allowedChap = pair[1]
-    newWalkers.set(syntax, (node: es.Node, context: Context) => {
+    newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
       const id = freshId()
       Object.defineProperty(node, '__id', {
         enumerable: true,

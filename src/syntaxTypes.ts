@@ -11,7 +11,6 @@ const syntaxTypes: { [nodeName: string]: number } = {
   BinaryExpression: 1,
   LogicalExpression: 1,
   ConditionalExpression: 1,
-  FunctionExpression: 1,
   ArrowFunctionExpression: 1,
   Identifier: 1,
   Literal: 1,
@@ -36,6 +35,7 @@ const syntaxTypes: { [nodeName: string]: number } = {
   // previously Week 10
   NewExpression: 10,
   // Disallowed Forever
+  FunctionExpression: Infinity,
   SwitchStatement: Infinity,
   DebuggerStatement: Infinity,
   WithStatement: Infinity,
