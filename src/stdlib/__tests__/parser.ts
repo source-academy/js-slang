@@ -81,7 +81,20 @@ test("Parses declaration statements", () => {
 
 test("Parses assignment statements", () => {
   const program = `
-    stringify(parse("x = 5; x = x;"), undefined, 2);
+    stringify(parse("x = 5; x = x; if (true) { x = 5; } else {}"), undefined, 2);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  return promise.then(obj => {
+    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+  })
+})
+
+test("Parses if statements", () => {
+  const program = `
+    stringify(parse("if (true) { hi; } else { haha; } if (false) {} else {}"), undefined, 2);
   `
   const context = mockContext(4)
   const promise = runInContext(program, context, { scheduler: "preemptive" })
@@ -236,6 +249,18 @@ test('Does not parse if statements without else', () => {
 test('Does not parse for loops with empty initialiser', () => {
   const code = `
     parse("for (; true; x = x+1) {}");
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(JSON.stringify(context.errors, undefined, 2)).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+  })
+})
+
+test('Does not parse for loops with multiple initialisers', () => {
+  const code = `
+    parse("for (let x = 0, y = 3; true; x = x+1) {}");
   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
