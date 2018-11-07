@@ -490,6 +490,8 @@ defaultActions: {41:[2,1],46:[2,72],82:[2,77],132:[2,74],144:[2,79],160:[2,26]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
+    } else if (hash.loc && hash.line) {
+        throw new SyntaxError(str, hash.loc, hash.line);
     } else {
         var error = new Error(str);
         error.hash = hash;

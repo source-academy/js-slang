@@ -14,7 +14,7 @@ These all work together to form the functional evaluator.
 1. This project depends on node.js. Install [node.js](http://nodejs.org) for your platform.
 2. Using the shell for your platform, run `envsetup.{sh|bat}`. This will obtain the necessary installation dependencies and generate the development versions of the templates.
    - Note that your Jison install will be patched to throw SyntaxError exceptions when parse errors occur. This may affect your other Jison dependents, if any.
-2 (alternative) . Just run `npm install` and all the dependencies should be magically installed.  
+2 (alternative) . Just run `npm install` and all the dependencies should be magically installed. However, note to patch the Jison lib using the jison.patch file provided.
 3. If you have made changes to the templates, generate new development libraries by running `generate.js --environment`.
 4. `scratch.html` in the root directory of the project has got the evaluator-in-evaluator code being part of `test3`. Use that to test the interpreter interpreting itself.
 
