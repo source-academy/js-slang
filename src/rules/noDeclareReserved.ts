@@ -75,7 +75,7 @@ const noDeclareReserved: Rule<es.VariableDeclaration> = {
   name: 'no-declare-reserved',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration) {
+    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
       if (reservedNames.includes((node.declarations[0].id as any).name)) {
         return [new NoDeclareReservedError(node)]
       } else {

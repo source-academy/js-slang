@@ -57,3 +57,59 @@ test("Cannot use update expressions", () => {
   });
 });
 
+test("Cannot have incomplete statements", () => {
+  const code = `
+  5
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot have if without else", () => {
+  const code = `
+  if (true) { 5; }
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use assignment expressions", () => {
+  const code = `
+  let x = 3;
+  let y = x = 5;
+  x;
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+
+test("Cannot use update statements", () => {
+  const code = `
+  let x = 3;
+  x += 5;
+  x;
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    expect(obj.status).toBe("error");
+    const errors = parseError(context.errors);
+    expect(errors).toMatchSnapshot();
+  });
+});
+

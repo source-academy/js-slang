@@ -27,7 +27,7 @@ const noNonEmptyList: Rule<es.ArrayExpression> = {
   disableOn: 3,
 
   checkers: {
-    ArrayExpression(node: es.ArrayExpression) {
+    ArrayExpression(node: es.ArrayExpression, ancestors: [es.Node]) {
       if (node.elements.length > 0) {
         return [new NoNonEmptyListError(node)]
       } else {

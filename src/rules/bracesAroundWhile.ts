@@ -25,7 +25,7 @@ const bracesAroundWhile: Rule<es.WhileStatement> = {
   name: 'braces-around-while',
 
   checkers: {
-    WhileStatement(node: es.WhileStatement) {
+    WhileStatement(node: es.WhileStatement, ancestors: [es.Node]) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundWhileError(node)]
       } else {

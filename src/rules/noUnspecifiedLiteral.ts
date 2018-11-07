@@ -35,7 +35,7 @@ export class NoUnspecifiedLiteral implements SourceError {
 const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
   checkers: {
-    Literal(node: es.Literal) {
+    Literal(node: es.Literal, ancestors: [es.Node]) {
       if (!specifiedLiterals.includes(typeof node.value)) {
         return [new NoUnspecifiedLiteral(node)]
       } else {

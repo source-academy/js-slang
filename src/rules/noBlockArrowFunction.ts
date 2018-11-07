@@ -25,7 +25,7 @@ const noBlockArrowFunction: Rule<es.ArrowFunctionExpression> = {
   name: 'no-block-arrow-function',
 
   checkers: {
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression, ancestors: [es.Node]) {
       if (node.body.type === 'BlockStatement') {
         return [new NoBlockArrowFunction(node)]
       } else {

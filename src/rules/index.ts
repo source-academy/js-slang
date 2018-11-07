@@ -14,6 +14,8 @@ import noNonEmptyList from './noNonEmptyList'
 import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
 import singleVariableDeclaration from './singleVariableDeclaration'
+import noAssignmentExpression from './noAssignmentExpression'
+import noUpdateAssignment from './noUpdateAssignment'
 
 const rules: Array<Rule<es.Node>> = [
   bracesAroundIfElse,
@@ -27,6 +29,8 @@ const rules: Array<Rule<es.Node>> = [
   noDeclareReserved,
   noDeclareMutable,
   noUnspecifiedLiteral,
+  noAssignmentExpression,
+  noUpdateAssignment,
   noUnspecifiedOperator
 ]
 
