@@ -108,7 +108,7 @@ statements
 	| ';' /* The empty statement */
 		{ $$ = []; }
 	| statement statements
-		{ $$ = pair($1, $2); }
+		{ $$ = [$1, $2]; }
 	;
 
 statement
@@ -251,7 +251,7 @@ ifstatement
 				tag: 'conditional_statement',
 				predicate: $3,
 				consequent: { tag: 'block', body: $6 },
-				alternative: pair($9, []),
+				alternative: [$9, []],
 				line: yylineno
 			};
 		}}
@@ -516,24 +516,28 @@ expression
 			     	}
 			};
 		}}
-	| expression '=>' expression
+	| identifier '=>' expression
 		{{
-		             if ($1.tag === 'name') {
-			        $$ = {
-				   tag: 'function_definition',
-				   parameters: [$1, [] ],
-				   body: { tag: 'return_statement', expression: $3,
-					   line: yylineno },
-				   line: yylineno,
-				   location: {
+			$$ = {
+				tag: 'function_definition',
+				parameters: [$1, [] ],
+				body: {
+					tag: 'return_statement',
+					expression: $3,
+					line: @3.first_line,
+					start_line: @3.first_line,
+					start_col: @3.first_column,
+					end_line: @3.first_line,
+					end_col: @3.first_column
+				},
+				line: yylineno,
+				location: {
 					start_line: @1.first_line,
 					start_col: @1.first_column,
-					end_line: @5.first_line,
-					end_col: @5.first_column
-			     	};
-			     } else {
-				error('expecting name before => ' + yylineno + ": " + yytext);
-			     }
+					end_line: @3.first_line,
+					end_col: @3.first_column
+			     	}
+			};
 		}}
 {{if week|ormore>10}}
 	| expression '[' expression ']'
@@ -564,13 +568,7 @@ expression
 	| constants
 
 	| identifier
-		{{
-			$$ = {
-				tag: 'name',
-				name: $1,
-				line: yylineno
-			};
-		}}
+		{ $$ = $1; }
 
 	| '(' expression ')' '(' expressions ')'
 		{{
@@ -603,11 +601,7 @@ expression
 		{{
 			$$ = {
 				tag: 'application',
-				operator: {
-					tag: 'name',
-					name: $1,
-					line: yylineno
-				},
+				operator: $1,
 				operands: $3,
 				line: yylineno
 			};
@@ -755,5 +749,11 @@ nonemptyidentifiers
 identifier
 	:
 	'Identifier'
-		{ $$ = yytext; }
+		{{
+			$$ = {
+				tag: 'name',
+				name: yytext,
+				line: yylineno
+			};
+		}}
 	;

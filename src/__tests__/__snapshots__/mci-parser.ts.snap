@@ -4,6 +4,119 @@ exports[`Parse an arrow function 1`] = `
 Array [
   Object {
     "body": Object {
+      "end_col": 5,
+      "end_line": 1,
+      "expression": Object {
+        "line": 0,
+        "operands": Array [
+          Object {
+            "line": 0,
+            "name": "x",
+            "tag": "name",
+          },
+          Array [
+            1,
+            Array [],
+          ],
+        ],
+        "operator": Object {
+          "line": 0,
+          "name": "+",
+          "tag": "name",
+        },
+        "tag": "application",
+      },
+      "line": 1,
+      "start_col": 5,
+      "start_line": 1,
+      "tag": "return_statement",
+    },
+    "line": 0,
+    "location": Object {
+      "end_col": 5,
+      "end_line": 1,
+      "start_col": 0,
+      "start_line": 1,
+    },
+    "parameters": Array [
+      Object {
+        "line": 0,
+        "name": "x",
+        "tag": "name",
+      },
+      Array [],
+    ],
+    "tag": "function_definition",
+  },
+  Array [],
+]
+`;
+
+exports[`Parse arrow function assignment 1`] = `
+Array [
+  Object {
+    "line": 0,
+    "name": Object {
+      "line": 0,
+      "name": "y",
+      "tag": "name",
+    },
+    "tag": "constant_declaration",
+    "value": Object {
+      "body": Object {
+        "end_col": 15,
+        "end_line": 1,
+        "expression": Object {
+          "line": 0,
+          "operands": Array [
+            Object {
+              "line": 0,
+              "name": "x",
+              "tag": "name",
+            },
+            Array [
+              1,
+              Array [],
+            ],
+          ],
+          "operator": Object {
+            "line": 0,
+            "name": "+",
+            "tag": "name",
+          },
+          "tag": "application",
+        },
+        "line": 1,
+        "start_col": 15,
+        "start_line": 1,
+        "tag": "return_statement",
+      },
+      "line": 0,
+      "location": Object {
+        "end_col": 15,
+        "end_line": 1,
+        "start_col": 10,
+        "start_line": 1,
+      },
+      "parameters": Array [
+        Object {
+          "line": 0,
+          "name": "x",
+          "tag": "name",
+        },
+        Array [],
+      ],
+      "tag": "function_definition",
+    },
+  },
+  Array [],
+]
+`;
+
+exports[`Parses multi-argument arrow function 1`] = `
+Array [
+  Object {
+    "body": Object {
       "expression": Object {
         "line": 0,
         "operands": Array [
@@ -29,7 +142,7 @@ Array [
     },
     "line": 0,
     "location": Object {
-      "end_col": 0,
+      "end_col": 10,
       "end_line": 1,
       "start_col": 0,
       "start_line": 1,
@@ -40,7 +153,14 @@ Array [
         "name": "x",
         "tag": "name",
       },
-      Array [],
+      Array [
+        Object {
+          "line": 0,
+          "name": "y",
+          "tag": "name",
+        },
+        Array [],
+      ],
     ],
     "tag": "function_definition",
   },
@@ -48,11 +168,15 @@ Array [
 ]
 `;
 
-exports[`Parse arrow function assignment 1`] = `
+exports[`Parses multi-argument arrow function assignment 1`] = `
 Array [
   Object {
     "line": 0,
-    "name": "y",
+    "name": Object {
+      "line": 0,
+      "name": "y",
+      "tag": "name",
+    },
     "tag": "constant_declaration",
     "value": Object {
       "body": Object {
@@ -81,7 +205,7 @@ Array [
       },
       "line": 0,
       "location": Object {
-        "end_col": 10,
+        "end_col": 20,
         "end_line": 1,
         "start_col": 10,
         "start_line": 1,
@@ -92,7 +216,14 @@ Array [
           "name": "x",
           "tag": "name",
         },
-        Array [],
+        Array [
+          Object {
+            "line": 0,
+            "name": "y",
+            "tag": "name",
+          },
+          Array [],
+        ],
       ],
       "tag": "function_definition",
     },

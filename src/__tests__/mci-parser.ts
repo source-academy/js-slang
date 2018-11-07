@@ -16,3 +16,15 @@ test('Parse arrow function assignment', () => {
   expect(program).toMatchSnapshot()
 })
 
+test('Parses multi-argument arrow function', () => {
+  const context = mockContext()
+  const program = parser.parse('(x, y) => x + 1;', context)
+  expect(program).toMatchSnapshot()
+})
+
+test('Parses multi-argument arrow function assignment', () => {
+  const context = mockContext()
+  const program = parser.parse('const y = (x, y) => x + 1;', context)
+  expect(program).toMatchSnapshot()
+})
+

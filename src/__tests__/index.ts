@@ -189,6 +189,28 @@ test(
   30000
 )
 
+test('Metacircular Interpreter parses multi-argument Arrow Function Expressions properly', () => {
+  const code = 'stringify(parse("(x, y) => x + 1;"));'
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[{"tag":"function_definition","parameters":[{"tag":"name","name":"x","line":0},[{"tag":"name","name":"y","line":0},[]]],"body":{"tag":"return_statement","expression":{"tag":"application","operator":{"tag":"name","name":"+","line":0},"operands":[{"tag":"name","name":"x","line":0},[1,[]]],"line":0},"line":0},"line":0,"location":{"start_line":1,"start_col":0,"end_line":1,"end_col":10}},[]]')
+  })
+})
+
+test('Metacircular Interpreter parses multi-argument Arrow Function Assignments properly', () => {
+  const code = 'stringify(parse("const y = (x, y) => x + 1;"));'
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[{"tag":"constant_declaration","name":{"tag":"name","name":"y","line":0},"value":{"tag":"function_definition","parameters":[{"tag":"name","name":"x","line":0},[{"tag":"name","name":"y","line":0},[]]],"body":{"tag":"return_statement","expression":{"tag":"application","operator":{"tag":"name","name":"+","line":0},"operands":[{"tag":"name","name":"x","line":0},[1,[]]],"line":0},"line":0},"line":0,"location":{"start_line":1,"start_col":10,"end_line":1,"end_col":20}},"line":0},[]]')
+  })
+})
+
 test('Metacircular Interpreter parses Arrow Function Expressions properly', () => {
   const code = 'stringify(parse("x => x + 1;"));'
   const context = mockContext(4)
@@ -196,6 +218,7 @@ test('Metacircular Interpreter parses Arrow Function Expressions properly', () =
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[{"tag":"function_definition","parameters":[{"tag":"name","name":"x","line":0},[]],"body":{"tag":"return_statement","expression":{"tag":"application","operator":{"tag":"name","name":"+","line":0},"operands":[{"tag":"name","name":"x","line":0},[1,[]]],"line":0},"line":0},"line":0,"location":{"start_line":1,"start_col":0,"end_line":1,"end_col":0}},[]]')
   })
 })
 
@@ -206,6 +229,7 @@ test('Metacircular Interpreter parses Arrow Function Assignments properly', () =
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[{"tag":"constant_declaration","name":{"tag":"name","name":"y","line":0},"value":{"tag":"function_definition","parameters":[{"tag":"name","name":"x","line":0},[]],"body":{"tag":"return_statement","expression":{"tag":"application","operator":{"tag":"name","name":"+","line":0},"operands":[{"tag":"name","name":"x","line":0},[1,[]]],"line":0},"line":0},"line":0,"location":{"start_line":1,"start_col":10,"end_line":1,"end_col":10}},"line":0},[]]')
   })
 })
 
