@@ -220,26 +220,6 @@ test('Functions passed into non-source functions remain equal', () => {
   })
 })
 
-test('Metacircular Interpreter parses Arrow Function Expressions properly', () => {
-  const code = 'stringify(parse("x => x + 1;"));'
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
-})
-
-test('Metacircular Interpreter parses Arrow Function Assignments properly', () => {
-  const code = 'stringify(parse("const y = x => x + 1;"));'
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
-})
-
 test('Multi-dimensional arrays display properly', () => {
   const code = `
     function a() {} 
