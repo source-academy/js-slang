@@ -258,9 +258,23 @@ Object {
 }
 `;
 
+exports[`Multi-level object assignment 1`] = `
+Object {
+  "status": "finished",
+  "value": "string",
+}
+`;
+
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
   x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
+`;
+
+exports[`Simple object assignment 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
 `;
 
 exports[`Single boolean self-evaluates to itself 1`] = `

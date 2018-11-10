@@ -222,3 +222,36 @@ test('Multi-dimensional arrays display properly', () => {
     expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
   })
 })
+
+test('Simple object assignment and retrieval', () => {
+  const code = `
+    const o = {};
+    o.a = 1;
+    o.a;
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(1)
+  })
+})
+
+test('Deep object assignment and retrieval', () => {
+  const code = `
+    const o = {};
+    o.a = {};
+    o.a.b = {};
+    o.a.b.c = "string";
+    o.a.b.c;
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe("string")
+  })
+})
+
