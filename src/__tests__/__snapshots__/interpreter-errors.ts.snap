@@ -27,33 +27,6 @@ Array [
 ]
 `;
 
-exports[`Error when accessing property on undefined/null 1`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Error when accessing property on undefined/null 2`] = `
-Array [
-  GetPropertyError {
-    "location": SourceLocation {
-      "end": Position {
-        "column": 18,
-        "line": 2,
-      },
-      "start": Position {
-        "column": 4,
-        "line": 2,
-      },
-    },
-    "obj": undefined,
-    "prop": "prop",
-    "severity": "Error",
-    "type": "Runtime",
-  },
-]
-`;
-
 exports[`Error when assigning to property on undefined 1`] = `
 Object {
   "status": "error",
@@ -98,33 +71,6 @@ Array [
       "start": Position {
         "column": 4,
         "line": 3,
-      },
-    },
-    "obj": undefined,
-    "prop": "prop",
-    "severity": "Error",
-    "type": "Runtime",
-  },
-]
-`;
-
-exports[`Error when assignment value to property on undefined/null 1`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Error when assignment value to property on undefined/null 2`] = `
-Array [
-  SetPropertyError {
-    "location": SourceLocation {
-      "end": Position {
-        "column": 24,
-        "line": 2,
-      },
-      "start": Position {
-        "column": 4,
-        "line": 2,
       },
     },
     "obj": undefined,

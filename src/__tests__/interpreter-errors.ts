@@ -89,7 +89,7 @@ test('Error when deeply accessing property on undefined', () => {
 
 test('In case a function ever returns null, should throw an error as well', () => {
   const code = `
-    const myNull = '123'.match(x=>x);
+    const myNull = pair.constructor("return null;")();
     myNull.prop;
    `;
   const context = mockContext(4)
