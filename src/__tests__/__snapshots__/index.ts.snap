@@ -218,6 +218,13 @@ ArrowClosure {
 
 exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
 
+exports[`Deep object assignment and retrieval 1`] = `
+Object {
+  "status": "finished",
+  "value": "string",
+}
+`;
+
 exports[`Empty code returns undefined 1`] = `
 Object {
   "status": "finished",
@@ -261,6 +268,13 @@ Object {
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
   x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
+`;
+
+exports[`Simple object assignment and retrieval 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
 `;
 
 exports[`Single boolean self-evaluates to itself 1`] = `

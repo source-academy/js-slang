@@ -383,16 +383,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (obj instanceof Closure) {
       obj = obj.fun
     }
+    let prop
     if (node.computed) {
-      const prop = yield* evaluate(node.property, context)
-      return obj[prop]
+      prop = yield* evaluate(node.property, context)
     } else {
-      const name = (node.property as es.Identifier).name
-      if (name === 'prototype') {
-        return obj.prototype
-      } else {
-        return obj[name]
-      }
+      prop = (node.property as es.Identifier).name
+    }
+    try {
+      return obj[prop]
+    } catch {
+      handleError(context, new errors.GetPropertyError(node, obj, prop))
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
@@ -406,7 +406,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         prop = (left.property as es.Identifier).name
       }
       const val = yield* evaluate(node.right, context)
-      obj[prop] = val
+      try {
+        obj[prop] = val
+      } catch {
+        handleError(context, new errors.SetPropertyError(node, obj, prop))
+      }
       return val
     }
     const id = node.left as es.Identifier
