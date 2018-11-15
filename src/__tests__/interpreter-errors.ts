@@ -149,20 +149,3 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
   });
 })
-
-test("Builtins don't create additional errors when it's not their fault", () => {
-  const code = `
-    function f(x) {
-      return a;
-    }
-    map(f, list(1, 2));
-   `;
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
-  });
-})
