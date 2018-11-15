@@ -86,6 +86,7 @@ function defineVariable(context: Context, name: string, value: Value, constant=f
 
   return frame
 }
+
 function* visit(context: Context, node: es.Node) {
   context.runtime.nodes.unshift(node)
   yield context
