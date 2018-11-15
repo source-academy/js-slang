@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Builtins don't create additional errors when it's not their fault 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Builtins don't create additional errors when it's not their fault 2`] = `
+Array [
+  UndefinedVariable {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 13,
+        "line": 3,
+      },
+    },
+    "name": "a",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Error when accessing property on undefined 1`] = `
 Object {
   "status": "error",
@@ -156,6 +182,61 @@ Array [
     },
     "obj": null,
     "prop": "prop",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Nice errors when errors occur inside builtins 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins 2`] = `
+Array [
+  ExceptionError {
+    "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+    "location": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Nice errors when errors occur inside builtins 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins 4`] = `
+Array [
+  ExceptionError {
+    "error": [Error: Parse error on line 1:
+'
+-^
+Expecting ';', ')', '}', '=', '+', '-', '*', '/', '%', '&&', '||', '===', '!==', '>', '<', '>=', '<=', '=>', '[', ']', '.', '?', ':', 'EmptyString', 'QuotedString', 'QuotedStringEscape', ',', got '1'],
+    "location": SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
     "severity": "Error",
     "type": "Runtime",
   },
