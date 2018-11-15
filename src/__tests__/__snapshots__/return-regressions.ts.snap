@@ -28,6 +28,34 @@ Object {
 }
 `;
 
+exports[`Calling unreachable results in error 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Calling unreachable results in error 2`] = `
+Array [
+  TypeError {
+    "expected": "number",
+    "got": "boolean",
+    "location": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 13,
+        "line": 3,
+      },
+    },
+    "severity": "Error",
+    "side": " on right hand side of operation",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Recursive call early returns in for loops work 1`] = `
 Object {
   "status": "finished",
