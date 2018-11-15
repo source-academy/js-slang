@@ -362,7 +362,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         value = undefined
         break
       }
-      if (value instanceof ReturnValue) {
+      if (value instanceof ReturnValue || value instanceof TailCallReturnValue) {
         break
       }
       if (node.update) {
@@ -501,6 +501,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       result = yield* evaluate(statement, context)
       if (
         result instanceof ReturnValue ||
+        result instanceof TailCallReturnValue ||
         result instanceof BreakValue ||
         result instanceof ContinueValue
       ) {
@@ -514,7 +515,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result: Value
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
-      if (result instanceof ReturnValue) {
+      if (result instanceof ReturnValue || result instanceof TailCallReturnValue) {
         break
       }
     }

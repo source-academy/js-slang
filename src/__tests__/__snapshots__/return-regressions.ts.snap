@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bare early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Recursive call early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Tail call early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
