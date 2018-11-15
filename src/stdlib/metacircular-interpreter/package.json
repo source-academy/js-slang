@@ -1,0 +1,21 @@
+{
+  "name": "jediscript",
+  "version": "0.0.0",
+  "description": "This project comprises 4 main components:",
+  "main": "generate.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "markup-js": "~1.5.16",
+    "node-zip": "~1.0.1",
+    "nomnom": "~1.6.1",
+    "jison": "~0.4.13",
+    "gcc-rest": "0.1.6"
+  }
+}

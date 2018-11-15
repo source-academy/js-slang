@@ -6,7 +6,7 @@ SPECS = $(SPECSNUMS:%=source_%)
 
 PDFSPECS = $(SPECS:%=%.pdf)
 
-HELPERS = header bnf comments intro names numbers return strings typing objects arrays interpreter lists array_support
+HELPERS = header bnf comments intro names numbers return strings typing objects arrays interpreter lists array_support loops boolean_operators pair_mutators
 
 HELPERSTEX = $(HELPERS:%=source_%.tex)
 
