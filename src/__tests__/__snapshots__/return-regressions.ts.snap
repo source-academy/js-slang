@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bare early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Bare early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Calling unreachable results in error 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Calling unreachable results in error 2`] = `
+Array [
+  TypeError {
+    "expected": "number",
+    "got": "boolean",
+    "location": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 13,
+        "line": 3,
+      },
+    },
+    "severity": "Error",
+    "side": " on right hand side of operation",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Recursive call early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Recursive call early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 3,
+}
+`;
+
+exports[`Tail call early returns in for loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns in if statements work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns in while loops work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`Tail call early returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
