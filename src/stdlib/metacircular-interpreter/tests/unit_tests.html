@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>JediScript Meta-circular evaluator</title>
+
+	<script type="text/javascript" src="../../list.js"></script>
+	<script type="text/javascript" src="../../misc.js"></script>
+	<script type="text/javascript" src="../lib/interpreter/json2.js"></script>
+	<script type="text/javascript" src="../lib/interpreter/parser.js"></script>
+	<script type="text/javascript" src="../lib/interpreter/interpreter.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/qunit/1.11.0/qunit.min.css" />
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qunit/1.11.0/qunit.min.js"></script>
+
+	<script type="text/javascript" src="../../object.js"></script>
+	<script type="text/javascript" src="../../stream.js"></script>
+
+	<script type="text/javascript">
+	window.onload = function() {
+		var scripts = document.getElementsByTagName('script');
+		function testGenerator(index) {
+			return function() {
+				var script = scripts.item(index);
+				var scriptText = "(function() {\n" + script.innerHTML + "\n})();";
+
+				if (script.hasAttribute('throws')) {
+					var ex = eval(script.getAttribute('throws'));
+					if (script.className !== "nonStandard") {
+						throws(function() { eval(scriptText); }, ex, "Native throws exception: " + ex);
+					}
+					throws(function() { parse_and_evaluate(scriptText); }, ex, "Interpreter throws exception: " + ex);
+				} else if (script.className === "nativeTest") {
+					eval(scriptText);
+				} else {
+					var nativeResult = eval(scriptText);
+					var evaluatorResult = parse_and_evaluate(scriptText);
+					if (script.className !== "noResult") {
+						ok(nativeResult !== undefined && evaluatorResult !== undefined, "Implemented test");
+					}
+					deepEqual(evaluatorResult, nativeResult, "Evaluates to same result as native code");
+				}
+			}
+		}
+
+		function getSectionForScript(script) {
+			for ( ; script; script = script.parentNode) {
+				if (script.tagName.toUpperCase() === "SECTION" && script.title) {
+					return script.title;
+				}
+			}
+
+			return null;
+		}
+
+		var lastSection = null;
+		for (var i = 0, j = 0; i < scripts.length; ++i) {
+			var script = scripts.item(i);
+			if (script.type !== "text/jediscript" && script.className !== "nativeTest") {
+				continue;
+			}
+
+			var section = getSectionForScript(script);
+			if (section !== lastSection) {
+				lastSection = section;
+				module(section);
+			}
+
+			test(script.title || "document.jediscripts[" + j + "]", testGenerator(i));
+			
+			++j;
+		}
+	}
+
+	//Custom overrides for unit testing
+	function fail_test(x) { throw new Error(x); }
+	parser_register_native_function("fail_test", fail_test);
+	function is_in_interpreter() { return false; }
+	parser_register_native_function("is_in_interpreter", function() { return true; });
+	parser_register_native_function("error", error);
+	parser_register_native_variable("Math", Math);
+	parser_register_native_function("Object", Object);
+	parser_register_native_function("accumulate", accumulate);
+
+	//Global types for OO testing
+	function Person(test) {
+		this.test = test;
+	}
+	parser_register_native_function("Person", Person);
+	</script>
+</head>
+
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<section title="Parser tests">
+<script type="text/javascript">
+test("Constant parsing", function() {
+	deepEqual(parser.parse('42;'), list(42));
+});
+
+test("Strings and escapes", function() {
+	deepEqual(
+		parser.parse(' \"Hello\\\\\\\" World!\";'),
+		list("Hello\\\" World!")
+    );
+	deepEqual(
+		parser.parse(' \'Hello\\\' World!\';'),
+		list("Hello' World!")
+    );
+	deepEqual(
+		parser.parse('"\\\\";'),
+		list("\\")
+    );
+	deepEqual(
+		parser.parse('"";'),
+		list("")
+    );
+	throws(function() { parser.parse(' \"Hello\\\\\\\\" World!\";'); }, "SyntaxError", "Quotes after escaped backslashes");
+	throws(function() { parser.parse('"\\";'); }, "SyntaxError");
+	throws(function() { parser.parse("'\\';"); }, "SyntaxError");
+});
+
+test("Binary operators", function() {
+	deepEqual(
+		parser.parse('42/0;'),
+		[{"line": 0, "tag":"application","operands":[42,[0,[]]],"operator":{"line": 0, "tag":"variable","name":"/"}},[]]
+	);
+});
+
+test("If statements", function() {
+	deepEqual(
+		parser.parse('if ( true ) { } else { }'),
+		[{"consequent":[],"alternative":[],"line": 0, "tag":"if","predicate":true},[]]
+	)
+});
+</script>
+</section>
+
+<section title="Language features">
+<script type="text/jediscript" title="comments">
+return 3; //This should be ignored even if 'there are quotes' or \'something\" " like that
+</script>
+
+<script type="text/jediscript" title="comments">
+/* This should be ignored */
+function ButThisShouldWork() {
+	return /* This, too should be ignored */ 3;
+}
+/* and comments with * */
+/* And some
+ * multiline stuff as well
+ */
+return ButThisShouldWork();
+</script>
+
+<script type="text/jediscript" title="values: strings">
+return "hello" + "i\'m a \"" + 4 + "\"\n" + "this line shall\
+not have a newline" + "but this line \n\
+should" +
+'hello' + 'i\'m a \"' + 4 + '\"\n' + 'this line shall\
+not have a newline' + 'but this line \n\
+should' +
+"\"A Mongoose\\is not a Goose\\nor a Moose" +
+'\"A Mongoose\\is not a Goose\\nor a Moose' +
+"\\\"\"\"Many many double quotes\"\"\"\\, where the outermost quotes are not included." +
+'\\\"\"\"Many many double quotes\"\"\"\\, where the outermost quotes are not included.';
+</script>
+
+<script type="text/jediscript" title="values: numbers">
+return 4 - 3.2541 / 2 + 1E-42;
+</script>
+
+<script type="text/jediscript" title="values: booleans">
+return true || false && true;
+</script>
+
+<script type="text/jediscript" title="operator precedence: unary negation">
+return +(-(-4)) * -Math.sqrt(-Math.PI * -Math.acos(-1));
+</script>
+
+<script type="text/jediscript" title="operator precedence: bracketed expressions">
+return (4 - 3) / 2;
+</script>
+
+<script type="text/jediscript" title="operator precedence: relational operators">
+return 5 < 3 === 1 > 2 !== 6 <= 3 !== 1 >= 3;
+</script>
+
+<script type="text/jediscript" title="operator precedence: logical operators">
+return true || true && false;
+</script>
+
+<script type="text/jediscript" title="return statements">
+function statement_block() {
+	return 3;
+	return error();
+}
+
+function if_block(x) {
+	if (x !== 0) {
+		return if_block(x - 1);
+	} else {
+		return 3;
+	}
+	return error();
+}
+
+function while_block(x) {
+	while (x !== 0) {
+		x = x - 1;
+		return while_block(x - 1);
+	}
+	return x;
+	error();
+}
+
+function for_block(x) {
+	for (var y = 0; x !== 0; ) {
+		x = x - 1;
+		return for_block(x - 1);
+	}
+	return x;
+	error();
+}
+
+return statement_block() === 3 && if_block(10) === 3 && while_block(10) === 0;
+</script>
+
+<script type="text/jediscript" title="nested functions">
+function fact2(x) {
+	function fact_iter(x, acc) {
+    	return (x > 1 ?
+                fact_iter(x-1, acc*x) :
+                acc);
+	}
+
+	return fact_iter(x, 1);
+}
+
+return fact2(3);
+</script>
+<script type="text/jediscript" title="function.toString">
+if (!is_in_interpreter()) {
+	//eval() doesn't care about global scoping. so we just return a hardcoded,
+	//expected value.
+	var a=  "function fact2(x) {\n\
+	function fact_iter(x, acc) {\n\
+    	return (x > 1 ?\n\
+                fact_iter(x-1, acc*x) :\n\
+                acc);\n\
+	}\n\
+\n\
+	return fact_iter(x, 0);\n\
+}";return a;
+} else {
+	function fact2(x) {
+	function fact_iter(x, acc) {
+    	return (x > 1 ?
+                fact_iter(x-1, acc*x) :
+                acc);
+	}
+
+	return fact_iter(x, 0);
+}
+	
+	return fact2.toString();
+}
+</script>
+</section>
+
+<section title="Variable scoping">
+<script type="text/jediscript" title="anonymous function/closure scoping">
+function f(z) {
+	var z = 1;
+	return z;
+}
+
+return f(3);
+</script>
+<script type="text/jediscript" title="var declaration">
+var a = 2;
+return a;
+</script>
+<script type="text/jediscript" title="var-less declaration" throws="SyntaxError">
+if (!is_in_interpreter()) {
+	//I have to throw this because natively the JavaScript interpreter accepts
+	//assignment to undeclared variables.
+	error("Simulated error.");
+} else {
+	a = 1;
+	return a;
+}
+</script>
+<script type="text/jediscript" title="variable assignment">
+var a = 1;
+a = 2;
+return a;
+</script>
+</section>
+
+<section title="Expression evaluation">
+<script type="text/jediscript" title="arithmetic">
+return 1 + (11 % 8) * 5 - 4 / 8;
+</script>
+<script type="text/jediscript" title="boolean arithmetic">
+return !(true && false) || (false && !true);
+</script>
+<script type="text/jediscript" title="comparison">
+return !(true === "");
+</script>
+<script type="text/jediscript" title="unary operators">
+return !(3 === -(-3));
+</script>
+<script type="text/jediscript" title="short-circuit boolean evaluation">
+function doNotCall() {
+	fail_test("Cannot call this function");
+}
+
+return false && doNotCall();
+</script>
+<script type="text/jediscript" title="ternary operator">
+function doNotCall() {
+	fail_test("Cannot call this function");
+}
+return false ? doNotCall() : true ? true : doNotCall();
+</script>
+</section>
+
+<section title="Global constants">
+<script type="text/jediscript" title="global constants">
+return NaN && undefined && Infinity;
+</script>
+</section>
+
+<section title="Functions">
+<script type="text/jediscript" title="Empty functions" class="noResult">
+function test() {
+
+}
+test();
+</script>
+
+<script type="text/jediscript" title="this in global context">
+// In web browsers, the window object is also the global object:
+if (this !== window) {
+	return false;
+} else { }
+
+this.a = 37;
+return window.a === 37; // 37
+</script>
+
+<script type="text/jediscript" title="this in simple function calls">
+function f1() {
+	return this;
+}
+
+return f1() === window; // global object
+</script>
+
+<script type="text/jediscript" title="this in functions">
+function scope() {
+	var this_ = this;
+	function within() {
+		function within2() {
+			if (this_ !== this) {
+				fail_test("this in within is not the same as this in scope");
+			} else {}
+		}
+		
+		if (this_ !== this) {
+			fail_test("this in within is not the same as this in scope");
+		} else {}
+		return within2();
+	}
+	
+	within();
+}
+
+scope();
+return true;
+</script>
+
+<script type="text/jediscript" title="this in object methods">
+function test() {
+}
+
+test.prototype.aFunction = function() {
+	var this_ = this;
+	function within() {
+		if (this === this_) {
+			fail_test("this in within is the same as this in scope");
+		} else {}
+		return this !== this_;
+	}
+
+	return within();
+};
+
+var aTest = new test();
+return aTest.aFunction();
+</script>
+
+<script type="text/jediscript" title="this in object methods">
+return (function() {
+	var calls = 0;
+	function F() { }
+	F.prototype.m = function(x) { };
+
+	var my_object = new F();
+	function f(x) {
+		calls = calls + 1;
+		return my_object;
+	}
+
+	f(4) . m(5);
+	return calls;
+})();
+</script>
+</section>
+
+<section title="Control statements">
+<script type="text/jediscript" title="if statement">
+if (5 === false) {
+	return 3;
+} else {
+	return 'a';
+}
+</script>
+<script type="text/jediscript" title="while statement">
+var i = 0;
+while (i < 30) {
+	i = i + 1;
+	if (i === 17) {
+		return i;
+	} else {
+	}
+}
+return i;
+</script>
+<script type="text/jediscript" title="while-break statement">
+var i = 0;
+while (i < 30) {
+	i = i + 1;
+	if (i === 17) {
+		break;
+	} else {
+	}
+}
+return i;
+</script>
+<script type="text/jediscript" title="while-continue statement">
+var i = 0;
+var result = 0;
+while (i < 30) {
+	i = i + 1;
+	if (i === 17) {
+		continue;
+	} else {
+	}
+	result = result + 1;
+}
+return result;
+</script>
+<script type="text/jediscript" title="for statement">
+for (var i = 0; i < 45; i = i + 1) {
+	if (i === 22) {
+		return 'a';
+	} else {
+	}
+}
+
+for (i = i + 5; i < 50; i = i + 1) {
+	if (i === 22) {
+		return 'a';
+	} else {
+	}
+}
+return i;
+</script>
+<script type="text/jediscript" title="for-break statement">
+for (var i = 0; i < 45; i = i + 1) {
+	if (i === 22) {
+		break;
+	} else {
+	}
+}
+return i;
+</script>
+<script type="text/jediscript" title="for-continue statement">
+var result = 0;
+for (var i = 0; i < 45; i = i + 1) {
+	if (i === 22) {
+		continue;
+	} else {
+	}
+
+	result = result + 1;
+}
+return result;
+</script>
+
+<script type="text/jediscript" title="break outside of loop" throws="SyntaxError">
+break;
+</script>
+<script type="text/jediscript" title="continue outside of loop" throws="SyntaxError">
+continue;
+</script>
+</section>
+
+<section title="Objects">
+<script type="text/jediscript" title="literal objects">
+return {
+	test: "3",
+	you: false
+};
+</script>
+<script type="text/jediscript" title="new (native object)">
+var test = "string";
+return (new Person(test)).test;
+</script>
+<script type="text/jediscript" title="new (evaluator object)">
+function test(test) {
+	this.value = test;
+}
+test.prototype.func = function() {
+	return this.value;
+};
+
+var s = "test";
+var t = new test(s);
+return t.func();
+</script>
+<script type="text/jediscript" title="new (constructor returns primitive)">
+function test(test) {
+	this.value = test;
+	return 1;
+}
+test.prototype.func = function() {
+	return this.value;
+};
+
+var s = "test";
+var t = new test(s);
+return t.func();
+</script>
+<script type="text/jediscript" title="new (constructor returns object)">
+function test(test) {
+	return { test: test };
+}
+
+var s = "test";
+var t = new test(s);
+return t.test;
+</script>
+<script type="text/jediscript" title="Prototype Chain">
+var t = {
+	test: function() {
+		return 3;
+	}
+};
+
+function test() {
+}
+test.prototype = t;
+var o = new test();
+return o.test();
+</script>
+<script type="text/jediscript" title="Assignment of falsy values">
+var o = {};
+o.test = 0;
+return o.test !== undefined;
+</script>
+<script type="text/jediscript" title="inheritance" id="inheritance">
+function Shape() {
+	this.name = "Shape";
+}
+Shape.prototype.Area = function() {
+	return undefined;
+};
+
+function Rectangle(width, height) {
+	this.Inherits(Shape);
+	this.name = "Rectangle";
+
+	this.width = width;
+	this.height = height;
+}
+Rectangle.Inherits(Shape);
+
+Rectangle.prototype.Area = function() {
+	return this.width * this.height;
+};
+
+function Square(width) {
+	this.Inherits(Rectangle, width, width);
+	this.name = "Square";
+}
+Square.Inherits(Rectangle);
+
+var rect = new Rectangle(15, 20);
+var sq = new Square(15);
+return list(sq.Area(), sq.width, sq.height);
+</script>
+<script type="text/jediscript" title="object.x as an alias for object['x']">
+var person = {
+	test: "3",
+	you: false
+};
+return pair(person["test"], person.test);
+</script>
+<script type="text/jediscript" title="native object access">
+return Math.PI;
+</script>
+</section>
+
+<section title="Libraries">
+<script type="text/jediscript" title="JediScript empty list">
+var z = [];
+return z;
+</script>
+<script type="text/jediscript" title="JavaScript vector creation/access">
+var z = [1, 2, 3];
+return list(z, z[2]);
+</script>
+<script type="text/jediscript" title="JavaScript built-in functionality">
+return Math.sqrt(Math.PI * Math.E + parseInt("15", 10));
+</script>
+<script type="text/jediscript" title="append (evaluated)">
+function append(xs, ys) {
+	if (is_empty_list(xs)) {
+		return ys;
+	} else {
+		return pair(head(xs),
+			append(tail(xs), ys));
+	}
+}
+return append(list(1,2), list(3,4));
+</script>
+<script type="text/jediscript" title="accumulate (native)">
+function add(x, y) {
+	return x + y;
+}
+var xs = list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+return accumulate(add, 0, xs);
+</script>
+</section>
+
+<section title="Interpreter-specific">
+<script type="text/javascript">
+function testMarshal() {
+	return function() {
+		return 4;
+	}
+}
+parser_register_native_function('testMarshal', testMarshal);
+</script>
+<script type="text/jediscript" title="Automatic marshal from native function return value">
+return (testMarshal())() === 4;
+</script>
+<script type="text/jediscript" title="Interpreter-to-native and back">
+function foo() { return 4; }
+
+var a = pair(1, foo);
+return (tail(a))();
+</script>
+<script type="text/javascript">
+parse_and_evaluate("function interpreter_marshalling_test(f) { return f(); }");
+
+// native code
+function marshal_test() {
+	var interpreter_marshalling_test = parse_and_evaluate('interpreter_marshalling_test;');
+	var fx = function() { return 1; };
+	return interpreter_marshalling_test(fx);
+}
+
+parser_register_native_function('marshal_test', marshal_test);
+</script>
+<script type="text/jediscript" title="Automatic marshal to interpreter function">
+return marshal_test();
+</script>
+</section>
+
+<section title="Streams">
+</section>
+
+<section title="Sample Code">
+<script type="text/jediscript">
+return 42 / 0;
+</script>
+
+<script type="text/jediscript">
+var x = 1;
+return x + 4; //Return is needed for JavaScript
+</script>
+
+<script type="text/jediscript">
+var x = 1;
+x = x + 8;
+return x;//Return is needed for JavaScript
+</script>
+
+<script type="text/jediscript">
+var x = 1;
+return x + 4;
+</script>
+
+<script type="text/jediscript">
+function f(x,y) {
+	return x + y;
+}
+
+return f(1,7);
+</script>
+
+<script type="text/jediscript">
+function append(xs,ys) {
+	if (is_empty_list(xs)) {
+		return ys;
+	} else {
+		return pair(head(xs),
+					append(tail(xs), ys));
+	}
+}
+return append(list(1,2), list(3,4));
+</script>
+</section>
+
+<section title="Debugging support">
+<script type="text/jediscript" class="nativeTest" title="Can debug">
+var test_program = "var a = 0;\
+var b = 0;\
+function test() {\
+	var a = 1;\
+	debug();\
+}\
+test();";
+
+// Install the debug frame.
+parse_and_evaluate(test_program);
+
+// Check that a is 1 and b is 0 (environment shadowing)
+deepEqual(parse_and_evaluate("a;"), 1, "Exposes deepest environment.");
+deepEqual(parse_and_evaluate("b;"), 0, "Parent environment still accessible.");
+
+parse_and_evaluate("debug_resume();");
+</script>
+
+<script type="text/jediscript" class="nativeTest" title="Can restore environment">
+var test_program = "var a = 0;\
+var b = 0;\
+function test() {\
+	var a = 1;\
+	debug();\
+}\
+test();";
+
+// Install the debug frame.
+parse_and_evaluate(test_program);
+
+// Restore the debug frame.
+parse_and_evaluate("debug_resume();");
+
+// Check that a is 0 and b is 0 (debug frame popped)
+deepEqual(parse_and_evaluate("a;"), 0, "Debug frame popped.");
+</script>
+
+<script type="text/jediscript" class="nativeTest" title="Display no environments message when trying to restore
+	without a debug environment">
+var consoleLogBackup = console.log;
+var called = undefined;
+console.log = function(message) {
+	called = message
+}
+
+// Try to restore a non-existant debug frame.
+parse_and_evaluate("debug_resume();");
+console.log = consoleLogBackup;
+
+// Check the message
+deepEqual(called, "No environments to restore.",
+	"Display appropriate message when no environments to restore.");
+</script>
+</section>
+</body>
+</html>

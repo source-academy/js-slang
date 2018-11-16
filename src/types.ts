@@ -110,6 +110,9 @@ export interface Context<T = any> {
   /** The external symbols that exist in the Context. */
   externalSymbols: string[]
 
+  /** The Parser used for meta-circular evaluation */
+  metaCircularParser: any
+
   /** All the errors gathered */
   errors: SourceError[]
 

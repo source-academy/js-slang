@@ -1,0 +1,43 @@
+// import { mockContext } from "../mocks/context";
+// import { parseError, runInContext } from "../index";
+// import { Finished } from "../types";
+//
+// test(
+//   "Functions are stored correctly in lists",
+//   () => {
+//     const code = `
+//     const f = i => i + 1;
+//     pair(3, 4);
+//     const lst = pair(f, f);
+//     head(lst) === f;
+//   `;
+//     const context = mockContext(2);
+//     const promise = runInContext(code, context, { scheduler: "preemptive" });
+//     return promise.then(obj => {
+//       console.log(parseError(context.errors));
+//
+//       expect(obj.status).toBe("finished");
+//       expect((obj as Finished).value).toBe(true);
+//     });
+//   },
+//   30000
+// );
+//
+// test(
+//   "HOFs work",
+//   () => {
+//     const code = `
+//     accumulate((x, y) => x + y, 0, list(1,2,3));
+//   `;
+//     const context = mockContext(2);
+//     const promise = runInContext(code, context, { scheduler: "preemptive" });
+//     return promise.then(obj => {
+//       console.log(parseError(context.errors));
+//       expect(obj.status).toBe("finished");
+//       expect((obj as Finished).value).toBe(6);
+//     });
+//   },
+//   30000
+// );
+//
+test("tru", {} => return true);
