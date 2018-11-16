@@ -68,7 +68,7 @@ export const toString = (value: Value, length = 0): string => {
       return arrayToString(value, length)
     }
   } else if (typeof value === 'string') {
-    return `\"${value}\"`
+    return value
   } else if (typeof value === 'undefined') {
     return 'undefined'
   } else if (typeof value === 'function') {
