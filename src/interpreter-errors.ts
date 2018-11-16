@@ -186,3 +186,39 @@ export class EmptyForExpression implements SourceError {
   }
 
 }
+
+export class GetPropertyError implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private obj: es.Node, private prop: string) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Cannot read property ${this.prop} of ${this.obj}`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
+
+export class SetPropertyError implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private obj: es.Node, private prop: string) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign property ${this.prop} of ${this.obj}`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
