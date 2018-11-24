@@ -1,0 +1,11 @@
+--- jison/lib/jison.js	2013-09-02 07:15:05.000000000 +0800
++++ jison/lib/jison.js	2014-08-16 09:23:01.418143400 +0800
+@@ -1204,6 +1204,8 @@
+ function parseError (str, hash) {
+     if (hash.recoverable) {
+         this.trace(str);
++    } else if (hash.loc && hash.line) {
++        throw new SyntaxError(str, hash.loc, hash.line);
+     } else {
+         throw new Error(str);
+     }
