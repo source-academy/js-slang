@@ -1,18 +1,16 @@
 \section*{Appendix: Stream library}
 
-Those stream library functions that are not builtins are pre-declared as follows:
+Those stream library functions that are not built-ins are pre-declared as follows:
 
 \begin{lstlisting}
 // stream.js: Supporting streams in the Scheme style, following
 //            "stream discipline"
-// A stream is either the empty list or a pair whose tail is
+// A stream is either null or a pair whose tail is
 // a nullary function that returns a stream.
 
-// list_to_stream transforms a given list to a stream
-// Lazy? Yes: list_to_stream goes down the list only when forced
 function list_to_stream(xs) {
-    return is_empty_list(xs)
-        ? []
+    return is_null(xs)
+        ? null
         : pair(head(xs), 
                () => list_to_stream(tail(xs))); 
 }
@@ -20,8 +18,8 @@ function list_to_stream(xs) {
 // stream_to_list transforms a given stream to a list
 // Lazy? No: stream_to_list needs to force the whole stream
 function stream_to_list(xs) {
-    return is_empty_list(xs)
-        ? []
+    return is_null(xs)
+        ? null
         : pair(head(xs), stream_to_list(stream_tail(xs)));
 }
 
@@ -29,7 +27,7 @@ function stream_to_list(xs) {
 // throws an exception if the argument is not a stream
 // Lazy? No: The function needs to explore the whole stream
 function stream_length(xs) {
-    return is_empty_list(xs)
+    return is_null(xs)
         ? 0
         : 1 + stream_length(stream_tail(xs));
 }
@@ -37,16 +35,16 @@ function stream_length(xs) {
 // stream_map applies first arg f to the elements of the second
 // argument, assumed to be a stream.
 // f is applied element-by-element:
-// stream_map(f,list_to_stream([1,[2,[]]])) results in
-// the same as list_to_stream([f(1),[f(2),[]]])
+// stream_map(f,list_to_stream([1,[2,null]])) results in
+// the same as list_to_stream([f(1),[f(2),null]])
 // stream_map throws an exception if the second argument is not a
 // stream, and if the second argument is a non-empty stream and the
 // first argument is not a function.
 // Lazy? Yes: The argument stream is only explored as forced by
 //            the result stream.
 function stream_map(f, s) {
-    return is_empty_list(s)
-        ? []
+    return is_null(s)
+        ? null
         : pair(f(head(s)), 
                  () => stream_map(f, stream_tail(s)));
 }
@@ -60,7 +58,7 @@ function stream_map(f, s) {
 function build_stream(n, fun) {
     function build(i) {
         return i >= n
-            ? []
+            ? null
             : pair(fun(i), 
                    () => build(i + 1)); 
     }
@@ -69,7 +67,7 @@ function build_stream(n, fun) {
 
 // stream_for_each applies first arg fun to the elements of the list
 // passed as second argument. fun is applied element-by-element:
-// for_each(fun,list_to_stream([1,[2,[]]])) results in the calls fun(1)
+// for_each(fun,list_to_stream([1,[2,null]])) results in the calls fun(1)
 // and fun(2).
 // stream_for_each returns true.
 // stream_for_each throws an exception if the second argument is not a list,
@@ -77,7 +75,7 @@ function build_stream(n, fun) {
 // first argument is not a function.
 // Lazy? No: stream_for_each forces the exploration of the entire stream
 function stream_for_each(fun, xs) {
-    if (is_empty_list(xs)) {
+    if (is_null(xs)) {
         return true;
     } else {
         fun(head(xs));
@@ -90,22 +88,22 @@ function stream_for_each(fun, xs) {
 // Lazy? No: stream_reverse forces the exploration of the entire stream
 function stream_reverse(xs) {
     function rev(original, reversed) {
-        return is_empty_list(original)
+        return is_null(original)
             ? reversed
             : rev(stream_tail(original), 
                   pair(head(original), () => reversed));
     }
-    return rev(xs,[]);
+    return rev(xs,null);
 }
 
 // stream_append appends first argument stream and second argument stream.
-// In the result, the [] at the end of the first argument stream
+// In the result, null at the end of the first argument stream
 // is replaced by the second argument stream
 // stream_append throws an exception if the first argument is not a
 // stream.
 // Lazy? Yes: the result stream forces the actual append operation
 function stream_append(xs, ys) {
-    return is_empty_list(xs)
+    return is_null(xs)
         ? ys
         : pair(head(xs),
                () => stream_append(stream_tail(xs), ys)); 
@@ -113,12 +111,12 @@ function stream_append(xs, ys) {
 
 // stream_member looks for a given first-argument element in a given
 // second argument stream. It returns the first postfix substream
-// that starts with the given element. It returns [] if the
+// that starts with the given element. It returns null if the
 // element does not occur in the stream
 // Lazy? Sort-of: stream_member forces the stream only until the element is found.
 function stream_member(x, s) {
-    return is_empty_list(s)
-        ? []
+    return is_null(s)
+        ? null
         : head(s) === x
             ? s
             : stream_member(x, stream_tail(s));
@@ -129,8 +127,8 @@ function stream_member(x, s) {
 // if there is no occurrence.
 // Lazy? Yes: the result stream forces the construction of each next element
 function stream_remove(v, xs) {
-    return is_empty_list(xs)
-        ? []
+    return is_null(xs)
+        ? null
         : v === head(xs)
             ? stream_tail(xs)
             :  pair(head(xs), 
@@ -140,8 +138,8 @@ function stream_remove(v, xs) {
 // stream_remove_all removes all instances of v instead of just the first.
 // Lazy? Yes: the result stream forces the construction of each next element
 function stream_remove_all(v, xs) {
-    return is_empty_list(xs)
-        ? []
+    return is_null(xs)
+        ? null
         : v === head(xs)
             ? stream_remove_all(v, stream_tail(xs))
             : pair(head(xs), () => stream_remove_all(v, stream_tail(xs))); 
@@ -154,8 +152,8 @@ function stream_remove_all(v, xs) {
 //            of the next element needs to go down the stream
 //            until an element is found for which p holds.
 function stream_filter(p, s) {
-    return is_empty_list(s)
-        ? []
+    return is_null(s)
+        ? null
         : p(head(s))
             ? pair(head(s), 
                    () => stream_filter(p, stream_tail(s)));
@@ -169,7 +167,7 @@ function stream_filter(p, s) {
 //            each next element
 function enum_stream(start, end) {
     return start > end
-        ? []
+        ? null
         : pair(start, 
                () => enum_stream(start + 1, end)); 
 }
@@ -190,7 +188,7 @@ function integers_from(n) {
 //                the stream untouched.
 function eval_stream(s, n) {
     return n === 0
-        ? []
+        ? null
         : pair(head(s),
                eval_stream(stream_tail(s),
                            n - 1));

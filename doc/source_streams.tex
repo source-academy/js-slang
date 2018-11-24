@@ -3,17 +3,17 @@
 The following stream processing functions are supported:
 
 \begin{itemize}
-\item \lstinline{stream_tail(x)}: \textit{Builtin}, assumes that the tail (second component) of the
+\item \lstinline{stream_tail(x)}: \textit{Built-in}, assumes that the tail (second component) of the
   pair \lstinline{x} is a nullary function, and returns the result of
   applying that function.\\
 \emph{Laziness:}  Yes: \lstinline{stream_tail} only forces the direct tail of a given
 stream,
 but not the rest of the stream, i.e. not the tail of the tail, etc.
-\item \lstinline{is_stream(x)}: \textit{Builtin}, returns \lstinline{true} if
+\item \lstinline{is_stream(x)}: \textit{Built-in}, returns \lstinline{true} if
   \lstinline{x} is a stream as defined in the lectures, and
   \lstinline{false} otherwise.\\
 \emph{Laziness:}  No: \lstinline{is_stream} needs to force the given stream.
-\item \lstinline{stream(x1, x2,..., xn)}: \textit{Builtin}, returns a stream with $n$ elements. The
+\item \lstinline{stream(x1, x2,..., xn)}: \textit{Built-in}, returns a stream with $n$ elements. The
 first element is \lstinline{x1}, the second \lstinline{x2}, etc.\\
 \emph{Laziness:}  No: In this implementation, we generate first a
            complete list, and then a stream using \lstinline{list_to_stream}.
@@ -45,7 +45,7 @@ appending the stream \lstinline{ys} to the stream \lstinline{xs}.\\
 \emph{Laziness:}  Yes: Forcing the result stream activates the actual append operation.
 \item \lstinline{stream_member(x, s)}: Returns first postfix substream
 whose head is equal to
-\lstinline{x} (\lstinline{===}); returns \lstinline{[]} if the
+\lstinline{x} (\lstinline{===}); returns \lstinline{null} if the
 element does not occur in the stream.\\
  \emph{Laziness:}  Sort-of: \lstinline{stream_member} forces the stream only until the element is found.
 \item \lstinline{stream_remove(x, s)}: Returns a stream that results from

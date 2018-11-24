@@ -26,7 +26,7 @@ audience with the characters used in names is an important aspect of program rea
 In addition to names that
 are declared using \texttt{\textbf{const}}, \texttt{\textbf{function}},
 $\texttt{\textbf{=>}}$ (and \texttt{\textbf{let}} in Source \S3 and 4), the following
-names refer to builtin functions and constants:
+names refer to built-in functions and constants:
 \begin{itemize}
 \item \lstinline{math_}$\textit{name}$,
 where $\textit{name}$ is any name specified in the
@@ -50,4 +50,8 @@ interprets the \emph{string} \texttt{s} as an integer, using the positive intege
 see \href{https://www.ecma-international.org/ecma-262/8.0/index.html#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
 \item \verb#undefined#, \verb#NaN#, \verb#Infinity#: Refer to JavaScript's undefined,
 NaN (``Not a Number'') and Infinity values, respectively.
+\item \verb#is_boolean#\texttt{(x)}, \verb#is_number#\texttt{(x)}, \verb#is_string#\texttt{(x)}, \verb#is_function#\texttt{(x)}:
+        return \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. Following
+  JavaScript, we specify that \verb#is_number# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
 \end{itemize}
+All Source built-in functions can be assumed to run in $O(1)$ time.

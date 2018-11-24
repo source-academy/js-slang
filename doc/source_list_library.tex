@@ -1,30 +1,30 @@
 \section*{Appendix: List library}
 
-Those list library functions that are not builtins are pre-declared as follows:
+Those list library functions that are not built-ins are pre-declared as follows:
 
 \begin{lstlisting}
-// is_list recurses down the list and checks that it ends with the empty list []
+// is_list recurses down the list and checks that it ends with the empty list null
 
 function is_list(xs) {
-    return is_empty_list(xs) || (is_pair(xs) && is_list(tail(xs)));
+    return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
 }
 
 // equal computes the structural equality 
 // over its arguments
 
-function equal(item1, item2){
-    return (is_pair(item1) && is_pair(item2)) 
-        ? (equal(head(item1), head(item2)) &&
-           equal(tail(item1), tail(item2)))
-        : (is_empty_list(item1) && is_empty_list(item2))
-          || item1 === item2;
+function equal(x, y){
+    return (is_pair(x) && is_pair(y)) 
+        ? (equal(head(x), head(y)) &&
+           equal(tail(x), tail(y)))
+        : (is_null(x) && is_null(y))
+          || x === y;
 }
 
 // returns the length of a given argument list
 // assumes that the argument is a list
 
 function length(xs) {
-    return is_empty_list(xs) 
+    return is_null(xs) 
 	? 0
         : 1 + length(tail(xs));
 }
@@ -32,11 +32,11 @@ function length(xs) {
 // map applies first arg f, assumed to be a unary function,
 // to the elements of the second argument, assumed to be a list.
 // f is applied element-by-element: 
-// map(f, [1, [2, []]]) results in [f(1), [f(2), []]]
+// map(f, [1, [2, null]]) results in [f(1), [f(2), null]]
 
 function map(f, xs) {
-    return is_empty_list(xs)
-        ? []
+    return is_null(xs)
+        ? null
         : pair(f(head(xs)), map(f, tail(xs)));
 }
 
@@ -52,17 +52,17 @@ function build_list(n, fun){
 	    : build(i - 1, fun, pair(fun(i),
 		  		     already_built));
     }
-    return build(n - 1, fun, []);
+    return build(n - 1, fun, null);
 }
 
 // for_each applies first arg fun, assumed to be a unary function,
 // to the elements of the second argument, assumed to be a list.
 // fun is applied element-by-element:
-// for_each(fun, [1, [2, []]]) results in the calls fun(1) and fun(2).
+// for_each(fun, [1, [2, null]]) results in the calls fun(1) and fun(2).
 // for_each returns true.
 
 function for_each(fun, xs) {
-    if (is_empty_list(xs)) {
+    if (is_null(xs)) {
 	return true;
     } else {
         fun(head(xs));
@@ -81,8 +81,8 @@ function to_string(x) {
 // When it encounters a non-list, it applies toString to it.
 
 function list_to_string(xs) {
-    return is_empty_list(xs)
-        ? "[]"
+    return is_null(xs)
+        ? "null"
         : is_pair(xs)
             ? "[" + list_to_string(head(xs)) + ","+
                     list_to_string(tail(xs))      + "]"
@@ -93,21 +93,21 @@ function list_to_string(xs) {
 
 function reverse(xs) {
     function rev(original, reversed) {
-	return is_empty_list(original)
+	return is_null(original)
 	    ? reversed
 	    : rev(tail(original), 
 	          pair(head(original), reversed));
     }
-    return rev(xs, []);
+    return rev(xs, null);
 }
 
 // append first argument, assumed to be a list, to the second argument.
-// In the result, the [] at the end of the first argument list
+// In the result null at the end of the first argument list
 // is replaced by the second argument, regardless what the second
 // argument consists of.
 
 function append(xs, ys) {
-    return is_empty_list(xs)
+    return is_null(xs)
 	? ys
         : pair(head(xs),
 	       append(tail(xs), ys));
@@ -115,12 +115,12 @@ function append(xs, ys) {
 
 // member looks for a given first-argument element in the 
 // second argument, assumed to be a list. It returns the first 
-// postfix sublist that starts with the given element. It returns [] if the 
+// postfix sublist that starts with the given element. It returns null if the 
 // element does not occur in the list
 
 function member(v, xs){
-    return is_empty_list(xs)
-	? []
+    return is_null(xs)
+	? null
         : (v === head(xs))
 	    ? xs
 	    : member(v, tail(xs));
@@ -131,8 +131,8 @@ function member(v, xs){
 // list if there is no occurrence.
 
 function remove(v, xs){
-    return is_empty_list(xs)
-	? []
+    return is_null(xs)
+	? null
         : v === head(xs)
 	    ? tail(xs)
 	    : pair(head(xs), 
@@ -143,8 +143,8 @@ function remove(v, xs){
 // instead of just the first
 
 function remove_all(v, xs) {
-    return is_empty_list(xs)
-	? []
+    return is_null(xs)
+	? null
         : v === head(xs)
 	    ? remove_all(v, tail(xs))
 	    : pair(head(xs), 
@@ -156,7 +156,7 @@ function remove_all(v, xs) {
 // returns true.
 
 function filter(pred, xs){
-    return is_empty_list(xs)
+    return is_null(xs)
 	? xs
         : pred(head(xs))
 	    ? pair(head(xs),
@@ -170,7 +170,7 @@ function filter(pred, xs){
 
 function enum_list(start, end) {
     return start > end
-	? []
+	? null
         : pair(start,
 	       enum_list(start + 1, end));
 }
@@ -195,7 +195,7 @@ function list_ref(xs, n) {
 // op(1, op(2, op(3, zero)))
 
 function accumulate(f, initial, xs) {
-    return is_empty_list(xs)
+    return is_null(xs)
         ? initial
         : f(head(xs),
              accumulate(f, initial, tail(xs)));

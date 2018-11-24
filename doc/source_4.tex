@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2018}{Source}{\S 4}
+	\docheader{2019}{Source}{\S 4}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
@@ -13,9 +13,8 @@ Compared to Source \S 3, Source \S 4 has the following changes:
 \begin{itemize}
 \item literal object expressions
 \item dot abbreviation (see Section \textbf{Objects})
-\item Source \S 4 adds the functions \lstinline{parse},
-\lstinline{apply_in_underlying_javascript}, and
-\lstinline{JSON.stringify}.
+\item Source \S 4 adds the functions \lstinline{parse} and
+\lstinline{apply_in_underlying_javascript}. 
 Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
 \lstinline{is_string}, \lstinline{is_function}, \lstinline{is_object} and
 \lstinline{is_array} are available, with their obvious meaning.
@@ -89,6 +88,8 @@ Section ``Interpreter Support'' below.
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad && \textbf{\texttt{null}}
+                                                           && \textrm{primitive list expression}\\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
 &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
@@ -105,7 +106,12 @@ Section ``Interpreter Support'' below.
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition expression}\\
+                                                           && \textrm{function definition (expression body)}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \textrm{function definition (block body)}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
@@ -116,6 +122,10 @@ Section ``Interpreter Support'' below.
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \textrm{array/object access} \\
+&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
+                                            \textit{expressions}\
+                                            \textbf{\texttt{]}}
+                                                           && \textrm{literal array expression}\\
 &&                       && |   &\quad &&   \textbf{\texttt{\{}}\ 
                                             \textit{properties}\
                                             \textbf{\texttt{\}}}
@@ -159,6 +169,8 @@ Section ``Interpreter Support'' below.
 \input source_pair_mutators
 
 \input source_array_support
+
+\input source_object_support
 
 \input source_streams
 

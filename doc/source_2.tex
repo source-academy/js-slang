@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2018}{Source}{\S 2}
+	\docheader{2019}{Source}{\S 2}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
@@ -11,7 +11,7 @@
 
 Compared to Source \S 1, Source \S 2 has the following changes:
 \begin{itemize}
-\item \lstinline{[]}: Empty list.
+\item \lstinline{null}: primitive list expression (empty list).
 \item List library: Functions for creating, accessing and processing lists.
 \end{itemize}
 
@@ -54,6 +54,8 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad && \textbf{\texttt{null}}
+                                                           && \textrm{primitive list expression}\\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
 &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
@@ -70,14 +72,17 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition expression}\\
+                                                           && \textrm{function definition (expression body)}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \textrm{function definition (block body)}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
                                                            && \textrm{conditional expression}\\
-&&                       && |   &\quad &&   \textbf{\texttt{[]}}
-                                                           && \textrm{primitive empty list expression}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
 && \textit{binary-operator}    \ 
