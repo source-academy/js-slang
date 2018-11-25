@@ -10,6 +10,8 @@
 \input source_bnf.tex
 
 \begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \textit{statement} \ \ldots
+                                                           && \textrm{non-empty statement sequence} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
@@ -20,8 +22,6 @@
                                                            && \textrm{return statement}\\
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{conditional statement}\\
-&&                       && |   &\quad &&  \textit{statement} \ 
-                                    \textit{statement}     && \textrm{statement sequence} \\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
@@ -39,7 +39,7 @@
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{block statement}\\[1mm]         
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
@@ -60,7 +60,7 @@
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition (expression body)}\\
+                                                           && \textrm{function definition (expr. body)}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    

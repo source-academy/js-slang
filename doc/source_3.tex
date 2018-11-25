@@ -32,6 +32,8 @@ applied to arrays.
 \newpage
 
 \begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \textit{statement} \ \ldots
+                                                           && \textrm{non-empty statement sequence} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
@@ -64,8 +66,6 @@ applied to arrays.
                                                            && \textrm{break statement}\\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
                                                            && \textrm{continue statement}\\
-&&                       && |   &\quad &&  \textit{statement} \ 
-                                    \textit{statement}     && \textrm{statement sequence} \\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
@@ -83,7 +83,7 @@ applied to arrays.
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{block statement}\\[1mm]         
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
@@ -112,7 +112,7 @@ applied to arrays.
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition (expression body)}\\
+                                                           && \textrm{function definition (expr. body)}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
