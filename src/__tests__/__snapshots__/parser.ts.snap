@@ -133,3 +133,144 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Parse an arrow function 1`] = `
+Node {
+  "__id": "node_13",
+  "body": Array [
+    Node {
+      "__id": "node_12",
+      "end": 11,
+      "expression": Node {
+        "__id": "node_11",
+        "body": Node {
+          "__id": "node_10",
+          "end": 10,
+          "left": Node {
+            "__id": "node_8",
+            "end": 6,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 6,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 5,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 5,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 5,
+              "line": 1,
+            },
+          },
+          "operator": "+",
+          "right": Node {
+            "__id": "node_9",
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 9,
+            "type": "Literal",
+            "value": 1,
+          },
+          "start": 5,
+          "type": "BinaryExpression",
+        },
+        "end": 10,
+        "expression": true,
+        "generator": false,
+        "id": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "params": Array [
+          Node {
+            "end": 1,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 0,
+            "type": "Identifier",
+          },
+        ],
+        "start": 0,
+        "type": "ArrowFunctionExpression",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 11,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 11,
+      "line": 1,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "script",
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`Parse an arrow function assignment in js-slang 1`] = `
+Object {
+  "status": "finished",
+  "value": "[{\\"tag\\":\\"constant_declaration\\",\\"name\\":\\"y\\",\\"value\\":{\\"tag\\":\\"function_definition\\",\\"parameters\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[]],\\"body\\":{\\"tag\\":\\"return_statement\\",\\"expression\\":{\\"tag\\":\\"application\\",\\"operator\\":{\\"tag\\":\\"name\\",\\"name\\":\\"+\\",\\"line\\":0},\\"operands\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[1,[]]],\\"line\\":0},\\"line\\":0},\\"line\\":0,\\"location\\":{\\"start_line\\":1,\\"start_col\\":10,\\"end_line\\":1,\\"end_col\\":10}},\\"line\\":0},[]]",
+}
+`;
+
+exports[`Parse an arrow function expression in js-slang 1`] = `
+Object {
+  "status": "finished",
+  "value": "[{\\"tag\\":\\"function_definition\\",\\"parameters\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[]],\\"body\\":{\\"tag\\":\\"return_statement\\",\\"expression\\":{\\"tag\\":\\"application\\",\\"operator\\":{\\"tag\\":\\"name\\",\\"name\\":\\"+\\",\\"line\\":0},\\"operands\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[1,[]]],\\"line\\":0},\\"line\\":0},\\"line\\":0,\\"location\\":{\\"start_line\\":1,\\"start_col\\":0,\\"end_line\\":1,\\"end_col\\":0}},[]]",
+}
+`;
