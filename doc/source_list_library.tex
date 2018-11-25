@@ -16,8 +16,7 @@ function equal(x, y){
     return (is_pair(x) && is_pair(y)) 
         ? (equal(head(x), head(y)) &&
            equal(tail(x), tail(y)))
-        : (is_null(x) && is_null(y))
-          || x === y;
+        : x === y;
 }
 
 // returns the length of a given argument list
@@ -32,7 +31,7 @@ function length(xs) {
 // map applies first arg f, assumed to be a unary function,
 // to the elements of the second argument, assumed to be a list.
 // f is applied element-by-element: 
-// map(f, [1, [2, null]]) results in [f(1), [f(2), null]]
+// map(f, list(1, 2)) results in list(f(1), f(2))
 
 function map(f, xs) {
     return is_null(xs)
@@ -58,7 +57,7 @@ function build_list(n, fun){
 // for_each applies first arg fun, assumed to be a unary function,
 // to the elements of the second argument, assumed to be a list.
 // fun is applied element-by-element:
-// for_each(fun, [1, [2, null]]) results in the calls fun(1) and fun(2).
+// for_each(fun, list(1, 2)) results in the calls fun(1) and fun(2).
 // for_each returns true.
 
 function for_each(fun, xs) {
@@ -78,7 +77,7 @@ function to_string(x) {
 
 // list_to_string returns a string that represents the argument list.
 // It applies itself recursively on the elements of the given list.
-// When it encounters a non-list, it applies toString to it.
+// When it encounters a non-list, it applies to_string to it.
 
 function list_to_string(xs) {
     return is_null(xs)

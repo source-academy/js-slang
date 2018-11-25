@@ -35,8 +35,8 @@ function stream_length(xs) {
 // stream_map applies first arg f to the elements of the second
 // argument, assumed to be a stream.
 // f is applied element-by-element:
-// stream_map(f,list_to_stream([1,[2,null]])) results in
-// the same as list_to_stream([f(1),[f(2),null]])
+// stream_map(f,list_to_stream(list(1,2)) results in
+// the same as list_to_stream(list(f(1),f(2)))
 // stream_map throws an exception if the second argument is not a
 // stream, and if the second argument is a non-empty stream and the
 // first argument is not a function.
@@ -65,13 +65,13 @@ function build_stream(n, fun) {
     return build(0);
 }
 
-// stream_for_each applies first arg fun to the elements of the list
+// stream_for_each applies first arg fun to the elements of the stream
 // passed as second argument. fun is applied element-by-element:
 // for_each(fun,list_to_stream([1,[2,null]])) results in the calls fun(1)
 // and fun(2).
 // stream_for_each returns true.
-// stream_for_each throws an exception if the second argument is not a list,
-// and if the second argument is a non-empty list and the
+// stream_for_each throws an exception if the second argument is not a 
+// stream, and if the second argument is a non-empty stream and the
 // first argument is not a function.
 // Lazy? No: stream_for_each forces the exploration of the entire stream
 function stream_for_each(fun, xs) {
