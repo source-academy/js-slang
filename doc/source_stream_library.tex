@@ -156,7 +156,7 @@ function stream_filter(p, s) {
         ? null
         : p(head(s))
             ? pair(head(s), 
-                   () => stream_filter(p, stream_tail(s)));
+                   () => stream_filter(p, stream_tail(s)))
             : stream_filter(p, stream_tail(s));
 }
 
