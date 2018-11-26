@@ -95,7 +95,7 @@ function reverse(xs) {
         return is_null(original)
             ? reversed
             : rev(tail(original), 
-                pair(head(original), reversed));
+                  pair(head(original), reversed));
     }
     return rev(xs, null);
 }
@@ -135,7 +135,7 @@ function remove(v, xs){
         : v === head(xs)
             ? tail(xs)
             : pair(head(xs), 
-                remove(v, tail(xs)));
+                   remove(v, tail(xs)));
 }
 
 // Similar to remove, but removes all instances of v
@@ -147,7 +147,7 @@ function remove_all(v, xs) {
         : v === head(xs)
             ? remove_all(v, tail(xs))
             : pair(head(xs), 
-                remove_all(v, tail(xs)));
+                     remove_all(v, tail(xs)));
 }
 
 // filter returns the sublist of elements of the second argument
@@ -159,7 +159,7 @@ function filter(pred, xs){
         ? xs
         : pred(head(xs))
             ? pair(head(xs),
-                filter(pred, tail(xs)))
+                   filter(pred, tail(xs)))
             : filter(pred, tail(xs));
 }
 
@@ -171,7 +171,7 @@ function enum_list(start, end) {
     return start > end
         ? null
         : pair(start,
-            enum_list(start + 1, end));
+               enum_list(start + 1, end));
 }
 
 // Returns the item in xs (assumed to be a list) at index n,
@@ -180,7 +180,7 @@ function enum_list(start, end) {
 
 function list_ref(xs, n) {
     return n === 0
-	? head(xs)
+        ? head(xs)
         : list_ref(tail(xs), n - 1);
 }
 
@@ -197,7 +197,7 @@ function accumulate(f, initial, xs) {
     return is_null(xs)
         ? initial
         : f(head(xs),
-            accumulate(f, initial, tail(xs)));
+             accumulate(f, initial, tail(xs)));
 }
 \end{lstlisting}
 

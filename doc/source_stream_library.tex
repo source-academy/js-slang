@@ -5,6 +5,14 @@ Those stream library functions that are not built-ins are pre-declared as follow
 \begin{lstlisting}
 // stream.js: Supporting streams in the Scheme style, following
 //            "stream discipline"
+
+// is_stream recurses down the stream and checks that it ends with the
+// empty list null
+
+function is_stream(xs) {
+    return is_null(xs) || (is_pair(xs) && is_list(stream_tail(xs)));
+}
+
 // A stream is either null or a pair whose tail is
 // a nullary function that returns a stream.
 
