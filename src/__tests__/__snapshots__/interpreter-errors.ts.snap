@@ -135,33 +135,6 @@ Array [
 ]
 `;
 
-exports[`In case a function ever returns null, should throw an error as well 1`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`In case a function ever returns null, should throw an error as well 2`] = `
-Array [
-  GetPropertyError {
-    "location": SourceLocation {
-      "end": Position {
-        "column": 15,
-        "line": 3,
-      },
-      "start": Position {
-        "column": 4,
-        "line": 3,
-      },
-    },
-    "obj": null,
-    "prop": "prop",
-    "severity": "Error",
-    "type": "Runtime",
-  },
-]
-`;
-
 exports[`Undefined variable error is thrown 1`] = `
 Object {
   "status": "error",

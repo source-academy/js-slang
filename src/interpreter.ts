@@ -389,6 +389,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       prop = (node.property as es.Identifier).name
     }
+    if((obj !== undefined) && (prop in obj) && (!obj.hasOwnProperty(prop))){
+        handleError(context, new errors.GetInheritedPropertyError(node, obj, prop))
+    }
     try {
       return obj[prop]
     } catch {
@@ -406,6 +409,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         prop = (left.property as es.Identifier).name
       }
       const val = yield* evaluate(node.right, context)
+      if((obj !== undefined) && (prop in obj) && (!obj.hasOwnProperty(prop))){
+        handleError(context, new errors.SetInheritedPropertyError(node, obj, prop))
+      }
       try {
         obj[prop] = val
       } catch {

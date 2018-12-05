@@ -87,17 +87,17 @@ test('Error when deeply accessing property on undefined', () => {
   })
 })
 
-test('In case a function ever returns null, should throw an error as well', () => {
-  const code = `
-    const myNull = pair.constructor("return null;")();
-    myNull.prop;
-   `;
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of null')
-  })
-})
+// test('In case a function ever returns null, should throw an error as well', () => {
+//   const code = `
+//     const myNull = pair.constructor("return null;")();
+//     myNull.prop;
+//    `;
+//   const context = mockContext(4)
+//   const promise = runInContext(code, context, { scheduler: 'preemptive' })
+//   return promise.then(obj => {
+//     expect(obj).toMatchSnapshot()
+//     expect(obj.status).toBe('error')
+//     expect(context.errors).toMatchSnapshot()
+//     expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of null')
+//   })
+// })

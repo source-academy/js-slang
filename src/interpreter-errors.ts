@@ -205,20 +205,56 @@ export class GetPropertyError implements SourceError {
   }
 }
 
+export class GetInheritedPropertyError implements SourceError {
+    public type = ErrorType.RUNTIME
+    public severity = ErrorSeverity.ERROR
+    public location: es.SourceLocation
+
+    constructor(node: es.Node, private obj: es.Node, private prop: string) {
+        this.location = node.loc!
+    }
+
+    public explain() {
+        return `Cannot read inherited property ${this.prop} of ${this.obj}`
+    }
+
+    public elaborate() {
+        return 'TODO'
+    }
+}
+
 export class SetPropertyError implements SourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
+    public type = ErrorType.RUNTIME
+    public severity = ErrorSeverity.ERROR
+    public location: es.SourceLocation
 
-  constructor(node: es.Node, private obj: es.Node, private prop: string) {
-    this.location = node.loc!
-  }
+    constructor(node: es.Node, private obj: es.Node, private prop: string) {
+        this.location = node.loc!
+    }
 
-  public explain() {
-    return `Cannot assign property ${this.prop} of ${this.obj}`
-  }
+    public explain() {
+        return `Cannot assign property ${this.prop} of ${this.obj}`
+    }
 
-  public elaborate() {
-    return 'TODO'
-  }
+    public elaborate() {
+        return 'TODO'
+    }
+}
+
+export class SetInheritedPropertyError implements SourceError {
+    public type = ErrorType.RUNTIME
+    public severity = ErrorSeverity.ERROR
+    public location: es.SourceLocation
+
+    constructor(node: es.Node, private obj: es.Node, private prop: string) {
+        this.location = node.loc!
+    }
+
+    public explain() {
+        return `Cannot assign inherited property ${this.prop} of ${this.obj}`
+    }
+
+    public elaborate() {
+        return 'TODO'
+    }
 }
