@@ -389,6 +389,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       prop = (node.property as es.Identifier).name
     }
+
+    if(!obj.hasOwnProperty(prop)){
+        handleError(context, new errors.GetPropertyError(node, obj, prop))
+    }
+
     try {
       return obj[prop]
     } catch {
