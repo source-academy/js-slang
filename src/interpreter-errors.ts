@@ -113,6 +113,24 @@ export class UndefinedVariable implements SourceError {
   }
 }
 
+export class UnassignedVariable implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(public name: string, node: es.Node) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Name ${this.name} not yet assigned`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
+
 export class InvalidNumberOfArguments implements SourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
