@@ -15,6 +15,34 @@ test("Undefined variable error is thrown", () => {
   })
 })
 
+test('Error when assigning to builtin', () => {
+  const code = `
+    map = 5;
+   `;
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 2: Cannot assign new value to constant map')
+  })
+})
+
+test('Error when assigning to builtin', () => {
+  const code = `
+    undefined = 5;
+   `;
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 2: Cannot assign new value to constant undefined')
+  })
+})
+
 test('Error when assigning to property on undefined', () => {
   const code = `
     undefined.prop = 123;
