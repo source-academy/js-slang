@@ -353,7 +353,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         value = undefined
         break
       }
-      if (value instanceof ReturnValue) {
+      if (value instanceof ReturnValue || value instanceof TailCallReturnValue) {
         break
       }
       if (node.update) {
@@ -374,16 +374,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (obj instanceof Closure) {
       obj = obj.fun
     }
+    let prop
     if (node.computed) {
-      const prop = yield* evaluate(node.property, context)
-      return obj[prop]
+      prop = yield* evaluate(node.property, context)
     } else {
-      const name = (node.property as es.Identifier).name
-      if (name === 'prototype') {
-        return obj.prototype
-      } else {
-        return obj[name]
-      }
+      prop = (node.property as es.Identifier).name
+    }
+    try {
+      return obj[prop]
+    } catch {
+      handleError(context, new errors.GetPropertyError(node, obj, prop))
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
@@ -397,7 +397,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         prop = (left.property as es.Identifier).name
       }
       const val = yield* evaluate(node.right, context)
-      obj[prop] = val
+      try {
+        obj[prop] = val
+      } catch {
+        handleError(context, new errors.SetPropertyError(node, obj, prop))
+      }
       return val
     }
     const id = node.left as es.Identifier
@@ -488,6 +492,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       result = yield* evaluate(statement, context)
       if (
         result instanceof ReturnValue ||
+        result instanceof TailCallReturnValue ||
         result instanceof BreakValue ||
         result instanceof ContinueValue
       ) {
@@ -501,7 +506,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result: Value
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
-      if (result instanceof ReturnValue) {
+      if (result instanceof ReturnValue || result instanceof TailCallReturnValue) {
         break
       }
     }

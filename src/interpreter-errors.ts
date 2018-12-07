@@ -166,3 +166,59 @@ export class ConstAssignment implements SourceError {
     return 'TODO'
   }
 }
+
+export class EmptyForExpression implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private missing: string[]) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    const exp = this.missing.length > 1 ? 'expressions': 'expression'
+    return `For statement cannot have empty ${this.missing.join(',')} ${exp}.`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+
+}
+
+export class GetPropertyError implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private obj: es.Node, private prop: string) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Cannot read property ${this.prop} of ${this.obj}`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
+
+export class SetPropertyError implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node: es.Node, private obj: es.Node, private prop: string) {
+    this.location = node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign property ${this.prop} of ${this.obj}`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
