@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2018}{Source}{\S 4}
+	\docheader{2019}{Source}{\S 4}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
@@ -11,22 +11,17 @@
 
 Compared to Source \S 3, Source \S 4 has the following changes:
 \begin{itemize}
-\item literal object expressions
-\item dot abbreviation (see Section \textbf{Objects})
-\item Source \S 4 adds the functions \lstinline{parse},
-\lstinline{apply_in_underlying_javascript}, and
-\lstinline{JSON.stringify}.
-Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
-\lstinline{is_string}, \lstinline{is_function}, \lstinline{is_object} and
-\lstinline{is_array} are available, with their obvious meaning.
-Following JavaScript, \lstinline{is_object} returns \lstinline{true} when
-applied to arrays. For details, see 
+\item Source \S 4 adds the functions \lstinline{parse} and
+\lstinline{apply_in_underlying_javascript}. 
+For details, see 
 Section ``Interpreter Support'' below.
 \end{itemize}
 
 \input source_bnf.tex
 
 \begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
+                                                           && \textrm{statement sequence} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
@@ -37,7 +32,7 @@ Section ``Interpreter Support'' below.
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{array/object assignment} \\
+                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{function declaration}\\
@@ -59,12 +54,10 @@ Section ``Interpreter Support'' below.
                                                            && \textrm{break statement}\\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
                                                            && \textrm{continue statement}\\
-&&                       && |   &\quad &&  \textit{statement} \ 
-                                    \textit{statement}     && \textrm{statement sequence} \\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{expression statement} \\[1mm] 
+                                                           && \textrm{expression statement} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \textrm{function parameters}   \\[1mm]
@@ -76,7 +69,7 @@ Section ``Interpreter Support'' below.
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{block statement}\\[1mm]         
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
@@ -87,6 +80,8 @@ Section ``Interpreter Support'' below.
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad && \textbf{\texttt{null}}
+                                                           && \textrm{primitive list expression}\\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
 &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
@@ -103,21 +98,24 @@ Section ``Interpreter Support'' below.
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition expression}\\
+                                                           && \textrm{function definition (expr. body)}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \textrm{function definition (block body)}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
                                                            && \textrm{conditional expression}\\
-&&                       && |   &\quad &&   \textbf{\texttt{[]}}
-                                                           && \textrm{empty list/array expression}\\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
-                                                           && \textrm{array/object access} \\
-&&                       && |   &\quad &&   \textbf{\texttt{\{}}\ 
-                                            \textit{properties}\
-                                            \textbf{\texttt{\}}}
-                                                           && \textrm{literal object expression}\\
+                                                           && \textrm{array access} \\
+&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
+                                            \textit{expressions}\
+                                            \textbf{\texttt{]}}
+                                                           && \textrm{literal array expression}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
 && \textit{binary-operator}    \ 
@@ -131,15 +129,7 @@ Section ``Interpreter Support'' below.
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
-                                                            && \textrm{argument expressions} \\[1mm]
-&& \textit{properties}  && ::= &\quad && \epsilon\ | \ \textit{property}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{property} \ 
-                                                                      )\ \ldots
-                                                            && \textrm{object properties} \\[1mm]
-&& \textit{property}  && ::= &\quad && (\ \textit{string}\ |\ \textit{name}\ ) 
-                                        \ \textbf{\texttt{:}} \ \textit{expression} 
-                                                            && \textrm{object property}
+                                                            && \textrm{argument expressions}
 \end{alignat*}
 
 \newpage
@@ -158,13 +148,13 @@ Section ``Interpreter Support'' below.
 
 \input source_array_support
 
+\input source_streams
+
 \input source_numbers
 
 \input source_strings
 
 \input source_arrays
-
-\input source_objects
 
 \input source_typing
 
@@ -175,5 +165,9 @@ Section ``Interpreter Support'' below.
 \newpage
 
 \input source_list_library
+
+\newpage
+
+\input source_stream_library
 
     \end{document}

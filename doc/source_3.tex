@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2018}{Source}{\S 3}
+	\docheader{2019}{Source}{\S 3}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
@@ -18,13 +18,18 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 \item \textbf{\texttt{for}} loops
 \item \textbf{\texttt{break}} and \textbf{\texttt{continue}}
 \item array access expressions
+\item literal array expressions
+\item function
+\lstinline{is_array} is available, with its obvious meaning
 \end{itemize}
-
-\newpage
 
 \input source_bnf.tex
 
+\newpage
+
 \begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
+                                                           && \textrm{statement sequence} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
@@ -57,14 +62,10 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                            && \textrm{break statement}\\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
                                                            && \textrm{continue statement}\\
-&&                       && |   &\quad &&  \textit{statement} \ 
-                                    \textit{statement}     && \textrm{statement sequence} \\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{expression statement} \\
-&&                       && |   &\quad &&  \epsilon
-                                                           && \textrm{empty statement} \\[1mm] 
+                                                           && \textrm{expression statement} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \textrm{function parameters}   \\[1mm]
@@ -76,7 +77,7 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                           \ | \
                                           \textit{if-statement} \ )
                                                             && \textrm{conditional statement}   \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}   \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{block statement}\\[1mm]         
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
@@ -87,6 +88,8 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
+&&                       && |   &\quad && \textbf{\texttt{null}}
+                                                           && \textrm{primitive list expression}\\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
 &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
@@ -103,17 +106,24 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition expression}\\
+                                                           && \textrm{function definition (expr. body)}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \textrm{function definition (block body)}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
                                                            && \textrm{conditional expression}\\
-&&                       && |   &\quad &&   \textbf{\texttt{[]}}
-                                                           && \textrm{empty list/array expression}\\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \textrm{array access} \\
+&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
+                                            \textit{expressions}\
+                                            \textbf{\texttt{]}}
+                                                           && \textrm{literal array expression}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
 && \textit{binary-operator}    \ 
@@ -146,6 +156,8 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 
 \input source_array_support
 
+\input source_streams
+
 \input source_numbers
 
 \input source_strings
@@ -159,5 +171,9 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 \newpage
 
 \input source_list_library
+
+\newpage
+
+\input source_stream_library
 
     \end{document}
