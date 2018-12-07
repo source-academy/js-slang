@@ -171,7 +171,7 @@ export class Closure extends Callable {
   public functionName: string
 
   /** Fake closure function */
-    // tslint:disable-next-line:ban-types
+  // tslint:disable-next-line:ban-types
   public fun: Function
 
   constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
@@ -194,7 +194,7 @@ export class Closure extends Callable {
 /**
  * Modified from class Closure, for construction of arrow functions.
  */
-export class ArrowClosure extends Callable{
+export class ArrowClosure extends Callable {
   /** Keep track how many lambdas are created */
   private static arrowCtr = 0
 
