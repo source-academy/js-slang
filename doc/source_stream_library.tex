@@ -75,7 +75,7 @@ function build_stream(n, fun) {
 
 // stream_for_each applies first arg fun to the elements of the stream
 // passed as second argument. fun is applied element-by-element:
-// for_each(fun,list_to_stream([1,[2,null]])) results in the calls fun(1)
+// for_each(fun,list_to_stream(list(1, 2,null))) results in the calls fun(1)
 // and fun(2).
 // stream_for_each returns true.
 // stream_for_each throws an exception if the second argument is not a 
