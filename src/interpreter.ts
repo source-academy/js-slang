@@ -67,10 +67,38 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
+const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol("Used to implement hoisting")
+
+function hoistIdentifier(context: Context, name: string, node: es.Node) {
+  const frame = currentFrame(context);
+  if (frame.environment.hasOwnProperty(name)) {
+    handleError(context, new errors.VariableRedeclaration(node!, name))
+  }
+  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  return frame;
+}
+function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+  for (const declaration of node.declarations) {
+    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+  }
+}
+function hoistFunctionsAndVariableDeclarationsIdentifiers(context: Context, node: es.BlockStatement) {
+  for (const statement of node.body) {
+    switch (statement.type) {
+      case 'VariableDeclaration':
+        hoistVariableDeclarations(context, statement)
+        break
+      case 'FunctionDeclaration':
+        hoistIdentifier(context, statement.id!.name, node)
+        break
+    }
+  }
+}
+
 function defineVariable(context: Context, name: string, value: Value, constant=false) {
   const frame = context.runtime.frames[0]
 
-  if (frame.environment.hasOwnProperty(name)) {
+  if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
@@ -103,7 +131,11 @@ const getVariable = (context: Context, name: string) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      return frame.environment[name]
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break;
+      } else {
+        return frame.environment[name]
+      }
     } else {
       frame = frame.parent
     }
@@ -114,6 +146,9 @@ const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break;
+      }
       const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
       if(descriptors[name].writable) {
         frame.environment[name] = value
@@ -326,8 +361,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       part => node[part] === null
     );
     if (missing_parts.length > 0) {
-      const error = new errors.EmptyForExpression(node, missing_parts);
-      handleError(context, error);
+      const error = new errors.EmptyForExpression(node, missing_parts)
+      handleError(context, error)
     }
 
     // Create a new block scope for the loop variables
@@ -335,6 +370,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     pushFrame(context, loopFrame)
 
     if (node.init) {
+      if (node.init.type === 'VariableDeclaration') {
+        hoistVariableDeclarations(context, node.init)
+      }
       yield* evaluate(node.init, context)
     }
     let test = node.test ? yield* evaluate(node.test, context) : true
@@ -496,6 +534,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new frame (block scoping)
     const frame = createBlockFrame(context, "blockFrame")
     pushFrame(context, frame)
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
 
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
@@ -512,6 +551,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return result
   },
   Program: function*(node: es.BlockStatement, context: Context) {
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
     let result: Value
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)

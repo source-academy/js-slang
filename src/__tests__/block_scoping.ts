@@ -154,3 +154,68 @@ test("Cannot overwrite loop variables within a block", () => {
   });
 });
 
+test(
+  'No hoisting of functions. Only the name is hoisted like let and const',
+  () => {
+    const code = `
+      const v = f();
+      function f() {
+        return 1;
+      }
+      v;
+    `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(obj).toMatchSnapshot()
+      expect(obj.status).toBe('error')
+      expect(errors).toEqual(
+        expect.stringMatching(/^Line 2: Name f not declared/)
+      )
+    })
+  },
+  30000
+)
+
+test(
+  'In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.',
+  () => {
+    const code = `
+      const a = 1;
+      {
+        a + a;
+        const a = 10;
+      }
+    `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toMatchSnapshot()
+      expect(errors).toEqual(
+        expect.stringMatching(/^Line 4: Name a not declared/)
+      )
+    })
+  },
+  30000
+)
+
+test("Shadowed variables may not be assigned to until declared in the current scope", () => {
+  const code = `
+  let variable = 1;
+  function test(){
+    variable = 100;
+    let variable = true;
+    return variable;
+  }
+  test();
+  `;
+  const context = mockContext(3);
+  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  return promise.then(obj => {
+    const errors = parseError(context.errors)
+    expect(obj.status).toBe('error')
+    expect(errors).toMatchSnapshot()
+  })
+})
