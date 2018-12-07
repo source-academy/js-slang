@@ -4,7 +4,7 @@
 
 Literal objects can be created using literal object expressions:
 \begin{lstlisting}
-var my_obj = { "key 1": 1,
+let my_obj = { "key 1": 1,
                "key 2": 2 };
 \end{lstlisting}
 
@@ -12,14 +12,14 @@ As keys, only strings are allowed in Source.
 If the string (without quotation marks) looks like a \textit{name}, the
 quotation marks around property keys can be omitted, for example:
 \begin{lstlisting}
-var my_motorcycle = { cc: 399,
+let the_motorcycle = { cc: 399,
                       number_of_cylinders: 4 };
 \end{lstlisting}
 
 The syntax
 \begin{lstlisting}
 my_obj["key 1"];
-my_motorcycle["cc"] = 1249;
+the_motorcycle["cc"] = 896;
 \end{lstlisting}
 allows for object access and assignment. Here, the quotation marks are not optional,
 even when the string (without quotation marks) looks like a \textit{name}.
@@ -30,11 +30,12 @@ In $\textit{statement}$ and $\textit{expression}$, the syntax
 \[
 \textit{expression} \ \texttt{.}\ \textit{id}
 \]
-is an abbreviation for
+can be used as an abbreviation for
 \[
 \textit{expression} \ \textbf{\texttt{[}}\  \texttt{\bf "} \textit{id}
 \texttt{\bf "}\ \textbf{\texttt{]}}
 \]
+if the string $\textit{id}$ looks like a \textit{name}.
 For example
 \begin{lstlisting}
 my_motorcyle . number_of_cylinders;
