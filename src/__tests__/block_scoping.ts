@@ -83,7 +83,8 @@ test("for loops use block scoping instead of function scoping", () => {
   const context = mockContext(3);
   const promise = runInContext(code, context, { scheduler: "preemptive" });
   return promise.then(obj => {
-    expect(obj.status).toBe("finished");
+    //expect(obj.status).toBe("finished");
+    expect(parseError(context.errors)).toBe("")
     expect(obj).toMatchSnapshot();
     expect((obj as Finished).value).toBe(true);
 
@@ -171,7 +172,7 @@ test(
       expect(obj).toMatchSnapshot()
       expect(obj.status).toBe('error')
       expect(errors).toEqual(
-        expect.stringMatching(/^Line 2: Name f not declared/)
+        expect.stringMatching(/^Line 2: Name f not yet assigned/)
       )
     })
   },
@@ -194,7 +195,7 @@ test(
       const errors = parseError(context.errors)
       expect(errors).toMatchSnapshot()
       expect(errors).toEqual(
-        expect.stringMatching(/^Line 4: Name a not declared/)
+        expect.stringMatching(/^Line 4: Name a not yet assigned/)
       )
     })
   },

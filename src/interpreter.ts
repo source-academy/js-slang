@@ -72,7 +72,7 @@ const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol("Used to implement hoisting")
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const frame = currentFrame(context);
   if (frame.environment.hasOwnProperty(name)) {
-    handleError(context, new errors.VariableRedeclaration(node!, name))
+    handleError(context, new errors.VariableRedeclaration(node, name))
   }
   frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return frame;
@@ -89,7 +89,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(context: Context, node
         hoistVariableDeclarations(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, statement.id!.name, node)
+        hoistIdentifier(context, (statement.id as es.Identifier).name, node)
         break
     }
   }
@@ -132,6 +132,7 @@ const getVariable = (context: Context, name: string) => {
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
       if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        handleError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
         break;
       } else {
         return frame.environment[name]
@@ -386,6 +387,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const frame = createBlockFrame(context, "forBlockFrame")
       pushFrame(context, frame)
       for(let name in loopFrame.environment) {
+        hoistIdentifier(context, name, node)
         defineVariable(context, name, loopFrame.environment[name], true)
       }
 
