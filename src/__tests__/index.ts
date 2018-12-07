@@ -2,6 +2,7 @@ import { stripIndent } from 'common-tags'
 import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
 import { Finished } from '../types'
+import { defineSymbol } from '../createContext'
 
 test('Empty code returns undefined', () => {
   const code = ''
@@ -22,6 +23,20 @@ test('Single string self-evaluates to itself', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe('42')
+  })
+})
+
+test('Multi-dimensional arrays display properly', () => {
+  const code = `
+    function a() {} 
+    ""+[1, a, 3, [() => 1, 5]];
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
   })
 })
 
@@ -189,6 +204,22 @@ test(
   30000
 )
 
+test("Functions passed into non-source functions remain equal", () => {
+  const code = `
+  function t(x, y, z) {
+    return x + y + z;
+  }
+  identity(t) === t && t(1, 2, 3) === 6;
+  `;
+  const context = mockContext(4);
+  defineSymbol(context, "identity", (x: any) => x)
+  const promise = runInContext(code, context, { scheduler: "preemptive" })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  });
+});
+
 test('Metacircular Interpreter parses Arrow Function Expressions properly', () => {
   const code = 'stringify(parse("x => x + 1;"));'
   const context = mockContext(4)
@@ -254,4 +285,3 @@ test('Deep object assignment and retrieval', () => {
     expect((obj as Finished).value).toBe("string")
   })
 })
-

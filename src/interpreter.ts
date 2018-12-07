@@ -2,7 +2,7 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toJS, toString } from './interop'
+import { toString } from './interop'
 import * as errors from './interpreter-errors'
 import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
@@ -26,7 +26,7 @@ const createFrame = (
   callExpression?: es.CallExpression
 ): Frame => {
   const frame: Frame = {
-    name: closure.name, // TODO: Change this
+    name: closure.functionName, // TODO: Change this
     parent: closure.frame,
     environment: {}
   }
@@ -607,8 +607,7 @@ export function* apply(
       result = new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {
-        const as = args.map(a => toJS(a, context))
-        result = fun.apply(thisContext, as)
+        result = fun.apply(thisContext, args)
         break
       } catch (e) {
         // Recover from exception
