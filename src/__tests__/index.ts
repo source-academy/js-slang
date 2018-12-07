@@ -2,6 +2,7 @@ import { stripIndent } from 'common-tags'
 import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
 import { Finished } from '../types'
+import { defineSymbol } from '../createContext'
 
 test('Empty code returns undefined', () => {
   const code = ''
