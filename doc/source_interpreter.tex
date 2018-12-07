@@ -1,24 +1,9 @@
 \section*{Interpreter Support}
 
 \begin{itemize}
-\item \lstinline{is_number(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is a number, and 
-\lstinline{false} otherwise.
-\item \lstinline{is_boolean(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is \lstinline{true} or \lstinline{false}, and \lstinline{false} otherwise.
-\item \lstinline{is_string(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is a
-string, and \lstinline{false} otherwise.
-\item \lstinline{is_function(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is a
-function, and \lstinline{false} otherwise.
-\item \lstinline{is_object(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is an
-object, and \lstinline{false} otherwise. Following JavaScript, arrays are considered
-objects.
-\item \lstinline{is_array(x)}: \textit{builtin}, returns \lstinline{true} if \lstinline{x} is an
-array, and \lstinline{false} otherwise. The empty array \lstinline{[]}, also known
-as the empty list, is an array.
-\item \lstinline{parse(x)}: \textit{builtin}, returns the parse tree that results from parsing
+\item \lstinline{parse(x)}: \textit{built-in}, returns the parse tree that results from parsing
 the string \lstinline{x} as a Source program.
-\item \lstinline{JSON.stringify(x)}: \textit{builtin}, returns a string that represents the given JSON object
-\lstinline{x}.
-\item \lstinline{apply_in_underlying_javascript(f, xs)}: \textit{builtin}, calls the function \lstinline{f}
+\item \lstinline{apply_in_underlying_javascript(f, xs)}: \textit{built-in}, calls the function \lstinline{f}
 with arguments \lstinline{xs}. For example:
 \begin{lstlisting}
 function times(x, y) {

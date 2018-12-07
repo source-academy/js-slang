@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cannot leave blank expressions in for loops 1`] = `"Line 2: For statement cannot have empty init expression."`;
+exports[`Cannot leave blank expressions in for loops 1`] = `"Line 2: Missing init expression in for statement."`;
 
-exports[`Cannot leave blank expressions in for loops 2`] = `"Line 2: For statement cannot have empty test expression."`;
+exports[`Cannot leave blank expressions in for loops 2`] = `"Line 2: Missing test expression in for statement."`;
 
-exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: For statement cannot have empty update expression."`;
+exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: Missing update expression in for statement."`;
 
-exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: For statement cannot have empty init,test,update expressions."`;
+exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: Missing init, test, update expressions in for statement."`;
 
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;

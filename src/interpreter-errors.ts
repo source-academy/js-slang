@@ -127,7 +127,25 @@ export class UndefinedVariable extends RuntimeSourceError {
   }
 }
 
-export class InvalidNumberOfArguments extends RuntimeSourceError {
+export class UnassignedVariable implements RuntimeSourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(public name: string, node: es.Node) {
+    super(node)
+  }
+
+  public explain() {
+    return `Name ${this.name} not yet assigned`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
+
+export class InvalidNumberOfArguments implements RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation

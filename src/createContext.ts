@@ -48,9 +48,17 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-const defineSymbol = (context: Context, name: string, value: Value) => {
+export const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalFrame = context.runtime.frames[0]
-  globalFrame.environment[name] = value
+  Object.defineProperty(
+    globalFrame.environment,
+    name,
+    {
+      value,
+      writable: false,
+      enumerable: true
+    }
+  )
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
@@ -143,7 +151,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       function () {
         return context.metaCircularParser
           .parse.apply(context.metaCircularParser, arguments)
-      });
+      })
     defineSymbol(context, 'apply_in_underlying_javascript', function(
       fun: Function,
       args: Value

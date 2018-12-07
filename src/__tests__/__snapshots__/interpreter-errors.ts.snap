@@ -53,6 +53,58 @@ Array [
 ]
 `;
 
+exports[`Error when assigning to builtin 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when assigning to builtin 2`] = `
+Array [
+  ConstAssignment {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 11,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "name": "map",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when assigning to builtin 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when assigning to builtin 4`] = `
+Array [
+  ConstAssignment {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 17,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "name": "undefined",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Error when assigning to property on undefined 1`] = `
 Object {
   "status": "error",
