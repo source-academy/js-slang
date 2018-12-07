@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Syntaxes are allowed in the chapter they are introduced 1`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 2`] = `undefined`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 3`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 4`] = `3`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 5`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 6`] = `true`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 7`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 8`] = `
+ReturnValue {
+  "value": 3,
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 9`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 10`] = `true`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 11`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 12`] = `false`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 13`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 14`] = `"a string \\"\\" ''"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 15`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 16`] = `31.4`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 17`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 18`] = `true`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 19`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 20`] = `null`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 21`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 22`] = `
+Array [
+  1,
+  null,
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 23`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 24`] = `
+Array [
+  1,
+  Array [],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 25`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 26`] = `5`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 27`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 28`] = `5`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 29`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 30`] = `4`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 31`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 32`] = `Array []`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 33`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 34`] = `
+Array [
+  1,
+  2,
+  3,
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 35`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 36`] = `Object {}`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 37`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 38`] = `
+Object {
+  "a": 1,
+  "b": 2,
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 40`] = `2`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 41`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 42`] = `1`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 43`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 44`] = `1`;

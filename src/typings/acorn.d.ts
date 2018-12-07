@@ -4,6 +4,8 @@ declare module 'acorn/dist/walk' {
   namespace AcornWalk {
     export type SimpleWalker<S> = (node: es.Node, state?: S) => void
     export type SimpleWalkers<S> = { [name: string]: SimpleWalker<S> }
+    export type AncestorWalker<S> = (node: es.Node, state: S, ancestors: [es.Node]) => void
+    export type AncestorWalkers<S> = { [name: string]: AncestorWalker<S> }
     export type Walker<T extends es.Node, S> = (
       node: T,
       state: S,
@@ -18,6 +20,12 @@ declare module 'acorn/dist/walk' {
       node: es.Node,
       visitors: SimpleWalkers<S>,
       base?: SimpleWalkers<S>,
+      state?: S
+    ): void
+    export function ancestor<S>(
+      node: es.Node,
+      visitors: AncestorWalkers<S>,
+      base?: AncestorWalkers<S>,
       state?: S
     ): void
     export function recursive<S>(node: es.Node, state: S, functions: Walkers<S>): void

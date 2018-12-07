@@ -40,7 +40,7 @@ export interface Rule<T extends es.Node> {
   name: string
   disableOn?: number
   checkers: {
-    [name: string]: (node: T) => SourceError[]
+    [name: string]: (node: T, ancestors: [es.Node]) => SourceError[]
   }
 }
 

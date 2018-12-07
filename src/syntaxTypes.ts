@@ -11,13 +11,11 @@ const syntaxTypes: { [nodeName: string]: number } = {
   BinaryExpression: 1,
   LogicalExpression: 1,
   ConditionalExpression: 1,
-  FunctionExpression: 1,
   ArrowFunctionExpression: 1,
   Identifier: 1,
   Literal: 1,
 
   // Chapter 2
-  ArrayExpression: 2,
 
   // Chapter 3
   AssignmentExpression: 3,
@@ -25,17 +23,19 @@ const syntaxTypes: { [nodeName: string]: number } = {
   WhileStatement: 3,
   BreakStatement: 3,
   ContinueStatement: 3,
-  ThisExpression: 3,
+  ArrayExpression: 3,
   ObjectExpression: 3,
   MemberExpression: 3,
   Property: 3,
 
   // Week 5
   UpdateExpression: 5,
-  EmptyStatement: 5,
   // previously Week 10
   NewExpression: 10,
   // Disallowed Forever
+  EmptyStatement: Infinity,
+  ThisExpression: Infinity,
+  FunctionExpression: Infinity,
   SwitchStatement: Infinity,
   DebuggerStatement: Infinity,
   WithStatement: Infinity,
