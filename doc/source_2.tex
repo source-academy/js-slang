@@ -20,8 +20,8 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 \input source_bnf.tex
 
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \textit{statement} \ \ldots
-                                                           && \textrm{non-empty statement sequence} \\[1mm]
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
+                                                           && \textrm{statement sequence} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{constant declaration} \\
@@ -35,9 +35,7 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{expression statement} \\
-&&                       && |   &\quad &&  \textbf{\texttt{;}}
-                                                           && \textrm{empty statement} \\[1mm] 
+                                                           && \textrm{expression statement} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \textrm{function parameters}   \\[1mm]
