@@ -211,8 +211,8 @@ test("Functions passed into non-source functions remain equal", () => {
   identity(t) === t && t(1, 2, 3) === 6;
   `;
   const context = mockContext(4);
-  context.runtime.frames[0].environment.identity = (x: any) => x
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  defineSymbol(context, "identity", (x: any) => x)
+  const promise = runInContext(code, context, { scheduler: "preemptive" })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(true)
