@@ -48,7 +48,7 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-const defineSymbol = (context: Context, name: string, value: Value) => {
+export const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalFrame = context.runtime.frames[0]
   Object.defineProperty(
     globalFrame.environment,
