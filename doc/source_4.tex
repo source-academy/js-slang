@@ -11,15 +11,9 @@
 
 Compared to Source \S 3, Source \S 4 has the following changes:
 \begin{itemize}
-\item literal object expressions
-\item dot abbreviation (see Section \textbf{Objects})
 \item Source \S 4 adds the functions \lstinline{parse} and
 \lstinline{apply_in_underlying_javascript}. 
-Furthermore, the functions \lstinline{is_boolean}, \lstinline{is_number},
-\lstinline{is_string}, \lstinline{is_function}, \lstinline{is_object} and
-\lstinline{is_array} are available, with their obvious meaning.
-Following JavaScript, \lstinline{is_object} returns \lstinline{true} when
-applied to arrays. For details, see 
+For details, see 
 Section ``Interpreter Support'' below.
 \end{itemize}
 
@@ -38,7 +32,7 @@ Section ``Interpreter Support'' below.
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{array/object assignment} \\
+                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{function declaration}\\
@@ -121,15 +115,11 @@ Section ``Interpreter Support'' below.
                                                            && \textrm{empty list/array expression}\\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
-                                                           && \textrm{array/object access} \\
+                                                           && \textrm{array access} \\
 &&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
                                                            && \textrm{literal array expression}\\
-&&                       && |   &\quad &&   \textbf{\texttt{\{}}\ 
-                                            \textit{properties}\
-                                            \textbf{\texttt{\}}}
-                                                           && \textrm{literal object expression}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
 && \textit{binary-operator}    \ 
@@ -143,15 +133,7 @@ Section ``Interpreter Support'' below.
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
-                                                            && \textrm{argument expressions} \\[1mm]
-&& \textit{properties}  && ::= &\quad && \epsilon\ | \ \textit{property}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{property} \ 
-                                                                      )\ \ldots
-                                                            && \textrm{object properties} \\[1mm]
-&& \textit{property}  && ::= &\quad && (\ \textit{string}\ |\ \textit{name}\ ) 
-                                        \ \textbf{\texttt{:}} \ \textit{expression} 
-                                                            && \textrm{object property}
+                                                            && \textrm{argument expressions}
 \end{alignat*}
 
 \newpage
@@ -170,8 +152,6 @@ Section ``Interpreter Support'' below.
 
 \input source_array_support
 
-\input source_object_support
-
 \input source_streams
 
 \input source_numbers
@@ -179,8 +159,6 @@ Section ``Interpreter Support'' below.
 \input source_strings
 
 \input source_arrays
-
-\input source_objects
 
 \input source_typing
 
