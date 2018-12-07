@@ -127,7 +127,7 @@ export class UndefinedVariable extends RuntimeSourceError {
   }
 }
 
-export class UnassignedVariable implements RuntimeSourceError {
+export class UnassignedVariable extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
@@ -145,7 +145,7 @@ export class UnassignedVariable implements RuntimeSourceError {
   }
 }
 
-export class InvalidNumberOfArguments implements RuntimeSourceError {
+export class InvalidNumberOfArguments extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
