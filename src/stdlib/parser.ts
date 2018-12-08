@@ -244,11 +244,21 @@ transformers = new Map([
   })}],
   ["MemberExpression", (node: es.Node) => {
     node = <es.MemberExpression> node
-    return ({
-      tag: "property_access",
-      object: transform(node.object),
-      property: transform(node.property)
-  })}],
+    if (node.computed) {
+      return ({
+        tag: "property_access",
+        object: transform(node.object),
+        property: transform(node.property)
+      })
+    } else {
+      const prop = <es.Identifier> node.property
+      return ({
+        tag: "property_access",
+        object: transform(node.object),
+        property: prop.name
+      })
+    }
+  }],
   ["Property", (node: es.Node) => {
     node = <es.Property> node
     if (node.key.type === 'Literal') {
