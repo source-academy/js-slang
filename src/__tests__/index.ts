@@ -255,10 +255,15 @@ test('Multi-dimensional arrays display properly', () => {
 })
 
 test('Simple object assignment and retrieval', () => {
+  // const code = `
+  //   const o = {};
+  //   o.a = 1;
+  //   o.a;
+  //  `;
   const code = `
     const o = {};
-    o.a = 1;
-    o.a;
+    o['a'] = 1;
+    o['a'];
    `;
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -270,12 +275,19 @@ test('Simple object assignment and retrieval', () => {
 })
 
 test('Deep object assignment and retrieval', () => {
+  // const code = `
+  //   const o = {};
+  //   o.a = {};
+  //   o.a.b = {};
+  //   o.a.b.c = "string";
+  //   o.a.b.c;
+  //  `;
   const code = `
     const o = {};
-    o.a = {};
-    o.a.b = {};
-    o.a.b.c = "string";
-    o.a.b.c;
+    o['a'] = {};
+    o['a']['b'] = {};
+    o['a']['b']['c'] = "string";
+    o['a']['b']['c'];
    `;
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

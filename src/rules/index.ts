@@ -16,6 +16,7 @@ import singleVariableDeclaration from './singleVariableDeclaration'
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
 import noAssignmentExpression from './noAssignmentExpression'
 import noUpdateAssignment from './noUpdateAssignment'
+import noDotAbbreviation from './noDotAbbreviation'
 
 const rules: Array<Rule<es.Node>> = [
   bracesAroundIfElse,
@@ -31,6 +32,7 @@ const rules: Array<Rule<es.Node>> = [
   forStatementMustHaveAllParts,
   noAssignmentExpression,
   noUpdateAssignment,
+  noDotAbbreviation,
   noUnspecifiedOperator
 ]
 
