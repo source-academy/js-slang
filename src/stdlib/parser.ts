@@ -27,20 +27,25 @@ type ASTTransformers = Map<string, (node: es.Node) => Value>
 
 let transformers: ASTTransformers
 transformers = new Map([
+
   ["Program", (node: es.Node) => {
     node = <es.Program> node
     return vector_to_list(node.body.map(transform))
   }],
+
   ["BlockStatement", (node: es.Node) => {
     node = <es.BlockStatement> node
     return ({
       tag: "block",
       body: vector_to_list(node.body.map(transform))
-  })}],
+    })
+  }],
+
   ["ExpressionStatement", (node: es.Node) => {
     node = <es.ExpressionStatement> node
     return transform(node.expression)
   }],
+
   ["IfStatement", (node: es.Node) => {
     node = <es.IfStatement> node
     return ({
@@ -48,7 +53,9 @@ transformers = new Map([
       predicate: transform(node.test),
       consequent: transform(node.consequent),
       alternative: transform(node.alternate as es.Statement)
-  })}],
+    })
+  }],
+
   ["FunctionDeclaration", (node: es.Node) => {
     node = <es.FunctionDeclaration> node
     return ({
@@ -59,7 +66,9 @@ transformers = new Map([
         parameters: vector_to_list(node.params.map(transform)),
         body: vector_to_list(node.body.body.map(transform))
       })
-  })}],
+    })
+  }],
+
   ["VariableDeclaration", (node: es.Node) => {
     node = <es.VariableDeclaration> node
     if (node.kind === 'let') {
@@ -79,19 +88,24 @@ transformers = new Map([
       throw new ParseError("Invalid declaration kind")
     }
   }],
+
   ["ReturnStatement", (node: es.Node) => {
     node = <es.ReturnStatement> node
     return ({
       tag: "return_statement",
       expression: transform(node.argument as es.Expression)
-  })}],
+    })
+  }],
+
   ["CallExpression", (node: es.Node) => {
     node = <es.CallExpression> node
     return ({
       tag: "application",
       operator: transform(node.callee),
       operands: vector_to_list(node.arguments.map(transform))
-  })}],
+    })
+  }],
+
   ["UnaryExpression", (node: es.Node) => {
     node = <es.UnaryExpression> node
     let loc = <es.SourceLocation> node.loc
@@ -108,7 +122,9 @@ transformers = new Map([
       operands: vector_to_list([
         transform(node.argument)
       ])
-  })}],
+    })
+  }],
+
   ["BinaryExpression", (node: es.Node) => {
     node = <es.BinaryExpression> node
     let loc = <es.SourceLocation> node.right.loc
@@ -126,7 +142,9 @@ transformers = new Map([
         transform(node.left),
         transform(node.right)
       ])
-  })}],
+    })
+  }],
+
   ["LogicalExpression", (node: es.Node) => {
     node = <es.LogicalExpression> node
     let loc = <es.SourceLocation> node.right.loc
@@ -144,7 +162,9 @@ transformers = new Map([
         transform(node.left),
         transform(node.right)
       ])
-  })}],
+    })
+  }],
+
   ["ConditionalExpression", (node: es.Node) => {
     node = <es.ConditionalExpression> node
     return ({
@@ -152,7 +172,9 @@ transformers = new Map([
       predicate: transform(node.test),
       consequent: transform(node.consequent),
       alternative: transform(node.alternate)
-  })}],
+    })
+  }],
+
   ["ArrowFunctionExpression", (node: es.Node) => {
     node = <es.ArrowFunctionExpression> node
     return ({
@@ -163,17 +185,22 @@ transformers = new Map([
         expression: transform(node.body as es.Expression),
         loc: node.body.loc
       }
-  })}],
+    })
+  }],
+
   ["Identifier", (node: es.Node) => {
     node = <es.Identifier> node
     return ({
       tag: "name",
       name: node.name
-  })}],
+    })
+  }],
+
   ["Literal", (node: es.Node) => {
     node = <es.Literal> node
     return node.value
   }],
+
   ["ArrayExpression", (node: es.Node) => {
     node = <es.ArrayExpression> node
     if (node.elements.length === 0) {
@@ -187,6 +214,7 @@ transformers = new Map([
       })
     }
   }],
+
   ["AssignmentExpression", (node: es.Node) => {
     node = <es.AssignmentExpression> node
     if (node.operator !== "=") {
@@ -210,6 +238,7 @@ transformers = new Map([
       throw new ParseError("Invalid assignment")
     }
   }],
+
   ["ForStatement", (node: es.Node) => {
     node = <es.ForStatement> node
     return ({
@@ -218,30 +247,40 @@ transformers = new Map([
       predicate: transform(node.test as es.Expression),
       finaliser: transform(node.update as es.Expression),
       statements: transform(node.body)
-  })}],
+    })
+  }],
+
   ["WhileStatement", (node: es.Node) => {
     node = <es.WhileStatement> node
     return ({
       tag: "while_loop",
       predicate: transform(node.test),
       statements: transform(node.body)
-  })}],
+    })
+  }],
+
   ["BreakStatement", (node: es.Node) => {
     node = <es.BreakStatement> node
     return ({
       tag: "break_statement"
-  })}],
+    })
+  }],
+
   ["ContinueStatement", (node: es.Node) => {
     node = <es.ContinueStatement> node
     return ({
       tag: "continue_statement"
-  })}],
+    })
+  }],
+
   ["ObjectExpression", (node: es.Node) => {
     node = <es.ObjectExpression> node
     return ({
       tag: "object_expression",
       pairs: vector_to_list(node.properties.map(transform))
-  })}],
+    })
+  }],
+
   ["MemberExpression", (node: es.Node) => {
     node = <es.MemberExpression> node
     if (node.computed) {
@@ -259,6 +298,7 @@ transformers = new Map([
       })
     }
   }],
+
   ["Property", (node: es.Node) => {
     node = <es.Property> node
     if (node.key.type === 'Literal') {
@@ -270,6 +310,7 @@ transformers = new Map([
       throw new ParseError('Invalid property key type')
     }
   }]
+
 ])
 
 function transform(node: es.Node) {
