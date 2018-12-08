@@ -90,21 +90,25 @@ test("Syntaxes are allowed in the chapter they are introduced", () => {
     [1, 2, 3];
   `],
     [3, `
-    ({});
-  `],
-    [3, `
-    ({a: 1, b: 2});
-  `],
-    [3, `
     [1, 2, 3][1];
   `],
-    [3, `
+
+    [100, `
+    ({});
+  `],
+    [100, `
+    ({a: 1, b: 2});
+  `],
+    [100, `
     ({a: 1, b: 2})['a'];
   `],
 
-    [4, `
+    // TODO: To make this work we need to allow rules to apply for specific chapters
+    /*
+    [100, `
     ({a: 1, b: 2}).a;
   `],
+  */
   ];
 
   const scheduler = "preemptive";
@@ -113,14 +117,19 @@ test("Syntaxes are allowed in the chapter they are introduced", () => {
     const snippet = c[1] as string;
     const context = mockContext(chapter);
     return runInContext(snippet, context, { scheduler }).then(obj => ({
+      snippet,
       context,
       obj
     }));
   });
   return Promise.all(promises).then(results => {
     results.map(res => {
-      const { context, obj } = res;
+      const { snippet, context, obj } = res;
       const errors = parseError(context.errors);
+
+      // If you hit an error here, you have changed the snippets but not changed the snapshot
+      expect(snippet).toMatchSnapshot();
+
       expect(errors).toMatchSnapshot();
       expect(obj.status).toBe("finished");
       expect((obj as Finished).value).toMatchSnapshot();

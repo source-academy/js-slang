@@ -24,14 +24,14 @@ const syntaxTypes: { [nodeName: string]: number } = {
   BreakStatement: 3,
   ContinueStatement: 3,
   ArrayExpression: 3,
-  ObjectExpression: 3,
   MemberExpression: 3,
   Property: 3,
 
-  // Week 5
-  UpdateExpression: 5,
-  // previously Week 10
-  NewExpression: 10,
+  // Disabled
+  UpdateExpression: 100,
+  NewExpression: 100,
+  ObjectExpression: 100,
+
   // Disallowed Forever
   EmptyStatement: Infinity,
   ThisExpression: Infinity,

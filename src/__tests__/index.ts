@@ -260,7 +260,7 @@ test('Simple object assignment and retrieval', () => {
     o.a = 1;
     o.a;
    `;
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -277,7 +277,7 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
    `;
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
