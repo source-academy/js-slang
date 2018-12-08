@@ -129,3 +129,51 @@ test('In case a function ever returns null, should throw an error as well', () =
     expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of null')
   })
 })
+
+test('Nice errors when errors occur inside builtins', () => {
+  const code = `
+    parse_int("10");
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.')
+  })
+})
+
+test('Nice errors when errors occur inside builtins', () => {
+  const code = `
+    parse("'");
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe(`Line 2: Error: Parse error on line 1:
+'
+-^
+Expecting ';', ')', '}', '=', '+', '-', '*', '/', '%', '&&', '||', '===', '!==', '>', '<', '>=', '<=', '=>', '[', ']', '.', '?', ':', 'EmptyString', 'QuotedString', 'QuotedStringEscape', ',', got '1'`)
+  });
+})
+
+test("Builtins don't create additional errors when it's not their fault", () => {
+  const code = `
+    function f(x) {
+      return a;
+    }
+    map(f, list(1, 2));
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
+  });
+})
