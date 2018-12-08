@@ -35,13 +35,6 @@ Object {
 }
 `;
 
-exports[`enum_list 2`] = `
-Object {
-  "status": "finished",
-  "value": true,
-}
-`;
-
 exports[`filter 1`] = `
 Object {
   "status": "finished",
