@@ -54,7 +54,11 @@ transformers = new Map([
     return ({
       tag: "constant_declaration",
       name: transform(node.id as es.Identifier),
-      value: (transformers.get("FunctionExpression") as Function)(node)
+      value: ({
+        tag: "function_definition",
+        parameters: vector_to_list(node.params.map(transform)),
+        body: vector_to_list(node.body.body.map(transform))
+      })
   })}],
   ["VariableDeclaration", (node: es.Node) => {
     node = <es.VariableDeclaration> node
@@ -149,13 +153,6 @@ transformers = new Map([
       consequent: transform(node.consequent),
       alternative: transform(node.alternate)
   })}],
-  ["FunctionExpression", (node: es.Node) => {
-    node = <es.FunctionExpression> node
-    return ({
-      tag: "function_definition",
-      parameters: vector_to_list(node.params.map(transform)),
-      body: vector_to_list(node.body.body.map(transform))
-  })}],
   ["ArrowFunctionExpression", (node: es.Node) => {
     node = <es.ArrowFunctionExpression> node
     return ({
@@ -239,12 +236,6 @@ transformers = new Map([
     return ({
       tag: "continue_statement"
   })}],
-  ["ThisExpression", (node: es.Node) => {
-    node = <es.ThisExpression> node
-    return ({
-      tag: "name",
-      name: "this"
-  })}],
   ["ObjectExpression", (node: es.Node) => {
     node = <es.ObjectExpression> node
     return ({
@@ -268,10 +259,6 @@ transformers = new Map([
       unreachable()
       throw new ParseError('Invalid property key type')
     }
-  }],
-  ["EmptyStatement", (node: es.Node) => {
-    node = <es.EmptyStatement> node
-    return []
   }]
 ])
 
