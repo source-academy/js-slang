@@ -32,6 +32,10 @@ exports[`No array expressions in chapter 2 1`] = `"Line 2: Array expressions are
 
 exports[`No empty statements 1`] = `"Line 2: Empty statements are not allowed"`;
 
+exports[`No rest pattern 1`] = `"Line 2: Rest elements are not allowed"`;
+
+exports[`No spread operator 1`] = `"Line 5: Spread elements are not allowed"`;
+
 exports[`for needs braces 1`] = `
 Object {
   "status": "error",
@@ -49,6 +53,40 @@ Object {
 exports[`if needs braces 2`] = `
 "Line 2: Missing curly braces around \\"if\\" block
 Line 2: Missing curly braces around \\"else\\" block"
+`;
+
+exports[`no classes 1`] = `
+"Line 2: Class bodys are not allowed
+Line 2: Class declarations are not allowed"
+`;
+
+exports[`no for in loops 1`] = `
+"Line 2: Missing value in variable declaration
+Line 2: Object expressions are not allowed
+Line 2: For in statements are not allowed"
+`;
+
+exports[`no for of loops 1`] = `
+"Line 2: Missing value in variable declaration
+Line 2: For of statements are not allowed"
+`;
+
+exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowed"`;
+
+exports[`no template literals 1`] = `
+"Line 1: Missing semicolon at the end of statement
+Line 1: Template literals are not allowed"
+`;
+
+exports[`no this, no new 1`] = `
+"Line 3: 'this' expressions are not allowed
+Line 5: New expressions are not allowed"
+`;
+
+exports[`no try statements 1`] = `
+"Line 6: Spread elements are not allowed
+Line 7: Catch clauses are not allowed
+Line 5: Try statements are not allowed"
 `;
 
 exports[`while needs braces 1`] = `

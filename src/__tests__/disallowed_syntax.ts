@@ -259,3 +259,140 @@ test('No array expressions in chapter 2', () => {
     expect(errors).toMatchSnapshot()
   })
 })
+
+test('No rest pattern', () => {
+  const code = `
+    function f(...rest) {
+      return rest;
+    }
+    f(1, 2);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('No spread operator', () => {
+  const code = `
+    function f(x, y) {
+      return x + y;
+    }
+    f(...[1, 2]);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no try statements', () => {
+  const code = `
+    function f(x, y) {
+      return x + y;
+    }
+    try {
+      f(...[1, 2]);
+    } catch (e) {
+      display(e);
+    }
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no for of loops', () => {
+  const code = `
+    for (let i of list()) {
+    }
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no for in loops', () => {
+  const code = `
+    for (let i in { a: 1, b: 2 }) {
+    }
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no generator functions', () => {
+  const code = `
+    function* gen() {
+      yield 2;
+      return 1;
+    }
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no classes', () => {
+  const code = `
+    class Box {
+    }
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no template literals', () => {
+  const code = '`hi`'
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no this, no new', () => {
+  const code = `
+    function Box() {
+      this['x'] = 5;
+    }
+    const box = new Box();
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})

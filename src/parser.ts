@@ -158,24 +158,26 @@ function createWalkers(
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
-    const allowedChap = pair[1]
     newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
-      const id = freshId()
-      Object.defineProperty(node, '__id', {
-        enumerable: true,
-        configurable: false,
-        writable: false,
-        value: id
-      })
-      context.cfg.nodes[id] = {
-        id,
-        node,
-        scope: undefined,
-        usages: []
-      }
-      context.cfg.edges[id] = []
-      if (context.chapter < allowedChap) {
-        context.errors.push(new DisallowedConstructError(node))
+      if (!node.hasOwnProperty('__id')) {
+        const id = freshId()
+        Object.defineProperty(node, '__id', {
+          enumerable: true,
+          configurable: false,
+          writable: false,
+          value: id
+        })
+        context.cfg.nodes[id] = {
+          id,
+          node,
+          scope: undefined,
+          usages: []
+        }
+        context.cfg.edges[id] = []
+
+        if (context.chapter < allowedSyntaxes[node.type]) {
+          context.errors.push(new DisallowedConstructError(node))
+        }
       }
     })
   })

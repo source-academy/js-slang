@@ -136,18 +136,18 @@ Node {
 
 exports[`Parse an arrow function 1`] = `
 Node {
-  "__id": "node_13",
+  "__id": "node_14",
   "body": Array [
     Node {
-      "__id": "node_12",
+      "__id": "node_13",
       "end": 11,
       "expression": Node {
-        "__id": "node_11",
+        "__id": "node_12",
         "body": Node {
-          "__id": "node_10",
+          "__id": "node_11",
           "end": 10,
           "left": Node {
-            "__id": "node_8",
+            "__id": "node_9",
             "end": 6,
             "loc": SourceLocation {
               "end": Position {
@@ -175,7 +175,7 @@ Node {
           },
           "operator": "+",
           "right": Node {
-            "__id": "node_9",
+            "__id": "node_10",
             "end": 10,
             "loc": SourceLocation {
               "end": Position {
@@ -211,6 +211,7 @@ Node {
         },
         "params": Array [
           Node {
+            "__id": "node_8",
             "end": 1,
             "loc": SourceLocation {
               "end": Position {
