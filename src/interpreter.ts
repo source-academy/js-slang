@@ -185,6 +185,30 @@ function* getArgs(context: Context, call: es.CallExpression) {
   return args
 }
 
+function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
+  if (node.operator === '&&') {
+    return <es.ConditionalExpression> {
+      type: 'ConditionalExpression',
+      test: node.left,
+      consequent: node.right,
+      alternate: {
+        type: 'Literal',
+        value: false
+      }
+    }
+  } else {
+    return <es.ConditionalExpression> {
+      type: 'ConditionalExpression',
+      test: node.left,
+      consequent: {
+        type: 'Literal',
+        value: true
+      },
+      alternate: node.right
+    }
+  }
+}
+
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
 /**
@@ -324,24 +348,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* this.IfStatement(node, context)
   },
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    let error = rttc.checkLogicalExpression(context, left, true)
-    if (error) {
-      handleError(context, error)
-      return undefined
-    } else if ((node.operator === '&&' && left) || (node.operator === '||' && !left)) {
-      // only evaluate right if required (lazy); but when we do, check typeof right
-      const right = yield* evaluate(node.right, context)
-      error = rttc.checkLogicalExpression(context, left, right)
-      if (error) {
-        handleError(context, error)
-        return undefined
-      } else {
-        return right
-      }
-    } else {
-      return left
-    }
+    return yield* this.IfStatement(transformLogicalExpression(node), context)
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]

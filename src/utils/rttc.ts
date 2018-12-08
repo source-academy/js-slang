@@ -108,17 +108,6 @@ export const checkBinaryExpression = (
   }
 }
 
-export const checkLogicalExpression = (context: Context, left: Value, right: Value) => {
-  const node = context.runtime.nodes[0]
-  if (!isBool(left)) {
-    return new TypeError(node, LHS, 'boolean', typeOf(left))
-  } else if (!isBool(right)) {
-    return new TypeError(node, RHS, 'boolean', typeOf(right))
-  } else {
-    return
-  }
-}
-
 export const checkIfStatement = (context: Context, test: Value) => {
   const node = context.runtime.nodes[0]
   return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
