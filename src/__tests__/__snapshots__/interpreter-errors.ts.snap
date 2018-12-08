@@ -272,28 +272,7 @@ Object {
 }
 `;
 
-exports[`Nice errors when errors occur inside builtins 4`] = `
-Array [
-  ExceptionError {
-    "error": [Error: Parse error on line 1:
-'
--^
-Expecting ';', ')', '}', '=', '+', '-', '*', '/', '%', '&&', '||', '===', '!==', '>', '<', '>=', '<=', '=>', '[', ']', '.', '?', ':', 'EmptyString', 'QuotedString', 'QuotedStringEscape', ',', got '1'],
-    "location": SourceLocation {
-      "end": Position {
-        "column": 14,
-        "line": 2,
-      },
-      "start": Position {
-        "column": 4,
-        "line": 2,
-      },
-    },
-    "severity": "Error",
-    "type": "Runtime",
-  },
-]
-`;
+exports[`Nice errors when errors occur inside builtins 4`] = `"Line 2: ParseError: SyntaxError: Unterminated string constant (1:0)"`;
 
 exports[`Undefined variable error is thrown 1`] = `
 Object {

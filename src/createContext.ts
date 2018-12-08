@@ -1,12 +1,9 @@
 import * as list from './stdlib/list'
+import * as parser from './stdlib/parser'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
 import { toString } from '.';
 import { list_to_vector } from './stdlib/list'
-
-/** Import meta-circular parser */
-const createParserModule = require('./stdlib/parser')
-const Parser = createParserModule.Parser
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -30,7 +27,6 @@ export const createEmptyContext = <T>(chapter: number, externalSymbols: string[]
   externalContext,
   cfg: createEmptyCFG(),
   runtime: createEmptyRuntime(),
-  metaCircularParser: new Parser()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -149,11 +145,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
-    defineSymbol(context, 'parse',
-      function () {
-        return context.metaCircularParser
-          .parse.apply(context.metaCircularParser, arguments)
-      })
+    defineSymbol(context, 'parse', parser.parse)
     defineSymbol(context, 'apply_in_underlying_javascript', function(
       fun: Function,
       args: Value
