@@ -312,7 +312,7 @@ test('Test apply_in_underlying_javascript', () => {
 
 test('Test equal for primitives', () => {
   const code = `
-  equal(1, 1) && equal("str", "str") && equal(null, null);
+  equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -324,7 +324,19 @@ test('Test equal for primitives', () => {
 
 test('Test equal for lists', () => {
   const code = `
-  equal(pair(1, 2), pair(1, 2)) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
+  equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('Test equal for different lists', () => {
+  const code = `
+  !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
