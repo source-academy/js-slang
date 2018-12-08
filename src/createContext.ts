@@ -3,6 +3,7 @@ import * as parser from './stdlib/parser'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
 import { toString } from '.';
+import { list_to_vector } from './stdlib/list'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -110,11 +111,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
+    defineSymbol(context, 'null', null)
     defineSymbol(context, 'pair', list.pair)
     defineSymbol(context, 'is_pair', list.is_pair)
     defineSymbol(context, 'head', list.head)
     defineSymbol(context, 'tail', list.tail)
-    defineSymbol(context, 'is_empty_list', list.is_empty_list)
+    defineSymbol(context, 'is_null', list.is_null)
     defineSymbol(context, 'is_list', list.is_list)
     defineSymbol(context, 'list', list.list)
     defineSymbol(context, 'length', list.length)
@@ -148,14 +150,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       fun: Function,
       args: Value
     ) {
-      const res = []
-      var i = 0
-      while (!(args.length === 0)) {
-        res[i] = args[0]
-        i = i + 1
-        args = args[1]
-      }
-      return fun.apply(fun, res)
+      return fun.apply(fun, list_to_vector(args))
     })
     defineSymbol(context, 'is_number', misc.is_number)
     defineSymbol(context, 'is_array', misc.is_array)
