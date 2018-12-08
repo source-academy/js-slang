@@ -12,6 +12,17 @@ declare global {
   }
 }
 
+class ParseError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'ParseError'
+  }
+}
+
+function unreachable() {
+  console.error('UNREACHABLE CODE REACHED! Please file an issue at https://github.com/source-academy/js-slang/issues if you see this.')
+}
+
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
 let transformers: ASTTransformers
@@ -60,7 +71,8 @@ transformers = new Map([
         value: transform(node.declarations[0].init as es.Expression)
       })
     } else {
-      throw new SyntaxError("bleugh")
+      unreachable()
+      throw new ParseError("Invalid declaration kind")
     }
   }],
   ["ReturnStatement", (node: es.Node) => {
@@ -181,7 +193,8 @@ transformers = new Map([
   ["AssignmentExpression", (node: es.Node) => {
     node = <es.AssignmentExpression> node
     if (node.operator !== "=") {
-      throw new SyntaxError("Update statements not allowed >:(")
+      unreachable()
+      throw new ParseError(`{node.operator} assignments are not allowed. Use = instead`)
     }
     if (node.left.type === 'Identifier') {
       return ({
@@ -196,7 +209,8 @@ transformers = new Map([
         value: transform(node.right),
       })
     } else {
-      throw new SyntaxError("wat :C")
+      unreachable()
+      throw new ParseError("Invalid assignment")
     }
   }],
   ["ForStatement", (node: es.Node) => {
@@ -251,12 +265,9 @@ transformers = new Map([
     } else if (node.key.type === 'Identifier') {
       return [node.key.name, transform(node.value)];
     } else {
-      throw new SyntaxError("blah")
+      unreachable()
+      throw new ParseError('Invalid property key type')
     }
-  }],
-  ["UpdateExpression", (node: es.Node) => {
-    node = <es.UpdateExpression> node
-    throw new SyntaxError("not allowed :/")
   }],
   ["EmptyStatement", (node: es.Node) => {
     node = <es.EmptyStatement> node
@@ -275,7 +286,8 @@ function transform(node: es.Node) {
     }
     return transformed
   } else {
-    throw new SyntaxError("ugh, unknown type: " + node.type)
+    unreachable()
+    throw new ParseError("Cannot transform unknown type: " + node.type)
   }
 }
 
@@ -283,10 +295,15 @@ export function parse(x: string): Value {
   const context = createContext(4)
   let program: es.Program | undefined
   program = sourceParse(x, context)
+  if (context.errors.length > 0) {
+    throw new ParseError(context.errors[0].explain())
+  }
+
   if (program !== undefined) {
     return transform(program)
   } else {
-    throw new SyntaxError("ugh");
+    unreachable()
+    throw new ParseError('Invalid parse')
   }
 }
 parse.__SOURCE__ = 'parse(program_string)'

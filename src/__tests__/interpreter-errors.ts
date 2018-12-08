@@ -153,11 +153,7 @@ test('Nice errors when errors occur inside builtins', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe(`Line 2: Error: Parse error on line 1:
-'
--^
-Expecting ';', ')', '}', '=', '+', '-', '*', '/', '%', '&&', '||', '===', '!==', '>', '<', '>=', '<=', '=>', '[', ']', '.', '?', ':', 'EmptyString', 'QuotedString', 'QuotedStringEscape', ',', got '1'`)
+    expect(parseError(context.errors)).toMatchSnapshot()
   });
 })
 

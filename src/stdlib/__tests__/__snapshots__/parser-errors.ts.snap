@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Blacklisted syntax 1`] = `"Line 2: ParseError: Cannot transform unknown type: YieldExpression"`;
+
+exports[`Blacklisted syntax 2`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Blatant syntax error 1`] = `"Line 2: ParseError: SyntaxError: Unterminated string constant (1:0)"`;
+
+exports[`Blatant syntax error 2`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Syntax rules 1`] = `"Line 2: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Syntax rules 2`] = `
+Object {
+  "status": "error",
+}
+`;
