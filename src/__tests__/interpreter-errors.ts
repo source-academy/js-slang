@@ -1,7 +1,6 @@
 import { mockContext } from "../mocks/context";
 import { runInContext, parseError } from "../index";
 
-
 test("Undefined variable error is thrown", () => {
   const code = `
     im_undefined;
