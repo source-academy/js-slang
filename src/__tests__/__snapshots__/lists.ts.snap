@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`accumulate 1`] = `
+Object {
+  "status": "finished",
+  "value": 10,
+}
+`;
+
+exports[`append 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`build_list 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`empty list is null 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`enum_list 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`enum_list 2`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`filter 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`for_each 1`] = `
+Object {
+  "status": "finished",
+  "value": 6,
+}
+`;
+
+exports[`head works 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`list creates list 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    1,
+    Array [
+      "a string \\"\\"",
+      Array [
+        [Function],
+        Array [
+          [Function],
+          Array [
+            true,
+            Array [
+              3.14,
+              null,
+            ],
+          ],
+        ],
+      ],
+    ],
+  ],
+}
+`;
+
+exports[`list_ref 1`] = `
+Object {
+  "status": "finished",
+  "value": 4,
+}
+`;
+
+exports[`map 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`member 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`pair creates pair 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    1,
+    "a string \\"\\"",
+  ],
+}
+`;
+
+exports[`remove 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`remove_all 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`reverse 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`tail of a 1 element list is null 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`tail works 1`] = `
+Object {
+  "status": "finished",
+  "value": "a string \\"\\"",
+}
+`;

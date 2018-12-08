@@ -80,7 +80,7 @@ test('list now uses Source toString instead of native when +ed with another stri
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('123[4, [5, [6, []]]]')
+    expect((obj as Finished).value).toBe('123[4, [5, [6, null]]]')
   })
 })
 
@@ -295,5 +295,17 @@ test('Deep object assignment and retrieval', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe('string')
+  })
+})
+
+test('Test apply_in_underlying_javascript', () => {
+  const code = `
+  apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(60)
   })
 })
