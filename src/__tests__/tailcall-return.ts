@@ -1,5 +1,5 @@
 import { mockContext } from '../mocks/context'
-import { runInContext } from '../index'
+import { parseError, runInContext } from '../index'
 import { Finished } from '../types'
 
 test('Check that stack is at most 10k in size', () => {
@@ -16,9 +16,8 @@ test('Check that stack is at most 10k in size', () => {
   const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
   })
 })
 
@@ -39,7 +38,7 @@ test('Simple tail call returns work', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(10000)
-    expect(context.errors).toMatchSnapshot()
+    expect(context.errors).toEqual([])
   })
 })
 
@@ -56,7 +55,7 @@ test('Tail call in conditional expressions work', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(10000)
-    expect(context.errors).toMatchSnapshot()
+    expect(context.errors).toEqual([])
   })
 })
 
@@ -77,7 +76,7 @@ test('Tail call in boolean operators work', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(10000)
-    expect(context.errors).toMatchSnapshot()
+    expect(context.errors).toEqual([])
   })
 })
 
@@ -94,6 +93,6 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(10000)
-    expect(context.errors).toMatchSnapshot()
+    expect(context.errors).toEqual([])
   })
 })

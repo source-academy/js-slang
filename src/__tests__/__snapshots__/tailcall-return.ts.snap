@@ -139,16 +139,12 @@ Object {
 }
 `;
 
-exports[`Simple tail call returns work 2`] = `Array []`;
-
 exports[`Tail call in boolean operators work 1`] = `
 Object {
   "status": "finished",
   "value": 10000,
 }
 `;
-
-exports[`Tail call in boolean operators work 2`] = `Array []`;
 
 exports[`Tail call in conditional expressions work 1`] = `
 Object {
@@ -157,13 +153,9 @@ Object {
 }
 `;
 
-exports[`Tail call in conditional expressions work 2`] = `Array []`;
-
 exports[`Tail call in nested mix of conditional expressions boolean operators work 1`] = `
 Object {
   "status": "finished",
   "value": 10000,
 }
 `;
-
-exports[`Tail call in nested mix of conditional expressions boolean operators work 2`] = `Array []`;
