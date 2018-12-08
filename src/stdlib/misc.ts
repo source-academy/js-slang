@@ -12,6 +12,7 @@ import { Context, Value } from '../types'
 export function display(value: Value, externalContext: any) {
   const output = toString(value)
   console.log(output)
+  return value;
 }
 display.__SOURCE__ = 'display(a)'
 
