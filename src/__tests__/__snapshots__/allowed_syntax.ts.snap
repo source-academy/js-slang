@@ -143,7 +143,7 @@ exports[`Syntaxes are allowed in the chapter they are introduced 35`] = `""`;
 exports[`Syntaxes are allowed in the chapter they are introduced 36`] = `
 Array [
   1,
-  Array [],
+  null,
 ]
 `;
 
