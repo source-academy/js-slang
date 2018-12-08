@@ -116,7 +116,7 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     const chapter = c[0] as number
     const snippet = c[1] as string
     const context = mockContext(chapter)
-    return runInContext(snippet, context, {scheduler}).then(obj => ({
+    return runInContext(snippet, context, { scheduler }).then(obj => ({
       snippet,
       context,
       obj
@@ -124,7 +124,7 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
   })
   return Promise.all(promises).then(results => {
     results.map(res => {
-      const {snippet, context, obj} = res
+      const { snippet, context, obj } = res
       const errors = parseError(context.errors)
 
       // If you hit an error here, you have changed the snippets but not changed the snapshot

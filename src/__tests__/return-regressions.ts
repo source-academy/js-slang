@@ -20,7 +20,7 @@ test('Calling unreachable results in error', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
@@ -43,7 +43,7 @@ test('Bare early returns work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -70,7 +70,7 @@ test('Recursive call early returns work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -97,7 +97,7 @@ test('Tail call early returns work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -124,7 +124,7 @@ test('Bare early returns in if statements work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -154,7 +154,7 @@ test('Recursive call early returns in if statements work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -184,7 +184,7 @@ test('Tail call early returns in if statements work', () => {
     f();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -211,7 +211,7 @@ test('Bare early returns in while loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -241,7 +241,7 @@ test('Recursive call early returns in while loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -271,7 +271,7 @@ test('Tail call early returns in while loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -298,7 +298,7 @@ test('Bare early returns in for loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -325,7 +325,7 @@ test('Recursive call early returns in for loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])
@@ -355,7 +355,7 @@ test('Tail call early returns in for loops work', () => {
     f();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(context.errors).toEqual([])

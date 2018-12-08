@@ -15,7 +15,7 @@ test('standalone block statements', () => {
     test();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
@@ -38,7 +38,7 @@ test('const uses block scoping instead of function scoping', () => {
     test();
   `
   const context = mockContext()
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
@@ -61,7 +61,7 @@ test('let uses block scoping instead of function scoping', () => {
     test();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect(obj).toMatchSnapshot()
@@ -81,7 +81,7 @@ test('for loops use block scoping instead of function scoping', () => {
     test();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     //expect(obj.status).toBe("finished");
     expect(parseError(context.errors)).toBe('')
@@ -105,7 +105,7 @@ test('while loops use block scoping instead of function scoping', () => {
     test();
   `
   const context = mockContext(4)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect(obj).toMatchSnapshot()
@@ -127,7 +127,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   test();
   `
   const context = mockContext(4)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(1)
@@ -147,7 +147,7 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     const errors = parseError(context.errors)
@@ -166,7 +166,7 @@ test(
       v;
     `
     const context = mockContext()
-    const promise = runInContext(code, context, {scheduler: 'preemptive'})
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
     return promise.then(obj => {
       const errors = parseError(context.errors)
       expect(obj).toMatchSnapshot()
@@ -190,7 +190,7 @@ test(
       }
     `
     const context = mockContext()
-    const promise = runInContext(code, context, {scheduler: 'preemptive'})
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
     return promise.then(obj => {
       const errors = parseError(context.errors)
       expect(errors).toMatchSnapshot()
@@ -213,7 +213,7 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   test();
   `
   const context = mockContext(3)
-  const promise = runInContext(code, context, {scheduler: 'preemptive'})
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     const errors = parseError(context.errors)
     expect(obj.status).toBe('error')
