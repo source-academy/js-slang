@@ -1,6 +1,5 @@
 /* tslint:disable: max-classes-per-file */
-import * as es from 'estree'
-import { MaximumStackLimitExceeded } from './interpreter-errors'
+import {MaximumStackLimitExceeded} from './interpreter-errors'
 import { Context, Result, Scheduler, Value } from './types'
 
 export class AsyncScheduler implements Scheduler {
@@ -42,11 +41,19 @@ export class PreemptiveScheduler implements Scheduler {
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
-            const stacks: es.CallExpression[] = []
+            const stacks: any = []
             for (let i = 1; i <= 3; i++) {
-              stacks.push(context.runtime.frames[i - 1].callExpression!)
-            }
-            context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
+              let currentFrame = context.runtime.frames[i - 1]
+              while (!currentFrame.callExpression) {
+                if (currentFrame.parent) {
+                  currentFrame = currentFrame.parent
+                } else {
+                  break
+                }
+              }
+              stacks.push(currentFrame.callExpression || {callee: "unknown", args: []})
+          }
+          context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
           }
           context.runtime.isRunning = false
           clearInterval(interval)

@@ -1,6 +1,7 @@
 import { mockContext } from "../mocks/context";
 import { runInContext, parseError } from "../index";
 
+
 test("Undefined variable error is thrown", () => {
   const code = `
     im_undefined;
@@ -127,5 +128,40 @@ test('In case a function ever returns null, should throw an error as well', () =
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of null')
+  })
+})
+
+test('Infinite recursion with a block bodied function', () => {
+  const code = `
+    function i(n) {
+      return n === 0 ? 0 : 1 + i(n);
+    }
+    i(1000);
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+  })
+})
+
+test('Infinite recursion with function calls in argument', () => {
+  const code = `
+    function i(n, redundant) {
+      return n === 0 ? 0 : 1 + i(n, r());
+    }
+    function r() {
+      return 1;
+    }
+    i(1000, 1);
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
   })
 })

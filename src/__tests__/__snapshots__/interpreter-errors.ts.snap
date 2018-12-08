@@ -214,6 +214,678 @@ Array [
 ]
 `;
 
+exports[`Infinite recursion with a block bodied function 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Infinite recursion with a block bodied function 2`] = `
+Array [
+  MaximumStackLimitExceeded {
+    "calls": Array [
+      Object {
+        "__id": "node_61",
+        "arguments": Array [
+          Object {
+            "__id": "__syn334",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_59",
+          "end": 53,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 52,
+          "type": "Identifier",
+        },
+        "end": 56,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 35,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 52,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_61",
+        "arguments": Array [
+          Object {
+            "__id": "__syn334",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_59",
+          "end": 53,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 52,
+          "type": "Identifier",
+        },
+        "end": 56,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 35,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 52,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_61",
+        "arguments": Array [
+          Object {
+            "__id": "__syn333",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_59",
+          "end": 53,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 52,
+          "type": "Identifier",
+        },
+        "end": 56,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 35,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 52,
+        "type": "CallExpression",
+      },
+    ],
+    "customGenerator": Object {
+      "ArrayExpression": [Function],
+      "ArrayPattern": [Function],
+      "ArrowFunctionExpression": [Function],
+      "AssignmentExpression": [Function],
+      "AssignmentPattern": [Function],
+      "AwaitExpression": [Function],
+      "BinaryExpression": [Function],
+      "BlockStatement": [Function],
+      "BreakStatement": [Function],
+      "CallExpression": [Function],
+      "ClassBody": [Function],
+      "ClassDeclaration": [Function],
+      "ClassExpression": [Function],
+      "ConditionalExpression": [Function],
+      "ContinueStatement": [Function],
+      "DebuggerStatement": [Function],
+      "DoWhileStatement": [Function],
+      "EmptyStatement": [Function],
+      "ExportAllDeclaration": [Function],
+      "ExportDefaultDeclaration": [Function],
+      "ExportNamedDeclaration": [Function],
+      "ExpressionStatement": [Function],
+      "ForInStatement": [Function],
+      "ForOfStatement": [Function],
+      "ForStatement": [Function],
+      "FunctionDeclaration": [Function],
+      "FunctionExpression": [Function],
+      "Identifier": [Function],
+      "IfStatement": [Function],
+      "ImportDeclaration": [Function],
+      "LabeledStatement": [Function],
+      "Literal": [Function],
+      "LogicalExpression": [Function],
+      "MemberExpression": [Function],
+      "MetaProperty": [Function],
+      "MethodDefinition": [Function],
+      "NewExpression": [Function],
+      "ObjectExpression": [Function],
+      "ObjectPattern": [Function],
+      "Program": [Function],
+      "Property": [Function],
+      "RegExpLiteral": [Function],
+      "RestElement": [Function],
+      "ReturnStatement": [Function],
+      "SequenceExpression": [Function],
+      "SpreadElement": [Function],
+      "Super": [Function],
+      "SwitchStatement": [Function],
+      "TaggedTemplateExpression": [Function],
+      "TemplateLiteral": [Function],
+      "ThisExpression": [Function],
+      "ThrowStatement": [Function],
+      "TryStatement": [Function],
+      "UnaryExpression": [Function],
+      "UpdateExpression": [Function],
+      "VariableDeclaration": [Function],
+      "VariableDeclarator": [Function],
+      "WhileStatement": [Function],
+      "WithStatement": [Function],
+      "YieldExpression": [Function],
+    },
+    "location": SourceLocation {
+      "end": Position {
+        "column": 35,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 31,
+        "line": 3,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Infinite recursion with function calls in argument 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Infinite recursion with function calls in argument 2`] = `
+Array [
+  MaximumStackLimitExceeded {
+    "calls": Array [
+      Object {
+        "__id": "node_80",
+        "arguments": Array [
+          Object {
+            "__id": "__syn1001",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn1002",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_76",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_80",
+        "arguments": Array [
+          Object {
+            "__id": "__syn1001",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn1002",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_76",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_80",
+        "arguments": Array [
+          Object {
+            "__id": "__syn999",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn1000",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_76",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+    ],
+    "customGenerator": Object {
+      "ArrayExpression": [Function],
+      "ArrayPattern": [Function],
+      "ArrowFunctionExpression": [Function],
+      "AssignmentExpression": [Function],
+      "AssignmentPattern": [Function],
+      "AwaitExpression": [Function],
+      "BinaryExpression": [Function],
+      "BlockStatement": [Function],
+      "BreakStatement": [Function],
+      "CallExpression": [Function],
+      "ClassBody": [Function],
+      "ClassDeclaration": [Function],
+      "ClassExpression": [Function],
+      "ConditionalExpression": [Function],
+      "ContinueStatement": [Function],
+      "DebuggerStatement": [Function],
+      "DoWhileStatement": [Function],
+      "EmptyStatement": [Function],
+      "ExportAllDeclaration": [Function],
+      "ExportDefaultDeclaration": [Function],
+      "ExportNamedDeclaration": [Function],
+      "ExpressionStatement": [Function],
+      "ForInStatement": [Function],
+      "ForOfStatement": [Function],
+      "ForStatement": [Function],
+      "FunctionDeclaration": [Function],
+      "FunctionExpression": [Function],
+      "Identifier": [Function],
+      "IfStatement": [Function],
+      "ImportDeclaration": [Function],
+      "LabeledStatement": [Function],
+      "Literal": [Function],
+      "LogicalExpression": [Function],
+      "MemberExpression": [Function],
+      "MetaProperty": [Function],
+      "MethodDefinition": [Function],
+      "NewExpression": [Function],
+      "ObjectExpression": [Function],
+      "ObjectPattern": [Function],
+      "Program": [Function],
+      "Property": [Function],
+      "RegExpLiteral": [Function],
+      "RestElement": [Function],
+      "ReturnStatement": [Function],
+      "SequenceExpression": [Function],
+      "SpreadElement": [Function],
+      "Super": [Function],
+      "SwitchStatement": [Function],
+      "TaggedTemplateExpression": [Function],
+      "TemplateLiteral": [Function],
+      "ThisExpression": [Function],
+      "ThrowStatement": [Function],
+      "TryStatement": [Function],
+      "UnaryExpression": [Function],
+      "UpdateExpression": [Function],
+      "VariableDeclaration": [Function],
+      "VariableDeclarator": [Function],
+      "WhileStatement": [Function],
+      "WithStatement": [Function],
+      "YieldExpression": [Function],
+    },
+    "location": SourceLocation {
+      "end": Position {
+        "column": 28,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 27,
+        "line": 3,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Infinite recursion with nested function calls 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Infinite recursion with nested function calls 2`] = `
+Array [
+  MaximumStackLimitExceeded {
+    "calls": Array [
+      Object {
+        "__id": "node_10",
+        "arguments": Array [
+          Object {
+            "__id": "__syn667",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn668",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_6",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_10",
+        "arguments": Array [
+          Object {
+            "__id": "__syn667",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn668",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_6",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+      Object {
+        "__id": "node_10",
+        "arguments": Array [
+          Object {
+            "__id": "__syn665",
+            "raw": 1000,
+            "type": "Literal",
+            "value": 1000,
+          },
+          Object {
+            "__id": "__syn666",
+            "raw": 1,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_6",
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 32,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 3,
+            },
+          },
+          "name": "i",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "end": 72,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 40,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 31,
+            "line": 3,
+          },
+        },
+        "start": 63,
+        "type": "CallExpression",
+      },
+    ],
+    "customGenerator": Object {
+      "ArrayExpression": [Function],
+      "ArrayPattern": [Function],
+      "ArrowFunctionExpression": [Function],
+      "AssignmentExpression": [Function],
+      "AssignmentPattern": [Function],
+      "AwaitExpression": [Function],
+      "BinaryExpression": [Function],
+      "BlockStatement": [Function],
+      "BreakStatement": [Function],
+      "CallExpression": [Function],
+      "ClassBody": [Function],
+      "ClassDeclaration": [Function],
+      "ClassExpression": [Function],
+      "ConditionalExpression": [Function],
+      "ContinueStatement": [Function],
+      "DebuggerStatement": [Function],
+      "DoWhileStatement": [Function],
+      "EmptyStatement": [Function],
+      "ExportAllDeclaration": [Function],
+      "ExportDefaultDeclaration": [Function],
+      "ExportNamedDeclaration": [Function],
+      "ExpressionStatement": [Function],
+      "ForInStatement": [Function],
+      "ForOfStatement": [Function],
+      "ForStatement": [Function],
+      "FunctionDeclaration": [Function],
+      "FunctionExpression": [Function],
+      "Identifier": [Function],
+      "IfStatement": [Function],
+      "ImportDeclaration": [Function],
+      "LabeledStatement": [Function],
+      "Literal": [Function],
+      "LogicalExpression": [Function],
+      "MemberExpression": [Function],
+      "MetaProperty": [Function],
+      "MethodDefinition": [Function],
+      "NewExpression": [Function],
+      "ObjectExpression": [Function],
+      "ObjectPattern": [Function],
+      "Program": [Function],
+      "Property": [Function],
+      "RegExpLiteral": [Function],
+      "RestElement": [Function],
+      "ReturnStatement": [Function],
+      "SequenceExpression": [Function],
+      "SpreadElement": [Function],
+      "Super": [Function],
+      "SwitchStatement": [Function],
+      "TaggedTemplateExpression": [Function],
+      "TemplateLiteral": [Function],
+      "ThisExpression": [Function],
+      "ThrowStatement": [Function],
+      "TryStatement": [Function],
+      "UnaryExpression": [Function],
+      "UpdateExpression": [Function],
+      "VariableDeclaration": [Function],
+      "VariableDeclarator": [Function],
+      "WhileStatement": [Function],
+      "WithStatement": [Function],
+      "YieldExpression": [Function],
+    },
+    "location": SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 13,
+        "line": 3,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Undefined variable error is thrown 1`] = `
 Object {
   "status": "error",
