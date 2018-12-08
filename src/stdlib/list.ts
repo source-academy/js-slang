@@ -14,7 +14,7 @@ declare global {
 // Author: Martin Henz
 // Translated to TypeScript by Evan Sebastian
 
-export type List = Value[] | null
+export type List = Value[]
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)
@@ -46,7 +46,7 @@ is_pair.__SOURCE__ = 'is_pair(x)'
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function head(xs: List) {
   if (is_pair(xs)) {
-    return xs![0]
+    return xs[0]
   } else {
     throw new Error('head(xs) expects a pair as ' + 'argument xs, but encountered ' + toString(xs))
   }
@@ -58,7 +58,7 @@ head.__SOURCE__ = 'head(xs)'
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function tail(xs: List) {
   if (is_pair(xs)) {
-    return xs![1]
+    return xs[1]
   } else {
     throw new Error('tail(xs) expects a pair as ' + 'argument xs, but encountered ' + toString(xs))
   }
@@ -142,7 +142,7 @@ length.__SOURCE__ = 'length(xs)'
 // map throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the first
 // argument is not a function.
-export function map(f: Function, xs: List): List {
+export function map(f: Function, xs: List): List | null {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)))
 }
 map.__SOURCE__ = 'map(f, xs)'
@@ -151,8 +151,8 @@ map.__SOURCE__ = 'map(f, xs)'
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
-export function build_list(n: number, fun: Function) {
-  function build(i: number, fun: Function, already_built: List): List {
+export function build_list(n: number, fun: Function): List | null {
+  function build(i: number, fun: Function, already_built: List | null): List | null {
     if (i < 0) {
       return already_built
     } else {
@@ -233,7 +233,7 @@ member.__SOURCE__ = 'member(x, xs)'
 // removes the first occurrence of a given first-argument element
 // in a given second-argument list. Returns the original list
 // if there is no occurrence.
-export function remove(v: Value, xs: List): List {
+export function remove(v: Value, xs: List): List | null {
   if (is_null(xs)) {
     return null
   } else {
@@ -247,7 +247,7 @@ export function remove(v: Value, xs: List): List {
 remove.__SOURCE__ = 'remove(x, xs)'
 
 // Similar to remove. But removes all instances of v instead of just the first
-export function remove_all(v: Value, xs: List): List {
+export function remove_all(v: Value, xs: List): List | null {
   if (is_null(xs)) {
     return null
   } else {
@@ -308,7 +308,7 @@ filter.__SOURCE__ = 'filter(pred, xs)'
 // enumerates numbers starting from start,
 // using a step size of 1, until the number
 // exceeds end.
-export function enum_list(start: number, end: number): List {
+export function enum_list(start: number, end: number): List | null {
   if (start > end) {
     return null
   } else {
@@ -356,7 +356,7 @@ accumulate.__SOURCE__ = 'accumulate(op, initial, xs)'
 
 export function set_head(xs: List, x: Value) {
   if (is_pair(xs)) {
-    xs![0] = x
+    xs[0] = x
     return undefined
   } else {
     throw new Error(
@@ -372,7 +372,7 @@ set_head.__SOURCE__ = 'set_head(xs, x)'
 
 export function set_tail(xs: List, x: Value) {
   if (is_pair(xs)) {
-    xs![1] = x
+    xs[1] = x
     return undefined
   } else {
     throw new Error(
