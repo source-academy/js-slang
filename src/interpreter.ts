@@ -487,16 +487,37 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* evaluate(node.expression, context)
   },
   *ReturnStatement(node: es.ReturnStatement, context: Context) {
-    if (node.argument) {
-      if (node.argument.type === 'CallExpression') {
-        const callee = yield* evaluate(node.argument.callee, context)
-        const args = yield* getArgs(context, node.argument)
-        return new TailCallReturnValue(callee, args, node.argument)
-      } else {
-        return new ReturnValue(yield* evaluate(node.argument, context))
-      }
-    } else {
+    let return_expression = node.argument
+    if (!return_expression) {
       return new ReturnValue(undefined)
+    }
+
+    // If we have a conditional expression, reduce it until we get something else
+    while (return_expression.type === 'LogicalExpression' ||
+      return_expression.type === 'ConditionalExpression') {
+      if (return_expression.type === 'LogicalExpression') {
+        return_expression = transformLogicalExpression(return_expression)
+      }
+      const test = yield* evaluate(return_expression.test, context)
+      const error = rttc.checkIfStatement(context, test)
+      if (error) {
+        handleError(context, error)
+        return undefined
+      }
+      if (test) {
+        return_expression = return_expression.consequent
+      } else {
+        return_expression = return_expression.alternate
+      }
+    }
+
+    // If we are now left with a CallExpression, then we use TCO
+    if (return_expression.type === 'CallExpression') {
+      const callee = yield* evaluate(return_expression.callee, context)
+      const args = yield* getArgs(context, return_expression)
+      return new TailCallReturnValue(callee, args, return_expression)
+    } else {
+      return new ReturnValue(yield* evaluate(return_expression, context))
     }
   },
   WhileStatement: function*(node: es.WhileStatement, context: Context) {
