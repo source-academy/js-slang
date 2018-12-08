@@ -76,7 +76,7 @@ export_symbol('pair', pair, "(x, y)");
 export_symbol('is_pair', is_pair, "(x)");
 export_symbol('head', head, "(xs)");
 export_symbol('tail', tail, "(xs)");
-export_symbol('is_empty_list', is_empty_list, "(xs)");
+export_symbol('is_null', is_empty_list, "(xs)");
 export_symbol('is_list', is_list, "(x)");
 export_symbol('list', list);
 export_symbol('list_to_vector', list_to_vector, "(xs)");

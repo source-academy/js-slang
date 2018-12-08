@@ -725,7 +725,7 @@ var primitive_functions =
 	pair("list", list),
 	pair("length", length),
 	pair("map", map),
-	pair("is_empty_list", is_empty_list),
+	pair("is_null", is_empty_list),
 
 	//Intepreter functions
 	pair("parse", parse),

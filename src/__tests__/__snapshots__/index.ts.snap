@@ -43,7 +43,7 @@ Object {
 
 exports[`Inifinite recursion with list args represents CallExpression well 1`] = `
 "Line 2: Infinite recursion
-  f([1, [2, []]])..  f([1, [2, []]])..  f([1, [2, []]]).."
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `;
 
 exports[`Metacircular Interpreter parses Arrow Function Assignments properly 1`] = `
@@ -110,7 +110,7 @@ Object {
 exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
 Object {
   "status": "finished",
-  "value": "123[4, [5, [6, []]]]",
+  "value": "123[4, [5, [6, null]]]",
 }
 `;
 
