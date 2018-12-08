@@ -140,9 +140,10 @@ test('Infinite recursion with a block bodied function', () => {
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toEqual(
+      expect.stringContaining('Infinite recursion')
+    )
   })
 })
 
@@ -159,8 +160,9 @@ test('Infinite recursion with function calls in argument', () => {
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toEqual(
+      expect.stringContaining('Infinite recursion')
+    )
   })
 })
