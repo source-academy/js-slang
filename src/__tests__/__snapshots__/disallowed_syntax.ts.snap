@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Cannot have if without else 1`] = `"Line 2: Missing \\"else\\" in \\"if-else\\" statement"`;
+
+exports[`Cannot have incomplete statements 1`] = `"Line 2: Missing semicolon at the end of statement"`;
+
 exports[`Cannot leave blank expressions in for loops 1`] = `"Line 2: Missing init expression in for statement."`;
 
 exports[`Cannot leave blank expressions in for loops 2`] = `"Line 2: Missing test expression in for statement."`;
@@ -8,4 +12,49 @@ exports[`Cannot leave blank expressions in for loops 3`] = `"Line 2: Missing upd
 
 exports[`Cannot leave blank expressions in for loops 4`] = `"Line 2: Missing init, test, update expressions in for statement."`;
 
+exports[`Cannot leave while loop predicate blank 1`] = `"Line 2: SyntaxError: Unexpected token (2:8)"`;
+
+exports[`Cannot use assignment expressions 1`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use assignment expressions 2`] = `"Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use assignment expressions 3`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
+
+exports[`Cannot use function expressions 1`] = `"Line 2: Function expressions are not allowed"`;
+
+exports[`Cannot use function expressions 2`] = `"Line 2: Function expressions are not allowed"`;
+
 exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
+
+exports[`Cannot use update statements 1`] = `"Line 3: The assignment operator += is not allowed. Use = instead"`;
+
+exports[`No array expressions in chapter 2 1`] = `"Line 2: Array expressions are not allowed"`;
+
+exports[`No empty statements 1`] = `"Line 2: Empty statements are not allowed"`;
+
+exports[`for needs braces 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`for needs braces 2`] = `"Line 2: Missing curly braces around \\"for\\" block"`;
+
+exports[`if needs braces 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`if needs braces 2`] = `
+"Line 2: Missing curly braces around \\"if\\" block
+Line 2: Missing curly braces around \\"else\\" block"
+`;
+
+exports[`while needs braces 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`while needs braces 2`] = `"Line 3: Missing curly braces around \\"while\\" block"`;

@@ -2,18 +2,18 @@ import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 
-export class BracesAroundWhileError implements SourceError {
+export class BracesAroundForError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.WhileStatement) {}
+  constructor(public node: es.ForStatement) {}
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    return 'Missing curly braces around "while" block'
+    return 'Missing curly braces around "for" block'
   }
 
   public elaborate() {
@@ -21,13 +21,13 @@ export class BracesAroundWhileError implements SourceError {
   }
 }
 
-const bracesAroundWhile: Rule<es.WhileStatement> = {
-  name: 'braces-around-while',
+const bracesAroundFor: Rule<es.ForStatement> = {
+  name: 'braces-around-for',
 
   checkers: {
-    WhileStatement(node: es.WhileStatement, ancestors: [es.Node]) {
+    ForStatement(node: es.ForStatement, ancestors: [es.Node]) {
       if (node.body.type !== 'BlockStatement') {
-        return [new BracesAroundWhileError(node)]
+        return [new BracesAroundForError(node)]
       } else {
         return []
       }
@@ -35,4 +35,4 @@ const bracesAroundWhile: Rule<es.WhileStatement> = {
   }
 }
 
-export default bracesAroundWhile
+export default bracesAroundFor

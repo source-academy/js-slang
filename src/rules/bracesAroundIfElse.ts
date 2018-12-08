@@ -72,7 +72,7 @@ const bracesAroundIfElse: Rule<es.IfStatement> = {
   name: 'braces-around-if-else',
 
   checkers: {
-    IfStatement(node: es.IfStatement) {
+    IfStatement(node: es.IfStatement, ancestors: [es.Node]) {
       const errors: SourceError[] = []
       if (node.consequent && node.consequent.type !== 'BlockStatement') {
         errors.push(new BracesAroundIfElseError(node, 'consequent'))

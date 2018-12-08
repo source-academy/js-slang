@@ -16,7 +16,7 @@ test('Empty code returns undefined', () => {
 })
 
 test('Single string self-evaluates to itself', () => {
-  const code = "'42';"
+  const code = '\'42\';'
   const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -30,7 +30,7 @@ test('Multi-dimensional arrays display properly', () => {
   const code = `
     function a() {} 
     ""+[1, a, 3, [() => 1, 5]];
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -80,7 +80,7 @@ test('list now uses Source toString instead of native when +ed with another stri
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe("123[4, [5, [6, []]]]")
+    expect((obj as Finished).value).toBe('123[4, [5, [6, []]]]')
   })
 })
 
@@ -132,7 +132,7 @@ test(
   30000
 )
 
-test("Cannot overwrite consts even when assignment is allowed", () => {
+test('Cannot overwrite consts even when assignment is allowed', () => {
   const code = `
   function test(){
     const constant = 3;
@@ -140,18 +140,18 @@ test("Cannot overwrite consts even when assignment is allowed", () => {
     return constant;
   }
   test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
-    expect(obj.status).toBe("error");
+    expect(obj.status).toBe('error')
     const errors = parseError(context.errors)
     expect(errors).toMatchSnapshot()
-  });
-});
+  })
+})
 
 
-test("Can overwrite lets when assignment is allowed", () => {
+test('Can overwrite lets when assignment is allowed', () => {
   const code = `
   function test(){
     let variable = false;
@@ -159,14 +159,14 @@ test("Can overwrite lets when assignment is allowed", () => {
     return variable;
   }
   test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(true)
-  });
-});
+  })
+})
 
 test(
   'Inifinite recursion with list args represents CallExpression well',
@@ -204,21 +204,21 @@ test(
   30000
 )
 
-test("Functions passed into non-source functions remain equal", () => {
+test('Functions passed into non-source functions remain equal', () => {
   const code = `
   function t(x, y, z) {
     return x + y + z;
   }
   identity(t) === t && t(1, 2, 3) === 6;
-  `;
-  const context = mockContext(4);
-  defineSymbol(context, "identity", (x: any) => x)
-  const promise = runInContext(code, context, { scheduler: "preemptive" })
+  `
+  const context = mockContext(4)
+  defineSymbol(context, 'identity', (x: any) => x)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(true)
-  });
-});
+  })
+})
 
 test('Metacircular Interpreter parses Arrow Function Expressions properly', () => {
   const code = 'stringify(parse("x => x + 1;"));'
@@ -244,7 +244,7 @@ test('Multi-dimensional arrays display properly', () => {
   const code = `
     function a() {} 
     ""+[1, a, 3, [() => 1, 5]];
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -255,12 +255,17 @@ test('Multi-dimensional arrays display properly', () => {
 })
 
 test('Simple object assignment and retrieval', () => {
+  // const code = `
+  //   const o = {};
+  //   o.a = 1;
+  //   o.a;
+  //  `;
   const code = `
     const o = {};
-    o.a = 1;
-    o.a;
-   `;
-  const context = mockContext(4)
+    o['a'] = 1;
+    o['a'];
+   `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -270,18 +275,25 @@ test('Simple object assignment and retrieval', () => {
 })
 
 test('Deep object assignment and retrieval', () => {
+  // const code = `
+  //   const o = {};
+  //   o.a = {};
+  //   o.a.b = {};
+  //   o.a.b.c = "string";
+  //   o.a.b.c;
+  //  `;
   const code = `
     const o = {};
-    o.a = {};
-    o.a.b = {};
-    o.a.b.c = "string";
-    o.a.b.c;
-   `;
-  const context = mockContext(4)
+    o['a'] = {};
+    o['a']['b'] = {};
+    o['a']['b']['c'] = "string";
+    o['a']['b']['c'];
+   `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe("string")
+    expect((obj as Finished).value).toBe('string')
   })
 })

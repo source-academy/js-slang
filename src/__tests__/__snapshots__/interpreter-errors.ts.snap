@@ -37,7 +37,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 18,
+        "column": 21,
         "line": 2,
       },
       "start": Position {
@@ -116,7 +116,7 @@ Array [
   SetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 24,
+        "column": 27,
         "line": 2,
       },
       "start": Position {
@@ -143,7 +143,7 @@ Array [
   SetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 16,
+        "column": 19,
         "line": 3,
       },
       "start": Position {
@@ -170,7 +170,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 18,
+        "column": 21,
         "line": 2,
       },
       "start": Position {
@@ -197,7 +197,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 10,
+        "column": 13,
         "line": 3,
       },
       "start": Position {
@@ -224,7 +224,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 15,
+        "column": 18,
         "line": 3,
       },
       "start": Position {
