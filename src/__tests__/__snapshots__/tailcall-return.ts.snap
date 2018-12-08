@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Check that stack is at most 10k in size 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Check that stack is at most 10k in size 2`] = `
+Array [
+  MaximumStackLimitExceeded {
+    "calls": Array [
+      undefined,
+      undefined,
+      Object {
+        "__id": "node_11",
+        "arguments": Array [
+          Object {
+            "__id": "__syn382",
+            "raw": 9619,
+            "type": "Literal",
+            "value": 9619,
+          },
+        ],
+        "callee": Node {
+          "__id": "node_7",
+          "end": 94,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 20,
+              "line": 6,
+            },
+            "start": Position {
+              "column": 19,
+              "line": 6,
+            },
+          },
+          "name": "f",
+          "start": 93,
+          "type": "Identifier",
+        },
+        "end": 99,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 25,
+            "line": 6,
+          },
+          "start": Position {
+            "column": 19,
+            "line": 6,
+          },
+        },
+        "start": 93,
+        "type": "CallExpression",
+      },
+    ],
+    "customGenerator": Object {
+      "ArrayExpression": [Function],
+      "ArrayPattern": [Function],
+      "ArrowFunctionExpression": [Function],
+      "AssignmentExpression": [Function],
+      "AssignmentPattern": [Function],
+      "AwaitExpression": [Function],
+      "BinaryExpression": [Function],
+      "BlockStatement": [Function],
+      "BreakStatement": [Function],
+      "CallExpression": [Function],
+      "ClassBody": [Function],
+      "ClassDeclaration": [Function],
+      "ClassExpression": [Function],
+      "ConditionalExpression": [Function],
+      "ContinueStatement": [Function],
+      "DebuggerStatement": [Function],
+      "DoWhileStatement": [Function],
+      "EmptyStatement": [Function],
+      "ExportAllDeclaration": [Function],
+      "ExportDefaultDeclaration": [Function],
+      "ExportNamedDeclaration": [Function],
+      "ExpressionStatement": [Function],
+      "ForInStatement": [Function],
+      "ForOfStatement": [Function],
+      "ForStatement": [Function],
+      "FunctionDeclaration": [Function],
+      "FunctionExpression": [Function],
+      "Identifier": [Function],
+      "IfStatement": [Function],
+      "ImportDeclaration": [Function],
+      "LabeledStatement": [Function],
+      "Literal": [Function],
+      "LogicalExpression": [Function],
+      "MemberExpression": [Function],
+      "MetaProperty": [Function],
+      "MethodDefinition": [Function],
+      "NewExpression": [Function],
+      "ObjectExpression": [Function],
+      "ObjectPattern": [Function],
+      "Program": [Function],
+      "Property": [Function],
+      "RegExpLiteral": [Function],
+      "RestElement": [Function],
+      "ReturnStatement": [Function],
+      "SequenceExpression": [Function],
+      "SpreadElement": [Function],
+      "Super": [Function],
+      "SwitchStatement": [Function],
+      "TaggedTemplateExpression": [Function],
+      "TemplateLiteral": [Function],
+      "ThisExpression": [Function],
+      "ThrowStatement": [Function],
+      "TryStatement": [Function],
+      "UnaryExpression": [Function],
+      "UpdateExpression": [Function],
+      "VariableDeclaration": [Function],
+      "VariableDeclarator": [Function],
+      "WhileStatement": [Function],
+      "WithStatement": [Function],
+      "YieldExpression": [Function],
+    },
+    "location": SourceLocation {
+      "end": Position {
+        "column": 26,
+        "line": 6,
+      },
+      "start": Position {
+        "column": 8,
+        "line": 6,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Simple tail call returns work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Simple tail call returns work 2`] = `Array []`;
+
+exports[`Tail call in boolean operators work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail call in boolean operators work 2`] = `Array []`;
+
+exports[`Tail call in conditional expressions work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail call in conditional expressions work 2`] = `Array []`;
+
+exports[`Tail call in nested mix of conditional expressions boolean operators work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail call in nested mix of conditional expressions boolean operators work 2`] = `Array []`;
