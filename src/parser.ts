@@ -159,6 +159,9 @@ function createWalkers(
   syntaxPairs.map(pair => {
     const syntax = pair[0]
     newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
+      // Note that because of the way there is inheritance in the estree spec,
+      // we may walk this node more than once, so ensure that we only push errors
+      // at most once per node.
       if (!node.hasOwnProperty('__id')) {
         const id = freshId()
         Object.defineProperty(node, '__id', {
