@@ -1,9 +1,9 @@
-import { mockContext } from "../mocks/context";
-import { parseError, runInContext } from "../index";
-import { Finished } from "../types";
+import { mockContext } from '../mocks/context'
+import { parseError, runInContext } from '../index'
+import { Finished } from '../types'
 
 // This is bad practice. Don't do this!
-test("standalone block statements", () => {
+test('standalone block statements', () => {
   const code = `
     function test(){
       const x = true;
@@ -13,18 +13,18 @@ test("standalone block statements", () => {
       return x;
     }
     test();
-  `;
-  const context = mockContext();
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj).toMatchSnapshot();
-    expect(obj.status).toBe("finished");
-    expect((obj as Finished).value).toBe(true);
-  });
-});
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
 
 // This is bad practice. Don't do this!
-test("const uses block scoping instead of function scoping", () => {
+test('const uses block scoping instead of function scoping', () => {
   const code = `
     function test(){
       const x = true;
@@ -36,18 +36,18 @@ test("const uses block scoping instead of function scoping", () => {
       return x;
     }
     test();
-  `;
-  const context = mockContext();
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj).toMatchSnapshot();
-    expect(obj.status).toBe("finished");
-    expect((obj as Finished).value).toBe(true);
-  });
-});
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
 
 // This is bad practice. Don't do this!
-test("let uses block scoping instead of function scoping", () => {
+test('let uses block scoping instead of function scoping', () => {
   const code = `
     function test(){
       let x = true;
@@ -59,18 +59,18 @@ test("let uses block scoping instead of function scoping", () => {
       return x;
     }
     test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj.status).toBe("finished");
-    expect(obj).toMatchSnapshot();
-    expect((obj as Finished).value).toBe(true);
-  });
-});
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
 
 // This is bad practice. Don't do this!
-test("for loops use block scoping instead of function scoping", () => {
+test('for loops use block scoping instead of function scoping', () => {
   const code = `
     function test(){
       let x = true;
@@ -79,20 +79,20 @@ test("for loops use block scoping instead of function scoping", () => {
       return x;
     }
     test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
     //expect(obj.status).toBe("finished");
-    expect(parseError(context.errors)).toBe("")
-    expect(obj).toMatchSnapshot();
-    expect((obj as Finished).value).toBe(true);
+    expect(parseError(context.errors)).toBe('')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
 
-  });
-});
+  })
+})
 
 // This is bad practice. Don't do this!
-test("while loops use block scoping instead of function scoping", () => {
+test('while loops use block scoping instead of function scoping', () => {
   const code = `
     function test(){
       let x = true;
@@ -103,19 +103,19 @@ test("while loops use block scoping instead of function scoping", () => {
       return x;
     }
     test();
-  `;
-  const context = mockContext(4);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj.status).toBe("finished");
-    expect(obj).toMatchSnapshot();
-    expect((obj as Finished).value).toBe(true);
-  });
-});
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
 
 //see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 //and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-test("for loop `let` variables are copied into the block scope", () => {
+test('for loop `let` variables are copied into the block scope', () => {
   const code = `
   function test(){
     let z = [];
@@ -125,17 +125,17 @@ test("for loop `let` variables are copied into the block scope", () => {
     return z[1]();
   }
   test();
-  `;
-  const context = mockContext(4);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj.status).toBe("finished");
-    expect((obj as Finished).value).toBe(1);
-    expect(obj).toMatchSnapshot();
-  });
-});
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(1)
+    expect(obj).toMatchSnapshot()
+  })
+})
 
-test("Cannot overwrite loop variables within a block", () => {
+test('Cannot overwrite loop variables within a block', () => {
   const code = `
   function test(){
       let z = [];
@@ -145,15 +145,15 @@ test("Cannot overwrite loop variables within a block", () => {
       return false;
   }
   test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
-    expect(obj.status).toBe("error");
-    const errors = parseError(context.errors);
-    expect(errors).toMatchSnapshot();
-  });
-});
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
 
 test(
   'No hoisting of functions. Only the name is hoisted like let and const',
@@ -166,7 +166,7 @@ test(
       v;
     `
     const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    const promise = runInContext(code, context, {scheduler: 'preemptive'})
     return promise.then(obj => {
       const errors = parseError(context.errors)
       expect(obj).toMatchSnapshot()
@@ -190,7 +190,7 @@ test(
       }
     `
     const context = mockContext()
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    const promise = runInContext(code, context, {scheduler: 'preemptive'})
     return promise.then(obj => {
       const errors = parseError(context.errors)
       expect(errors).toMatchSnapshot()
@@ -202,7 +202,7 @@ test(
   30000
 )
 
-test("Shadowed variables may not be assigned to until declared in the current scope", () => {
+test('Shadowed variables may not be assigned to until declared in the current scope', () => {
   const code = `
   let variable = 1;
   function test(){
@@ -211,9 +211,9 @@ test("Shadowed variables may not be assigned to until declared in the current sc
     return variable;
   }
   test();
-  `;
-  const context = mockContext(3);
-  const promise = runInContext(code, context, { scheduler: "preemptive" });
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, {scheduler: 'preemptive'})
   return promise.then(obj => {
     const errors = parseError(context.errors)
     expect(obj.status).toBe('error')

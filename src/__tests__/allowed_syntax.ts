@@ -2,7 +2,7 @@ import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
 import { Finished } from '../types'
 
-test("Syntaxes are allowed in the chapter they are introduced", () => {
+test('Syntaxes are allowed in the chapter they are introduced', () => {
   const code = [
     [1, `
   `],
@@ -109,30 +109,30 @@ test("Syntaxes are allowed in the chapter they are introduced", () => {
     ({a: 1, b: 2}).a;
   `],
   */
-  ];
+  ]
 
-  const scheduler = "preemptive";
+  const scheduler = 'preemptive'
   const promises = code.map(c => {
-    const chapter = c[0] as number;
-    const snippet = c[1] as string;
-    const context = mockContext(chapter);
-    return runInContext(snippet, context, { scheduler }).then(obj => ({
+    const chapter = c[0] as number
+    const snippet = c[1] as string
+    const context = mockContext(chapter)
+    return runInContext(snippet, context, {scheduler}).then(obj => ({
       snippet,
       context,
       obj
-    }));
-  });
+    }))
+  })
   return Promise.all(promises).then(results => {
     results.map(res => {
-      const { snippet, context, obj } = res;
-      const errors = parseError(context.errors);
+      const {snippet, context, obj} = res
+      const errors = parseError(context.errors)
 
       // If you hit an error here, you have changed the snippets but not changed the snapshot
-      expect(snippet).toMatchSnapshot();
+      expect(snippet).toMatchSnapshot()
 
-      expect(errors).toMatchSnapshot();
-      expect(obj.status).toBe("finished");
-      expect((obj as Finished).value).toMatchSnapshot();
-    });
-  });
-});
+      expect(errors).toMatchSnapshot()
+      expect(obj.status).toBe('finished')
+      expect((obj as Finished).value).toMatchSnapshot()
+    })
+  })
+})

@@ -2,7 +2,7 @@ import { mockContext } from '../mocks/context'
 //@ts-ignore
 import { Parser } from '../stdlib/parser.js'
 
-const parser = new Parser();
+const parser = new Parser()
 
 test('Parse an arrow function', () => {
   const context = mockContext()

@@ -9,7 +9,7 @@ test('Empty parse returns empty Program Node', () => {
 
 test('Parse a single string', () => {
   const context = mockContext()
-  const program = parse("'42';", context)
+  const program = parse('\'42\';', context)
   expect(program).toMatchSnapshot()
 })
 
