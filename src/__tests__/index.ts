@@ -40,6 +40,17 @@ test('Multi-dimensional arrays display properly', () => {
   })
 })
 
+test('Allow display to return value it is displaying', () => {
+  const code = '25*(display(1+1));'
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe('50')
+  })
+})
+
 test('Single number self-evaluates to itself', () => {
   const code = '42;'
   const context = mockContext()
@@ -99,7 +110,7 @@ test('Factorial arrow function', () => {
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  const context = mockContext(4)
+  const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
