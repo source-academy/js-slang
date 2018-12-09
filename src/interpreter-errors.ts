@@ -1,6 +1,5 @@
 /* tslint:disable: max-classes-per-file */
 import { baseGenerator, generate } from 'astring'
-import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from './constants'
@@ -62,6 +61,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
+  public static MAX_CALLS_TO_SHOW = 3
 
   private customGenerator = {
     ...baseGenerator,
@@ -80,10 +80,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 
   public explain() {
     const repr = (call: es.CallExpression) => generate(call, { generator: this.customGenerator })
-    return stripIndent`
-      Infinite recursion
-        ${repr(this.calls[2])}..  ${repr(this.calls[1])}..  ${repr(this.calls[0])}..
-    `
+    return 'Infinite recursion\n  ' + this.calls.map(call => repr(call) + '..').join('  ')
   }
 
   public elaborate() {

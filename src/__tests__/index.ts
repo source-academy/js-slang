@@ -80,7 +80,7 @@ test('list now uses Source toString instead of native when +ed with another stri
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('123[4, [5, [6, []]]]')
+    expect((obj as Finished).value).toBe('123[4, [5, [6, null]]]')
   })
 })
 
@@ -220,26 +220,6 @@ test('Functions passed into non-source functions remain equal', () => {
   })
 })
 
-test('Metacircular Interpreter parses Arrow Function Expressions properly', () => {
-  const code = 'stringify(parse("x => x + 1;"));'
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
-})
-
-test('Metacircular Interpreter parses Arrow Function Assignments properly', () => {
-  const code = 'stringify(parse("const y = x => x + 1;"));'
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
-})
-
 test('Multi-dimensional arrays display properly', () => {
   const code = `
     function a() {} 
@@ -295,5 +275,53 @@ test('Deep object assignment and retrieval', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe('string')
+  })
+})
+
+test('Test apply_in_underlying_javascript', () => {
+  const code = `
+  apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(60)
+  })
+})
+
+test('Test equal for primitives', () => {
+  const code = `
+  equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('Test equal for lists', () => {
+  const code = `
+  equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('Test equal for different lists', () => {
+  const code = `
+  !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(true)
   })
 })

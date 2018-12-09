@@ -158,24 +158,29 @@ function createWalkers(
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
-    const allowedChap = pair[1]
     newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
-      const id = freshId()
-      Object.defineProperty(node, '__id', {
-        enumerable: true,
-        configurable: false,
-        writable: false,
-        value: id
-      })
-      context.cfg.nodes[id] = {
-        id,
-        node,
-        scope: undefined,
-        usages: []
-      }
-      context.cfg.edges[id] = []
-      if (context.chapter < allowedChap) {
-        context.errors.push(new DisallowedConstructError(node))
+      // Note that because of the way there is inheritance in the estree spec,
+      // we may walk this node more than once, so ensure that we only push errors
+      // at most once per node.
+      if (!node.hasOwnProperty('__id')) {
+        const id = freshId()
+        Object.defineProperty(node, '__id', {
+          enumerable: true,
+          configurable: false,
+          writable: false,
+          value: id
+        })
+        context.cfg.nodes[id] = {
+          id,
+          node,
+          scope: undefined,
+          usages: []
+        }
+        context.cfg.edges[id] = []
+
+        if (context.chapter < allowedSyntaxes[node.type]) {
+          context.errors.push(new DisallowedConstructError(node))
+        }
       }
     })
   })

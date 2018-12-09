@@ -65,29 +65,19 @@ export function tail(xs: List) {
 }
 tail.__SOURCE__ = 'tail(xs)'
 
-// is_empty_list returns true if arg is []
+// is_null returns true if arg is exactly null
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_empty_list(xs: List) {
-  if (array_test(xs)) {
-    if (xs.length === 0) {
-      return true
-    } else if (xs.length === 2) {
-      return false
-    } else {
-      return false
-    }
-  } else {
-    return false
-  }
+export function is_null(xs: List) {
+  return xs === null
 }
-is_empty_list.__SOURCE__ = 'is_empty_list(xs)'
+is_null.__SOURCE__ = 'is_null(xs)'
 
 // is_list recurses down the list and checks that it ends with the empty list []
 // does not throw Value exceptions
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_list(xs: List) {
   for (; ; xs = tail(xs)) {
-    if (is_empty_list(xs)) {
+    if (is_null(xs)) {
       return true
     } else if (!is_pair(xs)) {
       return false
@@ -99,8 +89,8 @@ is_list.__SOURCE__ = 'is_list(xs)'
 // list makes a list out of its arguments
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list() {
-  var the_list = []
-  for (var i = arguments.length - 1; i >= 0; i--) {
+  let the_list = null
+  for (let i = arguments.length - 1; i >= 0; i--) {
     the_list = pair(arguments[i], the_list)
   }
   return the_list
@@ -112,8 +102,8 @@ list.__SOURCE__ = 'list(x, y, ...)'
 // list_to_vector throws an exception if the argument is not a list
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list_to_vector(lst: List) {
-  var vector = []
-  while (!is_empty_list(lst)) {
+  const vector = []
+  while (!is_null(lst)) {
     vector.push(head(lst))
     lst = tail(lst)
   }
@@ -126,12 +116,8 @@ list_to_vector.__SOURCE__ = 'list_to_vector(xs)'
 // vector_to_list throws an exception if the argument is not a vector
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function vector_to_list(vector: Value[]) {
-  if (vector.length === 0) {
-    return []
-  }
-
-  var result = []
-  for (var i = vector.length - 1; i >= 0; i = i - 1) {
+  let result = null
+  for (let i = vector.length - 1; i >= 0; i = i - 1) {
     result = pair(vector[i], result)
   }
   return result
@@ -141,8 +127,9 @@ vector_to_list.__SOURCE__ = 'vector_to_list(vs)'
 // returns the length of a given argument list
 // throws an exception if the argument is not a list
 export function length(xs: List) {
-  for (var i = 0; !is_empty_list(xs); ++i) {
-    xs = tail(xs)
+  let i = 0
+  while (!is_null(xs)) {
+    i += 1
   }
   return i
 }
@@ -155,8 +142,8 @@ length.__SOURCE__ = 'length(xs)'
 // map throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the first
 // argument is not a function.
-export function map(f: Function, xs: List): List {
-  return is_empty_list(xs) ? [] : pair(f(head(xs)), map(f, tail(xs)))
+export function map(f: Function, xs: List): List | null {
+  return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)))
 }
 map.__SOURCE__ = 'map(f, xs)'
 
@@ -164,15 +151,15 @@ map.__SOURCE__ = 'map(f, xs)'
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
-export function build_list(n: number, fun: Function) {
-  function build(i: number, fun: Function, already_built: List): List {
+export function build_list(n: number, fun: Function): List | null {
+  function build(i: number, fun: Function, already_built: List | null): List | null {
     if (i < 0) {
       return already_built
     } else {
       return build(i - 1, fun, pair(fun(i), already_built))
     }
   }
-  return build(n - 1, fun, [])
+  return build(n - 1, fun, null)
 }
 build_list.__SOURCE__ = 'build_list(n, fun)'
 
@@ -187,7 +174,7 @@ export function for_each(fun: Function, xs: List) {
   if (!is_list(xs)) {
     throw new Error('for_each expects a list as argument xs, but ' + 'encountered ' + xs)
   }
-  for (; !is_empty_list(xs); xs = tail(xs)) {
+  for (; !is_null(xs); xs = tail(xs)) {
     fun(head(xs))
   }
   return true
@@ -208,8 +195,8 @@ export function reverse(xs: List) {
   if (!is_list(xs)) {
     throw new Error('reverse(xs) expects a list as argument xs, but ' + 'encountered ' + xs)
   }
-  var result = []
-  for (; !is_empty_list(xs); xs = tail(xs)) {
+  let result = null
+  for (; !is_null(xs); xs = tail(xs)) {
     result = pair(head(xs), result)
   }
   return result
@@ -221,7 +208,7 @@ reverse.__SOURCE__ = 'reverse(xs)'
 // is replaced by the second argument list
 // append throws an exception if the first argument is not a list
 export function append(xs: List, ys: List): List {
-  if (is_empty_list(xs)) {
+  if (is_null(xs)) {
     return ys
   } else {
     return pair(head(xs), append(tail(xs), ys))
@@ -234,21 +221,21 @@ append.__SOURCE__ = 'append(xs, ys)'
 // that starts with the given element. It returns [] if the
 // element does not occur in the list
 export function member(v: Value, xs: List) {
-  for (; !is_empty_list(xs); xs = tail(xs)) {
+  for (; !is_null(xs); xs = tail(xs)) {
     if (head(xs) === v) {
       return xs
     }
   }
-  return []
+  return null
 }
 member.__SOURCE__ = 'member(x, xs)'
 
 // removes the first occurrence of a given first-argument element
 // in a given second-argument list. Returns the original list
 // if there is no occurrence.
-export function remove(v: Value, xs: List): List {
-  if (is_empty_list(xs)) {
-    return []
+export function remove(v: Value, xs: List): List | null {
+  if (is_null(xs)) {
+    return null
   } else {
     if (v === head(xs)) {
       return tail(xs)
@@ -260,9 +247,9 @@ export function remove(v: Value, xs: List): List {
 remove.__SOURCE__ = 'remove(x, xs)'
 
 // Similar to remove. But removes all instances of v instead of just the first
-export function remove_all(v: Value, xs: List): List {
-  if (is_empty_list(xs)) {
-    return []
+export function remove_all(v: Value, xs: List): List | null {
+  if (is_null(xs)) {
+    return null
   } else {
     if (v === head(xs)) {
       return remove_all(v, tail(xs))
@@ -280,8 +267,6 @@ export const removeAll = remove_all
 export function equal(item1: Value, item2: Value): boolean {
   if (is_pair(item1) && is_pair(item2)) {
     return equal(head(item1), head(item2)) && equal(tail(item1), tail(item2))
-  } else if (array_test(item1) && item1.length === 0 && array_test(item2) && item2.length === 0) {
-    return true
   } else {
     return item1 === item2
   }
@@ -295,7 +280,7 @@ equal.__SOURCE__ = 'equal(x, y)'
 // first argument v. Returns false if there is no such
 // pair
 export function assoc(v: Value, xs: List): boolean {
-  if (is_empty_list(xs)) {
+  if (is_null(xs)) {
     return false
   } else if (equal(v, head(head(xs)))) {
     return head(xs)
@@ -308,7 +293,7 @@ assoc.__SOURCE__ = 'assoc(v, xs)'
 // filter returns the sublist of elements of given list xs
 // for which the given predicate function returns true.
 export function filter(pred: Function, xs: List): List {
-  if (is_empty_list(xs)) {
+  if (is_null(xs)) {
     return xs
   } else {
     if (pred(head(xs))) {
@@ -323,9 +308,9 @@ filter.__SOURCE__ = 'filter(pred, xs)'
 // enumerates numbers starting from start,
 // using a step size of 1, until the number
 // exceeds end.
-export function enum_list(start: number, end: number): List {
+export function enum_list(start: number, end: number): List | null {
   if (start > end) {
-    return []
+    return null
   } else {
     return pair(start, enum_list(start + 1, end))
   }
@@ -357,7 +342,7 @@ list_ref.__SOURCE__ = 'list_ref(xs, n)'
 // op(1, op(2, op(3, zero)))
 
 export function accumulate<T>(op: (value: Value, acc: T) => T, initial: T, sequence: List): T {
-  if (is_empty_list(sequence)) {
+  if (is_null(sequence)) {
     return initial
   } else {
     return op(head(sequence), accumulate(op, initial, tail(sequence)))
