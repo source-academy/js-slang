@@ -10,9 +10,9 @@ import { closureToJS } from './interop'
  * different implementations. e.g display() in a web application.
  */
 export interface CustomBuiltIns {
-  display: (value: Value, externalContext: any) => void,
-  prompt: (value: Value, externalContext: any) => string | null,
-  alert: (value: Value, externalContext: any) => void,
+  display: (value: Value, externalContext: any) => void
+  prompt: (value: Value, externalContext: any) => string | null
+  alert: (value: Value, externalContext: any) => void
   /* Used for list visualisation. See #12 */
   visualiseList: (list: any, externalContext: any) => void
 }
@@ -152,8 +152,8 @@ export interface Frame {
 
 class Callable extends Function {
   constructor(f: any) {
-    super();
-    return Object.setPrototypeOf(f, new.target.prototype);
+    super()
+    return Object.setPrototypeOf(f, new.target.prototype)
   }
 }
 
@@ -175,7 +175,7 @@ export class Closure extends Callable {
   public originalNode: es.Function
 
   constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
-    super(function (this: any, ...args: any[]) {
+    super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
     this.originalNode = node
@@ -197,29 +197,39 @@ export class Closure extends Callable {
 
     let closure = null
     if (isExpressionBody(node.body)) {
-      closure = new Closure(<es.FunctionExpression> {
-        type: 'FunctionExpression',
-        loc: node.loc,
-        id: null,
-        params: node.params,
-        body: <es.BlockStatement> {
-          type: 'BlockStatement',
-          loc: node.body.loc,
-          body: [{
-            type: 'ReturnStatement',
+      closure = new Closure(
+        <es.FunctionExpression>{
+          type: 'FunctionExpression',
+          loc: node.loc,
+          id: null,
+          params: node.params,
+          body: <es.BlockStatement>{
+            type: 'BlockStatement',
             loc: node.body.loc,
-            argument: node.body
-          }]
-        }
-      }, frame, context)
+            body: [
+              {
+                type: 'ReturnStatement',
+                loc: node.body.loc,
+                argument: node.body
+              }
+            ]
+          }
+        },
+        frame,
+        context
+      )
     } else {
-      closure = new Closure(<es.FunctionExpression> {
-        type: 'FunctionExpression',
-        loc: node.loc,
-        id: null,
-        params: node.params,
-        body: node.body
-      }, frame, context)
+      closure = new Closure(
+        <es.FunctionExpression>{
+          type: 'FunctionExpression',
+          loc: node.loc,
+          id: null,
+          params: node.params,
+          body: node.body
+        },
+        frame,
+        context
+      )
     }
 
     // Set the closure's nod to point back at the original one

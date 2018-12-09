@@ -60,7 +60,10 @@ const walkIfStatement: Walker<es.IfStatement, Context> = (node, context, recurse
   let consequentExit
   let alternateExit
   // Connect test with previous node
-  connect(test, context)
+  connect(
+    test,
+    context
+  )
 
   // Process the consequent branch
   edgeLabel = 'consequent'
@@ -85,7 +88,10 @@ const walkIfStatement: Walker<es.IfStatement, Context> = (node, context, recurse
 walkers.IfStatement = walkIfStatement
 
 const walkReturnStatement: Walker<es.ReturnStatement, Context> = (node, state) => {
-  connect(node, state)
+  connect(
+    node,
+    state
+  )
   exitScope(state)
 }
 walkers.ReturnStatement = composeWalker(base.ReturnStatement, walkReturnStatement)
@@ -97,7 +103,10 @@ const walkFunction: Walker<es.FunctionDeclaration | es.FunctionExpression, Conte
 ) => {
   // Check whether function declaration is from outer scope or its own
   if (scopeQueue[0].node !== node) {
-    connect(node, context)
+    connect(
+      node,
+      context
+    )
     const name = node.id ? node.id.name : freshLambda()
     const scope: CFG.Scope = {
       name,

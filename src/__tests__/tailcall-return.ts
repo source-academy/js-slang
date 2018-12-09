@@ -18,7 +18,8 @@ test('Check that stack is at most 10k in size', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n([^f]*f){3}/))
+      expect.stringMatching(/Infinite recursion\n([^f]*f){3}/)
+    )
   })
 })
 

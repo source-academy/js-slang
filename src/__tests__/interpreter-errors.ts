@@ -140,7 +140,9 @@ test('Nice errors when errors occur inside builtins', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.')
+    expect(parseError(context.errors)).toBe(
+      'Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    )
   })
 })
 
@@ -154,7 +156,7 @@ test('Nice errors when errors occur inside builtins', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toMatchSnapshot()
-  });
+  })
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
@@ -171,7 +173,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
-  });
+  })
 })
 
 test('Infinite recursion with a block bodied function', () => {

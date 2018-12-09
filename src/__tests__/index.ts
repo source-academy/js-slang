@@ -16,7 +16,7 @@ test('Empty code returns undefined', () => {
 })
 
 test('Single string self-evaluates to itself', () => {
-  const code = '\'42\';'
+  const code = "'42';"
   const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -28,7 +28,7 @@ test('Single string self-evaluates to itself', () => {
 
 test('Multi-dimensional arrays display properly', () => {
   const code = `
-    function a() {} 
+    function a() {}
     ""+[1, a, 3, [() => 1, 5]];
    `
   const context = mockContext(4)
@@ -174,7 +174,6 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     expect(errors).toMatchSnapshot()
   })
 })
-
 
 test('Can overwrite lets when assignment is allowed', () => {
   const code = `

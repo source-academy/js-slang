@@ -1,12 +1,5 @@
 import * as es from 'estree'
-import {
-  Closure,
-  Context,
-  ErrorSeverity,
-  ErrorType,
-  SourceError,
-  Value
-} from '../types'
+import { Closure, Context, ErrorSeverity, ErrorType, SourceError, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'

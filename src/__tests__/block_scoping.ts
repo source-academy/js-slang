@@ -87,7 +87,6 @@ test('for loops use block scoping instead of function scoping', () => {
     expect(parseError(context.errors)).toBe('')
     expect(obj).toMatchSnapshot()
     expect((obj as Finished).value).toBe(true)
-
   })
 })
 
@@ -171,9 +170,7 @@ test(
       const errors = parseError(context.errors)
       expect(obj).toMatchSnapshot()
       expect(obj.status).toBe('error')
-      expect(errors).toEqual(
-        expect.stringMatching(/^Line 2: Name f not yet assigned/)
-      )
+      expect(errors).toEqual(expect.stringMatching(/^Line 2: Name f not yet assigned/))
     })
   },
   30000
@@ -194,9 +191,7 @@ test(
     return promise.then(obj => {
       const errors = parseError(context.errors)
       expect(errors).toMatchSnapshot()
-      expect(errors).toEqual(
-        expect.stringMatching(/^Line 4: Name a not yet assigned/)
-      )
+      expect(errors).toEqual(expect.stringMatching(/^Line 4: Name a not yet assigned/))
     })
   },
   30000
