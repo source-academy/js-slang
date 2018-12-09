@@ -97,3 +97,83 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
     expect(context.errors).toEqual([])
   })
 })
+
+test('Tail calls in arrow functions work', () => {
+  const code = `
+    const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
+    f(5000, 5000);
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(10000)
+    expect(context.errors).toEqual([])
+  })
+})
+
+test('Tail calls in arrow block functions work', () => {
+  const code = `
+    const f = (x, y) => {
+      if (x <= 0) {
+        return y;
+      } else {
+        return f(x-1, y+1);
+      }
+    };
+    f(5000, 5000);
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(10000)
+    expect(context.errors).toEqual([])
+  })
+})
+
+test('Tail calls in mutual recursion work', () => {
+  const code = `
+    function f(x, y) {
+      if (x <= 0) {
+        return y;
+      } else {
+        return g(x-1, y+1);
+      }
+    }
+    function g(x, y) {
+      if (x <= 0) {
+        return y;
+      } else {
+        return f(x-1, y+1);
+      }
+    }
+    f(5000, 5000);
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(10000)
+    expect(context.errors).toEqual([])
+  })
+})
+
+test('Tail calls in mutual recursion with arrow functions work', () => {
+  const code = `
+    const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
+    const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
+    f(5000, 5000);
+  `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(10000)
+    expect(context.errors).toEqual([])
+  })
+})

@@ -27,3 +27,31 @@ Object {
   "value": 10000,
 }
 `;
+
+exports[`Tail calls in arrow block functions work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail calls in arrow functions work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail calls in mutual recursion with arrow functions work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail calls in mutual recursion work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
