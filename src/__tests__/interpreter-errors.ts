@@ -133,7 +133,7 @@ test('In case a function ever returns null, should throw an error as well', () =
 test('Nice errors when errors occur inside builtins', () => {
   const code = `
     parse_int("10");
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -147,7 +147,7 @@ test('Nice errors when errors occur inside builtins', () => {
 test('Nice errors when errors occur inside builtins', () => {
   const code = `
     parse("'");
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -163,7 +163,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
       return a;
     }
     map(f, list(1, 2));
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -172,4 +172,61 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
   });
+})
+
+test('Infinite recursion with a block bodied function', () => {
+  const code = `
+    function i(n) {
+      return n === 0 ? 0 : 1 + i(n-1);
+    }
+    i(1000);
+   `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toEqual(
+      expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^f]{2,4}){3}/)
+    )
+  })
+})
+
+test('Infinite recursion with function calls in argument', () => {
+  const code = `
+    function i(n, redundant) {
+      return n === 0 ? 0 : 1 + i(n-1, r());
+    }
+    function r() {
+      return 1;
+    }
+    i(1000, 1);
+   `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toEqual(
+      expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^f]{2,4}){3}/)
+    )
+  })
+})
+
+test('Infinite recursion of mutually recursive functions', () => {
+  const code = `
+    function f(n) {
+      return n === 0 ? 0 : 1 + g(n - 1);
+    }
+    function g(n) {
+      return 1 + f(n);
+    }
+    f(1000);
+   `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toEqual(
+      expect.stringMatching(/Infinite recursion\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/)
+    )
+  })
 })
