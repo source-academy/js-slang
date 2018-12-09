@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Builtins don't create additional errors when it's not their fault 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Builtins don't create additional errors when it's not their fault 2`] = `
+Array [
+  UndefinedVariable {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 13,
+        "line": 3,
+      },
+    },
+    "name": "a",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Error when accessing property on undefined 1`] = `
 Object {
   "status": "error",
@@ -11,7 +37,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 18,
+        "column": 21,
         "line": 2,
       },
       "start": Position {
@@ -90,7 +116,7 @@ Array [
   SetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 24,
+        "column": 27,
         "line": 2,
       },
       "start": Position {
@@ -117,7 +143,7 @@ Array [
   SetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 16,
+        "column": 19,
         "line": 3,
       },
       "start": Position {
@@ -144,7 +170,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 18,
+        "column": 21,
         "line": 2,
       },
       "start": Position {
@@ -171,7 +197,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 10,
+        "column": 13,
         "line": 3,
       },
       "start": Position {
@@ -198,7 +224,7 @@ Array [
   GetPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 15,
+        "column": 18,
         "line": 3,
       },
       "start": Position {
@@ -213,6 +239,40 @@ Array [
   },
 ]
 `;
+
+exports[`Nice errors when errors occur inside builtins 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins 2`] = `
+Array [
+  ExceptionError {
+    "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+    "location": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Nice errors when errors occur inside builtins 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins 4`] = `"Line 2: ParseError: SyntaxError: Unterminated string constant (1:0)"`;
 
 exports[`Undefined variable error is thrown 1`] = `
 Object {

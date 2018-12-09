@@ -614,8 +614,14 @@ export function* apply(
         const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
         context.runtime.frames = [globalFrame]
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
-        handleError(context, new errors.ExceptionError(e, loc))
+        if (!(e instanceof errors.RuntimeSourceError)) {
+          // The error could've arisen when the builtin called a source function which errored.
+          // If the cause was a source error, we don't want to include the error.
+          // However if the error came from the builtin itself, we need to handle it.
+          handleError(context, new errors.ExceptionError(e, loc))
+        }
         result = undefined
+        throw e
       }
     } else {
       handleError(context, new errors.CallingNonFunctionValue(fun, node))

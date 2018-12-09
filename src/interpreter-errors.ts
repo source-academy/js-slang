@@ -6,13 +6,31 @@ import { UNKNOWN_LOCATION } from './constants'
 import { toString } from './interop'
 import { ErrorSeverity, ErrorType, SourceError, Value } from './types'
 
-export class InterruptedError implements SourceError {
+export class RuntimeSourceError implements SourceError {
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
+
+  constructor(node?: es.Node) {
+    this.location = node ? node.loc! : UNKNOWN_LOCATION
+  }
+
+  public explain() {
+    return ''
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InterruptedError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -39,7 +57,7 @@ export class ExceptionError implements SourceError {
   }
 }
 
-export class MaximumStackLimitExceeded implements SourceError {
+export class MaximumStackLimitExceeded extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
@@ -57,7 +75,7 @@ export class MaximumStackLimitExceeded implements SourceError {
   }
 
   constructor(node: es.Node, private calls: es.CallExpression[]) {
-    this.location = node ? node.loc! : UNKNOWN_LOCATION
+    super(node)
   }
 
   public explain() {
@@ -70,17 +88,13 @@ export class MaximumStackLimitExceeded implements SourceError {
   }
 }
 
-export class CallingNonFunctionValue implements SourceError {
+export class CallingNonFunctionValue extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(private callee: Value, node?: es.Node) {
-    if (node) {
-      this.location = node.loc!
-    } else {
-      this.location = UNKNOWN_LOCATION
-    }
+    super(node)
   }
 
   public explain() {
@@ -92,13 +106,13 @@ export class CallingNonFunctionValue implements SourceError {
   }
 }
 
-export class UndefinedVariable implements SourceError {
+export class UndefinedVariable extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(public name: string, node: es.Node) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -110,13 +124,13 @@ export class UndefinedVariable implements SourceError {
   }
 }
 
-export class UnassignedVariable implements SourceError {
+export class UnassignedVariable extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(public name: string, node: es.Node) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -128,13 +142,13 @@ export class UnassignedVariable implements SourceError {
   }
 }
 
-export class InvalidNumberOfArguments implements SourceError {
+export class InvalidNumberOfArguments extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private expected: number, private got: number) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -146,13 +160,13 @@ export class InvalidNumberOfArguments implements SourceError {
   }
 }
 
-export class VariableRedeclaration implements SourceError {
+export class VariableRedeclaration extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private name: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -164,13 +178,13 @@ export class VariableRedeclaration implements SourceError {
   }
 }
 
-export class ConstAssignment implements SourceError {
+export class ConstAssignment extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private name: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -182,13 +196,13 @@ export class ConstAssignment implements SourceError {
   }
 }
 
-export class EmptyForExpression implements SourceError {
+export class EmptyForExpression extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private missing: string[]) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -202,13 +216,13 @@ export class EmptyForExpression implements SourceError {
 
 }
 
-export class GetPropertyError implements SourceError {
+export class GetPropertyError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private obj: es.Node, private prop: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -220,13 +234,13 @@ export class GetPropertyError implements SourceError {
   }
 }
 
-export class SetPropertyError implements SourceError {
+export class SetPropertyError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private obj: es.Node, private prop: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {

@@ -40,7 +40,7 @@ export interface Rule<T extends es.Node> {
   name: string
   disableOn?: number
   checkers: {
-    [name: string]: (node: T) => SourceError[]
+    [name: string]: (node: T, ancestors: [es.Node]) => SourceError[]
   }
 }
 
@@ -109,9 +109,6 @@ export interface Context<T = any> {
 
   /** The external symbols that exist in the Context. */
   externalSymbols: string[]
-
-  /** The Parser used for meta-circular evaluation */
-  metaCircularParser: any
 
   /** All the errors gathered */
   errors: SourceError[]

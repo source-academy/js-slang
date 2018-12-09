@@ -21,8 +21,8 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "scripts/build.sh",
-    "build": "scripts/build.sh",
+    "prepublishOnly": "tsc",
+    "build": "tsc",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },

@@ -1,6 +1,6 @@
 /* tslint:disable: max-classes-per-file */
 import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
-import { simple } from 'acorn/dist/walk'
+import { ancestor, AncestorWalker } from 'acorn/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 
@@ -101,7 +101,7 @@ export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     program = acornParse(source, createAcornParserOptions(context))
-    simple(program, walkers, undefined, context)
+    ancestor(program, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
       // tslint:disable-next-line:no-any
@@ -152,30 +152,35 @@ function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
   parserRules: Array<Rule<es.Node>>
 ) {
-  const newWalkers = new Map<string, (n: es.Node, c: Context) => void>()
+  const newWalkers = new Map<string, AncestorWalker<Context>>()
 
   // Provide callbacks checking for disallowed syntaxes, such as case, switch...
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
-    const allowedChap = pair[1]
-    newWalkers.set(syntax, (node: es.Node, context: Context) => {
-      const id = freshId()
-      Object.defineProperty(node, '__id', {
-        enumerable: true,
-        configurable: false,
-        writable: false,
-        value: id
-      })
-      context.cfg.nodes[id] = {
-        id,
-        node,
-        scope: undefined,
-        usages: []
-      }
-      context.cfg.edges[id] = []
-      if (context.chapter < allowedChap) {
-        context.errors.push(new DisallowedConstructError(node))
+    newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
+      // Note that because of the way there is inheritance in the estree spec,
+      // we may walk this node more than once, so ensure that we only push errors
+      // at most once per node.
+      if (!node.hasOwnProperty('__id')) {
+        const id = freshId()
+        Object.defineProperty(node, '__id', {
+          enumerable: true,
+          configurable: false,
+          writable: false,
+          value: id
+        })
+        context.cfg.nodes[id] = {
+          id,
+          node,
+          scope: undefined,
+          usages: []
+        }
+        context.cfg.edges[id] = []
+
+        if (context.chapter < allowedSyntaxes[node.type]) {
+          context.errors.push(new DisallowedConstructError(node))
+        }
       }
     })
   })
@@ -188,18 +193,18 @@ function createWalkers(
       const syntax = pair[0]
       const checker = pair[1]
       const oldCheck = newWalkers.get(syntax)
-      const newCheck = (node: es.Node, context: Context) => {
+      const newCheck = (node: es.Node, context: Context, ancestors: [es.Node]) => {
         if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
           return
         }
-        const errors = checker(node)
+        const errors = checker(node, ancestors)
         errors.forEach(e => context.errors.push(e))
       }
-      newWalkers.set(syntax, (node, context) => {
+      newWalkers.set(syntax, (node, context, ancestors) => {
         if (oldCheck) {
-          oldCheck(node, context)
+          oldCheck(node, context, ancestors)
         }
-        newCheck(node, context)
+        newCheck(node, context, ancestors)
       })
     })
   })
@@ -218,7 +223,7 @@ export const freshId = (() => {
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: (node: es.Node, ctxt: Context) => void } = createWalkers(
+const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(
   syntaxTypes,
   rules
 )
