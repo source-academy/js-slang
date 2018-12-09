@@ -17,7 +17,8 @@ test('Check that stack is at most 10k in size', () => {
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(parseError(context.errors)).toEqual(
+      expect.stringMatching(/Infinite recursion\n([^f]*f){3}/))
   })
 })
 
