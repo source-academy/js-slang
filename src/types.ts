@@ -199,12 +199,15 @@ export class Closure extends Callable {
     if (isExpressionBody(node.body)) {
       closure = new Closure(<es.FunctionExpression> {
         type: 'FunctionExpression',
+        loc: node.loc,
         id: null,
         params: node.params,
         body: <es.BlockStatement> {
           type: 'BlockStatement',
+          loc: node.body.loc,
           body: [{
             type: 'ReturnStatement',
+            loc: node.body.loc,
             argument: node.body
           }]
         }
@@ -212,6 +215,7 @@ export class Closure extends Callable {
     } else {
       closure = new Closure(<es.FunctionExpression> {
         type: 'FunctionExpression',
+        loc: node.loc,
         id: null,
         params: node.params,
         body: node.body
