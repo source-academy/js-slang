@@ -43,7 +43,7 @@ Object {
 
 exports[`Inifinite recursion with list args represents CallExpression well 1`] = `
 "Line 2: Infinite recursion
-f([1, [2, []]]).. f([1, [2, []]]).. f([1, [2, []]]).. "
+  f([1, [2, []]])..  f([1, [2, []]])..  f([1, [2, []]]).."
 `;
 
 exports[`Metacircular Interpreter parses Arrow Function Assignments properly 1`] = `
@@ -76,7 +76,7 @@ Object {
 
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
-x(x => x(x)).. x(x => x(x)).. x(x => x(x)).. "
+  x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
 `;
 
 exports[`Simple object assignment and retrieval 1`] = `

@@ -62,7 +62,7 @@ export class MaximumStackLimitExceeded implements SourceError {
 
   public explain() {
     const repr = (call: es.CallExpression) => generate(call, { generator: this.customGenerator })
-    return 'Infinite recursion\n' + this.calls.map(call => repr(call) + '.. ').join('')
+    return 'Infinite recursion\n  ' + this.calls.map(call => repr(call) + '..').join('  ')
   }
 
   public elaborate() {
