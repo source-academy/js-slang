@@ -73,6 +73,12 @@ Object {
   "value": "[1, function a() {}, 3, [() => 1, 5]]",
 }
 `;
+exports[`Allow display to return value it is displaying`] = `
+Object {
+  "status": "finished",
+  "value": 50,
+}
+`;
 
 exports[`Simple inifinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
