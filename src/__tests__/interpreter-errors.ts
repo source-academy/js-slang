@@ -142,7 +142,7 @@ test('Infinite recursion with a block bodied function', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/^Infinite recursion\n *(i\(\d*\)[^f]{2,4}){3}/)
+      expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^f]{2,4}){3}/)
     )
   })
 })
