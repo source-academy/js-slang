@@ -24,6 +24,8 @@ export class noDotAbbreviationError implements SourceError {
 const noDotAbbreviation: Rule<es.MemberExpression> = {
   name: 'no-dot-abbreviation',
 
+  disableOn: 100,
+
   checkers: {
     MemberExpression(node: es.MemberExpression, ancestors: [es.Node]) {
       if (!node.computed) {
