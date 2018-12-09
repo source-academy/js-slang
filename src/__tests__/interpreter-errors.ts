@@ -166,3 +166,23 @@ test('Infinite recursion with function calls in argument', () => {
     )
   })
 })
+
+test('Infinite recursion of mutually recursive functions', () => {
+  const code = `
+    function f(n) {
+      return n === 0 ? 0 : 1 + g(n - 1);
+    }
+    function g(n) {
+      return 1 + f(n);
+    }
+    f(1000);
+   `;
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toEqual(
+      expect.stringMatching(/Infinite recursion\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/)
+    )
+  })
+})
