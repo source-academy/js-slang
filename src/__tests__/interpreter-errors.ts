@@ -119,7 +119,7 @@ test('In case a function ever returns null, should throw an error as well', () =
   const code = `
     const myNull = pair.constructor("return null;")();
     myNull.prop;
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -133,16 +133,16 @@ test('In case a function ever returns null, should throw an error as well', () =
 test('Infinite recursion with a block bodied function', () => {
   const code = `
     function i(n) {
-      return n === 0 ? 0 : 1 + i(n);
+      return n === 0 ? 0 : 1 + i(n-1);
     }
     i(1000);
-   `;
+   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringContaining('Infinite recursion')
+      expect.stringMatching(/^Line 3: Infinite recursion\n *(i\(\d*\)[^f]{2,4}){3}/)
     )
   })
 })
@@ -150,7 +150,7 @@ test('Infinite recursion with a block bodied function', () => {
 test('Infinite recursion with function calls in argument', () => {
   const code = `
     function i(n, redundant) {
-      return n === 0 ? 0 : 1 + i(n, r());
+      return n === 0 ? 0 : 1 + i(n-1, r());
     }
     function r() {
       return 1;
@@ -162,7 +162,7 @@ test('Infinite recursion with function calls in argument', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringContaining('Infinite recursion')
+      expect.stringMatching(/^Line 3: Infinite recursion\n *(i\(\d*, 1\)[^f]{2,4}){3}/)
     )
   })
 })

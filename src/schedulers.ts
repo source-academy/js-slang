@@ -1,5 +1,5 @@
 /* tslint:disable: max-classes-per-file */
-import {MaximumStackLimitExceeded} from './interpreter-errors'
+import { MaximumStackLimitExceeded } from './interpreter-errors'
 import { Context, Result, Scheduler, Value } from './types'
 
 export class AsyncScheduler implements Scheduler {
@@ -25,7 +25,8 @@ export class AsyncScheduler implements Scheduler {
 }
 
 export class PreemptiveScheduler implements Scheduler {
-  constructor(public steps: number) {}
+  constructor(public steps: number) {
+  }
 
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
@@ -41,19 +42,16 @@ export class PreemptiveScheduler implements Scheduler {
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
+            const frames = context.runtime.frames
             const stacks: any = []
-            for (let i = 1; i <= 3; i++) {
-              let currentFrame = context.runtime.frames[i - 1]
-              while (!currentFrame.callExpression) {
-                if (currentFrame.parent) {
-                  currentFrame = currentFrame.parent
-                } else {
-                  break
-                }
+            let counter = 0
+            for (let i = 0; counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < frames.length; i++) {
+              if (frames[i].callExpression) {
+                stacks.unshift(frames[i].callExpression)
+                counter++
               }
-              stacks.push(currentFrame.callExpression || {callee: "unknown", args: []})
-          }
-          context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
+            }
+            context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
           }
           context.runtime.isRunning = false
           clearInterval(interval)
