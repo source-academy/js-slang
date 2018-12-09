@@ -9,6 +9,13 @@ Object {
 }
 `;
 
+exports[`Allow display to return value it is displaying 1`] = `
+Object {
+  "status": "finished",
+  "value": 50,
+}
+`;
+
 exports[`Arrow function definition returns itself 1`] = `
 Object {
   "status": "finished",
@@ -71,12 +78,6 @@ exports[`Multi-dimensional arrays display properly 2`] = `
 Object {
   "status": "finished",
   "value": "[1, function a() {}, 3, [() => 1, 5]]",
-}
-`;
-exports[`Allow display to return value it is displaying`] = `
-Object {
-  "status": "finished",
-  "value": 50,
 }
 `;
 
