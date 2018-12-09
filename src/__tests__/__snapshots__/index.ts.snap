@@ -9,6 +9,13 @@ Object {
 }
 `;
 
+exports[`Allow display to return value it is displaying 1`] = `
+Object {
+  "status": "finished",
+  "value": 50,
+}
+`;
+
 exports[`Arrow function definition returns itself 1`] = `
 Object {
   "status": "finished",
