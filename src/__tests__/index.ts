@@ -47,7 +47,7 @@ test('Allow display to return value it is displaying', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('50')
+    expect((obj as Finished).value).toBe(50)
   })
 })
 
