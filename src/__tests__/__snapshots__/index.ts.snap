@@ -18,6 +18,11 @@ Object {
 
 exports[`Arrow function definition returns itself 2`] = `[Function]`;
 
+exports[`Arrow function infinite recursion with list args represents CallExpression well 1`] = `
+"Line 2: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+`;
+
 exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
 
 exports[`Deep object assignment and retrieval 1`] = `
@@ -41,7 +46,7 @@ Object {
 }
 `;
 
-exports[`Inifinite recursion with list args represents CallExpression well 1`] = `
+exports[`Function infinite recursion with list args represents CallExpression well 1`] = `
 "Line 2: Infinite recursion
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `;
@@ -60,9 +65,20 @@ Object {
 }
 `;
 
-exports[`Simple inifinite recursion represents CallExpression well 1`] = `
+exports[`Simple arrow function infinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
-  x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
+  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
+`;
+
+exports[`Simple function infinite recursion represents CallExpression well 1`] = `
+"Line 1: Infinite recursion
+  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+}).."
 `;
 
 exports[`Simple object assignment and retrieval 1`] = `

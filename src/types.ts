@@ -171,11 +171,14 @@ export class Closure extends Callable {
   // tslint:disable-next-line:ban-types
   public fun: Function
 
+  /** The original node that created this Closure **/
+  public originalNode: es.Function
+
   constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
     super(function (this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
-    this.node = node
+    this.originalNode = node
     try {
       if (this.node.id) {
         this.functionName = this.node.id.name
@@ -186,29 +189,43 @@ export class Closure extends Callable {
     const funJS = closureToJS(this, context, this.functionName)
     this.fun = funJS
   }
-}
 
-/**
- * Modified from class Closure, for construction of arrow functions.
- */
-export class ArrowClosure extends Callable {
-  /** Keep track how many lambdas are created */
-  private static arrowCtr = 0
+  static makeFromArrowFunction(node: es.ArrowFunctionExpression, frame: Frame, context: Context) {
+    function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
+      return body.type !== 'BlockStatement'
+    }
 
-  /** Unique ID defined for anonymous closure */
-  public functionName: string
+    let closure = null
+    if (isExpressionBody(node.body)) {
+      closure = new Closure(<es.FunctionExpression> {
+        type: 'FunctionExpression',
+        loc: node.loc,
+        id: null,
+        params: node.params,
+        body: <es.BlockStatement> {
+          type: 'BlockStatement',
+          loc: node.body.loc,
+          body: [{
+            type: 'ReturnStatement',
+            loc: node.body.loc,
+            argument: node.body
+          }]
+        }
+      }, frame, context)
+    } else {
+      closure = new Closure(<es.FunctionExpression> {
+        type: 'FunctionExpression',
+        loc: node.loc,
+        id: null,
+        params: node.params,
+        body: node.body
+      }, frame, context)
+    }
 
-  /** Fake closure function */
-  // tslint:disable-next-line:ban-types
-  public fun: Function
+    // Set the closure's nod to point back at the original one
+    closure.originalNode = node
 
-  constructor(public node: es.Function, public frame: Frame, context: Context) {
-    super(function (this: any, ...args: any[]) {
-      return funJS.apply(this, args)
-    })
-    this.functionName = `Anonymous${++ArrowClosure.arrowCtr}`
-    const funJS = closureToJS(this, context, this.functionName)
-    this.fun = funJS
+    return closure
   }
 }
 

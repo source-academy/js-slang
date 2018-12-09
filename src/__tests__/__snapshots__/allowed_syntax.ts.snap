@@ -51,11 +51,7 @@ exports[`Syntaxes are allowed in the chapter they are introduced 10`] = `
 
 exports[`Syntaxes are allowed in the chapter they are introduced 11`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 12`] = `
-ReturnValue {
-  "value": 3,
-}
-`;
+exports[`Syntaxes are allowed in the chapter they are introduced 12`] = `3`;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 13`] = `
 "

@@ -119,9 +119,23 @@ test('parseError for missing semicolon', () => {
 })
 
 test(
-  'Simple inifinite recursion represents CallExpression well',
+  'Simple arrow function infinite recursion represents CallExpression well',
   () => {
-    const code = '(x => x(x))(x => x(x));'
+    const code = '(x => x(x)(x))(x => x(x)(x));'
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toMatchSnapshot()
+    })
+  },
+  30000
+)
+
+test(
+  'Simple function infinite recursion represents CallExpression well',
+  () => {
+    const code = 'function f(x) {return x(x)(x);} f(f);'
     const context = mockContext()
     const promise = runInContext(code, context, { scheduler: 'preemptive' })
     return promise.then(obj => {
@@ -169,11 +183,11 @@ test('Can overwrite lets when assignment is allowed', () => {
 })
 
 test(
-  'Inifinite recursion with list args represents CallExpression well',
+  'Arrow function infinite recursion with list args represents CallExpression well',
   () => {
     const code = `
-    const f = xs => f(xs);
-    f(list(1, 2 ));
+    const f = xs => append(f(xs), list());
+    f(list(1, 2));
   `
     const context = mockContext(2)
     const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -186,10 +200,46 @@ test(
 )
 
 test(
-  'Inifinite recursion with different args represents CallExpression well',
+  'Function infinite recursion with list args represents CallExpression well',
   () => {
     const code = `
-    const f = i => f(i+1);
+    function f(xs) { return append(f(xs), list()); }
+    f(list(1, 2));
+  `
+    const context = mockContext(2)
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toMatchSnapshot()
+    })
+  },
+  30000
+)
+
+test(
+  'Arrow function infinite recursion with different args represents CallExpression well',
+  () => {
+    const code = `
+    const f = i => f(i+1) - 1;
+    f(0);
+  `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toEqual(
+        expect.stringMatching(/^Line 2: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/)
+      )
+    })
+  },
+  30000
+)
+
+test(
+  'Function infinite recursion with different args represents CallExpression well',
+  () => {
+    const code = `
+    function f(i) { return f(i+1) - 1; }
     f(0);
   `
     const context = mockContext()

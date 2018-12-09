@@ -1,6 +1,5 @@
 import * as es from 'estree'
 import {
-  ArrowClosure,
   Closure,
   Context,
   ErrorSeverity,
@@ -35,7 +34,7 @@ export class TypeError implements SourceError {
  * identifed as functions
  */
 const typeOf = (v: Value) => {
-  if (v instanceof Closure || v instanceof ArrowClosure || typeof v === 'function') {
+  if (v instanceof Closure || typeof v === 'function') {
     return 'function'
   } else {
     return typeof v
@@ -105,17 +104,6 @@ export const checkBinaryExpression = (
     case '===':
     default:
       return
-  }
-}
-
-export const checkLogicalExpression = (context: Context, left: Value, right: Value) => {
-  const node = context.runtime.nodes[0]
-  if (!isBool(left)) {
-    return new TypeError(node, LHS, 'boolean', typeOf(left))
-  } else if (!isBool(right)) {
-    return new TypeError(node, RHS, 'boolean', typeOf(right))
-  } else {
-    return
   }
 }
 
