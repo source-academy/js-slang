@@ -1,6 +1,5 @@
 import * as es from 'estree'
 import {
-  ArrowClosure,
   Closure,
   Context,
   ErrorSeverity,
@@ -35,7 +34,7 @@ export class TypeError implements SourceError {
  * identifed as functions
  */
 const typeOf = (v: Value) => {
-  if (v instanceof Closure || v instanceof ArrowClosure || typeof v === 'function') {
+  if (v instanceof Closure || typeof v === 'function') {
     return 'function'
   } else {
     return typeof v

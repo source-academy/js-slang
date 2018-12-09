@@ -4,7 +4,7 @@ import * as es from 'estree'
 import * as constants from './constants'
 import { toString } from './interop'
 import * as errors from './interpreter-errors'
-import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
+import { Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
@@ -21,7 +21,7 @@ class TailCallReturnValue {
 }
 
 const createFrame = (
-  closure: ArrowClosure | Closure,
+  closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
 ): Frame => {
@@ -167,7 +167,7 @@ const setVariable = (context: Context, name: string, value: any) => {
 
 const checkNumberOfArguments = (
   context: Context,
-  callee: ArrowClosure | Closure,
+  callee: Closure,
   args: Value[],
   exp: es.CallExpression
 ) => {
@@ -239,8 +239,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
     return new Closure(node, currentFrame(context), context)
   },
-  ArrowFunctionExpression: function*(node: es.Function, context: Context) {
-    return new ArrowClosure(node, currentFrame(context), context)
+  ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
+    return Closure.makeFromArrowFunction(node, currentFrame(context), context)
   },
   Identifier: function*(node: es.Identifier, context: Context) {
     return getVariable(context, node.name)
@@ -594,7 +594,7 @@ export function* evaluate(node: es.Node, context: Context) {
 
 export function* apply(
   context: Context,
-  fun: ArrowClosure | Closure | Value,
+  fun: Closure | Value,
   args: Value[],
   node?: es.CallExpression,
   thisContext?: Value
@@ -622,17 +622,6 @@ export function* apply(
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
       }
-    } else if (fun instanceof ArrowClosure) {
-      checkNumberOfArguments(context, fun, args, node!)
-      const frame = createFrame(fun, args, node)
-      frame.thisContext = thisContext
-      if (result instanceof TailCallReturnValue) {
-        replaceFrame(context, frame)
-      } else {
-        pushFrame(context, frame)
-        total++
-      }
-      result = new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {
         result = fun.apply(thisContext, args)

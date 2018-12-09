@@ -2,7 +2,7 @@ import { generate } from 'astring'
 
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
 import { apply } from './interpreter'
-import { ArrowClosure, Closure, Context, Value } from './types'
+import { Closure, Context, Value } from './types'
 
 export const closureToJS = (value: Value, context: Context, klass: string) => {
   function DummyClass(this: Value) {
@@ -56,8 +56,8 @@ const arrayToString = (value: Value[], length: number) => {
 }
 
 export const toString = (value: Value, length = 0): string => {
-  if (value instanceof ArrowClosure || value instanceof Closure) {
-    return generate(value.node)
+  if (value instanceof Closure) {
+    return generate(value.originalNode)
   } else if (Array.isArray(value)) {
     if (length > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
