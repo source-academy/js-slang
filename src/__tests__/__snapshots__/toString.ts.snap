@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`String representation of arrays are nice 1`] = `"[1, \\"true\\", true, () => x]"`;
+
+exports[`String representation of arrow functions are nice 1`] = `"(x, y) => z"`;
+
+exports[`String representation of booleans are nice 1`] = `"\\"true\\""`;
+
+exports[`String representation of builtins are nice 1`] = `
+"function pair(x, xs) {
+	[implementation hidden]
+}"
+`;
+
+exports[`String representation of functions are nice 1`] = `
+"function f(x, y) {
+  return z;
+}"
+`;
+
+exports[`String representation of null is nice 1`] = `"null"`;
+
+exports[`String representation of numbers are nice 1`] = `"0"`;
+
+exports[`String representation of objects are nice 1`] = `"[object Object]"`;
+
+exports[`String representation of strings are nice 1`] = `"\\"a string\\""`;
+
+exports[`String representation of undefined is nice 1`] = `"undefined"`;

@@ -232,3 +232,210 @@ test('Infinite recursion of mutually recursive functions', () => {
     )
   })
 })
+
+test('Error when calling non function value undefined', () => {
+  const code = `
+    undefined();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value null', () => {
+  const code = `
+    null();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value true', () => {
+  const code = `
+    true();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value 0', () => {
+  const code = `
+    0();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value "string"', () => {
+  const code = `
+    'string'();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value array', () => {
+  const code = `
+    [1]();
+   `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling non function value object', () => {
+  const code = `
+    ({a: 1})();
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling function with too few arguments', () => {
+  const code = `
+    function f(x) {
+      return x;
+    }
+    f();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling function with too many arguments', () => {
+  const code = `
+    function f(x) {
+      return x;
+    }
+    f(1, 2);
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling arrow function with too few arguments', () => {
+  const code = `
+    const f = x => x;
+    f();
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when calling arrow function with too many arguments', () => {
+  const code = `
+    const f = x => x;
+    f(1, 2);
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when redeclaring constant', () => {
+  const code = `
+    const f = x => x;
+    const f = x => x;
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when redeclaring constant as variable', () => {
+  const code = `
+    const f = x => x;
+    let f = x => x;
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when redeclaring variable as constant', () => {
+  const code = `
+    let f = x => x;
+    const f = x => x;
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Error when redeclaring variable', () => {
+  const code = `
+    let f = x => x;
+    let f = x => x;
+   `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})

@@ -195,24 +195,47 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
   const promises = code.map(c => {
     const chapter = c[0] as number
     const snippet = c[1] as string
-    const context = mockContext(chapter)
-    return runInContext(snippet, context, { scheduler }).then(obj => ({
-      snippet,
-      context,
-      obj
-    }))
+    const parseSnippet = `parse(${JSON.stringify(snippet)});`
+    const successContext = mockContext(chapter)
+    const parseContext = mockContext(4)
+    const failureContext = mockContext(chapter-1)
+    return runInContext(snippet, successContext, { scheduler }).then(runResult =>
+      runInContext(parseSnippet, parseContext, { scheduler }).then(parseResult =>
+        runInContext(snippet, failureContext, { scheduler }).then(failureResult =>
+        ({
+          chapter,
+          snippet,
+          parseSnippet,
+          successContext,
+          parseContext,
+          failureContext,
+          runResult,
+          parseResult,
+          failureResult
+        }))))
   })
   return Promise.all(promises).then(results => {
     results.map(res => {
-      const { snippet, context, obj } = res
-      const errors = parseError(context.errors)
+      const { chapter, snippet, parseSnippet, successContext, parseContext, failureContext, runResult, parseResult, failureResult } = res
+      const successErrors = parseError(successContext.errors)
+      const parseErrors = parseError(parseContext.errors)
+      const failureErrors = parseError(failureContext.errors)
 
       // If you hit an error here, you have changed the snippets but not changed the snapshot
       expect(snippet).toMatchSnapshot()
+      expect(parseSnippet).toMatchSnapshot();
 
-      expect(errors).toMatchSnapshot()
-      expect(obj.status).toBe('finished')
-      expect((obj as Finished).value).toMatchSnapshot()
+      expect(successErrors).toMatchSnapshot()
+      expect(parseErrors).toMatchSnapshot()
+      expect(runResult.status).toBe('finished')
+      expect((runResult as Finished).value).toMatchSnapshot()
+      expect(parseResult.status).toBe('finished')
+      expect((parseResult as Finished).value).toMatchSnapshot()
+
+      if (chapter > 1) {
+        expect(failureErrors).toMatchSnapshot()
+        expect(failureResult.status).toBe('error')
+      }
     })
   })
 })

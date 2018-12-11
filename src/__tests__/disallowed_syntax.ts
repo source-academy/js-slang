@@ -26,7 +26,7 @@ test('Cannot leave blank expressions in for loops', () => {
   ]
   const scheduler = 'preemptive'
   const promises = code.map(c => {
-    const context = mockContext(4)
+    const context = mockContext(100)
     return runInContext(c, context, { scheduler }).then(obj => ({
       context,
       obj
@@ -48,7 +48,7 @@ test('Cannot leave while loop predicate blank', () => {
     x;
   }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -63,7 +63,7 @@ test('Cannot use update expressions', () => {
   x++;
   x;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -76,7 +76,7 @@ test('Cannot have incomplete statements', () => {
   const code = `
   5
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -89,7 +89,7 @@ test('Cannot have if without else', () => {
   const code = `
   if (true) { 5; }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -104,7 +104,7 @@ test('Cannot use assignment expressions', () => {
   let y = x = 5;
   x;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -120,7 +120,7 @@ test('Cannot use assignment expressions', () => {
   x = y = 5;
   x;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -136,7 +136,36 @@ test('Cannot use assignment expressions', () => {
     y;
   }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('Cannot use multiple declarations', () => {
+  const code = `
+  let x = 3, y = 5;
+  x;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('Cannot use destructuring declarations', () => {
+  const code = `
+  let x = [1, 2];
+  let [a, b] = x;
+  a;
+  `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -151,7 +180,7 @@ test('Cannot use update statements', () => {
   x += 5;
   x;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -164,7 +193,7 @@ test('Cannot use function expressions', () => {
   const code = `
   (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -177,7 +206,7 @@ test('Cannot use function expressions', () => {
   const code = `
   (function(x) { return x + 1; })(4);
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -193,7 +222,7 @@ test('if needs braces', () => {
     else
       false;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -208,7 +237,7 @@ test('for needs braces', () => {
     for (let i = 0; i < 1; i = i + 1)
       i;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -224,7 +253,7 @@ test('while needs braces', () => {
     while (i < 1)
       i = i + 1;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -238,7 +267,7 @@ test('No empty statements', () => {
   const code = `
     ;
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -260,6 +289,35 @@ test('No array expressions in chapter 2', () => {
   })
 })
 
+test('No trailing commas in arrays', () => {
+  const code = `
+    [1,];
+  `
+  const context = mockContext(2)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('No trailing commas in objects', () => {
+  const code = `
+    {
+      a: 1,
+      b: 2,
+    };
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
 test('No rest pattern', () => {
   const code = `
     function f(...rest) {
@@ -267,7 +325,7 @@ test('No rest pattern', () => {
     }
     f(1, 2);
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -283,7 +341,7 @@ test('No spread operator', () => {
     }
     f(...[1, 2]);
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -303,7 +361,7 @@ test('no try statements', () => {
       display(e);
     }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -317,7 +375,7 @@ test('no for of loops', () => {
     for (let i of list()) {
     }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -331,7 +389,20 @@ test('no for in loops', () => {
     for (let i in { a: 1, b: 2 }) {
     }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no debugger statement', () => {
+  const code = `
+    debugger;
+  `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -347,7 +418,7 @@ test('no generator functions', () => {
       return 1;
     }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -361,7 +432,102 @@ test('no classes', () => {
     class Box {
     }
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no super', () => {
+  const code = `
+    super(1);
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no export function', () => {
+  const code = `
+    export function f(x) {
+      return x;
+    }
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no export constant', () => {
+  const code = `
+    export const x = 1;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no export default', () => {
+  const code = `
+    const x = 1;
+    export default x;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no import', () => {
+  const code = `
+    import { stripIndent } from 'common-tags'
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no sequence expression', () => {
+  const code = `
+    (1, 2);
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no interface', () => {
+  const code = `
+    interface Box {
+    }
+  `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -372,7 +538,18 @@ test('no classes', () => {
 
 test('no template literals', () => {
   const code = '`hi`'
-  const context = mockContext(4)
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no regexp', () => {
+  const code = '/pattern/'
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')
@@ -388,7 +565,34 @@ test('no this, no new', () => {
     }
     const box = new Box();
   `
-  const context = mockContext(4)
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no unspecified operators', () => {
+  const code = `
+    1 << 10;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no unspecified unary operators', () => {
+  const code = `
+    let x = 5;
+    typeof x;
+  `
+  const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('error')

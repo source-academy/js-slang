@@ -398,7 +398,7 @@ function transform(node: es.Node) {
 }
 
 export function parse(x: string): Value {
-  const context = createContext(4)
+  const context = createContext(100)
   let program: es.Program | undefined
   program = sourceParse(x, context)
   if (context.errors.length > 0) {
