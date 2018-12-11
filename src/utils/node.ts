@@ -16,12 +16,12 @@ import { Closure, Value } from '../types'
  */
 export const isNodeEqual = (n1: es.Node, n2: es.Node) => {
   if (n1.hasOwnProperty('__id') && n2.hasOwnProperty('__id')) {
-    const first = n1.__id === n2.__id
+    const first = (n1 as any).__id === (n2 as any).__id
     if (!first) {
       return false
     }
     if (n1.hasOwnProperty('__call') && n2.hasOwnProperty('__call')) {
-      return n1.__call === n2.__call
+      return (n1 as any).__call === (n2 as any).__call
     } else {
       return true
     }
@@ -73,18 +73,18 @@ export const replaceAST = (node: es.Node, before: es.Node, after: es.Node) => {
 
 const createLiteralNode = (value: {}): es.Node => {
   if (typeof value === 'undefined') {
-    return {
+    return ({
       type: 'Identifier',
       name: 'undefined',
       __id: freshId()
-    }
+    }) as unknown as es.Node
   } else {
-    return {
+    return ({
       type: 'Literal',
       value,
       raw: value,
       __id: freshId()
-    } as es.SimpleLiteral
+    }) as unknown as es.SimpleLiteral
   }
 }
 

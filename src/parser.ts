@@ -99,7 +99,7 @@ export class TrailingCommaError implements SourceError {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    program = acornParse(source, createAcornParserOptions(context))
+    program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
