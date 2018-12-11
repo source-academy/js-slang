@@ -79,6 +79,8 @@ Line 2: Class declarations are not allowed"
 
 exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allowed"`;
 
+exports[`no declaration without assignment 1`] = `"Line 2: Missing value in variable declaration"`;
+
 exports[`no declaring reserved keywords 1`] = `
 "Line 2: Reserved word 'yield' is not allowed as a name
 Line 3: Reserved word 'package' is not allowed as a name
