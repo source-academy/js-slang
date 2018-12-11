@@ -35,5 +35,5 @@ export function mockClosure(): Closure {
 }
 
 export function mockTypeError(): TypeError {
-  return new TypeError(parse('', {sourceType: "script"}) as es.Node, '', '', '')
+  return new TypeError(parse('', { sourceType: 'script' }) as es.Node, '', '', '')
 }

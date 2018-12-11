@@ -23,8 +23,8 @@
   "scripts": {
     "prepublishOnly": "tsc",
     "build": "tsc",
-    "format": "prettier --write 'src/**/*.{ts,tsx}'",
-    "format:ci": "prettier --list-different 'src/**/*.{ts,tsx}'",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
@@ -48,7 +48,7 @@
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.5",
-    "typescript": "^3.2.2",
+    "typescript": "^3.2.2"
   },
   "jest": {
     "moduleFileExtensions": [

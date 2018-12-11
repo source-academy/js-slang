@@ -77,14 +77,14 @@ const createLiteralNode = (value: {}): es.Node => {
       type: 'Identifier',
       name: 'undefined',
       __id: freshId()
-    }) as unknown as es.Node
+    } as unknown) as es.Node
   } else {
     return ({
       type: 'Literal',
       value,
       raw: value,
       __id: freshId()
-    }) as unknown as es.SimpleLiteral
+    } as unknown) as es.SimpleLiteral
   }
 }
 
