@@ -45,7 +45,7 @@ test('Error when assigning to builtin', () => {
 
 test('Error when assigning to property on undefined', () => {
   const code = `
-    undefined['prop'] = 123;
+    undefined.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -60,7 +60,7 @@ test('Error when assigning to property on undefined', () => {
 test('Error when assigning to property on variable with value undefined', () => {
   const code = `
     const u = undefined;
-    u['prop'] = 123;
+    u.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -75,7 +75,7 @@ test('Error when assigning to property on variable with value undefined', () => 
 test('Error when deeply assigning to property on variable with value undefined', () => {
   const code = `
     const u = undefined;
-    u['prop']['prop'] = 123;
+    u.prop.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -89,7 +89,7 @@ test('Error when deeply assigning to property on variable with value undefined',
 
 test('Error when accessing property on undefined', () => {
   const code = `
-    undefined['prop'];
+    undefined.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -103,7 +103,7 @@ test('Error when accessing property on undefined', () => {
 
 test('Error when deeply accessing property on undefined', () => {
   const code = `
-    undefined['prop']['prop'];
+    undefined.prop.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -117,8 +117,8 @@ test('Error when deeply accessing property on undefined', () => {
 
 test('In case a function ever returns null, should throw an error as well', () => {
   const code = `
-    const myNull = pair['constructor']("return null;")();
-    myNull['prop'];
+    const myNull = pair.constructor("return null;")();
+    myNull.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

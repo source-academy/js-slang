@@ -384,7 +384,7 @@ test('no template literals', () => {
 test('no this, no new', () => {
   const code = `
     function Box() {
-      this['x'] = 5;
+      this[0] = 5;
     }
     const box = new Box();
   `

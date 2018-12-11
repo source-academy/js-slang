@@ -181,17 +181,14 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
       `
       ({a: 1, b: 2})['a'];
       `
-    ]
+    ],
 
-    // TODO: To make this work we need to allow rules to apply for specific chapters
-    /*
     [
       100,
       `
       ({a: 1, b: 2}).a;
       `
-    ],
-  */
+    ]
   ]
 
   const scheduler = 'preemptive'
