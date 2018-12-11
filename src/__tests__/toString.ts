@@ -88,6 +88,46 @@ test('String representation of arrays are nice', () => {
   })
 })
 
+test('String representation of empty arrays are nice', () => {
+  const code = stripIndent`
+  const xs = [];
+  toString(xs);
+  `
+  const context = mockContext(3)
+  defineSymbol(context, 'toString', toString)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation of lists are nice', () => {
+  const code = stripIndent`
+  toString(enum_list(1, 10));
+  `
+  const context = mockContext(2)
+  defineSymbol(context, 'toString', toString)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation of huge lists are nice', () => {
+  const code = stripIndent`
+  toString(enum_list(1, 1000));
+  `
+  const context = mockContext(2)
+  defineSymbol(context, 'toString', toString)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
 test('String representation of objects are nice', () => {
   const code = stripIndent`
   const o = { a: 1, b: true, c: () => x };
@@ -107,6 +147,19 @@ test('String representation of builtins are nice', () => {
   toString(pair);
   `
   const context = mockContext(2)
+  defineSymbol(context, 'toString', toString)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation of builtins without __SOURCE__ are nice', () => {
+  const code = stripIndent`
+  toString(prompt);
+  `
+  const context = mockContext()
   defineSymbol(context, 'toString', toString)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
