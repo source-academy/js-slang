@@ -191,7 +191,7 @@ test('Infinite recursion with a block bodied function', () => {
       expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^i]{2,4}){3}/)
     )
   })
-})
+}, 10000)
 
 test('Infinite recursion with function calls in argument', () => {
   const code = `
@@ -211,7 +211,7 @@ test('Infinite recursion with function calls in argument', () => {
       expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
     )
   })
-})
+}, 10000)
 
 test('Infinite recursion of mutually recursive functions', () => {
   const code = `

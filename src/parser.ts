@@ -7,11 +7,6 @@ import rules from './rules'
 import syntaxTypes from './syntaxTypes'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
 
-// tslint:disable-next-line:interface-name
-export interface ParserOptions {
-  chapter: number
-}
-
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
