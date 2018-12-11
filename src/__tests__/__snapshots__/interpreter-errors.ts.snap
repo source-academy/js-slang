@@ -394,6 +394,74 @@ Object {
 
 exports[`Nice errors when errors occur inside builtins 4`] = `"Line 2: ParseError: SyntaxError: Unterminated string constant (1:0)"`;
 
+exports[`Runtime error when redeclaring constant 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring constant as variable 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant as variable 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant as variable 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring variable 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring variable as constant 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable as constant 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable as constant 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f"`;
+
 exports[`Undefined variable error is thrown 1`] = `
 Object {
   "status": "error",
