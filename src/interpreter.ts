@@ -407,7 +407,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
 
       yield* evaluate(updateNode, context)
-      test = yield* evaluate(node.test!, context)
     }
 
     popFrame(context)
