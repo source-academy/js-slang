@@ -66,11 +66,7 @@ exports[`if needs braces 2`] = `
 Line 2: Missing curly braces around \\"else\\" block"
 `;
 
-exports[`no assigning to reserved keywords 1`] = `
-"Line 2: Reserved word 'yield' is not allowed as a name
-Line 3: Reserved word 'package' is not allowed as a name
-Line 4: Reserved word 'static' is not allowed as a name"
-`;
+exports[`no assigning to reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'yield' is reserved (2:4)"`;
 
 exports[`no classes 1`] = `
 "Line 2: Class bodys are not allowed
@@ -81,17 +77,13 @@ exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allow
 
 exports[`no declaration without assignment 1`] = `"Line 2: Missing value in variable declaration"`;
 
-exports[`no declaring reserved keywords 1`] = `
-"Line 2: Reserved word 'yield' is not allowed as a name
-Line 3: Reserved word 'package' is not allowed as a name
-Line 4: Reserved word 'static' is not allowed as a name"
-`;
+exports[`no declaring reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'yield' is reserved (2:8)"`;
 
-exports[`no export constant 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no export constant 1`] = `"Line 2: Export named declarations are not allowed"`;
 
-exports[`no export default 1`] = `"Line 3: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (3:4)"`;
+exports[`no export default 1`] = `"Line 3: Export default declarations are not allowed"`;
 
-exports[`no export function 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no export function 1`] = `"Line 2: Export named declarations are not allowed"`;
 
 exports[`no for in loops 1`] = `
 "Line 2: Missing value in variable declaration
@@ -107,14 +99,19 @@ exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowe
 
 exports[`no implicit undefined return 1`] = `"Line 3: Missing value in return statement"`;
 
-exports[`no import 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no import 1`] = `
+"Line 2: Import specifiers are not allowed
+Line 2: Import declarations are not allowed"
+`;
 
-exports[`no interface 1`] = `"Line 2: SyntaxError: Unexpected token (2:14)"`;
+exports[`no interface 1`] = `"Line 2: SyntaxError: The keyword 'interface' is reserved (2:4)"`;
 
 exports[`no regexp 1`] = `
 "Line 1: Missing semicolon at the end of statement
 Line 1: 'RegExp' literals are not allowed"
 `;
+
+exports[`no repeated params 1`] = `"Line 2: SyntaxError: Argument name clash (2:18)"`;
 
 exports[`no sequence expression 1`] = `"Line 2: Sequence expressions are not allowed"`;
 

@@ -516,7 +516,7 @@ test('no export default', () => {
 
 test('no import', () => {
   const code = `
-    import { stripIndent } from 'common-tags'
+    import { stripIndent } from 'common-tags';
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -634,11 +634,11 @@ test('no implicit undefined return', () => {
   })
 })
 
-test('no declaring reserved keywords', () => {
+test('no repeated params', () => {
   const code = `
-    let yield = 5;
-    let package = 5;
-    let static = 5;
+    function f(x, x) {
+      return x;
+    }
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -646,15 +646,25 @@ test('no declaring reserved keywords', () => {
     expect(obj.status).toBe('error')
     const errors = parseError(context.errors)
     expect(errors).toMatchSnapshot()
-    expect(context.errors.length).toBe(3)
+  })
+})
+
+test('no declaring reserved keywords', () => {
+  const code = `
+    let yield = 5;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
   })
 })
 
 test('no assigning to reserved keywords', () => {
   const code = `
-    yield = 5;
     package = 5;
-    static = 5;
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -662,6 +672,5 @@ test('no assigning to reserved keywords', () => {
     expect(obj.status).toBe('error')
     const errors = parseError(context.errors)
     expect(errors).toMatchSnapshot()
-    expect(context.errors.length).toBe(3)
   })
 })
