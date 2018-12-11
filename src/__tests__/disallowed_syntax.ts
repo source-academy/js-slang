@@ -443,7 +443,11 @@ test('no classes', () => {
 
 test('no super', () => {
   const code = `
-    super(1);
+    class BoxError extends Error {
+      constructor() {
+        super(1);
+      }
+    }
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -451,6 +455,7 @@ test('no super', () => {
     expect(obj.status).toBe('error')
     const errors = parseError(context.errors)
     expect(errors).toMatchSnapshot()
+    expect(errors).toEqual(expect.stringContaining('Supers are not allowed'))
   })
 })
 
