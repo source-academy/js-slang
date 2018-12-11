@@ -66,7 +66,7 @@ exports[`if needs braces 2`] = `
 Line 2: Missing curly braces around \\"else\\" block"
 `;
 
-exports[`no assigning to reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'yield' is reserved (2:4)"`;
+exports[`no assigning to reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'package' is reserved (2:4)"`;
 
 exports[`no classes 1`] = `
 "Line 2: Class bodys are not allowed
