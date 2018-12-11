@@ -45,7 +45,7 @@ test('Error when assigning to builtin', () => {
 
 test('Error when assigning to property on undefined', () => {
   const code = `
-    undefined['prop'] = 123;
+    undefined.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -60,7 +60,7 @@ test('Error when assigning to property on undefined', () => {
 test('Error when assigning to property on variable with value undefined', () => {
   const code = `
     const u = undefined;
-    u['prop'] = 123;
+    u.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -75,7 +75,7 @@ test('Error when assigning to property on variable with value undefined', () => 
 test('Error when deeply assigning to property on variable with value undefined', () => {
   const code = `
     const u = undefined;
-    u['prop']['prop'] = 123;
+    u.prop.prop = 123;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -89,7 +89,7 @@ test('Error when deeply assigning to property on variable with value undefined',
 
 test('Error when accessing property on undefined', () => {
   const code = `
-    undefined['prop'];
+    undefined.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -103,7 +103,7 @@ test('Error when accessing property on undefined', () => {
 
 test('Error when deeply accessing property on undefined', () => {
   const code = `
-    undefined['prop']['prop'];
+    undefined.prop.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -117,8 +117,8 @@ test('Error when deeply accessing property on undefined', () => {
 
 test('In case a function ever returns null, should throw an error as well', () => {
   const code = `
-    const myNull = pair['constructor']("return null;")();
-    myNull['prop'];
+    const myNull = pair.constructor("return null;")();
+    myNull.prop;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -140,7 +140,9 @@ test('Nice errors when errors occur inside builtins', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.')
+    expect(parseError(context.errors)).toBe(
+      'Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    )
   })
 })
 
@@ -154,7 +156,7 @@ test('Nice errors when errors occur inside builtins', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toMatchSnapshot()
-  });
+  })
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
@@ -171,7 +173,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
-  });
+  })
 })
 
 test('Infinite recursion with a block bodied function', () => {
@@ -186,7 +188,7 @@ test('Infinite recursion with a block bodied function', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^f]{2,4}){3}/)
+      expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^i]{2,4}){3}/)
     )
   })
 })
@@ -206,7 +208,7 @@ test('Infinite recursion with function calls in argument', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^f]{2,4}){3}/)
+      expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
     )
   })
 })

@@ -13,11 +13,11 @@ export class NoUpdateAssignment implements SourceError {
   }
 
   explain() {
-    return "The assignment operator " + this.node.operator + " is not allowed. Use = instead"
+    return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead'
   }
 
   elaborate() {
-    return ""
+    return ''
   }
 }
 
@@ -26,7 +26,7 @@ const noUpdateAssignment: Rule<es.AssignmentExpression> = {
 
   checkers: {
     AssignmentExpression(node: es.AssignmentExpression, ancestors: [es.Node]) {
-      if (node.operator !== "=") {
+      if (node.operator !== '=') {
         return [new NoUpdateAssignment(node)]
       } else {
         return []

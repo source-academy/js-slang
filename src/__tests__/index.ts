@@ -16,7 +16,7 @@ test('Empty code returns undefined', () => {
 })
 
 test('Single string self-evaluates to itself', () => {
-  const code = '\'42\';'
+  const code = "'42';"
   const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
@@ -28,7 +28,7 @@ test('Single string self-evaluates to itself', () => {
 
 test('Multi-dimensional arrays display properly', () => {
   const code = `
-    function a() {} 
+    function a() {}
     ""+[1, a, 3, [() => 1, 5]];
    `
   const context = mockContext(4)
@@ -37,6 +37,17 @@ test('Multi-dimensional arrays display properly', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
+  })
+})
+
+test('Allow display to return value it is displaying', () => {
+  const code = '25*(display(1+1));'
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toBe(50)
   })
 })
 
@@ -99,7 +110,7 @@ test('Factorial arrow function', () => {
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  const context = mockContext(4)
+  const context = mockContext()
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -119,9 +130,23 @@ test('parseError for missing semicolon', () => {
 })
 
 test(
-  'Simple inifinite recursion represents CallExpression well',
+  'Simple arrow function infinite recursion represents CallExpression well',
   () => {
-    const code = '(x => x(x))(x => x(x));'
+    const code = '(x => x(x)(x))(x => x(x)(x));'
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toMatchSnapshot()
+    })
+  },
+  30000
+)
+
+test(
+  'Simple function infinite recursion represents CallExpression well',
+  () => {
+    const code = 'function f(x) {return x(x)(x);} f(f);'
     const context = mockContext()
     const promise = runInContext(code, context, { scheduler: 'preemptive' })
     return promise.then(obj => {
@@ -150,7 +175,6 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
   })
 })
 
-
 test('Can overwrite lets when assignment is allowed', () => {
   const code = `
   function test(){
@@ -169,11 +193,11 @@ test('Can overwrite lets when assignment is allowed', () => {
 })
 
 test(
-  'Inifinite recursion with list args represents CallExpression well',
+  'Arrow function infinite recursion with list args represents CallExpression well',
   () => {
     const code = `
-    const f = xs => f(xs);
-    f(list(1, 2 ));
+    const f = xs => append(f(xs), list());
+    f(list(1, 2));
   `
     const context = mockContext(2)
     const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -186,10 +210,46 @@ test(
 )
 
 test(
-  'Inifinite recursion with different args represents CallExpression well',
+  'Function infinite recursion with list args represents CallExpression well',
   () => {
     const code = `
-    const f = i => f(i+1);
+    function f(xs) { return append(f(xs), list()); }
+    f(list(1, 2));
+  `
+    const context = mockContext(2)
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toMatchSnapshot()
+    })
+  },
+  30000
+)
+
+test(
+  'Arrow function infinite recursion with different args represents CallExpression well',
+  () => {
+    const code = `
+    const f = i => f(i+1) - 1;
+    f(0);
+  `
+    const context = mockContext()
+    const promise = runInContext(code, context, { scheduler: 'preemptive' })
+    return promise.then(obj => {
+      const errors = parseError(context.errors)
+      expect(errors).toEqual(
+        expect.stringMatching(/^Line 2: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/)
+      )
+    })
+  },
+  30000
+)
+
+test(
+  'Function infinite recursion with different args represents CallExpression well',
+  () => {
+    const code = `
+    function f(i) { return f(i+1) - 1; }
     f(0);
   `
     const context = mockContext()
@@ -235,15 +295,10 @@ test('Multi-dimensional arrays display properly', () => {
 })
 
 test('Simple object assignment and retrieval', () => {
-  // const code = `
-  //   const o = {};
-  //   o.a = 1;
-  //   o.a;
-  //  `;
   const code = `
     const o = {};
-    o['a'] = 1;
-    o['a'];
+    o.a = 1;
+    o.a;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -255,19 +310,12 @@ test('Simple object assignment and retrieval', () => {
 })
 
 test('Deep object assignment and retrieval', () => {
-  // const code = `
-  //   const o = {};
-  //   o.a = {};
-  //   o.a.b = {};
-  //   o.a.b.c = "string";
-  //   o.a.b.c;
-  //  `;
   const code = `
     const o = {};
-    o['a'] = {};
-    o['a']['b'] = {};
-    o['a']['b']['c'] = "string";
-    o['a']['b']['c'];
+    o.a = {};
+    o.a.b = {};
+    o.a.b.c = "string";
+    o.a.b.c;
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

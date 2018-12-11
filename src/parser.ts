@@ -116,7 +116,6 @@ export function parse(source: string, context: Context) {
   }
   const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
   if (program && !hasErrors) {
-    // context.cfg.scopes[0].node = program
     return program
   } else {
     return undefined
@@ -169,13 +168,6 @@ function createWalkers(
           writable: false,
           value: id
         })
-        context.cfg.nodes[id] = {
-          id,
-          node,
-          scope: undefined,
-          usages: []
-        }
-        context.cfg.edges[id] = []
 
         if (context.chapter < allowedSyntaxes[node.type]) {
           context.errors.push(new DisallowedConstructError(node))
@@ -222,7 +214,4 @@ export const freshId = (() => {
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(
-  syntaxTypes,
-  rules
-)
+const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxTypes, rules)

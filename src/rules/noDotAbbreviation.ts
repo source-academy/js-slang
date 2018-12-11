@@ -13,16 +13,18 @@ export class noDotAbbreviationError implements SourceError {
   }
 
   explain() {
-    return "Dot abbreviations are not allowed."
+    return 'Dot abbreviations are not allowed.'
   }
 
   elaborate() {
-    return ""
+    return ''
   }
 }
 
 const noDotAbbreviation: Rule<es.MemberExpression> = {
   name: 'no-dot-abbreviation',
+
+  disableOn: 100,
 
   checkers: {
     MemberExpression(node: es.MemberExpression, ancestors: [es.Node]) {

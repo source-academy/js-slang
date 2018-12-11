@@ -2,16 +2,10 @@ import * as list from './stdlib/list'
 import * as parser from './stdlib/parser'
 import * as misc from './stdlib/misc'
 import { Context, CustomBuiltIns, Value } from './types'
-import { toString } from '.';
+import { toString } from '.'
 import { list_to_vector } from './stdlib/list'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
-
-const createEmptyCFG = () => ({
-  nodes: {},
-  edges: {},
-  scopes: []
-})
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -20,13 +14,16 @@ const createEmptyRuntime = () => ({
   nodes: []
 })
 
-export const createEmptyContext = <T>(chapter: number, externalSymbols: string[], externalContext?: T): Context<T> => ({
+export const createEmptyContext = <T>(
+  chapter: number,
+  externalSymbols: string[],
+  externalContext?: T
+): Context<T> => ({
   chapter,
   externalSymbols,
   errors: [],
   externalContext,
-  cfg: createEmptyCFG(),
-  runtime: createEmptyRuntime(),
+  runtime: createEmptyRuntime()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -47,15 +44,11 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
 
 export const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalFrame = context.runtime.frames[0]
-  Object.defineProperty(
-    globalFrame.environment,
-    name,
-    {
-      value,
-      writable: false,
-      enumerable: true
-    }
-  )
+  Object.defineProperty(globalFrame.environment, name, {
+    value,
+    writable: false,
+    enumerable: true
+  })
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
@@ -84,7 +77,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
   let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
   visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
-
 
   if (context.chapter >= 1) {
     defineSymbol(context, 'runtime', misc.runtime)
@@ -146,10 +138,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
     defineSymbol(context, 'parse', parser.parse)
-    defineSymbol(context, 'apply_in_underlying_javascript', function(
-      fun: Function,
-      args: Value
-    ) {
+    defineSymbol(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
       return fun.apply(fun, list_to_vector(args))
     })
     defineSymbol(context, 'is_number', misc.is_number)
@@ -164,7 +153,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // previously week 4
     defineSymbol(context, 'alert', alert)
     // tslint:disable-next-line:ban-types
-    defineSymbol(context, 'timed', (f: Function) => misc.timed(context, f, context.externalContext, externalBuiltIns.display))
+    defineSymbol(context, 'timed', (f: Function) =>
+      misc.timed(context, f, context.externalContext, externalBuiltIns.display)
+    )
     // previously week 5
     defineSymbol(context, 'assoc', list.assoc)
     // previously week 6
@@ -178,11 +169,16 @@ const defaultBuiltIns: CustomBuiltIns = {
   // See issue #11
   alert: misc.display,
   visualiseList: (list: any) => {
-    throw new Error('List visualizer is not enabled')}
+    throw new Error('List visualizer is not enabled')
+  }
 }
 
-const createContext = <T>(chapter = 1, externalSymbols: string[] = [], externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns) => {
+const createContext = <T>(
+  chapter = 1,
+  externalSymbols: string[] = [],
+  externalContext?: T,
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+) => {
   const context = createEmptyContext(chapter, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
