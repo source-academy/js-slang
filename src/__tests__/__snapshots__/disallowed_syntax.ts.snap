@@ -73,11 +73,11 @@ Line 2: Class declarations are not allowed"
 
 exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allowed"`;
 
-exports[`no export constant 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no export constant 1`] = `"Line 2: Export named declarations are not allowed"`;
 
-exports[`no export default 1`] = `"Line 3: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (3:4)"`;
+exports[`no export default 1`] = `"Line 3: Export default declarations are not allowed"`;
 
-exports[`no export function 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no export function 1`] = `"Line 2: Export named declarations are not allowed"`;
 
 exports[`no for in loops 1`] = `
 "Line 2: Missing value in variable declaration
@@ -91,14 +91,19 @@ Line 2: For of statements are not allowed"
 
 exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowed"`;
 
-exports[`no import 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+exports[`no import 1`] = `
+"Line 2: Import specifiers are not allowed
+Line 2: Import declarations are not allowed"
+`;
 
-exports[`no interface 1`] = `"Line 2: SyntaxError: Unexpected token (2:14)"`;
+exports[`no interface 1`] = `"Line 2: SyntaxError: The keyword 'interface' is reserved (2:4)"`;
 
 exports[`no regexp 1`] = `
 "Line 1: Missing semicolon at the end of statement
 Line 1: 'RegExp' literals are not allowed"
 `;
+
+exports[`no repeated params 1`] = `"Line 2: SyntaxError: Argument name clash (2:18)"`;
 
 exports[`no sequence expression 1`] = `"Line 2: Sequence expressions are not allowed"`;
 

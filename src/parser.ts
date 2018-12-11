@@ -123,7 +123,7 @@ export function parse(source: string, context: Context) {
 }
 
 const createAcornParserOptions = (context: Context): AcornOptions => ({
-  sourceType: 'script',
+  sourceType: 'module',
   ecmaVersion: 6,
   locations: true,
   // tslint:disable-next-line:no-any
