@@ -56,7 +56,7 @@
       "js"
     ],
     "transform": {
-      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "\\.ts$": "<rootDir>/node_modules/ts-jest",
       "\\.js$": "<rootDir>/node_modules/babel-jest"
     },
     "testRegex": "/__tests__/.*\\.ts$",
