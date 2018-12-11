@@ -1,9 +1,8 @@
 /* tslint:disable: max-classes-per-file */
 import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
-import { ancestor, AncestorWalker } from 'acorn/dist/walk'
+import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
-
 import rules from './rules'
 import syntaxTypes from './syntaxTypes'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
@@ -101,7 +100,7 @@ export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     program = acornParse(source, createAcornParserOptions(context))
-    ancestor(program, walkers, undefined, context)
+    ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
       // tslint:disable-next-line:no-any
