@@ -14,9 +14,7 @@ export class NoAssignReservedError implements SourceError {
   }
 
   public explain() {
-    return (
-      `Reserved word '${(this.node.left as any).name}'` + ' is not allowed as a name'
-    )
+    return `Reserved word '${(this.node.left as any).name}'` + ' is not allowed as a name'
   }
 
   public elaborate() {

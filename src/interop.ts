@@ -62,7 +62,8 @@ export const toString = (value: Value, length = 0): string => {
     if (value.__SOURCE__) {
       return `function ${value.__SOURCE__} {\n\t[implementation hidden]\n}`
     } else {
-      return `function ${value.name}(${getParameterNames(value).join(', ')}) {\n\t[implementation hidden]\n}`
+      const params = getParameterNames(value).join(', ')
+      return `function ${value.name}(${params}) {\n\t[implementation hidden]\n}`
     }
   } else if (value === null) {
     return 'null'
