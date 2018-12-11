@@ -503,7 +503,7 @@ test('no export default', () => {
 
 test('no import', () => {
   const code = `
-    import { stripIndent } from 'common-tags'
+    import { stripIndent } from 'common-tags';
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -596,6 +596,21 @@ test('no unspecified unary operators', () => {
   const code = `
     let x = 5;
     typeof x;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no repeated params', () => {
+  const code = `
+    function f(x, x) {
+      return x;
+    }
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
