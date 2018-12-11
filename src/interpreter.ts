@@ -299,14 +299,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result
     switch (node.operator) {
       case '+':
-        let isLeftString = typeof left === 'string'
-        let isRightString = typeof right === 'string'
-        if (isLeftString && !isRightString) {
-          right = toString(right)
-        } else if (isRightString && !isLeftString) {
-          left = toString(left)
+        {
+          let isLeftString = typeof left === 'string'
+          let isRightString = typeof right === 'string'
+          if (isLeftString && !isRightString) {
+            right = toString(right)
+          } else if (isRightString && !isLeftString) {
+            left = toString(left)
+          }
+          result = left + right
         }
-        result = left + right
         break
       case '-':
         result = left - right
@@ -525,7 +527,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
-      (test = yield* evaluate(node.test, context)) &&
+      (yield* evaluate(node.test, context)) &&
       !(value instanceof ReturnValue) &&
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)

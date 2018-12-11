@@ -47,9 +47,10 @@ export class DisallowedConstructError implements SourceError {
         return "'this' expressions"
       case 'Property':
         return 'Properties'
-      default:
+      default: {
         const words = nodeType.split(/(?=[A-Z])/)
         return words.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(' ') + 's'
+      }
     }
   }
 }
