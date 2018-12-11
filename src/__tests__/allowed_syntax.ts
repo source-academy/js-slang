@@ -198,11 +198,10 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
     const successContext = mockContext(chapter)
     const parseContext = mockContext(4)
-    const failureContext = mockContext(chapter-1)
+    const failureContext = mockContext(chapter - 1)
     return runInContext(snippet, successContext, { scheduler }).then(runResult =>
       runInContext(parseSnippet, parseContext, { scheduler }).then(parseResult =>
-        runInContext(snippet, failureContext, { scheduler }).then(failureResult =>
-        ({
+        runInContext(snippet, failureContext, { scheduler }).then(failureResult => ({
           chapter,
           snippet,
           parseSnippet,
@@ -212,18 +211,30 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
           runResult,
           parseResult,
           failureResult
-        }))))
+        }))
+      )
+    )
   })
   return Promise.all(promises).then(results => {
     results.map(res => {
-      const { chapter, snippet, parseSnippet, successContext, parseContext, failureContext, runResult, parseResult, failureResult } = res
+      const {
+        chapter,
+        snippet,
+        parseSnippet,
+        successContext,
+        parseContext,
+        failureContext,
+        runResult,
+        parseResult,
+        failureResult
+      } = res
       const successErrors = parseError(successContext.errors)
       const parseErrors = parseError(parseContext.errors)
       const failureErrors = parseError(failureContext.errors)
 
       // If you hit an error here, you have changed the snippets but not changed the snapshot
       expect(snippet).toMatchSnapshot()
-      expect(parseSnippet).toMatchSnapshot();
+      expect(parseSnippet).toMatchSnapshot()
 
       expect(successErrors).toMatchSnapshot()
       expect(parseErrors).toMatchSnapshot()

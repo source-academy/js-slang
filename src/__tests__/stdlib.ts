@@ -1,12 +1,9 @@
-
-
 import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
 import { Finished } from '../types'
 
 test('Syntaxes are allowed in the chapter they are introduced', () => {
   const code = [
-
     [
       1,
       `
@@ -392,42 +389,41 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
       undefined
     ],
 
-    // [
-    //   2,
-    //   `
-    //   head(1);
-    //   `,
-    //   false,
-    //   undefined
-    // ],
+    [
+      2,
+      `
+      head(1);
+      `,
+      false,
+      undefined
+    ],
 
-    // [
-    //   2,
-    //   `
-    //   tail(1);
-    //   `,
-    //   false,
-    //   undefined
-    // ],
+    [
+      2,
+      `
+      tail(1);
+      `,
+      false,
+      undefined
+    ],
 
-    // [
-    //   2,
-    //   `
-    //   length(list(1, 2));
-    //   `,
-    //   true,
-    //   2
-    // ],
+    [
+      2,
+      `
+      length(list(1, 2));
+      `,
+      true,
+      2
+    ],
 
-    // [
-    //   2,
-    //   `
-    //   length(1);
-    //   `,
-    //   false,
-    //   undefined
-    // ],
-
+    [
+      2,
+      `
+      length(1);
+      `,
+      false,
+      undefined
+    ]
   ]
 
   const scheduler = 'preemptive'
@@ -437,14 +433,13 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     const passing = c[2] as boolean
     const returnValue = c[3]
     const context = mockContext(chapter)
-    return runInContext(snippet, context, { scheduler }).then(runResult =>
-        ({
-          snippet,
-          context,
-          passing,
-          returnValue,
-          runResult
-        }))
+    return runInContext(snippet, context, { scheduler }).then(runResult => ({
+      snippet,
+      context,
+      passing,
+      returnValue,
+      runResult
+    }))
   })
   return Promise.all(promises).then(results => {
     results.map(res => {

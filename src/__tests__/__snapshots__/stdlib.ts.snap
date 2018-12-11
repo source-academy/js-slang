@@ -342,3 +342,35 @@ exports[`Syntaxes are allowed in the chapter they are introduced 83`] = `
 `;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 84`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 85`] = `
+"
+      head(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 86`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 87`] = `
+"
+      tail(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 88`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 89`] = `
+"
+      length(list(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 90`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 91`] = `
+"
+      length(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 92`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
