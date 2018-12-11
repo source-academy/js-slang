@@ -33,8 +33,6 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   return DummyClass
 }
 
-
-
 const stripBody = (body: string) => {
   const lines = body.split(/\n/)
   if (lines.length >= 2) {

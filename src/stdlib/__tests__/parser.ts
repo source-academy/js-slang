@@ -1,12 +1,12 @@
-import { mockContext } from "../../mocks/context"
-import { runInContext } from "../../index"
+import { mockContext } from '../../mocks/context'
+import { runInContext } from '../../index'
 
-test("Parses empty program", () => {
+test('Parses empty program', () => {
   const program = `
     stringify(parse(""), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -14,12 +14,12 @@ test("Parses empty program", () => {
   })
 })
 
-test("Parses literals", () => {
+test('Parses literals', () => {
   const program = `
     stringify(parse("3; true; false; ''; \\"\\"; 'bob'; 1; 20;"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -27,12 +27,12 @@ test("Parses literals", () => {
   })
 })
 
-test("Parses name expression", () => {
+test('Parses name expression', () => {
   const program = `
     stringify(parse("x;"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -40,12 +40,12 @@ test("Parses name expression", () => {
   })
 })
 
-test("Parses name expressions", () => {
+test('Parses name expressions', () => {
   const program = `
     stringify(parse("x; moreNames; undefined;"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -53,12 +53,12 @@ test("Parses name expressions", () => {
   })
 })
 
-test("Parses infix expressions", () => {
+test('Parses infix expressions', () => {
   const program = `
     stringify(parse("3 + 5 === 8 || !true && false;"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -66,12 +66,12 @@ test("Parses infix expressions", () => {
   })
 })
 
-test("Parses declaration statements", () => {
+test('Parses declaration statements', () => {
   const program = `
     stringify(parse("const x = 5; let y = x;"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -79,12 +79,12 @@ test("Parses declaration statements", () => {
   })
 })
 
-test("Parses assignment statements", () => {
+test('Parses assignment statements', () => {
   const program = `
     stringify(parse("x = 5; x = x; if (true) { x = 5; } else {}"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -92,12 +92,12 @@ test("Parses assignment statements", () => {
   })
 })
 
-test("Parses if statements", () => {
+test('Parses if statements', () => {
   const program = `
     stringify(parse("if (true) { hi; } else { haha; } if (false) {} else {}"), undefined, 2);
   `
   const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: "preemptive" })
+  const promise = runInContext(program, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
     expect(obj).toMatchSnapshot()
@@ -248,4 +248,3 @@ test('Parses loops', () => {
     expect(obj.status).toBe('finished')
   })
 })
-

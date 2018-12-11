@@ -23,7 +23,12 @@ export function error_message(value: Value) {
 error_message.__SOURCE__ = 'error(a)'
 
 // tslint:disable-next-line:no-any
-export function timed(context: Context, f: Function, externalContext: any, display: (value: Value, externalContext: any) => void) {
+export function timed(
+  context: Context,
+  f: Function,
+  externalContext: any,
+  display: (value: Value, externalContext: any) => void
+) {
   return (...args: any[]) => {
     const start = runtime()
     const result = f(...args)
@@ -94,10 +99,18 @@ array_length.__SOURCE__ = 'array_length(xs)'
  * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: string, radix: number) {
-  if (typeof(str) === 'string' && typeof(radix) === 'number' && Number.isInteger(radix) && 2 <= radix && radix <= 36) {
+  if (
+    typeof str === 'string' &&
+    typeof radix === 'number' &&
+    Number.isInteger(radix) &&
+    2 <= radix &&
+    radix <= 36
+  ) {
     return parseInt(str, radix)
   } else {
-    throw new Error('parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.')
+    throw new Error(
+      'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    )
   }
 }
 parse_int.__SOURCE__ = 'parse_int(s, i)'

@@ -7,14 +7,16 @@ export class ForStatmentMustHaveAllParts implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.ForStatement, private missingParts :string[]) {}
+  constructor(public node: es.ForStatement, private missingParts: string[]) {}
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    return `Missing ${this.missingParts.join(', ')} expression${this.missingParts.length === 1 ? '' : 's'} in for statement.`
+    return `Missing ${this.missingParts.join(', ')} expression${
+      this.missingParts.length === 1 ? '' : 's'
+    } in for statement.`
   }
 
   public elaborate() {
@@ -29,9 +31,7 @@ const forStatementMustHaveAllParts: Rule<es.ForStatement> = {
 
   checkers: {
     ForStatement(node: es.ForStatement) {
-      const missingParts = ["init", "test", "update"].filter(
-        part => node[part] === null
-      );
+      const missingParts = ['init', 'test', 'update'].filter(part => node[part] === null)
       if (missingParts.length > 0) {
         return [new ForStatmentMustHaveAllParts(node, missingParts)]
       } else {

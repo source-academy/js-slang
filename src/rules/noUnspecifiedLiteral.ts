@@ -20,9 +20,7 @@ export class NoUnspecifiedLiteral implements SourceError {
      * Any other unspecified literal value should not be caught.
      */
     const literal = this.node.value instanceof RegExp ? 'RegExp' : ''
-    return (
-      `'${literal}' literals are not allowed`
-    )
+    return `'${literal}' literals are not allowed`
   }
 
   public elaborate() {
