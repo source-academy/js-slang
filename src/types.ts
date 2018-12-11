@@ -44,63 +44,12 @@ export interface Rule<T extends es.Node> {
   }
 }
 
-// tslint:disable-next-line:no-namespace
-export namespace CFG {
-  // tslint:disable-next-line:no-shadowed-variable
-  export interface Scope {
-    name: string
-    parent?: Scope
-    entry?: Vertex
-    exits: Vertex[]
-    node?: es.Node
-    proof?: es.Node
-    type: Type
-    env: {
-      [name: string]: Sym
-    }
-  }
-
-  export interface Vertex {
-    id: string
-    node: es.Node
-    scope?: Scope
-    usages: Sym[]
-  }
-
-  export interface Sym {
-    name: string
-    defined?: boolean
-    definedAt?: es.SourceLocation
-    type: Type
-    proof?: es.Node
-  }
-
-  export interface Type {
-    name: 'number' | 'string' | 'boolean' | 'function' | 'undefined' | 'any'
-    params?: Type[]
-    returnType?: Type
-  }
-
-  export type EdgeLabel = 'next' | 'alternate' | 'consequent'
-
-  export interface Edge {
-    type: EdgeLabel
-    to: Vertex
-  }
-}
-
 export interface Comment {
   type: 'Line' | 'Block'
   value: string
   start: number
   end: number
   loc: SourceLocation | undefined
-}
-
-export interface TypeError extends SourceError {
-  expected: CFG.Type[]
-  got: CFG.Type
-  proof?: es.Node
 }
 
 export interface Context<T = any> {
@@ -112,13 +61,6 @@ export interface Context<T = any> {
 
   /** All the errors gathered */
   errors: SourceError[]
-
-  /** CFG Specific State */
-  cfg: {
-    nodes: { [id: string]: CFG.Vertex }
-    edges: { [from: string]: CFG.Edge[] }
-    scopes: CFG.Scope[]
-  }
 
   /** Runtime Sepecific state */
   runtime: {
