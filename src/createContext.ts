@@ -7,12 +7,6 @@ import { list_to_vector } from './stdlib/list'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
-const createEmptyCFG = () => ({
-  nodes: {},
-  edges: {},
-  scopes: []
-})
-
 const createEmptyRuntime = () => ({
   isRunning: false,
   frames: [],
@@ -29,7 +23,6 @@ export const createEmptyContext = <T>(
   externalSymbols,
   errors: [],
   externalContext,
-  cfg: createEmptyCFG(),
   runtime: createEmptyRuntime()
 })
 
