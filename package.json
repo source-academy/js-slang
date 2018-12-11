@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/estree": "0.0.39",
     "@types/common-tags": "^1.8.0",
     "@types/invariant": "^2.2.29",
     "@types/jest": "^23.3.10",
