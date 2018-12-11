@@ -523,7 +523,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   WhileStatement: function*(node: es.WhileStatement, context: Context) {
     let value: any // tslint:disable-line
-    let test
     while (
       // tslint:disable-next-line
       (test = yield* evaluate(node.test, context)) &&

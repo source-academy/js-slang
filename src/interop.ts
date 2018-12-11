@@ -27,7 +27,7 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   DummyClass.toString = function() {
     return toString(value)
   }
-  DummyClass.call = (thisArg: Value, ...args: Value[]) => {
+  DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
     return DummyClass.apply(thisArg, args)
   }
   return DummyClass

@@ -1,4 +1,4 @@
-declare module 'acorn/dist/walk' {
+declare module 'acorn-walk/dist/walk' {
   import * as es from 'estree'
 
   namespace AcornWalk {

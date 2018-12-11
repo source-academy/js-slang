@@ -75,6 +75,7 @@ exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowe
 
 exports[`no template literals 1`] = `
 "Line 1: Missing semicolon at the end of statement
+Line 1: Template elements are not allowed
 Line 1: Template literals are not allowed"
 `;
 
