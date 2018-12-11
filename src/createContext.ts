@@ -83,6 +83,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'display', display)
     defineSymbol(context, 'error', misc.error_message)
     defineSymbol(context, 'prompt', prompt)
+    defineSymbol(context, 'is_number', misc.is_number)
+    defineSymbol(context, 'is_string', misc.is_string)
+    defineSymbol(context, 'is_function', misc.is_function)
+    defineSymbol(context, 'is_boolean', misc.is_boolean)
+    defineSymbol(context, 'is_undefined', misc.is_undefined)
     defineSymbol(context, 'parse_int', misc.parse_int)
     defineSymbol(context, 'undefined', undefined)
     defineSymbol(context, 'NaN', NaN)
@@ -133,6 +138,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'set_head', list.set_head)
     defineSymbol(context, 'set_tail', list.set_tail)
     defineSymbol(context, 'array_length', misc.array_length)
+    defineSymbol(context, 'is_array', misc.is_array)
   }
 
   if (context.chapter >= 4) {
@@ -141,12 +147,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineSymbol(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
       return fun.apply(fun, list_to_vector(args))
     })
-    defineSymbol(context, 'is_number', misc.is_number)
-    defineSymbol(context, 'is_array', misc.is_array)
+  }
+
+  if (context.chapter >= 100) {
     defineSymbol(context, 'is_object', misc.is_object)
-    defineSymbol(context, 'is_string', misc.is_string)
-    defineSymbol(context, 'is_function', misc.is_function)
-    defineSymbol(context, 'is_boolean', misc.is_boolean)
   }
 
   if (context.chapter >= Infinity) {

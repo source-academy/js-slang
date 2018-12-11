@@ -130,6 +130,7 @@ export function length(xs: List) {
   let i = 0
   while (!is_null(xs)) {
     i += 1
+    xs = tail(xs)
   }
   return i
 }

@@ -196,25 +196,6 @@ export class ConstAssignment extends RuntimeSourceError {
   }
 }
 
-export class EmptyForExpression extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
-  constructor(node: es.Node, private missing: string[]) {
-    super(node)
-  }
-
-  public explain() {
-    const exp = this.missing.length > 1 ? 'expressions' : 'expression'
-    return `For statement cannot have empty ${this.missing.join(',')} ${exp}.`
-  }
-
-  public elaborate() {
-    return 'TODO'
-  }
-}
-
 export class GetPropertyError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR

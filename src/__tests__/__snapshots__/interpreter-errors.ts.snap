@@ -159,6 +159,94 @@ Array [
 ]
 `;
 
+exports[`Error when calling arrow function with too few arguments 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments 2`] = `"Line 3: Expected 1 arguments, but got 0"`;
+
+exports[`Error when calling arrow function with too many arguments 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments 2`] = `"Line 3: Expected 1 arguments, but got 2"`;
+
+exports[`Error when calling function with too few arguments 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling function with too few arguments 2`] = `"Line 5: Expected 1 arguments, but got 0"`;
+
+exports[`Error when calling function with too many arguments 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling function with too many arguments 2`] = `"Line 5: Expected 1 arguments, but got 2"`;
+
+exports[`Error when calling non function value "string" 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value "string" 2`] = `"Line 2: Calling non-function value \\"string\\""`;
+
+exports[`Error when calling non function value 0 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value 0 2`] = `"Line 2: Calling non-function value 0"`;
+
+exports[`Error when calling non function value array 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value array 2`] = `"Line 2: Calling non-function value [1]"`;
+
+exports[`Error when calling non function value null 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value null 2`] = `"Line 2: null literals are not allowed"`;
+
+exports[`Error when calling non function value object 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value object 2`] = `"Line 2: Calling non-function value [object Object]"`;
+
+exports[`Error when calling non function value true 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value true 2`] = `"Line 2: Calling non-function value true"`;
+
+exports[`Error when calling non function value undefined 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when calling non function value undefined 2`] = `"Line 2: Calling non-function value undefined"`;
+
 exports[`Error when deeply accessing property on undefined 1`] = `
 Object {
   "status": "error",
@@ -212,6 +300,38 @@ Array [
   },
 ]
 `;
+
+exports[`Error when redeclaring constant 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when redeclaring constant 2`] = `"Line 3: SyntaxError: Identifier 'f' has already been declared (3:10)"`;
+
+exports[`Error when redeclaring constant as variable 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when redeclaring constant as variable 2`] = `"Line 3: SyntaxError: Identifier 'f' has already been declared (3:8)"`;
+
+exports[`Error when redeclaring variable 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when redeclaring variable 2`] = `"Line 3: SyntaxError: Identifier 'f' has already been declared (3:8)"`;
+
+exports[`Error when redeclaring variable as constant 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when redeclaring variable as constant 2`] = `"Line 3: SyntaxError: Identifier 'f' has already been declared (3:10)"`;
 
 exports[`In case a function ever returns null, should throw an error as well 1`] = `
 Object {

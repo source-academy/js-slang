@@ -20,11 +20,15 @@ exports[`Cannot use assignment expressions 2`] = `"Line 4: Assignment inside an 
 
 exports[`Cannot use assignment expressions 3`] = `"Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
 
+exports[`Cannot use destructuring declarations 1`] = `"Line 3: Array patterns are not allowed"`;
+
 exports[`Cannot use function expressions 1`] = `"Line 2: Function expressions are not allowed"`;
 
 exports[`Cannot use function expressions 2`] = `"Line 2: Function expressions are not allowed"`;
 
-exports[`Cannot use update expressions 1`] = `"Line 3: Update expressions are not allowed"`;
+exports[`Cannot use multiple declarations 1`] = `"Line 2: Multiple declaration in a single statement"`;
+
+exports[`Cannot use update expressions 1`] = `""`;
 
 exports[`Cannot use update statements 1`] = `"Line 3: The assignment operator += is not allowed. Use = instead"`;
 
@@ -35,6 +39,13 @@ exports[`No empty statements 1`] = `"Line 2: Empty statements are not allowed"`;
 exports[`No rest pattern 1`] = `"Line 2: Rest elements are not allowed"`;
 
 exports[`No spread operator 1`] = `"Line 5: Spread elements are not allowed"`;
+
+exports[`No trailing commas in arrays 1`] = `
+"Line 2: Trailing comma
+Line 2: Array expressions are not allowed"
+`;
+
+exports[`No trailing commas in objects 1`] = `"Line 4: SyntaxError: Unexpected token (4:7)"`;
 
 exports[`for needs braces 1`] = `
 Object {
@@ -60,9 +71,16 @@ exports[`no classes 1`] = `
 Line 2: Class declarations are not allowed"
 `;
 
+exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allowed"`;
+
+exports[`no export constant 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+
+exports[`no export default 1`] = `"Line 3: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (3:4)"`;
+
+exports[`no export function 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+
 exports[`no for in loops 1`] = `
 "Line 2: Missing value in variable declaration
-Line 2: Object expressions are not allowed
 Line 2: For in statements are not allowed"
 `;
 
@@ -73,22 +91,42 @@ Line 2: For of statements are not allowed"
 
 exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowed"`;
 
+exports[`no import 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
+
+exports[`no interface 1`] = `"Line 2: SyntaxError: Unexpected token (2:14)"`;
+
+exports[`no regexp 1`] = `
+"Line 1: Missing semicolon at the end of statement
+Line 1: 'RegExp' literals are not allowed"
+`;
+
+exports[`no sequence expression 1`] = `"Line 2: Sequence expressions are not allowed"`;
+
+exports[`no super 1`] = `
+"Line 4: Supers are not allowed
+Line 3: Function expressions are not allowed
+Line 3: Method definitions are not allowed
+Line 2: Class bodys are not allowed
+Line 2: Class declarations are not allowed"
+`;
+
 exports[`no template literals 1`] = `
 "Line 1: Missing semicolon at the end of statement
 Line 1: Template elements are not allowed
 Line 1: Template literals are not allowed"
 `;
 
-exports[`no this, no new 1`] = `
-"Line 3: 'this' expressions are not allowed
-Line 5: New expressions are not allowed"
-`;
+exports[`no this, no new 1`] = `"Line 3: 'this' expressions are not allowed"`;
 
 exports[`no try statements 1`] = `
 "Line 6: Spread elements are not allowed
 Line 7: Catch clauses are not allowed
 Line 5: Try statements are not allowed"
 `;
+
+exports[`no unspecified operators 1`] = `"Line 2: Operator '<<' is not allowed."`;
+
+exports[`no unspecified unary operators 1`] = `"Line 3: Operator 'typeof' is not allowed."`;
 
 exports[`while needs braces 1`] = `
 Object {
