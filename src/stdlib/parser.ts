@@ -399,7 +399,7 @@ function transform(node: es.Node) {
 
 export function parse(x: string): Value {
   const context = createContext(100)
-  let program: es.Program | undefined
+  let program
   program = sourceParse(x, context)
   if (context.errors.length > 0) {
     throw new ParseError(context.errors[0].explain())

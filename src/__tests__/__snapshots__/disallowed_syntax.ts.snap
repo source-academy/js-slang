@@ -106,6 +106,7 @@ exports[`no super 1`] = `"Line 2: SyntaxError: 'super' outside of function or cl
 
 exports[`no template literals 1`] = `
 "Line 1: Missing semicolon at the end of statement
+Line 1: Template elements are not allowed
 Line 1: Template literals are not allowed"
 `;
 
