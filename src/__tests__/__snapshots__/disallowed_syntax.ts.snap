@@ -66,12 +66,24 @@ exports[`if needs braces 2`] = `
 Line 2: Missing curly braces around \\"else\\" block"
 `;
 
+exports[`no assigning to reserved keywords 1`] = `
+"Line 2: Reserved word 'yield' is not allowed as a name
+Line 3: Reserved word 'package' is not allowed as a name
+Line 4: Reserved word 'static' is not allowed as a name"
+`;
+
 exports[`no classes 1`] = `
 "Line 2: Class bodys are not allowed
 Line 2: Class declarations are not allowed"
 `;
 
 exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allowed"`;
+
+exports[`no declaring reserved keywords 1`] = `
+"Line 2: Reserved word 'yield' is not allowed as a name
+Line 3: Reserved word 'package' is not allowed as a name
+Line 4: Reserved word 'static' is not allowed as a name"
+`;
 
 exports[`no export constant 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
 
@@ -90,6 +102,8 @@ Line 2: For of statements are not allowed"
 `;
 
 exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowed"`;
+
+exports[`no implicit undefined return 1`] = `"Line 3: Missing value in return statement"`;
 
 exports[`no import 1`] = `"Line 2: SyntaxError: 'import' and 'export' may appear only with 'sourceType: module' (2:4)"`;
 
