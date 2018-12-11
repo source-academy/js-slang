@@ -3,7 +3,7 @@
  */
 import { SimpleWalker, Walker } from 'acorn/dist/walk'
 import * as es from 'estree'
-import { Closure, Value } from '../types'
+import { Value } from '../types'
 
 /**
  * Check whether two nodes are equal.
@@ -104,9 +104,6 @@ const freshId = (() => {
  * @returns {Node}
  */
 export const createNode = (value: Value): es.Node => {
-  if (value instanceof Closure) {
-    return value.node
-  }
   return createLiteralNode(value)
 }
 

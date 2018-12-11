@@ -254,4 +254,3 @@ test('accumulate', () => {
     expect((obj as Finished).value).toBe(10)
   })
 })
-

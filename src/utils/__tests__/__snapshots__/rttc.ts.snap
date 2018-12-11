@@ -256,34 +256,6 @@ exports[`Invalid binary type combinations for + return TypeError 11`] = `"Expect
 
 exports[`Invalid binary type combinations for + return TypeError 12`] = `"Expected string on left hand side of operation, got function."`;
 
-exports[`Invalid logical type combinations return TypeError 1`] = `"Expected boolean on left hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 2`] = `"Expected boolean on right hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 3`] = `"Expected boolean on left hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 4`] = `"Expected boolean on right hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 5`] = `"Expected boolean on left hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 6`] = `"Expected boolean on left hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 7`] = `"Expected boolean on left hand side of operation, got string."`;
-
-exports[`Invalid logical type combinations return TypeError 8`] = `"Expected boolean on left hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 9`] = `"Expected boolean on right hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 10`] = `"Expected boolean on left hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 11`] = `"Expected boolean on right hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 12`] = `"Expected boolean on left hand side of operation, got function."`;
-
-exports[`Invalid logical type combinations return TypeError 13`] = `"Expected boolean on left hand side of operation, got number."`;
-
-exports[`Invalid logical type combinations return TypeError 14`] = `"Expected boolean on left hand side of operation, got string."`;
-
 exports[`Invalid ternary/if test expressions return TypeError 1`] = `"Expected boolean as condition, got number."`;
 
 exports[`Invalid ternary/if test expressions return TypeError 2`] = `"Expected boolean as condition, got string."`;

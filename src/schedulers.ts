@@ -25,8 +25,7 @@ export class AsyncScheduler implements Scheduler {
 }
 
 export class PreemptiveScheduler implements Scheduler {
-  constructor(public steps: number) {
-  }
+  constructor(public steps: number) {}
 
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
@@ -45,7 +44,11 @@ export class PreemptiveScheduler implements Scheduler {
             const frames = context.runtime.frames
             const stacks: any = []
             let counter = 0
-            for (let i = 0; counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < frames.length; i++) {
+            for (
+              let i = 0;
+              counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < frames.length;
+              i++
+            ) {
               if (frames[i].callExpression) {
                 stacks.unshift(frames[i].callExpression)
                 counter++

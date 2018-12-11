@@ -13,11 +13,11 @@ export class noDotAbbreviationError implements SourceError {
   }
 
   explain() {
-    return "Dot abbreviations are not allowed."
+    return 'Dot abbreviations are not allowed.'
   }
 
   elaborate() {
-    return ""
+    return ''
   }
 }
 
