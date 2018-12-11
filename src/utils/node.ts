@@ -5,16 +5,16 @@ import * as es from 'estree'
 import { Value } from '../types'
 const createLiteralNode = (value: {}): es.Node => {
   if (typeof value === 'undefined') {
-    return ({
+    return {
       type: 'Identifier',
       name: 'undefined'
-    } as unknown) as es.Node
+    } as es.Node
   } else {
-    return ({
+    return {
       type: 'Literal',
       value,
       raw: value
-    } as unknown) as es.SimpleLiteral
+    } as es.SimpleLiteral
   }
 }
 /**
