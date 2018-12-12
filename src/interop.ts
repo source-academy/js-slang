@@ -1,8 +1,9 @@
 import { generate } from 'astring'
+import getParameterNames = require('get-parameter-names')
 
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
 import { apply } from './interpreter'
-import { ArrowClosure, Closure, Context, Value } from './types'
+import { Closure, Context, Value } from './types'
 
 export const closureToJS = (value: Value, context: Context, klass: string) => {
   function DummyClass(this: Value) {
@@ -24,27 +25,13 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
       DummyClass.prototype.constructor = DummyClass
     }
   })
-  DummyClass.call = (thisArg: Value, ...args: Value[]) => {
+  DummyClass.toString = function() {
+    return toString(value)
+  }
+  DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
     return DummyClass.apply(thisArg, args)
   }
   return DummyClass
-}
-
-export const toJS = (value: Value, context: Context, klass?: string) => {
-  if (value instanceof Closure || value instanceof ArrowClosure) {
-    return value.fun
-  } else {
-    return value
-  }
-}
-
-const stripBody = (body: string) => {
-  const lines = body.split(/\n/)
-  if (lines.length >= 2) {
-    return lines[0] + '\n\t[implementation hidden]\n' + lines[lines.length - 1]
-  } else {
-    return body
-  }
 }
 
 const arrayToString = (value: Value[], length: number) => {
@@ -59,8 +46,8 @@ const arrayToString = (value: Value[], length: number) => {
 }
 
 export const toString = (value: Value, length = 0): string => {
-  if (value instanceof ArrowClosure || value instanceof Closure) {
-    return generate(value.node)
+  if (value instanceof Closure) {
+    return generate(value.originalNode)
   } else if (Array.isArray(value)) {
     if (length > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
@@ -68,14 +55,15 @@ export const toString = (value: Value, length = 0): string => {
       return arrayToString(value, length)
     }
   } else if (typeof value === 'string') {
-    return `\"${value}\"`
+    return `"${value}"`
   } else if (typeof value === 'undefined') {
     return 'undefined'
   } else if (typeof value === 'function') {
     if (value.__SOURCE__) {
       return `function ${value.__SOURCE__} {\n\t[implementation hidden]\n}`
     } else {
-      return stripBody(value.toString())
+      const params = getParameterNames(value).join(', ')
+      return `function ${value.name}(${params}) {\n\t[implementation hidden]\n}`
     }
   } else if (value === null) {
     return 'null'

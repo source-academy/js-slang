@@ -1,17 +1,11 @@
 /* tslint:disable: max-classes-per-file */
 import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
-import { simple } from 'acorn/dist/walk'
+import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
-
 import rules from './rules'
 import syntaxTypes from './syntaxTypes'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
-
-// tslint:disable-next-line:interface-name
-export interface ParserOptions {
-  chapter: number
-}
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -48,9 +42,10 @@ export class DisallowedConstructError implements SourceError {
         return "'this' expressions"
       case 'Property':
         return 'Properties'
-      default:
+      default: {
         const words = nodeType.split(/(?=[A-Z])/)
         return words.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(' ') + 's'
+      }
     }
   }
 }
@@ -100,8 +95,8 @@ export class TrailingCommaError implements SourceError {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    program = acornParse(source, createAcornParserOptions(context))
-    simple(program, walkers, undefined, context)
+    program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
+    ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
       // tslint:disable-next-line:no-any
@@ -117,7 +112,6 @@ export function parse(source: string, context: Context) {
   }
   const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
   if (program && !hasErrors) {
-    // context.cfg.scopes[0].node = program
     return program
   } else {
     return undefined
@@ -125,7 +119,7 @@ export function parse(source: string, context: Context) {
 }
 
 const createAcornParserOptions = (context: Context): AcornOptions => ({
-  sourceType: 'script',
+  sourceType: 'module',
   ecmaVersion: 6,
   locations: true,
   // tslint:disable-next-line:no-any
@@ -152,30 +146,20 @@ function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
   parserRules: Array<Rule<es.Node>>
 ) {
-  const newWalkers = new Map<string, (n: es.Node, c: Context) => void>()
+  const newWalkers = new Map<string, AncestorWalker<Context>>()
+  const visitedNodes = new Set<es.Node>()
 
   // Provide callbacks checking for disallowed syntaxes, such as case, switch...
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
-    const allowedChap = pair[1]
-    newWalkers.set(syntax, (node: es.Node, context: Context) => {
-      const id = freshId()
-      Object.defineProperty(node, '__id', {
-        enumerable: true,
-        configurable: false,
-        writable: false,
-        value: id
-      })
-      context.cfg.nodes[id] = {
-        id,
-        node,
-        scope: undefined,
-        usages: []
-      }
-      context.cfg.edges[id] = []
-      if (context.chapter < allowedChap) {
-        context.errors.push(new DisallowedConstructError(node))
+    newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
+      if (!visitedNodes.has(node)) {
+        visitedNodes.add(node)
+
+        if (context.chapter < allowedSyntaxes[node.type]) {
+          context.errors.push(new DisallowedConstructError(node))
+        }
       }
     })
   })
@@ -188,18 +172,18 @@ function createWalkers(
       const syntax = pair[0]
       const checker = pair[1]
       const oldCheck = newWalkers.get(syntax)
-      const newCheck = (node: es.Node, context: Context) => {
+      const newCheck = (node: es.Node, context: Context, ancestors: [es.Node]) => {
         if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
           return
         }
-        const errors = checker(node)
+        const errors = checker(node, ancestors)
         errors.forEach(e => context.errors.push(e))
       }
-      newWalkers.set(syntax, (node, context) => {
+      newWalkers.set(syntax, (node, context, ancestors) => {
         if (oldCheck) {
-          oldCheck(node, context)
+          oldCheck(node, context, ancestors)
         }
-        newCheck(node, context)
+        newCheck(node, context, ancestors)
       })
     })
   })
@@ -207,18 +191,7 @@ function createWalkers(
   return mapToObj(newWalkers)
 }
 
-export const freshId = (() => {
-  let id = 0
-  return () => {
-    id++
-    return 'node_' + id
-  }
-})()
-
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: (node: es.Node, ctxt: Context) => void } = createWalkers(
-  syntaxTypes,
-  rules
-)
+const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxTypes, rules)

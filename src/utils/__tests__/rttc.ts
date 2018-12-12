@@ -199,34 +199,6 @@ test('Invalid binary type combinations for (<|>|<=|>=) return TypeError', () => 
   errors.map(error => expect(error.elaborate()).toMatchSnapshot())
 })
 
-test('Valid logical type combinations are OK', () => {
-  const operatorValues = [[bool, bool], [bool, bool]]
-  const context = mockRuntimeContext()
-  const errors = operatorValues.map(opVals => {
-    return rttc.checkLogicalExpression(context, opVals[0], opVals[1])
-  })
-  errors.map(error => expect(error).toBeUndefined())
-})
-
-test('Invalid logical type combinations return TypeError', () => {
-  const operatorValues = [
-    [num, bool],
-    [bool, num],
-    [func, bool],
-    [bool, func],
-    [func, func],
-    [num, num],
-    [str, str]
-  ]
-  const context = mockRuntimeContext()
-  const errors = operatorValues.map(opVals => {
-    return rttc.checkLogicalExpression(context, opVals[0], opVals[1])
-  }) as rttc.TypeError[]
-  errors.map(error => expect(error).toBeInstanceOf(rttc.TypeError))
-  errors.map(error => expect(error.explain()).toMatchSnapshot())
-  errors.map(error => expect(error.elaborate()).toMatchSnapshot())
-})
-
 test('Valid ternary/if test expressions are OK', () => {
   const operatorValues = [bool]
   const context = mockRuntimeContext()

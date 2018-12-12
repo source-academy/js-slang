@@ -1,5 +1,4 @@
 /* tslint:disable: max-classes-per-file */
-import * as es from 'estree'
 import { MaximumStackLimitExceeded } from './interpreter-errors'
 import { Context, Result, Scheduler, Value } from './types'
 
@@ -42,9 +41,18 @@ export class PreemptiveScheduler implements Scheduler {
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
-            const stacks: es.CallExpression[] = []
-            for (let i = 1; i <= 3; i++) {
-              stacks.push(context.runtime.frames[i - 1].callExpression!)
+            const frames = context.runtime.frames
+            const stacks: any = []
+            let counter = 0
+            for (
+              let i = 0;
+              counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < frames.length;
+              i++
+            ) {
+              if (frames[i].callExpression) {
+                stacks.unshift(frames[i].callExpression)
+                counter++
+              }
             }
             context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
           }

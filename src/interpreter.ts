@@ -2,9 +2,9 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toJS, toString } from './interop'
+import { toString } from './interop'
 import * as errors from './interpreter-errors'
-import { ArrowClosure, Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
+import { Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
@@ -21,12 +21,12 @@ class TailCallReturnValue {
 }
 
 const createFrame = (
-  closure: ArrowClosure | Closure,
+  closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
 ): Frame => {
   const frame: Frame = {
-    name: closure.name, // TODO: Change this
+    name: closure.functionName, // TODO: Change this
     parent: closure.frame,
     environment: {}
   }
@@ -44,7 +44,7 @@ const createFrame = (
 }
 const createBlockFrame = (
   context: Context,
-  name = "blockFrame",
+  name = 'blockFrame',
   environment: Environment = {}
 ): Frame => {
   const frame: Frame = {
@@ -52,9 +52,9 @@ const createBlockFrame = (
     parent: currentFrame(context),
     environment,
     thisContext: context
-  };
-  return frame;
-};
+  }
+  return frame
+}
 
 const handleError = (context: Context, error: SourceError) => {
   context.errors.push(error)
@@ -67,25 +67,53 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
-function defineVariable(context: Context, name: string, value: Value, constant=false) {
+const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+
+function hoistIdentifier(context: Context, name: string, node: es.Node) {
+  const frame = currentFrame(context)
+  if (frame.environment.hasOwnProperty(name)) {
+    handleError(context, new errors.VariableRedeclaration(node, name))
+  }
+  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  return frame
+}
+function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+  for (const declaration of node.declarations) {
+    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+  }
+}
+function hoistFunctionsAndVariableDeclarationsIdentifiers(
+  context: Context,
+  node: es.BlockStatement
+) {
+  for (const statement of node.body) {
+    switch (statement.type) {
+      case 'VariableDeclaration':
+        hoistVariableDeclarations(context, statement)
+        break
+      case 'FunctionDeclaration':
+        hoistIdentifier(context, (statement.id as es.Identifier).name, node)
+        break
+    }
+  }
+}
+
+function defineVariable(context: Context, name: string, value: Value, constant = false) {
   const frame = context.runtime.frames[0]
 
-  if (frame.environment.hasOwnProperty(name)) {
+  if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
-  Object.defineProperty(
-    frame.environment,
-    name,
-    {
-      value,
-      writable: !constant,
-      enumerable: true
-    }
-  )
+  Object.defineProperty(frame.environment, name, {
+    value,
+    writable: !constant,
+    enumerable: true
+  })
 
   return frame
 }
+
 function* visit(context: Context, node: es.Node) {
   context.runtime.nodes.unshift(node)
   yield context
@@ -103,7 +131,11 @@ const getVariable = (context: Context, name: string) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
-      return frame.environment[name]
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        handleError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
+      } else {
+        return frame.environment[name]
+      }
     } else {
       frame = frame.parent
     }
@@ -114,8 +146,11 @@ const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
+      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+        break
+      }
       const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
-      if(descriptors[name].writable) {
+      if (descriptors[name].writable) {
         frame.environment[name] = value
         return
       }
@@ -130,7 +165,7 @@ const setVariable = (context: Context, name: string, value: any) => {
 
 const checkNumberOfArguments = (
   context: Context,
-  callee: ArrowClosure | Closure,
+  callee: Closure,
   args: Value[],
   exp: es.CallExpression
 ) => {
@@ -146,6 +181,30 @@ function* getArgs(context: Context, call: es.CallExpression) {
     args.push(yield* evaluate(arg, context))
   }
   return args
+}
+
+function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
+  if (node.operator === '&&') {
+    return <es.ConditionalExpression>{
+      type: 'ConditionalExpression',
+      test: node.left,
+      consequent: node.right,
+      alternate: {
+        type: 'Literal',
+        value: false
+      }
+    }
+  } else {
+    return <es.ConditionalExpression>{
+      type: 'ConditionalExpression',
+      test: node.left,
+      consequent: {
+        type: 'Literal',
+        value: true
+      },
+      alternate: node.right
+    }
+  }
 }
 
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
@@ -178,8 +237,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
     return new Closure(node, currentFrame(context), context)
   },
-  ArrowFunctionExpression: function*(node: es.Function, context: Context) {
-    return new ArrowClosure(node, currentFrame(context), context)
+  ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
+    return Closure.makeFromArrowFunction(node, currentFrame(context), context)
   },
   Identifier: function*(node: es.Identifier, context: Context) {
     return getVariable(context, node.name)
@@ -239,14 +298,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result
     switch (node.operator) {
       case '+':
-        let isLeftString = typeof left === 'string'
-        let isRightString = typeof right === 'string';
-        if (isLeftString && !isRightString) {
-          right = toString(right)
-        } else if (isRightString && !isLeftString) {
-          left = toString(left)
+        {
+          let isLeftString = typeof left === 'string'
+          let isRightString = typeof right === 'string'
+          if (isLeftString && !isRightString) {
+            right = toString(right)
+          } else if (isRightString && !isLeftString) {
+            left = toString(left)
+          }
+          result = left + right
         }
-        result = left + right
         break
       case '-':
         result = left - right
@@ -287,28 +348,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* this.IfStatement(node, context)
   },
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    let error = rttc.checkLogicalExpression(context, left, true)
-    if (error) {
-      handleError(context, error)
-      return undefined
-    } else if ((node.operator === '&&' && left) || (node.operator === '||' && !left)) {
-      // only evaluate right if required (lazy); but when we do, check typeof right
-      const right = yield* evaluate(node.right, context)
-      error = rttc.checkLogicalExpression(context, left, right)
-      if (error) {
-        handleError(context, error)
-        return undefined
-      } else {
-        return right
-      }
-    } else {
-      return left
-    }
+    return yield* this.IfStatement(transformLogicalExpression(node), context)
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
-    const constant = (node.kind == "const")
+    const constant = node.kind == 'const'
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
     defineVariable(context, id.name, value, constant)
@@ -321,40 +365,36 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return new BreakValue()
   },
   ForStatement: function*(node: es.ForStatement, context: Context) {
-    // Check that all 3 expressions are not empty in a for loop
-    const missing_parts = ["init", "test", "update"].filter(
-      part => node[part] === null
-    );
-    if (missing_parts.length > 0) {
-      const error = new errors.EmptyForExpression(node, missing_parts);
-      handleError(context, error);
-    }
-
     // Create a new block scope for the loop variables
-    const loopFrame = createBlockFrame(context, "forLoopFrame")
+    const loopFrame = createBlockFrame(context, 'forLoopFrame')
     pushFrame(context, loopFrame)
 
-    if (node.init) {
-      yield* evaluate(node.init, context)
+    const initNode = node.init!
+    const testNode = node.test!
+    const updateNode = node.update!
+    if (initNode.type === 'VariableDeclaration') {
+      hoistVariableDeclarations(context, initNode)
     }
-    let test = node.test ? yield* evaluate(node.test, context) : true
+    yield* evaluate(initNode, context)
+
     let value
-    while (test) {
+    while (yield* evaluate(testNode, context)) {
       // create block context and shallow copy loop frame environment
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
       // We copy this as a const to avoid ES6 funkiness when mutating loop vars
       // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
-      const frame = createBlockFrame(context, "forBlockFrame")
+      const frame = createBlockFrame(context, 'forBlockFrame')
       pushFrame(context, frame)
-      for(let name in loopFrame.environment) {
+      for (let name in loopFrame.environment) {
+        hoistIdentifier(context, name, node)
         defineVariable(context, name, loopFrame.environment[name], true)
       }
 
       value = yield* evaluate(node.body, context)
 
       // Remove block context
-      popFrame(context);
+      popFrame(context)
       if (value instanceof ContinueValue) {
         value = undefined
       }
@@ -365,17 +405,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (value instanceof ReturnValue || value instanceof TailCallReturnValue) {
         break
       }
-      if (node.update) {
-        yield* evaluate(node.update, context)
-      }
-      test = node.test ? yield* evaluate(node.test, context) : true
+
+      yield* evaluate(updateNode, context)
     }
 
-    popFrame(context);
+    popFrame(context)
 
-    if (value instanceof BreakValue) {
-      return undefined
-    }
     return value
   },
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
@@ -440,35 +475,52 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (test) {
       const result = yield* evaluate(node.consequent, context)
       return result
-    } else if (node.alternate) {
-      const result = yield* evaluate(node.alternate, context)
-      return result
     } else {
-      return undefined
+      const result = yield* evaluate(node.alternate!, context)
+      return result
     }
   },
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
     return yield* evaluate(node.expression, context)
   },
   *ReturnStatement(node: es.ReturnStatement, context: Context) {
-    if (node.argument) {
-      if (node.argument.type === 'CallExpression') {
-        const callee = yield* evaluate(node.argument.callee, context)
-        const args = yield* getArgs(context, node.argument)
-        return new TailCallReturnValue(callee, args, node.argument)
-      } else {
-        return new ReturnValue(yield* evaluate(node.argument, context))
+    let returnExpression = node.argument!
+
+    // If we have a conditional expression, reduce it until we get something else
+    while (
+      returnExpression.type === 'LogicalExpression' ||
+      returnExpression.type === 'ConditionalExpression'
+    ) {
+      if (returnExpression.type === 'LogicalExpression') {
+        returnExpression = transformLogicalExpression(returnExpression)
       }
+      const test = yield* evaluate(returnExpression.test, context)
+      const error = rttc.checkIfStatement(context, test)
+      if (error) {
+        handleError(context, error)
+        return undefined
+      }
+      if (test) {
+        returnExpression = returnExpression.consequent
+      } else {
+        returnExpression = returnExpression.alternate
+      }
+    }
+
+    // If we are now left with a CallExpression, then we use TCO
+    if (returnExpression.type === 'CallExpression') {
+      const callee = yield* evaluate(returnExpression.callee, context)
+      const args = yield* getArgs(context, returnExpression)
+      return new TailCallReturnValue(callee, args, returnExpression)
     } else {
-      return new ReturnValue(undefined)
+      return new ReturnValue(yield* evaluate(returnExpression, context))
     }
   },
   WhileStatement: function*(node: es.WhileStatement, context: Context) {
     let value: any // tslint:disable-line
-    let test
     while (
       // tslint:disable-next-line
-      (test = yield* evaluate(node.test, context)) &&
+      (yield* evaluate(node.test, context)) &&
       !(value instanceof ReturnValue) &&
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
@@ -497,8 +549,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result: Value
 
     // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, "blockFrame")
+    const frame = createBlockFrame(context, 'blockFrame')
     pushFrame(context, frame)
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
 
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
@@ -515,6 +568,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return result
   },
   Program: function*(node: es.BlockStatement, context: Context) {
+    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
     let result: Value
     for (const statement of node.body) {
       result = yield* evaluate(statement, context)
@@ -535,7 +589,7 @@ export function* evaluate(node: es.Node, context: Context) {
 
 export function* apply(
   context: Context,
-  fun: ArrowClosure | Closure | Value,
+  fun: Closure | Value,
   args: Value[],
   node?: es.CallExpression,
   thisContext?: Value
@@ -563,29 +617,23 @@ export function* apply(
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
       }
-    } else if (fun instanceof ArrowClosure) {
-      checkNumberOfArguments(context, fun, args, node!)
-      const frame = createFrame(fun, args, node)
-      frame.thisContext = thisContext
-      if (result instanceof TailCallReturnValue) {
-        replaceFrame(context, frame)
-      } else {
-        pushFrame(context, frame)
-        total++
-      }
-      result = new ReturnValue(yield* evaluate(fun.node.body, context))
     } else if (typeof fun === 'function') {
       try {
-        const as = args.map(a => toJS(a, context))
-        result = fun.apply(thisContext, as)
+        result = fun.apply(thisContext, args)
         break
       } catch (e) {
         // Recover from exception
         const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
         context.runtime.frames = [globalFrame]
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
-        handleError(context, new errors.ExceptionError(e, loc))
+        if (!(e instanceof errors.RuntimeSourceError)) {
+          // The error could've arisen when the builtin called a source function which errored.
+          // If the cause was a source error, we don't want to include the error.
+          // However if the error came from the builtin itself, we need to handle it.
+          handleError(context, new errors.ExceptionError(e, loc))
+        }
         result = undefined
+        throw e
       }
     } else {
       handleError(context, new errors.CallingNonFunctionValue(fun, node))

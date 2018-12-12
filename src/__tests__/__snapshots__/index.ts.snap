@@ -9,211 +9,25 @@ Object {
 }
 `;
 
-exports[`Arrow function definition returns itself 1`] = `
+exports[`Allow display to return value it is displaying 1`] = `
 Object {
   "status": "finished",
-  "value": ArrowClosure {
-    "frame": Object {
-      "environment": Object {
-        "Infinity": Infinity,
-        "NaN": NaN,
-        "display": [Function],
-        "error": [Function],
-        "math_E": 2.718281828459045,
-        "math_LN10": 2.302585092994046,
-        "math_LN2": 0.6931471805599453,
-        "math_LOG10E": 0.4342944819032518,
-        "math_LOG2E": 1.4426950408889634,
-        "math_PI": 3.141592653589793,
-        "math_SQRT1_2": 0.7071067811865476,
-        "math_SQRT2": 1.4142135623730951,
-        "math_abs": [Function],
-        "math_acos": [Function],
-        "math_acosh": [Function],
-        "math_asin": [Function],
-        "math_asinh": [Function],
-        "math_atan": [Function],
-        "math_atan2": [Function],
-        "math_atanh": [Function],
-        "math_cbrt": [Function],
-        "math_ceil": [Function],
-        "math_clz32": [Function],
-        "math_cos": [Function],
-        "math_cosh": [Function],
-        "math_exp": [Function],
-        "math_expm1": [Function],
-        "math_floor": [Function],
-        "math_fround": [Function],
-        "math_hypot": [Function],
-        "math_imul": [Function],
-        "math_log": [Function],
-        "math_log10": [Function],
-        "math_log1p": [Function],
-        "math_log2": [Function],
-        "math_max": [Function],
-        "math_min": [Function],
-        "math_pow": [Function],
-        "math_random": [Function],
-        "math_round": [Function],
-        "math_sign": [Function],
-        "math_sin": [Function],
-        "math_sinh": [Function],
-        "math_sqrt": [Function],
-        "math_tan": [Function],
-        "math_tanh": [Function],
-        "math_trunc": [Function],
-        "parse_int": [Function],
-        "prompt": [Function],
-        "runtime": [Function],
-        "undefined": undefined,
-      },
-      "name": "global",
-      "parent": null,
-    },
-    "fun": [Function],
-    "name": "Anonymous1",
-    "node": Node {
-      "__id": "node_12",
-      "body": Node {
-        "__id": "node_11",
-        "end": 8,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 8,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 1,
-          },
-        },
-        "raw": "42",
-        "start": 6,
-        "type": "Literal",
-        "value": 42,
-      },
-      "end": 8,
-      "expression": true,
-      "generator": false,
-      "id": null,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 8,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "params": Array [],
-      "start": 0,
-      "type": "ArrowFunctionExpression",
-    },
-  },
+  "value": 50,
 }
 `;
 
-exports[`Arrow function definition returns itself 2`] = `
-ArrowClosure {
-  "frame": Object {
-    "environment": Object {
-      "Infinity": Infinity,
-      "NaN": NaN,
-      "display": [Function],
-      "error": [Function],
-      "math_E": 2.718281828459045,
-      "math_LN10": 2.302585092994046,
-      "math_LN2": 0.6931471805599453,
-      "math_LOG10E": 0.4342944819032518,
-      "math_LOG2E": 1.4426950408889634,
-      "math_PI": 3.141592653589793,
-      "math_SQRT1_2": 0.7071067811865476,
-      "math_SQRT2": 1.4142135623730951,
-      "math_abs": [Function],
-      "math_acos": [Function],
-      "math_acosh": [Function],
-      "math_asin": [Function],
-      "math_asinh": [Function],
-      "math_atan": [Function],
-      "math_atan2": [Function],
-      "math_atanh": [Function],
-      "math_cbrt": [Function],
-      "math_ceil": [Function],
-      "math_clz32": [Function],
-      "math_cos": [Function],
-      "math_cosh": [Function],
-      "math_exp": [Function],
-      "math_expm1": [Function],
-      "math_floor": [Function],
-      "math_fround": [Function],
-      "math_hypot": [Function],
-      "math_imul": [Function],
-      "math_log": [Function],
-      "math_log10": [Function],
-      "math_log1p": [Function],
-      "math_log2": [Function],
-      "math_max": [Function],
-      "math_min": [Function],
-      "math_pow": [Function],
-      "math_random": [Function],
-      "math_round": [Function],
-      "math_sign": [Function],
-      "math_sin": [Function],
-      "math_sinh": [Function],
-      "math_sqrt": [Function],
-      "math_tan": [Function],
-      "math_tanh": [Function],
-      "math_trunc": [Function],
-      "parse_int": [Function],
-      "prompt": [Function],
-      "runtime": [Function],
-      "undefined": undefined,
-    },
-    "name": "global",
-    "parent": null,
-  },
-  "fun": [Function],
-  "name": "Anonymous1",
-  "node": Node {
-    "__id": "node_12",
-    "body": Node {
-      "__id": "node_11",
-      "end": 8,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 8,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 6,
-          "line": 1,
-        },
-      },
-      "raw": "42",
-      "start": 6,
-      "type": "Literal",
-      "value": 42,
-    },
-    "end": 8,
-    "expression": true,
-    "generator": false,
-    "id": null,
-    "loc": SourceLocation {
-      "end": Position {
-        "column": 8,
-        "line": 1,
-      },
-      "start": Position {
-        "column": 0,
-        "line": 1,
-      },
-    },
-    "params": Array [],
-    "start": 0,
-    "type": "ArrowFunctionExpression",
-  },
+exports[`Arrow function definition returns itself 1`] = `
+Object {
+  "status": "finished",
+  "value": [Function],
 }
+`;
+
+exports[`Arrow function definition returns itself 2`] = `[Function]`;
+
+exports[`Arrow function infinite recursion with list args represents CallExpression well 1`] = `
+"Line 2: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `;
 
 exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
@@ -239,23 +53,9 @@ Object {
 }
 `;
 
-exports[`Inifinite recursion with list args represents CallExpression well 1`] = `
+exports[`Function infinite recursion with list args represents CallExpression well 1`] = `
 "Line 2: Infinite recursion
-  f([1, [2, []]])..  f([1, [2, []]])..  f([1, [2, []]]).."
-`;
-
-exports[`Metacircular Interpreter parses Arrow Function Assignments properly 1`] = `
-Object {
-  "status": "finished",
-  "value": "[{\\"tag\\":\\"constant_declaration\\",\\"name\\":\\"y\\",\\"value\\":{\\"tag\\":\\"function_definition\\",\\"parameters\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[]],\\"body\\":{\\"tag\\":\\"return_statement\\",\\"expression\\":{\\"tag\\":\\"application\\",\\"operator\\":{\\"tag\\":\\"name\\",\\"name\\":\\"+\\",\\"line\\":0},\\"operands\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[1,[]]],\\"line\\":0},\\"line\\":0},\\"line\\":0,\\"location\\":{\\"start_line\\":1,\\"start_col\\":10,\\"end_line\\":1,\\"end_col\\":10}},\\"line\\":0},[]]",
-}
-`;
-
-exports[`Metacircular Interpreter parses Arrow Function Expressions properly 1`] = `
-Object {
-  "status": "finished",
-  "value": "[{\\"tag\\":\\"function_definition\\",\\"parameters\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[]],\\"body\\":{\\"tag\\":\\"return_statement\\",\\"expression\\":{\\"tag\\":\\"application\\",\\"operator\\":{\\"tag\\":\\"name\\",\\"name\\":\\"+\\",\\"line\\":0},\\"operands\\":[{\\"tag\\":\\"name\\",\\"name\\":\\"x\\",\\"line\\":0},[1,[]]],\\"line\\":0},\\"line\\":0},\\"line\\":0,\\"location\\":{\\"start_line\\":1,\\"start_col\\":0,\\"end_line\\":1,\\"end_col\\":0}},[]]",
-}
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `;
 
 exports[`Multi-dimensional arrays display properly 1`] = `
@@ -265,9 +65,27 @@ Object {
 }
 `;
 
-exports[`Simple inifinite recursion represents CallExpression well 1`] = `
+exports[`Multi-dimensional arrays display properly 2`] = `
+Object {
+  "status": "finished",
+  "value": "[1, function a() {}, 3, [() => 1, 5]]",
+}
+`;
+
+exports[`Simple arrow function infinite recursion represents CallExpression well 1`] = `
 "Line 1: Infinite recursion
-  x(x => x(x))..  x(x => x(x))..  x(x => x(x)).."
+  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
+`;
+
+exports[`Simple function infinite recursion represents CallExpression well 1`] = `
+"Line 1: Infinite recursion
+  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+}).."
 `;
 
 exports[`Simple object assignment and retrieval 1`] = `
@@ -301,7 +119,7 @@ Object {
 exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
 Object {
   "status": "finished",
-  "value": "123[4, [5, [6, []]]]",
+  "value": "123[4, [5, [6, null]]]",
 }
 `;
 

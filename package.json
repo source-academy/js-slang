@@ -1,19 +1,20 @@
 {
   "name": "js-slang",
-  "version": "0.1.19",
+  "version": "0.2.0-alpha",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
-    "@types/acorn": "^4.0.3",
     "@types/estree": "0.0.39",
-    "acorn": "^5.7.1",
-    "astring": "^1.2.0",
-    "commander": "^2.14.1",
-    "common-tags": "^1.4.0",
-    "invariant": "^2.2.2"
+    "acorn": "^6.0.4",
+    "acorn-walk": "^6.1.1",
+    "astring": "^1.3.1",
+    "commander": "^2.19.0",
+    "common-tags": "^1.8.0",
+    "get-parameter-names": "^0.3.0",
+    "invariant": "^2.2.4"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -21,8 +22,11 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "scripts/build.sh",
-    "build": "scripts/build.sh",
+    "prepublishOnly": "tsc",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
+    "eslint": "eslint dist/*.js dist/stdlib/*.js dist/utils/*.js dist/rules/*.js dist/mocks/*.js",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
@@ -35,16 +39,19 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/common-tags": "^1.4.0",
+    "@types/common-tags": "^1.8.0",
     "@types/invariant": "^2.2.29",
-    "@types/jest": "^23.1.4",
-    "@types/node": "^9.4.7",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
+    "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
-    "coveralls": "^3.0.1",
-    "jest": "^23.3.0",
-    "ts-jest": "^23.0.0",
-    "typescript": "^2.7.2"
+    "coveralls": "^3.0.2",
+    "eslint": "^5.10.0",
+    "jest": "^23.6.0",
+    "prettier": "^1.14.3",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.2"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -52,7 +59,7 @@
       "js"
     ],
     "transform": {
-      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "\\.ts$": "<rootDir>/node_modules/ts-jest",
       "\\.js$": "<rootDir>/node_modules/babel-jest"
     },
     "testRegex": "/__tests__/.*\\.ts$",

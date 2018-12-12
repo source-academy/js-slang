@@ -30,7 +30,7 @@ const noDeclareMutable: Rule<es.VariableDeclaration> = {
   disableOn: 3,
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration) {
+    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)]
       } else {

@@ -15,16 +15,12 @@ export class NoUnspecifiedLiteral implements SourceError {
   }
 
   public explain() {
-    /** 
-     * A check is used for RegExp to ensure that only null and RegExp are caught.
+    /**
+     * A check is used for RegExp to ensure that only RegExp are caught.
      * Any other unspecified literal value should not be caught.
      */
-    const literal = this.node.value === null ? 'null' 
-      : this.node.value instanceof RegExp ? 'RegExp'
-      : ''
-    return (
-      `'${literal}' literals are not allowed`
-    )
+    const literal = this.node.value instanceof RegExp ? 'RegExp' : ''
+    return `'${literal}' literals are not allowed`
   }
 
   public elaborate() {
@@ -35,8 +31,8 @@ export class NoUnspecifiedLiteral implements SourceError {
 const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
   checkers: {
-    Literal(node: es.Literal) {
-      if (!specifiedLiterals.includes(typeof node.value)) {
+    Literal(node: es.Literal, ancestors: [es.Node]) {
+      if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
         return [new NoUnspecifiedLiteral(node)]
       } else {
         return []

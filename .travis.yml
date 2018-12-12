@@ -6,6 +6,8 @@ branches:
   except:
     - /^no-ci.*$/
 script:
-  - yarn test
+  - yarn format:ci
   - yarn build
+  - yarn eslint
+  - yarn test
   - yarn test-coveralls

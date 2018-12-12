@@ -1,0 +1,376 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Syntaxes are allowed in the chapter they are introduced 1`] = `
+"
+      display('message');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 2`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 3`] = `
+"
+      error('error!');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 4`] = `"Line 2: Error: \\"error!\\""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 5`] = `
+"
+      is_undefined(undefined);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 6`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 7`] = `
+"
+      is_undefined(null);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 8`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 9`] = `
+"
+      is_null(undefined);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 10`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 11`] = `
+"
+      is_null(null);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 12`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 13`] = `
+"
+      is_string('string');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 14`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 15`] = `
+"
+      is_string('true');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 16`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 17`] = `
+"
+      is_string('1');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 18`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 19`] = `
+"
+      is_string(true);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 20`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 21`] = `
+"
+      is_string(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 22`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 23`] = `
+"
+      is_number('string');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 24`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 25`] = `
+"
+      is_number('true');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 26`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 27`] = `
+"
+      is_number('1');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 28`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 29`] = `
+"
+      is_number(true);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 30`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 31`] = `
+"
+      is_number(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 32`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 33`] = `
+"
+      is_boolean('string');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 34`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 35`] = `
+"
+      is_boolean('true');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 36`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 37`] = `
+"
+      is_boolean('1');
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 38`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39`] = `
+"
+      is_boolean(true);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 40`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 41`] = `
+"
+      is_boolean(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 42`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 43`] = `
+"
+      is_function(display);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 44`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 45`] = `
+"
+      is_function(x => x);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 46`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 47`] = `
+"
+      function f(x) {
+        return x;
+      }
+      is_function(f);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 48`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 49`] = `
+"
+      is_function(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 50`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 51`] = `
+"
+      is_array(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 52`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 53`] = `
+"
+      is_array(pair(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 54`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 55`] = `
+"
+      is_array([1]);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 56`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 57`] = `
+"
+      array_length([1]);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 58`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 59`] = `
+"
+      parse_int('10', 10);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 60`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 61`] = `
+"
+      parse_int('10', 2);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 62`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 63`] = `
+"
+      is_number(runtime());
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 64`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 65`] = `
+"
+      const x = runtime();
+      const f = x => x === 0 ? x : f(x-1);
+      f(1000);
+      const y = runtime();
+      x !== y;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 66`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 67`] = `
+"
+      pair(1, 2);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 68`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 69`] = `
+"
+      list(1, 2);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 70`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 71`] = `
+"
+      is_list(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 72`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 73`] = `
+"
+      is_list(pair(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 74`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 75`] = `
+"
+      is_list(list(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 76`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 77`] = `
+"
+      head(pair(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 78`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 79`] = `
+"
+      tail(pair(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 80`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 81`] = `
+"
+      head(null);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 82`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 83`] = `
+"
+      tail(null);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 84`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 85`] = `
+"
+      head(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 86`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 87`] = `
+"
+      tail(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 88`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 89`] = `
+"
+      length(list(1, 2));
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 90`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 91`] = `
+"
+      length(1);
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 92`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
