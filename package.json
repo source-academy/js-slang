@@ -21,6 +21,9 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "js-slang": "dist/repl/repl.js"
+  },
   "scripts": {
     "prepublishOnly": "tsc",
     "build": "tsc",
