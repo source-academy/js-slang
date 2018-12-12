@@ -19,3 +19,16 @@ To build,
   $ cd slang
   $ yarn
   $ yarn build
+
+To try out *The Source* in a REPL, run
+
+.. code-block::
+
+  $ node dist/repl/repl.js
+
+or alternatively, install js-slang and run
+
+.. code-block::
+
+  $ npm -g install js-slang   # Install js-slang
+  $ js-slang
