@@ -15,7 +15,7 @@ function startRepl(chapter = 1) {
         }
       })
     }
-  });
+  })
 }
 
 function main() {
@@ -23,4 +23,4 @@ function main() {
   startRepl(chapter)
 }
 
-main();
+main()
