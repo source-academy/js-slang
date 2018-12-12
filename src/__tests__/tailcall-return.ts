@@ -21,7 +21,7 @@ test('Check that stack is at most 10k in size', () => {
       expect.stringMatching(/Infinite recursion\n([^f]*f){3}/)
     )
   })
-})
+}, 10000)
 
 test('Simple tail call returns work', () => {
   const code = `

@@ -7,11 +7,6 @@ import rules from './rules'
 import syntaxTypes from './syntaxTypes'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
 
-// tslint:disable-next-line:interface-name
-export interface ParserOptions {
-  chapter: number
-}
-
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
@@ -152,23 +147,15 @@ function createWalkers(
   parserRules: Array<Rule<es.Node>>
 ) {
   const newWalkers = new Map<string, AncestorWalker<Context>>()
+  const visitedNodes = new Set<es.Node>()
 
   // Provide callbacks checking for disallowed syntaxes, such as case, switch...
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
     newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
-      // Note that because of the way there is inheritance in the estree spec,
-      // we may walk this node more than once, so ensure that we only push errors
-      // at most once per node.
-      if (!node.hasOwnProperty('__id')) {
-        const id = freshId()
-        Object.defineProperty(node, '__id', {
-          enumerable: true,
-          configurable: false,
-          writable: false,
-          value: id
-        })
+      if (!visitedNodes.has(node)) {
+        visitedNodes.add(node)
 
         if (context.chapter < allowedSyntaxes[node.type]) {
           context.errors.push(new DisallowedConstructError(node))
@@ -203,14 +190,6 @@ function createWalkers(
 
   return mapToObj(newWalkers)
 }
-
-export const freshId = (() => {
-  let id = 0
-  return () => {
-    id++
-    return 'node_' + id
-  }
-})()
 
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
