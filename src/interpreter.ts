@@ -133,7 +133,6 @@ const getVariable = (context: Context, name: string) => {
     if (frame.environment.hasOwnProperty(name)) {
       if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
         handleError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
-        break
       } else {
         return frame.environment[name]
       }
@@ -370,15 +369,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const loopFrame = createBlockFrame(context, 'forLoopFrame')
     pushFrame(context, loopFrame)
 
-    if (node.init) {
-      if (node.init.type === 'VariableDeclaration') {
-        hoistVariableDeclarations(context, node.init)
-      }
-      yield* evaluate(node.init, context)
+    const initNode = node.init!
+    const testNode = node.test!
+    const updateNode = node.update!
+    if (initNode.type === 'VariableDeclaration') {
+      hoistVariableDeclarations(context, initNode)
     }
-    let test = node.test ? yield* evaluate(node.test, context) : true
+    yield* evaluate(initNode, context)
+
     let value
-    while (test) {
+    while (yield* evaluate(testNode, context)) {
       // create block context and shallow copy loop frame environment
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -405,17 +405,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (value instanceof ReturnValue || value instanceof TailCallReturnValue) {
         break
       }
-      if (node.update) {
-        yield* evaluate(node.update, context)
-      }
-      test = node.test ? yield* evaluate(node.test, context) : true
+
+      yield* evaluate(updateNode, context)
     }
 
     popFrame(context)
 
-    if (value instanceof BreakValue) {
-      return undefined
-    }
     return value
   },
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
@@ -477,50 +472,45 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (test) {
       const result = yield* evaluate(node.consequent, context)
       return result
-    } else if (node.alternate) {
-      const result = yield* evaluate(node.alternate, context)
-      return result
     } else {
-      return undefined
+      const result = yield* evaluate(node.alternate!, context)
+      return result
     }
   },
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
     return yield* evaluate(node.expression, context)
   },
   *ReturnStatement(node: es.ReturnStatement, context: Context) {
-    let return_expression = node.argument
-    if (!return_expression) {
-      return new ReturnValue(undefined)
-    }
+    let returnExpression = node.argument!
 
     // If we have a conditional expression, reduce it until we get something else
     while (
-      return_expression.type === 'LogicalExpression' ||
-      return_expression.type === 'ConditionalExpression'
+      returnExpression.type === 'LogicalExpression' ||
+      returnExpression.type === 'ConditionalExpression'
     ) {
-      if (return_expression.type === 'LogicalExpression') {
-        return_expression = transformLogicalExpression(return_expression)
+      if (returnExpression.type === 'LogicalExpression') {
+        returnExpression = transformLogicalExpression(returnExpression)
       }
-      const test = yield* evaluate(return_expression.test, context)
+      const test = yield* evaluate(returnExpression.test, context)
       const error = rttc.checkIfStatement(context, test)
       if (error) {
         handleError(context, error)
         return undefined
       }
       if (test) {
-        return_expression = return_expression.consequent
+        returnExpression = returnExpression.consequent
       } else {
-        return_expression = return_expression.alternate
+        returnExpression = returnExpression.alternate
       }
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (return_expression.type === 'CallExpression') {
-      const callee = yield* evaluate(return_expression.callee, context)
-      const args = yield* getArgs(context, return_expression)
-      return new TailCallReturnValue(callee, args, return_expression)
+    if (returnExpression.type === 'CallExpression') {
+      const callee = yield* evaluate(returnExpression.callee, context)
+      const args = yield* getArgs(context, returnExpression)
+      return new TailCallReturnValue(callee, args, returnExpression)
     } else {
-      return new ReturnValue(yield* evaluate(return_expression, context))
+      return new ReturnValue(yield* evaluate(returnExpression, context))
     }
   },
   WhileStatement: function*(node: es.WhileStatement, context: Context) {

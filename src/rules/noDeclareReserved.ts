@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 
-const reservedNames = [
+export const reservedNames = [
   'break',
   'case',
   'catch',

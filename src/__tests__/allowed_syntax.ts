@@ -81,6 +81,13 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     ],
 
     [
+      1,
+      `
+      true ? 1 : 2;
+      `
+    ],
+
+    [
       2,
       `
       null;

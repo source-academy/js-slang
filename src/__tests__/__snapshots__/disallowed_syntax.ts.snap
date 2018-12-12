@@ -66,12 +66,18 @@ exports[`if needs braces 2`] = `
 Line 2: Missing curly braces around \\"else\\" block"
 `;
 
+exports[`no assigning to reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'package' is reserved (2:4)"`;
+
 exports[`no classes 1`] = `
 "Line 2: Class bodys are not allowed
 Line 2: Class declarations are not allowed"
 `;
 
 exports[`no debugger statement 1`] = `"Line 2: Debugger statements are not allowed"`;
+
+exports[`no declaration without assignment 1`] = `"Line 2: Missing value in variable declaration"`;
+
+exports[`no declaring reserved keywords 1`] = `"Line 2: SyntaxError: The keyword 'yield' is reserved (2:8)"`;
 
 exports[`no export constant 1`] = `"Line 2: Export named declarations are not allowed"`;
 
@@ -90,6 +96,8 @@ Line 2: For of statements are not allowed"
 `;
 
 exports[`no generator functions 1`] = `"Line 3: Yield expressions are not allowed"`;
+
+exports[`no implicit undefined return 1`] = `"Line 3: Missing value in return statement"`;
 
 exports[`no import 1`] = `
 "Line 2: Import specifiers are not allowed

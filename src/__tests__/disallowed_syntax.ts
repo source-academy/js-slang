@@ -174,6 +174,19 @@ test('Cannot use destructuring declarations', () => {
   })
 })
 
+test('no declaration without assignment', () => {
+  const code = `
+  let x;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
 test('Cannot use update statements', () => {
   const code = `
   let x = 3;
@@ -606,11 +619,52 @@ test('no unspecified unary operators', () => {
   })
 })
 
+test('no implicit undefined return', () => {
+  const code = `
+    function f() {
+      return;
+    }
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
 test('no repeated params', () => {
   const code = `
     function f(x, x) {
       return x;
     }
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no declaring reserved keywords', () => {
+  const code = `
+    let yield = 5;
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('error')
+    const errors = parseError(context.errors)
+    expect(errors).toMatchSnapshot()
+  })
+})
+
+test('no assigning to reserved keywords', () => {
+  const code = `
+    package = 5;
   `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
