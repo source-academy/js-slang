@@ -190,14 +190,6 @@ function createWalkers(
   return mapToObj(newWalkers)
 }
 
-export const freshId = (() => {
-  let id = 0
-  return () => {
-    id++
-    return 'node_' + id
-  }
-})()
-
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
