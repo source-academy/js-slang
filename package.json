@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.1.19",
+  "version": "0.2.0-alpha",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -13,6 +13,7 @@
     "astring": "^1.3.1",
     "commander": "^2.19.0",
     "common-tags": "^1.8.0",
+    "get-parameter-names": "^0.3.0",
     "invariant": "^2.2.4"
   },
   "main": "dist/index",
@@ -25,6 +26,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
+    "eslint": "eslint dist/*.js dist/stdlib/*.js dist/utils/*.js dist/rules/*.js dist/mocks/*.js",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
@@ -45,6 +47,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "coveralls": "^3.0.2",
+    "eslint": "^5.10.0",
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.5",

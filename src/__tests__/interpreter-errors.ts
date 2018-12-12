@@ -389,7 +389,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
    `
-  const context = mockContext()
+  const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -403,7 +403,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
    `
-  const context = mockContext()
+  const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -417,7 +417,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
    `
-  const context = mockContext()
+  const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
@@ -431,11 +431,91 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
    `
-  const context = mockContext()
+  const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(parseError(context.errors)).toMatchSnapshot()
+  })
+})
+
+test('Runtime error when redeclaring constant', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    const f = x => x;
+   `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring constant as variable', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    let f = x => x;
+   `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring variable as constant', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    const f = x => x;
+   `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
+test('Runtime error when redeclaring variable', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    let f = x => x;
+   `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
   })
 })

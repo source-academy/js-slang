@@ -172,6 +172,25 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
   })
 }, 30000)
 
+test('Error when accessing temporal dead zone', () => {
+  const code = `
+    const a = 1;
+    function f() {
+      display(a);
+      const a = 5;
+    }
+    f();
+    `
+  const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    const errors = parseError(context.errors)
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(errors).toEqual(expect.stringMatching(/^Line 4: Name a not yet assigned/))
+  })
+}, 30000)
+
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
   const code = `
       const a = 1;

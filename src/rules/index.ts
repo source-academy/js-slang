@@ -7,6 +7,7 @@ import bracesAroundWhile from './bracesAroundWhile'
 import bracesAroundFor from './bracesAroundFor'
 import noDeclareMutable from './noDeclareMutable'
 import noDeclareReserved from './noDeclareReserved'
+import noAssignReserved from './noAssignReserved'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
@@ -28,6 +29,7 @@ const rules: Array<Rule<es.Node>> = [
   noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
   noDeclareReserved,
+  noAssignReserved,
   noDeclareMutable,
   noUnspecifiedLiteral,
   noNull,

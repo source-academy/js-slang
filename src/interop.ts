@@ -1,4 +1,5 @@
 import { generate } from 'astring'
+import getParameterNames = require('get-parameter-names')
 
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
 import { apply } from './interpreter'
@@ -33,15 +34,6 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   return DummyClass
 }
 
-const stripBody = (body: string) => {
-  const lines = body.split(/\n/)
-  if (lines.length >= 2) {
-    return lines[0] + '\n\t[implementation hidden]\n' + lines[lines.length - 1]
-  } else {
-    return body
-  }
-}
-
 const arrayToString = (value: Value[], length: number) => {
   // Normal Array
   if (value.length > 2 || value.length === 1) {
@@ -63,14 +55,15 @@ export const toString = (value: Value, length = 0): string => {
       return arrayToString(value, length)
     }
   } else if (typeof value === 'string') {
-    return `\"${value}\"`
+    return `"${value}"`
   } else if (typeof value === 'undefined') {
     return 'undefined'
   } else if (typeof value === 'function') {
     if (value.__SOURCE__) {
       return `function ${value.__SOURCE__} {\n\t[implementation hidden]\n}`
     } else {
-      return stripBody(value.toString())
+      const params = getParameterNames(value).join(', ')
+      return `function ${value.name}(${params}) {\n\t[implementation hidden]\n}`
     }
   } else if (value === null) {
     return 'null'
