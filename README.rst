@@ -6,7 +6,7 @@ js-slang
 .. image:: https://coveralls.io/repos/github/source-academy/js-slang/badge.svg?branch=master
     :target: https://coveralls.io/github/source-academy/js-slang?branch=master
 
-An open-source interpreter for *The Source*.
+An open-source interpreter for the *Source* programming language.
 
 Usage
 -----
@@ -20,7 +20,7 @@ To build,
   $ yarn
   $ yarn build
 
-To try out *The Source* in a REPL, run
+To try out *Source* in a REPL, run
 
 .. code-block::
 
