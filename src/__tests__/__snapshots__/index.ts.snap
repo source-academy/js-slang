@@ -139,6 +139,15 @@ Object {
 }
 `;
 
+exports[`functions toString (mostly) matches up with JS 1`] = `
+Object {
+  "status": "finished",
+  "value": "a => bfunction f(x) {
+  return 5;
+}",
+}
+`;
+
 exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
 
 exports[`primitives toString matches up with JS 1`] = `

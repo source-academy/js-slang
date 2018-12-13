@@ -112,6 +112,22 @@ test('Arrays toString matches up with JS', () => {
   })
 })
 
+test('functions toString (mostly) matches up with JS', () => {
+  const code = `
+    function f(x) {
+      return 5;
+    }
+    "" + (a=>b) + f;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
+  })
+})
+
 test('primitives toString matches up with JS', () => {
   const code = '"" + true + false + 1 + 1.5 + null + undefined + NaN;'
   const context = mockContext(3)
