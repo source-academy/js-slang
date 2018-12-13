@@ -32,7 +32,8 @@
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
     "test": "jest",
-    "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\""
   },
   "repository": {
     "type": "git",
@@ -55,6 +56,7 @@
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
     "typescript": "^3.2.2"
   },
   "jest": {
