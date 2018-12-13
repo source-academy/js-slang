@@ -3,7 +3,7 @@ import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from './constants'
-import { toString } from './interop'
+import { stringify } from './interop'
 import { ErrorSeverity, ErrorType, SourceError, Value } from './types'
 
 export class RuntimeSourceError implements SourceError {
@@ -68,7 +68,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
     CallExpression(node: any, state: any) {
       state.write(node.callee.name)
       state.write('(')
-      const argsRepr = node.arguments.map((args: any) => toString(args.value))
+      const argsRepr = node.arguments.map((args: any) => stringify(args.value))
       state.write(argsRepr.join(', '))
       state.write(')')
     }
@@ -98,7 +98,7 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
   }
 
   public explain() {
-    return `Calling non-function value ${toString(this.callee)}`
+    return `Calling non-function value ${stringify(this.callee)}`
   }
 
   public elaborate() {

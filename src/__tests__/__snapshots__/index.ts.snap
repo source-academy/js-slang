@@ -1,18 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`__SOURCE__ functions now uses Source toString instead of native when +ed with another string 1`] = `
-Object {
-  "status": "finished",
-  "value": "function pair(x, xs) {
-	[implementation hidden]
-}123",
-}
-`;
-
 exports[`Allow display to return value it is displaying 1`] = `
 Object {
   "status": "finished",
   "value": 50,
+}
+`;
+
+exports[`Arrays toString matches up with JS 1`] = `
+Object {
+  "status": "finished",
+  "value": "1,2",
 }
 `;
 
@@ -28,6 +26,24 @@ exports[`Arrow function definition returns itself 2`] = `[Function]`;
 exports[`Arrow function infinite recursion with list args represents CallExpression well 1`] = `
 "Line 2: Infinite recursion
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+`;
+
+exports[`Builtins hide their implementation 1`] = `
+Object {
+  "status": "finished",
+  "value": "function pair(x, xs) {
+	[implementation hidden]
+}",
+}
+`;
+
+exports[`Builtins hide their implementation 2`] = `
+Object {
+  "status": "finished",
+  "value": "function pair(x, xs) {
+	[implementation hidden]
+}",
+}
 `;
 
 exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
@@ -58,17 +74,10 @@ exports[`Function infinite recursion with list args represents CallExpression we
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `;
 
-exports[`Multi-dimensional arrays display properly 1`] = `
+exports[`Objects toString matches up with JS 1`] = `
 Object {
   "status": "finished",
-  "value": "[1, function a() {}, 3, [() => 1, 5]]",
-}
-`;
-
-exports[`Multi-dimensional arrays display properly 2`] = `
-Object {
-  "status": "finished",
-  "value": "[1, function a() {}, 3, [() => 1, 5]]",
+  "value": "[object Object]",
 }
 `;
 
@@ -130,14 +139,14 @@ Object {
 }
 `;
 
-exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
+exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
+
+exports[`primitives toString matches up with JS 1`] = `
 Object {
   "status": "finished",
-  "value": "123[4, [5, [6, null]]]",
+  "value": "truefalse11.5nullundefinedNaN",
 }
 `;
-
-exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
 
 exports[`test && shortcircuiting 1`] = `
 Object {

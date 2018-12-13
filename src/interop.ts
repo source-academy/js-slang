@@ -1,5 +1,4 @@
 import { generate } from 'astring'
-import getParameterNames = require('get-parameter-names')
 
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
 import { apply } from './interpreter'
@@ -26,7 +25,7 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
     }
   })
   DummyClass.toString = function() {
-    return toString(value)
+    return stringify(value)
   }
   DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
     return DummyClass.apply(thisArg, args)
@@ -34,40 +33,111 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   return DummyClass
 }
 
-const arrayToString = (value: Value[], length: number) => {
-  // Normal Array
-  if (value.length > 2 || value.length === 1) {
-    return `[${value.map(v => toString(v, length + 1)).join(', ')}]`
-  } else if (value.length === 0) {
-    return '[]'
+function makeIndent(indent: number | string): string {
+  if (typeof indent === 'number') {
+    if (indent > 10) {
+      indent = 10
+    }
+    return repeat(' ', indent)
   } else {
-    return `[${toString(value[0], length + 1)}, ${toString(value[1], length + 1)}]`
+    if (indent.length > 10) {
+      indent = indent.substring(0, 10)
+    }
+    return indent
   }
 }
 
-export const toString = (value: Value, length = 0): string => {
-  if (value instanceof Closure) {
-    return generate(value.originalNode)
-  } else if (Array.isArray(value)) {
-    if (length > MAX_LIST_DISPLAY_LENGTH) {
-      return '...<truncated>'
+function indentify(indent: string, s: string): string {
+  return s
+    .split('\n')
+    .map(v => indent + v)
+    .join('\n')
+}
+
+function repeat(s: string, times: number): string {
+  return new Array(times + 1).join(s)
+}
+
+export const stringify = (
+  value: Value,
+  indent_: number | string = 2,
+  splitline_threshold = 80
+): string => {
+  let ancestors = new Set()
+  const indent = makeIndent(indent_)
+  let arr_prefix = '[' + indent.substring(1)
+  let obj_prefix = '{' + indent.substring(1)
+  let arr_suffix = indent.substring(1) + ']'
+  let obj_suffix = indent.substring(1) + '}'
+
+  const helper = (value: Value, indent_level: number = 0): string => {
+    if (ancestors.has(value)) {
+      return '...<circular>'
+    } else if (value instanceof Closure) {
+      return generate(value.originalNode)
+    } else if (Array.isArray(value)) {
+      if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
+        return '...<truncated>'
+      }
+      ancestors.add(value)
+      let value_strs = value.map(v => helper(v, 0))
+      let multiline =
+        value_strs.join(', ').length > splitline_threshold ||
+        value_strs.some(s => s.indexOf('\n') !== -1)
+      let res
+      if (multiline) {
+        if (value.length === 2) {
+          // It's a list, don't increase indent so that long lists don't look like crap
+          res = `[${indentify(repeat(indent, indent_level), value_strs.join(',\n')).trimLeft()}]`
+        } else {
+          res = `${arr_prefix}${indentify(
+            repeat(indent, indent_level + 1),
+            value_strs.join(',\n')
+          ).trimLeft()}${arr_suffix}`
+        }
+      } else {
+        res = `[${value_strs.join(', ')}]`
+      }
+      ancestors.delete(value)
+      return res
+    } else if (typeof value === 'string') {
+      return JSON.stringify(value)
+    } else if (typeof value === 'undefined') {
+      return 'undefined'
+    } else if (typeof value === 'function') {
+      return value.toString()
+    } else if (value === null) {
+      return 'null'
+    } else if (typeof value === 'object') {
+      ancestors.add(value)
+      let value_strs = Object.entries(value).map(entry => {
+        let key_str = helper(entry[0], 0)
+        let val_str = helper(entry[1], 1)
+        if (val_str.indexOf('\n') === -1) {
+          // Single line
+          return key_str + ': ' + val_str
+        } else {
+          return key_str + ':\n' + indent + val_str
+        }
+      })
+      let multiline =
+        value_strs.join(', ').length > splitline_threshold ||
+        value_strs.some(s => s.indexOf('\n') !== -1)
+      let res
+      if (multiline) {
+        res = `${obj_prefix}${indentify(
+          repeat(indent, indent_level + 1),
+          value_strs.join(',\n')
+        ).trimLeft()}${obj_suffix}`
+      } else {
+        res = `{${value_strs.join(', ')}}`
+      }
+      ancestors.delete(value)
+      return res
     } else {
-      return arrayToString(value, length)
+      return value.toString()
     }
-  } else if (typeof value === 'string') {
-    return `"${value}"`
-  } else if (typeof value === 'undefined') {
-    return 'undefined'
-  } else if (typeof value === 'function') {
-    if (value.__SOURCE__) {
-      return `function ${value.__SOURCE__} {\n\t[implementation hidden]\n}`
-    } else {
-      const params = getParameterNames(value).join(', ')
-      return `function ${value.name}(${params}) {\n\t[implementation hidden]\n}`
-    }
-  } else if (value === null) {
-    return 'null'
-  } else {
-    return value.toString()
   }
+
+  return helper(value, 0)
 }

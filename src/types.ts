@@ -3,7 +3,7 @@
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
-import { closureToJS } from './interop'
+import { stringify, closureToJS } from './interop'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -130,6 +130,10 @@ export class Closure extends Callable {
     }
     const funJS = closureToJS(this, context, this.functionName)
     this.fun = funJS
+  }
+
+  public toString(): string {
+    return stringify(this)
   }
 
   static makeFromArrowFunction(node: es.ArrowFunctionExpression, frame: Frame, context: Context) {

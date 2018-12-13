@@ -2,7 +2,6 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toString } from './interop'
 import * as errors from './interpreter-errors'
 import { Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
 import { createNode } from './utils/node'
@@ -304,13 +303,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     switch (node.operator) {
       case '+':
         {
-          let isLeftString = typeof left === 'string'
-          let isRightString = typeof right === 'string'
-          if (isLeftString && !isRightString) {
-            right = toString(right)
-          } else if (isRightString && !isLeftString) {
-            left = toString(left)
-          }
+          // let isLeftString = typeof left === 'string'
+          // let isRightString = typeof right === 'string'
+          // if (isLeftString && !isRightString) {
+          //   right = toString(right)
+          // } else if (isRightString && !isLeftString) {
+          //   left = toString(left)
+          // }
           result = left + right
         }
         break

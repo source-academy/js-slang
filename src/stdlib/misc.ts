@@ -1,5 +1,5 @@
 /* tslint:disable: ban-types*/
-import { toString } from '../interop'
+import { stringify } from '../interop'
 import { Context, Value } from '../types'
 
 /**
@@ -10,14 +10,14 @@ import { Context, Value } from '../types'
  *   any information required for external use (optional).
  */
 export function display(value: Value, externalContext: any) {
-  const output = toString(value)
+  const output = stringify(value)
   console.log(output)
   return value
 }
 display.__SOURCE__ = 'display(a)'
 
 export function error_message(value: Value) {
-  const output = toString(value)
+  const output = stringify(value)
   throw new Error(output)
 }
 error_message.__SOURCE__ = 'error(a)'

@@ -26,20 +26,6 @@ test('Single string self-evaluates to itself', () => {
   })
 })
 
-test('Multi-dimensional arrays display properly', () => {
-  const code = `
-    function a() {}
-    ""+[1, a, 3, [() => 1, 5]];
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
-  })
-})
-
 test('Allow display to return value it is displaying', () => {
   const code = '25*(display(1+1));'
   const context = mockContext()
@@ -84,24 +70,56 @@ test('Arrow function definition returns itself', () => {
   })
 })
 
-test('list now uses Source toString instead of native when +ed with another string', () => {
-  const code = '"123" + list(4, 5, 6);'
+test('Builtins hide their implementation', () => {
+  const code = 'stringify(pair);'
   const context = mockContext(2)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('123[4, [5, [6, null]]]')
   })
 })
 
-test('__SOURCE__ functions now uses Source toString instead of native when +ed with another string', () => {
-  const code = ' pair + "123";'
+test('Builtins hide their implementation', () => {
+  const code = '""+pair;'
   const context = mockContext(2)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+  })
+})
+
+test('Objects toString matches up with JS', () => {
+  const code = '"" + ({a: 1});'
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toEqual(eval(code))
+  })
+})
+
+test('Arrays toString matches up with JS', () => {
+  const code = '"" + [1, 2];'
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toEqual(eval(code))
+  })
+})
+
+test('primitives toString matches up with JS', () => {
+  const code = '"" + true + false + 1 + 1.5 + null + undefined + NaN;'
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toEqual(eval(code))
   })
 })
 
@@ -253,20 +271,6 @@ test('Functions passed into non-source functions remain equal', () => {
   return promise.then(obj => {
     expect(obj.status).toBe('finished')
     expect((obj as Finished).value).toBe(true)
-  })
-})
-
-test('Multi-dimensional arrays display properly', () => {
-  const code = `
-    function a() {} 
-    ""+[1, a, 3, [() => 1, 5]];
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
   })
 })
 
