@@ -25,11 +25,12 @@
     "js-slang": "dist/repl/repl.js"
   },
   "scripts": {
-    "prepublishOnly": "tsc",
+    "ci": "yarn format:ci && yarn build && yarn eslint && yarn test",
     "build": "tsc",
+    "eslint": "eslint dist/*.js dist/stdlib/*.js dist/utils/*.js dist/rules/*.js dist/mocks/*.js",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
-    "eslint": "eslint dist/*.js dist/stdlib/*.js dist/utils/*.js dist/rules/*.js dist/mocks/*.js",
+    "prepublishOnly": "tsc",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
