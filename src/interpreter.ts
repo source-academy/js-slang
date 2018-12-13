@@ -302,16 +302,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result
     switch (node.operator) {
       case '+':
-        {
-          // let isLeftString = typeof left === 'string'
-          // let isRightString = typeof right === 'string'
-          // if (isLeftString && !isRightString) {
-          //   right = toString(right)
-          // } else if (isRightString && !isLeftString) {
-          //   left = toString(left)
-          // }
-          result = left + right
-        }
+        result = left + right
         break
       case '-':
         result = left - right
