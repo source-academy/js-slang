@@ -349,3 +349,221 @@ test('Test equal for different lists', () => {
     expect((obj as Finished).value).toBe(true)
   })
 })
+
+test('true if with empty if works', () => {
+  const code = `
+    if (true) {
+    } else {
+    }
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(undefined)
+  })
+})
+
+test('true if with nonempty if works', () => {
+  const code = `
+    if (true) {
+      1;
+    } else {
+    }
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(1)
+  })
+})
+
+test('false if with empty else works', () => {
+  const code = `
+    if (false) {
+    } else {
+    }
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(undefined)
+  })
+})
+
+test('false if with nonempty if works', () => {
+  const code = `
+    if (false) {
+    } else {
+      2;
+    }
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(2)
+  })
+})
+
+test('test true conditional expression', () => {
+  const code = `
+    true ? true : false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('test false conditional expression', () => {
+  const code = `
+    false ? true : false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test false && true', () => {
+  const code = `
+    false && true;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test false && false', () => {
+  const code = `
+    false && false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test true && false', () => {
+  const code = `
+    true && false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test true && true', () => {
+  const code = `
+    true && true;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('test && shortcircuiting', () => {
+  const code = `
+    false && 1();
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test false || true', () => {
+  const code = `
+    false || true;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('test false || false', () => {
+  const code = `
+    false || false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(false)
+  })
+})
+
+test('test true || false', () => {
+  const code = `
+    true || false;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('test true || true', () => {
+  const code = `
+    true || true;
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})
+
+test('test || shortcircuiting', () => {
+  const code = `
+    true || 1();
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect(obj).toMatchSnapshot()
+    expect((obj as Finished).value).toBe(true)
+  })
+})

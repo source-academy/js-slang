@@ -116,6 +116,20 @@ Object {
 }
 `;
 
+exports[`false if with empty else works 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`false if with nonempty if works 1`] = `
+Object {
+  "status": "finished",
+  "value": 2,
+}
+`;
+
 exports[`list now uses Source toString instead of native when +ed with another string 1`] = `
 Object {
   "status": "finished",
@@ -124,3 +138,101 @@ Object {
 `;
 
 exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
+
+exports[`test && shortcircuiting 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test || shortcircuiting 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`test false && false 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test false && true 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test false || false 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test false || true 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`test false conditional expression 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test true && false 1`] = `
+Object {
+  "status": "finished",
+  "value": false,
+}
+`;
+
+exports[`test true && true 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`test true || false 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`test true || true 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`test true conditional expression 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`true if with empty if works 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`true if with nonempty if works 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
