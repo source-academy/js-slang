@@ -492,7 +492,7 @@ test('test true && true', () => {
 
 test('test && shortcircuiting', () => {
   const code = `
-    false && undeclared();
+    false && 1();
   `
   const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -557,7 +557,7 @@ test('test true || true', () => {
 
 test('test || shortcircuiting', () => {
   const code = `
-    true || undeclared();
+    true || 1();
   `
   const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
