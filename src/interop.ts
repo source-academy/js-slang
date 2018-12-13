@@ -65,10 +65,10 @@ export const stringify = (
 ): string => {
   let ancestors = new Set()
   const indent = makeIndent(indent_)
-  let arr_prefix = '[' + repeat(' ', indent.length - 1)
-  let obj_prefix = '{' + repeat(' ', indent.length - 1)
-  let arr_suffix = repeat(' ', indent.length - 1) + ']'
-  let obj_suffix = repeat(' ', indent.length - 1) + '}'
+  let arr_prefix = '[' + indent.substring(1)
+  let obj_prefix = '{' + indent.substring(1)
+  let arr_suffix = indent.substring(0, indent.length - 1) + ']'
+  let obj_suffix = indent.substring(0, indent.length - 1) + '}'
 
   const helper = (value: Value, indent_level: number = 0): string => {
     if (ancestors.has(value)) {

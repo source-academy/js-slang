@@ -294,3 +294,15 @@ test('String representation with custom indent', () => {
     expect((obj as Finished).value).toMatchSnapshot()
   })
 })
+
+test('String representation with long custom indent gets trimmed to 10 characters', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'), '.................................');
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})

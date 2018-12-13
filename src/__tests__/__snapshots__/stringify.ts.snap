@@ -269,21 +269,21 @@ null]"
 `;
 
 exports[`String representation with custom indent 1`] = `
-"[    {    \\"tag\\": \\"function_definition\\",
+"[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
- ...  ...  ... [    {    \\"tag\\": \\"name\\",
+ ...  ...  ... [... {... \\"tag\\": \\"name\\",
  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}    },
- ...  ...  ... null    ],
+ ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}} ...},
+ ...  ...  ... null ...],
  ...  ... \\"body\\":
- ...  ...  ... {    \\"tag\\": \\"return_statement\\",
+ ...  ...  ... {... \\"tag\\": \\"return_statement\\",
  ...  ...  ...  ... \\"expression\\":
- ...  ...  ...  ...  ... {    \\"tag\\": \\"name\\",
+ ...  ...  ...  ...  ... {... \\"tag\\": \\"name\\",
  ...  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}    },
- ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}    },
- ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}    },
-null    ]"
+ ...  ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
+ ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
+ ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} ...},
+null ...]"
 `;
 
 exports[`String representation with default (2 space) indent 1`] = `
@@ -302,6 +302,24 @@ exports[`String representation with default (2 space) indent 1`] = `
         \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} },
 null ]"
+`;
+
+exports[`String representation with long custom indent gets trimmed to 10 characters 1`] = `
+"[.........{.........\\"tag\\": \\"function_definition\\",
+....................\\"parameters\\":
+..............................[.........{.........\\"tag\\": \\"name\\",
+..................................................\\"name\\": \\"x\\",
+..................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}.........},
+..............................null.........],
+....................\\"body\\":
+..............................{.........\\"tag\\": \\"return_statement\\",
+........................................\\"expression\\":
+..................................................{.........\\"tag\\": \\"name\\",
+............................................................\\"name\\": \\"x\\",
+............................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
+........................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
+....................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}.........},
+null.........]"
 `;
 
 exports[`String representation with more than 10 space indent should trim to 10 space indent 1`] = `
