@@ -130,6 +130,22 @@ test('String representation of huge lists are nice', () => {
   })
 })
 
+test('String representation of huge arrays are nice', () => {
+  const code = stripIndent`
+  const arr = [];
+  for (let i = 0; i < 100; i = i + 1) {
+    arr[i] = i;
+  }
+  stringify(arr);
+  `
+  const context = mockContext(3)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
 test('String representation of objects are nice', () => {
   const code = stripIndent`
   const o = { a: 1, b: true, c: () => x };
@@ -169,6 +185,20 @@ test('String representation of big objects are nice', () => {
   })
 })
 
+test('String representation of nested objects are nice', () => {
+  const code = stripIndent`
+  let o = {};
+  o.o = o;
+  stringify(o);
+  `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
 test('String representation of builtins are nice', () => {
   const code = stripIndent`
   stringify(pair);
@@ -198,6 +228,66 @@ test('String representation of undefined is nice', () => {
   stringify(undefined);
   `
   const context = mockContext()
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation with no indent', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'), 0);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation with 1 space indent', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'), 1);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation with default (2 space) indent', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'));
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation with more than 10 space indent should trim to 10 space indent', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'), 100);
+  `
+  const context = mockContext(4)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj.status).toBe('finished')
+    expect((obj as Finished).value).toMatchSnapshot()
+  })
+})
+
+test('String representation with custom indent', () => {
+  const code = stripIndent`
+  stringify(parse('x=>x;'), ' ... ');
+  `
+  const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')

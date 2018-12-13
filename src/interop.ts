@@ -65,10 +65,10 @@ export const stringify = (
 ): string => {
   let ancestors = new Set()
   const indent = makeIndent(indent_)
-  let arr_prefix = '[' + indent.substring(1)
-  let obj_prefix = '{' + indent.substring(1)
-  let arr_suffix = indent.substring(1) + ']'
-  let obj_suffix = indent.substring(1) + '}'
+  let arr_prefix = '[' + repeat(' ', indent.length - 1)
+  let obj_prefix = '{' + repeat(' ', indent.length - 1)
+  let arr_suffix = repeat(' ', indent.length - 1) + ']'
+  let obj_suffix = repeat(' ', indent.length - 1) + '}'
 
   const helper = (value: Value, indent_level: number = 0): string => {
     if (ancestors.has(value)) {
@@ -82,18 +82,23 @@ export const stringify = (
       ancestors.add(value)
       let value_strs = value.map(v => helper(v, 0))
       let multiline =
-        value_strs.join(', ').length > splitline_threshold ||
-        value_strs.some(s => s.indexOf('\n') !== -1)
+        indent !== '' &&
+        (value_strs.join(', ').length > splitline_threshold ||
+          value_strs.some(s => s.indexOf('\n') !== -1))
       let res
       if (multiline) {
         if (value.length === 2) {
-          // It's a list, don't increase indent so that long lists don't look like crap
-          res = `[${indentify(repeat(indent, indent_level), value_strs.join(',\n')).trimLeft()}]`
+          // It's a list, don't increase indent on second element so that long lists don't look like crap
+          res = `${arr_prefix}${indentify(
+            repeat(indent, indent_level + 1),
+            value_strs[0]
+          ).substring(indent.length)},
+${indentify(repeat(indent, indent_level), value_strs[1])}${arr_suffix}`
         } else {
           res = `${arr_prefix}${indentify(
             repeat(indent, indent_level + 1),
             value_strs.join(',\n')
-          ).trimLeft()}${arr_suffix}`
+          ).substring(indent.length)}${arr_suffix}`
         }
       } else {
         res = `[${value_strs.join(', ')}]`
@@ -112,23 +117,24 @@ export const stringify = (
       ancestors.add(value)
       let value_strs = Object.entries(value).map(entry => {
         let key_str = helper(entry[0], 0)
-        let val_str = helper(entry[1], 1)
+        let val_str = helper(entry[1], 0)
         if (val_str.indexOf('\n') === -1) {
           // Single line
           return key_str + ': ' + val_str
         } else {
-          return key_str + ':\n' + indent + val_str
+          return key_str + ':\n' + indentify(indent, val_str)
         }
       })
       let multiline =
-        value_strs.join(', ').length > splitline_threshold ||
-        value_strs.some(s => s.indexOf('\n') !== -1)
+        indent !== '' &&
+        (value_strs.join(', ').length > splitline_threshold ||
+          value_strs.some(s => s.indexOf('\n') !== -1))
       let res
       if (multiline) {
         res = `${obj_prefix}${indentify(
           repeat(indent, indent_level + 1),
           value_strs.join(',\n')
-        ).trimLeft()}${obj_suffix}`
+        ).substring(indent.length)}${obj_suffix}`
       } else {
         res = `{${value_strs.join(', ')}}`
       }
