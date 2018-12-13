@@ -47,13 +47,12 @@ const createBlockFrame = (
   name = 'blockFrame',
   environment: Environment = {}
 ): Frame => {
-  const frame: Frame = {
+  return {
     name,
     parent: currentFrame(context),
     environment,
     thisContext: context
   }
-  return frame
 }
 
 const handleError = (context: Context, error: SourceError) => {
@@ -189,22 +188,28 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
       type: 'ConditionalExpression',
       test: node.left,
       consequent: node.right,
-      alternate: {
-        type: 'Literal',
-        value: false
-      }
+      alternate: createNode(false)
     }
   } else {
     return <es.ConditionalExpression>{
       type: 'ConditionalExpression',
       test: node.left,
-      consequent: {
-        type: 'Literal',
-        value: true
-      },
+      consequent: createNode(true),
       alternate: node.right
     }
   }
+}
+
+function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Context) {
+  const test = yield* evaluate(node.test, context)
+
+  const error = rttc.checkIfStatement(context, test)
+  if (error) {
+    handleError(context, error)
+    return undefined
+  }
+
+  return test ? node.consequent : node.alternate
 }
 
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
@@ -348,7 +353,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* this.IfStatement(node, context)
   },
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    return yield* this.IfStatement(transformLogicalExpression(node), context)
+    return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
@@ -461,26 +466,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     defineVariable(context, id.name, closure, true)
     return undefined
   },
-  *IfStatement(node: es.IfStatement, context: Context) {
-    const test = yield* evaluate(node.test, context)
-
-    const error = rttc.checkIfStatement(context, test)
-    if (error) {
-      handleError(context, error)
-      return undefined
-    }
-    if (test) {
-      const result = yield* evaluate(node.consequent, context)
-      return result
-    } else {
-      const result = yield* evaluate(node.alternate!, context)
-      return result
-    }
+  IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
+    return yield* evaluate(yield* reduceIf(node, context), context)
   },
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
     return yield* evaluate(node.expression, context)
   },
-  *ReturnStatement(node: es.ReturnStatement, context: Context) {
+  ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
     let returnExpression = node.argument!
 
     // If we have a conditional expression, reduce it until we get something else
@@ -491,17 +483,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (returnExpression.type === 'LogicalExpression') {
         returnExpression = transformLogicalExpression(returnExpression)
       }
-      const test = yield* evaluate(returnExpression.test, context)
-      const error = rttc.checkIfStatement(context, test)
-      if (error) {
-        handleError(context, error)
-        return undefined
-      }
-      if (test) {
-        returnExpression = returnExpression.consequent
-      } else {
-        returnExpression = returnExpression.alternate
-      }
+      returnExpression = yield* reduceIf(returnExpression, context)
     }
 
     // If we are now left with a CallExpression, then we use TCO
