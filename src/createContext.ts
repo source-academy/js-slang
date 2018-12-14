@@ -54,11 +54,10 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
 }
 
 export const defineBuiltin = (context: Context, name: string, f: Function) => {
-  let wrapped = (...args: any) => f(...args)
-  wrapped.toString = () => {
-    const params = getParameterNames(f).join(', ')
-    return `function ${f.name}(${params}) {\n\t[implementation hidden]\n}`
-  }
+  const wrapped = (...args: any) => f(...args)
+  const params = getParameterNames(f).join(', ')
+  const repr = `function ${name}(${params}) {\n\t[implementation hidden]\n}`
+  wrapped.toString = () => repr
   defineSymbol(context, name, wrapped)
 }
 
