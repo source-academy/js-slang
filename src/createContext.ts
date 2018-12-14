@@ -1,9 +1,9 @@
+import { toString } from './interop'
 import * as list from './stdlib/list'
-import * as parser from './stdlib/parser'
-import * as misc from './stdlib/misc'
-import { Context, CustomBuiltIns, Value } from './types'
-import { toString } from '.'
 import { list_to_vector } from './stdlib/list'
+import * as misc from './stdlib/misc'
+import * as parser from './stdlib/parser'
+import { Context, CustomBuiltIns, Value } from './types'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -69,13 +69,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   ensureGlobalEnvironmentExist(context)
 
   /* Defining the __SOURCE__ property in the curried functions. */
-  let display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
+  const display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
   display.__SOURCE__ = externalBuiltIns.display.__SOURCE__
-  let prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
   prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
-  let alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
   alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
-  let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
+  const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
   visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
 
   if (context.chapter >= 1) {
@@ -144,9 +144,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
     defineSymbol(context, 'parse', parser.parse)
-    defineSymbol(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
-      return fun.apply(fun, list_to_vector(args))
-    })
+    defineSymbol(
+      context,
+      'apply_in_underlying_javascript',
+      // tslint:disable-next-line:ban-types
+      (fun: Function, args: Value): Value => fun.apply(fun, list_to_vector(args))
+    )
   }
 
   if (context.chapter >= 100) {
@@ -172,7 +175,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: (v: Value, e: any) => toString(v),
   // See issue #11
   alert: misc.display,
-  visualiseList: (list: any) => {
+  visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }

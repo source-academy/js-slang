@@ -1,5 +1,5 @@
-import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
 test('Check that stack is at most 10k in size', () => {

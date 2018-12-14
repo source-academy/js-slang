@@ -3,8 +3,8 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { mockContext } from '../mocks/context'
 import { runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
 // This is bad practice. Don't do this!

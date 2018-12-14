@@ -1,10 +1,10 @@
 import * as es from 'estree'
 
-import { SourceError, Rule, ErrorSeverity, ErrorType } from '../types'
+import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 
 export class NoAssignmentExpression implements SourceError {
-  type = ErrorType.SYNTAX
-  severity = ErrorSeverity.ERROR
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
 
   constructor(public node: es.AssignmentExpression) {}
 
@@ -12,11 +12,11 @@ export class NoAssignmentExpression implements SourceError {
     return this.node.loc!
   }
 
-  explain() {
+  public explain() {
     return 'Assignment inside an expression is not allowed. Only assignment in a statement is allowed.'
   }
 
-  elaborate() {
+  public elaborate() {
     return ''
   }
 }
@@ -26,14 +26,15 @@ const noAssignmentExpression: Rule<es.AssignmentExpression> = {
 
   checkers: {
     AssignmentExpression(node: es.AssignmentExpression, ancestors: [es.Node]) {
-      let parent = ancestors[ancestors.length - 2]
-      let parent_type = parent.type
+      const parent = ancestors[ancestors.length - 2]
+      const parentType = parent.type
 
       if (
-        parent_type === 'ExpressionStatement' ||
+        parentType === 'ExpressionStatement' ||
         // Only permitted in a for loop if this node was its init or update expression
-        (parent_type === 'ForStatement' &&
-          ((<es.ForStatement>parent).init === node || (<es.ForStatement>parent).update === node))
+        (parentType === 'ForStatement' &&
+          ((parent as es.ForStatement).init === node ||
+            (parent as es.ForStatement).update === node))
       ) {
         return []
       } else {

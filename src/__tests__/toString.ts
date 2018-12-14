@@ -1,9 +1,9 @@
 import { stripIndent } from 'common-tags'
-import { mockContext } from '../mocks/context'
-import { runInContext } from '../index'
-import { Finished } from '../types'
-import { toString } from '../interop'
 import { defineSymbol } from '../createContext'
+import { runInContext } from '../index'
+import { toString } from '../interop'
+import { mockContext } from '../mocks/context'
+import { Finished } from '../types'
 
 test('String representation of numbers are nice', () => {
   const code = stripIndent`
