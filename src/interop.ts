@@ -81,9 +81,6 @@ export const stringify = (
   // The real one is stringifyValue
 
   const stringifyArray = (value: Value[], indentLevel: number) => {
-    if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
-      return '...<truncated>'
-    }
     ancestors.add(value)
     const valueStrs = value.map(v => stringifyValue(v, 0))
     ancestors.delete(value)
@@ -135,24 +132,24 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
   }
 
   const stringifyValue = (value: Value, indentLevel: number = 0): string => {
-    if (ancestors.has(value)) {
+    if (value === null) {
+      return 'null'
+    } else if (value === undefined) {
+      return 'undefined'
+    } else if (ancestors.has(value)) {
       return '...<circular>'
     } else if (value instanceof Closure) {
       return generate(value.originalNode)
-    } else if (Array.isArray(value)) {
-      return stringifyArray(value, indentLevel)
     } else if (typeof value === 'string') {
       return JSON.stringify(value)
-    } else if (typeof value === 'undefined') {
-      return 'undefined'
-    } else if (typeof value === 'function') {
+    } else if (typeof value !== 'object') {
       return value.toString()
-    } else if (value === null) {
-      return 'null'
-    } else if (typeof value === 'object') {
-      return stringifyObject(value, indentLevel)
+    } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
+      return '...<truncated>'
+    } else if (Array.isArray(value)) {
+      return stringifyArray(value, indentLevel)
     } else {
-      return value.toString()
+      return stringifyObject(value, indentLevel)
     }
   }
 
