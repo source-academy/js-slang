@@ -357,7 +357,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
-    const constant = node.kind == 'const'
+    const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
     defineVariable(context, id.name, value, constant)

@@ -19,7 +19,7 @@ function startRepl(chapter = 1) {
 }
 
 function main() {
-  const chapter = process.argv.length > 2 ? parseInt(process.argv[2]) : 1
+  const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 1
   startRepl(chapter)
 }
 

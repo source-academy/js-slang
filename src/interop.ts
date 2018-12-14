@@ -18,16 +18,14 @@ export const closureToJS = (value: Value, context: Context, klass: string) => {
   Object.defineProperty(DummyClass, 'name', {
     value: klass
   })
-  Object.setPrototypeOf(DummyClass, () => {})
+  Object.setPrototypeOf(DummyClass, () => undefined)
   Object.defineProperty(DummyClass, 'Inherits', {
     value: (Parent: Value) => {
       DummyClass.prototype = Object.create(Parent.prototype)
       DummyClass.prototype.constructor = DummyClass
     }
   })
-  DummyClass.toString = function() {
-    return toString(value)
-  }
+  DummyClass.toString = () => toString(value)
   DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
     return DummyClass.apply(thisArg, args)
   }
