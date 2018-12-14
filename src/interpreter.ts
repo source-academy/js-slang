@@ -291,8 +291,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    let left = yield* evaluate(node.left, context)
-    let right = yield* evaluate(node.right, context)
+    const left = yield* evaluate(node.left, context)
+    const right = yield* evaluate(node.right, context)
 
     const error = rttc.checkBinaryExpression(context, node.operator, left, right)
     if (error) {

@@ -74,11 +74,11 @@ export function is_list(xs: List) {
 // list makes a list out of its arguments
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list() {
-  let the_list = null
+  let theList = null
   for (let i = arguments.length - 1; i >= 0; i--) {
-    the_list = pair(arguments[i], the_list)
+    theList = pair(arguments[i], theList)
   }
-  return the_list
+  return theList
 }
 
 // list_to_vector returns vector that contains the elements of the argument list
@@ -124,6 +124,7 @@ export function length(xs: List) {
 // map throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the first
 // argument is not a function.
+// tslint:disable-next-line:ban-types
 export function map(f: Function, xs: List): List | null {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)))
 }
@@ -132,15 +133,17 @@ export function map(f: Function, xs: List): List | null {
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
+// tslint:disable-next-line:ban-types
 export function build_list(n: number, fun: Function): List | null {
-  function build(i: number, fun: Function, already_built: List | null): List | null {
+  // tslint:disable-next-line:ban-types
+  function build(i: number, alreadyBuilt: List | null): List | null {
     if (i < 0) {
-      return already_built
+      return alreadyBuilt
     } else {
-      return build(i - 1, fun, pair(fun(i), already_built))
+      return build(i - 1, pair(fun(i), alreadyBuilt))
     }
   }
-  return build(n - 1, fun, null)
+  return build(n - 1, null)
 }
 
 // for_each applies first arg fun to the elements of the list passed as
@@ -150,6 +153,7 @@ export function build_list(n: number, fun: Function): List | null {
 // for_each throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the
 // first argument is not a function.
+// tslint:disable-next-line:ban-types
 export function for_each(fun: Function, xs: List) {
   if (!is_list(xs)) {
     throw new Error('for_each expects a list as argument xs, but ' + 'encountered ' + xs)
@@ -263,6 +267,7 @@ export function assoc(v: Value, xs: List): boolean {
 
 // filter returns the sublist of elements of given list xs
 // for which the given predicate function returns true.
+// tslint:disable-next-line:ban-types
 export function filter(pred: Function, xs: List): List {
   if (is_null(xs)) {
     return xs

@@ -78,13 +78,13 @@ export const stringify = (
   // Stringify functions
   // The real one is stringifyValue
 
-  const stringifyArray = (value: Value[], indentLevel: number) => {
-    ancestors.add(value)
-    const valueStrs = value.map(v => stringifyValue(v, 0))
-    ancestors.delete(value)
+  const stringifyArray = (xs: Value[], indentLevel: number) => {
+    ancestors.add(xs)
+    const valueStrs = xs.map(x => stringifyValue(x, 0))
+    ancestors.delete(xs)
 
     if (shouldMultiline(valueStrs)) {
-      if (value.length === 2) {
+      if (xs.length === 2) {
         // It's (probably) a source list
         // Don't increase indent on second element
         // so long lists don't look like crap
@@ -106,9 +106,9 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     }
   }
 
-  const stringifyObject = (value: object, indentLevel: number) => {
-    ancestors.add(value)
-    const valueStrs = Object.entries(value).map(entry => {
+  const stringifyObject = (obj: object, indentLevel: number) => {
+    ancestors.add(obj)
+    const valueStrs = Object.entries(obj).map(entry => {
       const keyStr = stringifyValue(entry[0], 0)
       const valStr = stringifyValue(entry[1], 0)
       if (valStr.includes('\n')) {
@@ -117,7 +117,7 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
         return keyStr + ': ' + valStr
       }
     })
-    ancestors.delete(value)
+    ancestors.delete(obj)
 
     if (shouldMultiline(valueStrs)) {
       return `${objPrefix}${indentify(
@@ -129,25 +129,25 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     }
   }
 
-  const stringifyValue = (value: Value, indentLevel: number = 0): string => {
-    if (value === null) {
+  const stringifyValue = (v: Value, indentLevel: number = 0): string => {
+    if (v === null) {
       return 'null'
-    } else if (value === undefined) {
+    } else if (v === undefined) {
       return 'undefined'
-    } else if (ancestors.has(value)) {
+    } else if (ancestors.has(v)) {
       return '...<circular>'
-    } else if (value instanceof Closure) {
-      return generate(value.originalNode)
-    } else if (typeof value === 'string') {
-      return JSON.stringify(value)
-    } else if (typeof value !== 'object') {
-      return value.toString()
+    } else if (v instanceof Closure) {
+      return generate(v.originalNode)
+    } else if (typeof v === 'string') {
+      return JSON.stringify(v)
+    } else if (typeof v !== 'object') {
+      return v.toString()
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
-    } else if (Array.isArray(value)) {
-      return stringifyArray(value, indentLevel)
+    } else if (Array.isArray(v)) {
+      return stringifyArray(v, indentLevel)
     } else {
-      return stringifyObject(value, indentLevel)
+      return stringifyObject(v, indentLevel)
     }
   }
 

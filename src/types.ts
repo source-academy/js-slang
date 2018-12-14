@@ -3,7 +3,7 @@
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
-import { stringify, closureToJS } from './interop'
+import { closureToJS, stringify } from './interop'
 
 /**
  * Defines functions that act as built-ins, but might rely on

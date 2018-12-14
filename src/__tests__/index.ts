@@ -1,8 +1,8 @@
 import { stripIndent } from 'common-tags'
+import { defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
-import { defineBuiltin } from '../createContext'
 
 test('Empty code returns undefined', () => {
   const code = ''
@@ -97,6 +97,7 @@ test('Objects toString matches up with JS', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    // tslint:disable-next-line:no-eval
     expect((obj as Finished).value).toEqual(eval(code))
   })
 })
@@ -108,6 +109,7 @@ test('Arrays toString matches up with JS', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    // tslint:disable-next-line:no-eval
     expect((obj as Finished).value).toEqual(eval(code))
   })
 })
@@ -124,6 +126,7 @@ test('functions toString (mostly) matches up with JS', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    // tslint:disable-next-line:no-eval
     expect((obj as Finished).value.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
   })
 })
@@ -135,6 +138,7 @@ test('primitives toString matches up with JS', () => {
   return promise.then(obj => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('finished')
+    // tslint:disable-next-line:no-eval
     expect((obj as Finished).value).toEqual(eval(code))
   })
 })
