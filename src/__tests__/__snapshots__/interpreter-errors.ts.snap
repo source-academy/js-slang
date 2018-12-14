@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Access local property 1`] = `
+Object {
+  "status": "finished",
+  "value": 0,
+}
+`;
+
+exports[`Access local property 2`] = `Array []`;
+
 exports[`Builtins don't create additional errors when it's not their fault 1`] = `
 Object {
   "status": "error",
@@ -20,6 +29,87 @@ Array [
       },
     },
     "name": "a",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing inherited property 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing inherited property 2`] = `
+Array [
+  GetInheritedPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 28,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": [Function],
+    "prop": "constructor",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing property of null 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing property of null 2`] = `
+Array [
+  GetPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": null,
+    "prop": "prop",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing property of undefined 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing property of undefined 2`] = `
+Array [
+  GetPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": undefined,
+    "prop": "prop",
     "severity": "Error",
     "type": "Runtime",
   },
