@@ -44,32 +44,30 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-export const defineSymbol = (context: Context, name: string, value: Value) => {
+// Defines a builtin in the given context
+// If the builtin is a function, wrap it such that its toString hides the implementation
+export const defineBuiltin = (context: Context, name: string, value: Value) => {
+  let wrapped: Value = value
+  if (typeof value === 'function') {
+    wrapped = (...args: any) => value(...args)
+    const params = getParameterNames(value).join(', ')
+    const repr = `function ${name}(${params}) {\n\t[implementation hidden]\n}`
+    wrapped.toString = () => repr
+  }
+
   const globalFrame = context.runtime.frames[0]
   Object.defineProperty(globalFrame.environment, name, {
-    value,
+    value: wrapped,
     writable: false,
     enumerable: true
   })
-}
-
-export const defineBuiltin = (context: Context, name: string, f: Function) => {
-  const wrapped = (...args: any) => f(...args)
-  const params = getParameterNames(f).join(', ')
-  const repr = `function ${name}(${params}) {\n\t[implementation hidden]\n}`
-  wrapped.toString = () => repr
-  defineSymbol(context, name, wrapped)
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
   ensureGlobalEnvironmentExist(context)
 
   externalSymbols.forEach(symbol => {
-    if (typeof GLOBAL[symbol] === 'function') {
-      defineBuiltin(context, symbol, GLOBAL[symbol])
-    } else {
-      defineSymbol(context, symbol, GLOBAL[symbol])
-    }
+    defineBuiltin(context, symbol, GLOBAL[symbol])
   })
 }
 
@@ -96,26 +94,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_boolean', misc.is_boolean)
     defineBuiltin(context, 'is_undefined', misc.is_undefined)
     defineBuiltin(context, 'parse_int', misc.parse_int)
-    defineSymbol(context, 'undefined', undefined)
-    defineSymbol(context, 'NaN', NaN)
-    defineSymbol(context, 'Infinity', Infinity)
+    defineBuiltin(context, 'undefined', undefined)
+    defineBuiltin(context, 'NaN', NaN)
+    defineBuiltin(context, 'Infinity', Infinity)
     // Define all Math libraries
-    const objs = Object.getOwnPropertyNames(Math)
-    for (const i in objs) {
-      if (objs.hasOwnProperty(i)) {
-        const val = objs[i]
-        if (typeof Math[val] === 'function') {
-          defineBuiltin(context, 'math_' + val, Math[val].bind())
-        } else {
-          defineBuiltin(context, 'math_' + val, Math[val])
-        }
-      }
+    const props = Object.getOwnPropertyNames(Math)
+    for (const prop of props) {
+      defineBuiltin(context, 'math_' + prop, Math[prop])
     }
   }
 
   if (context.chapter >= 2) {
     // List library
-    defineSymbol(context, 'null', null)
+    defineBuiltin(context, 'null', null)
     defineBuiltin(context, 'pair', list.pair)
     defineBuiltin(context, 'is_pair', list.is_pair)
     defineBuiltin(context, 'head', list.head)
