@@ -1,5 +1,5 @@
-import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
 // This is bad practice. Don't do this!
@@ -83,7 +83,7 @@ test('for loops use block scoping instead of function scoping', () => {
   const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
-    //expect(obj.status).toBe("finished");
+    // expect(obj.status).toBe("finished");
     expect(parseError(context.errors)).toBe('')
     expect(obj).toMatchSnapshot()
     expect((obj as Finished).value).toBe(true)
@@ -112,8 +112,8 @@ test('while loops use block scoping instead of function scoping', () => {
   })
 })
 
-//see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
-//and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+// see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
+// and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
 test('for loop `let` variables are copied into the block scope', () => {
   const code = `
   function test(){

@@ -1,6 +1,6 @@
-import { parseError, runInContext, createContext } from '../index'
-import { Result } from '../types'
 import repl = require('repl')
+import { createContext, parseError, runInContext } from '../index'
+import { Result } from '../types'
 
 function startRepl(chapter = 1) {
   // use defaults for everything

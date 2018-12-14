@@ -4,7 +4,7 @@ import * as es from 'estree'
 import * as constants from './constants'
 import { toString } from './interop'
 import * as errors from './interpreter-errors'
-import { Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
+import { Closure, Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 

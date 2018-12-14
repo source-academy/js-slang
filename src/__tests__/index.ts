@@ -1,8 +1,8 @@
 import { stripIndent } from 'common-tags'
-import { mockContext } from '../mocks/context'
-import { parseError, runInContext } from '../index'
-import { Finished } from '../types'
 import { defineSymbol } from '../createContext'
+import { parseError, runInContext } from '../index'
+import { mockContext } from '../mocks/context'
+import { Finished } from '../types'
 
 test('Empty code returns undefined', () => {
   const code = ''
@@ -258,7 +258,7 @@ test('Functions passed into non-source functions remain equal', () => {
 
 test('Multi-dimensional arrays display properly', () => {
   const code = `
-    function a() {} 
+    function a() {}
     ""+[1, a, 3, [() => 1, 5]];
    `
   const context = mockContext(4)

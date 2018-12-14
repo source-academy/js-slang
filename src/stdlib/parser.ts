@@ -1,5 +1,5 @@
-import * as es from 'estree'
 import { oneLine } from 'common-tags'
+import * as es from 'estree'
 
 import createContext from '../createContext'
 import { parse as sourceParse } from '../parser'

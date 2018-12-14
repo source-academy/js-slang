@@ -1,7 +1,7 @@
 import { oneLine } from 'common-tags'
 
-import { mockContext } from '../../mocks/context'
 import { runInContext } from '../../index'
+import { mockContext } from '../../mocks/context'
 
 test('Parses empty program', () => {
   const program = `

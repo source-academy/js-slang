@@ -1,9 +1,9 @@
-import * as list from './stdlib/list'
-import * as parser from './stdlib/parser'
-import * as misc from './stdlib/misc'
-import { Context, CustomBuiltIns, Value } from './types'
 import { toString } from '.'
+import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
+import * as misc from './stdlib/misc'
+import * as parser from './stdlib/parser'
+import { Context, CustomBuiltIns, Value } from './types'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 

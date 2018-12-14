@@ -1,10 +1,10 @@
 import * as es from 'estree'
 
-import { SourceError, Rule, ErrorSeverity, ErrorType } from '../types'
+import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 
 export class NoAssignmentExpression implements SourceError {
-  type = ErrorType.SYNTAX
-  severity = ErrorSeverity.ERROR
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
 
   constructor(public node: es.AssignmentExpression) {}
 
@@ -12,11 +12,11 @@ export class NoAssignmentExpression implements SourceError {
     return this.node.loc!
   }
 
-  explain() {
+  public explain() {
     return 'Assignment inside an expression is not allowed. Only assignment in a statement is allowed.'
   }
 
-  elaborate() {
+  public elaborate() {
     return ''
   }
 }
