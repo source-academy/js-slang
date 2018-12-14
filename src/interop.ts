@@ -59,48 +59,88 @@ export const stringify = (
   indent: number | string = 2,
   splitlineThreshold = 80
 ): string => {
+  // Used to check if there are any cyclic structures
   const ancestors = new Set()
+
+  // Precompute useful strings
   const indentString = makeIndent(indent)
   const arrPrefix = '[' + indentString.substring(1)
   const objPrefix = '{' + indentString.substring(1)
   const arrSuffix = indentString.substring(0, indentString.length - 1) + ']'
   const objSuffix = indentString.substring(0, indentString.length - 1) + '}'
 
-  const helper = (value: Value, indentLevel: number = 0): string => {
+  // Util functions
+
+  // Determines if the array/object containing these (stringified) values
+  // should be multiline and indented or oneline
+  const shouldMultiline = (valueStrs: string[]) =>
+    indentString !== '' &&
+    (valueStrs.join(', ').length > splitlineThreshold || valueStrs.some(s => s.includes('\n')))
+
+  // Stringify functions
+  // The real one is stringifyValue
+
+  const stringifyArray = (value: Value[], indentLevel: number) => {
+    if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
+      return '...<truncated>'
+    }
+    ancestors.add(value)
+    const valueStrs = value.map(v => stringifyValue(v, 0))
+    ancestors.delete(value)
+
+    if (shouldMultiline(valueStrs)) {
+      if (value.length === 2) {
+        // It's (probably) a source list
+        // Don't increase indent on second element
+        // so long lists don't look like crap
+        return `${arrPrefix}${indentify(
+          indentString.repeat(indentLevel + 1),
+          valueStrs[0]
+        ).substring(indentString.length)},
+${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
+      } else {
+        // A regular array,
+        // indent second element onwards to match with first element
+        return `${arrPrefix}${indentify(
+          indentString.repeat(indentLevel + 1),
+          valueStrs.join(',\n')
+        ).substring(indentString.length)}${arrSuffix}`
+      }
+    } else {
+      return `[${valueStrs.join(', ')}]`
+    }
+  }
+
+  const stringifyObject = (value: object, indentLevel: number) => {
+    ancestors.add(value)
+    const valueStrs = Object.entries(value).map(entry => {
+      const keyStr = stringifyValue(entry[0], 0)
+      const valStr = stringifyValue(entry[1], 0)
+      if (valStr.includes('\n')) {
+        return keyStr + ':\n' + indentify(indentString, valStr)
+      } else {
+        return keyStr + ': ' + valStr
+      }
+    })
+    ancestors.delete(value)
+
+    if (shouldMultiline(valueStrs)) {
+      return `${objPrefix}${indentify(
+        indentString.repeat(indentLevel + 1),
+        valueStrs.join(',\n')
+      ).substring(indentString.length)}${objSuffix}`
+    } else {
+      return `{${valueStrs.join(', ')}}`
+    }
+  }
+
+  const stringifyValue = (value: Value, indentLevel: number = 0): string => {
     if (ancestors.has(value)) {
       return '...<circular>'
     } else if (value instanceof Closure) {
       return generate(value.originalNode)
     } else if (Array.isArray(value)) {
-      if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
-        return '...<truncated>'
-      }
-      ancestors.add(value)
-      const valueStrs = value.map(v => helper(v, 0))
-      const multiline =
-        indentString !== '' &&
-        (valueStrs.join(', ').length > splitlineThreshold ||
-          valueStrs.some(s => s.includes('\n')))
-      let res
-      if (multiline) {
-        if (value.length === 2) {
-          // It's a list, don't increase indent on second element so that long lists don't look like crap
-          res = `${arrPrefix}${indentify(
-            indentString.repeat(indentLevel + 1),
-            valueStrs[0]
-          ).substring(indentString.length)},
-${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
-        } else {
-          res = `${arrPrefix}${indentify(
-            indentString.repeat(indentLevel + 1),
-            valueStrs.join(',\n')
-          ).substring(indentString.length)}${arrSuffix}`
-        }
-      } else {
-        res = `[${valueStrs.join(', ')}]`
-      }
-      ancestors.delete(value)
-      return res
+      return stringifyArray(value, indentLevel)
     } else if (typeof value === 'string') {
       return JSON.stringify(value)
     } else if (typeof value === 'undefined') {
@@ -110,35 +150,11 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     } else if (value === null) {
       return 'null'
     } else if (typeof value === 'object') {
-      ancestors.add(value)
-      const valueStrs = Object.entries(value).map(entry => {
-        const keyStr = helper(entry[0], 0)
-        const valStr = helper(entry[1], 0)
-        if (valStr.includes('\n')) {
-          return keyStr + ':\n' + indentify(indentString, valStr)
-        } else {
-          return keyStr + ': ' + valStr
-        }
-      })
-      const multiline =
-        indentString !== '' &&
-        (valueStrs.join(', ').length > splitlineThreshold ||
-          valueStrs.some(s => s.includes('\n')))
-      let res
-      if (multiline) {
-        res = `${objPrefix}${indentify(
-          indentString.repeat(indentLevel + 1),
-          valueStrs.join(',\n')
-        ).substring(indentString.length)}${objSuffix}`
-      } else {
-        res = `{${valueStrs.join(', ')}}`
-      }
-      ancestors.delete(value)
-      return res
+      return stringifyObject(value, indentLevel)
     } else {
       return value.toString()
     }
   }
 
-  return helper(value, 0)
+  return stringifyValue(value, 0)
 }
