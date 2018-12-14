@@ -3,15 +3,21 @@ declare module 'acorn-walk/dist/walk' {
 
   namespace AcornWalk {
     export type SimpleWalker<S> = (node: es.Node, state?: S) => void
-    export type SimpleWalkers<S> = { [name: string]: SimpleWalker<S> }
+    export interface SimpleWalkers<S> {
+      [name: string]: SimpleWalker<S>
+    }
     export type AncestorWalker<S> = (node: es.Node, state: S, ancestors: [es.Node]) => void
-    export type AncestorWalkers<S> = { [name: string]: AncestorWalker<S> }
+    export interface AncestorWalkers<S> {
+      [name: string]: AncestorWalker<S>
+    }
     export type Walker<T extends es.Node, S> = (
       node: T,
       state: S,
       callback: SimpleWalker<S>
     ) => void
-    export type Walkers<S> = { [name: string]: Walker<any, S> }
+    export interface Walkers<S> {
+      [name: string]: Walker<any, S>
+    }
     type NodeTest = (nodeType: string, node: es.Node) => boolean
 
     export const base: Walkers<any>

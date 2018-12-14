@@ -7,9 +7,7 @@
     "quotemark": ["single"],
     "trailing-comma": false,
     "interface-name": false,
-    "interface-over-type-literal": false,
     "object-literal-sort-keys": false,
-    "no-angle-bracket-type-assertion": false,
     "no-shadowed-variable": false,
     "only-arrow-functions": false,
     "triple-equals": false,
@@ -18,7 +16,6 @@
     "no-console": {
       "severity": "warning"
     },
-    "prefer-const": false,
     "whitespace": false,
     "arrow-parens": false
   },

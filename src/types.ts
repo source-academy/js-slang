@@ -115,12 +115,12 @@ export class Closure extends Callable {
     let closure = null
     if (isExpressionBody(node.body)) {
       closure = new Closure(
-        <es.FunctionExpression>{
+        {
           type: 'FunctionExpression',
           loc: node.loc,
           id: null,
           params: node.params,
-          body: <es.BlockStatement>{
+          body: {
             type: 'BlockStatement',
             loc: node.body.loc,
             body: [
@@ -130,20 +130,20 @@ export class Closure extends Callable {
                 argument: node.body
               }
             ]
-          }
-        },
+          } as es.BlockStatement
+        } as es.FunctionExpression,
         frame,
         context
       )
     } else {
       closure = new Closure(
-        <es.FunctionExpression>{
+        {
           type: 'FunctionExpression',
           loc: node.loc,
           id: null,
           params: node.params,
           body: node.body
-        },
+        } as es.FunctionExpression,
         frame,
         context
       )

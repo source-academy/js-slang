@@ -184,19 +184,19 @@ function* getArgs(context: Context, call: es.CallExpression) {
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
-    return <es.ConditionalExpression>{
+    return {
       type: 'ConditionalExpression',
       test: node.left,
       consequent: node.right,
       alternate: createNode(false)
-    }
+    } as es.ConditionalExpression
   } else {
-    return <es.ConditionalExpression>{
+    return {
       type: 'ConditionalExpression',
       test: node.left,
       consequent: createNode(true),
       alternate: node.right
-    }
+    } as es.ConditionalExpression
   }
 }
 
@@ -304,8 +304,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     switch (node.operator) {
       case '+':
         {
-          let isLeftString = typeof left === 'string'
-          let isRightString = typeof right === 'string'
+          const isLeftString = typeof left === 'string'
+          const isRightString = typeof right === 'string'
           if (isLeftString && !isRightString) {
             right = toString(right)
           } else if (isRightString && !isLeftString) {
@@ -391,7 +391,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
       const frame = createBlockFrame(context, 'forBlockFrame')
       pushFrame(context, frame)
-      for (let name in loopFrame.environment) {
+      for (const name in loopFrame.environment) {
         if (loopFrame.environment.hasOwnProperty(name)) {
           hoistIdentifier(context, name, node)
           defineVariable(context, name, loopFrame.environment[name], true)

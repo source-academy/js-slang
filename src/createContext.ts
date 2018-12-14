@@ -69,13 +69,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   ensureGlobalEnvironmentExist(context)
 
   /* Defining the __SOURCE__ property in the curried functions. */
-  let display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
+  const display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
   display.__SOURCE__ = externalBuiltIns.display.__SOURCE__
-  let prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
   prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
-  let alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
   alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
-  let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
+  const visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
   visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
 
   if (context.chapter >= 1) {

@@ -26,14 +26,15 @@ const noAssignmentExpression: Rule<es.AssignmentExpression> = {
 
   checkers: {
     AssignmentExpression(node: es.AssignmentExpression, ancestors: [es.Node]) {
-      let parent = ancestors[ancestors.length - 2]
-      let parentType = parent.type
+      const parent = ancestors[ancestors.length - 2]
+      const parentType = parent.type
 
       if (
         parentType === 'ExpressionStatement' ||
         // Only permitted in a for loop if this node was its init or update expression
         (parentType === 'ForStatement' &&
-          ((<es.ForStatement>parent).init === node || (<es.ForStatement>parent).update === node))
+          ((parent as es.ForStatement).init === node ||
+            (parent as es.ForStatement).update === node))
       ) {
         return []
       } else {
