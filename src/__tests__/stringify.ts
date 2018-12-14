@@ -1,6 +1,6 @@
 import { stripIndent } from 'common-tags'
-import { mockContext } from '../mocks/context'
 import { runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
 test('String representation of numbers are nice', () => {

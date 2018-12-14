@@ -103,6 +103,58 @@ class Callable extends Function {
  * Models function value in the interpreter environment.
  */
 export class Closure extends Callable {
+  public static makeFromArrowFunction(
+    node: es.ArrowFunctionExpression,
+    frame: Frame,
+    context: Context
+  ) {
+    function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
+      return body.type !== 'BlockStatement'
+    }
+
+    let closure = null
+    if (isExpressionBody(node.body)) {
+      closure = new Closure(
+        {
+          type: 'FunctionExpression',
+          loc: node.loc,
+          id: null,
+          params: node.params,
+          body: {
+            type: 'BlockStatement',
+            loc: node.body.loc,
+            body: [
+              {
+                type: 'ReturnStatement',
+                loc: node.body.loc,
+                argument: node.body
+              }
+            ]
+          } as es.BlockStatement
+        } as es.FunctionExpression,
+        frame,
+        context
+      )
+    } else {
+      closure = new Closure(
+        {
+          type: 'FunctionExpression',
+          loc: node.loc,
+          id: null,
+          params: node.params,
+          body: node.body
+        } as es.FunctionExpression,
+        frame,
+        context
+      )
+    }
+
+    // Set the closure's nod to point back at the original one
+    closure.originalNode = node
+
+    return closure
+  }
+
   /** Keep track how many lambdas are created */
   private static lambdaCtr = 0
 
@@ -113,7 +165,7 @@ export class Closure extends Callable {
   // tslint:disable-next-line:ban-types
   public fun: Function
 
-  /** The original node that created this Closure **/
+  /** The original node that created this Closure */
   public originalNode: es.Function
 
   constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
@@ -134,54 +186,6 @@ export class Closure extends Callable {
 
   public toString(): string {
     return stringify(this)
-  }
-
-  static makeFromArrowFunction(node: es.ArrowFunctionExpression, frame: Frame, context: Context) {
-    function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
-      return body.type !== 'BlockStatement'
-    }
-
-    let closure = null
-    if (isExpressionBody(node.body)) {
-      closure = new Closure(
-        <es.FunctionExpression>{
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: <es.BlockStatement>{
-            type: 'BlockStatement',
-            loc: node.body.loc,
-            body: [
-              {
-                type: 'ReturnStatement',
-                loc: node.body.loc,
-                argument: node.body
-              }
-            ]
-          }
-        },
-        frame,
-        context
-      )
-    } else {
-      closure = new Closure(
-        <es.FunctionExpression>{
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: node.body
-        },
-        frame,
-        context
-      )
-    }
-
-    // Set the closure's nod to point back at the original one
-    closure.originalNode = node
-
-    return closure
   }
 }
 

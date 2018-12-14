@@ -1,9 +1,9 @@
 import * as list from './stdlib/list'
-import * as parser from './stdlib/parser'
 import * as misc from './stdlib/misc'
 import { stringify } from './interop'
 import { Context, CustomBuiltIns, Value } from './types'
 import { list_to_vector } from './stdlib/list'
+import * as parser from './stdlib/parser'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -174,7 +174,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: misc.display,
   // See issue #11
   alert: misc.display,
-  visualiseList: (list: any) => {
+  visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }

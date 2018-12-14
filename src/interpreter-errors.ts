@@ -58,10 +58,11 @@ export class ExceptionError implements SourceError {
 }
 
 export class MaximumStackLimitExceeded extends RuntimeSourceError {
+  public static MAX_CALLS_TO_SHOW = 3
+
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
-  public static MAX_CALLS_TO_SHOW = 3
 
   private customGenerator = {
     ...baseGenerator,

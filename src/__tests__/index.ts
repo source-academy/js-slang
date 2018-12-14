@@ -1,6 +1,6 @@
 import { stripIndent } from 'common-tags'
-import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 import { defineBuiltin } from '../createContext'
 
@@ -282,7 +282,7 @@ test('Functions passed into non-source functions remain equal', () => {
   identity(t) === t && t(1, 2, 3) === 6;
   `
   const context = mockContext(4)
-  defineBuiltin(context, 'identity', (x: any) => x)
+  defineBuiltin(context, 'identity(x)', (x: any) => x)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
   return promise.then(obj => {
     expect(obj.status).toBe('finished')

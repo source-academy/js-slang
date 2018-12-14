@@ -1,5 +1,5 @@
-import { mockContext } from '../mocks/context'
 import { parseError, runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
 test('list creates list', () => {
@@ -173,7 +173,9 @@ test('append', () => {
 
 test('member', () => {
   const code = `
-    equal(member("string", list(1, 2, 3, "string", 123, 456, null, undefined)), list("string", 123, 456, null, undefined));
+    equal(
+      member("string", list(1, 2, 3, "string", 123, 456, null, undefined)),
+      list("string", 123, 456, null, undefined));
   `
   const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

@@ -3,7 +3,7 @@
 import * as es from 'estree'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
-import { Closure, Context, ErrorSeverity, Frame, SourceError, Value, Environment } from './types'
+import { Closure, Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
@@ -183,19 +183,19 @@ function* getArgs(context: Context, call: es.CallExpression) {
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
-    return <es.ConditionalExpression>{
+    return {
       type: 'ConditionalExpression',
       test: node.left,
       consequent: node.right,
       alternate: createNode(false)
-    }
+    } as es.ConditionalExpression
   } else {
-    return <es.ConditionalExpression>{
+    return {
       type: 'ConditionalExpression',
       test: node.left,
       consequent: createNode(true),
       alternate: node.right
-    }
+    } as es.ConditionalExpression
   }
 }
 
@@ -347,7 +347,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
-    const constant = node.kind == 'const'
+    const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
     const value = yield* evaluate(declaration.init!, context)
     defineVariable(context, id.name, value, constant)
@@ -381,9 +381,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
       const frame = createBlockFrame(context, 'forBlockFrame')
       pushFrame(context, frame)
-      for (let name in loopFrame.environment) {
-        hoistIdentifier(context, name, node)
-        defineVariable(context, name, loopFrame.environment[name], true)
+      for (const name in loopFrame.environment) {
+        if (loopFrame.environment.hasOwnProperty(name)) {
+          hoistIdentifier(context, name, node)
+          defineVariable(context, name, loopFrame.environment[name], true)
+        }
       }
 
       value = yield* evaluate(node.body, context)
