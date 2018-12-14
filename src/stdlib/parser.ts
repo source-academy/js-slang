@@ -5,13 +5,6 @@ import { parse as sourceParse } from '../parser'
 import { Value } from '../types'
 import { vector_to_list } from './list'
 
-declare global {
-  // tslint:disable-next-line:interface-name
-  interface Function {
-    __SOURCE__?: string
-  }
-}
-
 class ParseError extends Error {
   constructor(message: string) {
     super(message)
@@ -412,4 +405,3 @@ export function parse(x: string): Value {
     throw new ParseError('Invalid parse')
   }
 }
-parse.__SOURCE__ = 'parse(program_string)'
