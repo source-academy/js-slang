@@ -8,11 +8,9 @@
     "trailing-comma": false,
     "interface-name": false,
     "object-literal-sort-keys": false,
-    "no-shadowed-variable": false,
     "no-console": {
       "severity": "warning"
     },
-    "whitespace": false,
     "arrow-parens": false
   },
   "rulesDirectory": []

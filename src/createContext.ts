@@ -75,7 +75,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
   const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
   alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
-  const visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
+  const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
   visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
 
   if (context.chapter >= 1) {
@@ -175,7 +175,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: (v: Value, e: any) => toString(v),
   // See issue #11
   alert: misc.display,
-  visualiseList: (list: any) => {
+  visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }

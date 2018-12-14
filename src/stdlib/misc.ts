@@ -23,18 +23,17 @@ export function error_message(value: Value) {
 }
 error_message.__SOURCE__ = 'error(a)'
 
-// tslint:disable-next-line:no-any
 export function timed(
   context: Context,
   f: Function,
   externalContext: any,
-  display: (value: Value, externalContext: any) => void
+  displayBuiltin: (value: Value, externalContext: any) => Value
 ) {
   return (...args: any[]) => {
     const start = runtime()
     const result = f(...args)
     const diff = runtime() - start
-    display('Duration: ' + Math.round(diff) + 'ms', externalContext)
+    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', externalContext)
     return result
   }
 }
