@@ -2,3 +2,8 @@ node_modules
 *.js
 *.map
 dist/
+.idea/
+*.lock
+
+
+
