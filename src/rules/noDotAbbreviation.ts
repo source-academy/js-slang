@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { SourceError, Rule, ErrorSeverity, ErrorType } from '../types'
 
-export class noDotAbbreviationError implements SourceError {
+export class NoDotAbbreviationError implements SourceError {
   type = ErrorType.SYNTAX
   severity = ErrorSeverity.ERROR
 
@@ -29,7 +29,7 @@ const noDotAbbreviation: Rule<es.MemberExpression> = {
   checkers: {
     MemberExpression(node: es.MemberExpression, ancestors: [es.Node]) {
       if (!node.computed) {
-        return [new noDotAbbreviationError(node)]
+        return [new NoDotAbbreviationError(node)]
       } else {
         return []
       }

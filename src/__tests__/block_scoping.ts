@@ -191,6 +191,7 @@ test('Error when accessing temporal dead zone', () => {
   })
 }, 30000)
 
+// tslint:disable-next-line:max-line-length
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
   const code = `
       const a = 1;

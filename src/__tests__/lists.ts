@@ -173,7 +173,9 @@ test('append', () => {
 
 test('member', () => {
   const code = `
-    equal(member("string", list(1, 2, 3, "string", 123, 456, null, undefined)), list("string", 123, 456, null, undefined));
+    equal(
+      member("string", list(1, 2, 3, "string", 123, 456, null, undefined)),
+      list("string", 123, 456, null, undefined));
   `
   const context = mockContext(3)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

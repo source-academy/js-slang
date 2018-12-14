@@ -144,6 +144,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 4) {
     defineSymbol(context, 'stringify', JSON.stringify)
     defineSymbol(context, 'parse', parser.parse)
+    // tslint:disable-next-line:ban-types
     defineSymbol(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
       return fun.apply(fun, list_to_vector(args))
     })

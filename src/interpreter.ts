@@ -392,8 +392,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const frame = createBlockFrame(context, 'forBlockFrame')
       pushFrame(context, frame)
       for (let name in loopFrame.environment) {
-        hoistIdentifier(context, name, node)
-        defineVariable(context, name, loopFrame.environment[name], true)
+        if (loopFrame.environment.hasOwnProperty(name)) {
+          hoistIdentifier(context, name, node)
+          defineVariable(context, name, loopFrame.environment[name], true)
+        }
       }
 
       value = yield* evaluate(node.body, context)

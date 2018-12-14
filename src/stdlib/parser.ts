@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import { oneLine } from 'common-tags'
 
 import createContext from '../createContext'
 import { parse as sourceParse } from '../parser'
@@ -20,9 +21,13 @@ class ParseError extends Error {
 }
 
 function unreachable() {
-  console.error(
-    'UNREACHABLE CODE REACHED! Please file an issue at https://github.com/source-academy/js-slang/issues if you see this.'
-  )
+  // tslint:disable-next-line:no-console
+  console.error(oneLine`
+    UNREACHABLE CODE REACHED!
+    Please file an issue at
+    https://github.com/source-academy/js-slang/issues
+    if you see this.
+  `)
 }
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>

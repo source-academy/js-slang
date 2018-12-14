@@ -11,6 +11,7 @@ import { Context, Value } from '../types'
  */
 export function display(value: Value, externalContext: any) {
   const output = toString(value)
+  // tslint:disable-next-line:no-console
   console.log(output)
   return value
 }

@@ -1,3 +1,5 @@
+import { oneLine } from 'common-tags'
+
 import { mockContext } from '../../mocks/context'
 import { runInContext } from '../../index'
 
@@ -237,8 +239,20 @@ test('Parses fibonacci', () => {
 // })
 
 test('Parses loops', () => {
-  const code = `
-    stringify(parse("while (true) { continue; break; } for (let i = 0; i < 1; i = i + 1) { continue; break; } for (i = 0; i < 1; i = i + 1) { continue; break; }"), undefined, 2);
+  const code = oneLine`
+    stringify(parse(
+      "while (true) {
+        continue;
+        break;
+      }
+      for (let i = 0; i < 1; i = i + 1) {
+        continue;
+        break;
+      }
+      for (i = 0; i < 1; i = i + 1) {
+        continue;
+        break;
+      }"), undefined, 2);
   `
   const context = mockContext(4)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })

@@ -103,36 +103,11 @@ class Callable extends Function {
  * Models function value in the interpreter environment.
  */
 export class Closure extends Callable {
-  /** Keep track how many lambdas are created */
-  private static lambdaCtr = 0
-
-  /** Unique ID defined for anonymous closure */
-  public functionName: string
-
-  /** Fake closure function */
-  // tslint:disable-next-line:ban-types
-  public fun: Function
-
-  /** The original node that created this Closure **/
-  public originalNode: es.Function
-
-  constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
-    super(function(this: any, ...args: any[]) {
-      return funJS.apply(this, args)
-    })
-    this.originalNode = node
-    try {
-      if (this.node.id) {
-        this.functionName = this.node.id.name
-      }
-    } catch (e) {
-      this.functionName = `Anonymous${++Closure.lambdaCtr}`
-    }
-    const funJS = closureToJS(this, context, this.functionName)
-    this.fun = funJS
-  }
-
-  static makeFromArrowFunction(node: es.ArrowFunctionExpression, frame: Frame, context: Context) {
+  public static makeFromArrowFunction(
+    node: es.ArrowFunctionExpression,
+    frame: Frame,
+    context: Context
+  ) {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
     }
@@ -178,6 +153,35 @@ export class Closure extends Callable {
     closure.originalNode = node
 
     return closure
+  }
+
+  /** Keep track how many lambdas are created */
+  private static lambdaCtr = 0
+
+  /** Unique ID defined for anonymous closure */
+  public functionName: string
+
+  /** Fake closure function */
+  // tslint:disable-next-line:ban-types
+  public fun: Function
+
+  /** The original node that created this Closure */
+  public originalNode: es.Function
+
+  constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
+    super(function(this: any, ...args: any[]) {
+      return funJS.apply(this, args)
+    })
+    this.originalNode = node
+    try {
+      if (this.node.id) {
+        this.functionName = this.node.id.name
+      }
+    } catch (e) {
+      this.functionName = `Anonymous${++Closure.lambdaCtr}`
+    }
+    const funJS = closureToJS(this, context, this.functionName)
+    this.fun = funJS
   }
 }
 
