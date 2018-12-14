@@ -38,7 +38,7 @@ function makeIndent(indent: number | string): string {
     if (indent > 10) {
       indent = 10
     }
-    return repeat(' ', indent)
+    return ' '.repeat(indent)
   } else {
     if (indent.length > 10) {
       indent = indent.substring(0, 10)
@@ -54,23 +54,19 @@ function indentify(indent: string, s: string): string {
     .join('\n')
 }
 
-function repeat(s: string, times: number): string {
-  return new Array(times + 1).join(s)
-}
-
 export const stringify = (
   value: Value,
-  indent_: number | string = 2,
-  splitline_threshold = 80
+  indent: number | string = 2,
+  splitlineThreshold = 80
 ): string => {
-  let ancestors = new Set()
-  const indent = makeIndent(indent_)
-  let arr_prefix = '[' + indent.substring(1)
-  let obj_prefix = '{' + indent.substring(1)
-  let arr_suffix = indent.substring(0, indent.length - 1) + ']'
-  let obj_suffix = indent.substring(0, indent.length - 1) + '}'
+  const ancestors = new Set()
+  const indentString = makeIndent(indent)
+  const arrPrefix = '[' + indentString.substring(1)
+  const objPrefix = '{' + indentString.substring(1)
+  const arrSuffix = indentString.substring(0, indentString.length - 1) + ']'
+  const objSuffix = indentString.substring(0, indentString.length - 1) + '}'
 
-  const helper = (value: Value, indent_level: number = 0): string => {
+  const helper = (value: Value, indentLevel: number = 0): string => {
     if (ancestors.has(value)) {
       return '...<circular>'
     } else if (value instanceof Closure) {
@@ -80,28 +76,28 @@ export const stringify = (
         return '...<truncated>'
       }
       ancestors.add(value)
-      let value_strs = value.map(v => helper(v, 0))
-      let multiline =
-        indent !== '' &&
-        (value_strs.join(', ').length > splitline_threshold ||
-          value_strs.some(s => s.indexOf('\n') !== -1))
+      const valueStrs = value.map(v => helper(v, 0))
+      const multiline =
+        indentString !== '' &&
+        (valueStrs.join(', ').length > splitlineThreshold ||
+          valueStrs.some(s => s.includes('\n')))
       let res
       if (multiline) {
         if (value.length === 2) {
           // It's a list, don't increase indent on second element so that long lists don't look like crap
-          res = `${arr_prefix}${indentify(
-            repeat(indent, indent_level + 1),
-            value_strs[0]
-          ).substring(indent.length)},
-${indentify(repeat(indent, indent_level), value_strs[1])}${arr_suffix}`
+          res = `${arrPrefix}${indentify(
+            indentString.repeat(indentLevel + 1),
+            valueStrs[0]
+          ).substring(indentString.length)},
+${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
         } else {
-          res = `${arr_prefix}${indentify(
-            repeat(indent, indent_level + 1),
-            value_strs.join(',\n')
-          ).substring(indent.length)}${arr_suffix}`
+          res = `${arrPrefix}${indentify(
+            indentString.repeat(indentLevel + 1),
+            valueStrs.join(',\n')
+          ).substring(indentString.length)}${arrSuffix}`
         }
       } else {
-        res = `[${value_strs.join(', ')}]`
+        res = `[${valueStrs.join(', ')}]`
       }
       ancestors.delete(value)
       return res
@@ -115,28 +111,27 @@ ${indentify(repeat(indent, indent_level), value_strs[1])}${arr_suffix}`
       return 'null'
     } else if (typeof value === 'object') {
       ancestors.add(value)
-      let value_strs = Object.entries(value).map(entry => {
-        let key_str = helper(entry[0], 0)
-        let val_str = helper(entry[1], 0)
-        if (val_str.indexOf('\n') === -1) {
-          // Single line
-          return key_str + ': ' + val_str
+      const valueStrs = Object.entries(value).map(entry => {
+        const keyStr = helper(entry[0], 0)
+        const valStr = helper(entry[1], 0)
+        if (valStr.includes('\n')) {
+          return keyStr + ':\n' + indentify(indentString, valStr)
         } else {
-          return key_str + ':\n' + indentify(indent, val_str)
+          return keyStr + ': ' + valStr
         }
       })
-      let multiline =
-        indent !== '' &&
-        (value_strs.join(', ').length > splitline_threshold ||
-          value_strs.some(s => s.indexOf('\n') !== -1))
+      const multiline =
+        indentString !== '' &&
+        (valueStrs.join(', ').length > splitlineThreshold ||
+          valueStrs.some(s => s.includes('\n')))
       let res
       if (multiline) {
-        res = `${obj_prefix}${indentify(
-          repeat(indent, indent_level + 1),
-          value_strs.join(',\n')
-        ).substring(indent.length)}${obj_suffix}`
+        res = `${objPrefix}${indentify(
+          indentString.repeat(indentLevel + 1),
+          valueStrs.join(',\n')
+        ).substring(indentString.length)}${objSuffix}`
       } else {
-        res = `{${value_strs.join(', ')}}`
+        res = `{${valueStrs.join(', ')}}`
       }
       ancestors.delete(value)
       return res
