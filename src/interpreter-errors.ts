@@ -267,4 +267,3 @@ export class SetInheritedPropertyError implements RuntimeSourceError {
     return 'TODO'
   }
 }
-

@@ -521,58 +521,58 @@ test('Runtime error when redeclaring variable', () => {
 })
 
 test('Error when accessing property of null', () => {
-    const code = `
+  const code = `
     null["prop"];
    `
-    const context = mockContext(100)
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-        expect(obj).toMatchSnapshot()
-        expect(obj.status).toBe('error')
-        expect(context.errors).toMatchSnapshot()
-        expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of null')
-    })
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of null')
+  })
 })
 
 test('Error when accessing property of undefined', () => {
-    const code = `
+  const code = `
     undefined["prop"];
    `
-    const context = mockContext(100)
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-        expect(obj).toMatchSnapshot()
-        expect(obj.status).toBe('error')
-        expect(context.errors).toMatchSnapshot()
-        expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of undefined')
-    })
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of undefined')
+  })
 })
 
 test('Error when accessing inherited property', () => {
-    const code = `
+  const code = `
     (() => 1)["constructor"];
    `
-    const context = mockContext(100)
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-        expect(obj).toMatchSnapshot()
-        expect(obj.status).toBe('error')
-        expect(context.errors).toMatchSnapshot()
-        expect(parseError(context.errors))
-            .toBe('Line 2: Cannot read inherited property constructor of () => 1')
-    })
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe(
+      'Line 2: Cannot read inherited property constructor of () => 1'
+    )
+  })
 })
 
 test('Access local property', () => {
-    const code = `
+  const code = `
     []["length"];
    `
-    const context = mockContext(100)
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-        expect(obj).toMatchSnapshot()
-        expect(obj.status).toBe('finished')
-        expect(context.errors).toMatchSnapshot()
-    })
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('finished')
+    expect(context.errors).toMatchSnapshot()
+  })
 })
-
