@@ -31,7 +31,7 @@ exports[`Arrow function infinite recursion with list args represents CallExpress
 exports[`Builtins hide their implementation 1`] = `
 Object {
   "status": "finished",
-  "value": "function pair(x, xs) {
+  "value": "function pair(left, right) {
 	[implementation hidden]
 }",
 }
@@ -40,7 +40,7 @@ Object {
 exports[`Builtins hide their implementation 2`] = `
 Object {
   "status": "finished",
-  "value": "function pair(x, xs) {
+  "value": "function pair(left, right) {
 	[implementation hidden]
 }",
 }

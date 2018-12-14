@@ -5,8 +5,6 @@ import { stringify } from './interop'
 import { Context, CustomBuiltIns, Value } from './types'
 import { list_to_vector } from './stdlib/list'
 
-import getParameterNames = require('get-parameter-names')
-
 const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyRuntime = () => ({
@@ -44,30 +42,35 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-// Defines a builtin in the given context
-// If the builtin is a function, wrap it such that its toString hides the implementation
-export const defineBuiltin = (context: Context, name: string, value: Value) => {
-  let wrapped: Value = value
-  if (typeof value === 'function') {
-    wrapped = (...args: any) => value(...args)
-    const params = getParameterNames(value).join(', ')
-    const repr = `function ${name}(${params}) {\n\t[implementation hidden]\n}`
-    wrapped.toString = () => repr
-  }
-
+const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalFrame = context.runtime.frames[0]
   Object.defineProperty(globalFrame.environment, name, {
-    value: wrapped,
+    value,
     writable: false,
     enumerable: true
   })
+}
+
+// Defines a builtin in the given context
+// If the builtin is a function, wrap it such that its toString hides the implementation
+export const defineBuiltin = (context: Context, name: string, value: Value) => {
+  if (typeof value === 'function') {
+    let wrapped = (...args: any) => value(...args)
+    let funName = name.split('(')[0].trim()
+    const repr = `function ${name} {\n\t[implementation hidden]\n}`
+    wrapped.toString = () => repr
+
+    defineSymbol(context, funName, wrapped)
+  } else {
+    defineSymbol(context, name, value)
+  }
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
   ensureGlobalEnvironmentExist(context)
 
   externalSymbols.forEach(symbol => {
-    defineBuiltin(context, symbol, GLOBAL[symbol])
+    defineSymbol(context, symbol, GLOBAL[symbol])
   })
 }
 
@@ -83,17 +86,17 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
 
   if (context.chapter >= 1) {
-    defineBuiltin(context, 'runtime', misc.runtime)
-    defineBuiltin(context, 'display', display)
-    defineBuiltin(context, 'stringify', stringify)
-    defineBuiltin(context, 'error', misc.error_message)
-    defineBuiltin(context, 'prompt', prompt)
-    defineBuiltin(context, 'is_number', misc.is_number)
-    defineBuiltin(context, 'is_string', misc.is_string)
-    defineBuiltin(context, 'is_function', misc.is_function)
-    defineBuiltin(context, 'is_boolean', misc.is_boolean)
-    defineBuiltin(context, 'is_undefined', misc.is_undefined)
-    defineBuiltin(context, 'parse_int', misc.parse_int)
+    defineBuiltin(context, 'runtime()', misc.runtime)
+    defineBuiltin(context, 'display(value)', display)
+    defineBuiltin(context, 'stringify(value)', stringify)
+    defineBuiltin(context, 'error(message)', misc.error_message)
+    defineBuiltin(context, 'prompt(message)', prompt)
+    defineBuiltin(context, 'is_number(value)', misc.is_number)
+    defineBuiltin(context, 'is_string(value)', misc.is_string)
+    defineBuiltin(context, 'is_function(value)', misc.is_function)
+    defineBuiltin(context, 'is_boolean(value)', misc.is_boolean)
+    defineBuiltin(context, 'is_undefined(value)', misc.is_undefined)
+    defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
@@ -107,58 +110,60 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 2) {
     // List library
     defineBuiltin(context, 'null', null)
-    defineBuiltin(context, 'pair', list.pair)
-    defineBuiltin(context, 'is_pair', list.is_pair)
-    defineBuiltin(context, 'head', list.head)
-    defineBuiltin(context, 'tail', list.tail)
-    defineBuiltin(context, 'is_null', list.is_null)
-    defineBuiltin(context, 'is_list', list.is_list)
-    defineBuiltin(context, 'list', list.list)
-    defineBuiltin(context, 'length', list.length)
-    defineBuiltin(context, 'map', list.map)
-    defineBuiltin(context, 'build_list', list.build_list)
-    defineBuiltin(context, 'for_each', list.for_each)
-    defineBuiltin(context, 'list_to_string', list.list_to_string)
-    defineBuiltin(context, 'reverse', list.reverse)
-    defineBuiltin(context, 'append', list.append)
-    defineBuiltin(context, 'member', list.member)
-    defineBuiltin(context, 'remove', list.remove)
-    defineBuiltin(context, 'remove_all', list.remove_all)
-    defineBuiltin(context, 'filter', list.filter)
-    defineBuiltin(context, 'enum_list', list.enum_list)
-    defineBuiltin(context, 'list_ref', list.list_ref)
-    defineBuiltin(context, 'accumulate', list.accumulate)
-    defineBuiltin(context, 'equal', list.equal)
-    defineBuiltin(context, 'draw_list', visualiseList)
+    defineBuiltin(context, 'pair(left, right)', list.pair)
+    defineBuiltin(context, 'is_pair(val)', list.is_pair)
+    defineBuiltin(context, 'head(xs)', list.head)
+    defineBuiltin(context, 'tail(xs)', list.tail)
+    defineBuiltin(context, 'is_null(val)', list.is_null)
+    defineBuiltin(context, 'is_list(val)', list.is_list)
+    defineBuiltin(context, 'list(...values)', list.list)
+    defineBuiltin(context, 'length(xs)', list.length)
+    defineBuiltin(context, 'map(fun, xs)', list.map)
+    defineBuiltin(context, 'build_list(n, fun)', list.build_list)
+    defineBuiltin(context, 'for_each(fun, xs)', list.for_each)
+    defineBuiltin(context, 'list_to_string(xs)', list.list_to_string)
+    defineBuiltin(context, 'reverse(xs)', list.reverse)
+    defineBuiltin(context, 'append(xs, ys)', list.append)
+    defineBuiltin(context, 'member(val, xs)', list.member)
+    defineBuiltin(context, 'remove(val, xs)', list.remove)
+    defineBuiltin(context, 'remove_all(val, xs)', list.remove_all)
+    defineBuiltin(context, 'filter(pred, xs)', list.filter)
+    defineBuiltin(context, 'enum_list(start, end)', list.enum_list)
+    defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
+    defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
+    defineBuiltin(context, 'equal(value1, value2)', list.equal)
+    defineBuiltin(context, 'draw_list(xs)', visualiseList)
   }
 
   if (context.chapter >= 3) {
-    defineBuiltin(context, 'set_head', list.set_head)
-    defineBuiltin(context, 'set_tail', list.set_tail)
-    defineBuiltin(context, 'array_length', misc.array_length)
-    defineBuiltin(context, 'is_array', misc.is_array)
+    defineBuiltin(context, 'set_head(xs, val)', list.set_head)
+    defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
+    defineBuiltin(context, 'array_length(arr)', misc.array_length)
+    defineBuiltin(context, 'is_array(val)', misc.is_array)
   }
 
   if (context.chapter >= 4) {
-    defineBuiltin(context, 'parse', parser.parse)
-    defineBuiltin(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
-      return fun.apply(fun, list_to_vector(args))
-    })
+    defineBuiltin(context, 'parse(program_string)', parser.parse)
+    defineBuiltin(
+      context,
+      'apply_in_underlying_javascript(fun, args)',
+      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
+    )
   }
 
   if (context.chapter >= 100) {
-    defineBuiltin(context, 'is_object', misc.is_object)
+    defineBuiltin(context, 'is_object(val)', misc.is_object)
   }
 
   if (context.chapter >= Infinity) {
     // previously week 4
-    defineBuiltin(context, 'alert', alert)
+    defineBuiltin(context, 'alert(val)', alert)
     // tslint:disable-next-line:ban-types
-    defineBuiltin(context, 'timed', (f: Function) =>
+    defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.display)
     )
     // previously week 5
-    defineBuiltin(context, 'assoc', list.assoc)
+    defineBuiltin(context, 'assoc(val, xs)', list.assoc)
     // previously week 6
   }
 }
