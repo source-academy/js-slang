@@ -249,21 +249,3 @@ export class SetPropertyError extends RuntimeSourceError {
     return 'TODO'
   }
 }
-
-export class SetInheritedPropertyError implements RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
-  constructor(node: es.Node, private obj: es.Node, private prop: string) {
-    this.location = node.loc!
-  }
-
-  public explain() {
-    return `Cannot assign inherited property ${this.prop} of ${this.obj}`
-  }
-
-  public elaborate() {
-    return 'TODO'
-  }
-}
