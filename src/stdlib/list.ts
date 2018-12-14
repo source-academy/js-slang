@@ -1,14 +1,6 @@
-import { toString } from '../interop'
+import { stringify } from '../interop'
 import { Value } from '../types'
 
-declare global {
-  // tslint:disable-next-line:interface-name
-  interface Function {
-    __SOURCE__?: string
-  }
-}
-
-// tslint:disable
 // list.js: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
 // Author: Martin Henz
@@ -25,21 +17,18 @@ function array_test(x: Value) {
     return Array.isArray(x)
   }
 }
-array_test.__SOURCE__ = 'array_test(x)'
 
 // pair constructs a pair using a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function pair(x: Value, xs: Value) {
   return [x, xs]
 }
-pair.__SOURCE__ = 'pair(x, xs)'
 
 // is_pair returns true iff arg is a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_pair(x: Value) {
   return array_test(x) && x.length === 2
 }
-is_pair.__SOURCE__ = 'is_pair(x)'
 
 // head returns the first component of the given pair,
 // throws an exception if the argument is not a pair
@@ -48,10 +37,9 @@ export function head(xs: List) {
   if (is_pair(xs)) {
     return xs[0]
   } else {
-    throw new Error('head(xs) expects a pair as ' + 'argument xs, but encountered ' + toString(xs))
+    throw new Error('head(xs) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs))
   }
 }
-head.__SOURCE__ = 'head(xs)'
 
 // tail returns the second component of the given pair
 // throws an exception if the argument is not a pair
@@ -60,17 +48,15 @@ export function tail(xs: List) {
   if (is_pair(xs)) {
     return xs[1]
   } else {
-    throw new Error('tail(xs) expects a pair as ' + 'argument xs, but encountered ' + toString(xs))
+    throw new Error('tail(xs) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs))
   }
 }
-tail.__SOURCE__ = 'tail(xs)'
 
 // is_null returns true if arg is exactly null
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_null(xs: List) {
   return xs === null
 }
-is_null.__SOURCE__ = 'is_null(xs)'
 
 // is_list recurses down the list and checks that it ends with the empty list []
 // does not throw Value exceptions
@@ -84,18 +70,16 @@ export function is_list(xs: List) {
     }
   }
 }
-is_list.__SOURCE__ = 'is_list(xs)'
 
 // list makes a list out of its arguments
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list() {
-  let the_list = null
+  let theList = null
   for (let i = arguments.length - 1; i >= 0; i--) {
-    the_list = pair(arguments[i], the_list)
+    theList = pair(arguments[i], theList)
   }
-  return the_list
+  return theList
 }
-list.__SOURCE__ = 'list(x, y, ...)'
 
 // list_to_vector returns vector that contains the elements of the argument list
 // in the given order.
@@ -109,7 +93,6 @@ export function list_to_vector(lst: List) {
   }
   return vector
 }
-list_to_vector.__SOURCE__ = 'list_to_vector(xs)'
 
 // vector_to_list returns a list that contains the elements of the argument vector
 // in the given order.
@@ -122,7 +105,6 @@ export function vector_to_list(vector: Value[]) {
   }
   return result
 }
-vector_to_list.__SOURCE__ = 'vector_to_list(vs)'
 
 // returns the length of a given argument list
 // throws an exception if the argument is not a list
@@ -134,7 +116,6 @@ export function length(xs: List) {
   }
   return i
 }
-length.__SOURCE__ = 'length(xs)'
 
 // map applies first arg f to the elements of the second argument,
 // assumed to be a list.
@@ -143,26 +124,27 @@ length.__SOURCE__ = 'length(xs)'
 // map throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the first
 // argument is not a function.
+// tslint:disable-next-line:ban-types
 export function map(f: Function, xs: List): List | null {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)))
 }
-map.__SOURCE__ = 'map(f, xs)'
 
 // build_list takes a non-negative integer n as first argument,
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
+// tslint:disable-next-line:ban-types
 export function build_list(n: number, fun: Function): List | null {
-  function build(i: number, fun: Function, already_built: List | null): List | null {
+  // tslint:disable-next-line:ban-types
+  function build(i: number, alreadyBuilt: List | null): List | null {
     if (i < 0) {
-      return already_built
+      return alreadyBuilt
     } else {
-      return build(i - 1, fun, pair(fun(i), already_built))
+      return build(i - 1, pair(fun(i), alreadyBuilt))
     }
   }
-  return build(n - 1, fun, null)
+  return build(n - 1, null)
 }
-build_list.__SOURCE__ = 'build_list(n, fun)'
 
 // for_each applies first arg fun to the elements of the list passed as
 // second argument. fun is applied element-by-element:
@@ -171,6 +153,7 @@ build_list.__SOURCE__ = 'build_list(n, fun)'
 // for_each throws an exception if the second argument is not a list,
 // and if the second argument is a non-empty list and the
 // first argument is not a function.
+// tslint:disable-next-line:ban-types
 export function for_each(fun: Function, xs: List) {
   if (!is_list(xs)) {
     throw new Error('for_each expects a list as argument xs, but ' + 'encountered ' + xs)
@@ -180,15 +163,13 @@ export function for_each(fun: Function, xs: List) {
   }
   return true
 }
-for_each.__SOURCE__ = 'for_each(fun, xs)'
 
 // list_to_string returns a string that represents the argument list.
 // It applies itself recursively on the elements of the given list.
-// When it encounters a non-list, it applies toString to it.
+// When it encounters a non-list, it applies stringify to it.
 export function list_to_string(l: List): string {
-  return toString(l)
+  return stringify(l)
 }
-list_to_string.__SOURCE__ = 'list_to_string(xs)'
 
 // reverse reverses the argument list
 // reverse throws an exception if the argument is not a list.
@@ -202,7 +183,6 @@ export function reverse(xs: List) {
   }
   return result
 }
-reverse.__SOURCE__ = 'reverse(xs)'
 
 // append first argument list and second argument list.
 // In the result, the [] at the end of the first argument list
@@ -215,7 +195,6 @@ export function append(xs: List, ys: List): List {
     return pair(head(xs), append(tail(xs), ys))
   }
 }
-append.__SOURCE__ = 'append(xs, ys)'
 
 // member looks for a given first-argument element in a given
 // second argument list. It returns the first postfix sublist
@@ -229,7 +208,6 @@ export function member(v: Value, xs: List) {
   }
   return null
 }
-member.__SOURCE__ = 'member(x, xs)'
 
 // removes the first occurrence of a given first-argument element
 // in a given second-argument list. Returns the original list
@@ -245,7 +223,6 @@ export function remove(v: Value, xs: List): List | null {
     }
   }
 }
-remove.__SOURCE__ = 'remove(x, xs)'
 
 // Similar to remove. But removes all instances of v instead of just the first
 export function remove_all(v: Value, xs: List): List | null {
@@ -259,7 +236,6 @@ export function remove_all(v: Value, xs: List): List | null {
     }
   }
 }
-remove_all.__SOURCE__ = 'remove_all(x, xs)'
 // for backwards-compatibility
 export const removeAll = remove_all
 
@@ -272,7 +248,6 @@ export function equal(item1: Value, item2: Value): boolean {
     return item1 === item2
   }
 }
-equal.__SOURCE__ = 'equal(x, y)'
 
 // assoc treats the second argument as an association,
 // a list of (index,value) pairs.
@@ -289,10 +264,10 @@ export function assoc(v: Value, xs: List): boolean {
     return assoc(v, tail(xs))
   }
 }
-assoc.__SOURCE__ = 'assoc(v, xs)'
 
 // filter returns the sublist of elements of given list xs
 // for which the given predicate function returns true.
+// tslint:disable-next-line:ban-types
 export function filter(pred: Function, xs: List): List {
   if (is_null(xs)) {
     return xs
@@ -304,7 +279,6 @@ export function filter(pred: Function, xs: List): List {
     }
   }
 }
-filter.__SOURCE__ = 'filter(pred, xs)'
 
 // enumerates numbers starting from start,
 // using a step size of 1, until the number
@@ -316,7 +290,6 @@ export function enum_list(start: number, end: number): List | null {
     return pair(start, enum_list(start + 1, end))
   }
 }
-enum_list.__SOURCE__ = 'enum_list(start, end)'
 
 // Returns the item in list lst at index n (the first item is at position 0)
 export function list_ref(xs: List, n: number) {
@@ -331,7 +304,6 @@ export function list_ref(xs: List, n: number) {
   }
   return head(xs)
 }
-list_ref.__SOURCE__ = 'list_ref(xs, n)'
 
 // accumulate applies given operation op to elements of a list
 // in a right-to-left order, first apply op to the last element
@@ -349,7 +321,6 @@ export function accumulate<T>(op: (value: Value, acc: T) => T, initial: T, seque
     return op(head(sequence), accumulate(op, initial, tail(sequence)))
   }
 }
-accumulate.__SOURCE__ = 'accumulate(op, initial, xs)'
 
 // set_head(xs,x) changes the head of given pair xs to be x,
 // throws an exception if the argument is not a pair
@@ -361,11 +332,10 @@ export function set_head(xs: List, x: Value) {
     return undefined
   } else {
     throw new Error(
-      'set_head(xs,x) expects a pair as ' + 'argument xs, but encountered ' + toString(xs)
+      'set_head(xs,x) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs)
     )
   }
 }
-set_head.__SOURCE__ = 'set_head(xs, x)'
 
 // set_tail(xs,x) changes the tail of given pair xs to be x,
 // throws an exception if the argument is not a pair
@@ -377,9 +347,7 @@ export function set_tail(xs: List, x: Value) {
     return undefined
   } else {
     throw new Error(
-      'set_tail(xs,x) expects a pair as ' + 'argument xs, but encountered ' + toString(xs)
+      'set_tail(xs,x) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs)
     )
   }
 }
-set_tail.__SOURCE__ = 'set_tail(xs, x)'
-// tslint:enable

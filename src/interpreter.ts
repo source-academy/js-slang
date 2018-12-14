@@ -2,7 +2,6 @@
 /* tslint:disable: object-literal-shorthand*/
 import * as es from 'estree'
 import * as constants from './constants'
-import { toString } from './interop'
 import * as errors from './interpreter-errors'
 import { Closure, Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
 import { createNode } from './utils/node'
@@ -292,8 +291,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    let left = yield* evaluate(node.left, context)
-    let right = yield* evaluate(node.right, context)
+    const left = yield* evaluate(node.left, context)
+    const right = yield* evaluate(node.right, context)
 
     const error = rttc.checkBinaryExpression(context, node.operator, left, right)
     if (error) {
@@ -303,16 +302,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let result
     switch (node.operator) {
       case '+':
-        {
-          const isLeftString = typeof left === 'string'
-          const isRightString = typeof right === 'string'
-          if (isLeftString && !isRightString) {
-            right = toString(right)
-          } else if (isRightString && !isLeftString) {
-            left = toString(left)
-          }
-          result = left + right
-        }
+        result = left + right
         break
       case '-':
         result = left - right
