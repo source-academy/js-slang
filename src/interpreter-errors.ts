@@ -68,7 +68,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
     CallExpression(node: any, state: any) {
       state.write(node.callee.name)
       state.write('(')
-      const argsRepr = node.arguments.map((args: any) => stringify(args.value))
+      const argsRepr = node.arguments.map((arg: any) => stringify(arg.value))
       state.write(argsRepr.join(', '))
       state.write(')')
     }
