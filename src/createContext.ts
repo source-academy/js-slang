@@ -1,4 +1,4 @@
-import { toString } from '.'
+import { toString } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
