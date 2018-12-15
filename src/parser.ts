@@ -4,7 +4,7 @@ import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 import rules from './rules'
-import syntaxTypes from './syntaxTypes'
+import syntaxBlacklist from './syntaxBlacklist'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
 
 export class DisallowedConstructError implements SourceError {
@@ -192,4 +192,4 @@ function createWalkers(
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxTypes, rules)
+const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxBlacklist, rules)
