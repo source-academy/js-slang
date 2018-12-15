@@ -1,7 +1,7 @@
 export { stripIndent, oneLine } from 'common-tags'
 
-import createContext from '../createContext'
-import { runInContext } from '../index'
+import { default as createContext, defineBuiltin } from '../createContext'
+import { parseError, runInContext } from '../index'
 import { Context, CustomBuiltIns, Finished, Result, Value } from '../types'
 
 export interface TestContext extends Context {
@@ -11,10 +11,19 @@ export interface TestContext extends Context {
   visualiseListResult?: Value[]
 }
 
-function createTestContext(chapter: number | TestContext = 1): TestContext {
+interface TestBuiltins {
+  // tslint:disable-next-line:ban-types
+  [funcName: string]: Function
+}
+
+function createTestContext(
+  chapter: number | TestContext = 1,
+  testBuiltins?: TestBuiltins
+): TestContext {
   if (chapter === undefined) {
     chapter = 1
   }
+
   if (typeof chapter === 'number') {
     const context: TestContext = createContext(chapter, [], undefined, {
       rawDisplay: (str, externalContext) => {
@@ -36,6 +45,15 @@ function createTestContext(chapter: number | TestContext = 1): TestContext {
         }
       }
     } as CustomBuiltIns)
+
+    if (testBuiltins !== undefined) {
+      for (const name in testBuiltins) {
+        if (testBuiltins.hasOwnProperty(name)) {
+          defineBuiltin(context, name, testBuiltins[name])
+        }
+      }
+    }
+
     return context
   } else {
     return chapter
@@ -46,7 +64,7 @@ function expectSuccess(code: string, testContext: TestContext, result: Result) {
   expect(testContext.errors).toEqual([])
   expect(result.status).toBe('finished')
   expect({
-    code: code,
+    code,
     displayResult: testContext.displayResult,
     alertResult: testContext.alertResult,
     visualiseListResult: testContext.visualiseListResult,
@@ -54,8 +72,24 @@ function expectSuccess(code: string, testContext: TestContext, result: Result) {
   }).toMatchSnapshot()
 }
 
-export function expectDisplayResult(code: string, chapterOrContext?: number | TestContext) {
-  const testContext = createTestContext(chapterOrContext)
+function expectFailure(code: string, testContext: TestContext, result: Result) {
+  expect(testContext.errors).not.toEqual([])
+  expect(result.status).toBe('error')
+  expect({
+    code,
+    displayResult: testContext.displayResult,
+    alertResult: testContext.alertResult,
+    visualiseListResult: testContext.visualiseListResult,
+    error: parseError(testContext.errors)
+  }).toMatchSnapshot()
+}
+
+export function expectDisplayResult(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
   const scheduler = 'preemptive'
   return expect(
     runInContext(code, testContext, { scheduler }).then(result => {
@@ -65,8 +99,12 @@ export function expectDisplayResult(code: string, chapterOrContext?: number | Te
   ).resolves
 }
 
-export function expectResult(code: string, chapterOrContext?: number | TestContext) {
-  const testContext = createTestContext(chapterOrContext)
+export function expectResult(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
   const scheduler = 'preemptive'
   return expect(
     runInContext(code, testContext, { scheduler }).then(result => {
@@ -76,10 +114,64 @@ export function expectResult(code: string, chapterOrContext?: number | TestConte
   ).resolves
 }
 
-export function snapshotExecution(code: string, chapterOrContext?: number | TestContext) {
-  const testContext = createTestContext(chapterOrContext)
+export function expectError(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
+  const scheduler = 'preemptive'
+  return expect(
+    runInContext(code, testContext, { scheduler }).then(result => {
+      expectFailure(code, testContext, result)
+      return parseError(testContext.errors)
+    })
+  ).resolves
+}
+
+export function snapshotSuccess(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
   const scheduler = 'preemptive'
   return runInContext(code, testContext, { scheduler }).then(result => {
     expectSuccess(code, testContext, result)
+  })
+}
+
+export function snapshotFailure(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
+  const scheduler = 'preemptive'
+  return runInContext(code, testContext, { scheduler }).then(result => {
+    expectFailure(code, testContext, result)
+  })
+}
+
+export function expectToMatchJS(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  // tslint:disable-next-line:no-eval
+  return expectResult(code, chapterOrContext, testBuiltins).toEqual(eval(code))
+}
+
+export function expectToLooselyMatchJS(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
+  const scheduler = 'preemptive'
+  return runInContext(code, testContext, { scheduler }).then(result => {
+    expectSuccess(code, testContext, result)
+    // tslint:disable-next-line:no-eval
+    expect((result as Finished).value.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
   })
 }
