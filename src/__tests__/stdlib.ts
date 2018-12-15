@@ -2,7 +2,7 @@ import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 
-test('Syntaxes are allowed in the chapter they are introduced', () => {
+test('Builtins work as expected', () => {
   const code = [
     [
       1,
