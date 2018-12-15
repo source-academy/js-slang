@@ -84,6 +84,11 @@ function expectFailure(code: string, testContext: TestContext, result: Result) {
   }).toMatchSnapshot()
 }
 
+function expectFailureNoSnapshot(code: string, testContext: TestContext, result: Result) {
+  expect(testContext.errors).not.toEqual([])
+  expect(result.status).toBe('error')
+}
+
 export function expectDisplayResult(
   code: string,
   chapterOrContext?: number | TestContext,
@@ -124,6 +129,21 @@ export function expectError(
   return expect(
     runInContext(code, testContext, { scheduler }).then(result => {
       expectFailure(code, testContext, result)
+      return parseError(testContext.errors)
+    })
+  ).resolves
+}
+
+export function expectErrorNoSnapshot(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
+  const scheduler = 'preemptive'
+  return expect(
+    runInContext(code, testContext, { scheduler }).then(result => {
+      expectFailureNoSnapshot(code, testContext, result)
       return parseError(testContext.errors)
     })
   ).resolves

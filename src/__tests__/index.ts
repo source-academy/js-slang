@@ -1,5 +1,6 @@
 import {
   expectError,
+  expectErrorNoSnapshot,
   expectResult,
   expectToLooselyMatchJS,
   expectToMatchJS,
@@ -155,14 +156,14 @@ test('Function infinite recursion with list args represents CallExpression well'
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
-  return expectError(stripIndent`
+  return expectErrorNoSnapshot(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
   `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
-  return expectError(stripIndent`
+  return expectErrorNoSnapshot(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
