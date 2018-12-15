@@ -1,9 +1,8 @@
 import { oneLine } from 'common-tags'
 import * as es from 'estree'
 
-import createContext from '../createContext'
 import { parse as sourceParse } from '../parser'
-import { Value } from '../types'
+import { Context, Value } from '../types'
 import { vector_to_list } from './list'
 
 class ParseError extends Error {
@@ -395,8 +394,7 @@ function transform(node: es.Node) {
   }
 }
 
-export function parse(x: string): Value {
-  const context = createContext(100)
+export function parse(x: string, context: Context): Value {
   let program
   program = sourceParse(x, context)
   if (context.errors.length > 0) {

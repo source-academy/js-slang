@@ -145,7 +145,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   }
 
   if (context.chapter >= 4) {
-    defineBuiltin(context, 'parse(program_string)', parser.parse)
+    defineBuiltin(context, 'parse(program_string)', (str: string) =>
+      parser.parse(str, createContext(context.chapter))
+    )
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
