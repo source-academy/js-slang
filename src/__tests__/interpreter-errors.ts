@@ -565,19 +565,19 @@ test('Error when accessing inherited property', () => {
 })
 
 test('Error when accessing inherited property of builtin', () => {
-    const code = `
+  const code = `
     pair["constructor"];
    `
-    const context = mockContext(100)
-    const promise = runInContext(code, context, { scheduler: 'preemptive' })
-    return promise.then(obj => {
-        expect(obj).toMatchSnapshot()
-        expect(obj.status).toBe('error')
-        expect(context.errors).toMatchSnapshot()
-        expect(parseError(context.errors)).toBe(
-            'Line 2: Cannot read inherited property constructor of () => 1'
-        )
-    })
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toBe(
+      'Line 2: Cannot read inherited property constructor of () => 1'
+    )
+  })
 })
 
 test('Access local property', () => {
@@ -592,4 +592,3 @@ test('Access local property', () => {
     expect(context.errors).toMatchSnapshot()
   })
 })
-
