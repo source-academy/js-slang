@@ -1,4 +1,4 @@
-/* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-classes-per-file */
 import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
 import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'

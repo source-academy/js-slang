@@ -1,5 +1,4 @@
-/* tslint:disable:interface-functionName max-classes-per-file */
-
+/* tslint:disable:max-classes-per-file */
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 

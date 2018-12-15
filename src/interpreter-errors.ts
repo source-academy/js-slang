@@ -1,4 +1,4 @@
-/* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-classes-per-file */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
