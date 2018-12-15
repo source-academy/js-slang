@@ -65,12 +65,19 @@ const handleError = (context: Context, error: SourceError) => {
   }
 }
 
+const handleRuntimeError = (context: Context, error: errors.RuntimeSourceError): never => {
+  context.errors.push(error)
+  const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
+  context.runtime.frames = [globalFrame]
+  throw error
+}
+
 const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const frame = currentFrame(context)
   if (frame.environment.hasOwnProperty(name)) {
-    handleError(context, new errors.VariableRedeclaration(node, name))
+    handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
   }
   frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return frame
@@ -100,7 +107,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   const frame = context.runtime.frames[0]
 
   if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
-    handleError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
+    handleRuntimeError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
   }
 
   Object.defineProperty(frame.environment, name, {
@@ -130,7 +137,7 @@ const getVariable = (context: Context, name: string) => {
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
       if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
-        handleError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
+        handleRuntimeError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
       } else {
         return frame.environment[name]
       }
@@ -138,7 +145,7 @@ const getVariable = (context: Context, name: string) => {
       frame = frame.parent
     }
   }
-  handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 const setVariable = (context: Context, name: string, value: any) => {
   let frame: Frame | null = context.runtime.frames[0]
@@ -152,13 +159,12 @@ const setVariable = (context: Context, name: string, value: any) => {
         frame.environment[name] = value
         return
       }
-      const error = new errors.ConstAssignment(context.runtime.nodes[0]!, name)
-      handleError(context, error)
+      handleRuntimeError(context, new errors.ConstAssignment(context.runtime.nodes[0]!, name))
     } else {
       frame = frame.parent
     }
   }
-  handleError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const checkNumberOfArguments = (
@@ -168,8 +174,10 @@ const checkNumberOfArguments = (
   exp: es.CallExpression
 ) => {
   if (callee.node.params.length !== args.length) {
-    const error = new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
-    handleError(context, error)
+    handleRuntimeError(
+      context,
+      new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
+    )
   }
 }
 
@@ -424,7 +432,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     try {
       return obj[prop]
     } catch {
-      handleError(context, new errors.GetPropertyError(node, obj, prop))
+      handleRuntimeError(context, new errors.GetPropertyError(node, obj, prop))
     }
   },
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
@@ -441,7 +449,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       try {
         obj[prop] = val
       } catch {
-        handleError(context, new errors.SetPropertyError(node, obj, prop))
+        handleRuntimeError(context, new errors.SetPropertyError(node, obj, prop))
       }
       return val
     }
@@ -601,15 +609,13 @@ export function* apply(
           // The error could've arisen when the builtin called a source function which errored.
           // If the cause was a source error, we don't want to include the error.
           // However if the error came from the builtin itself, we need to handle it.
-          handleError(context, new errors.ExceptionError(e, loc))
+          handleRuntimeError(context, new errors.ExceptionError(e, loc))
         }
         result = undefined
         throw e
       }
     } else {
-      handleError(context, new errors.CallingNonFunctionValue(fun, node))
-      result = undefined
-      break
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
     }
   }
   // Unwraps return value and release stack frame

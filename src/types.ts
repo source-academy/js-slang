@@ -173,11 +173,9 @@ export class Closure extends Callable {
       return funJS.apply(this, args)
     })
     this.originalNode = node
-    try {
-      if (this.node.id) {
-        this.functionName = this.node.id.name
-      }
-    } catch (e) {
+    if (this.node.id) {
+      this.functionName = this.node.id.name
+    } else {
       this.functionName = `Anonymous${++Closure.lambdaCtr}`
     }
     const funJS = closureToJS(this, context, this.functionName)

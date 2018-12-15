@@ -14,6 +14,12 @@ const createEmptyRuntime = () => ({
   nodes: []
 })
 
+const createGlobalFrame = () => ({
+  parent: null,
+  name: 'global',
+  environment: {}
+})
+
 export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
@@ -34,11 +40,7 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
     context.runtime.frames = []
   }
   if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push({
-      parent: null,
-      name: 'global',
-      environment: {}
-    })
+    context.runtime.frames.push(createGlobalFrame())
   }
 }
 
@@ -154,18 +156,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 100) {
     defineBuiltin(context, 'is_object(val)', misc.is_object)
-  }
-
-  if (context.chapter >= Infinity) {
-    // previously week 4
     defineBuiltin(context, 'alert(val)', alert)
     // tslint:disable-next-line:ban-types
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.display)
     )
-    // previously week 5
     defineBuiltin(context, 'assoc(val, xs)', list.assoc)
-    // previously week 6
   }
 }
 

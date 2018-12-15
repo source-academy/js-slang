@@ -195,6 +195,28 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
       `
       ({a: 1, b: 2}).a;
       `
+    ],
+
+    [
+      100,
+      `
+      ({'a': 1, 'b': 2}).a;
+      `
+    ],
+
+    [
+      100,
+      `
+      ({1: 1, 2: 2})['1'];
+      `
+    ],
+
+    [
+      100,
+      `
+      const key = 'a';
+      ({a: 1, b: 2})[key];
+      `
     ]
   ]
 

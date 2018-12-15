@@ -171,7 +171,7 @@ function createWalkers(
     syntaxCheckerPair.forEach(pair => {
       const syntax = pair[0]
       const checker = pair[1]
-      const oldCheck = newWalkers.get(syntax)
+      const oldCheck = newWalkers.get(syntax)!
       const newCheck = (node: es.Node, context: Context, ancestors: [es.Node]) => {
         if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
           return
@@ -180,9 +180,7 @@ function createWalkers(
         errors.forEach(e => context.errors.push(e))
       }
       newWalkers.set(syntax, (node, context, ancestors) => {
-        if (oldCheck) {
-          oldCheck(node, context, ancestors)
-        }
+        oldCheck(node, context, ancestors)
         newCheck(node, context, ancestors)
       })
     })
