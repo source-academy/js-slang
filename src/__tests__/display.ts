@@ -1,139 +1,49 @@
-import { stripIndent } from 'common-tags'
-import createContext from '../createContext'
-import { runInContext } from '../index'
-import { Context, CustomBuiltIns, Finished } from '../types'
-
-interface TestContext extends Context {
-  displayResult?: string
-}
-
-function createTestContext(chapter: number = 1): TestContext {
-  const context: TestContext = createContext(chapter, [], undefined, {
-    rawDisplay: (str, externalContext) => {
-      context.displayResult = context.displayResult ? context.displayResult + '\n' + str : str
-      return str
-    },
-    prompt: (str, externalContext) => null,
-    alert: (str, externalContext) => undefined,
-    visualiseList: value => undefined
-  } as CustomBuiltIns)
-  return context
-}
+import { expectDisplayResult } from '../utils/testing'
 
 test('display can be used to display numbers', () => {
-  const code = stripIndent`
-  display(0);
-  `
-  const context = createTestContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(context.displayResult!).toBe('0')
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display(0);`).toMatchInlineSnapshot(`"0"`)
 })
 
 test('display can be used to display funny numbers', () => {
-  const code = stripIndent`
-  display(1e38);
-  display(NaN);
-  display(Infinity);
-  `
-  const context = createTestContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display(1e38); display(NaN); display(Infinity);`)
+    .toMatchInlineSnapshot(`
+"1e+38
+NaN
+Infinity"
+`)
 })
 
 test('display can be used to display (escaped) strings', () => {
-  const code = stripIndent`
-  display("Tom's assisstant said: \\"tuna.\\"");
-  `
-  const context = createTestContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(context.displayResult!).toBe('"Tom\'s assisstant said: \\"tuna.\\""')
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(
+    `display("Tom's assisstant said: \\"tuna.\\"");`
+  ).toMatchInlineSnapshot(`"\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\""`)
 })
 
 test('raw_display can be used to display (unescaped) strings directly', () => {
-  const code = stripIndent`
-  raw_display("Tom's assisstant said: \\"tuna.\\"");
-  `
-  const context = createTestContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(context.displayResult!).toBe('Tom\'s assisstant said: "tuna."')
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(
+    `raw_display("Tom's assisstant said: \\"tuna.\\"");`
+  ).toMatchInlineSnapshot(`"Tom's assisstant said: \\"tuna.\\""`)
 })
 
 test('display can be used to display functions', () => {
-  const code = stripIndent`
-  display(x => x);
-  display((x, y) => x + y);
-  `
-  const context = createTestContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display(x => x); display((x, y) => x + y);`).toMatchInlineSnapshot(`
+"x => x
+(x, y) => x + y"
+`)
 })
 
 test('display can be used to display lists', () => {
-  const code = stripIndent`
-  display(list(1, 2));
-  `
-  const context = createTestContext(2)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display(list(1, 2));`, 2).toMatchInlineSnapshot(`"[1, [2, null]]"`)
 })
 
 test('display can be used to display arrays', () => {
-  const code = stripIndent`
-  display([1, 2, [4, 5]]);
-  `
-  const context = createTestContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display([1, 2, [4, 5]]);`, 3).toMatchInlineSnapshot(
+    `"[1, 2, [4, 5]]"`
+  )
 })
 
 test('display can be used to display objects', () => {
-  const code = stripIndent`
-  display({a: 1, b: 2, c: {d: 3}});
-  `
-  const context = createTestContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(context.errors).toEqual([])
-    expect(context.displayResult!).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectDisplayResult(`display({a: 1, b: 2, c: {d: 3}});`, 100).toMatchInlineSnapshot(
+    `"{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}"`
+  )
 })
