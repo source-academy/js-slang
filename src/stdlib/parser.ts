@@ -257,10 +257,6 @@ transformers = new Map([
     'AssignmentExpression',
     (node: es.Node) => {
       node = node as es.AssignmentExpression
-      if (node.operator !== '=') {
-        unreachable()
-        throw new ParseError(`{node.operator} assignments are not allowed. Use = instead`)
-      }
       if (node.left.type === 'Identifier') {
         return {
           tag: 'assignment',
