@@ -1,8 +1,9 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import Closure from './closure'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
-import { Closure, Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
+import { Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
