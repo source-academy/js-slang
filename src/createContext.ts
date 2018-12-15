@@ -158,6 +158,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 100) {
     defineBuiltin(context, 'is_object(val)', misc.is_object)
+    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
+    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
     // tslint:disable-next-line:ban-types
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
