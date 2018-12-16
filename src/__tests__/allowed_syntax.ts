@@ -250,6 +250,7 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
       expect(parseResult.status).toBe('finished')
       expect((parseResult as Finished).value).toMatchSnapshot()
 
+	  //TODO originally > 1. 
       if (chapter > 1) {
         expect(failureErrors).toMatchSnapshot()
         expect(failureResult.status).toBe('error')

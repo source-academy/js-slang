@@ -1,3 +1,5 @@
+//change repl chapter here
+
 import repl = require('repl')
 import { createContext, parseError, runInContext } from '../index'
 import { Result } from '../types'
@@ -19,7 +21,9 @@ function startRepl(chapter = 1) {
 }
 
 function main() {
-  const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 1
+
+	//TODO const chapter alternative case should be 1
+  const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 4;
   startRepl(chapter)
 }
 

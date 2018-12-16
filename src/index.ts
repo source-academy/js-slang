@@ -15,11 +15,18 @@ const DEFAULT_OPTIONS: IOptions = {
   steps: 1000
 }
 
+
+//deals with parsing error objects and converting them to strings (for repl at least)
+
 export function parseError(errors: SourceError[]): string {
   const errorMessagesArr = errors.map(error => {
     const line = error.location ? error.location.start.line : '<unknown>'
-    const explanation = error.explain()
-    return `Line ${line}: ${explanation}`
+	const explanation = error.explain()
+	const elaboration = error.elaborate();
+
+	//TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
+	//way to display it.
+    return `Line ${line}: ${explanation}\nTo elaborate: ${elaboration}`
   })
   return errorMessagesArr.join('\n')
 }

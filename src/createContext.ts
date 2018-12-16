@@ -1,3 +1,5 @@
+//Variable determining chapter of Source is contained in this file.
+
 import { stringify } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -180,8 +182,9 @@ const defaultBuiltIns: CustomBuiltIns = {
   }
 }
 
+//TODO chapter original val: 1
 const createContext = <T>(
-  chapter = 1,
+  chapter = 4,
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
