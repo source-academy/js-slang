@@ -2,255 +2,481 @@
 
 exports[`Allow display to return value it is displaying 1`] = `
 Object {
-  "status": "finished",
-  "value": 50,
+  "alertResult": undefined,
+  "code": "25*(display(1+1));",
+  "displayResult": "2",
+  "result": 50,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Arrays toString matches up with JS 1`] = `
 Object {
-  "status": "finished",
-  "value": "1,2",
+  "alertResult": undefined,
+  "code": "\\"\\" + [1, 2];",
+  "displayResult": undefined,
+  "result": "1,2",
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Arrow function definition returns itself 1`] = `
 Object {
-  "status": "finished",
-  "value": [Function],
+  "alertResult": undefined,
+  "code": "() => 42;",
+  "displayResult": undefined,
+  "result": [Function],
+  "visualiseListResult": undefined,
 }
 `;
-
-exports[`Arrow function definition returns itself 2`] = `[Function]`;
 
 exports[`Arrow function infinite recursion with list args represents CallExpression well 1`] = `
-"Line 2: Infinite recursion
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
-`;
-
-exports[`Builtins hide their implementation 1`] = `
 Object {
-  "status": "finished",
-  "value": "function pair(left, right) {
-	[implementation hidden]
-}",
+  "alertResult": undefined,
+  "code": "const f = xs => append(f(xs), list());
+f(list(1, 2));",
+  "displayResult": undefined,
+  "error": "Line 1: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
+  "visualiseListResult": undefined,
 }
 `;
 
-exports[`Builtins hide their implementation 2`] = `
+exports[`Builtins hide their implementation when stringify 1`] = `
 Object {
-  "status": "finished",
-  "value": "function pair(left, right) {
+  "alertResult": undefined,
+  "code": "stringify(pair);",
+  "displayResult": undefined,
+  "result": "function pair(left, right) {
 	[implementation hidden]
 }",
+  "visualiseListResult": undefined,
 }
 `;
 
-exports[`Cannot overwrite consts even when assignment is allowed 1`] = `"Line 4: Cannot assign new value to constant constant"`;
+exports[`Builtins hide their implementation when toString 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "\\"\\"+pair;",
+  "displayResult": undefined,
+  "result": "function pair(left, right) {
+	[implementation hidden]
+}",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Can overwrite lets when assignment is allowed 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "function test() {
+  let variable = false;
+  variable = true;
+  return variable;
+}
+test();",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Cannot overwrite consts even when assignment is allowed 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "function test(){
+  const constant = 3;
+  constant = 4;
+  return constant;
+}
+test();",
+  "displayResult": undefined,
+  "error": "Line 3: Cannot assign new value to constant constant",
+  "visualiseListResult": undefined,
+}
+`;
 
 exports[`Deep object assignment and retrieval 1`] = `
 Object {
-  "status": "finished",
-  "value": "string",
+  "alertResult": undefined,
+  "code": "const o = {};
+o.a = {};
+o.a.b = {};
+o.a.b.c = \\"string\\";
+o.a.b.c;",
+  "displayResult": undefined,
+  "result": "string",
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Empty code returns undefined 1`] = `
 Object {
-  "status": "finished",
-  "value": undefined,
+  "alertResult": undefined,
+  "code": "",
+  "displayResult": undefined,
+  "result": undefined,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Factorial arrow function 1`] = `
 Object {
-  "status": "finished",
-  "value": 120,
+  "alertResult": undefined,
+  "code": "const fac = (i) => i === 1 ? 1 : i * fac(i-1);
+fac(5);",
+  "displayResult": undefined,
+  "result": 120,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Function infinite recursion with list args represents CallExpression well 1`] = `
-"Line 2: Infinite recursion
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+Object {
+  "alertResult": undefined,
+  "code": "function f(xs) { return append(f(xs), list()); }
+f(list(1, 2));",
+  "displayResult": undefined,
+  "error": "Line 1: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Functions passed into non-source functions remain equal 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "function t(x, y, z) {
+  return x + y + z;
+}
+identity(t) === t && t(1, 2, 3) === 6;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
 `;
 
 exports[`Objects toString matches up with JS 1`] = `
 Object {
-  "status": "finished",
-  "value": "[object Object]",
+  "alertResult": undefined,
+  "code": "\\"\\" + ({a: 1});",
+  "displayResult": undefined,
+  "result": "[object Object]",
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Simple arrow function infinite recursion represents CallExpression well 1`] = `
-"Line 1: Infinite recursion
-  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
+Object {
+  "alertResult": undefined,
+  "code": "(x => x(x)(x))(x => x(x)(x));",
+  "displayResult": undefined,
+  "error": "Line 1: Infinite recursion
+  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x))..",
+  "visualiseListResult": undefined,
+}
 `;
 
 exports[`Simple function infinite recursion represents CallExpression well 1`] = `
-"Line 1: Infinite recursion
+Object {
+  "alertResult": undefined,
+  "code": "function f(x) {return x(x)(x);} f(f);",
+  "displayResult": undefined,
+  "error": "Line 1: Infinite recursion
   x(function f(x) {
   return x(x)(x);
 })..  x(function f(x) {
   return x(x)(x);
 })..  x(function f(x) {
   return x(x)(x);
-}).."
+})..",
+  "visualiseListResult": undefined,
+}
 `;
 
 exports[`Simple object assignment and retrieval 1`] = `
 Object {
-  "status": "finished",
-  "value": 1,
+  "alertResult": undefined,
+  "code": "const o = {};
+o.a = 1;
+o.a;",
+  "displayResult": undefined,
+  "result": 1,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Single boolean self-evaluates to itself 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Single number self-evaluates to itself 1`] = `
 Object {
-  "status": "finished",
-  "value": 42,
+  "alertResult": undefined,
+  "code": "42;",
+  "displayResult": undefined,
+  "result": 42,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Single string self-evaluates to itself 1`] = `
 Object {
-  "status": "finished",
-  "value": "42",
+  "alertResult": undefined,
+  "code": "'42';",
+  "displayResult": undefined,
+  "result": "42",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Test apply_in_underlying_javascript 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));",
+  "displayResult": undefined,
+  "result": 60,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Test equal for different lists 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "!equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Test equal for lists 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Test equal for primitives 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "equal(1, 1) && equal(\\"str\\", \\"str\\") && equal(null, null) && !equal(1, 2) && !equal(\\"str\\", \\"\\");",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`false if with empty else works 1`] = `
 Object {
-  "status": "finished",
-  "value": undefined,
+  "alertResult": undefined,
+  "code": "if (false) {
+} else {
+}",
+  "displayResult": undefined,
+  "result": undefined,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`false if with nonempty if works 1`] = `
 Object {
-  "status": "finished",
-  "value": 2,
+  "alertResult": undefined,
+  "code": "if (false) {
+} else {
+  2;
+}",
+  "displayResult": undefined,
+  "result": 2,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`functions toString (mostly) matches up with JS 1`] = `
 Object {
-  "status": "finished",
-  "value": "a => bfunction f(x) {
+  "alertResult": undefined,
+  "code": "function f(x) {
+  return 5;
+}
+\\"\\" + (a=>b) + f;",
+  "displayResult": undefined,
+  "result": "a => bfunction f(x) {
   return 5;
 }",
+  "visualiseListResult": undefined,
 }
 `;
 
-exports[`parseError for missing semicolon 1`] = `"Line 1: Missing semicolon at the end of statement"`;
+exports[`parseError for missing semicolon 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "42",
+  "displayResult": undefined,
+  "error": "Line 1: Missing semicolon at the end of statement",
+  "visualiseListResult": undefined,
+}
+`;
 
 exports[`primitives toString matches up with JS 1`] = `
 Object {
-  "status": "finished",
-  "value": "truefalse11.5nullundefinedNaN",
+  "alertResult": undefined,
+  "code": "\\"\\" + true + false + 1 + 1.5 + null + undefined + NaN;",
+  "displayResult": undefined,
+  "result": "truefalse11.5nullundefinedNaN",
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test && shortcircuiting 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "false && 1();",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test || shortcircuiting 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true || 1();",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test false && false 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "false && false;",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test false && true 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "false && true;",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test false || false 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "false || false;",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test false || true 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "false || true;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test false conditional expression 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "false ? true : false;",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test true && false 1`] = `
 Object {
-  "status": "finished",
-  "value": false,
+  "alertResult": undefined,
+  "code": "true && false;",
+  "displayResult": undefined,
+  "result": false,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test true && true 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true && true;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test true || false 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true || false;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test true || true 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true || true;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`test true conditional expression 1`] = `
 Object {
-  "status": "finished",
-  "value": true,
+  "alertResult": undefined,
+  "code": "true ? true : false;",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`true if with empty if works 1`] = `
 Object {
-  "status": "finished",
-  "value": undefined,
+  "alertResult": undefined,
+  "code": "if (true) {
+} else {
+}",
+  "displayResult": undefined,
+  "result": undefined,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`true if with nonempty if works 1`] = `
 Object {
-  "status": "finished",
-  "value": 1,
+  "alertResult": undefined,
+  "code": "if (true) {
+  1;
+} else {
+}",
+  "displayResult": undefined,
+  "result": 1,
+  "visualiseListResult": undefined,
 }
 `;

@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`display can be used to display (escaped) strings 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
+  "displayResult": "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
+  "result": "Tom's assisstant said: \\"tuna.\\"",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display arrays 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display([1, 2, [4, 5]]);",
+  "displayResult": "[1, 2, [4, 5]]",
+  "result": Array [
+    1,
+    2,
+    Array [
+      4,
+      5,
+    ],
+  ],
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display functions 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display(x => x); display((x, y) => x + y);",
+  "displayResult": "x => x
+(x, y) => x + y",
+  "result": [Function],
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display funny numbers 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display(1e38); display(NaN); display(Infinity);",
+  "displayResult": "1e+38
+NaN
+Infinity",
+  "result": Infinity,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display lists 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display(list(1, 2));",
+  "displayResult": "[1, [2, null]]",
+  "result": Array [
+    1,
+    Array [
+      2,
+      null,
+    ],
+  ],
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display numbers 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display(0);",
+  "displayResult": "0",
+  "result": 0,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`display can be used to display objects 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "display({a: 1, b: 2, c: {d: 3}});",
+  "displayResult": "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
+  "result": Object {
+    "a": 1,
+    "b": 2,
+    "c": Object {
+      "d": 3,
+    },
+  },
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`raw_display can be used to display (unescaped) strings directly 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "raw_display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
+  "displayResult": "Tom's assisstant said: \\"tuna.\\"",
+  "result": "Tom's assisstant said: \\"tuna.\\"",
+  "visualiseListResult": undefined,
+}
+`;
