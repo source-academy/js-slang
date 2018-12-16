@@ -1,10 +1,10 @@
-/* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-classes-per-file */
 import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
 import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 import rules from './rules'
-import syntaxTypes from './syntaxTypes'
+import syntaxBlacklist from './syntaxBlacklist'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
 
 export class DisallowedConstructError implements SourceError {
@@ -171,7 +171,7 @@ function createWalkers(
     syntaxCheckerPair.forEach(pair => {
       const syntax = pair[0]
       const checker = pair[1]
-      const oldCheck = newWalkers.get(syntax)
+      const oldCheck = newWalkers.get(syntax)!
       const newCheck = (node: es.Node, context: Context, ancestors: [es.Node]) => {
         if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
           return
@@ -180,9 +180,7 @@ function createWalkers(
         errors.forEach(e => context.errors.push(e))
       }
       newWalkers.set(syntax, (node, context, ancestors) => {
-        if (oldCheck) {
-          oldCheck(node, context, ancestors)
-        }
+        oldCheck(node, context, ancestors)
         newCheck(node, context, ancestors)
       })
     })
@@ -194,4 +192,4 @@ function createWalkers(
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxTypes, rules)
+const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxBlacklist, rules)

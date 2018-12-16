@@ -1,4 +1,4 @@
-/* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-classes-per-file */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
@@ -25,10 +25,6 @@ export class RuntimeSourceError implements SourceError {
 }
 
 export class InterruptedError extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node) {
     super(node)
   }
@@ -60,10 +56,6 @@ export class ExceptionError implements SourceError {
 export class MaximumStackLimitExceeded extends RuntimeSourceError {
   public static MAX_CALLS_TO_SHOW = 3
 
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   private customGenerator = {
     ...baseGenerator,
     CallExpression(node: any, state: any) {
@@ -90,10 +82,6 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 }
 
 export class CallingNonFunctionValue extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(private callee: Value, node?: es.Node) {
     super(node)
   }
@@ -108,10 +96,6 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
 }
 
 export class UndefinedVariable extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(public name: string, node: es.Node) {
     super(node)
   }
@@ -126,10 +110,6 @@ export class UndefinedVariable extends RuntimeSourceError {
 }
 
 export class UnassignedVariable extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(public name: string, node: es.Node) {
     super(node)
   }
@@ -144,10 +124,6 @@ export class UnassignedVariable extends RuntimeSourceError {
 }
 
 export class InvalidNumberOfArguments extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node, private expected: number, private got: number) {
     super(node)
   }
@@ -162,10 +138,6 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
 }
 
 export class VariableRedeclaration extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node, private name: string) {
     super(node)
   }
@@ -180,10 +152,6 @@ export class VariableRedeclaration extends RuntimeSourceError {
 }
 
 export class ConstAssignment extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node, private name: string) {
     super(node)
   }
@@ -198,10 +166,6 @@ export class ConstAssignment extends RuntimeSourceError {
 }
 
 export class GetPropertyError extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node, private obj: es.Node, private prop: string) {
     super(node)
   }
@@ -216,10 +180,6 @@ export class GetPropertyError extends RuntimeSourceError {
 }
 
 export class SetPropertyError extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
   constructor(node: es.Node, private obj: es.Node, private prop: string) {
     super(node)
   }

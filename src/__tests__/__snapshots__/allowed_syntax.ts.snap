@@ -3065,19 +3065,248 @@ Line 2: Member expressions are not allowed"
 
 exports[`Syntaxes are allowed in the chapter they are introduced 124`] = `
 "
-      ({});
+      let x = [1, 2, 3];
+      x[1];
       "
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 125`] = `"parse(\\"\\\\n      ({});\\\\n      \\");"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 125`] = `"parse(\\"\\\\n      let x = [1, 2, 3];\\\\n      x[1];\\\\n      \\");"`;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 126`] = `""`;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 127`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 128`] = `Object {}`;
+exports[`Syntaxes are allowed in the chapter they are introduced 128`] = `2`;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 129`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 24,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "tag": "name",
+    },
+    "tag": "variable_declaration",
+    "value": Object {
+      "elements": Array [
+        1,
+        Array [
+          2,
+          Array [
+            3,
+            null,
+          ],
+        ],
+      ],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "tag": "array_expression",
+    },
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "object": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "name": "x",
+        "tag": "name",
+      },
+      "property": 1,
+      "tag": "property_access",
+    },
+    null,
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 130`] = `
+"Line 2: Array expressions are not allowed
+Line 2: Mutable variable declaration using keyword 'let' is not allowed.
+Line 3: Member expressions are not allowed"
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 131`] = `
+"
+      let x = [1, 2, 3];
+      x[1] = 4;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 132`] = `"parse(\\"\\\\n      let x = [1, 2, 3];\\\\n      x[1] = 4;\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 133`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 134`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 135`] = `4`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 136`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 24,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "tag": "name",
+    },
+    "tag": "variable_declaration",
+    "value": Object {
+      "elements": Array [
+        1,
+        Array [
+          2,
+          Array [
+            3,
+            null,
+          ],
+        ],
+      ],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "tag": "array_expression",
+    },
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "object": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "object": Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 3,
+            },
+          },
+          "name": "x",
+          "tag": "name",
+        },
+        "property": 1,
+        "tag": "property_access",
+      },
+      "tag": "property_assignment",
+      "value": 4,
+    },
+    null,
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 137`] = `
+"Line 2: Array expressions are not allowed
+Line 2: Mutable variable declaration using keyword 'let' is not allowed.
+Line 3: Member expressions are not allowed
+Line 3: Assignment expressions are not allowed"
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 138`] = `
+"
+      ({});
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 139`] = `"parse(\\"\\\\n      ({});\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 140`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 141`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 142`] = `Object {}`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 143`] = `
 Array [
   Object {
     "loc": SourceLocation {
@@ -3097,28 +3326,28 @@ Array [
 ]
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 130`] = `"Line 2: Object expressions are not allowed"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 144`] = `"Line 2: Object expressions are not allowed"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 131`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 145`] = `
 "
       ({a: 1, b: 2});
       "
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 132`] = `"parse(\\"\\\\n      ({a: 1, b: 2});\\\\n      \\");"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 146`] = `"parse(\\"\\\\n      ({a: 1, b: 2});\\\\n      \\");"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 133`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 147`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 134`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 148`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 135`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 149`] = `
 Object {
   "a": 1,
   "b": 2,
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 136`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 150`] = `
 Array [
   Object {
     "loc": SourceLocation {
@@ -3150,23 +3379,23 @@ Array [
 ]
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 137`] = `"Line 2: Object expressions are not allowed"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 151`] = `"Line 2: Object expressions are not allowed"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 138`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 152`] = `
 "
       ({a: 1, b: 2})['a'];
       "
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 139`] = `"parse(\\"\\\\n      ({a: 1, b: 2})['a'];\\\\n      \\");"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 153`] = `"parse(\\"\\\\n      ({a: 1, b: 2})['a'];\\\\n      \\");"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 140`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 154`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 141`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 155`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 142`] = `1`;
+exports[`Syntaxes are allowed in the chapter they are introduced 156`] = `1`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 143`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 157`] = `
 Array [
   Object {
     "loc": SourceLocation {
@@ -3212,23 +3441,23 @@ Array [
 ]
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 144`] = `"Line 2: Object expressions are not allowed"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 158`] = `"Line 2: Object expressions are not allowed"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 145`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 159`] = `
 "
       ({a: 1, b: 2}).a;
       "
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 146`] = `"parse(\\"\\\\n      ({a: 1, b: 2}).a;\\\\n      \\");"`;
+exports[`Syntaxes are allowed in the chapter they are introduced 160`] = `"parse(\\"\\\\n      ({a: 1, b: 2}).a;\\\\n      \\");"`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 147`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 161`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 148`] = `""`;
+exports[`Syntaxes are allowed in the chapter they are introduced 162`] = `""`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 149`] = `1`;
+exports[`Syntaxes are allowed in the chapter they are introduced 163`] = `1`;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 150`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 164`] = `
 Array [
   Object {
     "loc": SourceLocation {
@@ -3274,7 +3503,647 @@ Array [
 ]
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 151`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 165`] = `
 "Line 2: Object expressions are not allowed
 Line 2: Dot abbreviations are not allowed."
 `;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 166`] = `
+"
+      ({'a': 1, 'b': 2}).a;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 167`] = `"parse(\\"\\\\n      ({'a': 1, 'b': 2}).a;\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 168`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 169`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 170`] = `1`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 171`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 27,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "object": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 7,
+          "line": 2,
+        },
+      },
+      "pairs": Array [
+        Array [
+          "a",
+          1,
+        ],
+        Array [
+          Array [
+            "b",
+            2,
+          ],
+          null,
+        ],
+      ],
+      "tag": "object_expression",
+    },
+    "property": "a",
+    "tag": "property_access",
+  },
+  null,
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 172`] = `
+"Line 2: Object expressions are not allowed
+Line 2: Dot abbreviations are not allowed."
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 173`] = `
+"
+      ({1: 1, 2: 2})['1'];
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 174`] = `"parse(\\"\\\\n      ({1: 1, 2: 2})['1'];\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 175`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 176`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 177`] = `1`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 178`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 26,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "object": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 7,
+          "line": 2,
+        },
+      },
+      "pairs": Array [
+        Array [
+          1,
+          1,
+        ],
+        Array [
+          Array [
+            2,
+            2,
+          ],
+          null,
+        ],
+      ],
+      "tag": "object_expression",
+    },
+    "property": "1",
+    "tag": "property_access",
+  },
+  null,
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 179`] = `"Line 2: Object expressions are not allowed"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 180`] = `
+"
+      const key = 'a';
+      ({a: 1, b: 2})[key];
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 181`] = `"parse(\\"\\\\n      const key = 'a';\\\\n      ({a: 1, b: 2})[key];\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 182`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 183`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 184`] = `1`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 185`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 22,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 2,
+        },
+      },
+      "name": "key",
+      "tag": "name",
+    },
+    "tag": "constant_declaration",
+    "value": "a",
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "object": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 7,
+            "line": 3,
+          },
+        },
+        "pairs": Array [
+          Array [
+            "a",
+            1,
+          ],
+          Array [
+            Array [
+              "b",
+              2,
+            ],
+            null,
+          ],
+        ],
+        "tag": "object_expression",
+      },
+      "property": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 24,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 21,
+            "line": 3,
+          },
+        },
+        "name": "key",
+        "tag": "name",
+      },
+      "tag": "property_access",
+    },
+    null,
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 186`] = `"Line 3: Object expressions are not allowed"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 187`] = `
+"
+      let x = {a: 1, b: 2};
+      x.a = 3;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 188`] = `"parse(\\"\\\\n      let x = {a: 1, b: 2};\\\\n      x.a = 3;\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 189`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 190`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 191`] = `3`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 192`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 27,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "tag": "name",
+    },
+    "tag": "variable_declaration",
+    "value": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "pairs": Array [
+        Array [
+          "a",
+          1,
+        ],
+        Array [
+          Array [
+            "b",
+            2,
+          ],
+          null,
+        ],
+      ],
+      "tag": "object_expression",
+    },
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "object": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 9,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "object": Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 3,
+            },
+          },
+          "name": "x",
+          "tag": "name",
+        },
+        "property": "a",
+        "tag": "property_access",
+      },
+      "tag": "property_assignment",
+      "value": 3,
+    },
+    null,
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 193`] = `
+"Line 2: Object expressions are not allowed
+Line 3: Dot abbreviations are not allowed."
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 194`] = `
+"
+      let x = {a: 1, b: 2};
+      x['a'] = 3;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 195`] = `"parse(\\"\\\\n      let x = {a: 1, b: 2};\\\\n      x['a'] = 3;\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 196`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 197`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 198`] = `3`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 199`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 27,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "tag": "name",
+    },
+    "tag": "variable_declaration",
+    "value": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "pairs": Array [
+        Array [
+          "a",
+          1,
+        ],
+        Array [
+          Array [
+            "b",
+            2,
+          ],
+          null,
+        ],
+      ],
+      "tag": "object_expression",
+    },
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "object": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 3,
+          },
+        },
+        "object": Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 3,
+            },
+          },
+          "name": "x",
+          "tag": "name",
+        },
+        "property": "a",
+        "tag": "property_access",
+      },
+      "tag": "property_assignment",
+      "value": 3,
+    },
+    null,
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 200`] = `"Line 2: Object expressions are not allowed"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 201`] = `
+"
+      let x = {a: 1, b: 2};
+      const key = 'a';
+      x[key] = 3;
+      "
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 202`] = `"parse(\\"\\\\n      let x = {a: 1, b: 2};\\\\n      const key = 'a';\\\\n      x[key] = 3;\\\\n      \\");"`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 203`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 204`] = `""`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 205`] = `3`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 206`] = `
+Array [
+  Object {
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 27,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 6,
+        "line": 2,
+      },
+    },
+    "name": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "tag": "name",
+    },
+    "tag": "variable_declaration",
+    "value": Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "pairs": Array [
+        Array [
+          "a",
+          1,
+        ],
+        Array [
+          Array [
+            "b",
+            2,
+          ],
+          null,
+        ],
+      ],
+      "tag": "object_expression",
+    },
+  },
+  Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "name": Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 15,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 12,
+            "line": 3,
+          },
+        },
+        "name": "key",
+        "tag": "name",
+      },
+      "tag": "constant_declaration",
+      "value": "a",
+    },
+    Array [
+      Object {
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 4,
+          },
+        },
+        "object": Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 4,
+            },
+          },
+          "object": Object {
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 4,
+              },
+            },
+            "name": "x",
+            "tag": "name",
+          },
+          "property": Object {
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 4,
+              },
+            },
+            "name": "key",
+            "tag": "name",
+          },
+          "tag": "property_access",
+        },
+        "tag": "property_assignment",
+        "value": 3,
+      },
+      null,
+    ],
+  ],
+]
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 207`] = `"Line 2: Object expressions are not allowed"`;

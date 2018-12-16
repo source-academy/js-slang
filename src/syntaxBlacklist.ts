@@ -1,4 +1,4 @@
-const syntaxTypes: { [nodeName: string]: number } = {
+const syntaxBlacklist: { [nodeName: string]: number } = {
   // List of all node types taken from
   // https://github.com/acornjs/acorn/blob/master/acorn-walk/src/index.js
 
@@ -87,4 +87,4 @@ const syntaxTypes: { [nodeName: string]: number } = {
   MethodDefinition: Infinity
 }
 
-export default syntaxTypes
+export default syntaxBlacklist

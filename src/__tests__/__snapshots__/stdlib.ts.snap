@@ -229,7 +229,7 @@ exports[`Builtins work as expected 56`] = `""`;
 
 exports[`Builtins work as expected 57`] = `
 "
-      array_length([1]);
+      is_object(1);
       "
 `;
 
@@ -237,7 +237,7 @@ exports[`Builtins work as expected 58`] = `""`;
 
 exports[`Builtins work as expected 59`] = `
 "
-      parse_int('10', 10);
+      is_object(pair(1, 2));
       "
 `;
 
@@ -245,7 +245,7 @@ exports[`Builtins work as expected 60`] = `""`;
 
 exports[`Builtins work as expected 61`] = `
 "
-      parse_int('10', 2);
+      is_object([1]);
       "
 `;
 
@@ -253,13 +253,174 @@ exports[`Builtins work as expected 62`] = `""`;
 
 exports[`Builtins work as expected 63`] = `
 "
-      is_number(runtime());
+      is_object({});
       "
 `;
 
 exports[`Builtins work as expected 64`] = `""`;
 
 exports[`Builtins work as expected 65`] = `
+"
+      is_object({a: 1});
+      "
+`;
+
+exports[`Builtins work as expected 66`] = `""`;
+
+exports[`Builtins work as expected 67`] = `
+"
+      is_object(x => x);
+      "
+`;
+
+exports[`Builtins work as expected 68`] = `""`;
+
+exports[`Builtins work as expected 69`] = `
+"
+      is_object(display);
+      "
+`;
+
+exports[`Builtins work as expected 70`] = `""`;
+
+exports[`Builtins work as expected 71`] = `
+"
+      is_object(1);
+      "
+`;
+
+exports[`Builtins work as expected 72`] = `""`;
+
+exports[`Builtins work as expected 73`] = `
+"
+      is_object('string');
+      "
+`;
+
+exports[`Builtins work as expected 74`] = `""`;
+
+exports[`Builtins work as expected 75`] = `
+"
+      is_object(true);
+      "
+`;
+
+exports[`Builtins work as expected 76`] = `""`;
+
+exports[`Builtins work as expected 77`] = `
+"
+      is_NaN(1 / 0);
+      "
+`;
+
+exports[`Builtins work as expected 78`] = `""`;
+
+exports[`Builtins work as expected 79`] = `
+"
+      is_NaN(NaN);
+      "
+`;
+
+exports[`Builtins work as expected 80`] = `""`;
+
+exports[`Builtins work as expected 81`] = `
+"
+      is_NaN(1);
+      "
+`;
+
+exports[`Builtins work as expected 82`] = `""`;
+
+exports[`Builtins work as expected 83`] = `
+"
+      is_NaN(x => x);
+      "
+`;
+
+exports[`Builtins work as expected 84`] = `""`;
+
+exports[`Builtins work as expected 85`] = `
+"
+      has_own_property({a: 1, b: 2}, 'a');
+      "
+`;
+
+exports[`Builtins work as expected 86`] = `""`;
+
+exports[`Builtins work as expected 87`] = `
+"
+      has_own_property({a: 1, b: 2}, 'c');
+      "
+`;
+
+exports[`Builtins work as expected 88`] = `""`;
+
+exports[`Builtins work as expected 89`] = `
+"
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      o.b;
+      "
+`;
+
+exports[`Builtins work as expected 90`] = `""`;
+
+exports[`Builtins work as expected 91`] = `
+"
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      has_own_property(o, 'a');
+      "
+`;
+
+exports[`Builtins work as expected 92`] = `""`;
+
+exports[`Builtins work as expected 93`] = `
+"
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      has_own_property(o, 'b');
+      "
+`;
+
+exports[`Builtins work as expected 94`] = `""`;
+
+exports[`Builtins work as expected 95`] = `
+"
+      array_length([1]);
+      "
+`;
+
+exports[`Builtins work as expected 96`] = `""`;
+
+exports[`Builtins work as expected 97`] = `
+"
+      parse_int('10', 10);
+      "
+`;
+
+exports[`Builtins work as expected 98`] = `""`;
+
+exports[`Builtins work as expected 99`] = `
+"
+      parse_int('10', 2);
+      "
+`;
+
+exports[`Builtins work as expected 100`] = `""`;
+
+exports[`Builtins work as expected 101`] = `
+"
+      is_number(runtime());
+      "
+`;
+
+exports[`Builtins work as expected 102`] = `""`;
+
+exports[`Builtins work as expected 103`] = `
 "
       const x = runtime();
       const f = x => x === 0 ? x : f(x-1);
@@ -269,108 +430,108 @@ exports[`Builtins work as expected 65`] = `
       "
 `;
 
-exports[`Builtins work as expected 66`] = `""`;
+exports[`Builtins work as expected 104`] = `""`;
 
-exports[`Builtins work as expected 67`] = `
+exports[`Builtins work as expected 105`] = `
 "
       pair(1, 2);
       "
 `;
 
-exports[`Builtins work as expected 68`] = `""`;
+exports[`Builtins work as expected 106`] = `""`;
 
-exports[`Builtins work as expected 69`] = `
+exports[`Builtins work as expected 107`] = `
 "
       list(1, 2);
       "
 `;
 
-exports[`Builtins work as expected 70`] = `""`;
+exports[`Builtins work as expected 108`] = `""`;
 
-exports[`Builtins work as expected 71`] = `
+exports[`Builtins work as expected 109`] = `
 "
       is_list(1);
       "
 `;
 
-exports[`Builtins work as expected 72`] = `""`;
+exports[`Builtins work as expected 110`] = `""`;
 
-exports[`Builtins work as expected 73`] = `
+exports[`Builtins work as expected 111`] = `
 "
       is_list(pair(1, 2));
       "
 `;
 
-exports[`Builtins work as expected 74`] = `""`;
+exports[`Builtins work as expected 112`] = `""`;
 
-exports[`Builtins work as expected 75`] = `
+exports[`Builtins work as expected 113`] = `
 "
       is_list(list(1, 2));
       "
 `;
 
-exports[`Builtins work as expected 76`] = `""`;
+exports[`Builtins work as expected 114`] = `""`;
 
-exports[`Builtins work as expected 77`] = `
+exports[`Builtins work as expected 115`] = `
 "
       head(pair(1, 2));
       "
 `;
 
-exports[`Builtins work as expected 78`] = `""`;
+exports[`Builtins work as expected 116`] = `""`;
 
-exports[`Builtins work as expected 79`] = `
+exports[`Builtins work as expected 117`] = `
 "
       tail(pair(1, 2));
       "
 `;
 
-exports[`Builtins work as expected 80`] = `""`;
+exports[`Builtins work as expected 118`] = `""`;
 
-exports[`Builtins work as expected 81`] = `
+exports[`Builtins work as expected 119`] = `
 "
       head(null);
       "
 `;
 
-exports[`Builtins work as expected 82`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`;
+exports[`Builtins work as expected 120`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`;
 
-exports[`Builtins work as expected 83`] = `
+exports[`Builtins work as expected 121`] = `
 "
       tail(null);
       "
 `;
 
-exports[`Builtins work as expected 84`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
+exports[`Builtins work as expected 122`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
 
-exports[`Builtins work as expected 85`] = `
+exports[`Builtins work as expected 123`] = `
 "
       head(1);
       "
 `;
 
-exports[`Builtins work as expected 86`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 124`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
 
-exports[`Builtins work as expected 87`] = `
+exports[`Builtins work as expected 125`] = `
 "
       tail(1);
       "
 `;
 
-exports[`Builtins work as expected 88`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 126`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
 
-exports[`Builtins work as expected 89`] = `
+exports[`Builtins work as expected 127`] = `
 "
       length(list(1, 2));
       "
 `;
 
-exports[`Builtins work as expected 90`] = `""`;
+exports[`Builtins work as expected 128`] = `""`;
 
-exports[`Builtins work as expected 91`] = `
+exports[`Builtins work as expected 129`] = `
 "
       length(1);
       "
 `;
 
-exports[`Builtins work as expected 92`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 130`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
