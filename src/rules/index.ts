@@ -7,9 +7,7 @@ import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
 import noAssignmentExpression from './noAssignmentExpression'
-import noAssignReserved from './noAssignReserved'
 import noDeclareMutable from './noDeclareMutable'
-import noDeclareReserved from './noDeclareReserved'
 import noDotAbbreviation from './noDotAbbreviation'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
@@ -21,23 +19,21 @@ import noUpdateAssignment from './noUpdateAssignment'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
 const rules: Array<Rule<es.Node>> = [
+  bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,
-  bracesAroundFor,
-  singleVariableDeclaration,
+  forStatementMustHaveAllParts,
+  noAssignmentExpression,
+  noDeclareMutable,
+  noDotAbbreviation,
   noIfWithoutElse,
   noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
-  noDeclareReserved,
-  noAssignReserved,
-  noDeclareMutable,
-  noUnspecifiedLiteral,
   noNull,
-  forStatementMustHaveAllParts,
-  noAssignmentExpression,
+  noUnspecifiedLiteral,
+  noUnspecifiedOperator,
   noUpdateAssignment,
-  noDotAbbreviation,
-  noUnspecifiedOperator
+  singleVariableDeclaration
 ]
 
 export default rules

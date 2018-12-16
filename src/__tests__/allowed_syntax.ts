@@ -170,6 +170,22 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     ],
 
     [
+      3,
+      `
+      let x = [1, 2, 3];
+      x[1];
+      `
+    ],
+
+    [
+      3,
+      `
+      let x = [1, 2, 3];
+      x[1] = 4;
+      `
+    ],
+
+    [
       100,
       `
       ({});
@@ -195,6 +211,53 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
       `
       ({a: 1, b: 2}).a;
       `
+    ],
+
+    [
+      100,
+      `
+      ({'a': 1, 'b': 2}).a;
+      `
+    ],
+
+    [
+      100,
+      `
+      ({1: 1, 2: 2})['1'];
+      `
+    ],
+
+    [
+      100,
+      `
+      const key = 'a';
+      ({a: 1, b: 2})[key];
+      `
+    ],
+
+    [
+      100,
+      `
+      let x = {a: 1, b: 2};
+      x.a = 3;
+      `
+    ],
+
+    [
+      100,
+      `
+      let x = {a: 1, b: 2};
+      x['a'] = 3;
+      `
+    ],
+
+    [
+      100,
+      `
+      let x = {a: 1, b: 2};
+      const key = 'a';
+      x[key] = 3;
+      `
     ]
   ]
 
@@ -204,7 +267,7 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     const snippet = c[1] as string
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
     const successContext = mockContext(chapter)
-    const parseContext = mockContext(4)
+    const parseContext = mockContext(Math.max(4, chapter))
     const failureContext = mockContext(chapter - 1)
     return runInContext(snippet, successContext, { scheduler }).then(runResult =>
       runInContext(parseSnippet, parseContext, { scheduler }).then(parseResult =>

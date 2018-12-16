@@ -260,6 +260,186 @@ test('Syntaxes are allowed in the chapter they are introduced', () => {
     ],
 
     [
+      100,
+      `
+      is_object(1);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_object(pair(1, 2));
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object([1]);
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object({});
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object({a: 1});
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object(x => x);
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object(display);
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_object(1);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_object('string');
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_object(true);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_NaN(1 / 0);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_NaN(NaN);
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      is_NaN(1);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      is_NaN(x => x);
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      has_own_property({a: 1, b: 2}, 'a');
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      has_own_property({a: 1, b: 2}, 'c');
+      `,
+      true,
+      false
+    ],
+
+    [
+      100,
+      `
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      o.b;
+      `,
+      true,
+      2
+    ],
+
+    [
+      100,
+      `
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      has_own_property(o, 'a');
+      `,
+      true,
+      true
+    ],
+
+    [
+      100,
+      `
+      let o = {a: 1};
+      let o2 = {b: 2};
+      o.__proto__ = o2;
+      has_own_property(o, 'b');
+      `,
+      true,
+      false
+    ],
+
+    [
       3,
       `
       array_length([1]);

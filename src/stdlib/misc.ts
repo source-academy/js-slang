@@ -1,4 +1,3 @@
-/* tslint:disable: ban-types*/
 import { stringify } from '../interop'
 import { Context, Value } from '../types'
 
@@ -23,6 +22,7 @@ export function error_message(value: Value) {
 
 export function timed(
   context: Context,
+  // tslint:disable-next-line:ban-types
   f: Function,
   externalContext: any,
   displayBuiltin: (value: Value, externalContext: any) => Value

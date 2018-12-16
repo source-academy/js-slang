@@ -1,0 +1,415 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`accumulate 1`] = `
+Object {
+  "status": "finished",
+  "value": 10,
+}
+`;
+
+exports[`append 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`assoc 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`assoc not found 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`bad index error list_ref 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad index error list_ref 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`bad index error list_ref 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad index error list_ref 4`] = `"Line 2: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered -1"`;
+
+exports[`bad index error list_ref 5`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad index error list_ref 6`] = `"Line 2: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1.5"`;
+
+exports[`bad index error list_ref 7`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad index error list_ref 8`] = `"Line 2: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1"`;
+
+exports[`bad number error build_list 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error build_list 2`] = `"Line 2: Error: build_list(n, fun) expects a positive integer as argument n, but encountered -1"`;
+
+exports[`bad number error build_list 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error build_list 4`] = `"Line 2: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1.5"`;
+
+exports[`bad number error build_list 5`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error build_list 6`] = `"Line 2: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1"`;
+
+exports[`bad number error enum_list 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error enum_list 2`] = `"Line 2: Error: enum_list(start, end) expects a number as argument start, but encountered 1"`;
+
+exports[`bad number error enum_list 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error enum_list 4`] = `"Line 2: Error: enum_list(start, end) expects a number as argument start, but encountered 1"`;
+
+exports[`bad number error enum_list 5`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`bad number error enum_list 6`] = `"Line 2: Error: enum_list(start, end) expects a number as argument start, but encountered 5"`;
+
+exports[`build_list 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`empty list is null 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`enum_list 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`enum_list with floats 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`filter 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`for_each 1`] = `
+Object {
+  "status": "finished",
+  "value": 6,
+}
+`;
+
+exports[`head works 1`] = `
+Object {
+  "status": "finished",
+  "value": 1,
+}
+`;
+
+exports[`list creates list 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    1,
+    Array [
+      "a string \\"\\"",
+      Array [
+        [Function],
+        Array [
+          [Function],
+          Array [
+            true,
+            Array [
+              3.14,
+              null,
+            ],
+          ],
+        ],
+      ],
+    ],
+  ],
+}
+`;
+
+exports[`list_ref 1`] = `
+Object {
+  "status": "finished",
+  "value": 4,
+}
+`;
+
+exports[`list_to_string 1`] = `
+Object {
+  "status": "finished",
+  "value": "[1, [2, [3, null]]]",
+}
+`;
+
+exports[`map 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`member 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`non-list error accumulate 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error accumulate 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered undefined"`;
+
+exports[`non-list error accumulate 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error accumulate 4`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered undefined"`;
+
+exports[`non-list error append 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error append 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error assoc 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error assoc 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error filter 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error filter 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error for_each 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error for_each 2`] = `"Line 2: Error: for_each expects a list as argument xs, but encountered 1,2,3"`;
+
+exports[`non-list error head 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error head 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error length 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error length 2`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error map 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error map 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error member 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error member 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error remove 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error remove 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error remove_all 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error remove_all 2`] = `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error reverse 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error reverse 2`] = `"Line 2: Error: reverse(xs) expects a list as argument xs, but encountered 1,2,3"`;
+
+exports[`non-list error set_head 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error set_head 2`] = `"Line 2: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error set_tail 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error set_tail 2`] = `"Line 2: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`non-list error tail 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`non-list error tail 2`] = `"Line 2: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`;
+
+exports[`pair creates pair 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    1,
+    "a string \\"\\"",
+  ],
+}
+`;
+
+exports[`remove 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`remove not found 1`] = `
+Object {
+  "status": "finished",
+  "value": Array [
+    1,
+    null,
+  ],
+}
+`;
+
+exports[`remove_all 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`remove_all not found 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`reverse 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`set_head 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`set_tail 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`tail of a 1 element list is null 1`] = `
+Object {
+  "status": "finished",
+  "value": null,
+}
+`;
+
+exports[`tail works 1`] = `
+Object {
+  "status": "finished",
+  "value": "a string \\"\\"",
+}
+`;
