@@ -71,9 +71,10 @@
       "/dist/"
     ],
     "coveragePathIgnorePatterns": [
+      "/dist/",
       "/node_modules/",
       "/src/typings/",
-      "/dist/"
+      "/src/utils/testing.ts"
     ]
   }
 }
