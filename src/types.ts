@@ -1,3 +1,8 @@
+/*
+	This file contains definitions of some interfaces and classes that are used in Source (such as
+	error-related classes).
+*/
+
 /* tslint:disable:interface-functionName max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
@@ -28,6 +33,8 @@ export enum ErrorSeverity {
   ERROR = 'Error'
 }
 
+
+//any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
   type: ErrorType
   severity: ErrorSeverity

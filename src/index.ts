@@ -18,15 +18,24 @@ const DEFAULT_OPTIONS: IOptions = {
 
 //deals with parsing error objects and converting them to strings (for repl at least)
 
-export function parseError(errors: SourceError[]): string {
+export function parseError(errors: SourceError[], verbose?: boolean): string {
+
+	if (verbose === undefined) 
+		verbose = false;
+
   const errorMessagesArr = errors.map(error => {
     const line = error.location ? error.location.start.line : '<unknown>'
 	const explanation = error.explain()
 	const elaboration = error.elaborate();
 
-	//TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
-	//way to display it.
-    return `Line ${line}: ${explanation}\nTo elaborate: ${elaboration}`
+	if (verbose) {
+		//TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
+		//way to display it.
+		return `Line ${line}: ${explanation}\n\nTo elaborate: ${elaboration}\n`
+	}
+	else {
+		return `Line ${line}: ${explanation}`
+	}
   })
   return errorMessagesArr.join('\n')
 }
