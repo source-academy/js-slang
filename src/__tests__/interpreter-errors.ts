@@ -559,8 +559,8 @@ test('Error when accessing inherited property', () => {
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe(
-      "Line 2: Cannot read inherited property constructor of function pair(left, right) {\n" +
-        "\t[implementation hidden]\n}"
+      'Line 2: Cannot read inherited property constructor of function pair(left, right) {\n' +
+        '\t[implementation hidden]\n}'
     )
   })
 })
