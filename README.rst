@@ -6,7 +6,7 @@ js-slang
 .. image:: https://coveralls.io/repos/github/source-academy/js-slang/badge.svg?branch=master
     :target: https://coveralls.io/github/source-academy/js-slang?branch=master
 
-An open-source interpreter for *The Source*.
+An open-source interpreter for the *Source* programming language.
 
 Usage
 -----
@@ -19,3 +19,16 @@ To build,
   $ cd slang
   $ yarn
   $ yarn build
+
+To try out *Source* in a REPL, run
+
+.. code-block::
+
+  $ node dist/repl/repl.js
+
+or alternatively, install js-slang and run
+
+.. code-block::
+
+  $ npm -g install js-slang   # Install js-slang
+  $ js-slang

@@ -3,459 +3,308 @@
 exports[`Parses arrow function assignments properly 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"constant_declaration\\",
-    \\"name\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"y\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 6
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 7
-        }
-      }
-    },
-    \\"value\\": {
-      \\"tag\\": \\"function_definition\\",
-      \\"parameters\\": [
-        {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 10
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 11
-            }
-          }
-        },
-        null
-      ],
-      \\"body\\": {
-        \\"tag\\": \\"return_statement\\",
-        \\"expression\\": {
-          \\"tag\\": \\"application\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"+\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 18
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 19
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"constant_declaration\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"y\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 6 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 7 } } },
+    \\"value\\":
+      { \\"tag\\": \\"function_definition\\",
+        \\"parameters\\":
+          [ { \\"tag\\": \\"name\\",
               \\"name\\": \\"x\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 15
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 16
-                }
-              }
-            },
-            [
-              1,
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 15
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 20
-            }
-          }
-        },
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 15
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 20
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 20
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 21
-      }
-    }
-  },
-  null
-]",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 10 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 11 } } },
+          null ],
+        \\"body\\":
+          { \\"tag\\": \\"return_statement\\",
+            \\"expression\\":
+              { \\"tag\\": \\"application\\",
+                \\"operator\\":
+                  { \\"tag\\": \\"name\\",
+                    \\"name\\": \\"+\\",
+                    \\"loc\\":
+                      { \\"start\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 18 },
+                        \\"end\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 19 } } },
+                \\"operands\\":
+                  [ { \\"tag\\": \\"name\\",
+                      \\"name\\": \\"x\\",
+                      \\"loc\\":
+                        { \\"start\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 15 },
+                          \\"end\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 16 } } },
+                  [ 1,
+                  null ] ],
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 15 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 20 } } },
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 15 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 20 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 20 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 21 } } },
+null ]",
 }
 `;
 
 exports[`Parses arrow function expressions properly 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"function_definition\\",
-    \\"parameters\\": [
-      {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 0
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 1
-          }
-        }
-      },
-      null
-    ],
-    \\"body\\": {
-      \\"tag\\": \\"return_statement\\",
-      \\"expression\\": {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"+\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 8
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 9
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"x\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 5
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 6
-              }
-            }
-          },
-          [
-            1,
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 5
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 10
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 5
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 11
-      }
-    }
-  },
-  null
-]",
+  "value": "[ { \\"tag\\": \\"function_definition\\",
+    \\"parameters\\":
+      [ { \\"tag\\": \\"name\\",
+          \\"name\\": \\"x\\",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 0 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 1 } } },
+      null ],
+    \\"body\\":
+      { \\"tag\\": \\"return_statement\\",
+        \\"expression\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"+\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 8 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 9 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"x\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 5 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 6 } } },
+              [ 1,
+              null ] ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 5 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 10 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 5 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 11 } } },
+null ]",
 }
 `;
 
 exports[`Parses assignment statements 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"assignment\\",
-    \\"name\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"x\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 0
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 1
-        }
-      }
-    },
+  "value": "[ { \\"tag\\": \\"assignment\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"x\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 0 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 1 } } },
     \\"value\\": 5,
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 6
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"assignment\\",
-      \\"name\\": {
-        \\"tag\\": \\"name\\",
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 6 } } },
+[ { \\"tag\\": \\"assignment\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 7
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 8
-          }
-        }
-      },
-      \\"value\\": {
-        \\"tag\\": \\"name\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 7 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 8 } } },
+    \\"value\\":
+      { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 11
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 12
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 7
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 13
-        }
-      }
-    },
-    [
-      {
-        \\"tag\\": \\"conditional_statement\\",
-        \\"predicate\\": true,
-        \\"consequent\\": {
-          \\"tag\\": \\"block\\",
-          \\"body\\": [
-            {
-              \\"tag\\": \\"assignment\\",
-              \\"name\\": {
-                \\"tag\\": \\"name\\",
-                \\"name\\": \\"x\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 26
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 27
-                  }
-                }
-              },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 11 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 12 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 7 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 13 } } },
+[ { \\"tag\\": \\"conditional_statement\\",
+    \\"predicate\\": true,
+    \\"consequent\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"assignment\\",
+              \\"name\\":
+                { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"x\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 26 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 27 } } },
               \\"value\\": 5,
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 26
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 32
-                }
-              }
-            },
-            null
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 24
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 34
-            }
-          }
-        },
-        \\"alternative\\": {
-          \\"tag\\": \\"block\\",
-          \\"body\\": null,
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 40
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 42
-            }
-          }
-        },
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 14
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 42
-          }
-        }
-      },
-      null
-    ]
-  ]
-]",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 26 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 32 } } },
+          null ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 24 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 34 } } },
+    \\"alternative\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\": null,
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 40 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 42 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 14 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 42 } } },
+null ] ] ]",
 }
 `;
 
 exports[`Parses declaration statements 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"constant_declaration\\",
-    \\"name\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"x\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 6
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 7
-        }
-      }
-    },
-    \\"value\\": 5,
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 12
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"variable_declaration\\",
-      \\"name\\": {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"y\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 17
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 18
-          }
-        }
-      },
-      \\"value\\": {
-        \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"constant_declaration\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 21
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 22
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 13
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 23
-        }
-      }
-    },
-    null
-  ]
-]",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 6 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 7 } } },
+    \\"value\\": 5,
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 12 } } },
+[ { \\"tag\\": \\"variable_declaration\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"y\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 17 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 18 } } },
+    \\"value\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"x\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 21 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 22 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 13 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 23 } } },
+null ] ]",
 }
 `;
 
@@ -469,1773 +318,1157 @@ Object {
 exports[`Parses fibonacci 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"constant_declaration\\",
-    \\"name\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"fib\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 9
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 12
-        }
-      }
-    },
-    \\"value\\": {
-      \\"tag\\": \\"function_definition\\",
-      \\"parameters\\": [
-        {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 13
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 14
-            }
-          }
-        },
-        null
-      ],
-      \\"body\\": [
-        {
-          \\"tag\\": \\"return_statement\\",
-          \\"expression\\": {
-            \\"tag\\": \\"conditional_expression\\",
-            \\"predicate\\": {
-              \\"tag\\": \\"application\\",
-              \\"operator\\": {
-                \\"tag\\": \\"name\\",
-                \\"name\\": \\"<=\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 29
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 30
-                  }
-                }
-              },
-              \\"operands\\": [
-                {
-                  \\"tag\\": \\"name\\",
-                  \\"name\\": \\"x\\",
-                  \\"loc\\": {
-                    \\"start\\": {
-                      \\"line\\": 1,
-                      \\"column\\": 25
-                    },
-                    \\"end\\": {
-                      \\"line\\": 1,
-                      \\"column\\": 26
-                    }
-                  }
-                },
-                [
-                  1,
-                  null
-                ]
-              ],
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 25
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 31
-                }
-              }
-            },
-            \\"consequent\\": {
-              \\"tag\\": \\"name\\",
-              \\"name\\": \\"x\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 34
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 35
-                }
-              }
-            },
-            \\"alternative\\": {
-              \\"tag\\": \\"application\\",
-              \\"operator\\": {
-                \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 48
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 49
-                  }
-                }
-              },
-              \\"operands\\": [
-                {
-                  \\"tag\\": \\"application\\",
-                  \\"operator\\": {
-                    \\"tag\\": \\"name\\",
-                    \\"name\\": \\"fib\\",
-                    \\"loc\\": {
-                      \\"start\\": {
-                        \\"line\\": 1,
-                        \\"column\\": 38
-                      },
-                      \\"end\\": {
-                        \\"line\\": 1,
-                        \\"column\\": 41
-                      }
-                    }
-                  },
-                  \\"operands\\": [
-                    {
-                      \\"tag\\": \\"application\\",
-                      \\"operator\\": {
-                        \\"tag\\": \\"name\\",
-                        \\"name\\": \\"-\\",
-                        \\"loc\\": {
-                          \\"start\\": {
-                            \\"line\\": 1,
-                            \\"column\\": 43
-                          },
-                          \\"end\\": {
-                            \\"line\\": 1,
-                            \\"column\\": 44
-                          }
-                        }
-                      },
-                      \\"operands\\": [
-                        {
-                          \\"tag\\": \\"name\\",
-                          \\"name\\": \\"x\\",
-                          \\"loc\\": {
-                            \\"start\\": {
-                              \\"line\\": 1,
-                              \\"column\\": 42
-                            },
-                            \\"end\\": {
-                              \\"line\\": 1,
-                              \\"column\\": 43
-                            }
-                          }
-                        },
-                        [
-                          1,
-                          null
-                        ]
-                      ],
-                      \\"loc\\": {
-                        \\"start\\": {
-                          \\"line\\": 1,
-                          \\"column\\": 42
-                        },
-                        \\"end\\": {
-                          \\"line\\": 1,
-                          \\"column\\": 45
-                        }
-                      }
-                    },
-                    null
-                  ],
-                  \\"loc\\": {
-                    \\"start\\": {
-                      \\"line\\": 1,
-                      \\"column\\": 38
-                    },
-                    \\"end\\": {
-                      \\"line\\": 1,
-                      \\"column\\": 46
-                    }
-                  }
-                },
-                [
-                  {
-                    \\"tag\\": \\"application\\",
-                    \\"operator\\": {
-                      \\"tag\\": \\"name\\",
-                      \\"name\\": \\"fib\\",
-                      \\"loc\\": {
-                        \\"start\\": {
-                          \\"line\\": 1,
-                          \\"column\\": 49
-                        },
-                        \\"end\\": {
-                          \\"line\\": 1,
-                          \\"column\\": 52
-                        }
-                      }
-                    },
-                    \\"operands\\": [
-                      {
-                        \\"tag\\": \\"application\\",
-                        \\"operator\\": {
-                          \\"tag\\": \\"name\\",
-                          \\"name\\": \\"-\\",
-                          \\"loc\\": {
-                            \\"start\\": {
-                              \\"line\\": 1,
-                              \\"column\\": 54
-                            },
-                            \\"end\\": {
-                              \\"line\\": 1,
-                              \\"column\\": 55
-                            }
-                          }
-                        },
-                        \\"operands\\": [
-                          {
-                            \\"tag\\": \\"name\\",
-                            \\"name\\": \\"x\\",
-                            \\"loc\\": {
-                              \\"start\\": {
-                                \\"line\\": 1,
-                                \\"column\\": 53
-                              },
-                              \\"end\\": {
-                                \\"line\\": 1,
-                                \\"column\\": 54
-                              }
-                            }
-                          },
-                          [
-                            2,
-                            null
-                          ]
-                        ],
-                        \\"loc\\": {
-                          \\"start\\": {
-                            \\"line\\": 1,
-                            \\"column\\": 53
-                          },
-                          \\"end\\": {
-                            \\"line\\": 1,
-                            \\"column\\": 56
-                          }
-                        }
-                      },
-                      null
-                    ],
-                    \\"loc\\": {
-                      \\"start\\": {
-                        \\"line\\": 1,
-                        \\"column\\": 49
-                      },
-                      \\"end\\": {
-                        \\"line\\": 1,
-                        \\"column\\": 57
-                      }
-                    }
-                  },
-                  null
-                ]
-              ],
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 38
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 57
-                }
-              }
-            },
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 25
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 57
-              }
-            }
-          },
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 18
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 58
-            }
-          }
-        },
-        null
-      ]
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 60
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"application\\",
-      \\"operator\\": {
-        \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"constant_declaration\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
         \\"name\\": \\"fib\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 61
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 64
-          }
-        }
-      },
-      \\"operands\\": [
-        4,
-        null
-      ],
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 61
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 68
-        }
-      }
-    },
-    null
-  ]
-]",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 9 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 12 } } },
+    \\"value\\":
+      { \\"tag\\": \\"function_definition\\",
+        \\"parameters\\":
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"x\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 13 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 14 } } },
+          null ],
+        \\"body\\":
+          [ { \\"tag\\": \\"return_statement\\",
+              \\"expression\\":
+                { \\"tag\\": \\"conditional_expression\\",
+                  \\"predicate\\":
+                    { \\"tag\\": \\"application\\",
+                      \\"operator\\":
+                        { \\"tag\\": \\"name\\",
+                          \\"name\\": \\"<=\\",
+                          \\"loc\\":
+                            { \\"start\\":
+                                { \\"line\\": 1,
+                                  \\"column\\": 29 },
+                              \\"end\\":
+                                { \\"line\\": 1,
+                                  \\"column\\": 30 } } },
+                      \\"operands\\":
+                        [ { \\"tag\\": \\"name\\",
+                            \\"name\\": \\"x\\",
+                            \\"loc\\":
+                              { \\"start\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 25 },
+                                \\"end\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 26 } } },
+                        [ 1,
+                        null ] ],
+                      \\"loc\\":
+                        { \\"start\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 25 },
+                          \\"end\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 31 } } },
+                  \\"consequent\\":
+                    { \\"tag\\": \\"name\\",
+                      \\"name\\": \\"x\\",
+                      \\"loc\\":
+                        { \\"start\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 34 },
+                          \\"end\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 35 } } },
+                  \\"alternative\\":
+                    { \\"tag\\": \\"application\\",
+                      \\"operator\\":
+                        { \\"tag\\": \\"name\\",
+                          \\"name\\": \\"+\\",
+                          \\"loc\\":
+                            { \\"start\\":
+                                { \\"line\\": 1,
+                                  \\"column\\": 48 },
+                              \\"end\\":
+                                { \\"line\\": 1,
+                                  \\"column\\": 49 } } },
+                      \\"operands\\":
+                        [ { \\"tag\\": \\"application\\",
+                            \\"operator\\":
+                              { \\"tag\\": \\"name\\",
+                                \\"name\\": \\"fib\\",
+                                \\"loc\\":
+                                  { \\"start\\":
+                                      { \\"line\\": 1,
+                                        \\"column\\": 38 },
+                                    \\"end\\":
+                                      { \\"line\\": 1,
+                                        \\"column\\": 41 } } },
+                            \\"operands\\":
+                              [ { \\"tag\\": \\"application\\",
+                                  \\"operator\\":
+                                    { \\"tag\\": \\"name\\",
+                                      \\"name\\": \\"-\\",
+                                      \\"loc\\":
+                                        { \\"start\\":
+                                            { \\"line\\": 1,
+                                              \\"column\\": 43 },
+                                          \\"end\\":
+                                            { \\"line\\": 1,
+                                              \\"column\\": 44 } } },
+                                  \\"operands\\":
+                                    [ { \\"tag\\": \\"name\\",
+                                        \\"name\\": \\"x\\",
+                                        \\"loc\\":
+                                          { \\"start\\":
+                                              { \\"line\\": 1,
+                                                \\"column\\": 42 },
+                                            \\"end\\":
+                                              { \\"line\\": 1,
+                                                \\"column\\": 43 } } },
+                                    [ 1,
+                                    null ] ],
+                                  \\"loc\\":
+                                    { \\"start\\":
+                                        { \\"line\\": 1,
+                                          \\"column\\": 42 },
+                                      \\"end\\":
+                                        { \\"line\\": 1,
+                                          \\"column\\": 45 } } },
+                              null ],
+                            \\"loc\\":
+                              { \\"start\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 38 },
+                                \\"end\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 46 } } },
+                        [ { \\"tag\\": \\"application\\",
+                            \\"operator\\":
+                              { \\"tag\\": \\"name\\",
+                                \\"name\\": \\"fib\\",
+                                \\"loc\\":
+                                  { \\"start\\":
+                                      { \\"line\\": 1,
+                                        \\"column\\": 49 },
+                                    \\"end\\":
+                                      { \\"line\\": 1,
+                                        \\"column\\": 52 } } },
+                            \\"operands\\":
+                              [ { \\"tag\\": \\"application\\",
+                                  \\"operator\\":
+                                    { \\"tag\\": \\"name\\",
+                                      \\"name\\": \\"-\\",
+                                      \\"loc\\":
+                                        { \\"start\\":
+                                            { \\"line\\": 1,
+                                              \\"column\\": 54 },
+                                          \\"end\\":
+                                            { \\"line\\": 1,
+                                              \\"column\\": 55 } } },
+                                  \\"operands\\":
+                                    [ { \\"tag\\": \\"name\\",
+                                        \\"name\\": \\"x\\",
+                                        \\"loc\\":
+                                          { \\"start\\":
+                                              { \\"line\\": 1,
+                                                \\"column\\": 53 },
+                                            \\"end\\":
+                                              { \\"line\\": 1,
+                                                \\"column\\": 54 } } },
+                                    [ 2,
+                                    null ] ],
+                                  \\"loc\\":
+                                    { \\"start\\":
+                                        { \\"line\\": 1,
+                                          \\"column\\": 53 },
+                                      \\"end\\":
+                                        { \\"line\\": 1,
+                                          \\"column\\": 56 } } },
+                              null ],
+                            \\"loc\\":
+                              { \\"start\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 49 },
+                                \\"end\\":
+                                  { \\"line\\": 1,
+                                    \\"column\\": 57 } } },
+                        null ] ],
+                      \\"loc\\":
+                        { \\"start\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 38 },
+                          \\"end\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 57 } } },
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 25 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 57 } } },
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 18 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 58 } } },
+          null ] },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 60 } } },
+[ { \\"tag\\": \\"application\\",
+    \\"operator\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"fib\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 61 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 64 } } },
+    \\"operands\\":
+      [ 4,
+      null ],
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 61 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 68 } } },
+null ] ]",
 }
 `;
 
 exports[`Parses function calls 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"application\\",
-    \\"operator\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"f\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 0
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 1
-        }
-      }
-    },
-    \\"operands\\": [
-      {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 2
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 3
-          }
-        }
-      },
-      null
-    ],
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 5
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"application\\",
-      \\"operator\\": {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"application\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"thrice\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 6
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 12
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"name\\",
-              \\"name\\": \\"thrice\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 13
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 19
-                }
-              }
-            },
-            null
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 6
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 20
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"plus_one\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 21
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 29
-              }
-            }
-          },
-          null
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 6
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 30
-          }
-        }
-      },
-      \\"operands\\": [
-        0,
-        null
-      ],
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 6
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 34
-        }
-      }
-    },
-    null
-  ]
-]",
+  "value": "[ { \\"tag\\": \\"application\\",
+    \\"operator\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"f\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 0 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 1 } } },
+    \\"operands\\":
+      [ { \\"tag\\": \\"name\\",
+          \\"name\\": \\"x\\",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 2 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 3 } } },
+      null ],
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 5 } } },
+[ { \\"tag\\": \\"application\\",
+    \\"operator\\":
+      { \\"tag\\": \\"application\\",
+        \\"operator\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"thrice\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 6 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 12 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"thrice\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 13 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 19 } } },
+              null ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 6 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 20 } } },
+        \\"operands\\":
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"plus_one\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 21 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 29 } } },
+          null ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 6 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 30 } } },
+    \\"operands\\":
+      [ 0,
+      null ],
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 6 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 34 } } },
+null ] ]",
 }
 `;
 
 exports[`Parses if statements 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"conditional_statement\\",
+  "value": "[ { \\"tag\\": \\"conditional_statement\\",
     \\"predicate\\": true,
-    \\"consequent\\": {
-      \\"tag\\": \\"block\\",
-      \\"body\\": [
-        {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"hi\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 12
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 15
-            }
-          }
-        },
-        null
-      ],
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 17
-        }
-      }
-    },
-    \\"alternative\\": {
-      \\"tag\\": \\"block\\",
-      \\"body\\": [
-        {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"haha\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 25
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 30
-            }
-          }
-        },
-        null
-      ],
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 23
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 32
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 32
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"conditional_statement\\",
-      \\"predicate\\": false,
-      \\"consequent\\": {
-        \\"tag\\": \\"block\\",
+    \\"consequent\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"hi\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 12 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 15 } } },
+          null ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 17 } } },
+    \\"alternative\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"haha\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 25 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 30 } } },
+          null ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 23 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 32 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 32 } } },
+[ { \\"tag\\": \\"conditional_statement\\",
+    \\"predicate\\": false,
+    \\"consequent\\":
+      { \\"tag\\": \\"block\\",
         \\"body\\": null,
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 44
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 46
-          }
-        }
-      },
-      \\"alternative\\": {
-        \\"tag\\": \\"block\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 44 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 46 } } },
+    \\"alternative\\":
+      { \\"tag\\": \\"block\\",
         \\"body\\": null,
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 52
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 54
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 33
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 54
-        }
-      }
-    },
-    null
-  ]
-]",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 52 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 54 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 33 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 54 } } },
+null ] ]",
 }
 `;
 
 exports[`Parses infix expressions 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"boolean_operation\\",
-    \\"operator\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"||\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 14
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 15
-        }
-      }
-    },
-    \\"operands\\": [
-      {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"===\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 9
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 10
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"application\\",
-            \\"operator\\": {
-              \\"tag\\": \\"name\\",
-              \\"name\\": \\"+\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 3
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 4
-                }
-              }
-            },
-            \\"operands\\": [
-              3,
-              [
-                5,
-                null
-              ]
-            ],
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 0
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 5
-              }
-            }
-          },
-          [
-            8,
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 0
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 11
-          }
-        }
-      },
-      [
-        {
-          \\"tag\\": \\"boolean_operation\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"&&\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 23
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 24
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"application\\",
-              \\"operator\\": {
-                \\"tag\\": \\"name\\",
-                \\"name\\": \\"!\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 15
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 16
-                  }
-                }
-              },
-              \\"operands\\": [
-                true,
-                null
-              ],
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 15
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 20
-                }
-              }
-            },
-            [
-              false,
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 15
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 29
-            }
-          }
-        },
-        null
-      ]
-    ],
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 30
-      }
-    }
-  },
-  null
-]",
+  "value": "[ { \\"tag\\": \\"boolean_operation\\",
+    \\"operator\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"||\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 14 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 15 } } },
+    \\"operands\\":
+      [ { \\"tag\\": \\"application\\",
+          \\"operator\\":
+            { \\"tag\\": \\"name\\",
+              \\"name\\": \\"===\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 9 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 10 } } },
+          \\"operands\\":
+            [ { \\"tag\\": \\"application\\",
+                \\"operator\\":
+                  { \\"tag\\": \\"name\\",
+                    \\"name\\": \\"+\\",
+                    \\"loc\\":
+                      { \\"start\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 3 },
+                        \\"end\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 4 } } },
+                \\"operands\\":
+                  [ 3,
+                  [ 5,
+                  null ] ],
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 0 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 5 } } },
+            [ 8,
+            null ] ],
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 0 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 11 } } },
+      [ { \\"tag\\": \\"boolean_operation\\",
+          \\"operator\\":
+            { \\"tag\\": \\"name\\",
+              \\"name\\": \\"&&\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 23 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 24 } } },
+          \\"operands\\":
+            [ { \\"tag\\": \\"application\\",
+                \\"operator\\":
+                  { \\"tag\\": \\"name\\",
+                    \\"name\\": \\"!\\",
+                    \\"loc\\":
+                      { \\"start\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 15 },
+                        \\"end\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 16 } } },
+                \\"operands\\":
+                  [ true,
+                  null ],
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 15 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 20 } } },
+            [ false,
+            null ] ],
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 15 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 29 } } },
+      null ] ],
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 30 } } },
+null ]",
 }
 `;
 
 exports[`Parses literals 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  3,
-  [
-    true,
-    [
-      false,
-      [
-        \\"\\",
-        [
-          \\"\\",
-          [
-            \\"bob\\",
-            [
-              1,
-              [
-                20,
-                null
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]
-  ]
-]",
+  "value": "[ 3,
+[ true,
+[ false,
+[ \\"\\",
+[ \\"\\",
+[ \\"bob\\",
+[ 1,
+[ 20,
+null ] ] ] ] ] ] ] ]",
 }
 `;
 
 exports[`Parses loops 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"while_loop\\",
+  "value": "[ { \\"tag\\": \\"while_loop\\",
     \\"predicate\\": true,
-    \\"statements\\": {
-      \\"tag\\": \\"block\\",
-      \\"body\\": [
-        {
-          \\"tag\\": \\"continue_statement\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 15
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 24
-            }
-          }
-        },
-        [
-          {
-            \\"tag\\": \\"break_statement\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 25
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 31
-              }
-            }
-          },
-          null
-        ]
-      ],
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 13
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 33
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 33
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"for_loop\\",
-      \\"initialiser\\": {
-        \\"tag\\": \\"variable_declaration\\",
-        \\"name\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"i\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 43
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 44
-            }
-          }
-        },
+    \\"statements\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"continue_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 15 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 24 } } },
+          [ { \\"tag\\": \\"break_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 25 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 31 } } },
+          null ] ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 13 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 33 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 33 } } },
+[ { \\"tag\\": \\"for_loop\\",
+    \\"initialiser\\":
+      { \\"tag\\": \\"variable_declaration\\",
+        \\"name\\":
+          { \\"tag\\": \\"name\\",
+            \\"name\\": \\"i\\",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 43 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 44 } } },
         \\"value\\": 0,
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 39
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 48
-          }
-        }
-      },
-      \\"predicate\\": {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"<\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 53
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 54
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 50
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 51
-              }
-            }
-          },
-          [
-            1,
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 50
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 55
-          }
-        }
-      },
-      \\"finaliser\\": {
-        \\"tag\\": \\"assignment\\",
-        \\"name\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"i\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 57
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 58
-            }
-          }
-        },
-        \\"value\\": {
-          \\"tag\\": \\"application\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"+\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 64
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 65
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"name\\",
-              \\"name\\": \\"i\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 61
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 62
-                }
-              }
-            },
-            [
-              1,
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 61
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 66
-            }
-          }
-        },
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 57
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 66
-          }
-        }
-      },
-      \\"statements\\": {
-        \\"tag\\": \\"block\\",
-        \\"body\\": [
-          {
-            \\"tag\\": \\"continue_statement\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 70
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 79
-              }
-            }
-          },
-          [
-            {
-              \\"tag\\": \\"break_statement\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 80
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 86
-                }
-              }
-            },
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 68
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 88
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 34
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 88
-        }
-      }
-    },
-    [
-      {
-        \\"tag\\": \\"for_loop\\",
-        \\"initialiser\\": {
-          \\"tag\\": \\"assignment\\",
-          \\"name\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 94
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 95
-              }
-            }
-          },
-          \\"value\\": 0,
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 94
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 99
-            }
-          }
-        },
-        \\"predicate\\": {
-          \\"tag\\": \\"application\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 39 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 48 } } },
+    \\"predicate\\":
+      { \\"tag\\": \\"application\\",
+        \\"operator\\":
+          { \\"tag\\": \\"name\\",
             \\"name\\": \\"<\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 104
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 105
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"name\\",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 53 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 54 } } },
+        \\"operands\\":
+          [ { \\"tag\\": \\"name\\",
               \\"name\\": \\"i\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 101
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 102
-                }
-              }
-            },
-            [
-              1,
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 101
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 106
-            }
-          }
-        },
-        \\"finaliser\\": {
-          \\"tag\\": \\"assignment\\",
-          \\"name\\": {
-            \\"tag\\": \\"name\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 50 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 51 } } },
+          [ 1,
+          null ] ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 50 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 55 } } },
+    \\"finaliser\\":
+      { \\"tag\\": \\"assignment\\",
+        \\"name\\":
+          { \\"tag\\": \\"name\\",
             \\"name\\": \\"i\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 108
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 109
-              }
-            }
-          },
-          \\"value\\": {
-            \\"tag\\": \\"application\\",
-            \\"operator\\": {
-              \\"tag\\": \\"name\\",
-              \\"name\\": \\"+\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 115
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 116
-                }
-              }
-            },
-            \\"operands\\": [
-              {
-                \\"tag\\": \\"name\\",
-                \\"name\\": \\"i\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 112
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 113
-                  }
-                }
-              },
-              [
-                1,
-                null
-              ]
-            ],
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 112
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 117
-              }
-            }
-          },
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 108
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 117
-            }
-          }
-        },
-        \\"statements\\": {
-          \\"tag\\": \\"block\\",
-          \\"body\\": [
-            {
-              \\"tag\\": \\"continue_statement\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 121
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 130
-                }
-              }
-            },
-            [
-              {
-                \\"tag\\": \\"break_statement\\",
-                \\"loc\\": {
-                  \\"start\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 131
-                  },
-                  \\"end\\": {
-                    \\"line\\": 1,
-                    \\"column\\": 137
-                  }
-                }
-              },
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 119
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 139
-            }
-          }
-        },
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 89
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 139
-          }
-        }
-      },
-      null
-    ]
-  ]
-]",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 57 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 58 } } },
+        \\"value\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"+\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 64 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 65 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"i\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 61 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 62 } } },
+              [ 1,
+              null ] ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 61 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 66 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 57 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 66 } } },
+    \\"statements\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"continue_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 70 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 79 } } },
+          [ { \\"tag\\": \\"break_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 80 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 86 } } },
+          null ] ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 68 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 88 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 34 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 88 } } },
+[ { \\"tag\\": \\"for_loop\\",
+    \\"initialiser\\":
+      { \\"tag\\": \\"assignment\\",
+        \\"name\\":
+          { \\"tag\\": \\"name\\",
+            \\"name\\": \\"i\\",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 94 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 95 } } },
+        \\"value\\": 0,
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 94 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 99 } } },
+    \\"predicate\\":
+      { \\"tag\\": \\"application\\",
+        \\"operator\\":
+          { \\"tag\\": \\"name\\",
+            \\"name\\": \\"<\\",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 104 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 105 } } },
+        \\"operands\\":
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"i\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 101 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 102 } } },
+          [ 1,
+          null ] ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 101 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 106 } } },
+    \\"finaliser\\":
+      { \\"tag\\": \\"assignment\\",
+        \\"name\\":
+          { \\"tag\\": \\"name\\",
+            \\"name\\": \\"i\\",
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 108 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 109 } } },
+        \\"value\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"+\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 115 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 116 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"i\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 112 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 113 } } },
+              [ 1,
+              null ] ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 112 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 117 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 108 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 117 } } },
+    \\"statements\\":
+      { \\"tag\\": \\"block\\",
+        \\"body\\":
+          [ { \\"tag\\": \\"continue_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 121 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 130 } } },
+          [ { \\"tag\\": \\"break_statement\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 131 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 137 } } },
+          null ] ],
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 119 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 139 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 89 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 139 } } },
+null ] ] ]",
 }
 `;
 
 exports[`Parses multi-argument arrow function assignments properly 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"constant_declaration\\",
-    \\"name\\": {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"y\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 6
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 7
-        }
-      }
-    },
-    \\"value\\": {
-      \\"tag\\": \\"function_definition\\",
-      \\"parameters\\": [
-        {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 11
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 12
-            }
-          }
-        },
-        [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"y\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 14
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 15
-              }
-            }
-          },
-          null
-        ]
-      ],
-      \\"body\\": {
-        \\"tag\\": \\"return_statement\\",
-        \\"expression\\": {
-          \\"tag\\": \\"application\\",
-          \\"operator\\": {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"+\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 23
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 24
-              }
-            }
-          },
-          \\"operands\\": [
-            {
-              \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"constant_declaration\\",
+    \\"name\\":
+      { \\"tag\\": \\"name\\",
+        \\"name\\": \\"y\\",
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 6 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 7 } } },
+    \\"value\\":
+      { \\"tag\\": \\"function_definition\\",
+        \\"parameters\\":
+          [ { \\"tag\\": \\"name\\",
               \\"name\\": \\"x\\",
-              \\"loc\\": {
-                \\"start\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 20
-                },
-                \\"end\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 21
-                }
-              }
-            },
-            [
-              1,
-              null
-            ]
-          ],
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 20
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 25
-            }
-          }
-        },
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 20
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 25
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 25
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 26
-      }
-    }
-  },
-  null
-]",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 11 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 12 } } },
+          [ { \\"tag\\": \\"name\\",
+              \\"name\\": \\"y\\",
+              \\"loc\\":
+                { \\"start\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 14 },
+                  \\"end\\":
+                    { \\"line\\": 1,
+                      \\"column\\": 15 } } },
+          null ] ],
+        \\"body\\":
+          { \\"tag\\": \\"return_statement\\",
+            \\"expression\\":
+              { \\"tag\\": \\"application\\",
+                \\"operator\\":
+                  { \\"tag\\": \\"name\\",
+                    \\"name\\": \\"+\\",
+                    \\"loc\\":
+                      { \\"start\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 23 },
+                        \\"end\\":
+                          { \\"line\\": 1,
+                            \\"column\\": 24 } } },
+                \\"operands\\":
+                  [ { \\"tag\\": \\"name\\",
+                      \\"name\\": \\"x\\",
+                      \\"loc\\":
+                        { \\"start\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 20 },
+                          \\"end\\":
+                            { \\"line\\": 1,
+                              \\"column\\": 21 } } },
+                  [ 1,
+                  null ] ],
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 20 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 25 } } },
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 20 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 25 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 25 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 26 } } },
+null ]",
 }
 `;
 
 exports[`Parses multi-argument arrow function expressions properly 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"function_definition\\",
-    \\"parameters\\": [
-      {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 1
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 2
-          }
-        }
-      },
-      [
-        {
-          \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"function_definition\\",
+    \\"parameters\\":
+      [ { \\"tag\\": \\"name\\",
+          \\"name\\": \\"x\\",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 1 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 2 } } },
+      [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"y\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 4
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 5
-            }
-          }
-        },
-        null
-      ]
-    ],
-    \\"body\\": {
-      \\"tag\\": \\"return_statement\\",
-      \\"expression\\": {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"+\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 13
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 14
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"x\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 10
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 11
-              }
-            }
-          },
-          [
-            1,
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 10
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 15
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 15
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 16
-      }
-    }
-  },
-  null
-]",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 4 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 5 } } },
+      null ] ],
+    \\"body\\":
+      { \\"tag\\": \\"return_statement\\",
+        \\"expression\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"+\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 13 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 14 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"x\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 10 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 11 } } },
+              [ 1,
+              null ] ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 10 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 15 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 15 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 16 } } },
+null ]",
 }
 `;
 
 exports[`Parses multi-argument arrow function expressions properly 2`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"function_definition\\",
-    \\"parameters\\": [
-      {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 1
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 2
-          }
-        }
-      },
-      [
-        {
-          \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"function_definition\\",
+    \\"parameters\\":
+      [ { \\"tag\\": \\"name\\",
+          \\"name\\": \\"x\\",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 1 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 2 } } },
+      [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"y\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 4
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 5
-            }
-          }
-        },
-        null
-      ]
-    ],
-    \\"body\\": {
-      \\"tag\\": \\"return_statement\\",
-      \\"expression\\": {
-        \\"tag\\": \\"application\\",
-        \\"operator\\": {
-          \\"tag\\": \\"name\\",
-          \\"name\\": \\"+\\",
-          \\"loc\\": {
-            \\"start\\": {
-              \\"line\\": 1,
-              \\"column\\": 13
-            },
-            \\"end\\": {
-              \\"line\\": 1,
-              \\"column\\": 14
-            }
-          }
-        },
-        \\"operands\\": [
-          {
-            \\"tag\\": \\"name\\",
-            \\"name\\": \\"x\\",
-            \\"loc\\": {
-              \\"start\\": {
-                \\"line\\": 1,
-                \\"column\\": 10
-              },
-              \\"end\\": {
-                \\"line\\": 1,
-                \\"column\\": 11
-              }
-            }
-          },
-          [
-            1,
-            null
-          ]
-        ],
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 10
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 15
-          }
-        }
-      },
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 10
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 15
-        }
-      }
-    },
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 16
-      }
-    }
-  },
-  null
-]",
+          \\"loc\\":
+            { \\"start\\":
+                { \\"line\\": 1,
+                  \\"column\\": 4 },
+              \\"end\\":
+                { \\"line\\": 1,
+                  \\"column\\": 5 } } },
+      null ] ],
+    \\"body\\":
+      { \\"tag\\": \\"return_statement\\",
+        \\"expression\\":
+          { \\"tag\\": \\"application\\",
+            \\"operator\\":
+              { \\"tag\\": \\"name\\",
+                \\"name\\": \\"+\\",
+                \\"loc\\":
+                  { \\"start\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 13 },
+                    \\"end\\":
+                      { \\"line\\": 1,
+                        \\"column\\": 14 } } },
+            \\"operands\\":
+              [ { \\"tag\\": \\"name\\",
+                  \\"name\\": \\"x\\",
+                  \\"loc\\":
+                    { \\"start\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 10 },
+                      \\"end\\":
+                        { \\"line\\": 1,
+                          \\"column\\": 11 } } },
+              [ 1,
+              null ] ],
+            \\"loc\\":
+              { \\"start\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 10 },
+                \\"end\\":
+                  { \\"line\\": 1,
+                    \\"column\\": 15 } } },
+        \\"loc\\":
+          { \\"start\\":
+              { \\"line\\": 1,
+                \\"column\\": 10 },
+            \\"end\\":
+              { \\"line\\": 1,
+                \\"column\\": 15 } } },
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 16 } } },
+null ]",
 }
 `;
 
 exports[`Parses name expression 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"x\\",
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 2
-      }
-    }
-  },
-  null
-]",
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 2 } } },
+null ]",
 }
 `;
 
 exports[`Parses name expressions 1`] = `
 Object {
   "status": "finished",
-  "value": "[
-  {
-    \\"tag\\": \\"name\\",
+  "value": "[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"x\\",
-    \\"loc\\": {
-      \\"start\\": {
-        \\"line\\": 1,
-        \\"column\\": 0
-      },
-      \\"end\\": {
-        \\"line\\": 1,
-        \\"column\\": 2
-      }
-    }
-  },
-  [
-    {
-      \\"tag\\": \\"name\\",
-      \\"name\\": \\"moreNames\\",
-      \\"loc\\": {
-        \\"start\\": {
-          \\"line\\": 1,
-          \\"column\\": 3
-        },
-        \\"end\\": {
-          \\"line\\": 1,
-          \\"column\\": 13
-        }
-      }
-    },
-    [
-      {
-        \\"tag\\": \\"name\\",
-        \\"name\\": \\"undefined\\",
-        \\"loc\\": {
-          \\"start\\": {
-            \\"line\\": 1,
-            \\"column\\": 14
-          },
-          \\"end\\": {
-            \\"line\\": 1,
-            \\"column\\": 24
-          }
-        }
-      },
-      null
-    ]
-  ]
-]",
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 0 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 2 } } },
+[ { \\"tag\\": \\"name\\",
+    \\"name\\": \\"moreNames\\",
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 3 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 13 } } },
+[ { \\"tag\\": \\"name\\",
+    \\"name\\": \\"undefined\\",
+    \\"loc\\":
+      { \\"start\\":
+          { \\"line\\": 1,
+            \\"column\\": 14 },
+        \\"end\\":
+          { \\"line\\": 1,
+            \\"column\\": 24 } } },
+null ] ] ]",
 }
 `;

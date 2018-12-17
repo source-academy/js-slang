@@ -1,9 +1,9 @@
+import { stringify } from './interop'
 import * as list from './stdlib/list'
-import * as parser from './stdlib/parser'
-import * as misc from './stdlib/misc'
-import { Context, CustomBuiltIns, Value } from './types'
-import { toString } from '.'
 import { list_to_vector } from './stdlib/list'
+import * as misc from './stdlib/misc'
+import * as parser from './stdlib/parser'
+import { Context, CustomBuiltIns, Value } from './types'
 
 const GLOBAL = typeof window === 'undefined' ? global : window
 
@@ -12,6 +12,12 @@ const createEmptyRuntime = () => ({
   frames: [],
   value: undefined,
   nodes: []
+})
+
+const createGlobalFrame = () => ({
+  parent: null,
+  name: 'global',
+  environment: {}
 })
 
 export const createEmptyContext = <T>(
@@ -34,21 +40,32 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
     context.runtime.frames = []
   }
   if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push({
-      parent: null,
-      name: 'global',
-      environment: {}
-    })
+    context.runtime.frames.push(createGlobalFrame())
   }
 }
 
-export const defineSymbol = (context: Context, name: string, value: Value) => {
+const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalFrame = context.runtime.frames[0]
   Object.defineProperty(globalFrame.environment, name, {
     value,
     writable: false,
     enumerable: true
   })
+}
+
+// Defines a builtin in the given context
+// If the builtin is a function, wrap it such that its toString hides the implementation
+export const defineBuiltin = (context: Context, name: string, value: Value) => {
+  if (typeof value === 'function') {
+    const wrapped = (...args: any) => value(...args)
+    const funName = name.split('(')[0].trim()
+    const repr = `function ${name} {\n\t[implementation hidden]\n}`
+    wrapped.toString = () => repr
+
+    defineSymbol(context, funName, wrapped)
+  } else {
+    defineSymbol(context, name, value)
+  }
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
@@ -61,118 +78,106 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 
 /**
  * Imports builtins from standard and external libraries.
- *
- * For externalBuiltIns that need to be curried, the __SOURCE__
- * property must be defined in the currying function.
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
-  /* Defining the __SOURCE__ property in the curried functions. */
-  let display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
-  display.__SOURCE__ = externalBuiltIns.display.__SOURCE__
-  let prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
-  prompt.__SOURCE__ = externalBuiltIns.prompt.__SOURCE__
-  let alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
-  alert.__SOURCE__ = externalBuiltIns.alert.__SOURCE__
-  let visualiseList = (list: any) => externalBuiltIns.visualiseList(list, context.externalContext)
-  visualiseList.__SOURCE__ = externalBuiltIns.visualiseList.__SOURCE__
+  const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
+  const display = (v: Value) => (rawDisplay(stringify(v)), v)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
-    defineSymbol(context, 'runtime', misc.runtime)
-    defineSymbol(context, 'display', display)
-    defineSymbol(context, 'error', misc.error_message)
-    defineSymbol(context, 'prompt', prompt)
-    defineSymbol(context, 'is_number', misc.is_number)
-    defineSymbol(context, 'is_string', misc.is_string)
-    defineSymbol(context, 'is_function', misc.is_function)
-    defineSymbol(context, 'is_boolean', misc.is_boolean)
-    defineSymbol(context, 'is_undefined', misc.is_undefined)
-    defineSymbol(context, 'parse_int', misc.parse_int)
-    defineSymbol(context, 'undefined', undefined)
-    defineSymbol(context, 'NaN', NaN)
-    defineSymbol(context, 'Infinity', Infinity)
+    defineBuiltin(context, 'runtime()', misc.runtime)
+    defineBuiltin(context, 'display(val)', display)
+    defineBuiltin(context, 'raw_display(str)', rawDisplay)
+    defineBuiltin(context, 'stringify(val)', stringify)
+    defineBuiltin(context, 'error(str)', misc.error_message)
+    defineBuiltin(context, 'prompt(str)', prompt)
+    defineBuiltin(context, 'is_number(val)', misc.is_number)
+    defineBuiltin(context, 'is_string(val)', misc.is_string)
+    defineBuiltin(context, 'is_function(val)', misc.is_function)
+    defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
+    defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
+    defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+    defineBuiltin(context, 'undefined', undefined)
+    defineBuiltin(context, 'NaN', NaN)
+    defineBuiltin(context, 'Infinity', Infinity)
     // Define all Math libraries
-    const objs = Object.getOwnPropertyNames(Math)
-    for (const i in objs) {
-      if (objs.hasOwnProperty(i)) {
-        const val = objs[i]
-        if (typeof Math[val] === 'function') {
-          defineSymbol(context, 'math_' + val, Math[val].bind())
-        } else {
-          defineSymbol(context, 'math_' + val, Math[val])
-        }
-      }
+    const props = Object.getOwnPropertyNames(Math)
+    for (const prop of props) {
+      defineBuiltin(context, 'math_' + prop, Math[prop])
     }
   }
 
   if (context.chapter >= 2) {
     // List library
-    defineSymbol(context, 'null', null)
-    defineSymbol(context, 'pair', list.pair)
-    defineSymbol(context, 'is_pair', list.is_pair)
-    defineSymbol(context, 'head', list.head)
-    defineSymbol(context, 'tail', list.tail)
-    defineSymbol(context, 'is_null', list.is_null)
-    defineSymbol(context, 'is_list', list.is_list)
-    defineSymbol(context, 'list', list.list)
-    defineSymbol(context, 'length', list.length)
-    defineSymbol(context, 'map', list.map)
-    defineSymbol(context, 'build_list', list.build_list)
-    defineSymbol(context, 'for_each', list.for_each)
-    defineSymbol(context, 'list_to_string', list.list_to_string)
-    defineSymbol(context, 'reverse', list.reverse)
-    defineSymbol(context, 'append', list.append)
-    defineSymbol(context, 'member', list.member)
-    defineSymbol(context, 'remove', list.remove)
-    defineSymbol(context, 'remove_all', list.remove_all)
-    defineSymbol(context, 'filter', list.filter)
-    defineSymbol(context, 'enum_list', list.enum_list)
-    defineSymbol(context, 'list_ref', list.list_ref)
-    defineSymbol(context, 'accumulate', list.accumulate)
-    defineSymbol(context, 'equal', list.equal)
-    defineSymbol(context, 'draw_list', visualiseList)
+    defineBuiltin(context, 'null', null)
+    defineBuiltin(context, 'pair(left, right)', list.pair)
+    defineBuiltin(context, 'is_pair(val)', list.is_pair)
+    defineBuiltin(context, 'head(xs)', list.head)
+    defineBuiltin(context, 'tail(xs)', list.tail)
+    defineBuiltin(context, 'is_null(val)', list.is_null)
+    defineBuiltin(context, 'is_list(val)', list.is_list)
+    defineBuiltin(context, 'list(...values)', list.list)
+    defineBuiltin(context, 'length(xs)', list.length)
+    defineBuiltin(context, 'map(fun, xs)', list.map)
+    defineBuiltin(context, 'build_list(n, fun)', list.build_list)
+    defineBuiltin(context, 'for_each(fun, xs)', list.for_each)
+    defineBuiltin(context, 'list_to_string(xs)', list.list_to_string)
+    defineBuiltin(context, 'reverse(xs)', list.reverse)
+    defineBuiltin(context, 'append(xs, ys)', list.append)
+    defineBuiltin(context, 'member(val, xs)', list.member)
+    defineBuiltin(context, 'remove(val, xs)', list.remove)
+    defineBuiltin(context, 'remove_all(val, xs)', list.remove_all)
+    defineBuiltin(context, 'filter(pred, xs)', list.filter)
+    defineBuiltin(context, 'enum_list(start, end)', list.enum_list)
+    defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
+    defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
+    defineBuiltin(context, 'equal(value1, value2)', list.equal)
+    defineBuiltin(context, 'draw_list(xs)', visualiseList)
   }
 
   if (context.chapter >= 3) {
-    defineSymbol(context, 'set_head', list.set_head)
-    defineSymbol(context, 'set_tail', list.set_tail)
-    defineSymbol(context, 'array_length', misc.array_length)
-    defineSymbol(context, 'is_array', misc.is_array)
+    defineBuiltin(context, 'set_head(xs, val)', list.set_head)
+    defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
+    defineBuiltin(context, 'array_length(arr)', misc.array_length)
+    defineBuiltin(context, 'is_array(val)', misc.is_array)
   }
 
   if (context.chapter >= 4) {
-    defineSymbol(context, 'stringify', JSON.stringify)
-    defineSymbol(context, 'parse', parser.parse)
-    defineSymbol(context, 'apply_in_underlying_javascript', function(fun: Function, args: Value) {
-      return fun.apply(fun, list_to_vector(args))
-    })
+    defineBuiltin(context, 'parse(program_string)', (str: string) =>
+      parser.parse(str, createContext(context.chapter))
+    )
+    defineBuiltin(
+      context,
+      'apply_in_underlying_javascript(fun, args)',
+      // tslint:disable-next-line:ban-types
+      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
+    )
   }
 
   if (context.chapter >= 100) {
-    defineSymbol(context, 'is_object', misc.is_object)
-  }
-
-  if (context.chapter >= Infinity) {
-    // previously week 4
-    defineSymbol(context, 'alert', alert)
+    defineBuiltin(context, 'is_object(val)', misc.is_object)
+    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
+    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
+    defineBuiltin(context, 'alert(val)', alert)
     // tslint:disable-next-line:ban-types
-    defineSymbol(context, 'timed', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.display)
+    defineBuiltin(context, 'timed(fun)', (f: Function) =>
+      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
-    // previously week 5
-    defineSymbol(context, 'assoc', list.assoc)
-    // previously week 6
+    defineBuiltin(context, 'assoc(val, xs)', list.assoc)
   }
 }
 
 const defaultBuiltIns: CustomBuiltIns = {
-  display: misc.display,
+  rawDisplay: misc.rawDisplay,
   // See issue #5
-  prompt: (v: Value, e: any) => toString(v),
+  prompt: misc.rawDisplay,
   // See issue #11
-  alert: misc.display,
-  visualiseList: (list: any) => {
+  alert: misc.rawDisplay,
+  visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }

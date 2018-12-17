@@ -2,42 +2,38 @@ import * as es from 'estree'
 
 import { Rule } from '../types'
 
+import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
-import bracesAroundFor from './bracesAroundFor'
+import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
+import noAssignmentExpression from './noAssignmentExpression'
 import noDeclareMutable from './noDeclareMutable'
-import noDeclareReserved from './noDeclareReserved'
-import noAssignReserved from './noAssignReserved'
+import noDotAbbreviation from './noDotAbbreviation'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
-import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noNull from './noNull'
+import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
-import singleVariableDeclaration from './singleVariableDeclaration'
-import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
-import noAssignmentExpression from './noAssignmentExpression'
 import noUpdateAssignment from './noUpdateAssignment'
-import noDotAbbreviation from './noDotAbbreviation'
+import singleVariableDeclaration from './singleVariableDeclaration'
 
 const rules: Array<Rule<es.Node>> = [
+  bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,
-  bracesAroundFor,
-  singleVariableDeclaration,
+  forStatementMustHaveAllParts,
+  noAssignmentExpression,
+  noDeclareMutable,
+  noDotAbbreviation,
   noIfWithoutElse,
   noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
-  noDeclareReserved,
-  noAssignReserved,
-  noDeclareMutable,
-  noUnspecifiedLiteral,
   noNull,
-  forStatementMustHaveAllParts,
-  noAssignmentExpression,
+  noUnspecifiedLiteral,
+  noUnspecifiedOperator,
   noUpdateAssignment,
-  noDotAbbreviation,
-  noUnspecifiedOperator
+  singleVariableDeclaration
 ]
 
 export default rules

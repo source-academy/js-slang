@@ -1,16 +1,13 @@
-/* tslint:disable:interface-functionName max-classes-per-file */
-
+/* tslint:disable:max-classes-per-file */
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
-
-import { closureToJS } from './interop'
 
 /**
  * Defines functions that act as built-ins, but might rely on
  * different implementations. e.g display() in a web application.
  */
 export interface CustomBuiltIns {
-  display: (value: Value, externalContext: any) => void
+  rawDisplay: (value: Value, externalContext: any) => void
   prompt: (value: Value, externalContext: any) => string | null
   alert: (value: Value, externalContext: any) => void
   /* Used for list visualisation. See #12 */
@@ -90,95 +87,6 @@ export interface Frame {
   callExpression?: es.CallExpression
   environment: Environment
   thisContext?: Value
-}
-
-class Callable extends Function {
-  constructor(f: any) {
-    super()
-    return Object.setPrototypeOf(f, new.target.prototype)
-  }
-}
-
-/**
- * Models function value in the interpreter environment.
- */
-export class Closure extends Callable {
-  /** Keep track how many lambdas are created */
-  private static lambdaCtr = 0
-
-  /** Unique ID defined for anonymous closure */
-  public functionName: string
-
-  /** Fake closure function */
-  // tslint:disable-next-line:ban-types
-  public fun: Function
-
-  /** The original node that created this Closure **/
-  public originalNode: es.Function
-
-  constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
-    super(function(this: any, ...args: any[]) {
-      return funJS.apply(this, args)
-    })
-    this.originalNode = node
-    try {
-      if (this.node.id) {
-        this.functionName = this.node.id.name
-      }
-    } catch (e) {
-      this.functionName = `Anonymous${++Closure.lambdaCtr}`
-    }
-    const funJS = closureToJS(this, context, this.functionName)
-    this.fun = funJS
-  }
-
-  static makeFromArrowFunction(node: es.ArrowFunctionExpression, frame: Frame, context: Context) {
-    function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
-      return body.type !== 'BlockStatement'
-    }
-
-    let closure = null
-    if (isExpressionBody(node.body)) {
-      closure = new Closure(
-        <es.FunctionExpression>{
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: <es.BlockStatement>{
-            type: 'BlockStatement',
-            loc: node.body.loc,
-            body: [
-              {
-                type: 'ReturnStatement',
-                loc: node.body.loc,
-                argument: node.body
-              }
-            ]
-          }
-        },
-        frame,
-        context
-      )
-    } else {
-      closure = new Closure(
-        <es.FunctionExpression>{
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: node.body
-        },
-        frame,
-        context
-      )
-    }
-
-    // Set the closure's nod to point back at the original one
-    closure.originalNode = node
-
-    return closure
-  }
 }
 
 export interface Error {

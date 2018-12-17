@@ -1,351 +1,325 @@
-import { stripIndent } from 'common-tags'
-import { mockContext } from '../mocks/context'
-import { parseError, runInContext } from '../index'
-import { Finished } from '../types'
-import { defineSymbol } from '../createContext'
+import {
+  expectError,
+  expectErrorNoSnapshot,
+  expectResult,
+  expectToLooselyMatchJS,
+  expectToMatchJS,
+  stripIndent
+} from '../utils/testing'
 
 test('Empty code returns undefined', () => {
-  const code = ''
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(undefined)
-  })
+  return expectResult('').toBe(undefined)
 })
 
 test('Single string self-evaluates to itself', () => {
-  const code = "'42';"
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('42')
-  })
-})
-
-test('Multi-dimensional arrays display properly', () => {
-  const code = `
-    function a() {}
-    ""+[1, a, 3, [() => 1, 5]];
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
-  })
+  return expectResult("'42';").toBe('42')
 })
 
 test('Allow display to return value it is displaying', () => {
-  const code = '25*(display(1+1));'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(50)
-  })
+  return expectResult('25*(display(1+1));').toBe(50)
 })
 
 test('Single number self-evaluates to itself', () => {
-  const code = '42;'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(42)
-  })
+  return expectResult('42;').toBe(42)
 })
 
 test('Single boolean self-evaluates to itself', () => {
-  const code = 'true;'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
+  return expectResult('true;').toBe(true)
 })
 
 test('Arrow function definition returns itself', () => {
-  const code = '() => 42;'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toMatchSnapshot()
-  })
+  return expectResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
 })
 
-test('list now uses Source toString instead of native when +ed with another string', () => {
-  const code = '"123" + list(4, 5, 6);'
-  const context = mockContext(2)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('123[4, [5, [6, null]]]')
-  })
+test('Builtins hide their implementation when stringify', () => {
+  return expectResult('stringify(pair);', 2).toMatchInlineSnapshot(`
+"function pair(left, right) {
+	[implementation hidden]
+}"
+`)
 })
 
-test('__SOURCE__ functions now uses Source toString instead of native when +ed with another string', () => {
-  const code = ' pair + "123";'
-  const context = mockContext(2)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+test('Builtins hide their implementation when toString', () => {
+  return expectResult('""+pair;', 2).toMatchInlineSnapshot(`
+"function pair(left, right) {
+	[implementation hidden]
+}"
+`)
+})
+
+test('Objects toString matches up with JS', () => {
+  return expectToMatchJS('"" + ({a: 1});', 100)
+})
+
+test('Arrays toString matches up with JS', () => {
+  return expectToMatchJS('"" + [1, 2];', 3)
+})
+
+test('functions toString (mostly) matches up with JS', () => {
+  return expectToLooselyMatchJS(stripIndent`
+  function f(x) {
+    return 5;
+  }
+  "" + (a=>b) + f;
+  `)
+})
+
+test('primitives toString matches up with JS', () => {
+  return expectToMatchJS('"" + true + false + 1 + 1.5 + null + undefined + NaN;', 2)
 })
 
 test('Factorial arrow function', () => {
-  const code = stripIndent`
+  return expectResult(stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(120)
-  })
+  `).toBe(120)
 })
 
 test('parseError for missing semicolon', () => {
-  const code = '42'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  return expectError('42').toMatchInlineSnapshot(
+    `"Line 1: Missing semicolon at the end of statement"`
+  )
 })
 
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  const code = '(x => x(x)(x))(x => x(x)(x));'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  return expectError('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
+"Line 1: Infinite recursion
+  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
+`)
 }, 30000)
 
 test('Simple function infinite recursion represents CallExpression well', () => {
-  const code = 'function f(x) {return x(x)(x);} f(f);'
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  return expectError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(`
+"Line 1: Infinite recursion
+  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+})..  x(function f(x) {
+  return x(x)(x);
+}).."
+`)
 }, 30000)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
-  const code = `
-  function test(){
-    const constant = 3;
-    constant = 4;
-    return constant;
-  }
-  test();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('error')
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  return expectError(
+    stripIndent`
+    function test(){
+      const constant = 3;
+      constant = 4;
+      return constant;
+    }
+    test();
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant"`)
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  const code = `
-  function test(){
-    let variable = false;
-    variable = true;
-    return variable;
-  }
-  test();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
+  return expectResult(
+    stripIndent`
+    function test() {
+      let variable = false;
+      variable = true;
+      return variable;
+    }
+    test();
+  `,
+    3
+  ).toBe(true)
 })
 
 test('Arrow function infinite recursion with list args represents CallExpression well', () => {
-  const code = `
+  return expectError(
+    stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
-  `
-  const context = mockContext(2)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  `,
+    2
+  ).toMatchInlineSnapshot(`
+"Line 1: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+`)
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
-  const code = `
+  return expectError(
+    stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
-  `
-  const context = mockContext(2)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toMatchSnapshot()
-  })
+  `,
+    2
+  ).toMatchInlineSnapshot(`
+"Line 1: Infinite recursion
+  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+`)
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
-  const code = `
+  return expectErrorNoSnapshot(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toEqual(
-      expect.stringMatching(/^Line 2: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/)
-    )
-  })
+  `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
-  const code = `
+  return expectErrorNoSnapshot(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    const errors = parseError(context.errors)
-    expect(errors).toEqual(
-      expect.stringMatching(/^Line 2: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/)
-    )
-  })
+  `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {
-  const code = `
-  function t(x, y, z) {
-    return x + y + z;
-  }
-  identity(t) === t && t(1, 2, 3) === 6;
-  `
-  const context = mockContext(4)
-  defineSymbol(context, 'identity', (x: any) => x)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
-})
-
-test('Multi-dimensional arrays display properly', () => {
-  const code = `
-    function a() {} 
-    ""+[1, a, 3, [() => 1, 5]];
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('[1, function a() {}, 3, [() => 1, 5]]')
-  })
+  return expectResult(
+    stripIndent`
+    function t(x, y, z) {
+      return x + y + z;
+    }
+    identity(t) === t && t(1, 2, 3) === 6;
+  `,
+    1,
+    { 'identity(x)': (x: any) => x }
+  ).toBe(true)
 })
 
 test('Simple object assignment and retrieval', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     const o = {};
     o.a = 1;
     o.a;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `,
+    100
+  ).toBe(1)
 })
 
 test('Deep object assignment and retrieval', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     const o = {};
     o.a = {};
     o.a.b = {};
     o.a.b.c = "string";
     o.a.b.c;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe('string')
-  })
+  `,
+    100
+  ).toBe('string')
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  const code = `
-  apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(60)
-  })
+  return expectResult(
+    stripIndent`
+    apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
+  `,
+    4
+  ).toBe(60)
 })
 
 test('Test equal for primitives', () => {
-  const code = `
-  equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
+  return expectResult(
+    stripIndent`
+    equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
+  `,
+    2
+  ).toBe(true)
 })
 
 test('Test equal for lists', () => {
-  const code = `
-  equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
+  return expectResult(
+    stripIndent`
+    equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
+  `,
+    2
+  ).toBe(true)
 })
 
 test('Test equal for different lists', () => {
-  const code = `
-  !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(true)
-  })
+  return expectResult(
+    stripIndent`
+    !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
+  `,
+    2
+  ).toBe(true)
+})
+
+test('true if with empty if works', () => {
+  return expectResult(stripIndent`
+    if (true) {
+    } else {
+    }
+  `).toBe(undefined)
+})
+
+test('true if with nonempty if works', () => {
+  return expectResult(stripIndent`
+    if (true) {
+      1;
+    } else {
+    }
+  `).toBe(1)
+})
+
+test('false if with empty else works', () => {
+  return expectResult(stripIndent`
+    if (false) {
+    } else {
+    }
+  `).toBe(undefined)
+})
+
+test('false if with nonempty if works', () => {
+  return expectResult(stripIndent`
+    if (false) {
+    } else {
+      2;
+    }
+  `).toBe(2)
+})
+
+test('test true conditional expression', () => {
+  return expectToMatchJS('true ? true : false;')
+})
+
+test('test false conditional expression', () => {
+  return expectToMatchJS('false ? true : false;')
+})
+
+test('test false && true', () => {
+  return expectToMatchJS('false && true;')
+})
+
+test('test false && false', () => {
+  return expectToMatchJS('false && false;')
+})
+
+test('test true && false', () => {
+  return expectToMatchJS('true && false;')
+})
+
+test('test true && true', () => {
+  return expectToMatchJS('true && true;')
+})
+
+test('test && shortcircuiting', () => {
+  return expectToMatchJS('false && 1();')
+})
+
+test('test false || true', () => {
+  return expectToMatchJS('false || true;')
+})
+
+test('test false || false', () => {
+  return expectToMatchJS('false || false;')
+})
+
+test('test true || false', () => {
+  return expectToMatchJS('true || false;')
+})
+
+test('test true || true', () => {
+  return expectToMatchJS('true || true;')
+})
+
+test('test || shortcircuiting', () => {
+  return expectToMatchJS('true || 1();')
 })

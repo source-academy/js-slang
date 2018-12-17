@@ -346,7 +346,7 @@ Object {
 }
 `;
 
-exports[`Error when calling non function value object 2`] = `"Line 2: Calling non-function value [object Object]"`;
+exports[`Error when calling non function value object 2`] = `"Line 2: Calling non-function value {\\"a\\": 1}"`;
 
 exports[`Error when calling non function value true 1`] = `
 Object {
