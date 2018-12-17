@@ -411,7 +411,7 @@ test('Builtins work as expected', () => {
       o.__proto__ = o2;
       o.b;
       `,
-      true,
+      false,
       2
     ],
 

@@ -364,7 +364,7 @@ exports[`Builtins work as expected 89`] = `
       "
 `;
 
-exports[`Builtins work as expected 90`] = `""`;
+exports[`Builtins work as expected 90`] = `"Line 5: Cannot read inherited property b of [object Object]"`;
 
 exports[`Builtins work as expected 91`] = `
 "
