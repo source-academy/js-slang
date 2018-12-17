@@ -46,7 +46,7 @@ Array [
   GetInheritedPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 28,
+        "column": 23,
         "line": 2,
       },
       "start": Position {

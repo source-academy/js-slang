@@ -550,7 +550,7 @@ test('Error when accessing property of undefined', () => {
 
 test('Error when accessing inherited property', () => {
   const code = `
-    (() => 1)["constructor"];
+    pair["constructor"];
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
@@ -559,7 +559,8 @@ test('Error when accessing inherited property', () => {
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toBe(
-      'Line 2: Cannot read inherited property constructor of () => 1'
+      "Line 2: Cannot read inherited property constructor of function pair(left, right) {\n" +
+        "\t[implementation hidden]\n}"
     )
   })
 })
