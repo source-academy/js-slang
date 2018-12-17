@@ -62,6 +62,33 @@ Array [
 ]
 `;
 
+exports[`Error when accessing inherited property of builtin 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing inherited property of builtin 2`] = `
+Array [
+  GetInheritedPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 28,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": [Function],
+    "prop": "constructor",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
 exports[`Error when accessing property of null 1`] = `
 Object {
   "status": "error",

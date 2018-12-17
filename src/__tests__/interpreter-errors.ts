@@ -566,7 +566,7 @@ test('Error when accessing inherited property', () => {
 
 test('Error when accessing inherited property of builtin', () => {
   const code = `
-    pair["constructor"];
+    (() => 1)["constructor"];
    `
   const context = mockContext(100)
   const promise = runInContext(code, context, { scheduler: 'preemptive' })
