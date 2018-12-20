@@ -403,41 +403,44 @@ test('Builtins work as expected', () => {
       false
     ],
 
-    [
-      100,
-      `
-      let o = {a: 1};
-      let o2 = {b: 2};
-      o.__proto__ = o2;
-      o.b;
-      `,
-      false,
-      2
-    ],
-
-    [
-      100,
-      `
-      let o = {a: 1};
-      let o2 = {b: 2};
-      o.__proto__ = o2;
-      has_own_property(o, 'a');
-      `,
-      true,
-      true
-    ],
-
-    [
-      100,
-      `
-      let o = {a: 1};
-      let o2 = {b: 2};
-      o.__proto__ = o2;
-      has_own_property(o, 'b');
-      `,
-      true,
-      false
-    ],
+    // NOTE: OOP doesn't work because we've disabled inherited properties for security reasons
+    // https://github.com/source-academy/js-slang/pull/137
+    // https://github.com/source-academy/js-slang/issues/81
+    // [
+    //   100,
+    //   `
+    //   let o = {a: 1};
+    //   let o2 = {b: 2};
+    //   o.__proto__ = o2;
+    //   o.b;
+    //   `,
+    //   true,
+    //   2
+    // ],
+    //
+    // [
+    //   100,
+    //   `
+    //   let o = {a: 1};
+    //   let o2 = {b: 2};
+    //   o.__proto__ = o2;
+    //   has_own_property(o, 'a');
+    //   `,
+    //   true,
+    //   true
+    // ],
+    //
+    // [
+    //   100,
+    //   `
+    //   let o = {a: 1};
+    //   let o2 = {b: 2};
+    //   o.__proto__ = o2;
+    //   has_own_property(o, 'b');
+    //   `,
+    //   true,
+    //   false
+    // ],
 
     [
       3,
