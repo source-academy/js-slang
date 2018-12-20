@@ -115,21 +115,6 @@ test('Error when deeply accessing property on undefined', () => {
   })
 })
 
-test('In case a function ever returns null, should throw an error as well', () => {
-  const code = `
-    const myNull = null;
-    myNull.prop;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of null')
-  })
-})
-
 test('Nice errors when errors occur inside builtins', () => {
   const code = `
     parse_int("10");
@@ -629,6 +614,38 @@ test('Error when accessing inherited property of object', () => {
     expect(context.errors).toMatchSnapshot()
     expect(parseError(context.errors)).toMatchInlineSnapshot(
       `"Line 2: Cannot read inherited property valueOf of {}"`
+    )
+  })
+})
+
+test('Error when accessing inherited property of string', () => {
+  const code = `
+    'hi'.includes;
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Cannot read inherited property includes of \\"hi\\""`
+    )
+  })
+})
+
+test('Error when accessing inherited property of number', () => {
+  const code = `
+    (1).toPrecision;
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Cannot read inherited property toPrecision of 1"`
     )
   })
 })
