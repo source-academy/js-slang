@@ -84,6 +84,18 @@ function expectFailure(code: string, testContext: TestContext, result: Result) {
   }).toMatchSnapshot()
 }
 
+function expectSuccessWithWarnings(code: string, testContext: TestContext, result: Result) {
+  expect(testContext.errors).not.toEqual([])
+  expect(result.status).toBe('finished')
+  expect({
+    code,
+    displayResult: testContext.displayResult,
+    alertResult: testContext.alertResult,
+    visualiseListResult: testContext.visualiseListResult,
+    result: (result as Finished).value
+  }).toMatchSnapshot()
+}
+
 function expectFailureNoSnapshot(code: string, testContext: TestContext, result: Result) {
   expect(testContext.errors).not.toEqual([])
   expect(result.status).toBe('error')
@@ -129,6 +141,21 @@ export function expectError(
   return expect(
     runInContext(code, testContext, { scheduler }).then(result => {
       expectFailure(code, testContext, result)
+      return parseError(testContext.errors)
+    })
+  ).resolves
+}
+
+export function expectWarning(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  const testContext = createTestContext(chapterOrContext, testBuiltins)
+  const scheduler = 'preemptive'
+  return expect(
+    runInContext(code, testContext, { scheduler }).then(result => {
+      expectSuccessWithWarnings(code, testContext, result)
       return parseError(testContext.errors)
     })
   ).resolves
