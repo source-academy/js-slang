@@ -548,7 +548,7 @@ test('Error when accessing property of undefined', () => {
   })
 })
 
-test('Error when accessing inherited property', () => {
+test('Error when accessing inherited property of builtin', () => {
   const code = `
     pair["constructor"];
    `
@@ -558,14 +558,34 @@ test('Error when accessing inherited property', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe(
-      'Line 2: Cannot read inherited property constructor of function pair(left, right) {\n' +
-        '\t[implementation hidden]\n}'
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `
+"Line 2: Cannot read inherited property constructor of function pair(left, right) {
+	[implementation hidden]
+}"
+`
     )
   })
 })
 
-test('Error when accessing inherited property of builtin', () => {
+test('Error when accessing inherited property of function', () => {
+  const code = `
+    function f() {}
+    f["constructor"];
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: Cannot read inherited property constructor of function f() {}"`
+    )
+  })
+})
+
+test('Error when accessing inherited property of arrow function', () => {
   const code = `
     (() => 1)["constructor"];
    `
@@ -575,8 +595,40 @@ test('Error when accessing inherited property of builtin', () => {
     expect(obj).toMatchSnapshot()
     expect(obj.status).toBe('error')
     expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe(
-      'Line 2: Cannot read inherited property constructor of () => 1'
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Cannot read inherited property constructor of () => 1"`
+    )
+  })
+})
+
+test('Error when accessing inherited property of array', () => {
+  const code = `
+    [].push;
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Cannot read inherited property push of []"`
+    )
+  })
+})
+
+test('Error when accessing inherited property of object', () => {
+  const code = `
+    ({}).valueOf;
+   `
+  const context = mockContext(100)
+  const promise = runInContext(code, context, { scheduler: 'preemptive' })
+  return promise.then(obj => {
+    expect(obj).toMatchSnapshot()
+    expect(obj.status).toBe('error')
+    expect(context.errors).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Cannot read inherited property valueOf of {}"`
     )
   })
 })

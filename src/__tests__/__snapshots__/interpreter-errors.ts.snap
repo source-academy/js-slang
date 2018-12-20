@@ -35,18 +35,45 @@ Array [
 ]
 `;
 
-exports[`Error when accessing inherited property 1`] = `
+exports[`Error when accessing inherited property of array 1`] = `
 Object {
   "status": "error",
 }
 `;
 
-exports[`Error when accessing inherited property 2`] = `
+exports[`Error when accessing inherited property of array 2`] = `
 Array [
   GetInheritedPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 23,
+        "column": 11,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": Array [],
+    "prop": "push",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing inherited property of arrow function 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing inherited property of arrow function 2`] = `
+Array [
+  GetInheritedPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 28,
         "line": 2,
       },
       "start": Position {
@@ -73,7 +100,7 @@ Array [
   GetInheritedPropertyError {
     "location": SourceLocation {
       "end": Position {
-        "column": 28,
+        "column": 23,
         "line": 2,
       },
       "start": Position {
@@ -83,6 +110,60 @@ Array [
     },
     "obj": [Function],
     "prop": "constructor",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing inherited property of function 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing inherited property of function 2`] = `
+Array [
+  GetInheritedPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 20,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 3,
+      },
+    },
+    "obj": [Function],
+    "prop": "constructor",
+    "severity": "Error",
+    "type": "Runtime",
+  },
+]
+`;
+
+exports[`Error when accessing inherited property of object 1`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Error when accessing inherited property of object 2`] = `
+Array [
+  GetInheritedPropertyError {
+    "location": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    "obj": Object {},
+    "prop": "valueOf",
     "severity": "Error",
     "type": "Runtime",
   },
