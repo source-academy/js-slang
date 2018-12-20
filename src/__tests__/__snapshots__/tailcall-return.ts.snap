@@ -2,56 +2,124 @@
 
 exports[`Simple tail call returns work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "function f(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return f(x-1, y+1);
+  }
+}
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail call in boolean operators work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "function f(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return false || f(x-1, y+1);
+  }
+}
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail call in conditional expressions work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "function f(x, y) {
+  return x <= 0 ? y : f(x-1, y+1);
+}
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail call in nested mix of conditional expressions boolean operators work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "function f(x, y) {
+  return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
+}
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail calls in arrow block functions work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "const f = (x, y) => {
+  if (x <= 0) {
+    return y;
+  } else {
+    return f(x-1, y+1);
+  }
+};
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail calls in arrow functions work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail calls in mutual recursion with arrow functions work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
+const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
 
 exports[`Tail calls in mutual recursion work 1`] = `
 Object {
-  "status": "finished",
-  "value": 10000,
+  "alertResult": undefined,
+  "code": "function f(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return g(x-1, y+1);
+  }
+}
+function g(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return f(x-1, y+1);
+  }
+}
+f(5000, 5000);",
+  "displayResult": undefined,
+  "result": 10000,
+  "visualiseListResult": undefined,
 }
 `;
