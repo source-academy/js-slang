@@ -35,10 +35,10 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
 
   // Disabled (aka chapter 100)
   ObjectExpression: 100,
-  UpdateExpression: 100,
   NewExpression: 100,
 
   // Disallowed forever
+  UpdateExpression: Infinity,
   Statement: Infinity,
   EmptyStatement: Infinity,
   ParenthesizedExpression: Infinity,
