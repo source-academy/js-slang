@@ -1,4 +1,4 @@
-import { expectResult, stripIndent, oneLine } from '../../utils/testing'
+import { expectResult, oneLine, stripIndent } from '../../utils/testing'
 
 test('Parses empty program', () => {
   return expectResult(

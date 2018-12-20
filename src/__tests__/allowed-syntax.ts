@@ -256,7 +256,7 @@ test.each([
     x[key] = 3;
     `
   ]
-] as [number, string][])(
+] as Array<[number, string]>)(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: number, snippet: string) => {
     snippet = stripIndent(snippet)

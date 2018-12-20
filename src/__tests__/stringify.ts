@@ -77,6 +77,7 @@ test('String representation of lists are nice', () => {
   ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
 })
 
+// tslint:disable:max-line-length
 test('String representation of huge lists are nice', () => {
   return expectResult(
     stripIndent`
@@ -177,6 +178,7 @@ test('String representation of huge lists are nice', () => {
 [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
 `)
 })
+// tslint:enable:max-line-length
 
 test('String representation of huge arrays are nice', () => {
   return expectResult(
@@ -376,6 +378,7 @@ test('String representation of undefined is nice', () => {
   `).toMatchInlineSnapshot(`"undefined"`)
 })
 
+// tslint:disable:max-line-length
 test('String representation with no indent', () => {
   return expectResult(
     stripIndent`
@@ -511,3 +514,4 @@ test('String representation with long custom indent gets trimmed to 10 character
 null.........]"
 `)
 })
+// tslint:enable:max-line-length
