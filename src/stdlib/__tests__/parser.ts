@@ -1,245 +1,170 @@
-import { oneLine } from 'common-tags'
-
-import { runInContext } from '../../index'
-import { mockContext } from '../../mocks/context'
+import { expectResult, stripIndent, oneLine } from '../../utils/testing'
 
 test('Parses empty program', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse(""), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses literals', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("3; true; false; ''; \\"\\"; 'bob'; 1; 20;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses name expression', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("x;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses name expressions', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("x; moreNames; undefined;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses infix expressions', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("3 + 5 === 8 || !true && false;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses declaration statements', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("const x = 5; let y = x;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses assignment statements', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("x = 5; x = x; if (true) { x = 5; } else {}"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses if statements', () => {
-  const program = `
+  return expectResult(
+    stripIndent`
     stringify(parse("if (true) { hi; } else { haha; } if (false) {} else {}"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses multi-argument arrow function expressions properly', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("(x, y) => x + 1;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses multi-argument arrow function expressions properly', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("(x, y) => x + 1;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses multi-argument arrow function assignments properly', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("const y = (x, y) => x + 1;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses arrow function expressions properly', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("x => x + 1;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses arrow function assignments properly', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("const y = x => x + 1;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses function calls', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("f(x); thrice(thrice)(plus_one)(0);"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
 test('Parses fibonacci', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     stringify(parse("function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); } fib(4);"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
 
-// TODO: Support objects in chapter 100, then re-enable these tests
-// test('Parses object notation', () => {
-//   const code = `
-//     stringify(parse("let x = {a: 5, b: 10, 'key': value};"), undefined, 2);
-//   `
-//   const context = mockContext(4)
-//   const promise = runInContext(code, context, { scheduler: 'preemptive' })
-//   return promise.then(obj => {
-//     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-//     expect(obj).toMatchSnapshot()
-//     expect(obj.status).toBe('finished')
-//   })
-// })
+test('Parses object notation', () => {
+  return expectResult(
+    stripIndent`
+    stringify(parse("let x = {a: 5, b: 10, 'key': value};"), undefined, 2);
+  `,
+    100
+  ).toEqual(expect.anything())
+})
 
-// test('Parses property access', () => {
-//   const code = `
-//     stringify(parse("a[b]; a.b; a[5]; a['b'];"), undefined, 2);
-//   `
-//   const context = mockContext(4)
-//   const promise = runInContext(code, context, { scheduler: 'preemptive' })
-//   return promise.then(obj => {
-//     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-//     expect(obj).toMatchSnapshot()
-//     expect(obj.status).toBe('finished')
-//   })
-// })
+test('Parses property access', () => {
+  return expectResult(
+    stripIndent`
+    stringify(parse("a[b]; a.b; a[5]; a['b'];"), undefined, 2);
+  `,
+    100
+  ).toEqual(expect.anything())
+})
 
-// test('Parses property assignment', () => {
-//   const code = `
-//     stringify(parse("a[b] = 5; a.b = value; a[5] = 'value'; a['b'] = 42;"), undefined, 2);
-//   `
-//   const context = mockContext(4)
-//   const promise = runInContext(code, context, { scheduler: 'preemptive' })
-//   return promise.then(obj => {
-//     expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-//     expect(obj).toMatchSnapshot()
-//     expect(obj.status).toBe('finished')
-//   })
-// })
+test('Parses property assignment', () => {
+  return expectResult(
+    stripIndent`
+    stringify(parse("a[b] = 5; a.b = value; a[5] = 'value'; a['b'] = 42;"), undefined, 2);
+  `,
+    100
+  ).toEqual(expect.anything())
+})
 
 test('Parses loops', () => {
-  const code = oneLine`
+  return expectResult(
+    oneLine`
     stringify(parse(
       "while (true) {
         continue;
@@ -253,12 +178,7 @@ test('Parses loops', () => {
         continue;
         break;
       }"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(JSON.stringify(context.errors, undefined, 2)).toBe('[]')
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-  })
+  `,
+    4
+  ).toEqual(expect.anything())
 })
