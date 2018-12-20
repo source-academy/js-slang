@@ -458,7 +458,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       typeof obj[prop] !== 'undefined' &&
       !obj.hasOwnProperty(prop)
     ) {
-      handleError(context, new errors.GetInheritedPropertyError(node, obj, prop))
+      handleRuntimeError(context, new errors.GetInheritedPropertyError(node, obj, prop))
     }
     try {
       return obj[prop]
