@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`parse_int with non-integer arg radix throws error 1`] = `
+exports[`parse_int with non-integer arg radix throws error: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int(42, 2.1);",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`parse_int with non-string arg str throws error 1`] = `
+exports[`parse_int with non-string arg str throws error: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int(42, 2);",
@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=1 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=1: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('10', 1);",
@@ -30,7 +30,7 @@ Object {
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=37 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=37: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('10', 37);",
@@ -40,7 +40,7 @@ Object {
 }
 `;
 
-exports[`parse_int with string arg radix throws error 1`] = `
+exports[`parse_int with string arg radix throws error: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int(42, '2');",
@@ -50,7 +50,7 @@ Object {
 }
 `;
 
-exports[`parse_int with valid args is ok, but invalid str for radix 1`] = `
+exports[`parse_int with valid args is ok, but invalid str for radix: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('uu1', 2);",
@@ -60,7 +60,7 @@ Object {
 }
 `;
 
-exports[`parse_int with valid args is ok, radix 2 1`] = `
+exports[`parse_int with valid args is ok, radix 2: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('1100101010101', 2);",
@@ -70,7 +70,7 @@ Object {
 }
 `;
 
-exports[`parse_int with valid args is ok, radix 36 1`] = `
+exports[`parse_int with valid args is ok, radix 36: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('uu1', 36);",

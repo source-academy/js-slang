@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Allow display to return value it is displaying 1`] = `
+exports[`Allow display to return value it is displaying: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "25*(display(1+1));",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`Arrays toString matches up with JS 1`] = `
+exports[`Arrays toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "\\"\\" + [1, 2];",
@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`Arrow function definition returns itself 1`] = `
+exports[`Arrow function definition returns itself: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "() => 42;",
@@ -30,7 +30,7 @@ Object {
 }
 `;
 
-exports[`Arrow function infinite recursion with list args represents CallExpression well 1`] = `
+exports[`Arrow function infinite recursion with list args represents CallExpression well: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const f = xs => append(f(xs), list());
@@ -42,7 +42,7 @@ f(list(1, 2));",
 }
 `;
 
-exports[`Builtins hide their implementation when stringify 1`] = `
+exports[`Builtins hide their implementation when stringify: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(pair);",
@@ -54,7 +54,7 @@ Object {
 }
 `;
 
-exports[`Builtins hide their implementation when toString 1`] = `
+exports[`Builtins hide their implementation when toString: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "\\"\\"+pair;",
@@ -66,7 +66,7 @@ Object {
 }
 `;
 
-exports[`Can overwrite lets when assignment is allowed 1`] = `
+exports[`Can overwrite lets when assignment is allowed: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function test() {
@@ -81,7 +81,7 @@ test();",
 }
 `;
 
-exports[`Cannot overwrite consts even when assignment is allowed 1`] = `
+exports[`Cannot overwrite consts even when assignment is allowed: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function test(){
@@ -96,7 +96,7 @@ test();",
 }
 `;
 
-exports[`Deep object assignment and retrieval 1`] = `
+exports[`Deep object assignment and retrieval: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const o = {};
@@ -110,7 +110,7 @@ o.a.b.c;",
 }
 `;
 
-exports[`Empty code returns undefined 1`] = `
+exports[`Empty code returns undefined: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "",
@@ -120,7 +120,7 @@ Object {
 }
 `;
 
-exports[`Factorial arrow function 1`] = `
+exports[`Factorial arrow function: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const fac = (i) => i === 1 ? 1 : i * fac(i-1);
@@ -131,7 +131,7 @@ fac(5);",
 }
 `;
 
-exports[`Function infinite recursion with list args represents CallExpression well 1`] = `
+exports[`Function infinite recursion with list args represents CallExpression well: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(xs) { return append(f(xs), list()); }
@@ -143,7 +143,7 @@ f(list(1, 2));",
 }
 `;
 
-exports[`Functions passed into non-source functions remain equal 1`] = `
+exports[`Functions passed into non-source functions remain equal: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function t(x, y, z) {
@@ -156,7 +156,7 @@ identity(t) === t && t(1, 2, 3) === 6;",
 }
 `;
 
-exports[`Objects toString matches up with JS 1`] = `
+exports[`Objects toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "\\"\\" + ({a: 1});",
@@ -166,7 +166,7 @@ Object {
 }
 `;
 
-exports[`Simple arrow function infinite recursion represents CallExpression well 1`] = `
+exports[`Simple arrow function infinite recursion represents CallExpression well: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "(x => x(x)(x))(x => x(x)(x));",
@@ -177,7 +177,7 @@ Object {
 }
 `;
 
-exports[`Simple function infinite recursion represents CallExpression well 1`] = `
+exports[`Simple function infinite recursion represents CallExpression well: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x) {return x(x)(x);} f(f);",
@@ -194,7 +194,7 @@ Object {
 }
 `;
 
-exports[`Simple object assignment and retrieval 1`] = `
+exports[`Simple object assignment and retrieval: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const o = {};
@@ -206,7 +206,7 @@ o.a;",
 }
 `;
 
-exports[`Single boolean self-evaluates to itself 1`] = `
+exports[`Single boolean self-evaluates to itself: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true;",
@@ -216,7 +216,7 @@ Object {
 }
 `;
 
-exports[`Single number self-evaluates to itself 1`] = `
+exports[`Single number self-evaluates to itself: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "42;",
@@ -226,7 +226,7 @@ Object {
 }
 `;
 
-exports[`Single string self-evaluates to itself 1`] = `
+exports[`Single string self-evaluates to itself: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "'42';",
@@ -236,7 +236,7 @@ Object {
 }
 `;
 
-exports[`Test apply_in_underlying_javascript 1`] = `
+exports[`Test apply_in_underlying_javascript: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));",
@@ -246,7 +246,7 @@ Object {
 }
 `;
 
-exports[`Test equal for different lists 1`] = `
+exports[`Test equal for different lists: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "!equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));",
@@ -256,7 +256,7 @@ Object {
 }
 `;
 
-exports[`Test equal for lists 1`] = `
+exports[`Test equal for lists: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));",
@@ -266,7 +266,7 @@ Object {
 }
 `;
 
-exports[`Test equal for primitives 1`] = `
+exports[`Test equal for primitives: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(1, 1) && equal(\\"str\\", \\"str\\") && equal(null, null) && !equal(1, 2) && !equal(\\"str\\", \\"\\");",
@@ -276,7 +276,7 @@ Object {
 }
 `;
 
-exports[`false if with empty else works 1`] = `
+exports[`false if with empty else works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (false) {
@@ -288,7 +288,7 @@ Object {
 }
 `;
 
-exports[`false if with nonempty if works 1`] = `
+exports[`false if with nonempty if works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (false) {
@@ -301,7 +301,7 @@ Object {
 }
 `;
 
-exports[`functions toString (mostly) matches up with JS 1`] = `
+exports[`functions toString (mostly) matches up with JS: expect to loosely match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x) {
@@ -316,7 +316,7 @@ Object {
 }
 `;
 
-exports[`parseError for missing semicolon 1`] = `
+exports[`parseError for missing semicolon: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "42",
@@ -326,7 +326,7 @@ Object {
 }
 `;
 
-exports[`primitives toString matches up with JS 1`] = `
+exports[`primitives toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "\\"\\" + true + false + 1 + 1.5 + null + undefined + NaN;",
@@ -336,7 +336,7 @@ Object {
 }
 `;
 
-exports[`test && shortcircuiting 1`] = `
+exports[`test && shortcircuiting: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false && 1();",
@@ -346,7 +346,7 @@ Object {
 }
 `;
 
-exports[`test || shortcircuiting 1`] = `
+exports[`test || shortcircuiting: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true || 1();",
@@ -356,7 +356,7 @@ Object {
 }
 `;
 
-exports[`test false && false 1`] = `
+exports[`test false && false: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false && false;",
@@ -366,7 +366,7 @@ Object {
 }
 `;
 
-exports[`test false && true 1`] = `
+exports[`test false && true: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false && true;",
@@ -376,7 +376,7 @@ Object {
 }
 `;
 
-exports[`test false || false 1`] = `
+exports[`test false || false: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false || false;",
@@ -386,7 +386,7 @@ Object {
 }
 `;
 
-exports[`test false || true 1`] = `
+exports[`test false || true: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false || true;",
@@ -396,7 +396,7 @@ Object {
 }
 `;
 
-exports[`test false conditional expression 1`] = `
+exports[`test false conditional expression: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "false ? true : false;",
@@ -406,7 +406,7 @@ Object {
 }
 `;
 
-exports[`test true && false 1`] = `
+exports[`test true && false: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true && false;",
@@ -416,7 +416,7 @@ Object {
 }
 `;
 
-exports[`test true && true 1`] = `
+exports[`test true && true: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true && true;",
@@ -426,7 +426,7 @@ Object {
 }
 `;
 
-exports[`test true || false 1`] = `
+exports[`test true || false: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true || false;",
@@ -436,7 +436,7 @@ Object {
 }
 `;
 
-exports[`test true || true 1`] = `
+exports[`test true || true: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true || true;",
@@ -446,7 +446,7 @@ Object {
 }
 `;
 
-exports[`test true conditional expression 1`] = `
+exports[`test true conditional expression: expect to match JS 1`] = `
 Object {
   "alertResult": undefined,
   "code": "true ? true : false;",
@@ -456,7 +456,7 @@ Object {
 }
 `;
 
-exports[`true if with empty if works 1`] = `
+exports[`true if with empty if works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (true) {
@@ -468,7 +468,7 @@ Object {
 }
 `;
 
-exports[`true if with nonempty if works 1`] = `
+exports[`true if with nonempty if works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (true) {

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Simple tail call returns work 1`] = `
+exports[`Simple tail call returns work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -17,7 +17,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail call in boolean operators work 1`] = `
+exports[`Tail call in boolean operators work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -34,7 +34,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail call in conditional expressions work 1`] = `
+exports[`Tail call in conditional expressions work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -47,7 +47,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail call in nested mix of conditional expressions boolean operators work 1`] = `
+exports[`Tail call in nested mix of conditional expressions boolean operators work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -60,7 +60,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail calls in arrow block functions work 1`] = `
+exports[`Tail calls in arrow block functions work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const f = (x, y) => {
@@ -77,7 +77,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail calls in arrow functions work 1`] = `
+exports[`Tail calls in arrow functions work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
@@ -88,7 +88,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail calls in mutual recursion with arrow functions work 1`] = `
+exports[`Tail calls in mutual recursion with arrow functions work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
@@ -100,7 +100,7 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail calls in mutual recursion work 1`] = `
+exports[`Tail calls in mutual recursion work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {

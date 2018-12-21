@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Bare early returns in for loops work 1`] = `
+exports[`Bare early returns in for loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -24,7 +24,7 @@ Object {
 }
 `;
 
-exports[`Bare early returns in if statements work 1`] = `
+exports[`Bare early returns in if statements work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -48,7 +48,7 @@ Object {
 }
 `;
 
-exports[`Bare early returns in while loops work 1`] = `
+exports[`Bare early returns in while loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -72,7 +72,7 @@ Object {
 }
 `;
 
-exports[`Bare early returns work 1`] = `
+exports[`Bare early returns work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -93,7 +93,7 @@ Object {
 }
 `;
 
-exports[`Calling unreachable results in error 1`] = `
+exports[`Calling unreachable results in error: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -112,7 +112,7 @@ Object {
 }
 `;
 
-exports[`Recursive call early returns in for loops work 1`] = `
+exports[`Recursive call early returns in for loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -136,7 +136,7 @@ Object {
 }
 `;
 
-exports[`Recursive call early returns in if statements work 1`] = `
+exports[`Recursive call early returns in if statements work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -163,7 +163,7 @@ Object {
 }
 `;
 
-exports[`Recursive call early returns in while loops work 1`] = `
+exports[`Recursive call early returns in while loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -190,7 +190,7 @@ Object {
 }
 `;
 
-exports[`Recursive call early returns work 1`] = `
+exports[`Recursive call early returns work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -214,7 +214,7 @@ Object {
 }
 `;
 
-exports[`Tail call early returns in for loops work 1`] = `
+exports[`Tail call early returns in for loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -241,7 +241,7 @@ Object {
 }
 `;
 
-exports[`Tail call early returns in if statements work 1`] = `
+exports[`Tail call early returns in if statements work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -268,7 +268,7 @@ Object {
 }
 `;
 
-exports[`Tail call early returns in while loops work 1`] = `
+exports[`Tail call early returns in while loops work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "
@@ -295,7 +295,7 @@ Object {
 }
 `;
 
-exports[`Tail call early returns work 1`] = `
+exports[`Tail call early returns work: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "

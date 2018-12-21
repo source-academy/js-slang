@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cannot have if without else 1`] = `
+exports[`Cannot have if without else: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (true) { 5; }",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`Cannot have incomplete statements 1`] = `
+exports[`Cannot have incomplete statements: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "5",
@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`Cannot leave blank expressions in for loop 1`] = `
+exports[`Cannot leave blank expressions in for loop: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for(;;) {
@@ -32,7 +32,7 @@ Object {
 }
 `;
 
-exports[`Cannot leave blank init in for loop 1`] = `
+exports[`Cannot leave blank init in for loop: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for(; i < 3; i = i + 1) {
@@ -44,7 +44,7 @@ Object {
 }
 `;
 
-exports[`Cannot leave blank test in for loop 1`] = `
+exports[`Cannot leave blank test in for loop: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for(let i = 0; ; i = i + 1) {
@@ -56,7 +56,7 @@ Object {
 }
 `;
 
-exports[`Cannot leave blank update in for loop 1`] = `
+exports[`Cannot leave blank update in for loop: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for(let i = 0; i < 3;) {
@@ -68,7 +68,7 @@ Object {
 }
 `;
 
-exports[`Cannot leave while loop predicate blank 1`] = `
+exports[`Cannot leave while loop predicate blank: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "while() {
@@ -80,7 +80,7 @@ Object {
 }
 `;
 
-exports[`Cannot use assignment expressions 1`] = `
+exports[`Cannot use assignment expressions: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 3;
@@ -92,7 +92,7 @@ x;",
 }
 `;
 
-exports[`Cannot use assignment expressions 3`] = `
+exports[`Cannot use assignment expressions: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 3;
@@ -105,7 +105,7 @@ x;",
 }
 `;
 
-exports[`Cannot use assignment expressions 5`] = `
+exports[`Cannot use assignment expressions: expectError 3`] = `
 Object {
   "alertResult": undefined,
   "code": "let y = 4;
@@ -118,7 +118,7 @@ for (let x = y = 1; x < 1; x = x + 1) {
 }
 `;
 
-exports[`Cannot use destructuring declarations 1`] = `
+exports[`Cannot use destructuring declarations: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = [1, 2];
@@ -130,7 +130,7 @@ a;",
 }
 `;
 
-exports[`Cannot use function expressions 1`] = `
+exports[`Cannot use function expressions: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "(function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);",
@@ -140,7 +140,7 @@ Object {
 }
 `;
 
-exports[`Cannot use function expressions 3`] = `
+exports[`Cannot use function expressions: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "(function(x) { return x + 1; })(4);",
@@ -150,7 +150,7 @@ Object {
 }
 `;
 
-exports[`Cannot use multiple declarations 1`] = `
+exports[`Cannot use multiple declarations: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 3, y = 5;
@@ -161,7 +161,7 @@ x;",
 }
 `;
 
-exports[`Cannot use update expressions 1`] = `
+exports[`Cannot use update expressions: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 3;
@@ -173,7 +173,7 @@ x;",
 }
 `;
 
-exports[`Cannot use update statements 1`] = `
+exports[`Cannot use update statements: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 3;
@@ -185,7 +185,7 @@ x;",
 }
 `;
 
-exports[`No array expressions in chapter 2 1`] = `
+exports[`No array expressions in chapter 2: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "[];",
@@ -195,7 +195,7 @@ Object {
 }
 `;
 
-exports[`No empty statements 1`] = `
+exports[`No empty statements: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": ";",
@@ -205,7 +205,7 @@ Object {
 }
 `;
 
-exports[`No rest pattern 1`] = `
+exports[`No rest pattern: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(...rest) {
@@ -218,7 +218,7 @@ f(1, 2);",
 }
 `;
 
-exports[`No spread operator 1`] = `
+exports[`No spread operator: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -231,19 +231,17 @@ f(...[1, 2]);",
 }
 `;
 
-exports[`No trailing commas in arrays 1`] = `
+exports[`No trailing commas in arrays: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "[1,];",
   "displayResult": undefined,
-  "result": Array [
-    1,
-  ],
+  "error": "Line 1: Trailing comma",
   "visualiseListResult": undefined,
 }
 `;
 
-exports[`No trailing commas in objects 1`] = `
+exports[`No trailing commas in objects: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "({
@@ -251,15 +249,12 @@ Object {
   b: 2,
 });",
   "displayResult": undefined,
-  "result": Object {
-    "a": 1,
-    "b": 2,
-  },
+  "error": "Line 3: Trailing comma",
   "visualiseListResult": undefined,
 }
 `;
 
-exports[`for needs braces 1`] = `
+exports[`for needs braces: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for (let i = 0; i < 1; i = i + 1)
@@ -270,7 +265,7 @@ Object {
 }
 `;
 
-exports[`if needs braces 1`] = `
+exports[`if needs braces: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "if (true)
@@ -284,7 +279,7 @@ Line 1: Missing curly braces around \\"else\\" block",
 }
 `;
 
-exports[`no assigning to reserved keywords 1`] = `
+exports[`no assigning to reserved keywords: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "package = 5;",
@@ -294,7 +289,7 @@ Object {
 }
 `;
 
-exports[`no classes 1`] = `
+exports[`no classes: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "class Box {
@@ -306,7 +301,7 @@ Line 1: Class declarations are not allowed",
 }
 `;
 
-exports[`no debugger statement 1`] = `
+exports[`no debugger statement: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "debugger;",
@@ -316,7 +311,7 @@ Object {
 }
 `;
 
-exports[`no declaration without assignment 1`] = `
+exports[`no declaration without assignment: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x;",
@@ -326,7 +321,7 @@ Object {
 }
 `;
 
-exports[`no declaring reserved keywords 1`] = `
+exports[`no declaring reserved keywords: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let yield = 5;",
@@ -336,7 +331,7 @@ Object {
 }
 `;
 
-exports[`no export constant 1`] = `
+exports[`no export constant: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "export const x = 1;",
@@ -346,7 +341,7 @@ Object {
 }
 `;
 
-exports[`no export default 1`] = `
+exports[`no export default: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const x = 1;
@@ -357,7 +352,7 @@ export default x;",
 }
 `;
 
-exports[`no export function 1`] = `
+exports[`no export function: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "export function f(x) {
@@ -369,7 +364,7 @@ Object {
 }
 `;
 
-exports[`no for in loops 1`] = `
+exports[`no for in loops: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for (let i in { a: 1, b: 2 }) {
@@ -381,7 +376,7 @@ Line 1: For in statements are not allowed",
 }
 `;
 
-exports[`no for of loops 1`] = `
+exports[`no for of loops: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for (let i of list()) {
@@ -393,7 +388,7 @@ Line 1: For of statements are not allowed",
 }
 `;
 
-exports[`no generator functions 1`] = `
+exports[`no generator functions: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function* gen() {
@@ -406,7 +401,7 @@ Object {
 }
 `;
 
-exports[`no implicit undefined return 1`] = `
+exports[`no implicit undefined return: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f() {
@@ -418,7 +413,7 @@ Object {
 }
 `;
 
-exports[`no import 1`] = `
+exports[`no import: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "import { stripIndent } from 'common-tags';",
@@ -429,7 +424,7 @@ Line 1: Import declarations are not allowed",
 }
 `;
 
-exports[`no interface 1`] = `
+exports[`no interface: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "interface Box {
@@ -440,7 +435,7 @@ Object {
 }
 `;
 
-exports[`no regexp 1`] = `
+exports[`no regexp: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "/pattern/",
@@ -451,7 +446,7 @@ Line 1: 'RegExp' literals are not allowed",
 }
 `;
 
-exports[`no repeated params 1`] = `
+exports[`no repeated params: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, x) {
@@ -463,7 +458,7 @@ Object {
 }
 `;
 
-exports[`no sequence expression 1`] = `
+exports[`no sequence expression: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "(1, 2);",
@@ -473,7 +468,7 @@ Object {
 }
 `;
 
-exports[`no super 1`] = `
+exports[`no super: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "class BoxError extends Error {
@@ -491,7 +486,7 @@ Line 1: Class declarations are not allowed",
 }
 `;
 
-exports[`no template literals 1`] = `
+exports[`no template literals: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "\`hi\`",
@@ -503,7 +498,7 @@ Line 1: Template literals are not allowed",
 }
 `;
 
-exports[`no this, no new 1`] = `
+exports[`no this, no new: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function Box() {
@@ -516,7 +511,7 @@ const box = new Box();",
 }
 `;
 
-exports[`no try statements 1`] = `
+exports[`no try statements: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -535,7 +530,7 @@ Line 4: Try statements are not allowed",
 }
 `;
 
-exports[`no unspecified operators 1`] = `
+exports[`no unspecified operators: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "1 << 10;",
@@ -545,7 +540,7 @@ Object {
 }
 `;
 
-exports[`no unspecified unary operators 1`] = `
+exports[`no unspecified unary operators: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let x = 5;
@@ -556,7 +551,7 @@ typeof x;",
 }
 `;
 
-exports[`while needs braces 1`] = `
+exports[`while needs braces: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let i = 0;

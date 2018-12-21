@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`accumulate 1`] = `
+exports[`accumulate: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`append 1`] = `
+exports[`append: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(append(list(\\"string\\", 123), list(456, null, undefined)), list(\\"string\\", 123, 456, null, undefined));",
@@ -20,17 +20,7 @@ Object {
 }
 `;
 
-exports[`assoc 1`] = `
-Object {
-  "alertResult": undefined,
-  "code": "equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));",
-  "displayResult": undefined,
-  "result": true,
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`assoc not found 1`] = `
+exports[`assoc not found: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);",
@@ -40,7 +30,17 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref 1`] = `
+exports[`assoc: expectResult 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`bad index error list_ref: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "list_ref(list(1, 2, 3), 3);",
@@ -50,7 +50,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref 3`] = `
+exports[`bad index error list_ref: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "list_ref(list(1, 2, 3), -1);",
@@ -60,7 +60,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref 5`] = `
+exports[`bad index error list_ref: expectError 3`] = `
 Object {
   "alertResult": undefined,
   "code": "list_ref(list(1, 2, 3), 1.5);",
@@ -70,7 +70,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref 7`] = `
+exports[`bad index error list_ref: expectError 4`] = `
 Object {
   "alertResult": undefined,
   "code": "list_ref(list(1, 2, 3), '1');",
@@ -80,7 +80,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list 1`] = `
+exports[`bad number error build_list: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "build_list(-1, x => x);",
@@ -90,7 +90,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list 3`] = `
+exports[`bad number error build_list: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "build_list(1.5, x => x);",
@@ -100,7 +100,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list 5`] = `
+exports[`bad number error build_list: expectError 3`] = `
 Object {
   "alertResult": undefined,
   "code": "build_list('1', x => x);",
@@ -110,7 +110,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list 1`] = `
+exports[`bad number error enum_list: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "enum_list('1', '5');",
@@ -120,7 +120,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list 3`] = `
+exports[`bad number error enum_list: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "enum_list('1', 5);",
@@ -130,7 +130,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list 5`] = `
+exports[`bad number error enum_list: expectError 3`] = `
 Object {
   "alertResult": undefined,
   "code": "enum_list(1, '5');",
@@ -140,7 +140,7 @@ Object {
 }
 `;
 
-exports[`build_list 1`] = `
+exports[`build_list: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));",
@@ -150,7 +150,7 @@ Object {
 }
 `;
 
-exports[`empty list is null 1`] = `
+exports[`empty list is null: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "list();",
@@ -160,17 +160,7 @@ Object {
 }
 `;
 
-exports[`enum_list 1`] = `
-Object {
-  "alertResult": undefined,
-  "code": "equal(enum_list(1, 5), list(1, 2, 3, 4, 5));",
-  "displayResult": undefined,
-  "result": true,
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`enum_list with floats 1`] = `
+exports[`enum_list with floats: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));",
@@ -180,7 +170,17 @@ Object {
 }
 `;
 
-exports[`filter 1`] = `
+exports[`enum_list: expectResult 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "equal(enum_list(1, 5), list(1, 2, 3, 4, 5));",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`filter: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));",
@@ -190,7 +190,7 @@ Object {
 }
 `;
 
-exports[`for_each 1`] = `
+exports[`for_each: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let sum = 0;
@@ -204,7 +204,7 @@ sum;",
 }
 `;
 
-exports[`head works 1`] = `
+exports[`head works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "head(pair(1, 'a string \\"\\"'));",
@@ -214,7 +214,7 @@ Object {
 }
 `;
 
-exports[`list creates list 1`] = `
+exports[`list creates list: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f() { return 1; }
@@ -243,7 +243,7 @@ list(1, 'a string \\"\\"', () => a, f, true, 3.14);",
 }
 `;
 
-exports[`list_ref 1`] = `
+exports[`list_ref: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "list_ref(list(1, 2, 3, \\"4\\", 4), 4);",
@@ -253,7 +253,7 @@ Object {
 }
 `;
 
-exports[`list_to_string 1`] = `
+exports[`list_to_string: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "list_to_string(list(1, 2, 3));",
@@ -263,7 +263,7 @@ Object {
 }
 `;
 
-exports[`map 1`] = `
+exports[`map: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));",
@@ -273,7 +273,7 @@ Object {
 }
 `;
 
-exports[`member 1`] = `
+exports[`member: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(
@@ -285,7 +285,7 @@ Object {
 }
 `;
 
-exports[`non-list error accumulate 1`] = `
+exports[`non-list error accumulate: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
@@ -295,7 +295,7 @@ Object {
 }
 `;
 
-exports[`non-list error accumulate 3`] = `
+exports[`non-list error accumulate: expectError 2`] = `
 Object {
   "alertResult": undefined,
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
@@ -305,7 +305,7 @@ Object {
 }
 `;
 
-exports[`non-list error append 1`] = `
+exports[`non-list error append: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "append([1, 2, 3], list(1, 2, 3));",
@@ -315,7 +315,7 @@ Object {
 }
 `;
 
-exports[`non-list error assoc 1`] = `
+exports[`non-list error assoc: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "assoc(1, [1, 2, 3]);",
@@ -325,7 +325,7 @@ Object {
 }
 `;
 
-exports[`non-list error filter 1`] = `
+exports[`non-list error filter: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "filter(x => true, [1, 2, 3]);",
@@ -335,7 +335,7 @@ Object {
 }
 `;
 
-exports[`non-list error for_each 1`] = `
+exports[`non-list error for_each: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "for_each(x=>x, [1, 2, 3]);",
@@ -345,7 +345,7 @@ Object {
 }
 `;
 
-exports[`non-list error head 1`] = `
+exports[`non-list error head: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "head([1, 2, 3]);",
@@ -355,7 +355,7 @@ Object {
 }
 `;
 
-exports[`non-list error length 1`] = `
+exports[`non-list error length: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "length([1, 2, 3]);",
@@ -365,7 +365,7 @@ Object {
 }
 `;
 
-exports[`non-list error map 1`] = `
+exports[`non-list error map: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "map(x=>x, [1, 2, 3]);",
@@ -375,7 +375,7 @@ Object {
 }
 `;
 
-exports[`non-list error member 1`] = `
+exports[`non-list error member: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "member(1, [1, 2, 3]);",
@@ -385,7 +385,7 @@ Object {
 }
 `;
 
-exports[`non-list error remove 1`] = `
+exports[`non-list error remove: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "remove(1, [1, 2, 3]);",
@@ -395,7 +395,7 @@ Object {
 }
 `;
 
-exports[`non-list error remove_all 1`] = `
+exports[`non-list error remove_all: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "remove_all(1, [1, 2, 3]);",
@@ -405,7 +405,7 @@ Object {
 }
 `;
 
-exports[`non-list error reverse 1`] = `
+exports[`non-list error reverse: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "reverse([1, 2, 3]);",
@@ -415,7 +415,7 @@ Object {
 }
 `;
 
-exports[`non-list error set_head 1`] = `
+exports[`non-list error set_head: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "set_head([1, 2, 3], 4);",
@@ -425,7 +425,7 @@ Object {
 }
 `;
 
-exports[`non-list error set_tail 1`] = `
+exports[`non-list error set_tail: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "set_tail([1, 2, 3], 4);",
@@ -435,7 +435,7 @@ Object {
 }
 `;
 
-exports[`non-list error tail 1`] = `
+exports[`non-list error tail: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "tail([1, 2, 3]);",
@@ -445,7 +445,7 @@ Object {
 }
 `;
 
-exports[`pair creates pair 1`] = `
+exports[`pair creates pair: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "pair(1, 'a string \\"\\"');",
@@ -458,17 +458,7 @@ Object {
 }
 `;
 
-exports[`remove 1`] = `
-Object {
-  "alertResult": undefined,
-  "code": "remove(1, list(1));",
-  "displayResult": undefined,
-  "result": null,
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`remove not found 1`] = `
+exports[`remove not found: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "remove(2, list(1));",
@@ -481,17 +471,17 @@ Object {
 }
 `;
 
-exports[`remove_all 1`] = `
+exports[`remove: expectResult 1`] = `
 Object {
   "alertResult": undefined,
-  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, \\"1\\", 5, 1, 1, 6)), list(2, 3, 4, \\"1\\", 5, 6));",
+  "code": "remove(1, list(1));",
   "displayResult": undefined,
-  "result": true,
+  "result": null,
   "visualiseListResult": undefined,
 }
 `;
 
-exports[`remove_all not found 1`] = `
+exports[`remove_all not found: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(remove_all(1, list(2, 3, \\"1\\")), list(2, 3, \\"1\\"));",
@@ -501,7 +491,17 @@ Object {
 }
 `;
 
-exports[`reverse 1`] = `
+exports[`remove_all: expectResult 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, \\"1\\", 5, 1, 1, 6)), list(2, 3, 4, \\"1\\", 5, 6));",
+  "displayResult": undefined,
+  "result": true,
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`reverse: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "equal(reverse(list(\\"string\\", null, undefined, null, 123)), list(123, null, undefined, null, \\"string\\"));",
@@ -511,7 +511,7 @@ Object {
 }
 `;
 
-exports[`set_head 1`] = `
+exports[`set_head: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let p = pair(1, 2);
@@ -524,7 +524,7 @@ p === q && equal(p, pair(3, 2));",
 }
 `;
 
-exports[`set_tail 1`] = `
+exports[`set_tail: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "let p = pair(1, 2);
@@ -537,7 +537,7 @@ p === q && equal(p, pair(1, 3));",
 }
 `;
 
-exports[`tail of a 1 element list is null 1`] = `
+exports[`tail of a 1 element list is null: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "tail(list(1));",
@@ -547,7 +547,7 @@ Object {
 }
 `;
 
-exports[`tail works 1`] = `
+exports[`tail works: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "tail(pair(1, 'a string \\"\\"'));",

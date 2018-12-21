@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`String representation of arrays are nice 1`] = `
+exports[`String representation of arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const xs = [1, 'true', true, () => x];
@@ -11,7 +11,7 @@ stringify(xs);",
 }
 `;
 
-exports[`String representation of arrow functions are nice 1`] = `
+exports[`String representation of arrow functions are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const f = (x, y) => z;
@@ -22,7 +22,7 @@ stringify(f);",
 }
 `;
 
-exports[`String representation of big objects are nice 1`] = `
+exports[`String representation of big objects are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
@@ -44,7 +44,7 @@ stringify(o);",
 }
 `;
 
-exports[`String representation of booleans are nice 1`] = `
+exports[`String representation of booleans are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify('true');",
@@ -54,7 +54,7 @@ Object {
 }
 `;
 
-exports[`String representation of builtins are nice 1`] = `
+exports[`String representation of builtins are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(pair);",
@@ -66,7 +66,7 @@ Object {
 }
 `;
 
-exports[`String representation of empty arrays are nice 1`] = `
+exports[`String representation of empty arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const xs = [];
@@ -77,7 +77,7 @@ stringify(xs);",
 }
 `;
 
-exports[`String representation of functions are nice 1`] = `
+exports[`String representation of functions are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x, y) {
@@ -92,7 +92,7 @@ stringify(f);",
 }
 `;
 
-exports[`String representation of huge arrays are nice 1`] = `
+exports[`String representation of huge arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const arr = [];
@@ -205,7 +205,7 @@ stringify(arr);",
 }
 `;
 
-exports[`String representation of huge lists are nice 1`] = `
+exports[`String representation of huge lists are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(enum_list(1, 1000));",
@@ -305,7 +305,7 @@ Object {
 }
 `;
 
-exports[`String representation of lists are nice 1`] = `
+exports[`String representation of lists are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(enum_list(1, 10));",
@@ -315,7 +315,7 @@ Object {
 }
 `;
 
-exports[`String representation of multidimensional arrays are nice 1`] = `
+exports[`String representation of multidimensional arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const xs = [1, 'true', [true, () => x, [[]]]];
@@ -326,7 +326,7 @@ stringify(xs);",
 }
 `;
 
-exports[`String representation of nested objects are nice 1`] = `
+exports[`String representation of nested objects are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
@@ -337,7 +337,7 @@ stringify(o);",
 }
 `;
 
-exports[`String representation of nested objects are nice 3`] = `
+exports[`String representation of nested objects are nice: expectResult 2`] = `
 Object {
   "alertResult": undefined,
   "code": "let o = {};
@@ -349,7 +349,7 @@ stringify(o);",
 }
 `;
 
-exports[`String representation of null is nice 1`] = `
+exports[`String representation of null is nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(null);",
@@ -359,7 +359,7 @@ Object {
 }
 `;
 
-exports[`String representation of numbers are nice 1`] = `
+exports[`String representation of numbers are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(0);",
@@ -369,7 +369,7 @@ Object {
 }
 `;
 
-exports[`String representation of objects are nice 1`] = `
+exports[`String representation of objects are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "const o = { a: 1, b: true, c: () => x };
@@ -380,7 +380,7 @@ stringify(o);",
 }
 `;
 
-exports[`String representation of strings are nice 1`] = `
+exports[`String representation of strings are nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify('a string');",
@@ -390,7 +390,7 @@ Object {
 }
 `;
 
-exports[`String representation of undefined is nice 1`] = `
+exports[`String representation of undefined is nice: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(undefined);",
@@ -400,7 +400,7 @@ Object {
 }
 `;
 
-exports[`String representation with 1 space indent 1`] = `
+exports[`String representation with 1 space indent: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 1);",
@@ -424,7 +424,7 @@ null]",
 }
 `;
 
-exports[`String representation with custom indent 1`] = `
+exports[`String representation with custom indent: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), ' ... ');",
@@ -448,7 +448,7 @@ null ...]",
 }
 `;
 
-exports[`String representation with default (2 space) indent 1`] = `
+exports[`String representation with default (2 space) indent: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'));",
@@ -472,7 +472,7 @@ null ]",
 }
 `;
 
-exports[`String representation with long custom indent gets trimmed to 10 characters 1`] = `
+exports[`String representation with long custom indent gets trimmed to 10 characters: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), '.................................');",
@@ -496,7 +496,7 @@ null.........]",
 }
 `;
 
-exports[`String representation with more than 10 space indent should trim to 10 space indent 1`] = `
+exports[`String representation with more than 10 space indent should trim to 10 space indent: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 100);",
@@ -520,7 +520,7 @@ null         ]",
 }
 `;
 
-exports[`String representation with no indent 1`] = `
+exports[`String representation with no indent: expectResult 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 0);",

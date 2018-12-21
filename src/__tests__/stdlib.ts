@@ -606,7 +606,7 @@ test.each([
     undefined
   ]
 ] as Array<[number, string, boolean, Value]>)(
-  'Builtins work as expected $#',
+  'Builtins work as expected %#',
   (chapter: number, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
       return expectResult(stripIndent(snippet), chapter).toEqual(returnValue)

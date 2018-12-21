@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Blacklisted syntax 1`] = `
+exports[`Blacklisted syntax: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse(\\"function* f() { yield 1; } f();\\"), undefined, 2);",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`Blatant syntax error 1`] = `
+exports[`Blatant syntax error: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse(\\"'\\"), undefined, 2);",
@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`Syntax rules 1`] = `
+exports[`Syntax rules: expectError 1`] = `
 Object {
   "alertResult": undefined,
   "code": "stringify(parse(\\"x = y = x;\\"), undefined, 2);",
