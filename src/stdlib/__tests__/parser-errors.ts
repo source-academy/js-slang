@@ -1,41 +1,30 @@
-import { parseError, runInContext } from '../../index'
-import { mockContext } from '../../mocks/context'
+import { expectParsedError, stripIndent } from '../../utils/testing'
 
 test('Blatant syntax error', () => {
-  const program = `
+  return expectParsedError(
+    stripIndent`
     stringify(parse("'"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
 test('Blacklisted syntax', () => {
-  const program = `
+  return expectParsedError(
+    stripIndent`
     stringify(parse("function* f() { yield 1; } f();"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(`"Line 1: ParseError: Yield expressions are not allowed"`)
 })
 
 test('Syntax rules', () => {
-  const program = `
+  return expectParsedError(
+    stripIndent`
     stringify(parse("x = y = x;"), undefined, 2);
-  `
-  const context = mockContext(4)
-  const promise = runInContext(program, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(
+    `"Line 1: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`
+  )
 })

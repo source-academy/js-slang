@@ -1,185 +1,130 @@
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
+import {
+  expectParsedError,
+  expectParsedErrorNoSnapshot,
+  expectResult,
+  stripIndent
+} from '../utils/testing'
 
 test('Undefined variable error is thrown', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     im_undefined;
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Name im_undefined not declared')
-  })
+  `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
 })
 
 test('Error when assigning to builtin', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     map = 5;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot assign new value to constant map')
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant map"`)
 })
 
 test('Error when assigning to builtin', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     undefined = 5;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot assign new value to constant undefined')
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
 })
 
 test('Error when assigning to property on undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     undefined.prop = 123;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot assign property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
 })
 
 test('Error when assigning to property on variable with value undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     const u = undefined;
     u.prop = 123;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Cannot assign property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 2: Cannot assign property prop of undefined"`)
 })
 
 test('Error when deeply assigning to property on variable with value undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     const u = undefined;
     u.prop.prop = 123;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Cannot read property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 2: Cannot read property prop of undefined"`)
 })
 
 test('Error when accessing property on undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     undefined.prop;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
 test('Error when deeply accessing property on undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     undefined.prop.prop;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     parse_int("10");
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe(
-      'Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
-    )
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(
+    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
+  )
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     parse("'");
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return a;
     }
     map(f, list(1, 2));
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 3: Name a not declared')
-  })
+  `,
+    4
+  ).toMatchInlineSnapshot(`"Line 2: Name a not declared"`)
 })
 
 test('Infinite recursion with a block bodied function', () => {
-  const code = `
+  return expectParsedErrorNoSnapshot(
+    stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
     }
     i(1000);
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^i]{2,4}){3}/)
-    )
-  })
+  `,
+    4
+  ).toEqual(expect.stringMatching(/Infinite recursion\n *(i\(\d*\)[^i]{2,4}){3}/))
 }, 10000)
 
 test('Infinite recursion with function calls in argument', () => {
-  const code = `
+  return expectParsedErrorNoSnapshot(
+    stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
     }
@@ -187,19 +132,14 @@ test('Infinite recursion with function calls in argument', () => {
       return 1;
     }
     i(1000, 1);
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
-    )
-  })
+  `,
+    4
+  ).toEqual(expect.stringMatching(/Infinite recursion\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/))
 }, 10000)
 
 test('Infinite recursion of mutually recursive functions', () => {
-  const code = `
+  return expectParsedErrorNoSnapshot(
+    stripIndent`
     function f(n) {
       return n === 0 ? 0 : 1 + g(n - 1);
     }
@@ -207,222 +147,129 @@ test('Infinite recursion of mutually recursive functions', () => {
       return 1 + f(n);
     }
     f(1000);
-   `
-  const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toEqual(
-      expect.stringMatching(/Infinite recursion\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/)
-    )
-  })
+  `,
+    4
+  ).toEqual(expect.stringMatching(/Infinite recursion\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/))
 })
 
 test('Error when calling non function value undefined', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     undefined();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
 })
 
 test('Error when calling non function value null', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     null();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
 })
 
 test('Error when calling non function value true', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     true();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
 })
 
 test('Error when calling non function value 0', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     0();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
 })
 
 test('Error when calling non function value "string"', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     'string'();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
 })
 
 test('Error when calling non function value array', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     [1]();
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
 test('Error when calling non function value object', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     ({a: 1})();
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value {\\"a\\": 1}"`)
 })
 
 test('Error when calling function with too few arguments', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     function f(x) {
       return x;
     }
     f();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling function with too many arguments', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     function f(x) {
       return x;
     }
     f(1, 2);
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     const f = x => x;
     f();
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  const code = `
+  return expectParsedError(stripIndent`
     const f = x => x;
     f(1, 2);
-   `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when redeclaring constant', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     const f = x => x;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring constant as variable', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     let f = x => x;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Error when redeclaring variable as constant', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     let f = x => x;
     const f = x => x;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring variable', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     let f = x => x;
     let f = x => x;
-   `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(parseError(context.errors)).toMatchSnapshot()
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Runtime error when redeclaring constant', () => {
@@ -431,7 +278,7 @@ test('Runtime error when redeclaring constant', () => {
   `
   const code2 = `
     const f = x => x;
-   `
+  `
   const context = mockContext(3)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -451,7 +298,7 @@ test('Runtime error when redeclaring constant as variable', () => {
   `
   const code2 = `
     let f = x => x;
-   `
+  `
   const context = mockContext(3)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -471,7 +318,7 @@ test('Runtime error when redeclaring variable as constant', () => {
   `
   const code2 = `
     const f = x => x;
-   `
+  `
   const context = mockContext(3)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -491,7 +338,7 @@ test('Runtime error when redeclaring variable', () => {
   `
   const code2 = `
     let f = x => x;
-   `
+  `
   const context = mockContext(3)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -506,159 +353,96 @@ test('Runtime error when redeclaring variable', () => {
 })
 
 test('Error when accessing property of null', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     null["prop"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of null')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
 })
 
 test('Error when accessing property of undefined', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     undefined["prop"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toBe('Line 2: Cannot read property prop of undefined')
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
 test('Error when accessing inherited property of builtin', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     pair["constructor"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `
-"Line 2: Cannot read inherited property constructor of function pair(left, right) {
+  `,
+    100
+  ).toMatchInlineSnapshot(`
+"Line 1: Cannot read inherited property constructor of function pair(left, right) {
 	[implementation hidden]
 }"
-`
-    )
-  })
+`)
 })
 
 test('Error when accessing inherited property of function', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     function f() {}
     f["constructor"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Cannot read inherited property constructor of function f() {}"`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
 })
 
 test('Error when accessing inherited property of arrow function', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     (() => 1)["constructor"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot read inherited property constructor of () => 1"`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
 })
 
 test('Error when accessing inherited property of array', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     [].push;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot read inherited property push of []"`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property push of []"`)
 })
 
 test('Error when accessing inherited property of object', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     ({}).valueOf;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot read inherited property valueOf of {}"`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}"`)
 })
 
 test('Error when accessing inherited property of string', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     'hi'.includes;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot read inherited property includes of \\"hi\\""`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
 })
 
 test('Error when accessing inherited property of number', () => {
-  const code = `
+  return expectParsedError(
+    stripIndent`
     (1).toPrecision;
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot read inherited property toPrecision of 1"`
-    )
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property toPrecision of 1"`)
 })
 
 test('Access local property', () => {
-  const code = `
+  return expectResult(
+    stripIndent`
     []["length"];
-   `
-  const context = mockContext(100)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('finished')
-    expect(context.errors).toMatchSnapshot()
-  })
+  `,
+    100
+  ).toMatchInlineSnapshot(`0`)
 })

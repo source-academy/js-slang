@@ -1,20 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`display can be used to display (escaped) strings 1`] = `
+exports[`display can be used to display (escaped) strings: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
-  "displayResult": "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
+  "displayResult": Array [
+    "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display arrays 1`] = `
+exports[`display can be used to display arrays: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display([1, 2, [4, 5]]);",
-  "displayResult": "[1, 2, [4, 5]]",
+  "displayResult": Array [
+    "[1, 2, [4, 5]]",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": Array [
     1,
     2,
@@ -23,38 +32,53 @@ Object {
       5,
     ],
   ],
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display functions 1`] = `
+exports[`display can be used to display functions: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display(x => x); display((x, y) => x + y);",
-  "displayResult": "x => x
-(x, y) => x + y",
+  "displayResult": Array [
+    "x => x",
+    "(x, y) => x + y",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": [Function],
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display funny numbers 1`] = `
+exports[`display can be used to display funny numbers: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display(1e38); display(NaN); display(Infinity);",
-  "displayResult": "1e+38
-NaN
-Infinity",
+  "displayResult": Array [
+    "1e+38",
+    "NaN",
+    "Infinity",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": Infinity,
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display lists 1`] = `
+exports[`display can be used to display lists: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display(list(1, 2));",
-  "displayResult": "[1, [2, null]]",
+  "displayResult": Array [
+    "[1, [2, null]]",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": Array [
     1,
     Array [
@@ -62,25 +86,35 @@ Object {
       null,
     ],
   ],
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display numbers 1`] = `
+exports[`display can be used to display numbers: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display(0);",
-  "displayResult": "0",
+  "displayResult": Array [
+    "0",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": 0,
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`display can be used to display objects 1`] = `
+exports[`display can be used to display objects: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "display({a: 1, b: 2, c: {d: 3}});",
-  "displayResult": "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
+  "displayResult": Array [
+    "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": Object {
     "a": 1,
     "b": 2,
@@ -88,16 +122,22 @@ Object {
       "d": 3,
     },
   },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`raw_display can be used to display (unescaped) strings directly 1`] = `
+exports[`raw_display can be used to display (unescaped) strings directly: expectDisplayResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "raw_display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
-  "displayResult": "Tom's assisstant said: \\"tuna.\\"",
+  "displayResult": Array [
+    "Tom's assisstant said: \\"tuna.\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
