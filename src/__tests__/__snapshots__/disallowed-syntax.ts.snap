@@ -2216,7 +2216,7 @@ f(...[1, 2]);",
 }
 `;
 
-exports[`No trailing commas in arrays: expectError 1`] = `
+exports[`No trailing commas in arrays: expectWarning 1`] = `
 Object {
   "alertResult": Array [],
   "code": "[1,];",
@@ -2244,7 +2244,7 @@ Object {
 }
 `;
 
-exports[`No trailing commas in objects: expectError 1`] = `
+exports[`No trailing commas in objects: expectWarning 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({

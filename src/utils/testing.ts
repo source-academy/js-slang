@@ -93,7 +93,7 @@ function testInContext(
   })
 }
 
-export function expectSuccess(
+export function testSuccess(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
@@ -105,7 +105,7 @@ export function expectSuccess(
   })
 }
 
-export function expectSuccessWithErrors(
+export function testSuccessWithErrors(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
@@ -117,7 +117,7 @@ export function expectSuccessWithErrors(
   })
 }
 
-export function expectFailure(
+export function testFailure(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
@@ -142,7 +142,7 @@ export function snapshotSuccess(
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectSuccess(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+  return testSuccess(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function snapshotWarning(
@@ -151,7 +151,7 @@ export function snapshotWarning(
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectSuccessWithErrors(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+  return testSuccessWithErrors(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function snapshotFailure(
@@ -160,7 +160,7 @@ export function snapshotFailure(
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectFailure(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+  return testFailure(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function expectDisplayResult(
@@ -169,9 +169,9 @@ export function expectDisplayResult(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotSuccess(code, chapterOrContext, 'expectDisplayResult', testBuiltins).then(
-      testResult => testResult.displayResult!
-    )
+    testSuccess(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expectDisplayResult'))
+      .then(testResult => testResult.displayResult!)
   ).resolves
 }
 
@@ -181,9 +181,9 @@ export function expectResult(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotSuccess(code, chapterOrContext, 'expectResult', testBuiltins).then(
-      testResult => testResult.result
-    )
+    testSuccess(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expectResult'))
+      .then(testResult => testResult.result)
   ).resolves
 }
 
@@ -193,9 +193,9 @@ export function expectError(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotFailure(code, chapterOrContext, 'expectError', testBuiltins).then(
-      testResult => testResult.parsedErrors
-    )
+    testFailure(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expectError'))
+      .then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
@@ -205,9 +205,9 @@ export function expectWarning(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotWarning(code, chapterOrContext, 'expectError', testBuiltins).then(
-      testResult => testResult.parsedErrors
-    )
+    testSuccessWithErrors(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expectWarning'))
+      .then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
@@ -217,7 +217,7 @@ export function expectErrorNoSnapshot(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    expectFailure(code, chapterOrContext, testBuiltins).then(testResult => testResult.parsedErrors)
+    testFailure(code, chapterOrContext, testBuiltins).then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
@@ -226,9 +226,11 @@ export function expectToMatchJS(
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
 ) {
-  return snapshotSuccess(code, chapterOrContext, 'expect to match JS', testBuiltins).then(
-    // tslint:disable-next-line:no-eval
-    testResult => expect(testResult.result).toEqual(eval(code))
+  return (
+    testSuccess(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expect to match JS'))
+      // tslint:disable-next-line:no-eval
+      .then(testResult => expect(testResult.result).toEqual(eval(code)))
   )
 }
 
@@ -237,8 +239,10 @@ export function expectToLooselyMatchJS(
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
 ) {
-  return snapshotSuccess(code, chapterOrContext, 'expect to loosely match JS', testBuiltins).then(
-    // tslint:disable-next-line:no-eval
-    testResult => expect(testResult.result.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
-  )
+  return testSuccess(code, chapterOrContext, testBuiltins)
+    .then(snapshot('expect to loosely match JS'))
+    .then(testResult =>
+      // tslint:disable-next-line:no-eval
+      expect(testResult.result.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
+    )
 }
