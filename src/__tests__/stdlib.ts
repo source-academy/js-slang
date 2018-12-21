@@ -1,5 +1,5 @@
 import { Value } from '../types'
-import { expectError, expectResult, stripIndent } from '../utils/testing'
+import { snapshotFailure, expectResult, stripIndent } from '../utils/testing'
 
 test.each([
   [
@@ -611,7 +611,7 @@ test.each([
     if (passing) {
       return expectResult(stripIndent(snippet), chapter).toEqual(returnValue)
     } else {
-      return expectError(stripIndent(snippet), chapter).toMatchSnapshot()
+      return snapshotFailure(stripIndent(snippet), chapter, 'fails')
     }
   }
 )

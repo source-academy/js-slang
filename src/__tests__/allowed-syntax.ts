@@ -1,4 +1,4 @@
-import { expectError, expectResult, stripIndent } from '../utils/testing'
+import { snapshotFailure, snapshotSuccess, stripIndent } from '../utils/testing'
 
 test.each([
   [
@@ -262,11 +262,11 @@ test.each([
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
     const tests = [
-      expectResult(snippet, chapter).toMatchSnapshot('result'),
-      expectResult(parseSnippet, Math.max(4, chapter)).toMatchSnapshot('parse result')
+      snapshotSuccess(snippet, chapter, 'passes'),
+      snapshotSuccess(parseSnippet, Math.max(4, chapter), 'parse passes')
     ]
     if (chapter > 1) {
-      tests.push(expectError(snippet, chapter - 1).toMatchSnapshot('failure error'))
+      tests.push(snapshotFailure(snippet, chapter - 1, 'fails a chapter below'))
     }
     return Promise.all(tests)
   }

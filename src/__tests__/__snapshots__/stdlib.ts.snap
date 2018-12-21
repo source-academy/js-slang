@@ -13,18 +13,6 @@ Object {
 exports[`Builtins work as expected $# 2`] = `
 Object {
   "alertResult": undefined,
-  "code": "error('error!');",
-  "displayResult": undefined,
-  "error": "Line 1: Error: \\"error!\\"",
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`Builtins work as expected $# 3`] = `"Line 1: Error: \\"error!\\""`;
-
-exports[`Builtins work as expected $# 4`] = `
-Object {
-  "alertResult": undefined,
   "code": "is_undefined(undefined);",
   "displayResult": undefined,
   "result": true,
@@ -32,7 +20,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 5`] = `
+exports[`Builtins work as expected $# 3`] = `
 Object {
   "alertResult": undefined,
   "code": "is_undefined(null);",
@@ -42,7 +30,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 6`] = `
+exports[`Builtins work as expected $# 4`] = `
 Object {
   "alertResult": undefined,
   "code": "is_null(undefined);",
@@ -52,7 +40,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 7`] = `
+exports[`Builtins work as expected $# 5`] = `
 Object {
   "alertResult": undefined,
   "code": "is_null(null);",
@@ -62,7 +50,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 8`] = `
+exports[`Builtins work as expected $# 6`] = `
 Object {
   "alertResult": undefined,
   "code": "is_string('string');",
@@ -72,7 +60,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 9`] = `
+exports[`Builtins work as expected $# 7`] = `
 Object {
   "alertResult": undefined,
   "code": "is_string('true');",
@@ -82,7 +70,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 10`] = `
+exports[`Builtins work as expected $# 8`] = `
 Object {
   "alertResult": undefined,
   "code": "is_string('1');",
@@ -92,7 +80,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 11`] = `
+exports[`Builtins work as expected $# 9`] = `
 Object {
   "alertResult": undefined,
   "code": "is_string(true);",
@@ -102,7 +90,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 12`] = `
+exports[`Builtins work as expected $# 10`] = `
 Object {
   "alertResult": undefined,
   "code": "is_string(1);",
@@ -112,7 +100,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 13`] = `
+exports[`Builtins work as expected $# 11`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number('string');",
@@ -122,7 +110,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 14`] = `
+exports[`Builtins work as expected $# 12`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number('true');",
@@ -132,7 +120,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 15`] = `
+exports[`Builtins work as expected $# 13`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number('1');",
@@ -142,7 +130,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 16`] = `
+exports[`Builtins work as expected $# 14`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number(true);",
@@ -152,7 +140,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 17`] = `
+exports[`Builtins work as expected $# 15`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number(1);",
@@ -162,7 +150,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 18`] = `
+exports[`Builtins work as expected $# 16`] = `
 Object {
   "alertResult": undefined,
   "code": "is_boolean('string');",
@@ -172,7 +160,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 19`] = `
+exports[`Builtins work as expected $# 17`] = `
 Object {
   "alertResult": undefined,
   "code": "is_boolean('true');",
@@ -182,7 +170,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 20`] = `
+exports[`Builtins work as expected $# 18`] = `
 Object {
   "alertResult": undefined,
   "code": "is_boolean('1');",
@@ -192,7 +180,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 21`] = `
+exports[`Builtins work as expected $# 19`] = `
 Object {
   "alertResult": undefined,
   "code": "is_boolean(true);",
@@ -202,7 +190,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 22`] = `
+exports[`Builtins work as expected $# 20`] = `
 Object {
   "alertResult": undefined,
   "code": "is_boolean(1);",
@@ -212,7 +200,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 23`] = `
+exports[`Builtins work as expected $# 21`] = `
 Object {
   "alertResult": undefined,
   "code": "is_function(display);",
@@ -222,7 +210,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 24`] = `
+exports[`Builtins work as expected $# 22`] = `
 Object {
   "alertResult": undefined,
   "code": "is_function(x => x);",
@@ -232,7 +220,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 25`] = `
+exports[`Builtins work as expected $# 23`] = `
 Object {
   "alertResult": undefined,
   "code": "function f(x) {
@@ -245,7 +233,7 @@ is_function(f);",
 }
 `;
 
-exports[`Builtins work as expected $# 26`] = `
+exports[`Builtins work as expected $# 24`] = `
 Object {
   "alertResult": undefined,
   "code": "is_function(1);",
@@ -255,7 +243,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 27`] = `
+exports[`Builtins work as expected $# 25`] = `
 Object {
   "alertResult": undefined,
   "code": "is_array(1);",
@@ -265,7 +253,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 28`] = `
+exports[`Builtins work as expected $# 26`] = `
 Object {
   "alertResult": undefined,
   "code": "is_array(pair(1, 2));",
@@ -275,7 +263,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 29`] = `
+exports[`Builtins work as expected $# 27`] = `
 Object {
   "alertResult": undefined,
   "code": "is_array([1]);",
@@ -285,7 +273,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 30`] = `
+exports[`Builtins work as expected $# 28`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(1);",
@@ -295,7 +283,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 31`] = `
+exports[`Builtins work as expected $# 29`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(pair(1, 2));",
@@ -305,7 +293,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 32`] = `
+exports[`Builtins work as expected $# 30`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object([1]);",
@@ -315,7 +303,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 33`] = `
+exports[`Builtins work as expected $# 31`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object({});",
@@ -325,7 +313,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 34`] = `
+exports[`Builtins work as expected $# 32`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object({a: 1});",
@@ -335,7 +323,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 35`] = `
+exports[`Builtins work as expected $# 33`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(x => x);",
@@ -345,7 +333,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 36`] = `
+exports[`Builtins work as expected $# 34`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(display);",
@@ -355,7 +343,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 37`] = `
+exports[`Builtins work as expected $# 35`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(1);",
@@ -365,7 +353,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 38`] = `
+exports[`Builtins work as expected $# 36`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object('string');",
@@ -375,7 +363,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 39`] = `
+exports[`Builtins work as expected $# 37`] = `
 Object {
   "alertResult": undefined,
   "code": "is_object(true);",
@@ -385,7 +373,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 40`] = `
+exports[`Builtins work as expected $# 38`] = `
 Object {
   "alertResult": undefined,
   "code": "is_NaN(1 / 0);",
@@ -395,7 +383,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 41`] = `
+exports[`Builtins work as expected $# 39`] = `
 Object {
   "alertResult": undefined,
   "code": "is_NaN(NaN);",
@@ -405,7 +393,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 42`] = `
+exports[`Builtins work as expected $# 40`] = `
 Object {
   "alertResult": undefined,
   "code": "is_NaN(1);",
@@ -415,7 +403,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 43`] = `
+exports[`Builtins work as expected $# 41`] = `
 Object {
   "alertResult": undefined,
   "code": "is_NaN(x => x);",
@@ -425,7 +413,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 44`] = `
+exports[`Builtins work as expected $# 42`] = `
 Object {
   "alertResult": undefined,
   "code": "has_own_property({a: 1, b: 2}, 'a');",
@@ -435,7 +423,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 45`] = `
+exports[`Builtins work as expected $# 43`] = `
 Object {
   "alertResult": undefined,
   "code": "has_own_property({a: 1, b: 2}, 'c');",
@@ -445,7 +433,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 46`] = `
+exports[`Builtins work as expected $# 44`] = `
 Object {
   "alertResult": undefined,
   "code": "array_length([1]);",
@@ -455,7 +443,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 47`] = `
+exports[`Builtins work as expected $# 45`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('10', 10);",
@@ -465,7 +453,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 48`] = `
+exports[`Builtins work as expected $# 46`] = `
 Object {
   "alertResult": undefined,
   "code": "parse_int('10', 2);",
@@ -475,7 +463,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 49`] = `
+exports[`Builtins work as expected $# 47`] = `
 Object {
   "alertResult": undefined,
   "code": "is_number(runtime());",
@@ -485,7 +473,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 50`] = `
+exports[`Builtins work as expected $# 48`] = `
 Object {
   "alertResult": undefined,
   "code": "const x = runtime();
@@ -499,7 +487,7 @@ x !== y;",
 }
 `;
 
-exports[`Builtins work as expected $# 51`] = `
+exports[`Builtins work as expected $# 49`] = `
 Object {
   "alertResult": undefined,
   "code": "pair(1, 2);",
@@ -512,7 +500,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 52`] = `
+exports[`Builtins work as expected $# 50`] = `
 Object {
   "alertResult": undefined,
   "code": "list(1, 2);",
@@ -528,7 +516,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 53`] = `
+exports[`Builtins work as expected $# 51`] = `
 Object {
   "alertResult": undefined,
   "code": "is_list(1);",
@@ -538,7 +526,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 54`] = `
+exports[`Builtins work as expected $# 52`] = `
 Object {
   "alertResult": undefined,
   "code": "is_list(pair(1, 2));",
@@ -548,7 +536,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 55`] = `
+exports[`Builtins work as expected $# 53`] = `
 Object {
   "alertResult": undefined,
   "code": "is_list(list(1, 2));",
@@ -558,7 +546,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 56`] = `
+exports[`Builtins work as expected $# 54`] = `
 Object {
   "alertResult": undefined,
   "code": "head(pair(1, 2));",
@@ -568,7 +556,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 57`] = `
+exports[`Builtins work as expected $# 55`] = `
 Object {
   "alertResult": undefined,
   "code": "tail(pair(1, 2));",
@@ -578,55 +566,7 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 58`] = `
-Object {
-  "alertResult": undefined,
-  "code": "head(null);",
-  "displayResult": undefined,
-  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered null",
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`Builtins work as expected $# 59`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered null"`;
-
-exports[`Builtins work as expected $# 60`] = `
-Object {
-  "alertResult": undefined,
-  "code": "tail(null);",
-  "displayResult": undefined,
-  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null",
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`Builtins work as expected $# 61`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
-
-exports[`Builtins work as expected $# 62`] = `
-Object {
-  "alertResult": undefined,
-  "code": "head(1);",
-  "displayResult": undefined,
-  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1",
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`Builtins work as expected $# 63`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
-
-exports[`Builtins work as expected $# 64`] = `
-Object {
-  "alertResult": undefined,
-  "code": "tail(1);",
-  "displayResult": undefined,
-  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1",
-  "visualiseListResult": undefined,
-}
-`;
-
-exports[`Builtins work as expected $# 65`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
-
-exports[`Builtins work as expected $# 66`] = `
+exports[`Builtins work as expected $# 56`] = `
 Object {
   "alertResult": undefined,
   "code": "length(list(1, 2));",
@@ -636,7 +576,57 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected $# 67`] = `
+exports[`Builtins work as expected $#: fails 1`] = `
+Object {
+  "alertResult": undefined,
+  "code": "error('error!');",
+  "displayResult": undefined,
+  "error": "Line 1: Error: \\"error!\\"",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Builtins work as expected $#: fails 2`] = `
+Object {
+  "alertResult": undefined,
+  "code": "head(null);",
+  "displayResult": undefined,
+  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Builtins work as expected $#: fails 3`] = `
+Object {
+  "alertResult": undefined,
+  "code": "tail(null);",
+  "displayResult": undefined,
+  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Builtins work as expected $#: fails 4`] = `
+Object {
+  "alertResult": undefined,
+  "code": "head(1);",
+  "displayResult": undefined,
+  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Builtins work as expected $#: fails 5`] = `
+Object {
+  "alertResult": undefined,
+  "code": "tail(1);",
+  "displayResult": undefined,
+  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1",
+  "visualiseListResult": undefined,
+}
+`;
+
+exports[`Builtins work as expected $#: fails 6`] = `
 Object {
   "alertResult": undefined,
   "code": "length(1);",
@@ -645,5 +635,3 @@ Object {
   "visualiseListResult": undefined,
 }
 `;
-
-exports[`Builtins work as expected $# 68`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;

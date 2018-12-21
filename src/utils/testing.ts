@@ -179,6 +179,7 @@ export function expectErrorNoSnapshot(
 export function snapshotSuccess(
   code: string,
   chapterOrContext?: number | TestContext,
+  snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
   return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
@@ -190,13 +191,15 @@ export function snapshotSuccess(
       alertResult: testResult.alertResult,
       visualiseListResult: testResult.visualiseListResult,
       result: (testResult.result as Finished).value
-    }).toMatchSnapshot()
+    }).toMatchSnapshot(snapshotName)
+    return testResult
   })
 }
 
 export function snapshotFailure(
   code: string,
   chapterOrContext?: number | TestContext,
+  snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
   return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
@@ -208,7 +211,8 @@ export function snapshotFailure(
       alertResult: testResult.alertResult,
       visualiseListResult: testResult.visualiseListResult,
       error: parseError(testResult.errors)
-    }).toMatchSnapshot()
+    }).toMatchSnapshot(snapshotName)
+    return testResult
   })
 }
 
