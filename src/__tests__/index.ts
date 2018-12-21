@@ -1,6 +1,7 @@
 import {
-  expectError,
-  expectErrorNoSnapshot,
+  expectParsedError,
+  expectParsedErrorNoErrorSnapshot,
+  expectParsedErrorNoSnapshot,
   expectResult,
   expectToLooselyMatchJS,
   expectToMatchJS,
@@ -76,20 +77,21 @@ test('Factorial arrow function', () => {
 })
 
 test('parseError for missing semicolon', () => {
-  return expectError('42').toMatchInlineSnapshot(
+  return expectParsedError('42').toMatchInlineSnapshot(
     `"Line 1: Missing semicolon at the end of statement"`
   )
 })
 
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectError('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
+  return expectParsedErrorNoErrorSnapshot('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
 "Line 1: Infinite recursion
   x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
 `)
 }, 30000)
 
 test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(`
+  return expectParsedErrorNoErrorSnapshot('function f(x) {return x(x)(x);} f(f);')
+    .toMatchInlineSnapshot(`
 "Line 1: Infinite recursion
   x(function f(x) {
   return x(x)(x);
@@ -102,7 +104,7 @@ test('Simple function infinite recursion represents CallExpression well', () => 
 }, 30000)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function test(){
       const constant = 3;
@@ -130,7 +132,7 @@ test('Can overwrite lets when assignment is allowed', () => {
 })
 
 test('Arrow function infinite recursion with list args represents CallExpression well', () => {
-  return expectError(
+  return expectParsedErrorNoErrorSnapshot(
     stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
@@ -143,7 +145,7 @@ test('Arrow function infinite recursion with list args represents CallExpression
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
-  return expectError(
+  return expectParsedErrorNoErrorSnapshot(
     stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
@@ -156,14 +158,14 @@ test('Function infinite recursion with list args represents CallExpression well'
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
-  return expectErrorNoSnapshot(stripIndent`
+  return expectParsedErrorNoSnapshot(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
   `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
-  return expectErrorNoSnapshot(stripIndent`
+  return expectParsedErrorNoSnapshot(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))

@@ -1,7 +1,7 @@
-import { expectErrorNoSnapshot, expectResult, stripIndent } from '../utils/testing'
+import { expectParsedErrorNoSnapshot, expectResult, stripIndent } from '../utils/testing'
 
 test('Check that stack is at most 10k in size', () => {
-  return expectErrorNoSnapshot(stripIndent`
+  return expectParsedErrorNoSnapshot(stripIndent`
     function f(x) {
       if (x <= 0) {
         return 0;

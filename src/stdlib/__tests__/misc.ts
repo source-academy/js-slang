@@ -1,4 +1,4 @@
-import { expectError, expectResult, stripIndent } from '../../utils/testing'
+import { expectParsedError, expectResult, stripIndent } from '../../utils/testing'
 
 test('parse_int with valid args is ok, radix 2', () => {
   return expectResult(stripIndent`
@@ -19,7 +19,7 @@ test('parse_int with valid args is ok, but invalid str for radix', () => {
 })
 
 test('parse_int with non-string arg str throws error', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     parse_int(42, 2);
   `).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
@@ -27,7 +27,7 @@ test('parse_int with non-string arg str throws error', () => {
 })
 
 test('parse_int with non-integer arg radix throws error', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     parse_int(42, 2.1);
   `).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
@@ -35,7 +35,7 @@ test('parse_int with non-integer arg radix throws error', () => {
 })
 
 test('parse_int with radix outside [2, 36] throws error, radix=1', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     parse_int('10', 1);
   `).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
@@ -43,7 +43,7 @@ test('parse_int with radix outside [2, 36] throws error, radix=1', () => {
 })
 
 test('parse_int with radix outside [2, 36] throws error, radix=37', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     parse_int('10', 37);
   `).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
@@ -51,7 +51,7 @@ test('parse_int with radix outside [2, 36] throws error, radix=37', () => {
 })
 
 test('parse_int with string arg radix throws error', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     parse_int(42, '2');
   `).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`

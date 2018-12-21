@@ -1,7 +1,7 @@
-import { expectError, stripIndent } from '../../utils/testing'
+import { expectParsedError, stripIndent } from '../../utils/testing'
 
 test('Blatant syntax error', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     stringify(parse("'"), undefined, 2);
   `,
@@ -10,7 +10,7 @@ test('Blatant syntax error', () => {
 })
 
 test('Blacklisted syntax', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     stringify(parse("function* f() { yield 1; } f();"), undefined, 2);
   `,
@@ -19,7 +19,7 @@ test('Blacklisted syntax', () => {
 })
 
 test('Syntax rules', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     stringify(parse("x = y = x;"), undefined, 2);
   `,

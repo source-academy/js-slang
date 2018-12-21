@@ -1,7 +1,7 @@
-import { expectError, expectWarning, stripIndent } from '../utils/testing'
+import { expectParsedError, expectWarning, stripIndent } from '../utils/testing'
 
 test('Cannot leave blank init in for loop', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for(; i < 3; i = i + 1) {
       break;
@@ -12,7 +12,7 @@ test('Cannot leave blank init in for loop', () => {
 })
 
 test('Cannot leave blank test in for loop', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for(let i = 0; ; i = i + 1) {
       break;
@@ -23,7 +23,7 @@ test('Cannot leave blank test in for loop', () => {
 })
 
 test('Cannot leave blank update in for loop', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for(let i = 0; i < 3;) {
       break;
@@ -34,7 +34,7 @@ test('Cannot leave blank update in for loop', () => {
 })
 
 test('Cannot leave blank expressions in for loop', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for(;;) {
       break;
@@ -45,7 +45,7 @@ test('Cannot leave blank expressions in for loop', () => {
 })
 
 test('Cannot leave while loop predicate blank', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   while() {
     x;
@@ -56,7 +56,7 @@ test('Cannot leave while loop predicate blank', () => {
 })
 
 test('Cannot use update expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = 3;
   x++;
@@ -67,7 +67,7 @@ test('Cannot use update expressions', () => {
 })
 
 test('Cannot have incomplete statements', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   5
   `,
@@ -76,7 +76,7 @@ test('Cannot have incomplete statements', () => {
 })
 
 test('Cannot have if without else', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   if (true) { 5; }
   `,
@@ -85,7 +85,7 @@ test('Cannot have if without else', () => {
 })
 
 test('Cannot use assignment expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = 3;
   let y = x = 5;
@@ -98,7 +98,7 @@ test('Cannot use assignment expressions', () => {
 })
 
 test('Cannot use assignment expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = 3;
   let y = 4;
@@ -112,7 +112,7 @@ test('Cannot use assignment expressions', () => {
 })
 
 test('Cannot use assignment expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let y = 4;
   for (let x = y = 1; x < 1; x = x + 1) {
@@ -126,7 +126,7 @@ test('Cannot use assignment expressions', () => {
 })
 
 test('Cannot use multiple declarations', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = 3, y = 5;
   x;
@@ -136,7 +136,7 @@ test('Cannot use multiple declarations', () => {
 })
 
 test('Cannot use destructuring declarations', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = [1, 2];
   let [a, b] = x;
@@ -147,7 +147,7 @@ test('Cannot use destructuring declarations', () => {
 })
 
 test('no declaration without assignment', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x;
   `,
@@ -156,7 +156,7 @@ test('no declaration without assignment', () => {
 })
 
 test('Cannot use update statements', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let x = 3;
   x += 5;
@@ -167,7 +167,7 @@ test('Cannot use update statements', () => {
 })
 
 test('Cannot use function expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
   `,
@@ -176,7 +176,7 @@ test('Cannot use function expressions', () => {
 })
 
 test('Cannot use function expressions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   (function(x) { return x + 1; })(4);
   `,
@@ -185,7 +185,7 @@ test('Cannot use function expressions', () => {
 })
 
 test('if needs braces', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     if (true)
       true;
@@ -200,7 +200,7 @@ Line 1: Missing curly braces around \\"else\\" block"
 })
 
 test('for needs braces', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for (let i = 0; i < 1; i = i + 1)
       i;
@@ -210,7 +210,7 @@ test('for needs braces', () => {
 })
 
 test('while needs braces', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     let i = 0;
     while (i < 1)
@@ -221,7 +221,7 @@ test('while needs braces', () => {
 })
 
 test('No empty statements', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     ;
   `,
@@ -230,7 +230,7 @@ test('No empty statements', () => {
 })
 
 test('No array expressions in chapter 2', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     [];
   `,
@@ -260,7 +260,7 @@ test('No trailing commas in objects', () => {
 })
 
 test('No rest pattern', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f(...rest) {
       return rest;
@@ -272,7 +272,7 @@ test('No rest pattern', () => {
 })
 
 test('No spread operator', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f(x, y) {
       return x + y;
@@ -284,7 +284,7 @@ test('No spread operator', () => {
 })
 
 test('no try statements', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f(x, y) {
       return x + y;
@@ -304,7 +304,7 @@ Line 4: Try statements are not allowed"
 })
 
 test('no for of loops', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for (let i of list()) {
     }
@@ -317,7 +317,7 @@ Line 1: For of statements are not allowed"
 })
 
 test('no for in loops', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for (let i in { a: 1, b: 2 }) {
     }
@@ -330,7 +330,7 @@ Line 1: For in statements are not allowed"
 })
 
 test('no debugger statement', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     debugger;
   `,
@@ -339,7 +339,7 @@ test('no debugger statement', () => {
 })
 
 test('no generator functions', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function* gen() {
       yield 2;
@@ -351,7 +351,7 @@ test('no generator functions', () => {
 })
 
 test('no classes', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     class Box {
     }
@@ -364,7 +364,7 @@ Line 1: Class declarations are not allowed"
 })
 
 test('no super', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     class BoxError extends Error {
       constructor() {
@@ -383,7 +383,7 @@ Line 1: Class declarations are not allowed"
 })
 
 test('no export function', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     export function f(x) {
       return x;
@@ -394,7 +394,7 @@ test('no export function', () => {
 })
 
 test('no export constant', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     export const x = 1;
   `,
@@ -403,7 +403,7 @@ test('no export constant', () => {
 })
 
 test('no export default', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     const x = 1;
     export default x;
@@ -413,7 +413,7 @@ test('no export default', () => {
 })
 
 test('no import', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     import { stripIndent } from 'common-tags';
   `,
@@ -425,7 +425,7 @@ Line 1: Import declarations are not allowed"
 })
 
 test('no sequence expression', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     (1, 2);
   `,
@@ -434,7 +434,7 @@ test('no sequence expression', () => {
 })
 
 test('no interface', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     interface Box {
     }
@@ -444,7 +444,7 @@ test('no interface', () => {
 })
 
 test('no template literals', () => {
-  return expectError('`hi`', 100).toMatchInlineSnapshot(`
+  return expectParsedError('`hi`', 100).toMatchInlineSnapshot(`
 "Line 1: Missing semicolon at the end of statement
 Line 1: Template elements are not allowed
 Line 1: Template literals are not allowed"
@@ -452,14 +452,14 @@ Line 1: Template literals are not allowed"
 })
 
 test('no regexp', () => {
-  return expectError('/pattern/', 100).toMatchInlineSnapshot(`
+  return expectParsedError('/pattern/', 100).toMatchInlineSnapshot(`
 "Line 1: Missing semicolon at the end of statement
 Line 1: 'RegExp' literals are not allowed"
 `)
 })
 
 test('no this, no new', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function Box() {
       this[0] = 5;
@@ -471,7 +471,7 @@ test('no this, no new', () => {
 })
 
 test('no unspecified operators', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     1 << 10;
   `,
@@ -480,7 +480,7 @@ test('no unspecified operators', () => {
 })
 
 test('no unspecified unary operators', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     let x = 5;
     typeof x;
@@ -490,7 +490,7 @@ test('no unspecified unary operators', () => {
 })
 
 test('no implicit undefined return', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f() {
       return;
@@ -501,7 +501,7 @@ test('no implicit undefined return', () => {
 })
 
 test('no repeated params', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f(x, x) {
       return x;
@@ -512,7 +512,7 @@ test('no repeated params', () => {
 })
 
 test('no declaring reserved keywords', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     let yield = 5;
   `,
@@ -521,7 +521,7 @@ test('no declaring reserved keywords', () => {
 })
 
 test('no assigning to reserved keywords', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     package = 5;
   `,

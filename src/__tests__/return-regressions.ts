@@ -3,11 +3,11 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { expectError, expectResult } from '../utils/testing'
+import { expectParsedError, expectResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
-  return expectError(`
+  return expectParsedError(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }

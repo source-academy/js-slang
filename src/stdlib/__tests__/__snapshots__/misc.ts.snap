@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`parse_int with non-integer arg radix throws error: expectError 1`] = `
+exports[`parse_int with non-integer arg radix throws error: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse_int(42, 2.1);",
@@ -29,7 +29,7 @@ Object {
 }
 `;
 
-exports[`parse_int with non-string arg str throws error: expectError 1`] = `
+exports[`parse_int with non-string arg str throws error: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse_int(42, 2);",
@@ -58,7 +58,7 @@ Object {
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=1: expectError 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=1: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse_int('10', 1);",
@@ -87,7 +87,7 @@ Object {
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=37: expectError 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=37: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse_int('10', 37);",
@@ -116,7 +116,7 @@ Object {
 }
 `;
 
-exports[`parse_int with string arg radix throws error: expectError 1`] = `
+exports[`parse_int with string arg radix throws error: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse_int(42, '2');",

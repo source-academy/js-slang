@@ -1,4 +1,4 @@
-import { expectError, expectResult, stripIndent } from '../../utils/testing'
+import { expectParsedError, expectResult, stripIndent } from '../../utils/testing'
 
 test('list creates list', () => {
   return expectResult(
@@ -278,7 +278,7 @@ test('set_tail', () => {
 })
 
 test('non-list error head', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     head([1, 2, 3]);
   `,
@@ -289,7 +289,7 @@ test('non-list error head', () => {
 })
 
 test('non-list error tail', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     tail([1, 2, 3]);
   `,
@@ -300,7 +300,7 @@ test('non-list error tail', () => {
 })
 
 test('non-list error length', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     length([1, 2, 3]);
   `,
@@ -311,7 +311,7 @@ test('non-list error length', () => {
 })
 
 test('non-list error map', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     map(x=>x, [1, 2, 3]);
   `,
@@ -322,7 +322,7 @@ test('non-list error map', () => {
 })
 
 test('non-list error for_each', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     for_each(x=>x, [1, 2, 3]);
   `,
@@ -333,7 +333,7 @@ test('non-list error for_each', () => {
 })
 
 test('non-list error reverse', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     reverse([1, 2, 3]);
   `,
@@ -344,7 +344,7 @@ test('non-list error reverse', () => {
 })
 
 test('non-list error append', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     append([1, 2, 3], list(1, 2, 3));
   `,
@@ -355,7 +355,7 @@ test('non-list error append', () => {
 })
 
 test('non-list error member', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     member(1, [1, 2, 3]);
   `,
@@ -366,7 +366,7 @@ test('non-list error member', () => {
 })
 
 test('non-list error remove', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     remove(1, [1, 2, 3]);
   `,
@@ -377,7 +377,7 @@ test('non-list error remove', () => {
 })
 
 test('non-list error remove_all', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     remove_all(1, [1, 2, 3]);
   `,
@@ -388,7 +388,7 @@ test('non-list error remove_all', () => {
 })
 
 test('non-list error assoc', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     assoc(1, [1, 2, 3]);
   `,
@@ -399,7 +399,7 @@ test('non-list error assoc', () => {
 })
 
 test('non-list error filter', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     filter(x => true, [1, 2, 3]);
   `,
@@ -410,7 +410,7 @@ test('non-list error filter', () => {
 })
 
 test('non-list error accumulate', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
@@ -421,7 +421,7 @@ test('non-list error accumulate', () => {
 })
 
 test('non-list error accumulate', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
@@ -432,7 +432,7 @@ test('non-list error accumulate', () => {
 })
 
 test('non-list error set_head', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     set_head([1, 2, 3], 4);
   `,
@@ -443,7 +443,7 @@ test('non-list error set_head', () => {
 })
 
 test('non-list error set_tail', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     set_tail([1, 2, 3], 4);
   `,
@@ -454,7 +454,7 @@ test('non-list error set_tail', () => {
 })
 
 test('bad number error build_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     build_list(-1, x => x);
   `,
@@ -465,7 +465,7 @@ test('bad number error build_list', () => {
 })
 
 test('bad number error build_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     build_list(1.5, x => x);
   `,
@@ -476,7 +476,7 @@ test('bad number error build_list', () => {
 })
 
 test('bad number error build_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     build_list('1', x => x);
   `,
@@ -487,7 +487,7 @@ test('bad number error build_list', () => {
 })
 
 test('bad number error enum_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     enum_list('1', '5');
   `,
@@ -498,7 +498,7 @@ test('bad number error enum_list', () => {
 })
 
 test('bad number error enum_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     enum_list('1', 5);
   `,
@@ -509,7 +509,7 @@ test('bad number error enum_list', () => {
 })
 
 test('bad number error enum_list', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     enum_list(1, '5');
   `,
@@ -520,7 +520,7 @@ test('bad number error enum_list', () => {
 })
 
 test('bad index error list_ref', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     list_ref(list(1, 2, 3), 3);
   `,
@@ -531,7 +531,7 @@ test('bad index error list_ref', () => {
 })
 
 test('bad index error list_ref', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     list_ref(list(1, 2, 3), -1);
   `,
@@ -542,7 +542,7 @@ test('bad index error list_ref', () => {
 })
 
 test('bad index error list_ref', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     list_ref(list(1, 2, 3), 1.5);
   `,
@@ -553,7 +553,7 @@ test('bad index error list_ref', () => {
 })
 
 test('bad index error list_ref', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     list_ref(list(1, 2, 3), '1');
   `,

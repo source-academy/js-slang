@@ -1,15 +1,20 @@
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
-import { expectError, expectErrorNoSnapshot, expectResult, stripIndent } from '../utils/testing'
+import {
+  expectParsedError,
+  expectParsedErrorNoSnapshot,
+  expectResult,
+  stripIndent
+} from '../utils/testing'
 
 test('Undefined variable error is thrown', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     im_undefined;
   `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
 })
 
 test('Error when assigning to builtin', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     map = 5;
   `,
@@ -18,7 +23,7 @@ test('Error when assigning to builtin', () => {
 })
 
 test('Error when assigning to builtin', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     undefined = 5;
   `,
@@ -27,7 +32,7 @@ test('Error when assigning to builtin', () => {
 })
 
 test('Error when assigning to property on undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     undefined.prop = 123;
   `,
@@ -36,7 +41,7 @@ test('Error when assigning to property on undefined', () => {
 })
 
 test('Error when assigning to property on variable with value undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     const u = undefined;
     u.prop = 123;
@@ -46,7 +51,7 @@ test('Error when assigning to property on variable with value undefined', () => 
 })
 
 test('Error when deeply assigning to property on variable with value undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     const u = undefined;
     u.prop.prop = 123;
@@ -56,7 +61,7 @@ test('Error when deeply assigning to property on variable with value undefined',
 })
 
 test('Error when accessing property on undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     undefined.prop;
   `,
@@ -65,7 +70,7 @@ test('Error when accessing property on undefined', () => {
 })
 
 test('Error when deeply accessing property on undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     undefined.prop.prop;
   `,
@@ -74,7 +79,7 @@ test('Error when deeply accessing property on undefined', () => {
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     parse_int("10");
   `,
@@ -85,7 +90,7 @@ test('Nice errors when errors occur inside builtins', () => {
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     parse("'");
   `,
@@ -94,7 +99,7 @@ test('Nice errors when errors occur inside builtins', () => {
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f(x) {
       return a;
@@ -106,7 +111,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
 })
 
 test('Infinite recursion with a block bodied function', () => {
-  return expectErrorNoSnapshot(
+  return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
@@ -118,7 +123,7 @@ test('Infinite recursion with a block bodied function', () => {
 }, 10000)
 
 test('Infinite recursion with function calls in argument', () => {
-  return expectErrorNoSnapshot(
+  return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
@@ -133,7 +138,7 @@ test('Infinite recursion with function calls in argument', () => {
 }, 10000)
 
 test('Infinite recursion of mutually recursive functions', () => {
-  return expectErrorNoSnapshot(
+  return expectParsedErrorNoSnapshot(
     stripIndent`
     function f(n) {
       return n === 0 ? 0 : 1 + g(n - 1);
@@ -148,37 +153,37 @@ test('Infinite recursion of mutually recursive functions', () => {
 })
 
 test('Error when calling non function value undefined', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     undefined();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
 })
 
 test('Error when calling non function value null', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     null();
   `).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
 })
 
 test('Error when calling non function value true', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     true();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
 })
 
 test('Error when calling non function value 0', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     0();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
 })
 
 test('Error when calling non function value "string"', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     'string'();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
 })
 
 test('Error when calling non function value array', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     [1]();
   `,
@@ -187,7 +192,7 @@ test('Error when calling non function value array', () => {
 })
 
 test('Error when calling non function value object', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     ({a: 1})();
   `,
@@ -196,7 +201,7 @@ test('Error when calling non function value object', () => {
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     function f(x) {
       return x;
     }
@@ -205,7 +210,7 @@ test('Error when calling function with too few arguments', () => {
 })
 
 test('Error when calling function with too many arguments', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     function f(x) {
       return x;
     }
@@ -214,21 +219,21 @@ test('Error when calling function with too many arguments', () => {
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     const f = x => x;
     f();
   `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     const f = x => x;
     f(1, 2);
   `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when redeclaring constant', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     const f = x => x;
     const f = x => x;
@@ -238,7 +243,7 @@ test('Error when redeclaring constant', () => {
 })
 
 test('Error when redeclaring constant as variable', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     const f = x => x;
     let f = x => x;
@@ -248,7 +253,7 @@ test('Error when redeclaring constant as variable', () => {
 })
 
 test('Error when redeclaring variable as constant', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     let f = x => x;
     const f = x => x;
@@ -258,7 +263,7 @@ test('Error when redeclaring variable as constant', () => {
 })
 
 test('Error when redeclaring variable', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     let f = x => x;
     let f = x => x;
@@ -348,7 +353,7 @@ test('Runtime error when redeclaring variable', () => {
 })
 
 test('Error when accessing property of null', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     null["prop"];
   `,
@@ -357,7 +362,7 @@ test('Error when accessing property of null', () => {
 })
 
 test('Error when accessing property of undefined', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     undefined["prop"];
   `,
@@ -366,7 +371,7 @@ test('Error when accessing property of undefined', () => {
 })
 
 test('Error when accessing inherited property of builtin', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     pair["constructor"];
   `,
@@ -379,7 +384,7 @@ test('Error when accessing inherited property of builtin', () => {
 })
 
 test('Error when accessing inherited property of function', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     function f() {}
     f["constructor"];
@@ -389,7 +394,7 @@ test('Error when accessing inherited property of function', () => {
 })
 
 test('Error when accessing inherited property of arrow function', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     (() => 1)["constructor"];
   `,
@@ -398,7 +403,7 @@ test('Error when accessing inherited property of arrow function', () => {
 })
 
 test('Error when accessing inherited property of array', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     [].push;
   `,
@@ -407,7 +412,7 @@ test('Error when accessing inherited property of array', () => {
 })
 
 test('Error when accessing inherited property of object', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     ({}).valueOf;
   `,
@@ -416,7 +421,7 @@ test('Error when accessing inherited property of object', () => {
 })
 
 test('Error when accessing inherited property of string', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     'hi'.includes;
   `,
@@ -425,7 +430,7 @@ test('Error when accessing inherited property of string', () => {
 })
 
 test('Error when accessing inherited property of number', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
     (1).toPrecision;
   `,

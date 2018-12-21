@@ -52,7 +52,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref: expectError 1`] = `
+exports[`bad index error list_ref: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), 3);",
@@ -81,7 +81,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref: expectError 2`] = `
+exports[`bad index error list_ref: expectParsedError 2`] = `
 Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), -1);",
@@ -110,7 +110,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref: expectError 3`] = `
+exports[`bad index error list_ref: expectParsedError 3`] = `
 Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), 1.5);",
@@ -139,7 +139,7 @@ Object {
 }
 `;
 
-exports[`bad index error list_ref: expectError 4`] = `
+exports[`bad index error list_ref: expectParsedError 4`] = `
 Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), '1');",
@@ -168,7 +168,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list: expectError 1`] = `
+exports[`bad number error build_list: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "build_list(-1, x => x);",
@@ -197,7 +197,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list: expectError 2`] = `
+exports[`bad number error build_list: expectParsedError 2`] = `
 Object {
   "alertResult": Array [],
   "code": "build_list(1.5, x => x);",
@@ -226,7 +226,7 @@ Object {
 }
 `;
 
-exports[`bad number error build_list: expectError 3`] = `
+exports[`bad number error build_list: expectParsedError 3`] = `
 Object {
   "alertResult": Array [],
   "code": "build_list('1', x => x);",
@@ -255,7 +255,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list: expectError 1`] = `
+exports[`bad number error enum_list: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "enum_list('1', '5');",
@@ -284,7 +284,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list: expectError 2`] = `
+exports[`bad number error enum_list: expectParsedError 2`] = `
 Object {
   "alertResult": Array [],
   "code": "enum_list('1', 5);",
@@ -313,7 +313,7 @@ Object {
 }
 `;
 
-exports[`bad number error enum_list: expectError 3`] = `
+exports[`bad number error enum_list: expectParsedError 3`] = `
 Object {
   "alertResult": Array [],
   "code": "enum_list(1, '5');",
@@ -523,7 +523,7 @@ Object {
 }
 `;
 
-exports[`non-list error accumulate: expectError 1`] = `
+exports[`non-list error accumulate: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
@@ -552,7 +552,7 @@ Object {
 }
 `;
 
-exports[`non-list error accumulate: expectError 2`] = `
+exports[`non-list error accumulate: expectParsedError 2`] = `
 Object {
   "alertResult": Array [],
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
@@ -581,7 +581,7 @@ Object {
 }
 `;
 
-exports[`non-list error append: expectError 1`] = `
+exports[`non-list error append: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "append([1, 2, 3], list(1, 2, 3));",
@@ -610,7 +610,7 @@ Object {
 }
 `;
 
-exports[`non-list error assoc: expectError 1`] = `
+exports[`non-list error assoc: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "assoc(1, [1, 2, 3]);",
@@ -639,7 +639,7 @@ Object {
 }
 `;
 
-exports[`non-list error filter: expectError 1`] = `
+exports[`non-list error filter: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "filter(x => true, [1, 2, 3]);",
@@ -668,7 +668,7 @@ Object {
 }
 `;
 
-exports[`non-list error for_each: expectError 1`] = `
+exports[`non-list error for_each: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "for_each(x=>x, [1, 2, 3]);",
@@ -697,7 +697,7 @@ Object {
 }
 `;
 
-exports[`non-list error head: expectError 1`] = `
+exports[`non-list error head: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "head([1, 2, 3]);",
@@ -726,7 +726,7 @@ Object {
 }
 `;
 
-exports[`non-list error length: expectError 1`] = `
+exports[`non-list error length: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "length([1, 2, 3]);",
@@ -755,7 +755,7 @@ Object {
 }
 `;
 
-exports[`non-list error map: expectError 1`] = `
+exports[`non-list error map: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "map(x=>x, [1, 2, 3]);",
@@ -784,7 +784,7 @@ Object {
 }
 `;
 
-exports[`non-list error member: expectError 1`] = `
+exports[`non-list error member: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "member(1, [1, 2, 3]);",
@@ -813,7 +813,7 @@ Object {
 }
 `;
 
-exports[`non-list error remove: expectError 1`] = `
+exports[`non-list error remove: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "remove(1, [1, 2, 3]);",
@@ -842,7 +842,7 @@ Object {
 }
 `;
 
-exports[`non-list error remove_all: expectError 1`] = `
+exports[`non-list error remove_all: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "remove_all(1, [1, 2, 3]);",
@@ -871,7 +871,7 @@ Object {
 }
 `;
 
-exports[`non-list error reverse: expectError 1`] = `
+exports[`non-list error reverse: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "reverse([1, 2, 3]);",
@@ -900,7 +900,7 @@ Object {
 }
 `;
 
-exports[`non-list error set_head: expectError 1`] = `
+exports[`non-list error set_head: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "set_head([1, 2, 3], 4);",
@@ -929,7 +929,7 @@ Object {
 }
 `;
 
-exports[`non-list error set_tail: expectError 1`] = `
+exports[`non-list error set_tail: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "set_tail([1, 2, 3], 4);",
@@ -958,7 +958,7 @@ Object {
 }
 `;
 
-exports[`non-list error tail: expectError 1`] = `
+exports[`non-list error tail: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "tail([1, 2, 3]);",

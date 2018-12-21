@@ -1,4 +1,4 @@
-import { expectError, expectResult, stripIndent } from '../utils/testing'
+import { expectParsedError, expectResult, stripIndent } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
@@ -102,7 +102,7 @@ test('for loop `let` variables are copied into the block scope', () => {
 })
 
 test('Cannot overwrite loop variables within a block', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   function test(){
       let z = [];
@@ -118,7 +118,7 @@ test('Cannot overwrite loop variables within a block', () => {
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
       const v = f();
       function f() {
         return 1;
@@ -128,7 +128,7 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
 }, 30000)
 
 test('Error when accessing temporal dead zone', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
     const a = 1;
     function f() {
       display(a);
@@ -140,7 +140,7 @@ test('Error when accessing temporal dead zone', () => {
 
 // tslint:disable-next-line:max-line-length
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
-  return expectError(stripIndent`
+  return expectParsedError(stripIndent`
       const a = 1;
       {
         a + a;
@@ -150,7 +150,7 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
 }, 30000)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
-  return expectError(
+  return expectParsedError(
     stripIndent`
   let variable = 1;
   function test(){

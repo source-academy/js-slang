@@ -129,10 +129,25 @@ export function testFailure(
   })
 }
 
-export function snapshot(snapshotName?: string): (testResult: TestResult) => TestResult {
-  return testResult => {
-    expect(testResult).toMatchSnapshot(snapshotName)
-    return testResult
+export function snapshot<T extends { [P in keyof TestResult]: any }>(
+  propertyMatchers: Partial<T>,
+  snapshotName?: string
+): (testResult: TestResult) => TestResult
+export function snapshot<T extends { [P in keyof TestResult]: any }>(
+  snapshotName?: string,
+  arg2?: string
+): (testResult: TestResult) => TestResult
+export function snapshot(arg1?: any, arg2?: any): (testResult: TestResult) => TestResult {
+  if (arg2) {
+    return testResult => {
+      expect(testResult).toMatchSnapshot(arg1!, arg2)
+      return testResult
+    }
+  } else {
+    return testResult => {
+      expect(testResult).toMatchSnapshot(arg1!)
+      return testResult
+    }
   }
 }
 
@@ -187,14 +202,33 @@ export function expectResult(
   ).resolves
 }
 
-export function expectError(
+export function expectParsedErrorNoErrorSnapshot(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
 ) {
   return expect(
     testFailure(code, chapterOrContext, testBuiltins)
-      .then(snapshot('expectError'))
+      .then(
+        snapshot(
+          {
+            errors: expect.any(Array)
+          },
+          'expectParsedErrorNoErrorSnapshot'
+        )
+      )
+      .then(testResult => testResult.parsedErrors)
+  ).resolves
+}
+
+export function expectParsedError(
+  code: string,
+  chapterOrContext?: number | TestContext,
+  testBuiltins?: TestBuiltins
+) {
+  return expect(
+    testFailure(code, chapterOrContext, testBuiltins)
+      .then(snapshot('expectParsedError'))
       .then(testResult => testResult.parsedErrors)
   ).resolves
 }
@@ -211,7 +245,7 @@ export function expectWarning(
   ).resolves
 }
 
-export function expectErrorNoSnapshot(
+export function expectParsedErrorNoSnapshot(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
