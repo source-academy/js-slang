@@ -12,7 +12,11 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -29,7 +33,11 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -42,7 +50,11 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -55,7 +67,11 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -72,7 +88,11 @@ Object {
 };
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -83,7 +103,11 @@ Object {
   "code": "const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -95,7 +119,11 @@ Object {
 const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -119,7 +147,11 @@ function g(x, y) {
 }
 f(5000, 5000);",
   "displayResult": undefined,
-  "result": 10000,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10000,
+  },
   "visualiseListResult": undefined,
 }
 `;

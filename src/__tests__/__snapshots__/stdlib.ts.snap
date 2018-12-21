@@ -5,7 +5,11 @@ Object {
   "alertResult": undefined,
   "code": "display('message');",
   "displayResult": "\\"message\\"",
-  "result": "message",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "message",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -15,7 +19,26 @@ Object {
   "alertResult": undefined,
   "code": "error('error!');",
   "displayResult": undefined,
-  "error": "Line 1: Error: \\"error!\\"",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "error!"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -25,7 +48,11 @@ Object {
   "alertResult": undefined,
   "code": "is_undefined(undefined);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -35,7 +62,11 @@ Object {
   "alertResult": undefined,
   "code": "is_undefined(null);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -45,7 +76,11 @@ Object {
   "alertResult": undefined,
   "code": "is_null(undefined);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -55,7 +90,11 @@ Object {
   "alertResult": undefined,
   "code": "is_null(null);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -65,7 +104,11 @@ Object {
   "alertResult": undefined,
   "code": "is_string('string');",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -75,7 +118,11 @@ Object {
   "alertResult": undefined,
   "code": "is_string('true');",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -85,7 +132,11 @@ Object {
   "alertResult": undefined,
   "code": "is_string('1');",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -95,7 +146,11 @@ Object {
   "alertResult": undefined,
   "code": "is_string(true);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -105,7 +160,11 @@ Object {
   "alertResult": undefined,
   "code": "is_string(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -115,7 +174,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number('string');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -125,7 +188,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number('true');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -135,7 +202,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number('1');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -145,7 +216,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number(true);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -155,7 +230,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number(1);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -165,7 +244,11 @@ Object {
   "alertResult": undefined,
   "code": "is_boolean('string');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -175,7 +258,11 @@ Object {
   "alertResult": undefined,
   "code": "is_boolean('true');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -185,7 +272,11 @@ Object {
   "alertResult": undefined,
   "code": "is_boolean('1');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -195,7 +286,11 @@ Object {
   "alertResult": undefined,
   "code": "is_boolean(true);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -205,7 +300,11 @@ Object {
   "alertResult": undefined,
   "code": "is_boolean(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -215,7 +314,11 @@ Object {
   "alertResult": undefined,
   "code": "is_function(display);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -225,7 +328,11 @@ Object {
   "alertResult": undefined,
   "code": "is_function(x => x);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -238,7 +345,11 @@ Object {
 }
 is_function(f);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -248,7 +359,11 @@ Object {
   "alertResult": undefined,
   "code": "is_function(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -258,7 +373,11 @@ Object {
   "alertResult": undefined,
   "code": "is_array(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -268,7 +387,11 @@ Object {
   "alertResult": undefined,
   "code": "is_array(pair(1, 2));",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -278,7 +401,11 @@ Object {
   "alertResult": undefined,
   "code": "is_array([1]);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -288,7 +415,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -298,7 +429,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(pair(1, 2));",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -308,7 +443,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object([1]);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -318,7 +457,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object({});",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -328,7 +471,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object({a: 1});",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -338,7 +485,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(x => x);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -348,7 +499,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(display);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -358,7 +513,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -368,7 +527,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object('string');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -378,7 +541,11 @@ Object {
   "alertResult": undefined,
   "code": "is_object(true);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -388,7 +555,11 @@ Object {
   "alertResult": undefined,
   "code": "is_NaN(1 / 0);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -398,7 +569,11 @@ Object {
   "alertResult": undefined,
   "code": "is_NaN(NaN);",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -408,7 +583,11 @@ Object {
   "alertResult": undefined,
   "code": "is_NaN(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -418,7 +597,11 @@ Object {
   "alertResult": undefined,
   "code": "is_NaN(x => x);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -428,7 +611,11 @@ Object {
   "alertResult": undefined,
   "code": "has_own_property({a: 1, b: 2}, 'a');",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -438,7 +625,11 @@ Object {
   "alertResult": undefined,
   "code": "has_own_property({a: 1, b: 2}, 'c');",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -448,7 +639,11 @@ Object {
   "alertResult": undefined,
   "code": "array_length([1]);",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -458,7 +653,11 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('10', 10);",
   "displayResult": undefined,
-  "result": 10,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 10,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -468,7 +667,11 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('10', 2);",
   "displayResult": undefined,
-  "result": 2,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 2,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -478,7 +681,11 @@ Object {
   "alertResult": undefined,
   "code": "is_number(runtime());",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -492,7 +699,11 @@ f(1000);
 const y = runtime();
 x !== y;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -502,10 +713,14 @@ Object {
   "alertResult": undefined,
   "code": "pair(1, 2);",
   "displayResult": undefined,
-  "result": Array [
-    1,
-    2,
-  ],
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": Array [
+      1,
+      2,
+    ],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -515,13 +730,17 @@ Object {
   "alertResult": undefined,
   "code": "list(1, 2);",
   "displayResult": undefined,
-  "result": Array [
-    1,
-    Array [
-      2,
-      null,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": Array [
+      1,
+      Array [
+        2,
+        null,
+      ],
     ],
-  ],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -531,7 +750,11 @@ Object {
   "alertResult": undefined,
   "code": "is_list(1);",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -541,7 +764,11 @@ Object {
   "alertResult": undefined,
   "code": "is_list(pair(1, 2));",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -551,7 +778,11 @@ Object {
   "alertResult": undefined,
   "code": "is_list(list(1, 2));",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -561,7 +792,11 @@ Object {
   "alertResult": undefined,
   "code": "head(pair(1, 2));",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -571,7 +806,11 @@ Object {
   "alertResult": undefined,
   "code": "tail(pair(1, 2));",
   "displayResult": undefined,
-  "result": 2,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 2,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -581,7 +820,26 @@ Object {
   "alertResult": undefined,
   "code": "head(null);",
   "displayResult": undefined,
-  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -591,7 +849,26 @@ Object {
   "alertResult": undefined,
   "code": "tail(null);",
   "displayResult": undefined,
-  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -601,7 +878,26 @@ Object {
   "alertResult": undefined,
   "code": "head(1);",
   "displayResult": undefined,
-  "error": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered 1],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -611,7 +907,26 @@ Object {
   "alertResult": undefined,
   "code": "tail(1);",
   "displayResult": undefined,
-  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered 1],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -621,7 +936,11 @@ Object {
   "alertResult": undefined,
   "code": "length(list(1, 2));",
   "displayResult": undefined,
-  "result": 2,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 2,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -631,7 +950,26 @@ Object {
   "alertResult": undefined,
   "code": "length(1);",
   "displayResult": undefined,
-  "error": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered 1],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;

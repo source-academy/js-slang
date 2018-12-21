@@ -5,7 +5,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int(42, 2.1);",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -15,7 +34,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int(42, 2);",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -25,7 +63,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('10', 1);",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -35,7 +92,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('10', 37);",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -45,7 +121,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int(42, '2');",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -55,7 +150,11 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('uu1', 2);",
   "displayResult": undefined,
-  "result": NaN,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": NaN,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -65,7 +164,11 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('1100101010101', 2);",
   "displayResult": undefined,
-  "result": 6485,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 6485,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -75,7 +178,11 @@ Object {
   "alertResult": undefined,
   "code": "parse_int('uu1', 36);",
   "displayResult": undefined,
-  "result": 39961,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 39961,
+  },
   "visualiseListResult": undefined,
 }
 `;

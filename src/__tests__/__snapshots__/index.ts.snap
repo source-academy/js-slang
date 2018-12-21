@@ -5,7 +5,11 @@ Object {
   "alertResult": undefined,
   "code": "25*(display(1+1));",
   "displayResult": "2",
-  "result": 50,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 50,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -15,7 +19,11 @@ Object {
   "alertResult": undefined,
   "code": "\\"\\" + [1, 2];",
   "displayResult": undefined,
-  "result": "1,2",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "1,2",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -25,7 +33,11 @@ Object {
   "alertResult": undefined,
   "code": "() => 42;",
   "displayResult": undefined,
-  "result": [Function],
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": [Function],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -36,8 +48,239 @@ Object {
   "code": "const f = xs => append(f(xs), list());
 f(list(1, 2));",
   "displayResult": undefined,
-  "error": "Line 1: Infinite recursion
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
+  "errors": Array [
+    MaximumStackLimitExceeded {
+      "calls": Array [
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 24,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 24,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 23,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 23,
+            "type": "Identifier",
+          },
+          "end": 28,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 28,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 23,
+              "line": 1,
+            },
+          },
+          "start": 23,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 24,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 24,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 23,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 23,
+            "type": "Identifier",
+          },
+          "end": 28,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 28,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 23,
+              "line": 1,
+            },
+          },
+          "start": 23,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 24,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 24,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 23,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 23,
+            "type": "Identifier",
+          },
+          "end": 28,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 28,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 23,
+              "line": 1,
+            },
+          },
+          "start": 23,
+          "type": "CallExpression",
+        },
+      ],
+      "customGenerator": Object {
+        "ArrayExpression": [Function],
+        "ArrayPattern": [Function],
+        "ArrowFunctionExpression": [Function],
+        "AssignmentExpression": [Function],
+        "AssignmentPattern": [Function],
+        "AwaitExpression": [Function],
+        "BinaryExpression": [Function],
+        "BlockStatement": [Function],
+        "BreakStatement": [Function],
+        "CallExpression": [Function],
+        "ClassBody": [Function],
+        "ClassDeclaration": [Function],
+        "ClassExpression": [Function],
+        "ConditionalExpression": [Function],
+        "ContinueStatement": [Function],
+        "DebuggerStatement": [Function],
+        "DoWhileStatement": [Function],
+        "EmptyStatement": [Function],
+        "ExportAllDeclaration": [Function],
+        "ExportDefaultDeclaration": [Function],
+        "ExportNamedDeclaration": [Function],
+        "ExpressionStatement": [Function],
+        "ForInStatement": [Function],
+        "ForOfStatement": [Function],
+        "ForStatement": [Function],
+        "FunctionDeclaration": [Function],
+        "FunctionExpression": [Function],
+        "Identifier": [Function],
+        "IfStatement": [Function],
+        "ImportDeclaration": [Function],
+        "LabeledStatement": [Function],
+        "Literal": [Function],
+        "LogicalExpression": [Function],
+        "MemberExpression": [Function],
+        "MetaProperty": [Function],
+        "MethodDefinition": [Function],
+        "NewExpression": [Function],
+        "ObjectExpression": [Function],
+        "ObjectPattern": [Function],
+        "Program": [Function],
+        "Property": [Function],
+        "RegExpLiteral": [Function],
+        "RestElement": [Function],
+        "ReturnStatement": [Function],
+        "SequenceExpression": [Function],
+        "SpreadElement": [Function],
+        "Super": [Function],
+        "SwitchStatement": [Function],
+        "TaggedTemplateExpression": [Function],
+        "TemplateLiteral": [Function],
+        "ThisExpression": [Function],
+        "ThrowStatement": [Function],
+        "TryStatement": [Function],
+        "UnaryExpression": [Function],
+        "UpdateExpression": [Function],
+        "VariableDeclaration": [Function],
+        "VariableDeclarator": [Function],
+        "WhileStatement": [Function],
+        "WithStatement": [Function],
+        "YieldExpression": [Function],
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 28,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 23,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -47,9 +290,13 @@ Object {
   "alertResult": undefined,
   "code": "stringify(pair);",
   "displayResult": undefined,
-  "result": "function pair(left, right) {
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "function pair(left, right) {
 	[implementation hidden]
 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -59,9 +306,13 @@ Object {
   "alertResult": undefined,
   "code": "\\"\\"+pair;",
   "displayResult": undefined,
-  "result": "function pair(left, right) {
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "function pair(left, right) {
 	[implementation hidden]
 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -76,7 +327,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -91,7 +346,26 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "error": "Line 3: Cannot assign new value to constant constant",
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "name": "constant",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -105,7 +379,11 @@ o.a.b = {};
 o.a.b.c = \\"string\\";
 o.a.b.c;",
   "displayResult": undefined,
-  "result": "string",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "string",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -115,7 +393,11 @@ Object {
   "alertResult": undefined,
   "code": "",
   "displayResult": undefined,
-  "result": undefined,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": undefined,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -126,7 +408,11 @@ Object {
   "code": "const fac = (i) => i === 1 ? 1 : i * fac(i-1);
 fac(5);",
   "displayResult": undefined,
-  "result": 120,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 120,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -137,8 +423,239 @@ Object {
   "code": "function f(xs) { return append(f(xs), list()); }
 f(list(1, 2));",
   "displayResult": undefined,
-  "error": "Line 1: Infinite recursion
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
+  "errors": Array [
+    MaximumStackLimitExceeded {
+      "calls": Array [
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 32,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 32,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 31,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 31,
+            "type": "Identifier",
+          },
+          "end": 36,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 36,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 1,
+            },
+          },
+          "start": 31,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 32,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 32,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 31,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 31,
+            "type": "Identifier",
+          },
+          "end": 36,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 36,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 1,
+            },
+          },
+          "start": 31,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              "type": "Literal",
+              "value": Array [
+                1,
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+            },
+          ],
+          "callee": Node {
+            "end": 32,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 32,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 31,
+                "line": 1,
+              },
+            },
+            "name": "f",
+            "start": 31,
+            "type": "Identifier",
+          },
+          "end": 36,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 36,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 31,
+              "line": 1,
+            },
+          },
+          "start": 31,
+          "type": "CallExpression",
+        },
+      ],
+      "customGenerator": Object {
+        "ArrayExpression": [Function],
+        "ArrayPattern": [Function],
+        "ArrowFunctionExpression": [Function],
+        "AssignmentExpression": [Function],
+        "AssignmentPattern": [Function],
+        "AwaitExpression": [Function],
+        "BinaryExpression": [Function],
+        "BlockStatement": [Function],
+        "BreakStatement": [Function],
+        "CallExpression": [Function],
+        "ClassBody": [Function],
+        "ClassDeclaration": [Function],
+        "ClassExpression": [Function],
+        "ConditionalExpression": [Function],
+        "ContinueStatement": [Function],
+        "DebuggerStatement": [Function],
+        "DoWhileStatement": [Function],
+        "EmptyStatement": [Function],
+        "ExportAllDeclaration": [Function],
+        "ExportDefaultDeclaration": [Function],
+        "ExportNamedDeclaration": [Function],
+        "ExpressionStatement": [Function],
+        "ForInStatement": [Function],
+        "ForOfStatement": [Function],
+        "ForStatement": [Function],
+        "FunctionDeclaration": [Function],
+        "FunctionExpression": [Function],
+        "Identifier": [Function],
+        "IfStatement": [Function],
+        "ImportDeclaration": [Function],
+        "LabeledStatement": [Function],
+        "Literal": [Function],
+        "LogicalExpression": [Function],
+        "MemberExpression": [Function],
+        "MetaProperty": [Function],
+        "MethodDefinition": [Function],
+        "NewExpression": [Function],
+        "ObjectExpression": [Function],
+        "ObjectPattern": [Function],
+        "Program": [Function],
+        "Property": [Function],
+        "RegExpLiteral": [Function],
+        "RestElement": [Function],
+        "ReturnStatement": [Function],
+        "SequenceExpression": [Function],
+        "SpreadElement": [Function],
+        "Super": [Function],
+        "SwitchStatement": [Function],
+        "TaggedTemplateExpression": [Function],
+        "TemplateLiteral": [Function],
+        "ThisExpression": [Function],
+        "ThrowStatement": [Function],
+        "TryStatement": [Function],
+        "UnaryExpression": [Function],
+        "UpdateExpression": [Function],
+        "VariableDeclaration": [Function],
+        "VariableDeclarator": [Function],
+        "WhileStatement": [Function],
+        "WithStatement": [Function],
+        "YieldExpression": [Function],
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 36,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 31,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -151,7 +668,11 @@ Object {
 }
 identity(t) === t && t(1, 2, 3) === 6;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -161,7 +682,11 @@ Object {
   "alertResult": undefined,
   "code": "\\"\\" + ({a: 1});",
   "displayResult": undefined,
-  "result": "[object Object]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[object Object]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -171,8 +696,203 @@ Object {
   "alertResult": undefined,
   "code": "(x => x(x)(x))(x => x(x)(x));",
   "displayResult": undefined,
-  "error": "Line 1: Infinite recursion
-  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x))..",
+  "errors": Array [
+    MaximumStackLimitExceeded {
+      "calls": Array [
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 21,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 20,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 20,
+            "type": "Identifier",
+          },
+          "end": 24,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 24,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 20,
+              "line": 1,
+            },
+          },
+          "start": 20,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 21,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 20,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 20,
+            "type": "Identifier",
+          },
+          "end": 24,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 24,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 20,
+              "line": 1,
+            },
+          },
+          "start": 20,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 21,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 20,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 20,
+            "type": "Identifier",
+          },
+          "end": 24,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 24,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 20,
+              "line": 1,
+            },
+          },
+          "start": 20,
+          "type": "CallExpression",
+        },
+      ],
+      "customGenerator": Object {
+        "ArrayExpression": [Function],
+        "ArrayPattern": [Function],
+        "ArrowFunctionExpression": [Function],
+        "AssignmentExpression": [Function],
+        "AssignmentPattern": [Function],
+        "AwaitExpression": [Function],
+        "BinaryExpression": [Function],
+        "BlockStatement": [Function],
+        "BreakStatement": [Function],
+        "CallExpression": [Function],
+        "ClassBody": [Function],
+        "ClassDeclaration": [Function],
+        "ClassExpression": [Function],
+        "ConditionalExpression": [Function],
+        "ContinueStatement": [Function],
+        "DebuggerStatement": [Function],
+        "DoWhileStatement": [Function],
+        "EmptyStatement": [Function],
+        "ExportAllDeclaration": [Function],
+        "ExportDefaultDeclaration": [Function],
+        "ExportNamedDeclaration": [Function],
+        "ExpressionStatement": [Function],
+        "ForInStatement": [Function],
+        "ForOfStatement": [Function],
+        "ForStatement": [Function],
+        "FunctionDeclaration": [Function],
+        "FunctionExpression": [Function],
+        "Identifier": [Function],
+        "IfStatement": [Function],
+        "ImportDeclaration": [Function],
+        "LabeledStatement": [Function],
+        "Literal": [Function],
+        "LogicalExpression": [Function],
+        "MemberExpression": [Function],
+        "MetaProperty": [Function],
+        "MethodDefinition": [Function],
+        "NewExpression": [Function],
+        "ObjectExpression": [Function],
+        "ObjectPattern": [Function],
+        "Program": [Function],
+        "Property": [Function],
+        "RegExpLiteral": [Function],
+        "RestElement": [Function],
+        "ReturnStatement": [Function],
+        "SequenceExpression": [Function],
+        "SpreadElement": [Function],
+        "Super": [Function],
+        "SwitchStatement": [Function],
+        "TaggedTemplateExpression": [Function],
+        "TemplateLiteral": [Function],
+        "ThisExpression": [Function],
+        "ThrowStatement": [Function],
+        "TryStatement": [Function],
+        "UnaryExpression": [Function],
+        "UpdateExpression": [Function],
+        "VariableDeclaration": [Function],
+        "VariableDeclarator": [Function],
+        "WhileStatement": [Function],
+        "WithStatement": [Function],
+        "YieldExpression": [Function],
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 24,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 20,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -182,14 +902,203 @@ Object {
   "alertResult": undefined,
   "code": "function f(x) {return x(x)(x);} f(f);",
   "displayResult": undefined,
-  "error": "Line 1: Infinite recursion
-  x(function f(x) {
-  return x(x)(x);
-})..  x(function f(x) {
-  return x(x)(x);
-})..  x(function f(x) {
-  return x(x)(x);
-})..",
+  "errors": Array [
+    MaximumStackLimitExceeded {
+      "calls": Array [
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 23,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 23,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 22,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 22,
+            "type": "Identifier",
+          },
+          "end": 26,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 26,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 22,
+              "line": 1,
+            },
+          },
+          "start": 22,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 23,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 23,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 22,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 22,
+            "type": "Identifier",
+          },
+          "end": 26,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 26,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 22,
+              "line": 1,
+            },
+          },
+          "start": 22,
+          "type": "CallExpression",
+        },
+        Object {
+          "arguments": Array [
+            Object {
+              "raw": [Function],
+              "type": "Literal",
+              "value": [Function],
+            },
+          ],
+          "callee": Node {
+            "end": 23,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 23,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 22,
+                "line": 1,
+              },
+            },
+            "name": "x",
+            "start": 22,
+            "type": "Identifier",
+          },
+          "end": 26,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 26,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 22,
+              "line": 1,
+            },
+          },
+          "start": 22,
+          "type": "CallExpression",
+        },
+      ],
+      "customGenerator": Object {
+        "ArrayExpression": [Function],
+        "ArrayPattern": [Function],
+        "ArrowFunctionExpression": [Function],
+        "AssignmentExpression": [Function],
+        "AssignmentPattern": [Function],
+        "AwaitExpression": [Function],
+        "BinaryExpression": [Function],
+        "BlockStatement": [Function],
+        "BreakStatement": [Function],
+        "CallExpression": [Function],
+        "ClassBody": [Function],
+        "ClassDeclaration": [Function],
+        "ClassExpression": [Function],
+        "ConditionalExpression": [Function],
+        "ContinueStatement": [Function],
+        "DebuggerStatement": [Function],
+        "DoWhileStatement": [Function],
+        "EmptyStatement": [Function],
+        "ExportAllDeclaration": [Function],
+        "ExportDefaultDeclaration": [Function],
+        "ExportNamedDeclaration": [Function],
+        "ExpressionStatement": [Function],
+        "ForInStatement": [Function],
+        "ForOfStatement": [Function],
+        "ForStatement": [Function],
+        "FunctionDeclaration": [Function],
+        "FunctionExpression": [Function],
+        "Identifier": [Function],
+        "IfStatement": [Function],
+        "ImportDeclaration": [Function],
+        "LabeledStatement": [Function],
+        "Literal": [Function],
+        "LogicalExpression": [Function],
+        "MemberExpression": [Function],
+        "MetaProperty": [Function],
+        "MethodDefinition": [Function],
+        "NewExpression": [Function],
+        "ObjectExpression": [Function],
+        "ObjectPattern": [Function],
+        "Program": [Function],
+        "Property": [Function],
+        "RegExpLiteral": [Function],
+        "RestElement": [Function],
+        "ReturnStatement": [Function],
+        "SequenceExpression": [Function],
+        "SpreadElement": [Function],
+        "Super": [Function],
+        "SwitchStatement": [Function],
+        "TaggedTemplateExpression": [Function],
+        "TemplateLiteral": [Function],
+        "ThisExpression": [Function],
+        "ThrowStatement": [Function],
+        "TryStatement": [Function],
+        "UnaryExpression": [Function],
+        "UpdateExpression": [Function],
+        "VariableDeclaration": [Function],
+        "VariableDeclarator": [Function],
+        "WhileStatement": [Function],
+        "WithStatement": [Function],
+        "YieldExpression": [Function],
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 22,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -201,7 +1110,11 @@ Object {
 o.a = 1;
 o.a;",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -211,7 +1124,11 @@ Object {
   "alertResult": undefined,
   "code": "true;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -221,7 +1138,11 @@ Object {
   "alertResult": undefined,
   "code": "42;",
   "displayResult": undefined,
-  "result": 42,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 42,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -231,7 +1152,11 @@ Object {
   "alertResult": undefined,
   "code": "'42';",
   "displayResult": undefined,
-  "result": "42",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "42",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -241,7 +1166,11 @@ Object {
   "alertResult": undefined,
   "code": "apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));",
   "displayResult": undefined,
-  "result": 60,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 60,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -251,7 +1180,11 @@ Object {
   "alertResult": undefined,
   "code": "!equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -261,7 +1194,11 @@ Object {
   "alertResult": undefined,
   "code": "equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -271,7 +1208,11 @@ Object {
   "alertResult": undefined,
   "code": "equal(1, 1) && equal(\\"str\\", \\"str\\") && equal(null, null) && !equal(1, 2) && !equal(\\"str\\", \\"\\");",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -283,7 +1224,11 @@ Object {
 } else {
 }",
   "displayResult": undefined,
-  "result": undefined,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": undefined,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -296,7 +1241,11 @@ Object {
   2;
 }",
   "displayResult": undefined,
-  "result": 2,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 2,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -309,9 +1258,13 @@ Object {
 }
 \\"\\" + (a=>b) + f;",
   "displayResult": undefined,
-  "result": "a => bfunction f(x) {
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "a => bfunction f(x) {
   return 5;
 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -321,7 +1274,25 @@ Object {
   "alertResult": undefined,
   "code": "42",
   "displayResult": undefined,
-  "error": "Line 1: Missing semicolon at the end of statement",
+  "errors": Array [
+    MissingSemicolonError {
+      "location": Object {
+        "end": Object {
+          "column": 3,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -331,7 +1302,11 @@ Object {
   "alertResult": undefined,
   "code": "\\"\\" + true + false + 1 + 1.5 + null + undefined + NaN;",
   "displayResult": undefined,
-  "result": "truefalse11.5nullundefinedNaN",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "truefalse11.5nullundefinedNaN",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -341,7 +1316,11 @@ Object {
   "alertResult": undefined,
   "code": "false && 1();",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -351,7 +1330,11 @@ Object {
   "alertResult": undefined,
   "code": "true || 1();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -361,7 +1344,11 @@ Object {
   "alertResult": undefined,
   "code": "false && false;",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -371,7 +1358,11 @@ Object {
   "alertResult": undefined,
   "code": "false && true;",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -381,7 +1372,11 @@ Object {
   "alertResult": undefined,
   "code": "false || false;",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -391,7 +1386,11 @@ Object {
   "alertResult": undefined,
   "code": "false || true;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -401,7 +1400,11 @@ Object {
   "alertResult": undefined,
   "code": "false ? true : false;",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -411,7 +1414,11 @@ Object {
   "alertResult": undefined,
   "code": "true && false;",
   "displayResult": undefined,
-  "result": false,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": false,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -421,7 +1428,11 @@ Object {
   "alertResult": undefined,
   "code": "true && true;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -431,7 +1442,11 @@ Object {
   "alertResult": undefined,
   "code": "true || false;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -441,7 +1456,11 @@ Object {
   "alertResult": undefined,
   "code": "true || true;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -451,7 +1470,11 @@ Object {
   "alertResult": undefined,
   "code": "true ? true : false;",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -463,7 +1486,11 @@ Object {
 } else {
 }",
   "displayResult": undefined,
-  "result": undefined,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": undefined,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -476,7 +1503,11 @@ Object {
 } else {
 }",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;

@@ -2,7 +2,7 @@ export { stripIndent, oneLine } from 'common-tags'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
-import { Context, CustomBuiltIns, Finished, Value } from '../types'
+import { Context, CustomBuiltIns, SourceError, Result, Finished, Value } from '../types'
 
 export interface TestContext extends Context {
   displayResult?: string
@@ -13,6 +13,15 @@ export interface TestContext extends Context {
 
 interface TestBuiltins {
   [builtinName: string]: any
+}
+
+interface TestResult {
+  code: string
+  displayResult: string | undefined
+  alertResult: string | undefined
+  visualiseListResult: any[] | undefined
+  errors: SourceError[]
+  result: Result
 }
 
 function createTestContext(
@@ -63,7 +72,7 @@ function testInContext(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
-) {
+): Promise<TestResult> {
   const testContext = createTestContext(chapterOrContext, testBuiltins)
   const scheduler = 'preemptive'
   return runInContext(code, testContext, { scheduler }).then(result => {
@@ -114,22 +123,20 @@ export function expectFailure(
   })
 }
 
+export function snapshot(snapshotName?: string): (testResult: TestResult) => TestResult {
+  return testResult => {
+    expect(testResult).toMatchSnapshot(snapshotName)
+    return testResult
+  }
+}
+
 export function snapshotSuccess(
   code: string,
   chapterOrContext?: number | TestContext,
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectSuccess(code, chapterOrContext, testBuiltins).then(testResult => {
-    expect({
-      code: testResult.code,
-      displayResult: testResult.displayResult,
-      alertResult: testResult.alertResult,
-      visualiseListResult: testResult.visualiseListResult,
-      result: (testResult.result as Finished).value
-    }).toMatchSnapshot(snapshotName)
-    return testResult
-  })
+  return expectSuccess(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function snapshotWarning(
@@ -138,16 +145,7 @@ export function snapshotWarning(
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectSuccessWithErrors(code, chapterOrContext, testBuiltins).then(testResult => {
-    expect({
-      code,
-      displayResult: testResult.displayResult,
-      alertResult: testResult.alertResult,
-      visualiseListResult: testResult.visualiseListResult,
-      error: parseError(testResult.errors)
-    }).toMatchSnapshot(snapshotName)
-    return testResult
-  })
+  return expectSuccessWithErrors(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function snapshotFailure(
@@ -156,16 +154,7 @@ export function snapshotFailure(
   snapshotName?: string,
   testBuiltins?: TestBuiltins
 ) {
-  return expectFailure(code, chapterOrContext, testBuiltins).then(testResult => {
-    expect({
-      code,
-      displayResult: testResult.displayResult,
-      alertResult: testResult.alertResult,
-      visualiseListResult: testResult.visualiseListResult,
-      error: parseError(testResult.errors)
-    }).toMatchSnapshot(snapshotName)
-    return testResult
-  })
+  return expectFailure(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
 }
 
 export function expectDisplayResult(
@@ -246,9 +235,9 @@ export function expectToLooselyMatchJS(
 ) {
   return snapshotSuccess(code, chapterOrContext, 'expect to loosely match JS', testBuiltins).then(
     testResult =>
-      expect((testResult.result as Finished).value.replace(/ /g, '')).toEqual(
-        // tslint:disable-next-line:no-eval
-        eval(code).replace(/ /g, '')
-      )
+    expect((testResult.result as Finished).value.replace(/ /g, '')).toEqual(
+      // tslint:disable-next-line:no-eval
+      eval(code).replace(/ /g, '')
+    )
   )
 }

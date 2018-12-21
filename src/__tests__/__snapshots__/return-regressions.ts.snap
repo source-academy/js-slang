@@ -19,7 +19,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -43,7 +47,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -67,7 +75,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -88,7 +100,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -107,7 +123,28 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "error": "Line 3: Expected number on right hand side of operation, got boolean.",
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "boolean",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 13,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -131,7 +168,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 3,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 3,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -158,7 +199,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 3,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 3,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -185,7 +230,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 3,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 3,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -209,7 +258,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 3,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 3,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -236,7 +289,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -263,7 +320,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -290,7 +351,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -314,7 +379,11 @@ Object {
     f();
   ",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;

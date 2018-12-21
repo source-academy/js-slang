@@ -5,7 +5,11 @@ Object {
   "alertResult": undefined,
   "code": "display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
   "displayResult": "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
-  "result": "Tom's assisstant said: \\"tuna.\\"",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "Tom's assisstant said: \\"tuna.\\"",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -15,14 +19,18 @@ Object {
   "alertResult": undefined,
   "code": "display([1, 2, [4, 5]]);",
   "displayResult": "[1, 2, [4, 5]]",
-  "result": Array [
-    1,
-    2,
-    Array [
-      4,
-      5,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": Array [
+      1,
+      2,
+      Array [
+        4,
+        5,
+      ],
     ],
-  ],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -33,7 +41,11 @@ Object {
   "code": "display(x => x); display((x, y) => x + y);",
   "displayResult": "x => x
 (x, y) => x + y",
-  "result": [Function],
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": [Function],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -45,7 +57,11 @@ Object {
   "displayResult": "1e+38
 NaN
 Infinity",
-  "result": Infinity,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": Infinity,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -55,13 +71,17 @@ Object {
   "alertResult": undefined,
   "code": "display(list(1, 2));",
   "displayResult": "[1, [2, null]]",
-  "result": Array [
-    1,
-    Array [
-      2,
-      null,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": Array [
+      1,
+      Array [
+        2,
+        null,
+      ],
     ],
-  ],
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -71,7 +91,11 @@ Object {
   "alertResult": undefined,
   "code": "display(0);",
   "displayResult": "0",
-  "result": 0,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 0,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -81,11 +105,15 @@ Object {
   "alertResult": undefined,
   "code": "display({a: 1, b: 2, c: {d: 3}});",
   "displayResult": "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
+  "errors": Array [],
   "result": Object {
-    "a": 1,
-    "b": 2,
-    "c": Object {
-      "d": 3,
+    "status": "finished",
+    "value": Object {
+      "a": 1,
+      "b": 2,
+      "c": Object {
+        "d": 3,
+      },
     },
   },
   "visualiseListResult": undefined,
@@ -97,7 +125,11 @@ Object {
   "alertResult": undefined,
   "code": "raw_display(\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\");",
   "displayResult": "Tom's assisstant said: \\"tuna.\\"",
-  "result": "Tom's assisstant said: \\"tuna.\\"",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "Tom's assisstant said: \\"tuna.\\"",
+  },
   "visualiseListResult": undefined,
 }
 `;

@@ -12,7 +12,26 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "error": "Line 4: Cannot assign new value to constant x",
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 4,
+        },
+      },
+      "name": "x",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -27,7 +46,26 @@ function f() {
 }
 f();",
   "displayResult": undefined,
-  "error": "Line 3: Name a not yet assigned",
+  "errors": Array [
+    UnassignedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 3,
+        },
+      },
+      "name": "a",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -41,7 +79,26 @@ Object {
   const a = 10;
 }",
   "displayResult": undefined,
-  "error": "Line 3: Name a not yet assigned",
+  "errors": Array [
+    UnassignedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "name": "a",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -55,7 +112,26 @@ function f() {
 }
 v;",
   "displayResult": undefined,
-  "error": "Line 1: Name f not yet assigned",
+  "errors": Array [
+    UnassignedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 1,
+        },
+      },
+      "name": "f",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -71,7 +147,26 @@ function test(){
 }
 test();",
   "displayResult": undefined,
-  "error": "Line 3: Name variable not declared",
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "name": "variable",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -90,7 +185,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -107,7 +206,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 1,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -123,7 +226,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -142,7 +249,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -159,7 +270,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -177,7 +292,11 @@ Object {
 }
 test();",
   "displayResult": undefined,
-  "result": true,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": true,
+  },
   "visualiseListResult": undefined,
 }
 `;

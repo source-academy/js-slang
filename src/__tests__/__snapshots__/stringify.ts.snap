@@ -6,7 +6,11 @@ Object {
   "code": "const xs = [1, 'true', true, () => x];
 stringify(xs);",
   "displayResult": undefined,
-  "result": "[1, \\"true\\", true, () => x]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[1, \\"true\\", true, () => x]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -17,7 +21,11 @@ Object {
   "code": "const f = (x, y) => z;
 stringify(f);",
   "displayResult": undefined,
-  "result": "(x, y) => z",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "(x, y) => z",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -28,7 +36,10 @@ Object {
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
 stringify(o);",
   "displayResult": undefined,
-  "result": "{ \\"a\\": 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "{ \\"a\\": 1,
   \\"b\\": true,
   \\"c\\": () => x,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
@@ -40,6 +51,7 @@ stringify(o);",
   \\"l\\": 0,
   \\"m\\": 0,
   \\"n\\": 0 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -49,7 +61,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify('true');",
   "displayResult": undefined,
-  "result": "\\"true\\"",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "\\"true\\"",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -59,9 +75,13 @@ Object {
   "alertResult": undefined,
   "code": "stringify(pair);",
   "displayResult": undefined,
-  "result": "function pair(left, right) {
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "function pair(left, right) {
 	[implementation hidden]
 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -72,7 +92,11 @@ Object {
   "code": "const xs = [];
 stringify(xs);",
   "displayResult": undefined,
-  "result": "[]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -85,9 +109,13 @@ Object {
 }
 stringify(f);",
   "displayResult": undefined,
-  "result": "function f(x, y) {
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "function f(x, y) {
   return z;
 }",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -101,7 +129,10 @@ for (let i = 0; i < 100; i = i + 1) {
 }
 stringify(arr);",
   "displayResult": undefined,
-  "result": "[ 0,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[ 0,
   1,
   2,
   3,
@@ -201,6 +232,7 @@ stringify(arr);",
   97,
   98,
   99 ]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -210,7 +242,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(enum_list(1, 1000));",
   "displayResult": undefined,
-  "result": "[ 1,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[ 1,
 [ 2,
 [ 3,
 [ 4,
@@ -301,6 +336,7 @@ Object {
 [ 89,
 [ 90,
 [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -310,7 +346,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify(enum_list(1, 10));",
   "displayResult": undefined,
-  "result": "[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -321,7 +361,11 @@ Object {
   "code": "const xs = [1, 'true', [true, () => x, [[]]]];
 stringify(xs);",
   "displayResult": undefined,
-  "result": "[1, \\"true\\", [true, () => x, [[]]]]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[1, \\"true\\", [true, () => x, [[]]]]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -332,7 +376,11 @@ Object {
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
 stringify(o);",
   "displayResult": undefined,
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -344,7 +392,11 @@ Object {
 o.o = o;
 stringify(o);",
   "displayResult": undefined,
-  "result": "{\\"o\\": ...<circular>}",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "{\\"o\\": ...<circular>}",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -354,7 +406,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify(null);",
   "displayResult": undefined,
-  "result": "null",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "null",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -364,7 +420,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify(0);",
   "displayResult": undefined,
-  "result": "0",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "0",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -375,7 +435,11 @@ Object {
   "code": "const o = { a: 1, b: true, c: () => x };
 stringify(o);",
   "displayResult": undefined,
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -385,7 +449,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify('a string');",
   "displayResult": undefined,
-  "result": "\\"a string\\"",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "\\"a string\\"",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -395,7 +463,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify(undefined);",
   "displayResult": undefined,
-  "result": "undefined",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "undefined",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -405,7 +477,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 1);",
   "displayResult": undefined,
-  "result": "[{\\"tag\\": \\"function_definition\\",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[{\\"tag\\": \\"function_definition\\",
   \\"parameters\\":
    [{\\"tag\\": \\"name\\",
      \\"name\\": \\"x\\",
@@ -420,6 +495,7 @@ Object {
     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
   \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}},
 null]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -429,7 +505,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), ' ... ');",
   "displayResult": undefined,
-  "result": "[... {... \\"tag\\": \\"function_definition\\",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
  ...  ...  ... [... {... \\"tag\\": \\"name\\",
  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
@@ -444,6 +523,7 @@ Object {
  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} ...},
 null ...]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -453,7 +533,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'));",
   "displayResult": undefined,
-  "result": "[ { \\"tag\\": \\"function_definition\\",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
       [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"x\\",
@@ -468,6 +551,7 @@ Object {
         \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} },
 null ]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -477,7 +561,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), '.................................');",
   "displayResult": undefined,
-  "result": "[.........{.........\\"tag\\": \\"function_definition\\",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[.........{.........\\"tag\\": \\"function_definition\\",
 ....................\\"parameters\\":
 ..............................[.........{.........\\"tag\\": \\"name\\",
 ..................................................\\"name\\": \\"x\\",
@@ -492,6 +579,7 @@ Object {
 ........................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
 ....................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}.........},
 null.........]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -501,7 +589,10 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 100);",
   "displayResult": undefined,
-  "result": "[         {         \\"tag\\": \\"function_definition\\",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[         {         \\"tag\\": \\"function_definition\\",
                     \\"parameters\\":
                               [         {         \\"tag\\": \\"name\\",
                                                   \\"name\\": \\"x\\",
@@ -516,6 +607,7 @@ Object {
                                         \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
                     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}         },
 null         ]",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -525,7 +617,11 @@ Object {
   "alertResult": undefined,
   "code": "stringify(parse('x=>x;'), 0);",
   "displayResult": undefined,
-  "result": "[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]",
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": "[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]",
+  },
   "visualiseListResult": undefined,
 }
 `;

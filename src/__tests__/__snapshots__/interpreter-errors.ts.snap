@@ -5,7 +5,11 @@ Object {
   "alertResult": undefined,
   "code": "[][\\"length\\"];",
   "displayResult": undefined,
-  "result": 0,
+  "errors": Array [],
+  "result": Object {
+    "status": "finished",
+    "value": 0,
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -18,7 +22,26 @@ Object {
 }
 map(f, list(1, 2));",
   "displayResult": undefined,
-  "error": "Line 2: Name a not declared",
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "name": "a",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -28,7 +51,27 @@ Object {
   "alertResult": undefined,
   "code": "[].push;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property push of []",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": Array [],
+      "prop": "push",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -38,7 +81,27 @@ Object {
   "alertResult": undefined,
   "code": "(() => 1)[\\"constructor\\"];",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property constructor of () => 1",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 24,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": [Function],
+      "prop": "constructor",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -48,9 +111,27 @@ Object {
   "alertResult": undefined,
   "code": "pair[\\"constructor\\"];",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property constructor of function pair(left, right) {
-	[implementation hidden]
-}",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": [Function],
+      "prop": "constructor",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -61,7 +142,27 @@ Object {
   "code": "function f() {}
 f[\\"constructor\\"];",
   "displayResult": undefined,
-  "error": "Line 2: Cannot read inherited property constructor of function f() {}",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "obj": [Function],
+      "prop": "constructor",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -71,7 +172,27 @@ Object {
   "alertResult": undefined,
   "code": "(1).toPrecision;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property toPrecision of 1",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": 1,
+      "prop": "toPrecision",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -81,7 +202,27 @@ Object {
   "alertResult": undefined,
   "code": "({}).valueOf;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property valueOf of {}",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": Object {},
+      "prop": "valueOf",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -91,7 +232,27 @@ Object {
   "alertResult": undefined,
   "code": "'hi'.includes;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read inherited property includes of \\"hi\\"",
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": "hi",
+      "prop": "includes",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -101,7 +262,27 @@ Object {
   "alertResult": undefined,
   "code": "null[\\"prop\\"];",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read property prop of null",
+  "errors": Array [
+    GetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": null,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -111,7 +292,27 @@ Object {
   "alertResult": undefined,
   "code": "undefined[\\"prop\\"];",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read property prop of undefined",
+  "errors": Array [
+    GetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -121,7 +322,27 @@ Object {
   "alertResult": undefined,
   "code": "undefined.prop;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read property prop of undefined",
+  "errors": Array [
+    GetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -131,7 +352,26 @@ Object {
   "alertResult": undefined,
   "code": "map = 5;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot assign new value to constant map",
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "map",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -141,7 +381,26 @@ Object {
   "alertResult": undefined,
   "code": "undefined = 5;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot assign new value to constant undefined",
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -151,7 +410,27 @@ Object {
   "alertResult": undefined,
   "code": "undefined.prop = 123;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot assign property prop of undefined",
+  "errors": Array [
+    SetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -162,7 +441,27 @@ Object {
   "code": "const u = undefined;
 u.prop = 123;",
   "displayResult": undefined,
-  "error": "Line 2: Cannot assign property prop of undefined",
+  "errors": Array [
+    SetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -173,7 +472,27 @@ Object {
   "code": "const f = x => x;
 f();",
   "displayResult": undefined,
-  "error": "Line 2: Expected 1 arguments, but got 0",
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -184,7 +503,27 @@ Object {
   "code": "const f = x => x;
 f(1, 2);",
   "displayResult": undefined,
-  "error": "Line 2: Expected 1 arguments, but got 2",
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -197,7 +536,27 @@ Object {
 }
 f();",
   "displayResult": undefined,
-  "error": "Line 4: Expected 1 arguments, but got 0",
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -210,7 +569,27 @@ Object {
 }
 f(1, 2);",
   "displayResult": undefined,
-  "error": "Line 4: Expected 1 arguments, but got 2",
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -220,7 +599,26 @@ Object {
   "alertResult": undefined,
   "code": "'string'();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value \\"string\\"",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -230,7 +628,26 @@ Object {
   "alertResult": undefined,
   "code": "0();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value 0",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -240,7 +657,28 @@ Object {
   "alertResult": undefined,
   "code": "[1]();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value [1]",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Array [
+        1,
+      ],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -250,7 +688,32 @@ Object {
   "alertResult": undefined,
   "code": "null();",
   "displayResult": undefined,
-  "error": "Line 1: null literals are not allowed",
+  "errors": Array [
+    NoNullError {
+      "node": Node {
+        "end": 4,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "null",
+        "start": 0,
+        "type": "Literal",
+        "value": null,
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -260,7 +723,28 @@ Object {
   "alertResult": undefined,
   "code": "({a: 1})();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value {\\"a\\": 1}",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -270,7 +754,26 @@ Object {
   "alertResult": undefined,
   "code": "true();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value true",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": true,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -280,7 +783,26 @@ Object {
   "alertResult": undefined,
   "code": "undefined();",
   "displayResult": undefined,
-  "error": "Line 1: Calling non-function value undefined",
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -290,7 +812,27 @@ Object {
   "alertResult": undefined,
   "code": "undefined.prop.prop;",
   "displayResult": undefined,
-  "error": "Line 1: Cannot read property prop of undefined",
+  "errors": Array [
+    GetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -301,7 +843,27 @@ Object {
   "code": "const u = undefined;
 u.prop.prop = 123;",
   "displayResult": undefined,
-  "error": "Line 2: Cannot read property prop of undefined",
+  "errors": Array [
+    GetPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "obj": undefined,
+      "prop": "prop",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -312,7 +874,26 @@ Object {
   "code": "const f = x => x;
 let f = x => x;",
   "displayResult": undefined,
-  "error": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -323,7 +904,26 @@ Object {
   "code": "const f = x => x;
 const f = x => x;",
   "displayResult": undefined,
-  "error": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -334,7 +934,26 @@ Object {
   "code": "let f = x => x;
 const f = x => x;",
   "displayResult": undefined,
-  "error": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -345,7 +964,26 @@ Object {
   "code": "let f = x => x;
 let f = x => x;",
   "displayResult": undefined,
-  "error": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -355,7 +993,26 @@ Object {
   "alertResult": undefined,
   "code": "parse_int(\\"10\\");",
   "displayResult": undefined,
-  "error": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -365,7 +1022,26 @@ Object {
   "alertResult": undefined,
   "code": "parse(\\"'\\");",
   "displayResult": undefined,
-  "error": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "errors": Array [
+    ExceptionError {
+      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
@@ -443,7 +1119,26 @@ Object {
   "alertResult": undefined,
   "code": "im_undefined;",
   "displayResult": undefined,
-  "error": "Line 1: Name im_undefined not declared",
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "im_undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "result": Object {
+    "status": "error",
+  },
   "visualiseListResult": undefined,
 }
 `;
