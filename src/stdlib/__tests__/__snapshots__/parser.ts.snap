@@ -2,13 +2,12 @@
 
 exports[`Parses arrow function assignments properly 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"const y = x => x + 1;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"constant_declaration\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"constant_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"y\\",
@@ -87,20 +86,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 21 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses arrow function expressions properly 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"x => x + 1;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
       [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"x\\",
@@ -160,20 +158,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 11 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses assignment statements 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"x = 5; x = x; if (true) { x = 5; } else {}\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"assignment\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"assignment\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
@@ -270,20 +267,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 42 } } },
 null ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses declaration statements 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"const x = 5; let y = x;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"constant_declaration\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"constant_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
@@ -331,34 +327,32 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 23 } } },
 null ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses empty program 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "null",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "null",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses fibonacci 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); } fib(4);\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"constant_declaration\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"constant_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"fib\\",
@@ -592,20 +586,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 68 } } },
 null ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses function calls 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"f(x); thrice(thrice)(plus_one)(0);\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"application\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"application\\",
     \\"operator\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"f\\",
@@ -696,20 +689,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 34 } } },
 null ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses if statements 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"if (true) { hi; } else { haha; } if (false) {} else {}\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"conditional_statement\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"conditional_statement\\",
     \\"predicate\\": true,
     \\"consequent\\":
       { \\"tag\\": \\"block\\",
@@ -788,20 +780,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 54 } } },
 null ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses infix expressions 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"3 + 5 === 8 || !true && false;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"boolean_operation\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"boolean_operation\\",
     \\"operator\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"||\\",
@@ -907,20 +898,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 30 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses literals 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"3; true; false; ''; \\\\\\"\\\\\\"; 'bob'; 1; 20;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ 3,
+  "parsedErrors": "",
+  "result": "[ 3,
 [ true,
 [ false,
 [ \\"\\",
@@ -929,20 +919,19 @@ Object {
 [ 1,
 [ 20,
 null ] ] ] ] ] ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses loops 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse( \\"while (true) { continue; break; } for (let i = 0; i < 1; i = i + 1) { continue; break; } for (i = 0; i < 1; i = i + 1) { continue; break; }\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"while_loop\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"while_loop\\",
     \\"predicate\\": true,
     \\"statements\\":
       { \\"tag\\": \\"block\\",
@@ -1251,20 +1240,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 139 } } },
 null ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses multi-argument arrow function assignments properly 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"const y = (x, y) => x + 1;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"constant_declaration\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"constant_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"y\\",
@@ -1352,20 +1340,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 26 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses multi-argument arrow function expressions properly 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"(x, y) => x + 1;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
       [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"x\\",
@@ -1434,20 +1421,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 16 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses multi-argument arrow function expressions properly 2`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"(x, y) => x + 1;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
       [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"x\\",
@@ -1516,20 +1502,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 16 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses name expression 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"x;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"name\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"x\\",
     \\"loc\\":
       { \\"start\\":
@@ -1539,20 +1524,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 2 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses name expressions 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"x; moreNames; undefined;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"name\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"x\\",
     \\"loc\\":
       { \\"start\\":
@@ -1580,20 +1564,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 24 } } },
 null ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses object notation 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"let x = {a: 5, b: 10, 'key': value};\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"variable_declaration\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"variable_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
@@ -1637,20 +1620,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 36 } } },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses property access 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"a[b]; a.b; a[5]; a['b'];\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"property_access\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"property_access\\",
     \\"object\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"a\\",
@@ -1736,20 +1718,19 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 24 } } },
 null ] ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Parses property assignment 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"a[b] = 5; a.b = value; a[5] = 'value'; a['b'] = 42;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"property_assignment\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"property_assignment\\",
     \\"object\\":
       { \\"tag\\": \\"property_access\\",
         \\"object\\":
@@ -1884,7 +1865,7 @@ Object {
           { \\"line\\": 1,
             \\"column\\": 51 } } },
 null ] ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;

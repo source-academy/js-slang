@@ -2,13 +2,13 @@ export { stripIndent, oneLine } from 'common-tags'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
-import { Context, CustomBuiltIns, SourceError, Result, Finished, Value } from '../types'
+import { Context, CustomBuiltIns, SourceError, Value } from '../types'
 
 export interface TestContext extends Context {
-  displayResult?: string
-  promptResult?: string
-  alertResult?: string
-  visualiseListResult?: Value[]
+  displayResult: string[]
+  promptResult: string[]
+  alertResult: string[]
+  visualiseListResult: Value[]
 }
 
 interface TestBuiltins {
@@ -17,11 +17,13 @@ interface TestBuiltins {
 
 interface TestResult {
   code: string
-  displayResult: string | undefined
-  alertResult: string | undefined
-  visualiseListResult: any[] | undefined
+  displayResult: string[]
+  alertResult: string[]
+  visualiseListResult: any[]
   errors: SourceError[]
-  result: Result
+  parsedErrors: string
+  resultStatus: string
+  result: Value
 }
 
 function createTestContext(
@@ -33,26 +35,28 @@ function createTestContext(
   }
 
   if (typeof chapter === 'number') {
-    const context: TestContext = createContext(chapter, [], undefined, {
-      rawDisplay: (str, externalContext) => {
-        context.displayResult = context.displayResult ? context.displayResult + '\n' + str : str
-        return str
-      },
-      prompt: (str, externalContext) => {
-        context.promptResult = context.promptResult ? context.promptResult + '\n' + str : str
-        return null
-      },
-      alert: (str, externalContext) => {
-        context.alertResult = context.alertResult ? context.alertResult + '\n' + str : str
-      },
-      visualiseList: value => {
-        if (context.visualiseListResult !== undefined) {
+    const context: TestContext = {
+      ...createContext(chapter, [], undefined, {
+        rawDisplay: (str, externalContext) => {
+          context.displayResult.push(str)
+          return str
+        },
+        prompt: (str, externalContext) => {
+          context.promptResult.push(str)
+          return null
+        },
+        alert: (str, externalContext) => {
+          context.alertResult.push(str)
+        },
+        visualiseList: value => {
           context.visualiseListResult.push(value)
-        } else {
-          context.visualiseListResult = [value]
         }
-      }
-    } as CustomBuiltIns)
+      } as CustomBuiltIns),
+      displayResult: [],
+      promptResult: [],
+      alertResult: [],
+      visualiseListResult: []
+    }
 
     if (testBuiltins !== undefined) {
       for (const name in testBuiltins) {
@@ -82,7 +86,9 @@ function testInContext(
       alertResult: testContext.alertResult,
       visualiseListResult: testContext.visualiseListResult,
       errors: testContext.errors,
-      result
+      parsedErrors: parseError(testContext.errors),
+      resultStatus: result.status,
+      result: result.status === 'finished' ? result.value : undefined
     }
   })
 }
@@ -94,7 +100,7 @@ export function expectSuccess(
 ) {
   return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
     expect(testResult.errors).toEqual([])
-    expect(testResult.result.status).toBe('finished')
+    expect(testResult.resultStatus).toBe('finished')
     return testResult
   })
 }
@@ -106,7 +112,7 @@ export function expectSuccessWithErrors(
 ) {
   return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
     expect(testResult.errors).not.toEqual([])
-    expect(testResult.result.status).toBe('finished')
+    expect(testResult.resultStatus).toBe('finished')
     return testResult
   })
 }
@@ -118,7 +124,7 @@ export function expectFailure(
 ) {
   return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
     expect(testResult.errors).not.toEqual([])
-    expect(testResult.result.status).toBe('error')
+    expect(testResult.resultStatus).toBe('error')
     return testResult
   })
 }
@@ -176,7 +182,7 @@ export function expectResult(
 ) {
   return expect(
     snapshotSuccess(code, chapterOrContext, 'expectResult', testBuiltins).then(
-      testResult => (testResult.result as Finished).value
+      testResult => testResult.result
     )
   ).resolves
 }
@@ -187,8 +193,8 @@ export function expectError(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotFailure(code, chapterOrContext, 'expectError', testBuiltins).then(testResult =>
-      parseError(testResult.errors)
+    snapshotFailure(code, chapterOrContext, 'expectError', testBuiltins).then(
+      testResult => testResult.parsedErrors
     )
   ).resolves
 }
@@ -199,8 +205,8 @@ export function expectWarning(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    snapshotWarning(code, chapterOrContext, 'expectError', testBuiltins).then(testResult =>
-      parseError(testResult.errors)
+    snapshotWarning(code, chapterOrContext, 'expectError', testBuiltins).then(
+      testResult => testResult.parsedErrors
     )
   ).resolves
 }
@@ -211,9 +217,7 @@ export function expectErrorNoSnapshot(
   testBuiltins?: TestBuiltins
 ) {
   return expect(
-    expectFailure(code, chapterOrContext, testBuiltins).then(testResult => {
-      return parseError(testResult.errors)
-    })
+    expectFailure(code, chapterOrContext, testBuiltins).then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
@@ -224,7 +228,7 @@ export function expectToMatchJS(
 ) {
   return snapshotSuccess(code, chapterOrContext, 'expect to match JS', testBuiltins).then(
     // tslint:disable-next-line:no-eval
-    testResult => expect((testResult.result as Finished).value).toEqual(eval(code))
+    testResult => expect(testResult.result).toEqual(eval(code))
   )
 }
 
@@ -234,10 +238,7 @@ export function expectToLooselyMatchJS(
   testBuiltins?: TestBuiltins
 ) {
   return snapshotSuccess(code, chapterOrContext, 'expect to loosely match JS', testBuiltins).then(
-    testResult =>
-    expect((testResult.result as Finished).value.replace(/ /g, '')).toEqual(
-      // tslint:disable-next-line:no-eval
-      eval(code).replace(/ /g, '')
-    )
+    // tslint:disable-next-line:no-eval
+    testResult => expect(testResult.result.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
   )
 }

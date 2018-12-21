@@ -2,9 +2,9 @@
 
 exports[`Blacklisted syntax: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"function* f() { yield 1; } f();\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ExceptionError {
       "error": [ParseError: Yield expressions are not allowed],
@@ -22,18 +22,18 @@ Object {
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: ParseError: Yield expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Blatant syntax error: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"'\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ExceptionError {
       "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
@@ -51,18 +51,18 @@ Object {
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Syntax rules: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse(\\"x = y = x;\\"), undefined, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ExceptionError {
       "error": [ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.],
@@ -80,9 +80,9 @@ Object {
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;

@@ -2,7 +2,7 @@
 
 exports[`Cannot overwrite loop variables within a block: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
     let z = [];
     for (let x = 0; x < 2; x = x + 1) {
@@ -11,7 +11,7 @@ Object {
     return false;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ConstAssignment {
       "location": SourceLocation {
@@ -29,23 +29,23 @@ test();",
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 4: Cannot assign new value to constant x",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Error when accessing temporal dead zone: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const a = 1;
 function f() {
   display(a);
   const a = 5;
 }
 f();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     UnassignedVariable {
       "location": SourceLocation {
@@ -63,22 +63,22 @@ f();",
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Name a not yet assigned",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const a = 1;
 {
   a + a;
   const a = 10;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     UnassignedVariable {
       "location": SourceLocation {
@@ -96,22 +96,22 @@ Object {
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Name a not yet assigned",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No hoisting of functions. Only the name is hoisted like let and const: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const v = f();
 function f() {
   return 1;
 }
 v;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     UnassignedVariable {
       "location": SourceLocation {
@@ -129,16 +129,16 @@ v;",
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Name f not yet assigned",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Shadowed variables may not be assigned to until declared in the current scope: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let variable = 1;
 function test(){
   variable = 100;
@@ -146,7 +146,7 @@ function test(){
   return variable;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     UndefinedVariable {
       "location": SourceLocation {
@@ -164,16 +164,16 @@ test();",
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Name variable not declared",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`const uses block scoping instead of function scoping: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   const x = true;
   if(true) {
@@ -184,19 +184,18 @@ Object {
   return x;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": true,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`for loop \`let\` variables are copied into the block scope: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   let z = [];
   for (let x = 0; x < 10; x = x + 1) {
@@ -205,19 +204,18 @@ Object {
   return z[1]();
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`for loops use block scoping instead of function scoping: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   let x = true;
   for (let x = 1; x > 0; x = x - 1) {
@@ -225,19 +223,18 @@ Object {
   return x;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": true,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`let uses block scoping instead of function scoping: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   let x = true;
   if(true) {
@@ -248,19 +245,18 @@ Object {
   return x;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": true,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`standalone block statements: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   const x = true;
   {
@@ -269,19 +265,18 @@ Object {
   return x;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": true,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`while loops use block scoping instead of function scoping: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function test(){
   let x = true;
   while (true) {
@@ -291,12 +286,11 @@ Object {
   return x;
 }
 test();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": true,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;

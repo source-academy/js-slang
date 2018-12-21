@@ -1,5 +1,5 @@
 import { Value } from '../types'
-import { snapshotFailure, expectResult, stripIndent } from '../utils/testing'
+import { expectResult, snapshotFailure, stripIndent } from '../utils/testing'
 
 test.each([
   [

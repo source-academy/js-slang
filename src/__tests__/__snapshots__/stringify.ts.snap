@@ -2,44 +2,41 @@
 
 exports[`String representation of arrays are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const xs = [1, 'true', true, () => x];
 stringify(xs);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[1, \\"true\\", true, () => x]",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "[1, \\"true\\", true, () => x]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of arrow functions are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const f = (x, y) => z;
 stringify(f);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "(x, y) => z",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "(x, y) => z",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of big objects are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
 stringify(o);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "{ \\"a\\": 1,
+  "parsedErrors": "",
+  "result": "{ \\"a\\": 1,
   \\"b\\": true,
   \\"c\\": () => x,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
@@ -51,88 +48,83 @@ stringify(o);",
   \\"l\\": 0,
   \\"m\\": 0,
   \\"n\\": 0 }",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of booleans are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify('true');",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "\\"true\\"",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "\\"true\\"",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of builtins are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(pair);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "function pair(left, right) {
+  "parsedErrors": "",
+  "result": "function pair(left, right) {
 	[implementation hidden]
 }",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of empty arrays are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const xs = [];
 stringify(xs);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[]",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "[]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of functions are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f(x, y) {
   return z;
 }
 stringify(f);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "function f(x, y) {
+  "parsedErrors": "",
+  "result": "function f(x, y) {
   return z;
 }",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of huge arrays are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const arr = [];
 for (let i = 0; i < 100; i = i + 1) {
   arr[i] = i;
 }
 stringify(arr);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ 0,
+  "parsedErrors": "",
+  "result": "[ 0,
   1,
   2,
   3,
@@ -232,20 +224,19 @@ stringify(arr);",
   97,
   98,
   99 ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of huge lists are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(enum_list(1, 1000));",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ 1,
+  "parsedErrors": "",
+  "result": "[ 1,
 [ 2,
 [ 3,
 [ 4,
@@ -336,151 +327,141 @@ Object {
 [ 89,
 [ 90,
 [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of lists are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(enum_list(1, 10));",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of multidimensional arrays are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const xs = [1, 'true', [true, () => x, [[]]]];
 stringify(xs);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[1, \\"true\\", [true, () => x, [[]]]]",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "[1, \\"true\\", [true, () => x, [[]]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of nested objects are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
 stringify(o);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of nested objects are nice: expectResult 2`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let o = {};
 o.o = o;
 stringify(o);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "{\\"o\\": ...<circular>}",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "{\\"o\\": ...<circular>}",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of null is nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(null);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "null",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "null",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of numbers are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(0);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "0",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "0",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of objects are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const o = { a: 1, b: true, c: () => x };
 stringify(o);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of strings are nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify('a string');",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "\\"a string\\"",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "\\"a string\\"",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation of undefined is nice: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(undefined);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "undefined",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "undefined",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with 1 space indent: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'), 1);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[{\\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[{\\"tag\\": \\"function_definition\\",
   \\"parameters\\":
    [{\\"tag\\": \\"name\\",
      \\"name\\": \\"x\\",
@@ -495,20 +476,19 @@ Object {
     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
   \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}},
 null]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with custom indent: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'), ' ... ');",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[... {... \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
  ...  ...  ... [... {... \\"tag\\": \\"name\\",
  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
@@ -523,20 +503,19 @@ Object {
  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} ...},
 null ...]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with default (2 space) indent: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'));",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[ { \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
       [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"x\\",
@@ -551,20 +530,19 @@ Object {
         \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} },
 null ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with long custom indent gets trimmed to 10 characters: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'), '.................................');",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[.........{.........\\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[.........{.........\\"tag\\": \\"function_definition\\",
 ....................\\"parameters\\":
 ..............................[.........{.........\\"tag\\": \\"name\\",
 ..................................................\\"name\\": \\"x\\",
@@ -579,20 +557,19 @@ Object {
 ........................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
 ....................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}.........},
 null.........]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with more than 10 space indent should trim to 10 space indent: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'), 100);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[         {         \\"tag\\": \\"function_definition\\",
+  "parsedErrors": "",
+  "result": "[         {         \\"tag\\": \\"function_definition\\",
                     \\"parameters\\":
                               [         {         \\"tag\\": \\"name\\",
                                                   \\"name\\": \\"x\\",
@@ -607,21 +584,20 @@ Object {
                                         \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
                     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}         },
 null         ]",
-  },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`String representation with no indent: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "stringify(parse('x=>x;'), 0);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": "[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": "[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;

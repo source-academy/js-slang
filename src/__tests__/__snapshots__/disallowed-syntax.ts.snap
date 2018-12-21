@@ -2,9 +2,9 @@
 
 exports[`Cannot have if without else: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "if (true) { 5; }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoIfWithoutElseError {
       "node": Node {
@@ -93,18 +93,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing \\"else\\" in \\"if-else\\" statement",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot have incomplete statements: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "5",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     MissingSemicolonError {
       "location": Object {
@@ -121,20 +121,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing semicolon at the end of statement",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot leave blank expressions in for loop: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for(;;) {
   break;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
       "missingParts": Array [
@@ -197,20 +197,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing init, test, update expressions in for statement.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot leave blank init in for loop: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for(; i < 3; i = i + 1) {
   break;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
       "missingParts": Array [
@@ -399,20 +399,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing init expression in for statement.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot leave blank test in for loop: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for(let i = 0; ; i = i + 1) {
   break;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
       "missingParts": Array [
@@ -618,20 +618,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing test expression in for statement.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot leave blank update in for loop: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for(let i = 0; i < 3;) {
   break;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
       "missingParts": Array [
@@ -805,20 +805,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing update expression in for statement.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot leave while loop predicate blank: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "while() {
   x;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
@@ -836,20 +836,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: SyntaxError: Unexpected token (1:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use assignment expressions: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 3;
 let y = x = 5;
 x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoAssignmentExpression {
       "node": Node {
@@ -905,21 +905,21 @@ x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use assignment expressions: expectError 2`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 3;
 let y = 4;
 x = y = 5;
 x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoAssignmentExpression {
       "node": Node {
@@ -975,21 +975,21 @@ x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use assignment expressions: expectError 3`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let y = 4;
 for (let x = y = 1; x < 1; x = x + 1) {
   y;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoAssignmentExpression {
       "node": Node {
@@ -1045,20 +1045,20 @@ for (let x = y = 1; x < 1; x = x + 1) {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use destructuring declarations: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = [1, 2];
 let [a, b] = x;
 a;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -1115,18 +1115,18 @@ a;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Array patterns are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use function expressions: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "(function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -1477,18 +1477,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Function expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use function expressions: expectError 2`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "(function(x) { return x + 1; })(4);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -1613,19 +1613,19 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Function expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use multiple declarations: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 3, y = 5;
 x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     MultipleDeclarationsError {
       "fixs": Array [
@@ -1876,20 +1876,20 @@ x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Multiple declaration in a single statement",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use update expressions: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 3;
 x++;
 x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -1930,20 +1930,20 @@ x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Update expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Cannot use update statements: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 3;
 x += 5;
 x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoUpdateAssignment {
       "node": Node {
@@ -1999,18 +1999,18 @@ x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: The assignment operator += is not allowed. Use = instead",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No array expressions in chapter 2: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "[];",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2034,18 +2034,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No empty statements: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": ";",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2068,21 +2068,21 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Empty statements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No rest pattern: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f(...rest) {
   return rest;
 }
 f(1, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2121,21 +2121,21 @@ f(1, 2);",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Rest elements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No spread operator: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f(x, y) {
   return x + y;
 }
 f(...[1, 2]);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2209,18 +2209,18 @@ f(...[1, 2]);",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 4: Spread elements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No trailing commas in arrays: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "[1,];",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     TrailingCommaError {
       "location": Object {
@@ -2235,24 +2235,23 @@ Object {
       },
     },
   ],
-  "result": Object {
-    "status": "finished",
-    "value": Array [
-      1,
-    ],
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Trailing comma",
+  "result": Array [
+    1,
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`No trailing commas in objects: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "({
   a: 1,
   b: 2,
 });",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     TrailingCommaError {
       "location": Object {
@@ -2267,23 +2266,22 @@ Object {
       },
     },
   ],
+  "parsedErrors": "Line 3: Trailing comma",
   "result": Object {
-    "status": "finished",
-    "value": Object {
-      "a": 1,
-      "b": 2,
-    },
+    "a": 1,
+    "b": 2,
   },
-  "visualiseListResult": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`for needs braces: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for (let i = 0; i < 1; i = i + 1)
   i;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     BracesAroundForError {
       "node": Node {
@@ -2532,21 +2530,21 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing curly braces around \\"for\\" block",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`if needs braces: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "if (true)
   true;
 else
   false;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     BracesAroundIfElseError {
       "branch": "consequent",
@@ -2751,18 +2749,19 @@ else
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing curly braces around \\"if\\" block
+Line 1: Missing curly braces around \\"else\\" block",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no assigning to reserved keywords: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "package = 5;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
@@ -2780,19 +2779,19 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: SyntaxError: The keyword 'package' is reserved (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no classes: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "class Box {
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2869,18 +2868,19 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Class bodys are not allowed
+Line 1: Class declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no debugger statement: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "debugger;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -2903,18 +2903,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Debugger statements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no declaration without assignment: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoImplicitDeclareUndefinedError {
       "node": Node {
@@ -2937,18 +2937,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing value in variable declaration",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no declaring reserved keywords: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let yield = 5;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
@@ -2966,18 +2966,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no export constant: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "export const x = 1;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -3068,19 +3068,19 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Export named declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no export default: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "const x = 1;
 export default x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -3119,20 +3119,20 @@ export default x;",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Export default declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no export function: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "export function f(x) {
   return x;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -3256,19 +3256,19 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Export named declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no for in loops: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for (let i in { a: 1, b: 2 }) {
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoImplicitDeclareUndefinedError {
       "node": Node {
@@ -3498,19 +3498,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing value in variable declaration
+Line 1: For in statements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no for of loops: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "for (let i of list()) {
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoImplicitDeclareUndefinedError {
       "node": Node {
@@ -3651,21 +3652,22 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing value in variable declaration
+Line 1: For of statements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no generator functions: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function* gen() {
   yield 2;
   return 1;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -3706,20 +3708,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Yield expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no implicit undefined return: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f() {
   return;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoImplicitReturnUndefinedError {
       "node": Node {
@@ -3742,18 +3744,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Missing value in return statement",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no import: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "import { stripIndent } from 'common-tags';",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -3894,19 +3896,20 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Import specifiers are not allowed
+Line 1: Import declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no interface: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "interface Box {
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
@@ -3924,18 +3927,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no regexp: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "/pattern/",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     MissingSemicolonError {
       "location": Object {
@@ -3977,20 +3980,21 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing semicolon at the end of statement
+Line 1: 'RegExp' literals are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no repeated params: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f(x, x) {
   return x;
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
@@ -4008,18 +4012,18 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: SyntaxError: Argument name clash (1:14)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no sequence expression: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "(1, 2);",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -4078,22 +4082,22 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Sequence expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no super: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "class BoxError extends Error {
   constructor() {
     super(1);
   }
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -4719,18 +4723,22 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Supers are not allowed
+Line 2: Function expressions are not allowed
+Line 2: Method definitions are not allowed
+Line 1: Class bodys are not allowed
+Line 1: Class declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no template literals: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "\`hi\`",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     MissingSemicolonError {
       "location": Object {
@@ -4815,21 +4823,23 @@ Object {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Missing semicolon at the end of statement
+Line 1: Template elements are not allowed
+Line 1: Template literals are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no this, no new: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function Box() {
   this[0] = 5;
 }
 const box = new Box();",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -4852,16 +4862,16 @@ const box = new Box();",
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: 'this' expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no try statements: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "function f(x, y) {
   return x + y;
 }
@@ -4870,7 +4880,7 @@ try {
 } catch (e) {
   display(e);
 }",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
@@ -5325,18 +5335,20 @@ try {
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 5: Spread elements are not allowed
+Line 6: Catch clauses are not allowed
+Line 4: Try statements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no unspecified operators: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "1 << 10;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoUnspecifiedOperatorError {
       "node": Node {
@@ -5394,19 +5406,19 @@ Object {
       "unspecifiedOperator": "<<",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 1: Operator '<<' is not allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`no unspecified unary operators: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let x = 5;
 typeof x;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     NoUnspecifiedOperatorError {
       "node": Node {
@@ -5447,20 +5459,20 @@ typeof x;",
       "unspecifiedOperator": "typeof",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Operator 'typeof' is not allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`while needs braces: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "let i = 0;
 while (i < 1)
   i = i + 1;",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     BracesAroundWhileError {
       "node": Node {
@@ -5627,9 +5639,9 @@ while (i < 1)
       "type": "Syntax",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 2: Missing curly braces around \\"while\\" block",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;

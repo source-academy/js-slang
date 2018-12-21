@@ -2,7 +2,7 @@
 
 exports[`Bare early returns in for loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -18,19 +18,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Bare early returns in if statements work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -46,19 +45,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Bare early returns in while loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -74,19 +72,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Bare early returns work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -99,19 +96,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Calling unreachable results in error: expectError 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -122,7 +118,7 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [
     TypeError {
       "expected": "number",
@@ -142,16 +138,16 @@ Object {
       "type": "Runtime",
     },
   ],
-  "result": Object {
-    "status": "error",
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "Line 3: Expected number on right hand side of operation, got boolean.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Recursive call early returns in for loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -167,19 +163,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 3,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Recursive call early returns in if statements work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -198,19 +193,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 3,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Recursive call early returns in while loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -229,19 +223,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 3,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Recursive call early returns work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -257,19 +250,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 3,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Tail call early returns in for loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -288,19 +280,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Tail call early returns in if statements work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -319,19 +310,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Tail call early returns in while loops work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -350,19 +340,18 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
 exports[`Tail call early returns work: expectResult 1`] = `
 Object {
-  "alertResult": undefined,
+  "alertResult": Array [],
   "code": "
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -378,12 +367,11 @@ Object {
     }
     f();
   ",
-  "displayResult": undefined,
+  "displayResult": Array [],
   "errors": Array [],
-  "result": Object {
-    "status": "finished",
-    "value": 1,
-  },
-  "visualiseListResult": undefined,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
