@@ -37,7 +37,8 @@ const typeOf = (v: Value) => {
 const isNumber = (v: Value) => typeOf(v) === 'number'
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
-const isObject = (v: Value) => typeOf(v) === 'object' && !Array.isArray(v)
+const isObject = (v: Value) =>
+  typeOf(v) === 'object' && !(v instanceof Closure) && !(v instanceof Function) && !Array.isArray(v)
 const isArray = (v: Value) => typeOf(v) === 'object' && Array.isArray(v)
 
 export const checkUnaryExpression = (

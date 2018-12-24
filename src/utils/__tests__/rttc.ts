@@ -245,7 +245,11 @@ test('Invalid member expressions return TypeError', () => {
     [arr, str],
     [arr, func],
     [arr, obj],
-    [arr, arr]
+    [arr, arr],
+    [num, num],
+    [num, str],
+    [str, num],
+    [str, str]
   ]
   const context = mockRuntimeContext()
   operatorValues.map(opVals => {

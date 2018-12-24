@@ -538,6 +538,50 @@ Object {
 }
 `;
 
+exports[`Invalid member expressions return TypeError 11`] = `
+Object {
+  "elaborate": "Expected object or array, got number.",
+  "explain": "Expected object or array, got number.",
+  "opVals": Array [
+    0,
+    0,
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 12`] = `
+Object {
+  "elaborate": "Expected object or array, got number.",
+  "explain": "Expected object or array, got number.",
+  "opVals": Array [
+    0,
+    " ",
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 13`] = `
+Object {
+  "elaborate": "Expected object or array, got string.",
+  "explain": "Expected object or array, got string.",
+  "opVals": Array [
+    " ",
+    0,
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 14`] = `
+Object {
+  "elaborate": "Expected object or array, got string.",
+  "explain": "Expected object or array, got string.",
+  "opVals": Array [
+    " ",
+    " ",
+  ],
+}
+`;
+
 exports[`Invalid ternary/if test expressions return TypeError 1`] = `"Expected boolean as condition, got number."`;
 
 exports[`Invalid ternary/if test expressions return TypeError 2`] = `"Expected boolean as condition, got string."`;

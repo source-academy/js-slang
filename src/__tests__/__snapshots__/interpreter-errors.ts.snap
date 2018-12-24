@@ -163,67 +163,6 @@ Object {
 }
 `;
 
-exports[`Error when assigning to property on undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "undefined.prop = 123;",
-  "displayResult": Array [],
-  "errors": Array [
-    SetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot assign property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when assigning to property on variable with value undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const u = undefined;
-u.prop = 123;",
-  "displayResult": Array [],
-  "errors": Array [
-    SetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 2: Cannot assign property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Error when calling arrow function with too few arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -810,6 +749,71 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Type error when accessing property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prototype = {};",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.length;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
 
 exports[`Undefined variable error is thrown: expectParsedError 1`] = `
 Object {

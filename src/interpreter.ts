@@ -484,6 +484,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       } else {
         prop = (left.property as es.Identifier).name
       }
+
+      const error = rttc.checkMemberAccess(context, obj, prop)
+      if (error) {
+        handleError(context, error)
+        return undefined
+      }
+
       const val = yield* evaluate(node.right, context)
       try {
         obj[prop] = val

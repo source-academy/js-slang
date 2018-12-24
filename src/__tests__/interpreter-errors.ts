@@ -31,7 +31,8 @@ test('Error when assigning to builtin', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
 })
 
-test('Error when assigning to property on undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when assigning to property on undefined', () => {
   return expectParsedError(
     stripIndent`
     undefined.prop = 123;
@@ -40,7 +41,8 @@ test('Error when assigning to property on undefined', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
 })
 
-test('Error when assigning to property on variable with value undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when assigning to property on variable with value undefined', () => {
   return expectParsedError(
     stripIndent`
     const u = undefined;
@@ -461,4 +463,25 @@ test('Access local property', () => {
   `,
     100
   ).toMatchInlineSnapshot(`0`)
+})
+
+test('Type error when accessing property of string', () => {
+  return expectParsedError(
+    stripIndent`
+    'hi'.length;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+})
+
+test('Type error when accessing property of function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {
+      return 1;
+    }
+    f.prototype = {};
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
