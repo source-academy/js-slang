@@ -24,7 +24,7 @@ To try out *Source* in a REPL, run
 
 .. code-block::
 
-  $ node dist/repl/repl.js
+  $ node dist/repl/repl.js <chapter, or 1 if blank>
 
 or alternatively, install js-slang and run
 
