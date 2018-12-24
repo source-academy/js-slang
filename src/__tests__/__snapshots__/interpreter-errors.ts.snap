@@ -756,7 +756,7 @@ Object {
   "code": "function f() {
   return 1;
 }
-f.prototype = {};",
+f.prototype;",
   "displayResult": Array [],
   "errors": Array [
     TypeError {
@@ -764,7 +764,7 @@ f.prototype = {};",
       "got": "function",
       "location": SourceLocation {
         "end": Position {
-          "column": 16,
+          "column": 11,
           "line": 4,
         },
         "start": Position {
@@ -796,6 +796,71 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
           "line": 1,
         },
         "start": Position {

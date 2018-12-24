@@ -480,7 +480,28 @@ test('Type error when accessing property of function', () => {
     function f() {
       return 1;
     }
-    f.prototype = {};
+    f.prototype;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
+})
+
+test('Type error when assigning property of string', () => {
+  return expectParsedError(
+    stripIndent`
+    'hi'.prop = 5;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+})
+
+test('Type error when assigning property of function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {
+      return 1;
+    }
+    f.prop = 5;
     `,
     100
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
