@@ -10,7 +10,7 @@ test('Check that stack is at most 10k in size', () => {
       }
     }
     f(10000);
-  `).toEqual(expect.stringMatching(/Infinite recursion\n([^f]*f){3}/))
+  `).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
 }, 10000)
 
 test('Simple tail call returns work', () => {

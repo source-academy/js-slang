@@ -48,7 +48,7 @@ Object {
 f(list(1, 2));",
   "displayResult": Array [],
   "errors": Any<Array>,
-  "parsedErrors": "Line 1: Infinite recursion
+  "parsedErrors": "Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
   "result": undefined,
   "resultStatus": "error",
@@ -189,7 +189,7 @@ Object {
 f(list(1, 2));",
   "displayResult": Array [],
   "errors": Any<Array>,
-  "parsedErrors": "Line 1: Infinite recursion
+  "parsedErrors": "Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
   "result": undefined,
   "resultStatus": "error",
@@ -232,7 +232,7 @@ Object {
   "code": "(x => x(x)(x))(x => x(x)(x));",
   "displayResult": Array [],
   "errors": Any<Array>,
-  "parsedErrors": "Line 1: Infinite recursion
+  "parsedErrors": "Line 1: Maximum call stack size exceeded
   x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x))..",
   "result": undefined,
   "resultStatus": "error",
@@ -246,7 +246,7 @@ Object {
   "code": "function f(x) {return x(x)(x);} f(f);",
   "displayResult": Array [],
   "errors": Any<Array>,
-  "parsedErrors": "Line 1: Infinite recursion
+  "parsedErrors": "Line 1: Maximum call stack size exceeded
   x(function f(x) {
   return x(x)(x);
 })..  x(function f(x) {
