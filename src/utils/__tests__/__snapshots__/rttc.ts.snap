@@ -400,6 +400,144 @@ Object {
 }
 `;
 
+exports[`Invalid member expressions return TypeError 1`] = `
+Object {
+  "elaborate": "Expected string as prop, got number.",
+  "explain": "Expected string as prop, got number.",
+  "opVals": Array [
+    Object {
+      "a": 1,
+    },
+    0,
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 2`] = `
+Object {
+  "elaborate": "Expected string as prop, got boolean.",
+  "explain": "Expected string as prop, got boolean.",
+  "opVals": Array [
+    Object {
+      "a": 1,
+    },
+    true,
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 3`] = `
+Object {
+  "elaborate": "Expected string as prop, got function.",
+  "explain": "Expected string as prop, got function.",
+  "opVals": Array [
+    Object {
+      "a": 1,
+    },
+    [Function],
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 4`] = `
+Object {
+  "elaborate": "Expected string as prop, got object.",
+  "explain": "Expected string as prop, got object.",
+  "opVals": Array [
+    Object {
+      "a": 1,
+    },
+    Object {
+      "a": 1,
+    },
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 5`] = `
+Object {
+  "elaborate": "Expected string as prop, got object.",
+  "explain": "Expected string as prop, got object.",
+  "opVals": Array [
+    Object {
+      "a": 1,
+    },
+    Array [
+      2,
+    ],
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 6`] = `
+Object {
+  "elaborate": "Expected number as prop, got boolean.",
+  "explain": "Expected number as prop, got boolean.",
+  "opVals": Array [
+    Array [
+      2,
+    ],
+    true,
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 7`] = `
+Object {
+  "elaborate": "Expected number as prop, got string.",
+  "explain": "Expected number as prop, got string.",
+  "opVals": Array [
+    Array [
+      2,
+    ],
+    " ",
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 8`] = `
+Object {
+  "elaborate": "Expected number as prop, got function.",
+  "explain": "Expected number as prop, got function.",
+  "opVals": Array [
+    Array [
+      2,
+    ],
+    [Function],
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 9`] = `
+Object {
+  "elaborate": "Expected number as prop, got object.",
+  "explain": "Expected number as prop, got object.",
+  "opVals": Array [
+    Array [
+      2,
+    ],
+    Object {
+      "a": 1,
+    },
+  ],
+}
+`;
+
+exports[`Invalid member expressions return TypeError 10`] = `
+Object {
+  "elaborate": "Expected number as prop, got object.",
+  "explain": "Expected number as prop, got object.",
+  "opVals": Array [
+    Array [
+      2,
+    ],
+    Array [
+      2,
+    ],
+  ],
+}
+`;
+
 exports[`Invalid ternary/if test expressions return TypeError 1`] = `"Expected boolean as condition, got number."`;
 
 exports[`Invalid ternary/if test expressions return TypeError 2`] = `"Expected boolean as condition, got string."`;

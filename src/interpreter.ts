@@ -452,6 +452,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       prop = (node.property as es.Identifier).name
     }
+
+    const error = rttc.checkMemberAccess(context, obj, prop)
+    if (error) {
+      handleError(context, error)
+      return undefined
+    }
+
     if (
       obj !== null &&
       obj !== undefined &&

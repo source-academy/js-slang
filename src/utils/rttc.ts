@@ -37,6 +37,8 @@ const typeOf = (v: Value) => {
 const isNumber = (v: Value) => typeOf(v) === 'number'
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
+const isObject = (v: Value) => typeOf(v) === 'object' && !Array.isArray(v)
+const isArray = (v: Value) => typeOf(v) === 'object' && Array.isArray(v)
 
 export const checkUnaryExpression = (
   context: Context,
@@ -94,4 +96,15 @@ export const checkBinaryExpression = (
 export const checkIfStatement = (context: Context, test: Value) => {
   const node = context.runtime.nodes[0]
   return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
+}
+
+export const checkMemberAccess = (context: Context, obj: Value, prop: Value) => {
+  const node = context.runtime.nodes[0]
+  if (isObject(obj)) {
+    return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeof prop)
+  } else if (isArray(obj)) {
+    return isNumber(prop) ? undefined : new TypeError(node, ' as prop', 'number', typeof prop)
+  } else {
+    return new TypeError(node, '', 'object or array', typeof obj)
+  }
 }

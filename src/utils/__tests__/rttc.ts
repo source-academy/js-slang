@@ -6,6 +6,8 @@ const num = 0
 const bool = true
 const str = ' '
 const func = mockClosure()
+const obj = { a: 1 }
+const arr = [2]
 
 test('Valid unary type combinations are OK', () => {
   const operatorValue = [['!', bool], ['+', num], ['-', num]]
@@ -223,4 +225,36 @@ test('Invalid ternary/if test expressions return TypeError', () => {
   errors.map(error => expect(error).toBeInstanceOf(rttc.TypeError))
   errors.map(error => expect(error.explain()).toMatchSnapshot())
   errors.map(error => expect(error.elaborate()).toMatchSnapshot())
+})
+
+test('Valid member expressions are OK', () => {
+  const operatorValues = [[obj, str], [arr, num]]
+  const context = mockRuntimeContext()
+  const errors = operatorValues.map(opVals => rttc.checkMemberAccess(context, opVals[0], opVals[1]))
+  errors.map(error => expect(error).toBeUndefined())
+})
+
+test('Invalid member expressions return TypeError', () => {
+  const operatorValues = [
+    [obj, num],
+    [obj, bool],
+    [obj, func],
+    [obj, obj],
+    [obj, arr],
+    [arr, bool],
+    [arr, str],
+    [arr, func],
+    [arr, obj],
+    [arr, arr]
+  ]
+  const context = mockRuntimeContext()
+  operatorValues.map(opVals => {
+    const error = rttc.checkMemberAccess(context, opVals[0], opVals[1])
+    expect(error).toBeInstanceOf(rttc.TypeError)
+    expect({
+      opVals,
+      explain: error!.explain(),
+      elaborate: error!.elaborate()
+    }).toMatchSnapshot()
+  })
 })
