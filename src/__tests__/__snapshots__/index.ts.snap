@@ -18,7 +18,7 @@ Object {
 exports[`Arrays toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "\\"\\" + [1, 2];",
+  "code": "toString([1, 2]);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -74,7 +74,7 @@ Object {
 exports[`Builtins hide their implementation when toString: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "\\"\\"+pair;",
+  "code": "toString(pair);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -216,7 +216,7 @@ identity(t) === t && t(1, 2, 3) === 6;",
 exports[`Objects toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "\\"\\" + ({a: 1});",
+  "code": "toString({a: 1});",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -403,7 +403,7 @@ Object {
   "code": "function f(x) {
   return 5;
 }
-\\"\\" + (a=>b) + f;",
+toString(a=>b) + toString(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -446,7 +446,13 @@ Object {
 exports[`primitives toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "\\"\\" + true + false + 1 + 1.5 + null + undefined + NaN;",
+  "code": "toString(true) +
+toString(false) +
+toString(1) +
+toString(1.5) +
+toString(null) +
+toString(undefined) +
+toString(NaN);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",

@@ -232,29 +232,173 @@ exports[`Invalid binary type combinations for (-|*|/|%) return TypeError 87`] = 
 
 exports[`Invalid binary type combinations for (-|*|/|%) return TypeError 88`] = `"Expected number on left hand side of operation, got function."`;
 
-exports[`Invalid binary type combinations for + return TypeError 1`] = `"Expected number on right hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 1`] = `
+Object {
+  "elaborate": "Expected number on right hand side of operation, got boolean.",
+  "explain": "Expected number on right hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    0,
+    true,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 2`] = `"Expected number on right hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 2`] = `
+Object {
+  "elaborate": "Expected number on right hand side of operation, got string.",
+  "explain": "Expected number on right hand side of operation, got string.",
+  "opVals": Array [
+    "+",
+    0,
+    " ",
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 3`] = `"Expected string on left hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 3`] = `
+Object {
+  "elaborate": "Expected number on right hand side of operation, got function.",
+  "explain": "Expected number on right hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    0,
+    [Function],
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 4`] = `"Expected string on left hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 4`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got boolean.",
+  "explain": "Expected string or number on left hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    true,
+    0,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 5`] = `"Expected string on left hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 5`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got boolean.",
+  "explain": "Expected string or number on left hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    true,
+    true,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 6`] = `"Expected string on left hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 6`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got boolean.",
+  "explain": "Expected string or number on left hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    true,
+    " ",
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 7`] = `"Expected number on right hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 7`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got boolean.",
+  "explain": "Expected string or number on left hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    true,
+    [Function],
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 8`] = `"Expected number on right hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 8`] = `
+Object {
+  "elaborate": "Expected string on right hand side of operation, got number.",
+  "explain": "Expected string on right hand side of operation, got number.",
+  "opVals": Array [
+    "+",
+    " ",
+    0,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 9`] = `"Expected string on left hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 9`] = `
+Object {
+  "elaborate": "Expected string on right hand side of operation, got boolean.",
+  "explain": "Expected string on right hand side of operation, got boolean.",
+  "opVals": Array [
+    "+",
+    " ",
+    true,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 10`] = `"Expected string on left hand side of operation, got boolean."`;
+exports[`Invalid binary type combinations for + return TypeError 10`] = `
+Object {
+  "elaborate": "Expected string on right hand side of operation, got function.",
+  "explain": "Expected string on right hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    " ",
+    [Function],
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 11`] = `"Expected string on left hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 11`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got function.",
+  "explain": "Expected string or number on left hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    [Function],
+    0,
+  ],
+}
+`;
 
-exports[`Invalid binary type combinations for + return TypeError 12`] = `"Expected string on left hand side of operation, got function."`;
+exports[`Invalid binary type combinations for + return TypeError 12`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got function.",
+  "explain": "Expected string or number on left hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    [Function],
+    true,
+  ],
+}
+`;
+
+exports[`Invalid binary type combinations for + return TypeError 13`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got function.",
+  "explain": "Expected string or number on left hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    [Function],
+    " ",
+  ],
+}
+`;
+
+exports[`Invalid binary type combinations for + return TypeError 14`] = `
+Object {
+  "elaborate": "Expected string or number on left hand side of operation, got function.",
+  "explain": "Expected string or number on left hand side of operation, got function.",
+  "opVals": Array [
+    "+",
+    [Function],
+    [Function],
+  ],
+}
+`;
 
 exports[`Invalid ternary/if test expressions return TypeError 1`] = `"Expected boolean as condition, got number."`;
 

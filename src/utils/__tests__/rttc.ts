@@ -38,15 +38,7 @@ test('Invalid unary type combinations return TypeError', () => {
 })
 
 test('Valid binary type combinations are OK for +', () => {
-  const operatorValues = [
-    ['+', num, num],
-    ['+', str, num],
-    ['+', str, bool],
-    ['+', str, func],
-    ['+', num, str],
-    ['+', bool, str],
-    ['+', func, str]
-  ]
+  const operatorValues = [['+', num, num], ['+', str, str]]
   const context = mockRuntimeContext()
   const errors = operatorValues.map(opVals => {
     return rttc.checkBinaryExpression(context, opVals[0] as BinaryOperator, opVals[1], opVals[2])
@@ -57,19 +49,35 @@ test('Valid binary type combinations are OK for +', () => {
 test('Invalid binary type combinations for + return TypeError', () => {
   const operatorValues = [
     ['+', num, bool],
+    ['+', num, str],
     ['+', num, func],
-    ['+', bool, func],
     ['+', bool, num],
+    ['+', bool, bool],
+    ['+', bool, str],
+    ['+', bool, func],
+    ['+', str, num],
+    ['+', str, bool],
+    ['+', str, func],
     ['+', func, num],
-    ['+', func, bool]
+    ['+', func, bool],
+    ['+', func, str],
+    ['+', func, func]
   ]
   const context = mockRuntimeContext()
-  const errors = operatorValues.map(opVals => {
-    return rttc.checkBinaryExpression(context, opVals[0] as BinaryOperator, opVals[1], opVals[2])
-  }) as rttc.TypeError[]
-  errors.map(error => expect(error).toBeInstanceOf(rttc.TypeError))
-  errors.map(error => expect(error.explain()).toMatchSnapshot())
-  errors.map(error => expect(error.elaborate()).toMatchSnapshot())
+  operatorValues.map(opVals => {
+    const error = rttc.checkBinaryExpression(
+      context,
+      opVals[0] as BinaryOperator,
+      opVals[1],
+      opVals[2]
+    )
+    expect(error).toBeInstanceOf(rttc.TypeError)
+    expect({
+      opVals,
+      explain: error!.explain(),
+      elaborate: error!.elaborate()
+    }).toMatchSnapshot()
+  })
 })
 
 test('Valid binary type combinations are OK for (-|*|/|%)', () => {
