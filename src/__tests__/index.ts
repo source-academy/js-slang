@@ -84,7 +84,7 @@ test('parseError for missing semicolon', () => {
 
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
   return expectParsedErrorNoErrorSnapshot('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
-"Line 1: Infinite recursion
+"Line 1: Maximum call stack size exceeded
   x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
 `)
 }, 30000)
@@ -92,7 +92,7 @@ test('Simple arrow function infinite recursion represents CallExpression well', 
 test('Simple function infinite recursion represents CallExpression well', () => {
   return expectParsedErrorNoErrorSnapshot('function f(x) {return x(x)(x);} f(f);')
     .toMatchInlineSnapshot(`
-"Line 1: Infinite recursion
+"Line 1: Maximum call stack size exceeded
   x(function f(x) {
   return x(x)(x);
 })..  x(function f(x) {
@@ -139,7 +139,7 @@ test('Arrow function infinite recursion with list args represents CallExpression
   `,
     2
   ).toMatchInlineSnapshot(`
-"Line 1: Infinite recursion
+"Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `)
 }, 30000)
@@ -152,7 +152,7 @@ test('Function infinite recursion with list args represents CallExpression well'
   `,
     2
   ).toMatchInlineSnapshot(`
-"Line 1: Infinite recursion
+"Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
 `)
 }, 30000)
@@ -161,14 +161,14 @@ test('Arrow function infinite recursion with different args represents CallExpre
   return expectParsedErrorNoSnapshot(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
+  `).toEqual(expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
   return expectParsedErrorNoSnapshot(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toEqual(expect.stringMatching(/^Line 1: Infinite recursion\n\ *(f\(\d*\)[^f]{2,4}){3}/))
+  `).toEqual(expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/))
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {
