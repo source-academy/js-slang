@@ -73,7 +73,9 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 
   public explain() {
     const repr = (call: es.CallExpression) => generate(call, { generator: this.customGenerator })
-    return 'Maximum call stack size exceeded\n  ' + this.calls.map(call => repr(call) + '..').join('  ')
+    return (
+      'Maximum call stack size exceeded\n  ' + this.calls.map(call => repr(call) + '..').join('  ')
+    )
   }
 
   public elaborate() {

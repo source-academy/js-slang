@@ -134,7 +134,9 @@ test('Infinite recursion with function calls in argument', () => {
     i(1000, 1);
   `,
     4
-  ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/))
+  ).toEqual(
+    expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
+  )
 }, 10000)
 
 test('Infinite recursion of mutually recursive functions', () => {
@@ -149,7 +151,11 @@ test('Infinite recursion of mutually recursive functions', () => {
     f(1000);
   `,
     4
-  ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/))
+  ).toEqual(
+    expect.stringMatching(
+      /Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/
+    )
+  )
 })
 
 test('Error when calling non function value undefined', () => {

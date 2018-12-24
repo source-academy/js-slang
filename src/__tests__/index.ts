@@ -161,14 +161,18 @@ test('Arrow function infinite recursion with different args represents CallExpre
   return expectParsedErrorNoSnapshot(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toEqual(expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/))
+  `).toEqual(
+    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
+  )
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
   return expectParsedErrorNoSnapshot(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toEqual(expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/))
+  `).toEqual(
+    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
+  )
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {
