@@ -472,7 +472,7 @@ test('Type error when accessing property of null', () => {
     null.prop;
     `,
     100
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got object."`)
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
 })
 
 test('Type error when accessing property of string', () => {

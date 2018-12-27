@@ -762,7 +762,7 @@ Object {
   "errors": Array [
     TypeError {
       "expected": "object or array",
-      "got": "object",
+      "got": "null",
       "location": SourceLocation {
         "end": Position {
           "column": 9,
@@ -778,7 +778,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Expected object or array, got object.",
+  "parsedErrors": "Line 1: Expected object or array, got null.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

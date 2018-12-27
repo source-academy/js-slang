@@ -23,17 +23,17 @@ export class TypeError implements SourceError {
   }
 }
 
-/**
- * We need to define our own typeof in order for source functions to be
- * identifed as functions
- */
+// We need to define our own typeof in order for null/array to display properly in error messages
 const typeOf = (v: Value) => {
-  if (v instanceof Closure || typeof v === 'function') {
-    return 'function'
+  if (v === null) {
+    return 'null'
+  } else if (Array.isArray(v)) {
+    return 'array'
   } else {
     return typeof v
   }
 }
+
 const isNumber = (v: Value) => typeOf(v) === 'number'
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
@@ -106,10 +106,10 @@ export const checkIfStatement = (context: Context, test: Value) => {
 export const checkMemberAccess = (context: Context, obj: Value, prop: Value) => {
   const node = context.runtime.nodes[0]
   if (isObject(obj)) {
-    return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeof prop)
+    return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
   } else if (isArray(obj)) {
-    return isNumber(prop) ? undefined : new TypeError(node, ' as prop', 'number', typeof prop)
+    return isNumber(prop) ? undefined : new TypeError(node, ' as prop', 'number', typeOf(prop))
   } else {
-    return new TypeError(node, '', 'object or array', typeof obj)
+    return new TypeError(node, '', 'object or array', typeOf(obj))
   }
 }
