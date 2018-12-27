@@ -1,5 +1,4 @@
 import * as es from 'estree'
-import Closure from '../closure'
 import { Context, ErrorSeverity, ErrorType, SourceError, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
@@ -37,13 +36,8 @@ const typeOf = (v: Value) => {
 const isNumber = (v: Value) => typeOf(v) === 'number'
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
-const isObject = (v: Value) =>
-  typeOf(v) === 'object' &&
-  v !== null &&
-  !(v instanceof Closure) &&
-  !(v instanceof Function) &&
-  !Array.isArray(v)
-const isArray = (v: Value) => Array.isArray(v)
+const isObject = (v: Value) => typeOf(v) === 'object'
+const isArray = (v: Value) => typeOf(v) === 'array'
 
 export const checkUnaryExpression = (
   context: Context,
