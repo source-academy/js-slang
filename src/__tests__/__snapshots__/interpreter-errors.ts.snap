@@ -669,6 +669,23 @@ Object {
 
 exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f"`;
 
+exports[`Runtime error when redeclaring constant as function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant as function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function 4`] = `"Line 1: Redeclaring name f"`;
+
 exports[`Runtime error when redeclaring constant as variable 1`] = `
 Object {
   "status": "finished",
@@ -685,6 +702,57 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function 2`] = `""`;
+
+exports[`Runtime error when redeclaring function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function 4`] = `"Line 1: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function as constant 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as constant 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function as variable 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as variable 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable 4`] = `"Line 2: Redeclaring name f"`;
 
 exports[`Runtime error when redeclaring variable 1`] = `
 Object {
@@ -719,6 +787,23 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring variable as function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable as function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function 4`] = `"Line 1: Redeclaring name f"`;
 
 exports[`Type error when accessing property of function: expectParsedError 1`] = `
 Object {
