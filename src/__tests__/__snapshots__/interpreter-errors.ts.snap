@@ -75,36 +75,6 @@ Object {
 }
 `;
 
-exports[`Error when accessing property of null: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "null[\\"prop\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": null,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read property prop of null",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Error when assigning to builtin: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -778,6 +748,37 @@ f.prototype;",
     },
   ],
   "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null.prop;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "object",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got object.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

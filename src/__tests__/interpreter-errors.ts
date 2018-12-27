@@ -363,7 +363,8 @@ test('Runtime error when redeclaring variable', () => {
   })
 })
 
-test('Error when accessing property of null', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing property of null', () => {
   return expectParsedError(
     stripIndent`
     null["prop"];
@@ -463,6 +464,15 @@ test('Access local property', () => {
   `,
     100
   ).toMatchInlineSnapshot(`0`)
+})
+
+test('Type error when accessing property of null', () => {
+  return expectParsedError(
+    stripIndent`
+    null.prop;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got object."`)
 })
 
 test('Type error when accessing property of string', () => {
