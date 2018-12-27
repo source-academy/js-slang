@@ -1,16 +1,17 @@
 import * as es from 'estree'
-import { Context, ErrorSeverity, ErrorType, SourceError, Value } from '../types'
+import { RuntimeSourceError } from '../interpreter-errors'
+import { Context, ErrorSeverity, ErrorType, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
 
-export class TypeError implements SourceError {
+export class TypeError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, public side: string, public expected: string, public got: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
