@@ -30,5 +30,18 @@ export function mockRuntimeContext(): Context {
 }
 
 export function mockClosure(): Closure {
-  return new Closure({} as es.FunctionExpression, {} as Frame, {} as Context)
+  return new Closure(
+    {
+      type: 'FunctionExpression',
+      loc: null,
+      id: null,
+      params: [],
+      body: {
+        type: 'BlockStatement',
+        body: []
+      }
+    } as es.FunctionExpression,
+    {} as Frame,
+    {} as Context
+  )
 }
