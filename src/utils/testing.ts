@@ -255,11 +255,8 @@ export function expectParsedErrorNoSnapshot(
   ).resolves
 }
 
-function evalWithBuiltins(code: string, testBuiltins?: TestBuiltins) {
+function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
   // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
-  if (testBuiltins === undefined) {
-    testBuiltins = {}
-  }
   let evalstring = ''
   for (const key in testBuiltins) {
     if (testBuiltins.hasOwnProperty(key)) {
