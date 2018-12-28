@@ -31,7 +31,8 @@ test('Error when assigning to builtin', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
 })
 
-test('Error when assigning to property on undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when assigning to property on undefined', () => {
   return expectParsedError(
     stripIndent`
     undefined.prop = 123;
@@ -40,7 +41,8 @@ test('Error when assigning to property on undefined', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
 })
 
-test('Error when assigning to property on variable with value undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when assigning to property on variable with value undefined', () => {
   return expectParsedError(
     stripIndent`
     const u = undefined;
@@ -50,7 +52,8 @@ test('Error when assigning to property on variable with value undefined', () => 
   ).toMatchInlineSnapshot(`"Line 2: Cannot assign property prop of undefined"`)
 })
 
-test('Error when deeply assigning to property on variable with value undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when deeply assigning to property on variable with value undefined', () => {
   return expectParsedError(
     stripIndent`
     const u = undefined;
@@ -60,7 +63,8 @@ test('Error when deeply assigning to property on variable with value undefined',
   ).toMatchInlineSnapshot(`"Line 2: Cannot read property prop of undefined"`)
 })
 
-test('Error when accessing property on undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing property on undefined', () => {
   return expectParsedError(
     stripIndent`
     undefined.prop;
@@ -69,7 +73,8 @@ test('Error when accessing property on undefined', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
-test('Error when deeply accessing property on undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when deeply accessing property on undefined', () => {
   return expectParsedError(
     stripIndent`
     undefined.prop.prop;
@@ -318,6 +323,26 @@ test('Runtime error when redeclaring constant as variable', () => {
   })
 })
 
+test('Runtime error when redeclaring constant as function', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring variable as constant', () => {
   const code1 = `
     let f = x => x;
@@ -358,7 +383,88 @@ test('Runtime error when redeclaring variable', () => {
   })
 })
 
-test('Error when accessing property of null', () => {
+test('Runtime error when redeclaring variable as function', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring function as constant', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
+test('Runtime error when redeclaring function as variable', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring function', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing property of null', () => {
   return expectParsedError(
     stripIndent`
     null["prop"];
@@ -367,7 +473,8 @@ test('Error when accessing property of null', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
 })
 
-test('Error when accessing property of undefined', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing property of undefined', () => {
   return expectParsedError(
     stripIndent`
     undefined["prop"];
@@ -376,7 +483,8 @@ test('Error when accessing property of undefined', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
-test('Error when accessing inherited property of builtin', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of builtin', () => {
   return expectParsedError(
     stripIndent`
     pair["constructor"];
@@ -389,7 +497,8 @@ test('Error when accessing inherited property of builtin', () => {
 `)
 })
 
-test('Error when accessing inherited property of function', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of function', () => {
   return expectParsedError(
     stripIndent`
     function f() {}
@@ -399,7 +508,8 @@ test('Error when accessing inherited property of function', () => {
   ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
 })
 
-test('Error when accessing inherited property of arrow function', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of arrow function', () => {
   return expectParsedError(
     stripIndent`
     (() => 1)["constructor"];
@@ -408,7 +518,8 @@ test('Error when accessing inherited property of arrow function', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
 })
 
-test('Error when accessing inherited property of array', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of array', () => {
   return expectParsedError(
     stripIndent`
     [].push;
@@ -426,7 +537,8 @@ test('Error when accessing inherited property of object', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}"`)
 })
 
-test('Error when accessing inherited property of string', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of string', () => {
   return expectParsedError(
     stripIndent`
     'hi'.includes;
@@ -435,7 +547,8 @@ test('Error when accessing inherited property of string', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
 })
 
-test('Error when accessing inherited property of number', () => {
+// NOTE: Obsoleted due to strict types on member access
+test.skip('Error when accessing inherited property of number', () => {
   return expectParsedError(
     stripIndent`
     (1).toPrecision;
@@ -447,8 +560,59 @@ test('Error when accessing inherited property of number', () => {
 test('Access local property', () => {
   return expectResult(
     stripIndent`
-    []["length"];
+    ({a: 0})["a"];
   `,
     100
   ).toMatchInlineSnapshot(`0`)
+})
+
+test('Type error when accessing property of null', () => {
+  return expectParsedError(
+    stripIndent`
+    null.prop;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
+})
+
+test('Type error when accessing property of string', () => {
+  return expectParsedError(
+    stripIndent`
+    'hi'.length;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+})
+
+test('Type error when accessing property of function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {
+      return 1;
+    }
+    f.prototype;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
+})
+
+test('Type error when assigning property of string', () => {
+  return expectParsedError(
+    stripIndent`
+    'hi'.prop = 5;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+})
+
+test('Type error when assigning property of function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {
+      return 1;
+    }
+    f.prop = 5;
+    `,
+    100
+  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })

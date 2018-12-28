@@ -255,17 +255,26 @@ export function expectParsedErrorNoSnapshot(
   ).resolves
 }
 
+function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
+  // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
+  let evalstring = ''
+  for (const key in testBuiltins) {
+    if (testBuiltins.hasOwnProperty(key)) {
+      evalstring = evalstring + 'const ' + key + ' = testBuiltins.' + key + '; '
+    }
+  }
+  // tslint:disable-next-line:no-eval
+  return eval(evalstring + code)
+}
+
 export function expectToMatchJS(
   code: string,
   chapterOrContext?: number | TestContext,
   testBuiltins?: TestBuiltins
 ) {
-  return (
-    testSuccess(code, chapterOrContext, testBuiltins)
-      .then(snapshot('expect to match JS'))
-      // tslint:disable-next-line:no-eval
-      .then(testResult => expect(testResult.result).toEqual(eval(code)))
-  )
+  return testSuccess(code, chapterOrContext, testBuiltins)
+    .then(snapshot('expect to match JS'))
+    .then(testResult => expect(testResult.result).toEqual(evalWithBuiltins(code, testBuiltins)))
 }
 
 export function expectToLooselyMatchJS(
@@ -276,7 +285,8 @@ export function expectToLooselyMatchJS(
   return testSuccess(code, chapterOrContext, testBuiltins)
     .then(snapshot('expect to loosely match JS'))
     .then(testResult =>
-      // tslint:disable-next-line:no-eval
-      expect(testResult.result.replace(/ /g, '')).toEqual(eval(code).replace(/ /g, ''))
+      expect(testResult.result.replace(/ /g, '')).toEqual(
+        evalWithBuiltins(code, testBuiltins).replace(/ /g, '')
+      )
     )
 }

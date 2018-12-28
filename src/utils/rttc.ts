@@ -1,17 +1,17 @@
 import * as es from 'estree'
-import Closure from '../closure'
-import { Context, ErrorSeverity, ErrorType, SourceError, Value } from '../types'
+import { RuntimeSourceError } from '../interpreter-errors'
+import { Context, ErrorSeverity, ErrorType, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
 
-export class TypeError implements SourceError {
+export class TypeError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, public side: string, public expected: string, public got: string) {
-    this.location = node.loc!
+    super(node)
   }
 
   public explain() {
@@ -23,20 +23,22 @@ export class TypeError implements SourceError {
   }
 }
 
-/**
- * We need to define our own typeof in order for source functions to be
- * identifed as functions
- */
+// We need to define our own typeof in order for null/array to display properly in error messages
 const typeOf = (v: Value) => {
-  if (v instanceof Closure || typeof v === 'function') {
-    return 'function'
+  if (v === null) {
+    return 'null'
+  } else if (Array.isArray(v)) {
+    return 'array'
   } else {
     return typeof v
   }
 }
+
 const isNumber = (v: Value) => typeOf(v) === 'number'
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
+const isObject = (v: Value) => typeOf(v) === 'object'
+const isArray = (v: Value) => typeOf(v) === 'array'
 
 export const checkUnaryExpression = (
   context: Context,
@@ -72,6 +74,7 @@ export const checkBinaryExpression = (
       } else {
         return
       }
+    case '+':
     case '<':
     case '<=':
     case '>':
@@ -83,17 +86,6 @@ export const checkBinaryExpression = (
       } else {
         return new TypeError(node, LHS, 'string or number', typeOf(left))
       }
-    case '+':
-      if (isNumber(left)) {
-        return isNumber(right) || isString(right)
-          ? undefined
-          : new TypeError(node, RHS, 'number', typeOf(right))
-      } else if (!isString(left) && !isString(right)) {
-        // must have at least one side that is a string
-        return new TypeError(node, LHS, 'string', typeOf(left))
-      } else {
-        return
-      }
     case '!==':
     case '===':
     default:
@@ -104,4 +96,15 @@ export const checkBinaryExpression = (
 export const checkIfStatement = (context: Context, test: Value) => {
   const node = context.runtime.nodes[0]
   return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
+}
+
+export const checkMemberAccess = (context: Context, obj: Value, prop: Value) => {
+  const node = context.runtime.nodes[0]
+  if (isObject(obj)) {
+    return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
+  } else if (isArray(obj)) {
+    return isNumber(prop) ? undefined : new TypeError(node, ' as prop', 'number', typeOf(prop))
+  } else {
+    return new TypeError(node, '', 'object or array', typeOf(obj))
+  }
 }

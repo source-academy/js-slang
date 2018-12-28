@@ -1,3 +1,4 @@
+import { Value } from '../types'
 import {
   expectParsedError,
   expectParsedErrorNoErrorSnapshot,
@@ -7,6 +8,8 @@ import {
   expectToMatchJS,
   stripIndent
 } from '../utils/testing'
+
+const toString = (x: Value) => '' + x
 
 test('Empty code returns undefined', () => {
   return expectResult('').toBe(undefined)
@@ -41,7 +44,7 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expectResult('""+pair;', 2).toMatchInlineSnapshot(`
+  return expectResult('toString(pair);', 2, { toString }).toMatchInlineSnapshot(`
 "function pair(left, right) {
 	[implementation hidden]
 }"
@@ -49,24 +52,40 @@ test('Builtins hide their implementation when toString', () => {
 })
 
 test('Objects toString matches up with JS', () => {
-  return expectToMatchJS('"" + ({a: 1});', 100)
+  return expectToMatchJS('toString({a: 1});', 100, { toString })
 })
 
 test('Arrays toString matches up with JS', () => {
-  return expectToMatchJS('"" + [1, 2];', 3)
+  return expectToMatchJS('toString([1, 2]);', 3, { toString })
 })
 
 test('functions toString (mostly) matches up with JS', () => {
-  return expectToLooselyMatchJS(stripIndent`
+  return expectToLooselyMatchJS(
+    stripIndent`
   function f(x) {
     return 5;
   }
-  "" + (a=>b) + f;
-  `)
+  toString(a=>b) + toString(f);
+  `,
+    1,
+    { toString }
+  )
 })
 
 test('primitives toString matches up with JS', () => {
-  return expectToMatchJS('"" + true + false + 1 + 1.5 + null + undefined + NaN;', 2)
+  return expectToMatchJS(
+    stripIndent`
+    toString(true) +
+    toString(false) +
+    toString(1) +
+    toString(1.5) +
+    toString(null) +
+    toString(undefined) +
+    toString(NaN);
+    `,
+    2,
+    { toString }
+  )
 })
 
 test('Factorial arrow function', () => {

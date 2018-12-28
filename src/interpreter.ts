@@ -3,7 +3,7 @@ import * as es from 'estree'
 import Closure from './closure'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
-import { Context, Environment, ErrorSeverity, Frame, SourceError, Value } from './types'
+import { Context, Environment, Frame, Value } from './types'
 import { createNode } from './utils/node'
 import * as rttc from './utils/rttc'
 
@@ -55,17 +55,6 @@ const createBlockFrame = (
   }
 }
 
-const handleError = (context: Context, error: SourceError) => {
-  context.errors.push(error)
-  if (error.severity === ErrorSeverity.ERROR) {
-    const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
-    context.runtime.frames = [globalFrame]
-    throw error
-  } else {
-    return context
-  }
-}
-
 const handleRuntimeError = (context: Context, error: errors.RuntimeSourceError): never => {
   context.errors.push(error)
   const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
@@ -78,7 +67,7 @@ const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const frame = currentFrame(context)
   if (frame.environment.hasOwnProperty(name)) {
-    handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
+    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
   }
   frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return frame
@@ -110,7 +99,10 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   const frame = context.runtime.frames[0]
 
   if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
-    handleRuntimeError(context, new errors.VariableRedeclaration(context.runtime.nodes[0]!, name))
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
+    )
   }
 
   Object.defineProperty(frame.environment, name, {
@@ -142,7 +134,10 @@ const getVariable = (context: Context, name: string) => {
   while (frame) {
     if (frame.environment.hasOwnProperty(name)) {
       if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
-        handleRuntimeError(context, new errors.UnassignedVariable(name, context.runtime.nodes[0]))
+        return handleRuntimeError(
+          context,
+          new errors.UnassignedVariable(name, context.runtime.nodes[0])
+        )
       } else {
         return frame.environment[name]
       }
@@ -150,7 +145,7 @@ const getVariable = (context: Context, name: string) => {
       frame = frame.parent
     }
   }
-  handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const setVariable = (context: Context, name: string, value: any) => {
@@ -163,14 +158,17 @@ const setVariable = (context: Context, name: string, value: any) => {
       const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
       if (descriptors[name].writable) {
         frame.environment[name] = value
-        return
+        return undefined
       }
-      handleRuntimeError(context, new errors.ConstAssignment(context.runtime.nodes[0]!, name))
+      return handleRuntimeError(
+        context,
+        new errors.ConstAssignment(context.runtime.nodes[0]!, name)
+      )
     } else {
       frame = frame.parent
     }
   }
-  handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const checkNumberOfArguments = (
@@ -180,11 +178,12 @@ const checkNumberOfArguments = (
   exp: es.CallExpression
 ) => {
   if (callee.node.params.length !== args.length) {
-    handleRuntimeError(
+    return handleRuntimeError(
       context,
       new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
     )
   }
+  return undefined
 }
 
 function* getArgs(context: Context, call: es.CallExpression) {
@@ -218,8 +217,7 @@ function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Con
 
   const error = rttc.checkIfStatement(context, test)
   if (error) {
-    handleError(context, error)
-    return undefined
+    return handleRuntimeError(context, error)
   }
 
   return test ? node.consequent : node.alternate
@@ -301,8 +299,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     const error = rttc.checkUnaryExpression(context, node.operator, value)
     if (error) {
-      handleError(context, error)
-      return undefined
+      return handleRuntimeError(context, error)
     }
 
     if (node.operator === '!') {
@@ -320,8 +317,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     const error = rttc.checkBinaryExpression(context, node.operator, left, right)
     if (error) {
-      handleError(context, error)
-      return undefined
+      return handleRuntimeError(context, error)
     }
     let result
     switch (node.operator) {
@@ -452,18 +448,24 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       prop = (node.property as es.Identifier).name
     }
+
+    const error = rttc.checkMemberAccess(context, obj, prop)
+    if (error) {
+      return handleRuntimeError(context, error)
+    }
+
     if (
       obj !== null &&
       obj !== undefined &&
       typeof obj[prop] !== 'undefined' &&
       !obj.hasOwnProperty(prop)
     ) {
-      handleRuntimeError(context, new errors.GetInheritedPropertyError(node, obj, prop))
+      return handleRuntimeError(context, new errors.GetInheritedPropertyError(node, obj, prop))
     }
     try {
       return obj[prop]
     } catch {
-      handleRuntimeError(context, new errors.GetPropertyError(node, obj, prop))
+      return handleRuntimeError(context, new errors.GetPropertyError(node, obj, prop))
     }
   },
 
@@ -477,11 +479,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       } else {
         prop = (left.property as es.Identifier).name
       }
+
+      const error = rttc.checkMemberAccess(context, obj, prop)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
+
       const val = yield* evaluate(node.right, context)
       try {
         obj[prop] = val
       } catch {
-        handleRuntimeError(context, new errors.SetPropertyError(node, obj, prop))
+        return handleRuntimeError(context, new errors.SetPropertyError(node, obj, prop))
       }
       return val
     }
@@ -649,13 +657,13 @@ export function* apply(
           // The error could've arisen when the builtin called a source function which errored.
           // If the cause was a source error, we don't want to include the error.
           // However if the error came from the builtin itself, we need to handle it.
-          handleRuntimeError(context, new errors.ExceptionError(e, loc))
+          return handleRuntimeError(context, new errors.ExceptionError(e, loc))
         }
         result = undefined
         throw e
       }
     } else {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
+      return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
     }
   }
   // Unwraps return value and release stack frame

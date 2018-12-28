@@ -3,7 +3,7 @@
 exports[`Access local property: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "[][\\"length\\"];",
+  "code": "({a: 0})[\\"a\\"];",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -45,159 +45,6 @@ map(f, list(1, 2));",
 }
 `;
 
-exports[`Error when accessing inherited property of array: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "[].push;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": Array [],
-      "prop": "push",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read inherited property push of []",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing inherited property of arrow function: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "(() => 1)[\\"constructor\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 24,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": [Function],
-      "prop": "constructor",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read inherited property constructor of () => 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing inherited property of builtin: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "pair[\\"constructor\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": [Function],
-      "prop": "constructor",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read inherited property constructor of function pair(left, right) {
-	[implementation hidden]
-}",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing inherited property of function: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f() {}
-f[\\"constructor\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "obj": [Function],
-      "prop": "constructor",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 2: Cannot read inherited property constructor of function f() {}",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing inherited property of number: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "(1).toPrecision;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": 1,
-      "prop": "toPrecision",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read inherited property toPrecision of 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Error when accessing inherited property of object: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -222,126 +69,6 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing inherited property of string: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "'hi'.includes;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": "hi",
-      "prop": "includes",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read inherited property includes of \\"hi\\"",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing property of null: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "null[\\"prop\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": null,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read property prop of null",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing property of undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "undefined[\\"prop\\"];",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 17,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when accessing property on undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "undefined.prop;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read property prop of undefined",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -400,67 +127,6 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Cannot assign new value to constant undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when assigning to property on undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "undefined.prop = 123;",
-  "displayResult": Array [],
-  "errors": Array [
-    SetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot assign property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when assigning to property on variable with value undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const u = undefined;
-u.prop = 123;",
-  "displayResult": Array [],
-  "errors": Array [
-    SetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 2: Cannot assign property prop of undefined",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -808,67 +474,6 @@ Object {
 }
 `;
 
-exports[`Error when deeply accessing property on undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "undefined.prop.prop;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Cannot read property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Error when deeply assigning to property on variable with value undefined: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const u = undefined;
-u.prop.prop = 123;",
-  "displayResult": Array [],
-  "errors": Array [
-    GetPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 6,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "obj": undefined,
-      "prop": "prop",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 2: Cannot read property prop of undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Error when redeclaring constant as variable: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1064,6 +669,23 @@ Object {
 
 exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f"`;
 
+exports[`Runtime error when redeclaring constant as function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant as function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function 4`] = `"Line 1: Redeclaring name f"`;
+
 exports[`Runtime error when redeclaring constant as variable 1`] = `
 Object {
   "status": "finished",
@@ -1080,6 +702,57 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function 2`] = `""`;
+
+exports[`Runtime error when redeclaring function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function 4`] = `"Line 1: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function as constant 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as constant 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring function as variable 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as variable 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable 4`] = `"Line 2: Redeclaring name f"`;
 
 exports[`Runtime error when redeclaring variable 1`] = `
 Object {
@@ -1114,6 +787,184 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring variable as function 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable as function 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function 4`] = `"Line 1: Redeclaring name f"`;
+
+exports[`Type error when accessing property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prototype;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null.prop;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "null",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got null.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.length;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
 
 exports[`Undefined variable error is thrown: expectParsedError 1`] = `
 Object {
