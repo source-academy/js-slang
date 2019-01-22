@@ -42,9 +42,10 @@ JavaScript
 \item \texttt{error(a)}: Displays \emph{any} value \texttt{a} in the console with error flag. The evaluation
   of any call of \texttt{error} aborts the running program immediately.
 \item \texttt{prompt(s)}: Pops up a window that displays the \emph{string} \texttt{s}, provides
-an input line for the user to enter a text and an ``OK'' button. The call of \texttt{prompt}
-suspends execution of the program until the ``OK'' button is pressed, at which point it
-returns the entered text as a string.
+an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' button. The call of \texttt{prompt}
+suspends execution of the program until one of the two buttons is pressed. If 
+the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
+If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
 \item \verb#parse_int#\texttt{(s, i)}:
 interprets the \emph{string} \texttt{s} as an integer, using the positive integer \texttt{i} as radix, and returns the respective value,
 see \href{https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
