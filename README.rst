@@ -24,11 +24,11 @@ To try out *Source* in a REPL, run
 
 .. code-block::
 
-  $ node dist/repl/repl.js
+  $ node dist/repl/repl.js [chapter] # default: 1
 
 or alternatively, install js-slang and run
 
 .. code-block::
 
   $ npm -g install js-slang   # Install js-slang
-  $ js-slang
+  $ js-slang [chapter] # default: 1

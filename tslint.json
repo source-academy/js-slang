@@ -3,6 +3,10 @@
   "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
+    "cyclomatic-complexity": {
+      "severity": "warning",
+      "options": 20
+    },
     "semicolon": ["never"],
     "quotemark": ["single"],
     "trailing-comma": false,
