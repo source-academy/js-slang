@@ -1,35 +1,6 @@
-import { generate } from 'astring'
-
+import Closure from './closure'
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
-import { apply } from './interpreter'
-import { Closure, Context, Value } from './types'
-
-export const closureToJS = (value: Value, context: Context, klass: string) => {
-  function DummyClass(this: Value) {
-    const args: Value[] = Array.prototype.slice.call(arguments)
-    const gen = apply(context, value, args, undefined, this)
-    let it = gen.next()
-    while (!it.done) {
-      it = gen.next()
-    }
-    return it.value
-  }
-  Object.defineProperty(DummyClass, 'name', {
-    value: klass
-  })
-  Object.setPrototypeOf(DummyClass, () => undefined)
-  Object.defineProperty(DummyClass, 'Inherits', {
-    value: (Parent: Value) => {
-      DummyClass.prototype = Object.create(Parent.prototype)
-      DummyClass.prototype.constructor = DummyClass
-    }
-  })
-  DummyClass.toString = () => stringify(value)
-  DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
-    return DummyClass.apply(thisArg, args)
-  }
-  return DummyClass
-}
+import { Value } from './types'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -137,7 +108,7 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     } else if (ancestors.has(v)) {
       return '...<circular>'
     } else if (v instanceof Closure) {
-      return generate(v.originalNode)
+      return v.toString()
     } else if (typeof v === 'string') {
       return JSON.stringify(v)
     } else if (typeof v !== 'object') {

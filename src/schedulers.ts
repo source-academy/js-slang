@@ -1,4 +1,4 @@
-/* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-classes-per-file */
 import { MaximumStackLimitExceeded } from './interpreter-errors'
 import { Context, Result, Scheduler, Value } from './types'
 

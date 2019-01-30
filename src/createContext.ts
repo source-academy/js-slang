@@ -16,6 +16,12 @@ const createEmptyRuntime = () => ({
   nodes: []
 })
 
+const createGlobalFrame = () => ({
+  parent: null,
+  name: 'global',
+  environment: {}
+})
+
 export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
@@ -36,11 +42,7 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
     context.runtime.frames = []
   }
   if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push({
-      parent: null,
-      name: 'global',
-      environment: {}
-    })
+    context.runtime.frames.push(createGlobalFrame())
   }
 }
 
@@ -82,22 +84,24 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
-  const display = (v: Value) => externalBuiltIns.display(v, context.externalContext)
+  const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
+  const display = (v: Value) => (rawDisplay(stringify(v)), v)
   const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
   const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'runtime()', misc.runtime)
-    defineBuiltin(context, 'display(value)', display)
-    defineBuiltin(context, 'stringify(value)', stringify)
-    defineBuiltin(context, 'error(message)', misc.error_message)
-    defineBuiltin(context, 'prompt(message)', prompt)
-    defineBuiltin(context, 'is_number(value)', misc.is_number)
-    defineBuiltin(context, 'is_string(value)', misc.is_string)
-    defineBuiltin(context, 'is_function(value)', misc.is_function)
-    defineBuiltin(context, 'is_boolean(value)', misc.is_boolean)
-    defineBuiltin(context, 'is_undefined(value)', misc.is_undefined)
+    defineBuiltin(context, 'display(val)', display)
+    defineBuiltin(context, 'raw_display(str)', rawDisplay)
+    defineBuiltin(context, 'stringify(val)', stringify)
+    defineBuiltin(context, 'error(str)', misc.error_message)
+    defineBuiltin(context, 'prompt(str)', prompt)
+    defineBuiltin(context, 'is_number(val)', misc.is_number)
+    defineBuiltin(context, 'is_string(val)', misc.is_string)
+    defineBuiltin(context, 'is_function(val)', misc.is_function)
+    defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
+    defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
     defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
@@ -145,7 +149,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   }
 
   if (context.chapter >= 4) {
-    defineBuiltin(context, 'parse(program_string)', parser.parse)
+    defineBuiltin(context, 'parse(program_string)', (str: string) =>
+      parser.parse(str, createContext(context.chapter))
+    )
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
@@ -156,27 +162,23 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 100) {
     defineBuiltin(context, 'is_object(val)', misc.is_object)
-  }
-
-  if (context.chapter >= Infinity) {
-    // previously week 4
+    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
+    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
     // tslint:disable-next-line:ban-types
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.display)
+      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
-    // previously week 5
     defineBuiltin(context, 'assoc(val, xs)', list.assoc)
-    // previously week 6
   }
 }
 
 const defaultBuiltIns: CustomBuiltIns = {
-  display: misc.display,
+  rawDisplay: misc.rawDisplay,
   // See issue #5
-  prompt: misc.display,
+  prompt: misc.rawDisplay,
   // See issue #11
-  alert: misc.display,
+  alert: misc.rawDisplay,
   visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }

@@ -1,4 +1,3 @@
-/* tslint:disable: ban-types*/
 import { stringify } from '../interop'
 import { Context, Value } from '../types'
 
@@ -9,10 +8,9 @@ import { Context, Value } from '../types'
  * @param externalContext a property of Context that can hold
  *   any information required for external use (optional).
  */
-export function display(value: Value, externalContext: any) {
-  const output = stringify(value)
+export function rawDisplay(value: Value, externalContext: any) {
   // tslint:disable-next-line:no-console
-  console.log(output)
+  console.log(value.toString())
   return value
 }
 
@@ -23,6 +21,7 @@ export function error_message(value: Value) {
 
 export function timed(
   context: Context,
+  // tslint:disable-next-line:ban-types
   f: Function,
   externalContext: any,
   displayBuiltin: (value: Value, externalContext: any) => Value

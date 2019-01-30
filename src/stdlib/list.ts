@@ -37,7 +37,7 @@ export function head(xs: List) {
   if (is_pair(xs)) {
     return xs[0]
   } else {
-    throw new Error('head(xs) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs))
+    throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
   }
 }
 
@@ -48,7 +48,7 @@ export function tail(xs: List) {
   if (is_pair(xs)) {
     return xs[1]
   } else {
-    throw new Error('tail(xs) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs))
+    throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
   }
 }
 
@@ -135,6 +135,11 @@ export function map(f: Function, xs: List): List | null {
 // applying fun to the numbers from 0 to n-1.
 // tslint:disable-next-line:ban-types
 export function build_list(n: number, fun: Function): List | null {
+  if (typeof n !== 'number' || n < 0 || Math.floor(n) !== n) {
+    throw new Error(
+      'build_list(n, fun) expects a positive integer as ' + 'argument n, but encountered ' + n
+    )
+  }
   // tslint:disable-next-line:ban-types
   function build(i: number, alreadyBuilt: List | null): List | null {
     if (i < 0) {
@@ -156,7 +161,7 @@ export function build_list(n: number, fun: Function): List | null {
 // tslint:disable-next-line:ban-types
 export function for_each(fun: Function, xs: List) {
   if (!is_list(xs)) {
-    throw new Error('for_each expects a list as argument xs, but ' + 'encountered ' + xs)
+    throw new Error('for_each expects a list as argument xs, but encountered ' + xs)
   }
   for (; !is_null(xs); xs = tail(xs)) {
     fun(head(xs))
@@ -175,7 +180,7 @@ export function list_to_string(l: List): string {
 // reverse throws an exception if the argument is not a list.
 export function reverse(xs: List) {
   if (!is_list(xs)) {
-    throw new Error('reverse(xs) expects a list as argument xs, but ' + 'encountered ' + xs)
+    throw new Error('reverse(xs) expects a list as argument xs, but encountered ' + xs)
   }
   let result = null
   for (; !is_null(xs); xs = tail(xs)) {
@@ -284,6 +289,17 @@ export function filter(pred: Function, xs: List): List {
 // using a step size of 1, until the number
 // exceeds end.
 export function enum_list(start: number, end: number): List | null {
+  if (typeof start !== 'number') {
+    throw new Error(
+      'enum_list(start, end) expects a number as argument start, but encountered ' + start
+    )
+  }
+  if (typeof end !== 'number') {
+    throw new Error(
+      'enum_list(start, end) expects a number as argument start, but encountered ' + end
+    )
+  }
+
   if (start > end) {
     return null
   } else {
@@ -293,9 +309,9 @@ export function enum_list(start: number, end: number): List | null {
 
 // Returns the item in list lst at index n (the first item is at position 0)
 export function list_ref(xs: List, n: number) {
-  if (n < 0) {
+  if (typeof n !== 'number' || n < 0 || Math.floor(n) !== n) {
     throw new Error(
-      'list_ref(xs, n) expects a positive integer as ' + 'argument n, but encountered ' + n
+      'list_ref(xs, n) expects a positive integer as argument n, but encountered ' + n
     )
   }
 
@@ -332,7 +348,7 @@ export function set_head(xs: List, x: Value) {
     return undefined
   } else {
     throw new Error(
-      'set_head(xs,x) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs)
+      'set_head(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
     )
   }
 }
@@ -347,7 +363,7 @@ export function set_tail(xs: List, x: Value) {
     return undefined
   } else {
     throw new Error(
-      'set_tail(xs,x) expects a pair as ' + 'argument xs, but encountered ' + stringify(xs)
+      'set_tail(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
     )
   }
 }

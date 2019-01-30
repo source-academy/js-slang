@@ -1,62 +1,185 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`parse_int with non-integer arg radix throws error 1`] = `
+exports[`parse_int with non-integer arg radix throws error: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "parse_int(42, 2.1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with non-integer arg radix throws error 2`] = `"Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`;
-
-exports[`parse_int with non-string arg str throws error 1`] = `
+exports[`parse_int with non-string arg str throws error: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "parse_int(42, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with non-string arg str throws error 2`] = `"Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`;
-
-exports[`parse_int with radix outside [2, 36] throws error, radix=1 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=1: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "parse_int('10', 1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=1 2`] = `"Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`;
-
-exports[`parse_int with radix outside [2, 36] throws error, radix=37 1`] = `
+exports[`parse_int with radix outside [2, 36] throws error, radix=37: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "parse_int('10', 37);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with radix outside [2, 36] throws error, radix=37 2`] = `"Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`;
-
-exports[`parse_int with string arg radix throws error 1`] = `
+exports[`parse_int with string arg radix throws error: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "parse_int(42, '2');",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with string arg radix throws error 2`] = `"Line 2: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`;
-
-exports[`parse_int with valid args is ok, but invalid str for radix 1`] = `
+exports[`parse_int with valid args is ok, but invalid str for radix: expectResult 1`] = `
 Object {
-  "status": "finished",
-  "value": NaN,
+  "alertResult": Array [],
+  "code": "parse_int('uu1', 2);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": NaN,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with valid args is ok, radix 2 1`] = `
+exports[`parse_int with valid args is ok, radix 2: expectResult 1`] = `
 Object {
-  "status": "finished",
-  "value": 6485,
+  "alertResult": Array [],
+  "code": "parse_int('1100101010101', 2);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 6485,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`parse_int with valid args is ok, radix 36 1`] = `
+exports[`parse_int with valid args is ok, radix 36: expectResult 1`] = `
 Object {
-  "status": "finished",
-  "value": 39961,
+  "alertResult": Array [],
+  "code": "parse_int('uu1', 36);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 39961,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
 }
 `;

@@ -2,7 +2,6 @@
 
 import repl = require('repl') //'repl' here refers to the module named 'repl' in index.d.ts
 import { createContext, parseError, runInContext } from '../index'
-import { Result } from '../types'
 
 const ENABLE_VERBOSE = "_enable_verbose;\n";
 const DISABLE_VERBOSE = "_disable_verbose;\n";

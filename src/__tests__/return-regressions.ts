@@ -3,13 +3,11 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { runInContext } from '../index'
-import { mockContext } from '../mocks/context'
-import { Finished } from '../types'
+import { expectParsedError, expectResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
-  const code = `
+  return expectParsedError(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -18,19 +16,14 @@ test('Calling unreachable results in error', () => {
       return 0;
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(obj.status).toBe('error')
-    expect(context.errors).toMatchSnapshot()
-  })
+  `).toMatchInlineSnapshot(
+    `"Line 3: Expected number on right hand side of operation, got boolean."`
+  )
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -41,20 +34,12 @@ test('Bare early returns work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -68,20 +53,12 @@ test('Recursive call early returns work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(3)
-  })
+  `).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -95,20 +72,12 @@ test('Tail call early returns work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in if statements work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -122,20 +91,12 @@ test('Bare early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in if statements work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -152,20 +113,12 @@ test('Recursive call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(3)
-  })
+  `).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in if statements work', () => {
-  const code = `
+  return expectResult(`
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -182,20 +135,13 @@ test('Tail call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext()
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in while loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -209,20 +155,15 @@ test('Bare early returns in while loops work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in while loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -239,20 +180,15 @@ test('Recursive call early returns in while loops work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(3)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in while loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -269,20 +205,15 @@ test('Tail call early returns in while loops work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in for loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -296,20 +227,15 @@ test('Bare early returns in for loops work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in for loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -323,20 +249,15 @@ test('Recursive call early returns in for loops work', () => {
       return 0;
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(3)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in for loops work', () => {
-  const code = `
+  return expectResult(
+    `
     function unreachable() {
       return 1 < true; // Will cause an error
     }
@@ -353,13 +274,7 @@ test('Tail call early returns in for loops work', () => {
       unreachable();
     }
     f();
-  `
-  const context = mockContext(3)
-  const promise = runInContext(code, context, { scheduler: 'preemptive' })
-  return promise.then(obj => {
-    expect(obj).toMatchSnapshot()
-    expect(context.errors).toEqual([])
-    expect(obj.status).toBe('finished')
-    expect((obj as Finished).value).toBe(1)
-  })
+  `,
+    3
+  ).toMatchInlineSnapshot(`1`)
 })

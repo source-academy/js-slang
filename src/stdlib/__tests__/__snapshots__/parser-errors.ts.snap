@@ -1,25 +1,88 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Blacklisted syntax 1`] = `"Line 2: ParseError: Yield expressions are not allowed"`;
-
-exports[`Blacklisted syntax 2`] = `
+exports[`Blacklisted syntax: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "stringify(parse(\\"function* f() { yield 1; } f();\\"), undefined, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [ParseError: Yield expressions are not allowed],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 50,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: ParseError: Yield expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`Blatant syntax error 1`] = `"Line 2: ParseError: SyntaxError: Unterminated string constant (1:0)"`;
-
-exports[`Blatant syntax error 2`] = `
+exports[`Blatant syntax error: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "stringify(parse(\\"'\\"), undefined, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
 
-exports[`Syntax rules 1`] = `"Line 2: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."`;
-
-exports[`Syntax rules 2`] = `
+exports[`Syntax rules: expectParsedError 1`] = `
 Object {
-  "status": "error",
+  "alertResult": Array [],
+  "code": "stringify(parse(\\"x = y = x;\\"), undefined, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
 }
 `;
