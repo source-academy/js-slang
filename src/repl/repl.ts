@@ -35,7 +35,7 @@ function startRepl(chapter = 1) {
 			}
 			else {
 			
-				runInContext(cmd, context, {scheduler: 'preemptive' }).then((obj: Result) => {
+				runInContext(cmd, context, {scheduler: 'preemptive' }).then(obj => {
 					if (obj.status === 'finished') {
 						callback(null, obj.value)
 					} else {
