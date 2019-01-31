@@ -32,8 +32,7 @@ export enum ErrorSeverity {
   ERROR = 'Error'
 }
 
-
-//any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
+// any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
   type: ErrorType
   severity: ErrorSeverity

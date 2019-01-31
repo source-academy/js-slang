@@ -112,8 +112,8 @@ export class UndefinedVariable extends RuntimeSourceError {
   }
 
   public elaborate() {
-	return `Before you can call ${this.name}, you need to declare it as a variable or a constant.
-		You can do this using the let or const keywords.`;
+    return `Before you can call ${this.name}, you need to declare it as a variable or a constant.
+		You can do this using the let or const keywords.`
   }
 }
 
@@ -127,7 +127,7 @@ export class UnassignedVariable extends RuntimeSourceError {
   }
 
   public elaborate() {
-    return `Please assign a value to ${this.name} first. Example:\n\t${this.name} = 42;`;
+    return `Please assign a value to ${this.name} first. Example:\n\t${this.name} = 42;`
   }
 }
 

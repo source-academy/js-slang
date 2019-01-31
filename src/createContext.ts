@@ -1,4 +1,4 @@
-//Variable determining chapter of Source is contained in this file.
+// Variable determining chapter of Source is contained in this file.
 
 import { stringify } from './interop'
 import * as list from './stdlib/list'
@@ -184,7 +184,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   }
 }
 
-//TODO chapter original val: 1
+// TODO chapter original val: 1
 const createContext = <T>(
   chapter = 4,
   externalSymbols: string[] = [],

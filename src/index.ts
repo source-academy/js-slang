@@ -15,28 +15,26 @@ const DEFAULT_OPTIONS: IOptions = {
   steps: 1000
 }
 
-
-//deals with parsing error objects and converting them to strings (for repl at least)
+// deals with parsing error objects and converting them to strings (for repl at least)
 
 export function parseError(errors: SourceError[], verbose?: boolean): string {
-
-	if (verbose === undefined) 
-		verbose = false;
+  if (verbose === undefined) {
+    verbose = false
+  }
 
   const errorMessagesArr = errors.map(error => {
-	const line = error.location ? error.location.start.line : '<unknown>'
-	const column = error.location ? error.location.start.column : '<unknown>'
-	const explanation = error.explain()
-	const elaboration = error.elaborate();
+    const line = error.location ? error.location.start.line : '<unknown>'
+    const column = error.location ? error.location.start.column : '<unknown>'
+    const explanation = error.explain()
+    const elaboration = error.elaborate()
 
-	if (verbose) {
-		//TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
-		//way to display it.
-		return `Line ${line}, Column ${column}: ${explanation}\n\nTo elaborate: ${elaboration}\n`
-	}
-	else {
-		return `Line ${line}: ${explanation}`
-	}
+    if (verbose) {
+      // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
+      // way to display it.
+      return `Line ${line}, Column ${column}: ${explanation}\n\nTo elaborate: ${elaboration}\n`
+    } else {
+      return `Line ${line}: ${explanation}`
+    }
   })
   return errorMessagesArr.join('\n')
 }
