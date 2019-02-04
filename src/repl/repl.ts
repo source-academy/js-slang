@@ -16,17 +16,17 @@ function startRepl(chapter = 1) {
       eval: (cmd, unusedContext, unusedFilename, callback) => {
         if (cmd === ENABLE_VERBOSE) {
           if (verboseErrors) {
-            //console.log('Verbose error messages are already enabled.')
+            // console.log('Verbose error messages are already enabled.')
           } else {
             verboseErrors = true
-            //console.log('Verbose error messages enabled.')
+            // console.log('Verbose error messages enabled.')
           }
         } else if (cmd === DISABLE_VERBOSE) {
           if (verboseErrors) {
             verboseErrors = false
-            //console.log('Verbose error messages disabled.\n')
+            // console.log('Verbose error messages disabled.\n')
           } else {
-            //console.log('Verbose error messages are already disabled.')
+            // console.log('Verbose error messages are already disabled.')
           }
         } else {
           runInContext(cmd, context, { scheduler: 'preemptive' }).then(obj => {
