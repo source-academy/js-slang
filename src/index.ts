@@ -1,3 +1,4 @@
+import { Program } from 'estree'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
@@ -17,11 +18,9 @@ const DEFAULT_OPTIONS: IOptions = {
 
 // deals with parsing error objects and converting them to strings (for repl at least)
 
-export function parseError(errors: SourceError[], verbose?: boolean): string {
-  if (verbose === undefined) {
-    verbose = false
-  }
+let verboseErrors = false
 
+export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
@@ -44,10 +43,17 @@ export function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  function getFirstLine(theProgram: Program) {
+    return theProgram.body[0]['expression']['value']
+  }
+
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
   const program = parse(code, context)
   if (program) {
+    if (getFirstLine(program) === 'enable verbose') {
+      verboseErrors = true
+    }
     const it = evaluate(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
