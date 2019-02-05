@@ -1,4 +1,4 @@
-import { Program } from 'estree'
+import { Program, ExpressionStatement, Literal } from 'estree'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import { InterruptedError } from './interpreter-errors'
@@ -44,9 +44,8 @@ export function runInContext(
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   function getFirstLine(theProgram: Program) {
-    return theProgram.body[0]['expression']['value']
+    return (<Literal>(<ExpressionStatement>theProgram.body[0]).expression).value
   }
-
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
   const program = parse(code, context)
