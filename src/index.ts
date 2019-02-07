@@ -62,6 +62,8 @@ export function runInContext(
   if (program) {
     if (getFirstLine(program) === 'enable verbose') {
       verboseErrors = true
+    } else {
+      verboseErrors = false
     }
     const it = evaluate(program, context)
     let scheduler: Scheduler

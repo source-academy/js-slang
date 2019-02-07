@@ -184,9 +184,8 @@ const defaultBuiltIns: CustomBuiltIns = {
   }
 }
 
-// TODO chapter original val: 1
 const createContext = <T>(
-  chapter = 4,
+  chapter = 1,
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
