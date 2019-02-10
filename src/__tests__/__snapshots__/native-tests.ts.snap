@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Allow display to return value it is displaying 1`] = `
+Object {
+  "status": "finished",
+  "value": 50,
+}
+`;
+
+exports[`Empty code returns undefined 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Factorial arrow function 1`] = `
+Object {
+  "status": "finished",
+  "value": 120,
+}
+`;
+
+exports[`Simple tail call returns work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return f(x-1, y+1);
+  }
+}
+f(5000, 5000);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10000,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Single string self-evaluates to itself 1`] = `
+Object {
+  "status": "finished",
+  "value": "1",
+}
+`;
+
+exports[`Tail call in boolean operators work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail call in conditional expressions work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x, y) {
+  return x <= 0 ? y : f(x-1, y+1);
+}
+f(5000, 5000);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10000,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail call in nested mix of conditional expressions boolean operators work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail calls in arrow functions work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Tail calls in mutual recursion work 1`] = `
+Object {
+  "status": "finished",
+  "value": 10000,
+}
+`;
+
+exports[`Test apply_in_underlying_javascript 1`] = `
+Object {
+  "status": "finished",
+  "value": 60,
+}
+`;
+
+exports[`Test equal for different lists 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
+
+exports[`Test equal for lists 1`] = `
+Object {
+  "status": "finished",
+  "value": true,
+}
+`;
