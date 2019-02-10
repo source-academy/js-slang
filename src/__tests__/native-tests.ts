@@ -1,7 +1,7 @@
+import { runInContext } from '../index'
+import { mockContext } from '../mocks/context'
 import { Finished } from '../types'
 import { expectResult, stripIndent } from '../utils/testing'
-import { mockContext } from '../mocks/context'
-import { runInContext } from '../index'
 
 function nativeTest(code: string, expectedResult: any) {
   return () => {
