@@ -1,11 +1,10 @@
+import { GLOBAL } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
-
-const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -29,7 +28,12 @@ export const createEmptyContext = <T>(
   externalSymbols,
   errors: [],
   externalContext,
-  runtime: createEmptyRuntime()
+  runtime: createEmptyRuntime(),
+  native: {
+    builtins: new Map(),
+    globals: new Map(),
+    operators: new Map()
+  }
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
@@ -51,6 +55,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
+  context.native.builtins.set(name, value)
 }
 
 // Defines a builtin in the given context
@@ -113,7 +118,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
-    defineBuiltin(context, 'null', null)
     defineBuiltin(context, 'pair(left, right)', list.pair)
     defineBuiltin(context, 'is_pair(val)', list.is_pair)
     defineBuiltin(context, 'head(xs)', list.head)

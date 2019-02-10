@@ -1,18 +1,24 @@
+import { generate } from 'astring'
+import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
-import { InterruptedError } from './interpreter-errors'
+import { ExceptionError, InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { transpile } from './transpiler'
 import { Context, Error, Finished, Result, Scheduler, SourceError } from './types'
+import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
+  isNativeRunnable: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
-  steps: 1000
+  steps: 1000,
+  isNativeRunnable: false
 }
 
 export function parseError(errors: SourceError[]): string {
@@ -33,14 +39,26 @@ export function runInContext(
   context.errors = []
   const program = parse(code, context)
   if (program) {
-    const it = evaluate(program, context)
-    let scheduler: Scheduler
-    if (theOptions.scheduler === 'async') {
-      scheduler = new AsyncScheduler()
+    if (theOptions.isNativeRunnable) {
+      try {
+        return Promise.resolve({
+          status: 'finished',
+          value: sandboxedEval(generate(transpile(program, context)), context)
+        } as Result)
+      } catch (error) {
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+        return Promise.resolve({ status: 'error' } as Result)
+      }
     } else {
-      scheduler = new PreemptiveScheduler(theOptions.steps)
+      const it = evaluate(program, context)
+      let scheduler: Scheduler
+      if (theOptions.scheduler === 'async') {
+        scheduler = new AsyncScheduler()
+      } else {
+        scheduler = new PreemptiveScheduler(theOptions.steps)
+      }
+      return scheduler.run(it, context)
     }
-    return scheduler.run(it, context)
   } else {
     return Promise.resolve({ status: 'error' } as Result)
   }
