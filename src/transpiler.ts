@@ -180,6 +180,9 @@ function getStatementsToAppend(program: es.BlockStatement) {
 function splitLastStatementIntoStorageOfResultAndAccessorPair(
   lastStatement: es.Statement
 ): es.Statement[] {
+  if (lastStatement.type === 'VariableDeclaration') {
+    return [lastStatement, create.returnStatement(create.identifier('undefined'))]
+  }
   const uniqueIdentifier = getUniqueIdentifier()
   const lastStatementAsCode = generate(lastStatement)
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
@@ -203,6 +206,7 @@ export function transpile(node: es.Node) {
       nativeStorageUniqueId,
       create.identifier(NATIVE_STORAGE_GLOBAL)
     )
+    const statementsToAppend = getStatementsToAppend(program)
     const lastStatement = statements.pop() as es.Statement
     const [
       uniqueDeclarationToStoreLastStatementResult,
@@ -212,7 +216,7 @@ export function transpile(node: es.Node) {
       ...getStatementsToPrepend(program),
       ...statements,
       uniqueDeclarationToStoreLastStatementResult,
-      ...getStatementsToAppend(program),
+      ...statementsToAppend,
       returnStatementToReturnLastStatementResult
     ])
     program.body = [declarationToAccessNativeStorage, wrapped]
