@@ -43,7 +43,7 @@ export function runInContext(
       try {
         return Promise.resolve({
           status: 'finished',
-          value: sandboxedEval(generate(transpile(program, context)), context)
+          value: sandboxedEval(generate(transpile(program)))
         } as Result)
       } catch (error) {
         context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))

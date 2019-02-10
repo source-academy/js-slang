@@ -72,15 +72,6 @@ export interface Context<T = any> {
    * context for use in your own built-in functions (like `display(a)`)
    */
   externalContext?: T
-
-  /**
-   * Used for storing globals, operators and builtins for native implementation
-   */
-  native: {
-    builtins: Map<string, Value>
-    globals: Map<string, { kind: AllowedDeclarations; value: Value }>
-    operators: Map<string, (...operands: Value[]) => Value>
-  }
 }
 
 // tslint:disable:no-any

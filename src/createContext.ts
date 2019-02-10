@@ -1,10 +1,11 @@
-import { GLOBAL } from './constants'
+import { GLOBAL, NATIVE_STORAGE_GLOBAL } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
+import enableProperTailCalls from './utils/enableProperTailCalls'
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -23,18 +24,21 @@ export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
   externalContext?: T
-): Context<T> => ({
-  chapter,
-  externalSymbols,
-  errors: [],
-  externalContext,
-  runtime: createEmptyRuntime(),
-  native: {
+): Context<T> => {
+  GLOBAL[NATIVE_STORAGE_GLOBAL] = {
     builtins: new Map(),
     globals: new Map(),
-    operators: new Map()
+    operators: new Map(),
+    enableProperTailCalls
   }
-})
+  return {
+    chapter,
+    externalSymbols,
+    errors: [],
+    externalContext,
+    runtime: createEmptyRuntime()
+  }
+}
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
@@ -55,7 +59,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  context.native.builtins.set(name, value)
+  GLOBAL[NATIVE_STORAGE_GLOBAL].builtins.set(name, value)
 }
 
 // Defines a builtin in the given context

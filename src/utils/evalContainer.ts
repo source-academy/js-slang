@@ -1,3 +1,2 @@
-import { Context } from '../types'
-
-export const sandboxedEval = (code: string, context: Context) => code
+/* tslint:disable */
+export const sandboxedEval = (code: string) => eval(code)
