@@ -16,21 +16,18 @@ let NATIVE_STORAGE: {
   operators: Map<string, (...operands: Value[]) => Value>
 }
 
-const getUniqueIdentifier = (() => {
-  const used: string[] = []
-  const BIG_ENOUGH = 1e12
-  const getRandomInt = () => Math.floor(Math.random() * BIG_ENOUGH)
-  return () => {
-    let candidate
-    do {
-      candidate = '$_uniqueIdentifier$_' + String(getRandomInt())
-    } while (used.includes(candidate))
-    used.push(candidate)
-    return candidate
-  }
-})()
+let usedIdentifiers: Set<string>
 
-let nativeStorageUniqueId = getUniqueIdentifier()
+function makeUnique(id: string) {
+  let uniqueId = id
+  while (usedIdentifiers.has(uniqueId)) {
+    uniqueId += '$'
+  }
+  usedIdentifiers.add(uniqueId)
+  return uniqueId
+}
+
+let nativeStorageUniqueId: string
 
 function createStorageLocationAstFor(type: StorageLocations): es.MemberExpression {
   return create.memberExpression(create.identifier(nativeStorageUniqueId), type)
@@ -76,7 +73,7 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   )
 }
 
-function createStatementsToDeclareBuiltins(node: es.BlockStatement) {
+function createStatementsToDeclareBuiltins() {
   const statements = []
   for (const builtinName of NATIVE_STORAGE.builtins.keys()) {
     statements.push(
@@ -89,7 +86,7 @@ function createStatementsToDeclareBuiltins(node: es.BlockStatement) {
   return statements
 }
 
-function createStatementsToDeclarePreviouslyDeclaredGlobals(node: es.BlockStatement) {
+function createStatementsToDeclarePreviouslyDeclaredGlobals() {
   const statements = []
   for (const [name, valueWrapper] of NATIVE_STORAGE.globals.entries()) {
     const unwrappedValueAst = create.memberExpression(
@@ -101,7 +98,7 @@ function createStatementsToDeclarePreviouslyDeclaredGlobals(node: es.BlockStatem
   return statements
 }
 
-function createStatementsToStorePreviouslyDeclaredLetGlobals(node: es.BlockStatement) {
+function createStatementsToStorePreviouslyDeclaredLetGlobals() {
   const statements = []
   for (const [name, valueWrapper] of NATIVE_STORAGE.globals.entries()) {
     if (valueWrapper.kind === 'let') {
@@ -111,7 +108,7 @@ function createStatementsToStorePreviouslyDeclaredLetGlobals(node: es.BlockState
   return statements
 }
 
-function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.BlockStatement) {
+function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
   const statements = []
   for (const statement of program.body) {
     if (statement.type === 'VariableDeclaration') {
@@ -123,10 +120,8 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.BlockStatem
   return statements
 }
 
-function transformFunctionDeclarationsToConstantArrowFunctionDeclarations(
-  blockStatement: es.BlockStatement
-) {
-  simple(blockStatement, {
+function transformFunctionDeclarationsToConstantArrowFunctionDeclarations(program: es.Program) {
+  simple(program, {
     FunctionDeclaration(node) {
       const { id, params, body } = node as es.FunctionDeclaration
       node.type = 'VariableDeclaration'
@@ -143,8 +138,8 @@ function transformFunctionDeclarationsToConstantArrowFunctionDeclarations(
   })
 }
 
-function transformArrowFunctionsToAllowProperTailCalls(blockStatement: es.BlockStatement) {
-  simple(blockStatement, {
+function transformArrowFunctionsToAllowProperTailCalls(program: es.Program) {
+  simple(program, {
     ArrowFunctionExpression(node) {
       const originalNode = { ...node }
       node.type = 'CallExpression'
@@ -158,21 +153,32 @@ function transformArrowFunctionsToAllowProperTailCalls(blockStatement: es.BlockS
   })
 }
 
-function refreshLatestNatives() {
+function refreshLatestNatives(program: es.Program) {
   NATIVE_STORAGE = GLOBAL[NATIVE_STORAGE_GLOBAL]
-  nativeStorageUniqueId = getUniqueIdentifier()
+  usedIdentifiers = getAllIdentifiersUsed(program)
+  nativeStorageUniqueId = makeUnique('$$$___NATIVE_STORAGE')
 }
 
-function getStatementsToPrepend(program: es.BlockStatement) {
+function getAllIdentifiersUsed(program: es.Program) {
+  const identifiers = new Set<string>()
+  simple(program, {
+    Identifier(node: es.Identifier) {
+      identifiers.add(node.name)
+    }
+  })
+  return identifiers
+}
+
+function getStatementsToPrepend() {
   return [
-    ...createStatementsToDeclareBuiltins(program),
-    ...createStatementsToDeclarePreviouslyDeclaredGlobals(program)
+    ...createStatementsToDeclareBuiltins(),
+    ...createStatementsToDeclarePreviouslyDeclaredGlobals()
   ]
 }
 
-function getStatementsToAppend(program: es.BlockStatement) {
+function getStatementsToAppend(program: es.Program): es.Statement[] {
   return [
-    ...createStatementsToStorePreviouslyDeclaredLetGlobals(program),
+    ...createStatementsToStorePreviouslyDeclaredLetGlobals(),
     ...createStatementsToStoreCurrentlyDeclaredGlobals(program)
   ]
 }
@@ -183,7 +189,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   if (lastStatement.type === 'VariableDeclaration') {
     return [lastStatement, create.returnStatement(create.identifier('undefined'))]
   }
-  const uniqueIdentifier = getUniqueIdentifier()
+  const uniqueIdentifier = makeUnique('$$_lastStatementResult')
   const lastStatementAsCode = generate(lastStatement)
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
@@ -195,17 +201,17 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   return [uniqueDeclarationToStoreLastStatementResult, returnStatementToReturnLastStatementResult]
 }
 
-export function transpile(node: es.Node) {
-  refreshLatestNatives()
-  const program = node as es.BlockStatement
+export function transpile(program: es.Program) {
+  refreshLatestNatives(program)
   transformFunctionDeclarationsToConstantArrowFunctionDeclarations(program)
   transformArrowFunctionsToAllowProperTailCalls(program)
-  const statements = program.body
+  const statements = program.body as es.Statement[]
   if (statements.length > 0) {
     const declarationToAccessNativeStorage = create.constantDeclaration(
       nativeStorageUniqueId,
       create.identifier(NATIVE_STORAGE_GLOBAL)
     )
+    const statementsToPrepend = getStatementsToPrepend()
     const statementsToAppend = getStatementsToAppend(program)
     const lastStatement = statements.pop() as es.Statement
     const [
@@ -213,7 +219,7 @@ export function transpile(node: es.Node) {
       returnStatementToReturnLastStatementResult
     ] = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
     const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
-      ...getStatementsToPrepend(program),
+      ...statementsToPrepend,
       ...statements,
       uniqueDeclarationToStoreLastStatementResult,
       ...statementsToAppend,
@@ -221,7 +227,7 @@ export function transpile(node: es.Node) {
     ])
     program.body = [declarationToAccessNativeStorage, wrapped]
   }
-  return node
+  return program
 }
 
 function wrapInAnonymousFunctionToBlockExternalGlobals(statements: es.Statement[]): es.Statement {
