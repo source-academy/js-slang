@@ -1,8 +1,10 @@
+import { mockContext } from '../mocks/context'
+
 export { stripIndent, oneLine } from 'common-tags'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, Finished, SourceError, Value } from '../types'
 
 export interface TestContext extends Context {
   displayResult: string[]
@@ -289,4 +291,16 @@ export function expectToLooselyMatchJS(
         evalWithBuiltins(code, testBuiltins).replace(/ /g, '')
       )
     )
+}
+
+export function nativeTest(code: string, expectedResult: any) {
+  return () => {
+    const context = mockContext(4)
+    const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
+    return promise.then(obj => {
+      expect(obj).toMatchSnapshot()
+      expect(obj.status).toBe('finished')
+      expect((obj as Finished).value).toBe(expectedResult)
+    })
+  }
 }

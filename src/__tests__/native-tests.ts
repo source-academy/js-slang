@@ -1,19 +1,4 @@
-import { runInContext } from '../index'
-import { mockContext } from '../mocks/context'
-import { Finished } from '../types'
-import { expectResult, stripIndent } from '../utils/testing'
-
-function nativeTest(code: string, expectedResult: any) {
-  return () => {
-    const context = mockContext(4)
-    const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
-    return promise.then(obj => {
-      expect(obj).toMatchSnapshot()
-      expect(obj.status).toBe('finished')
-      expect((obj as Finished).value).toBe(expectedResult)
-    })
-  }
-}
+import { expectResult, nativeTest, stripIndent } from '../utils/testing'
 
 test('Empty code returns undefined', nativeTest('', undefined))
 

@@ -11,7 +11,10 @@ export const literal = (value: string | number | boolean): es.Literal => ({
   value
 })
 
-export const memberExpression = (object: es.Expression, propertyString: string): es.MemberExpression => ({
+export const memberExpression = (
+  object: es.Expression,
+  propertyString: string
+): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
   computed: false,
