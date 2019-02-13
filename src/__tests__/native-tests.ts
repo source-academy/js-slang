@@ -147,3 +147,31 @@ test(
     10000
   )
 )
+
+test(
+  'Tail calls in mixed tail-call/non-tail-call recursion work',
+  nativeTest(
+    stripIndent`
+    function f(x, y, z) {
+      if (x <= 0) {
+        return y;
+      } else {
+        return f(x-1, y+f(0, z, 0), z);
+      }
+    }
+    f(5000, 5000, 2);
+  `,
+    15000
+  )
+)
+
+test(
+  'Builtins work with source functions well',
+  nativeTest(
+    stripIndent`
+    function double(x) { return x * 2; }
+    accumulate((a, b) => a + b, 0, map(double, list(1, 2, 3)));
+  `,
+    12
+  )
+)

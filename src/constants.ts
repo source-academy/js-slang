@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 export const GLOBAL = typeof window === 'undefined' ? global : window
-export const NATIVE_STORAGE_GLOBAL = '$$NATIVE_STORAGE'
+export const GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE = '$$NATIVE_STORAGE'
 export const MAX_LIST_DISPLAY_LENGTH = 100
 export const UNKNOWN_LOCATION: es.SourceLocation = {
   start: {

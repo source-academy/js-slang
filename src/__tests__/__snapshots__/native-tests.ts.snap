@@ -7,6 +7,13 @@ Object {
 }
 `;
 
+exports[`Builtins work with source functions well 1`] = `
+Object {
+  "status": "finished",
+  "value": 12,
+}
+`;
+
 exports[`Empty code returns undefined 1`] = `
 Object {
   "status": "finished",
@@ -82,6 +89,13 @@ exports[`Tail calls in arrow functions work 1`] = `
 Object {
   "status": "finished",
   "value": 10000,
+}
+`;
+
+exports[`Tail calls in mixed tail-call/non-tail-call recursion work 1`] = `
+Object {
+  "status": "finished",
+  "value": 15000,
 }
 `;
 

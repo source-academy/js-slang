@@ -6,16 +6,16 @@ export const identifier = (name: string): es.Identifier => ({
   name
 })
 
-export const stringLiteral = (str: string): es.Literal => ({
+export const literal = (value: string | number | boolean): es.Literal => ({
   type: 'Literal',
-  value: str
+  value
 })
 
-export const memberExpression = (object: es.Expression, property: string): es.MemberExpression => ({
+export const memberExpression = (object: es.Expression, propertyString: string): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
   computed: false,
-  property: identifier(property)
+  property: identifier(propertyString)
 })
 
 export const declaration = (
@@ -70,4 +70,19 @@ export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
 export const returnStatement = (argument: es.Expression): es.ReturnStatement => ({
   type: 'ReturnStatement',
   argument
+})
+
+export const property = (key: string, value: es.Expression): es.Property => ({
+  type: 'Property',
+  method: false,
+  shorthand: false,
+  computed: false,
+  key: identifier(key),
+  value,
+  kind: 'init'
+})
+
+export const objectExpression = (properties: es.Property[]): es.ObjectExpression => ({
+  type: 'ObjectExpression',
+  properties
 })

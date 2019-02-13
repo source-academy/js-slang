@@ -1,11 +1,11 @@
-import { GLOBAL, NATIVE_STORAGE_GLOBAL } from './constants'
+import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
-import enableProperTailCalls from './utils/enableProperTailCalls'
+import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -25,11 +25,11 @@ export const createEmptyContext = <T>(
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
-  GLOBAL[NATIVE_STORAGE_GLOBAL] = {
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = {
     builtins: new Map(),
     globals: new Map(),
     operators: new Map(),
-    enableProperTailCalls
+    properTailCalls
   }
   return {
     chapter,
@@ -59,7 +59,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[NATIVE_STORAGE_GLOBAL].builtins.set(name, value)
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].builtins.set(name, value)
 }
 
 // Defines a builtin in the given context

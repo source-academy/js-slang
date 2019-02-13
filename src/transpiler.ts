@@ -1,11 +1,13 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { GLOBAL, NATIVE_STORAGE_GLOBAL } from './constants'
+import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
+import { transform } from './transformer'
 // import * as constants from "./constants";
 // import * as errors from "./interpreter-errors";
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
+import * as random from './utils/random'
 // import * as rttc from "./utils/rttc";
 
 type StorageLocations = 'builtins' | 'globals' | 'operators'
@@ -18,10 +20,10 @@ let NATIVE_STORAGE: {
 
 let usedIdentifiers: Set<string>
 
-function makeUnique(id: string) {
-  let uniqueId = id
+function getUnqiueId() {
+  let uniqueId = `$$unique${random.integer()}`
   while (usedIdentifiers.has(uniqueId)) {
-    uniqueId += '$'
+    uniqueId += random.character()
   }
   usedIdentifiers.add(uniqueId)
   return uniqueId
@@ -35,7 +37,7 @@ function createStorageLocationAstFor(type: StorageLocations): es.MemberExpressio
 
 function createGetFromStorageLocationAstFor(name: string, type: StorageLocations): es.Expression {
   return create.callExpression(create.memberExpression(createStorageLocationAstFor(type), 'get'), [
-    create.stringLiteral(name)
+    create.literal(name)
   ])
 }
 
@@ -45,30 +47,11 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
 ): es.ExpressionStatement {
   return create.expressionStatement(
     create.callExpression(create.memberExpression(createStorageLocationAstFor('globals'), 'set'), [
-      create.stringLiteral(name),
-      {
-        type: 'ObjectExpression',
-        properties: [
-          {
-            type: 'Property',
-            method: false,
-            shorthand: false,
-            computed: false,
-            key: create.stringLiteral('kind'),
-            value: create.stringLiteral(kind),
-            kind: 'init'
-          },
-          {
-            type: 'Property',
-            method: false,
-            shorthand: false,
-            computed: false,
-            key: create.stringLiteral('value'),
-            value: create.identifier(name),
-            kind: 'init'
-          }
-        ]
-      }
+      create.literal(name),
+      create.objectExpression([
+        create.property('kind', create.literal(kind)),
+        create.property('value', create.identifier(name))
+      ])
     ])
   )
 }
@@ -120,25 +103,20 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
   return statements
 }
 
-function transformFunctionDeclarationsToConstantArrowFunctionDeclarations(program: es.Program) {
-  simple(program, {
-    FunctionDeclaration(node) {
-      const { id, params, body } = node as es.FunctionDeclaration
-      node.type = 'VariableDeclaration'
-      const transformedNode = node as es.VariableDeclaration
-      transformedNode.kind = 'const'
-      transformedNode.declarations = [
-        {
-          type: 'VariableDeclarator',
-          id: id as es.Identifier,
-          init: create.blockArrowFunction(params as es.Identifier[], body)
-        }
-      ]
-    }
-  })
-}
+/**
+ * Transforms all arrow functions
+ * (arg1, arg2, ...) => { statement1; statement2; return statement3; }
+ *
+ * to
+ *
+ * <NATIVE STORAGE>.properTailCalls.wrap((arg1, arg2, ...) => {
+ *   statement1;statement2;return statement3;
+ * })
+ *
+ * to allow for iterative processes to take place
+ */
 
-function transformArrowFunctionsToAllowProperTailCalls(program: es.Program) {
+function wrapArrowFunctionsToAllowNormalCalls(program: es.Program) {
   simple(program, {
     ArrowFunctionExpression(node) {
       const originalNode = { ...node }
@@ -146,17 +124,70 @@ function transformArrowFunctionsToAllowProperTailCalls(program: es.Program) {
       const transformedNode = node as es.CallExpression
       transformedNode.arguments = [originalNode as es.ArrowFunctionExpression]
       transformedNode.callee = create.memberExpression(
-        create.identifier(nativeStorageUniqueId),
-        'enableProperTailCalls'
+        create.memberExpression(create.identifier(nativeStorageUniqueId), 'properTailCalls'),
+        'wrap'
       )
     }
   })
 }
 
+/**
+ * Transforms all return statements to return an intermediate value
+ * return nonFnCall + 1;
+ *  =>
+ * return {isTail: false, value: nonFnCall + 1};
+ *
+ * return fnCall(arg1, arg2);
+ * => return {isTail: true, function: fnCall, arguments: [arg1, arg2]}
+ *
+ * conditional and logical expressions will be recursively looped through as well
+ */
+function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
+  simple(program, {
+    ReturnStatement(node: es.ReturnStatement) {
+      function transformLogicalExpression(expression: es.Expression): es.Expression {
+        switch (expression.type) {
+          case 'LogicalExpression':
+            return {
+              type: 'LogicalExpression',
+              operator: expression.operator,
+              left: expression.left,
+              right: transformLogicalExpression(expression.right)
+            }
+          case 'ConditionalExpression':
+            return {
+              type: 'ConditionalExpression',
+              test: expression.test,
+              consequent: transformLogicalExpression(expression.consequent),
+              alternate: transformLogicalExpression(expression.alternate)
+            } as es.ConditionalExpression
+          case 'CallExpression':
+            expression = expression as es.CallExpression
+            return create.objectExpression([
+              create.property('isTail', create.literal(true)),
+              create.property('function', expression.callee as es.Expression),
+              create.property('arguments', {
+                type: 'ArrayExpression',
+                elements: expression.arguments
+              })
+            ])
+          default:
+            return create.objectExpression([
+              create.property('isTail', create.literal(false)),
+              create.property('value', expression)
+            ])
+        }
+      }
+
+      node.argument = transformLogicalExpression(node.argument!)
+    }
+  })
+}
+
 function refreshLatestNatives(program: es.Program) {
-  NATIVE_STORAGE = GLOBAL[NATIVE_STORAGE_GLOBAL]
+  NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
   usedIdentifiers = getAllIdentifiersUsed(program)
-  nativeStorageUniqueId = makeUnique('$$$___NATIVE_STORAGE')
+  nativeStorageUniqueId = getUnqiueId()
 }
 
 function getAllIdentifiersUsed(program: es.Program) {
@@ -183,17 +214,41 @@ function getStatementsToAppend(program: es.Program): es.Statement[] {
   ]
 }
 
+/**
+ * statement1;
+ * statement2;
+ * ...
+ * const a = 1; //lastStatement example 1 (should give undefined)
+ * 1 + 1; //lastStatement example 2 (should give 2)
+ * b = fun(5); //lastStatement example 3 (should set b to fun(5))
+ * if (true) { true; } else { false; } //lastStatement example 4 (should give true)
+ * for (let i = 0; i < 5; i = i + 1) { i; } //lastStatement example 5 (should give 4)
+ *
+ * We want to preserve the last evaluated statement's result to return back, so
+ * for const/let declarations we simply don't change anything, and return undefined
+ * at the end.
+ *
+ * For others, we will convert it into a string, wrap it in an eval, and store
+ * the result in a temporary variable. e.g.
+ *
+ * const tempVar = eval("1+1;");
+ * const tempVar = eval("if (true) { true; } else { false; }");
+ * etc etc...
+ * now at the end of all the appended statements we can do
+ * return tempVar;
+ */
+
 function splitLastStatementIntoStorageOfResultAndAccessorPair(
   lastStatement: es.Statement
 ): es.Statement[] {
   if (lastStatement.type === 'VariableDeclaration') {
     return [lastStatement, create.returnStatement(create.identifier('undefined'))]
   }
-  const uniqueIdentifier = makeUnique('$$_lastStatementResult')
+  const uniqueIdentifier = getUnqiueId()
   const lastStatementAsCode = generate(lastStatement)
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
-    create.callExpression(create.identifier('eval'), [create.stringLiteral(lastStatementAsCode)])
+    create.callExpression(create.identifier('eval'), [create.literal(lastStatementAsCode)])
   )
   const returnStatementToReturnLastStatementResult = create.returnStatement(
     create.identifier(uniqueIdentifier)
@@ -201,15 +256,16 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   return [uniqueDeclarationToStoreLastStatementResult, returnStatementToReturnLastStatementResult]
 }
 
-export function transpile(program: es.Program) {
-  refreshLatestNatives(program)
-  transformFunctionDeclarationsToConstantArrowFunctionDeclarations(program)
-  transformArrowFunctionsToAllowProperTailCalls(program)
+export function transpile(untranformedProgram: es.Program) {
+  refreshLatestNatives(untranformedProgram)
+  const program: es.Program = transform(untranformedProgram)
   const statements = program.body as es.Statement[]
   if (statements.length > 0) {
+    transformReturnStatementsToAllowProperTailCalls(program)
+    wrapArrowFunctionsToAllowNormalCalls(program)
     const declarationToAccessNativeStorage = create.constantDeclaration(
       nativeStorageUniqueId,
-      create.identifier(NATIVE_STORAGE_GLOBAL)
+      create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
     )
     const statementsToPrepend = getStatementsToPrepend()
     const statementsToAppend = getStatementsToAppend(program)
@@ -230,6 +286,20 @@ export function transpile(program: es.Program) {
   return program
 }
 
+/**
+ * Restricts the access of external global variables in Source
+ *
+ * statement;
+ * statement2;
+ * statement3;
+ * =>
+ * ((window, Number, Function, alert, ...other globals) => {
+ *  statement;
+ *  statement2;
+ *  statement3;
+ * })();
+ *
+ */
 function wrapInAnonymousFunctionToBlockExternalGlobals(statements: es.Statement[]): es.Statement {
   function isValidIdentifier(candidate: string) {
     try {
