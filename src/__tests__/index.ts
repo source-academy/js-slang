@@ -36,7 +36,7 @@ test('Arrow function definition returns itself', () => {
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expectResult('stringify(pair);', 2).toMatchInlineSnapshot(`
+  return expectResult('stringify(pair);', { chapter: 2 }).toMatchInlineSnapshot(`
 "function pair(left, right) {
 	[implementation hidden]
 }"
@@ -44,7 +44,8 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expectResult('toString(pair);', 2, { toString }).toMatchInlineSnapshot(`
+  return expectResult('toString(pair);', { chapter: 2, native: true, testBuiltins: { toString } })
+    .toMatchInlineSnapshot(`
 "function pair(left, right) {
 	[implementation hidden]
 }"
@@ -52,11 +53,15 @@ test('Builtins hide their implementation when toString', () => {
 })
 
 test('Objects toString matches up with JS', () => {
-  return expectToMatchJS('toString({a: 1});', 100, { toString })
+  return expectToMatchJS('toString({a: 1});', { chapter: 100, testBuiltins: { toString } })
 })
 
 test('Arrays toString matches up with JS', () => {
-  return expectToMatchJS('toString([1, 2]);', 3, { toString })
+  return expectToMatchJS('toString([1, 2]);', {
+    chapter: 3,
+    native: true,
+    testBuiltins: { toString }
+  })
 })
 
 test('functions toString (mostly) matches up with JS', () => {
@@ -67,8 +72,7 @@ test('functions toString (mostly) matches up with JS', () => {
   }
   toString(a=>b) + toString(f);
   `,
-    1,
-    { toString }
+    { testBuiltins: { toString } }
   )
 })
 
@@ -83,8 +87,7 @@ test('primitives toString matches up with JS', () => {
     toString(undefined) +
     toString(NaN);
     `,
-    2,
-    { toString }
+    { chapter: 2, native: true, testBuiltins: { toString } }
   )
 })
 
@@ -132,7 +135,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant"`)
 })
 
@@ -146,7 +149,7 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    3
+    { chapter: 3, native: true }
   ).toBe(true)
 })
 
@@ -156,7 +159,7 @@ test('Arrow function infinite recursion with list args represents CallExpression
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`
 "Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
@@ -169,7 +172,7 @@ test('Function infinite recursion with list args represents CallExpression well'
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`
 "Line 1: Maximum call stack size exceeded
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
@@ -202,8 +205,7 @@ test('Functions passed into non-source functions remain equal', () => {
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    1,
-    { 'identity(x)': (x: any) => x }
+    { chapter: 1, testBuiltins: { 'identity(x)': (x: any) => x } }
   ).toBe(true)
 })
 
@@ -214,7 +216,7 @@ test('Simple object assignment and retrieval', () => {
     o.a = 1;
     o.a;
   `,
-    100
+    { chapter: 100 }
   ).toBe(1)
 })
 
@@ -227,7 +229,7 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    100
+    { chapter: 100 }
   ).toBe('string')
 })
 
@@ -236,7 +238,7 @@ test('Test apply_in_underlying_javascript', () => {
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    4
+    { chapter: 4, native: true }
   ).toBe(60)
 })
 
@@ -245,7 +247,7 @@ test('Test equal for primitives', () => {
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
-    2
+    { chapter: 2, native: true }
   ).toBe(true)
 })
 
@@ -254,7 +256,7 @@ test('Test equal for lists', () => {
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
-    2
+    { chapter: 2, native: true }
   ).toBe(true)
 })
 
@@ -263,7 +265,7 @@ test('Test equal for different lists', () => {
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
-    2
+    { chapter: 2, native: true }
   ).toBe(true)
 })
 

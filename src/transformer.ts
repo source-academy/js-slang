@@ -119,7 +119,7 @@ const transformers = Object.freeze({
     if (node.expression) {
       return transform(
         create.blockArrowFunction(
-          node.params.map(transform),
+          node.params as es.Identifier[],
           create.blockStatement([create.returnStatement(node.body as es.Expression)])
         )
       )

@@ -46,7 +46,7 @@ export function runInContext(
           value: sandboxedEval(generate(transpile(program)))
         } as Result)
       } catch (error) {
-        context.errors.push(new ExceptionError(error.stack, UNKNOWN_LOCATION))
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
         return Promise.resolve({ status: 'error' } as Result)
       }
     } else {

@@ -18,7 +18,7 @@ test('Error when assigning to builtin', () => {
     stripIndent`
     map = 5;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant map"`)
 })
 
@@ -27,7 +27,7 @@ test('Error when assigning to builtin', () => {
     stripIndent`
     undefined = 5;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
 })
 
@@ -37,7 +37,7 @@ test.skip('Error when assigning to property on undefined', () => {
     stripIndent`
     undefined.prop = 123;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
 })
 
@@ -48,7 +48,7 @@ test.skip('Error when assigning to property on variable with value undefined', (
     const u = undefined;
     u.prop = 123;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Cannot assign property prop of undefined"`)
 })
 
@@ -59,7 +59,7 @@ test.skip('Error when deeply assigning to property on variable with value undefi
     const u = undefined;
     u.prop.prop = 123;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Cannot read property prop of undefined"`)
 })
 
@@ -69,7 +69,7 @@ test.skip('Error when accessing property on undefined', () => {
     stripIndent`
     undefined.prop;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -79,7 +79,7 @@ test.skip('Error when deeply accessing property on undefined', () => {
     stripIndent`
     undefined.prop.prop;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -88,7 +88,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse_int("10");
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
   )
@@ -99,7 +99,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse("'");
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
@@ -111,7 +111,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     }
     map(f, list(1, 2));
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`"Line 2: Name a not declared"`)
 })
 
@@ -123,7 +123,7 @@ test('Infinite recursion with a block bodied function', () => {
     }
     i(1000);
   `,
-    4
+    { chapter: 4 }
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 }, 10000)
 
@@ -138,7 +138,7 @@ test('Infinite recursion with function calls in argument', () => {
     }
     i(1000, 1);
   `,
-    4
+    { chapter: 4 }
   ).toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
@@ -155,7 +155,7 @@ test('Infinite recursion of mutually recursive functions', () => {
     }
     f(1000);
   `,
-    4
+    { chapter: 4 }
   ).toEqual(
     expect.stringMatching(
       /Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/
@@ -163,10 +163,17 @@ test('Infinite recursion of mutually recursive functions', () => {
   )
 })
 
+// should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
-  return expectParsedError(stripIndent`
-    undefined();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
+  return expectParsedError(
+    stripIndent`
+    (() => undefined())();
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`
+"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
+interpreted:\\"Line 1: Calling non-function value undefined\\""
+`)
 })
 
 test('Error when calling non function value null', () => {
@@ -198,7 +205,7 @@ test('Error when calling non function value array', () => {
     stripIndent`
     [1]();
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
@@ -207,7 +214,7 @@ test('Error when calling non function value object', () => {
     stripIndent`
     ({a: 1})();
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value {\\"a\\": 1}"`)
 })
 
@@ -249,7 +256,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -259,7 +266,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -269,7 +276,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -279,7 +286,7 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -469,7 +476,7 @@ test.skip('Error when accessing property of null', () => {
     stripIndent`
     null["prop"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
 })
 
@@ -479,7 +486,7 @@ test.skip('Error when accessing property of undefined', () => {
     stripIndent`
     undefined["prop"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -489,7 +496,7 @@ test.skip('Error when accessing inherited property of builtin', () => {
     stripIndent`
     pair["constructor"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 1: Cannot read inherited property constructor of function pair(left, right) {
 	[implementation hidden]
@@ -504,7 +511,7 @@ test.skip('Error when accessing inherited property of function', () => {
     function f() {}
     f["constructor"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
 })
 
@@ -514,7 +521,7 @@ test.skip('Error when accessing inherited property of arrow function', () => {
     stripIndent`
     (() => 1)["constructor"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
 })
 
@@ -524,7 +531,7 @@ test.skip('Error when accessing inherited property of array', () => {
     stripIndent`
     [].push;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property push of []"`)
 })
 
@@ -533,7 +540,7 @@ test('Error when accessing inherited property of object', () => {
     stripIndent`
     ({}).valueOf;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}"`)
 })
 
@@ -543,7 +550,7 @@ test.skip('Error when accessing inherited property of string', () => {
     stripIndent`
     'hi'.includes;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
 })
 
@@ -553,7 +560,7 @@ test.skip('Error when accessing inherited property of number', () => {
     stripIndent`
     (1).toPrecision;
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property toPrecision of 1"`)
 })
 
@@ -562,7 +569,7 @@ test('Access local property', () => {
     stripIndent`
     ({a: 0})["a"];
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`0`)
 })
 
@@ -571,7 +578,7 @@ test('Type error when accessing property of null', () => {
     stripIndent`
     null.prop;
     `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
 })
 
@@ -580,7 +587,7 @@ test('Type error when accessing property of string', () => {
     stripIndent`
     'hi'.length;
     `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -592,7 +599,7 @@ test('Type error when accessing property of function', () => {
     }
     f.prototype;
     `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
 
@@ -601,7 +608,7 @@ test('Type error when assigning property of string', () => {
     stripIndent`
     'hi'.prop = 5;
     `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -613,6 +620,6 @@ test('Type error when assigning property of function', () => {
     }
     f.prop = 5;
     `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
