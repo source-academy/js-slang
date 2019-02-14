@@ -141,6 +141,7 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -172,6 +173,7 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
@@ -205,6 +207,7 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -238,6 +241,7 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
