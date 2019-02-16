@@ -10,7 +10,7 @@ import * as create from './utils/astCreator'
 import * as random from './utils/random'
 // import * as rttc from "./utils/rttc";
 
-type StorageLocations = 'builtins' | 'globals' | 'operators'
+type StorageLocations = 'builtins' | 'globals' | 'operators' | 'properTailCalls'
 
 let NATIVE_STORAGE: {
   builtins: Map<string, Value>
@@ -30,9 +30,18 @@ function getUnqiueId() {
 }
 
 let nativeStorageUniqueId: string
+let contextId: number
 
 function createStorageLocationAstFor(type: StorageLocations): es.MemberExpression {
-  return create.memberExpression(create.identifier(nativeStorageUniqueId), type)
+  return create.memberExpression(
+    {
+      type: 'MemberExpression',
+      object: create.identifier(nativeStorageUniqueId),
+      property: create.literal(contextId),
+      computed: true
+    },
+    type
+  )
 }
 
 function createGetFromStorageLocationAstFor(name: string, type: StorageLocations): es.Expression {
@@ -58,7 +67,7 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
 
 function createStatementsToDeclareBuiltins() {
   const statements = []
-  for (const builtinName of NATIVE_STORAGE.builtins.keys()) {
+  for (const builtinName of NATIVE_STORAGE[contextId].builtins.keys()) {
     statements.push(
       create.constantDeclaration(
         builtinName,
@@ -71,7 +80,7 @@ function createStatementsToDeclareBuiltins() {
 
 function createStatementsToDeclarePreviouslyDeclaredGlobals() {
   const statements = []
-  for (const [name, valueWrapper] of NATIVE_STORAGE.globals.entries()) {
+  for (const [name, valueWrapper] of NATIVE_STORAGE[contextId].globals.entries()) {
     const unwrappedValueAst = create.memberExpression(
       createGetFromStorageLocationAstFor(name, 'globals'),
       'value'
@@ -83,7 +92,7 @@ function createStatementsToDeclarePreviouslyDeclaredGlobals() {
 
 function createStatementsToStorePreviouslyDeclaredLetGlobals() {
   const statements = []
-  for (const [name, valueWrapper] of NATIVE_STORAGE.globals.entries()) {
+  for (const [name, valueWrapper] of NATIVE_STORAGE[contextId].globals.entries()) {
     if (valueWrapper.kind === 'let') {
       statements.push(createStatementAstToStoreBackCurrentlyDeclaredGlobal(name, 'let'))
     }
@@ -124,7 +133,7 @@ function wrapArrowFunctionsToAllowNormalCalls(program: es.Program) {
       const transformedNode = node as es.CallExpression
       transformedNode.arguments = [originalNode as es.ArrowFunctionExpression]
       transformedNode.callee = create.memberExpression(
-        create.memberExpression(create.identifier(nativeStorageUniqueId), 'properTailCalls'),
+        createStorageLocationAstFor('properTailCalls'),
         'wrap'
       )
     }
@@ -256,7 +265,8 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   return [uniqueDeclarationToStoreLastStatementResult, returnStatementToReturnLastStatementResult]
 }
 
-export function transpile(untranformedProgram: es.Program) {
+export function transpile(untranformedProgram: es.Program, id: number) {
+  contextId = id
   refreshLatestNatives(untranformedProgram)
   const program: es.Program = transform(untranformedProgram)
   const statements = program.body as es.Statement[]

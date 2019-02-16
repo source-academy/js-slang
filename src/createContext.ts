@@ -25,18 +25,22 @@ export const createEmptyContext = <T>(
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = {
+  if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
+    GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
+  }
+  const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     builtins: new Map(),
     globals: new Map(),
     operators: new Map(),
     properTailCalls
-  }
+  })
   return {
     chapter,
     externalSymbols,
     errors: [],
     externalContext,
-    runtime: createEmptyRuntime()
+    runtime: createEmptyRuntime(),
+    contextId: length - 1
   }
 }
 
@@ -59,7 +63,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].builtins.set(name, value)
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].builtins.set(name, value)
 }
 
 // Defines a builtin in the given context

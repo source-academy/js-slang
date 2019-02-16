@@ -72,6 +72,11 @@ export interface Context<T = any> {
    * context for use in your own built-in functions (like `display(a)`)
    */
   externalContext?: T
+
+  /**
+   * Used for storing id of the context to be referenced by native
+   */
+  contextId: number
 }
 
 // tslint:disable:no-any
