@@ -13,6 +13,13 @@ test('Undefined variable error is thrown', () => {
   `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
 })
 
+test('Undefined variable error is thrown - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	im_undefined;
+	`).toMatchSnapshot()
+})
+
 test('Error when assigning to builtin', () => {
   return expectParsedError(
     stripIndent`
@@ -22,6 +29,16 @@ test('Error when assigning to builtin', () => {
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant map"`)
 })
 
+test('Error when assigning to builtin - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	  "enable verbose";
+	  map = 5;
+	`,
+    3
+  ).toMatchSnapshot()
+})
+
 test('Error when assigning to builtin', () => {
   return expectParsedError(
     stripIndent`
@@ -29,6 +46,16 @@ test('Error when assigning to builtin', () => {
   `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
+})
+
+test('Error when assigning to builtin - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	  "enable verbose";
+	  undefined = 5;
+	`,
+    3
+  ).toMatchSnapshot()
 })
 
 // NOTE: Obsoleted due to strict types on member access

@@ -75,6 +75,42 @@ Object {
 }
 `;
 
+exports[`Error when assigning to builtin - verbose 1`] = `
+"Line 2, Column 0: Cannot assign new value to constant map. As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+"
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+map = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "map",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map. As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when assigning to builtin: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -965,6 +1001,48 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Undefined variable error is thrown - verbose 1`] = `
+"Line 2, Column 0: Name im_undefined not declared. Before you can call im_undefined, you need to declare it as a variable or a constant.
+
+	const im_undefined = /*value*/;
+
+"
+`;
+
+exports[`Undefined variable error is thrown - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+im_undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "im_undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared. Before you can call im_undefined, you need to declare it as a variable or a constant.
+
+	const im_undefined = /*value*/;
+
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
