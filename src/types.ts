@@ -61,6 +61,7 @@ export interface Context<T = any> {
 
   /** Runtime Sepecific state */
   runtime: {
+    break: boolean
     isRunning: boolean
     frames: Frame[]
     nodes: es.Node[]
@@ -108,5 +109,5 @@ export interface Suspended {
 export type Result = Suspended | Finished | Error
 
 export interface Scheduler {
-  run(it: IterableIterator<Value>, context: Context): Promise<Result>
+  run(it: IterableIterator<Value>, context: Context):any
 }

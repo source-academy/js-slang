@@ -1,6 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import { MaximumStackLimitExceeded } from './interpreter-errors'
 import { Context, Result, Scheduler, Value } from './types'
+import { expose } from './interop'
 
 export class AsyncScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
@@ -31,13 +32,16 @@ export class PreemptiveScheduler implements Scheduler {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
-      let interval: number
-      interval = setInterval(() => {
+      let interval: number = setInterval(async ()=>{
         let step = 0
         try {
           while (!itValue.done && step < this.steps) {
-            itValue = it.next()
             step++
+            if (context.runtime.break){
+              context = await expose(context)
+              context.runtime.break = false
+            }
+            else itValue = it.next()
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
@@ -59,11 +63,12 @@ export class PreemptiveScheduler implements Scheduler {
           context.runtime.isRunning = false
           clearInterval(interval)
           resolve({ status: 'error' })
-        }
-        if (itValue.done) {
-          context.runtime.isRunning = false
-          clearInterval(interval)
-          resolve({ status: 'finished', value: itValue.value })
+        } finally {
+          if (itValue.done) {
+            context.runtime.isRunning = false
+            clearInterval(interval)
+            resolve({ status: 'finished', value: itValue.value })
+          }
         }
       })
     })

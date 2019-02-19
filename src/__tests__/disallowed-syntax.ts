@@ -329,15 +329,6 @@ Line 1: For in statements are not allowed"
 `)
 })
 
-test('no debugger statement', () => {
-  return expectParsedError(
-    stripIndent`
-    debugger;
-  `,
-    100
-  ).toMatchInlineSnapshot(`"Line 1: Debugger statements are not allowed"`)
-})
-
 test('no generator functions', () => {
   return expectParsedError(
     stripIndent`

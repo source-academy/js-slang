@@ -254,6 +254,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return res
   },
 
+  *DebuggerStatement(node: es.DebuggerStatement, context: Context) {
+    context.runtime.break = true
+    return node
+  },
+
   *FunctionExpression(node: es.FunctionExpression, context: Context) {
     return new Closure(node, currentFrame(context), context)
   },

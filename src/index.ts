@@ -35,6 +35,7 @@ export function runInContext(
   if (program) {
     const it = evaluate(program, context)
     let scheduler: Scheduler
+
     if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
     } else {

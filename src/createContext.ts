@@ -8,6 +8,7 @@ import { Context, CustomBuiltIns, Value } from './types'
 const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyRuntime = () => ({
+  break: false,
   isRunning: false,
   frames: [],
   value: undefined,

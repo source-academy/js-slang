@@ -1,6 +1,6 @@
 import Closure from './closure'
 import { MAX_LIST_DISPLAY_LENGTH } from './constants'
-import { Value } from './types'
+import { Context, Value } from './types'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -14,6 +14,15 @@ function makeIndent(indent: number | string): string {
     }
     return indent
   }
+}
+
+export const expose = (context: Context): Promise<Context> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      context.runtime.break = false
+      resolve(context)
+    })
+  })
 }
 
 function indentify(indent: string, s: string): string {
@@ -63,7 +72,7 @@ export const stringify = (
           indentString.repeat(indentLevel + 1),
           valueStrs[0]
         ).substring(indentString.length)},
-${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
+          ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       } else {
         // A regular array,
         // indent second element onwards to match with first element

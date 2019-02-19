@@ -2876,40 +2876,6 @@ Line 1: Class declarations are not allowed",
 }
 `;
 
-exports[`no debugger statement: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "debugger;",
-  "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 9,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 9,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "DebuggerStatement",
-      },
-      "nodeType": "Debugger statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
-  "parsedErrors": "Line 1: Debugger statements are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`no declaration without assignment: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
