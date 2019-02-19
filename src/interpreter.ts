@@ -125,9 +125,11 @@ function* leave(context: Context) {
 }
 
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
-const replaceEnvironment = (context: Context, environment: Environment) => (context.runtime.environments[0] = environment)
+const replaceEnvironment = (context: Context, environment: Environment) =>
+  (context.runtime.environments[0] = environment)
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
-const pushEnvironment = (context: Context, environment: Environment) => context.runtime.environments.unshift(environment)
+const pushEnvironment = (context: Context, environment: Environment) =>
+  context.runtime.environments.unshift(environment)
 
 const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]
@@ -650,7 +652,8 @@ export function* apply(
         break
       } catch (e) {
         // Recover from exception
-        const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
+        const globalEnvironment =
+          context.runtime.environments[context.runtime.environments.length - 1]
         context.runtime.environments = [globalEnvironment]
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
         if (!(e instanceof errors.RuntimeSourceError)) {

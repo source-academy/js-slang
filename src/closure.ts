@@ -108,7 +108,11 @@ export default class Closure extends Callable {
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(public node: es.FunctionExpression, public environment: Environment, context: Context) {
+  constructor(
+    public node: es.FunctionExpression,
+    public environment: Environment,
+    context: Context
+  ) {
     super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
