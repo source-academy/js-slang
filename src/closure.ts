@@ -20,8 +20,8 @@ const closureToJS = (value: Closure, context: Context, klass: string) => {
   })
   Object.setPrototypeOf(DummyClass, () => undefined)
   Object.defineProperty(DummyClass, 'Inherits', {
-    value: (Tail: Value) => {
-      DummyClass.prototype = Object.create(Tail.prototype)
+    value: (tail: Value) => {
+      DummyClass.prototype = Object.create(tail.prototype)
       DummyClass.prototype.constructor = DummyClass
     }
   })
