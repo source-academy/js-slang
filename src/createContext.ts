@@ -9,15 +9,15 @@ const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyRuntime = () => ({
   isRunning: false,
-  frames: [],
+  environments: [],
   value: undefined,
   nodes: []
 })
 
-const createGlobalFrame = () => ({
-  parent: null,
+const createGlobalEnvironment = () => ({
+  tail: null,
   name: 'global',
-  environment: {}
+  head: {}
 })
 
 export const createEmptyContext = <T>(
@@ -32,21 +32,21 @@ export const createEmptyContext = <T>(
   runtime: createEmptyRuntime()
 })
 
-export const ensureGlobalEnvironmentExist = (context: Context) => {
+export const ensureGlobalFrameExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
-  if (!context.runtime.frames) {
-    context.runtime.frames = []
+  if (!context.runtime.environments) {
+    context.runtime.environments = []
   }
-  if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push(createGlobalFrame())
+  if (context.runtime.environments.length === 0) {
+    context.runtime.environments.push(createGlobalEnvironment())
   }
 }
 
 const defineSymbol = (context: Context, name: string, value: Value) => {
-  const globalFrame = context.runtime.frames[0]
-  Object.defineProperty(globalFrame.environment, name, {
+  const globalEnvironment = context.runtime.environments[0]
+  Object.defineProperty(globalEnvironment.head, name, {
     value,
     writable: false,
     enumerable: true
@@ -69,7 +69,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
-  ensureGlobalEnvironmentExist(context)
+  ensureGlobalFrameExist(context)
 
   externalSymbols.forEach(symbol => {
     defineSymbol(context, symbol, GLOBAL[symbol])
@@ -80,7 +80,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  * Imports builtins from standard and external libraries.
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
-  ensureGlobalEnvironmentExist(context)
+  ensureGlobalFrameExist(context)
 
   const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
   const display = (v: Value) => (rawDisplay(stringify(v)), v)

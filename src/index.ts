@@ -55,8 +55,8 @@ export function resume(result: Result): Finished | Error | Promise<Result> {
 }
 
 export function interrupt(context: Context) {
-  const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
-  context.runtime.frames = [globalFrame]
+  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
+  context.runtime.environments = [globalEnvironment]
   context.runtime.isRunning = false
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }

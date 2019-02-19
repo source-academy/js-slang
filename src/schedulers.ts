@@ -41,16 +41,16 @@ export class PreemptiveScheduler implements Scheduler {
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
-            const frames = context.runtime.frames
+            const environments = context.runtime.environments
             const stacks: any = []
             let counter = 0
             for (
               let i = 0;
-              counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < frames.length;
+              counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < environments.length;
               i++
             ) {
-              if (frames[i].callExpression) {
-                stacks.unshift(frames[i].callExpression)
+              if (environments[i].callExpression) {
+                stacks.unshift(environments[i].callExpression)
                 counter++
               }
             }

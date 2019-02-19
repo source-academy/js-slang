@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { apply } from './interpreter'
-import { Context, Frame, Value } from './types'
+import { Context, Environment, Value } from './types'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
@@ -20,8 +20,8 @@ const closureToJS = (value: Closure, context: Context, klass: string) => {
   })
   Object.setPrototypeOf(DummyClass, () => undefined)
   Object.defineProperty(DummyClass, 'Inherits', {
-    value: (Parent: Value) => {
-      DummyClass.prototype = Object.create(Parent.prototype)
+    value: (Tail: Value) => {
+      DummyClass.prototype = Object.create(Tail.prototype)
       DummyClass.prototype.constructor = DummyClass
     }
   })
@@ -45,7 +45,7 @@ class Callable extends Function {
 export default class Closure extends Callable {
   public static makeFromArrowFunction(
     node: es.ArrowFunctionExpression,
-    frame: Frame,
+    environment: Environment,
     context: Context
   ) {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
@@ -72,7 +72,7 @@ export default class Closure extends Callable {
             ]
           } as es.BlockStatement
         } as es.FunctionExpression,
-        frame,
+        environment,
         context
       )
     } else {
@@ -84,7 +84,7 @@ export default class Closure extends Callable {
           params: node.params,
           body: node.body
         } as es.FunctionExpression,
-        frame,
+        environment,
         context
       )
     }
@@ -108,7 +108,7 @@ export default class Closure extends Callable {
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
+  constructor(public node: es.FunctionExpression, public environment: Environment, context: Context) {
     super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
