@@ -32,7 +32,7 @@ export const createEmptyContext = <T>(
   runtime: createEmptyRuntime()
 })
 
-export const ensureGlobalFrameExist = (context: Context) => {
+export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
@@ -69,7 +69,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
-  ensureGlobalFrameExist(context)
+  ensureGlobalEnvironmentExist(context)
 
   externalSymbols.forEach(symbol => {
     defineSymbol(context, symbol, GLOBAL[symbol])
@@ -80,7 +80,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  * Imports builtins from standard and external libraries.
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
-  ensureGlobalFrameExist(context)
+  ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
   const display = (v: Value) => (rawDisplay(stringify(v)), v)
