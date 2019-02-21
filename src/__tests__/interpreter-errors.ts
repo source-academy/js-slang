@@ -35,7 +35,7 @@ test('Error when assigning to builtin - verbose', () => {
 	  "enable verbose";
 	  map = 5;
 	`,
-    3
+    { chapter: 3 }
   ).toMatchSnapshot()
 })
 
@@ -54,7 +54,7 @@ test('Error when assigning to builtin - verbose', () => {
 	  "enable verbose";
 	  undefined = 5;
 	`,
-    3
+    { chapter: 3 }
   ).toMatchSnapshot()
 })
 
@@ -214,7 +214,7 @@ test('Error when calling non function value null', () => {
   return expectParsedError(stripIndent`
     null();
   `).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed. They're not part of the Source specs.
+"Line 1, Column 0: null literals are not allowed. null literals are not allowed
 "
 `)
 })
@@ -280,7 +280,7 @@ test('Error when calling non function value array - verbose', () => {
 	  "enable verbose";
 	  [1]();
 	`,
-    3
+    { chapter: 3 }
   ).toMatchSnapshot()
 })
 
@@ -299,7 +299,7 @@ test('Error when calling non function value object - verbose', () => {
 	  "enable verbose";
 	  ({a: 1})();
 	`,
-    100
+    { chapter: 100 }
   ).toMatchSnapshot()
 })
 

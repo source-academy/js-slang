@@ -76,12 +76,12 @@ Object {
 `;
 
 exports[`Error when assigning to builtin - verbose 1`] = `
-"Line 2, Column 0: Cannot assign new value to constant map. As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+"Line 2, Column 0: Cannot assign new value to constant map. TODO
 "
 `;
 
 exports[`Error when assigning to builtin - verbose 2`] = `
-"Line 2, Column 0: Cannot assign new value to constant undefined. As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+"Line 2, Column 0: Cannot assign new value to constant undefined. TODO
 "
 `;
 
@@ -108,7 +108,7 @@ map = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map. As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -139,7 +139,7 @@ undefined = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined. As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -213,7 +213,6 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
-      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -245,7 +244,6 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
-      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
@@ -279,7 +277,6 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
-      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -313,7 +310,6 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
-      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
@@ -338,7 +334,7 @@ f(1, 2);",
 `;
 
 exports[`Error when calling non function value "string" - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value \\"string\\". Because \\"string\\" is not a function, you cannot run \\"string\\"().
+"Line 2, Column 2: Calling non-function value \\"string\\". TODO
 "
 `;
 
@@ -365,7 +361,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\". Because \\"string\\" is not a function, you cannot run \\"string\\"().
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\". TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -403,7 +399,7 @@ Object {
 `;
 
 exports[`Error when calling non function value 0 - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value 0. Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+"Line 2, Column 2: Calling non-function value 0. TODO
 "
 `;
 
@@ -430,7 +426,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value 0. Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -468,7 +464,7 @@ Object {
 `;
 
 exports[`Error when calling non function value array - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value [1]. Because [1] is not a function, you cannot run [1]().
+"Line 2, Column 0: Calling non-function value [1]. TODO
 "
 `;
 
@@ -497,7 +493,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]. Because [1] is not a function, you cannot run [1]().
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -537,7 +533,7 @@ Object {
 `;
 
 exports[`Error when calling non function value null - verbose 1`] = `
-"Line 2, Column 2: null literals are not allowed. They're not part of the Source specs.
+"Line 2, Column 2: null literals are not allowed. null literals are not allowed
 "
 `;
 
@@ -570,7 +566,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: null literals are not allowed. They're not part of the Source specs.
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed. null literals are not allowed
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -606,10 +602,7 @@ Object {
       "type": "Syntax",
     },
   ],
-<<<<<<< HEAD
-  "parsedErrors": "Line 1: null literals are not allowed",
-=======
-  "parsedErrors": "Line 1, Column 0: null literals are not allowed. They're not part of the Source specs.
+  "parsedErrors": "Line 1, Column 0: null literals are not allowed. null literals are not allowed
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -618,7 +611,7 @@ Object {
 `;
 
 exports[`Error when calling non function value object - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value {\\"a\\": 1}. Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}. TODO
 "
 `;
 
@@ -647,9 +640,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}. Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}. TODO
 ",
->>>>>>> 49896d5... added tests; updated snapshots for CallingNonFunctionValue
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -688,7 +680,7 @@ Object {
 `;
 
 exports[`Error when calling non function value true - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value true. Because true is not a function, you cannot run true().
+"Line 2, Column 2: Calling non-function value true. TODO
 "
 `;
 
@@ -715,7 +707,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value true. Because true is not a function, you cannot run true().
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -753,7 +745,7 @@ Object {
 `;
 
 exports[`Error when calling non function value undefined - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value undefined. Because undefined is not a function, you cannot run undefined().
+"Line 2, Column 2: Calling non-function value undefined. TODO
 "
 `;
 
@@ -780,7 +772,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined. Because undefined is not a function, you cannot run undefined().
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined. TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -1311,10 +1303,8 @@ Object {
 `;
 
 exports[`Undefined variable error is thrown - verbose 1`] = `
-"Line 2, Column 0: Name im_undefined not declared. Before you can call im_undefined, you need to declare it as a variable or a constant.
-
-	const im_undefined = /*value*/;
-
+"Line 2, Column 0: Name im_undefined not declared. Before you can read the value of im_undefined, you need to declare it as a variable or a constant.
+		You can do this using the let or const keywords.
 "
 `;
 
@@ -1341,10 +1331,8 @@ im_undefined;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared. Before you can call im_undefined, you need to declare it as a variable or a constant.
-
-	const im_undefined = /*value*/;
-
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared. Before you can read the value of im_undefined, you need to declare it as a variable or a constant.
+		You can do this using the let or const keywords.
 ",
   "result": undefined,
   "resultStatus": "error",
