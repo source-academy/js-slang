@@ -80,6 +80,11 @@ exports[`Error when assigning to builtin - verbose 1`] = `
 "
 `;
 
+exports[`Error when assigning to builtin - verbose 2`] = `
+"Line 2, Column 0: Cannot assign new value to constant undefined. As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+"
+`;
+
 exports[`Error when assigning to builtin - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -104,6 +109,37 @@ map = 5;",
     },
   ],
   "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map. As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+undefined = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined. As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -301,6 +337,42 @@ f(1, 2);",
 }
 `;
 
+exports[`Error when calling non function value "string" - verbose 1`] = `
+"Line 2, Column 2: Calling non-function value \\"string\\". Because \\"string\\" is not a function, you cannot run \\"string\\"().
+"
+`;
+
+exports[`Error when calling non function value "string" - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  'string'();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\". Because \\"string\\" is not a function, you cannot run \\"string\\"().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling non function value "string": expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -330,6 +402,42 @@ Object {
 }
 `;
 
+exports[`Error when calling non function value 0 - verbose 1`] = `
+"Line 2, Column 2: Calling non-function value 0. Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+"
+`;
+
+exports[`Error when calling non function value 0 - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  0();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0. Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling non function value 0: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -353,6 +461,44 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Calling non-function value 0",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array - verbose 1`] = `
+"Line 2, Column 0: Calling non-function value [1]. Because [1] is not a function, you cannot run [1]().
+"
+`;
+
+exports[`Error when calling non function value array - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+[1]();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Array [
+        1,
+      ],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]. Because [1] is not a function, you cannot run [1]().
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -390,6 +536,48 @@ Object {
 }
 `;
 
+exports[`Error when calling non function value null - verbose 1`] = `
+"Line 2, Column 2: null literals are not allowed. They're not part of the Source specs.
+"
+`;
+
+exports[`Error when calling non function value null - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  null();",
+  "displayResult": Array [],
+  "errors": Array [
+    NoNullError {
+      "node": Node {
+        "end": 24,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 6,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "raw": "null",
+        "start": 20,
+        "type": "Literal",
+        "value": null,
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed. They're not part of the Source specs.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling non function value null: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -418,7 +606,50 @@ Object {
       "type": "Syntax",
     },
   ],
+<<<<<<< HEAD
   "parsedErrors": "Line 1: null literals are not allowed",
+=======
+  "parsedErrors": "Line 1, Column 0: null literals are not allowed. They're not part of the Source specs.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose 1`] = `
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}. Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+"
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}. Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+>>>>>>> 49896d5... added tests; updated snapshots for CallingNonFunctionValue
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -456,6 +687,42 @@ Object {
 }
 `;
 
+exports[`Error when calling non function value true - verbose 1`] = `
+"Line 2, Column 2: Calling non-function value true. Because true is not a function, you cannot run true().
+"
+`;
+
+exports[`Error when calling non function value true - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  true();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": true,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true. Because true is not a function, you cannot run true().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling non function value true: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -479,6 +746,42 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Calling non-function value true",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined - verbose 1`] = `
+"Line 2, Column 2: Calling non-function value undefined. Because undefined is not a function, you cannot run undefined().
+"
+`;
+
+exports[`Error when calling non function value undefined - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined. Because undefined is not a function, you cannot run undefined().
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

@@ -203,10 +203,27 @@ interpreted:\\"Line 1: Calling non-function value undefined\\""
 `)
 })
 
+test('Error when calling non function value undefined - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	  undefined();
+	`).toMatchSnapshot()
+})
+
 test('Error when calling non function value null', () => {
   return expectParsedError(stripIndent`
     null();
-  `).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
+  `).toMatchInlineSnapshot(`
+"Line 1, Column 0: null literals are not allowed. They're not part of the Source specs.
+"
+`)
+})
+
+test('Error when calling non function value null - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	  null();
+	`).toMatchSnapshot()
 })
 
 test('Error when calling non function value true', () => {
@@ -215,16 +232,37 @@ test('Error when calling non function value true', () => {
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
 })
 
+test('Error when calling non function value true - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	  true();
+	`).toMatchSnapshot()
+})
+
 test('Error when calling non function value 0', () => {
   return expectParsedError(stripIndent`
     0();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
 })
 
+test('Error when calling non function value 0 - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	  0();
+	`).toMatchSnapshot()
+})
+
 test('Error when calling non function value "string"', () => {
   return expectParsedError(stripIndent`
     'string'();
   `).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
+})
+
+test('Error when calling non function value "string" - verbose', () => {
+  return expectParsedError(stripIndent`
+	"enable verbose";
+	  'string'();
+	`).toMatchSnapshot()
 })
 
 test('Error when calling non function value array', () => {
@@ -236,6 +274,16 @@ test('Error when calling non function value array', () => {
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
+test('Error when calling non function value array - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	  "enable verbose";
+	  [1]();
+	`,
+    3
+  ).toMatchSnapshot()
+})
+
 test('Error when calling non function value object', () => {
   return expectParsedError(
     stripIndent`
@@ -243,6 +291,16 @@ test('Error when calling non function value object', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value {\\"a\\": 1}"`)
+})
+
+test('Error when calling non function value object - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	  "enable verbose";
+	  ({a: 1})();
+	`,
+    100
+  ).toMatchSnapshot()
 })
 
 test('Error when calling function with too few arguments', () => {
