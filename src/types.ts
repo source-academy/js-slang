@@ -1,4 +1,11 @@
+/*
+	This file contains definitions of some interfaces and classes that are used in Source (such as
+	error-related classes).
+*/
+
+/* tslint:disable:interface-functionName max-classes-per-file */
 /* tslint:disable:max-classes-per-file */
+
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
@@ -25,6 +32,7 @@ export enum ErrorSeverity {
   ERROR = 'Error'
 }
 
+// any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
   type: ErrorType
   severity: ErrorSeverity
@@ -62,7 +70,7 @@ export interface Context<T = any> {
   /** Runtime Sepecific state */
   runtime: {
     isRunning: boolean
-    frames: Frame[]
+    environments: Environment[]
     nodes: es.Node[]
   }
 
@@ -80,7 +88,7 @@ export interface Context<T = any> {
 }
 
 // tslint:disable:no-any
-export interface Environment {
+export interface Frame {
   [name: string]: any
 }
 export type Value = any
@@ -88,11 +96,11 @@ export type Value = any
 
 export type AllowedDeclarations = 'const' | 'let'
 
-export interface Frame {
+export interface Environment {
   name: string
-  parent: Frame | null
+  tail: Environment | null
   callExpression?: es.CallExpression
-  environment: Environment
+  head: Frame
   thisContext?: Value
 }
 

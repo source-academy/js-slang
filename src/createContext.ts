@@ -9,15 +9,15 @@ import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
   isRunning: false,
-  frames: [],
+  environments: [],
   value: undefined,
   nodes: []
 })
 
-const createGlobalFrame = () => ({
-  parent: null,
+const createGlobalEnvironment = () => ({
+  tail: null,
   name: 'global',
-  environment: {}
+  head: {}
 })
 
 export const createEmptyContext = <T>(
@@ -48,17 +48,17 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
-  if (!context.runtime.frames) {
-    context.runtime.frames = []
+  if (!context.runtime.environments) {
+    context.runtime.environments = []
   }
-  if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push(createGlobalFrame())
+  if (context.runtime.environments.length === 0) {
+    context.runtime.environments.push(createGlobalEnvironment())
   }
 }
 
 const defineSymbol = (context: Context, name: string, value: Value) => {
-  const globalFrame = context.runtime.frames[0]
-  Object.defineProperty(globalFrame.environment, name, {
+  const globalEnvironment = context.runtime.environments[0]
+  Object.defineProperty(globalEnvironment.head, name, {
     value,
     writable: false,
     enumerable: true
