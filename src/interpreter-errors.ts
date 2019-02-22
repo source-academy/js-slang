@@ -1,8 +1,3 @@
-/*
-	These errors are the sort that would occur in regular JS. For errors arising from flouting the rules
-	of Source, refer to the rules directory.
-*/
-
 /* tslint:disable: max-classes-per-file */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
