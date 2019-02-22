@@ -448,18 +448,18 @@ Object {
 exports[`Error when calling non function value undefined: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "undefined();",
+  "code": "(() => undefined())();",
   "displayResult": Array [],
   "errors": Array [
     CallingNonFunctionValue {
       "callee": undefined,
       "location": SourceLocation {
         "end": Position {
-          "column": 11,
+          "column": 18,
           "line": 1,
         },
         "start": Position {
-          "column": 0,
+          "column": 7,
           "line": 1,
         },
       },
@@ -467,7 +467,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value undefined",
+  "parsedErrors": "native:\\"Line -1: TypeError: Calling non-function value undefined\\"
+interpreted:\\"Line 1: Calling non-function value undefined\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

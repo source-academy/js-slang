@@ -1,11 +1,11 @@
+import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
-
-const GLOBAL = typeof window === 'undefined' ? global : window
+import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -24,13 +24,25 @@ export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
   externalContext?: T
-): Context<T> => ({
-  chapter,
-  externalSymbols,
-  errors: [],
-  externalContext,
-  runtime: createEmptyRuntime()
-})
+): Context<T> => {
+  if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
+    GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
+  }
+  const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
+    builtins: new Map(),
+    globals: new Map(),
+    operators: new Map(),
+    properTailCalls
+  })
+  return {
+    chapter,
+    externalSymbols,
+    errors: [],
+    externalContext,
+    runtime: createEmptyRuntime(),
+    contextId: length - 1
+  }
+}
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
@@ -51,6 +63,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].builtins.set(name, value)
 }
 
 // Defines a builtin in the given context
@@ -113,7 +126,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
-    defineBuiltin(context, 'null', null)
     defineBuiltin(context, 'pair(left, right)', list.pair)
     defineBuiltin(context, 'is_pair(val)', list.is_pair)
     defineBuiltin(context, 'head(xs)', list.head)

@@ -1,7 +1,7 @@
 import { expectDisplayResult } from '../utils/testing'
 
 test('display can be used to display numbers', () => {
-  return expectDisplayResult(`display(0);`).toMatchInlineSnapshot(`
+  return expectDisplayResult(`display(0);`, { native: true }).toMatchInlineSnapshot(`
 Array [
   "0",
 ]
@@ -9,7 +9,7 @@ Array [
 })
 
 test('display can be used to display funny numbers', () => {
-  return expectDisplayResult(`display(1e38); display(NaN); display(Infinity);`)
+  return expectDisplayResult(`display(1e38); display(NaN); display(Infinity);`, { native: true })
     .toMatchInlineSnapshot(`
 Array [
   "1e+38",
@@ -20,7 +20,7 @@ Array [
 })
 
 test('display can be used to display (escaped) strings', () => {
-  return expectDisplayResult(`display("Tom's assisstant said: \\"tuna.\\"");`)
+  return expectDisplayResult(`display("Tom's assisstant said: \\"tuna.\\"");`, { native: true })
     .toMatchInlineSnapshot(`
 Array [
   "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
@@ -29,7 +29,7 @@ Array [
 })
 
 test('raw_display can be used to display (unescaped) strings directly', () => {
-  return expectDisplayResult(`raw_display("Tom's assisstant said: \\"tuna.\\"");`)
+  return expectDisplayResult(`raw_display("Tom's assisstant said: \\"tuna.\\"");`, { native: true })
     .toMatchInlineSnapshot(`
 Array [
   "Tom's assisstant said: \\"tuna.\\"",
@@ -47,7 +47,8 @@ Array [
 })
 
 test('display can be used to display lists', () => {
-  return expectDisplayResult(`display(list(1, 2));`, 2).toMatchInlineSnapshot(`
+  return expectDisplayResult(`display(list(1, 2));`, { chapter: 2, native: true })
+    .toMatchInlineSnapshot(`
 Array [
   "[1, [2, null]]",
 ]
@@ -55,7 +56,8 @@ Array [
 })
 
 test('display can be used to display arrays', () => {
-  return expectDisplayResult(`display([1, 2, [4, 5]]);`, 3).toMatchInlineSnapshot(`
+  return expectDisplayResult(`display([1, 2, [4, 5]]);`, { chapter: 3, native: true })
+    .toMatchInlineSnapshot(`
 Array [
   "[1, 2, [4, 5]]",
 ]
@@ -63,7 +65,8 @@ Array [
 })
 
 test('display can be used to display objects', () => {
-  return expectDisplayResult(`display({a: 1, b: 2, c: {d: 3}});`, 100).toMatchInlineSnapshot(`
+  return expectDisplayResult(`display({a: 1, b: 2, c: {d: 3}});`, { chapter: 100 })
+    .toMatchInlineSnapshot(`
 Array [
   "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
 ]
