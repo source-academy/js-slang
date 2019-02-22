@@ -120,11 +120,17 @@ export class UnassignedVariable extends RuntimeSourceError {
   }
 
   public explain() {
-    return `Name ${this.name} not yet assigned`
+    return `Name ${this.name} declared later in current scope but not yet assigned`
   }
 
   public elaborate() {
-    return `Please assign a value to ${this.name} first. Example:\n\t${this.name} = 42;`
+    return `If you're trying to access the value of ${
+      this.name
+    } from an outer scope, please rename the inner ${
+      this.name
+    }. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${
+      this.name
+    } in the same scope. `
   }
 }
 

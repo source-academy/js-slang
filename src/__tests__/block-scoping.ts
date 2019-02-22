@@ -124,7 +124,9 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
         return 1;
       }
       v;
-    `).toMatchInlineSnapshot(`"Line 1: Name f not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 1: Name f declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Error when accessing temporal dead zone', () => {
@@ -135,7 +137,9 @@ test('Error when accessing temporal dead zone', () => {
       const a = 5;
     }
     f();
-    `).toMatchInlineSnapshot(`"Line 3: Name a not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 // tslint:disable-next-line:max-line-length
@@ -146,7 +150,9 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
         a + a;
         const a = 10;
       }
-    `).toMatchInlineSnapshot(`"Line 3: Name a not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
