@@ -44,15 +44,11 @@ export function runInContext(
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   function getFirstLine(theProgram: Program) {
-    if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
-      const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
-      if (firstLineOfProgram.expression.type === 'Literal') {
-        const firstLineExpression = firstLineOfProgram.expression as Literal
-        if (!!firstLineExpression) {
-          return firstLineExpression.value
-        } else {
-          return undefined
-        }
+    const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
+    if (!!firstLineOfProgram) {
+      const firstLineExpression = firstLineOfProgram.expression as Literal
+      if (!!firstLineExpression) {
+        return firstLineExpression.value
       } else {
         return undefined
       }
