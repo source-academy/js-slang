@@ -1,4 +1,4 @@
-import astr = require('astring')
+import * as astr from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
