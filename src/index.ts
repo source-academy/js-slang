@@ -50,15 +50,11 @@ export function runInContext(
         const firstLineExpression = firstLineOfProgram.expression as Literal
         if (!!firstLineExpression) {
           return firstLineExpression.value
-        } else {
-          return undefined
         }
-      } else {
-        return undefined
       }
-    } else {
-      return undefined
     }
+
+    return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
