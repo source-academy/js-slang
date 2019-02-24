@@ -1,5 +1,5 @@
-import { ExpressionStatement, Literal, Program } from 'estree'
 import { generate } from 'astring'
+import { ExpressionStatement, Literal, Program } from 'estree'
 import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
