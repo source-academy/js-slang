@@ -479,11 +479,15 @@ test.each([
   [
     1,
     `
-    const x = runtime();
-    const f = x => x === 0 ? x : f(x-1);
-    f(1000);
-    const y = runtime();
-    x !== y;
+    const start = runtime();
+    function repeatUntilDifferentTime() {
+      if (start === runtime()) {
+        return repeatUntilDifferentTime();
+      } else {
+        return true;
+      }
+    }
+    repeatUntilDifferentTime();
     `,
     true,
     true
@@ -609,9 +613,11 @@ test.each([
   'Builtins work as expected %#',
   (chapter: number, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectResult(stripIndent(snippet), chapter).toEqual(returnValue)
+      return expectResult(stripIndent(snippet), { chapter, native: chapter < 100 }).toEqual(
+        returnValue
+      )
     } else {
-      return snapshotFailure(stripIndent(snippet), chapter, 'fails')
+      return snapshotFailure(stripIndent(snippet), { chapter }, 'fails')
     }
   }
 )

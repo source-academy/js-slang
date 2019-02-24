@@ -1,21 +1,30 @@
 import { expectResult, stripIndent } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   stringify(0);
-  `).toMatchInlineSnapshot(`"0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"0"`)
 })
 
 test('String representation of strings are nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   stringify('a string');
-  `).toMatchInlineSnapshot(`"\\"a string\\""`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"\\"a string\\""`)
 })
 
 test('String representation of booleans are nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   stringify('true');
-  `).toMatchInlineSnapshot(`"\\"true\\""`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"\\"true\\""`)
 })
 
 test('String representation of functions are nice', () => {
@@ -44,7 +53,7 @@ test('String representation of arrays are nice', () => {
   const xs = [1, 'true', true, () => x];
   stringify(xs);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => x]"`)
 })
 
@@ -54,7 +63,7 @@ test('String representation of multidimensional arrays are nice', () => {
   const xs = [1, 'true', [true, () => x, [[]]]];
   stringify(xs);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => x, [[]]]]"`)
 })
 
@@ -64,7 +73,7 @@ test('String representation of empty arrays are nice', () => {
   const xs = [];
   stringify(xs);
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"[]"`)
 })
 
@@ -73,7 +82,7 @@ test('String representation of lists are nice', () => {
     stripIndent`
   stringify(enum_list(1, 10));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
 })
 
@@ -83,7 +92,7 @@ test('String representation of huge lists are nice', () => {
     stripIndent`
   stringify(enum_list(1, 1000));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
 "[ 1,
 [ 2,
@@ -189,7 +198,7 @@ test('String representation of huge arrays are nice', () => {
   }
   stringify(arr);
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`
 "[ 0,
   1,
@@ -300,7 +309,7 @@ test('String representation of objects are nice', () => {
   const o = { a: 1, b: true, c: () => x };
   stringify(o);
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}"`)
 })
 
@@ -310,7 +319,7 @@ test('String representation of nested objects are nice', () => {
   const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
   stringify(o);
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(
     `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
   )
@@ -322,7 +331,7 @@ test('String representation of big objects are nice', () => {
   const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "{ \\"a\\": 1,
   \\"b\\": true,
@@ -346,7 +355,7 @@ test('String representation of nested objects are nice', () => {
   o.o = o;
   stringify(o);
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(`"{\\"o\\": ...<circular>}"`)
 })
 
@@ -355,7 +364,7 @@ test('String representation of builtins are nice', () => {
     stripIndent`
   stringify(pair);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`
 "function pair(left, right) {
 	[implementation hidden]
@@ -368,14 +377,17 @@ test('String representation of null is nice', () => {
     stripIndent`
   stringify(null);
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`"null"`)
 })
 
 test('String representation of undefined is nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   stringify(undefined);
-  `).toMatchInlineSnapshot(`"undefined"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"undefined"`)
 })
 
 // tslint:disable:max-line-length
@@ -384,7 +396,7 @@ test('String representation with no indent', () => {
     stripIndent`
   stringify(parse('x=>x;'), 0);
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(
     `"[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]"`
   )
@@ -395,7 +407,7 @@ test('String representation with 1 space indent', () => {
     stripIndent`
   stringify(parse('x=>x;'), 1);
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`
 "[{\\"tag\\": \\"function_definition\\",
   \\"parameters\\":
@@ -420,7 +432,7 @@ test('String representation with default (2 space) indent', () => {
     stripIndent`
   stringify(parse('x=>x;'));
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`
 "[ { \\"tag\\": \\"function_definition\\",
     \\"parameters\\":
@@ -445,7 +457,7 @@ test('String representation with more than 10 space indent should trim to 10 spa
     stripIndent`
   stringify(parse('x=>x;'), 100);
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`
 "[         {         \\"tag\\": \\"function_definition\\",
                     \\"parameters\\":
@@ -470,7 +482,7 @@ test('String representation with custom indent', () => {
     stripIndent`
   stringify(parse('x=>x;'), ' ... ');
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`
 "[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
@@ -495,7 +507,7 @@ test('String representation with long custom indent gets trimmed to 10 character
     stripIndent`
   stringify(parse('x=>x;'), '.................................');
   `,
-    4
+    { chapter: 4 }
   ).toMatchInlineSnapshot(`
 "[.........{.........\\"tag\\": \\"function_definition\\",
 ....................\\"parameters\\":
