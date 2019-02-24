@@ -1,5 +1,5 @@
 import { generate } from 'astring'
-import { ExpressionStatement, Literal, Program } from 'estree'
+import { ExpressionStatement, Program } from 'estree'
 import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
@@ -7,7 +7,7 @@ import { ExceptionError, InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Error, Finished, Result, Scheduler, SourceError } from './types'
+import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -52,11 +52,9 @@ export function runInContext(
   function getFirstLine(theProgram: Program) {
     if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
       const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
-      if (firstLineOfProgram.expression.type === 'Literal') {
-        const firstLineExpression = firstLineOfProgram.expression as Literal
-        if (!!firstLineExpression) {
-          return firstLineExpression.value
-        }
+      const theDirective = (firstLineOfProgram as Directive).directive
+      if (theDirective) {
+        return theDirective
       }
     }
 
