@@ -23,8 +23,7 @@ function startRepl(chapter = 1) {
 }
 
 function main() {
-  // TODO const chapter alternative case should be 1
-  const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 4
+  const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 1
   startRepl(chapter)
 }
 
