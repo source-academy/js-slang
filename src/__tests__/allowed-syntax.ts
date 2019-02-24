@@ -262,11 +262,11 @@ test.each([
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
     const tests = [
-      snapshotSuccess(snippet, chapter, 'passes'),
-      snapshotSuccess(parseSnippet, Math.max(4, chapter), 'parse passes')
+      snapshotSuccess(snippet, { chapter, native: chapter < 100 }, 'passes'),
+      snapshotSuccess(parseSnippet, { chapter: Math.max(4, chapter), native: true }, 'parse passes')
     ]
     if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, chapter - 1, 'fails a chapter below'))
+      tests.push(snapshotFailure(snippet, { chapter: chapter - 1 }, 'fails a chapter below'))
     }
     return Promise.all(tests)
   }

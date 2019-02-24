@@ -648,11 +648,15 @@ Object {
 exports[`Builtins work as expected 48: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const x = runtime();
-const f = x => x === 0 ? x : f(x-1);
-f(1000);
-const y = runtime();
-x !== y;",
+  "code": "const start = runtime();
+function repeatUntilDifferentTime() {
+  if (start === runtime()) {
+    return repeatUntilDifferentTime();
+  } else {
+    return true;
+  }
+}
+repeatUntilDifferentTime();",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",

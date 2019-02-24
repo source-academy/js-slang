@@ -1,19 +1,25 @@
 import { ExpressionStatement, Literal, Program } from 'estree'
+import { generate } from 'astring'
+import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
-import { InterruptedError } from './interpreter-errors'
+import { ExceptionError, InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { transpile } from './transpiler'
 import { Context, Error, Finished, Result, Scheduler, SourceError } from './types'
+import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
+  isNativeRunnable: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
-  steps: 1000
+  steps: 1000,
+  isNativeRunnable: false
 }
 
 // deals with parsing error objects and converting them to strings (for repl at least)
@@ -65,14 +71,26 @@ export function runInContext(
     } else {
       verboseErrors = false
     }
-    const it = evaluate(program, context)
-    let scheduler: Scheduler
-    if (theOptions.scheduler === 'async') {
-      scheduler = new AsyncScheduler()
+    if (theOptions.isNativeRunnable) {
+      try {
+        return Promise.resolve({
+          status: 'finished',
+          value: sandboxedEval(generate(transpile(program, context.contextId)))
+        } as Result)
+      } catch (error) {
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+        return Promise.resolve({ status: 'error' } as Result)
+      }
     } else {
-      scheduler = new PreemptiveScheduler(theOptions.steps)
+      const it = evaluate(program, context)
+      let scheduler: Scheduler
+      if (theOptions.scheduler === 'async') {
+        scheduler = new AsyncScheduler()
+      } else {
+        scheduler = new PreemptiveScheduler(theOptions.steps)
+      }
+      return scheduler.run(it, context)
     }
-    return scheduler.run(it, context)
   } else {
     return Promise.resolve({ status: 'error' } as Result)
   }
@@ -87,8 +105,8 @@ export function resume(result: Result): Finished | Error | Promise<Result> {
 }
 
 export function interrupt(context: Context) {
-  const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
-  context.runtime.frames = [globalFrame]
+  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
+  context.runtime.environments = [globalEnvironment]
   context.runtime.isRunning = false
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }

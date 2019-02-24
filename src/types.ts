@@ -70,7 +70,7 @@ export interface Context<T = any> {
   /** Runtime Sepecific state */
   runtime: {
     isRunning: boolean
-    frames: Frame[]
+    environments: Environment[]
     nodes: es.Node[]
   }
 
@@ -80,20 +80,27 @@ export interface Context<T = any> {
    * context for use in your own built-in functions (like `display(a)`)
    */
   externalContext?: T
+
+  /**
+   * Used for storing id of the context to be referenced by native
+   */
+  contextId: number
 }
 
 // tslint:disable:no-any
-export interface Environment {
+export interface Frame {
   [name: string]: any
 }
 export type Value = any
 // tslint:enable:no-any
 
-export interface Frame {
+export type AllowedDeclarations = 'const' | 'let'
+
+export interface Environment {
   name: string
-  parent: Frame | null
+  tail: Environment | null
   callExpression?: es.CallExpression
-  environment: Environment
+  head: Frame
   thisContext?: Value
 }
 

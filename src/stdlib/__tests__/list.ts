@@ -6,7 +6,7 @@ test('list creates list', () => {
     function f() { return 1; }
     list(1, 'a string ""', () => a, f, true, 3.14);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`
 Array [
   1,
@@ -35,7 +35,7 @@ test('pair creates pair', () => {
     stripIndent`
     pair(1, 'a string ""');
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
 Array [
   1,
@@ -49,7 +49,7 @@ test('head works', () => {
     stripIndent`
     head(pair(1, 'a string ""'));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -58,7 +58,7 @@ test('tail works', () => {
     stripIndent`
     tail(pair(1, 'a string ""'));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`"a string \\"\\""`)
 })
 
@@ -67,7 +67,7 @@ test('tail of a 1 element list is null', () => {
     stripIndent`
     tail(list(1));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`null`)
 })
 
@@ -76,8 +76,8 @@ test('empty list is null', () => {
     stripIndent`
     list();
   `,
-    2
-  ).toMatchInlineSnapshot(`null`)
+    { chapter: 2, native: true }
+  ).toMatchInlineSnapshot('null')
 })
 
 test('for_each', () => {
@@ -89,7 +89,7 @@ test('for_each', () => {
     }, list(1, 2, 3));
     sum;
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`6`)
 })
 
@@ -98,7 +98,7 @@ test('map', () => {
     stripIndent`
     equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -107,7 +107,7 @@ test('filter', () => {
     stripIndent`
     equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -116,7 +116,7 @@ test('build_list', () => {
     stripIndent`
     equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -125,7 +125,7 @@ test('reverse', () => {
     stripIndent`
     equal(reverse(list("string", null, undefined, null, 123)), list(123, null, undefined, null, "string"));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -134,7 +134,7 @@ test('append', () => {
     stripIndent`
     equal(append(list("string", 123), list(456, null, undefined)), list("string", 123, 456, null, undefined));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -145,7 +145,7 @@ test('member', () => {
       member("string", list(1, 2, 3, "string", 123, 456, null, undefined)),
       list("string", 123, 456, null, undefined));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -154,7 +154,7 @@ test('remove', () => {
     stripIndent`
     remove(1, list(1));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`null`)
 })
 
@@ -163,7 +163,7 @@ test('remove not found', () => {
     stripIndent`
     remove(2, list(1));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
 Array [
   1,
@@ -177,7 +177,7 @@ test('remove_all', () => {
     stripIndent`
     equal(remove_all(1, list(1, 2, 3, 4, 1, 1, "1", 5, 1, 1, 6)), list(2, 3, 4, "1", 5, 6));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -186,7 +186,7 @@ test('remove_all not found', () => {
     stripIndent`
     equal(remove_all(1, list(2, 3, "1")), list(2, 3, "1"));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -195,7 +195,7 @@ test('enum_list', () => {
     stripIndent`
     equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -204,7 +204,7 @@ test('enum_list with floats', () => {
     stripIndent`
     equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -213,7 +213,7 @@ test('list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3, "4", 4), 4);
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`4`)
 })
 
@@ -222,7 +222,7 @@ test('accumulate', () => {
     stripIndent`
     accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`10`)
 })
 
@@ -231,7 +231,7 @@ test('list_to_string', () => {
     stripIndent`
     list_to_string(list(1, 2, 3));
   `,
-    2
+    { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`"[1, [2, [3, null]]]"`)
 })
 
@@ -240,7 +240,7 @@ test('assoc', () => {
     stripIndent`
     equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));
   `,
-    100
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -249,7 +249,7 @@ test('assoc not found', () => {
     stripIndent`
     equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);
   `,
-    100
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -261,7 +261,7 @@ test('set_head', () => {
     set_head(p, 3);
     p === q && equal(p, pair(3, 2));
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -273,7 +273,7 @@ test('set_tail', () => {
     set_tail(p, 3);
     p === q && equal(p, pair(1, 3));
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -282,7 +282,7 @@ test('non-list error head', () => {
     stripIndent`
     head([1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -293,7 +293,7 @@ test('non-list error tail', () => {
     stripIndent`
     tail([1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -304,7 +304,7 @@ test('non-list error length', () => {
     stripIndent`
     length([1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -315,7 +315,7 @@ test('non-list error map', () => {
     stripIndent`
     map(x=>x, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -326,7 +326,7 @@ test('non-list error for_each', () => {
     stripIndent`
     for_each(x=>x, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: for_each expects a list as argument xs, but encountered 1,2,3"`
   )
@@ -337,7 +337,7 @@ test('non-list error reverse', () => {
     stripIndent`
     reverse([1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: reverse(xs) expects a list as argument xs, but encountered 1,2,3"`
   )
@@ -348,7 +348,7 @@ test('non-list error append', () => {
     stripIndent`
     append([1, 2, 3], list(1, 2, 3));
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -359,7 +359,7 @@ test('non-list error member', () => {
     stripIndent`
     member(1, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -370,7 +370,7 @@ test('non-list error remove', () => {
     stripIndent`
     remove(1, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -381,7 +381,7 @@ test('non-list error remove_all', () => {
     stripIndent`
     remove_all(1, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -392,7 +392,7 @@ test('non-list error assoc', () => {
     stripIndent`
     assoc(1, [1, 2, 3]);
   `,
-    100
+    { chapter: 100 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -403,7 +403,7 @@ test('non-list error filter', () => {
     stripIndent`
     filter(x => true, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -414,7 +414,7 @@ test('non-list error accumulate', () => {
     stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined"`
   )
@@ -425,7 +425,7 @@ test('non-list error accumulate', () => {
     stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined"`
   )
@@ -436,7 +436,7 @@ test('non-list error set_head', () => {
     stripIndent`
     set_head([1, 2, 3], 4);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -447,7 +447,7 @@ test('non-list error set_tail', () => {
     stripIndent`
     set_tail([1, 2, 3], 4);
   `,
-    3
+    { chapter: 3 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -458,7 +458,7 @@ test('bad number error build_list', () => {
     stripIndent`
     build_list(-1, x => x);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered -1"`
   )
@@ -469,7 +469,7 @@ test('bad number error build_list', () => {
     stripIndent`
     build_list(1.5, x => x);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1.5"`
   )
@@ -480,7 +480,7 @@ test('bad number error build_list', () => {
     stripIndent`
     build_list('1', x => x);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1"`
   )
@@ -491,7 +491,7 @@ test('bad number error enum_list', () => {
     stripIndent`
     enum_list('1', '5');
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 1"`
   )
@@ -502,7 +502,7 @@ test('bad number error enum_list', () => {
     stripIndent`
     enum_list('1', 5);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 1"`
   )
@@ -513,7 +513,7 @@ test('bad number error enum_list', () => {
     stripIndent`
     enum_list(1, '5');
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 5"`
   )
@@ -524,7 +524,7 @@ test('bad index error list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3), 3);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
@@ -535,7 +535,7 @@ test('bad index error list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3), -1);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered -1"`
   )
@@ -546,7 +546,7 @@ test('bad index error list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3), 1.5);
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1.5"`
   )
@@ -557,7 +557,7 @@ test('bad index error list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3), '1');
   `,
-    2
+    { chapter: 2 }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1"`
   )

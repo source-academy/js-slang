@@ -9,6 +9,7 @@ import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
 import noAssignmentExpression from './noAssignmentExpression'
 import noDeclareMutable from './noDeclareMutable'
 import noDotAbbreviation from './noDotAbbreviation'
+import noEval from './noEval'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
@@ -33,7 +34,8 @@ const rules: Array<Rule<es.Node>> = [
   noUnspecifiedLiteral,
   noUnspecifiedOperator,
   noUpdateAssignment,
-  singleVariableDeclaration
+  singleVariableDeclaration,
+  noEval
 ]
 
 export default rules
