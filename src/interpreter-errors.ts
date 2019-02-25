@@ -109,8 +109,7 @@ export class UndefinedVariable extends RuntimeSourceError {
   public elaborate() {
     return `Before you can read the value of ${
       this.name
-    }, you need to declare it as a variable or a constant.
-		You can do this using the let or const keywords.`
+    }, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
   }
 }
 
