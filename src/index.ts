@@ -44,6 +44,10 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
   return errorMessagesArr.join('\n')
 }
 
+export function verboseEnabled() {
+  return verboseErrors
+}
+
 export function runInContext(
   code: string,
   context: Context,
