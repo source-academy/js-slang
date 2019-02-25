@@ -38,14 +38,6 @@ JavaScript
 \item \verb#math_sqrt#\texttt{(n)}: Returns the square root of the \emph{number} \texttt{n}.
 \end{itemize}
 \item \texttt{runtime()}: Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
-\item \texttt{display(a)}: Displays \emph{any} value \texttt{a} in the console; returns the argument \texttt{a}.
-\item \texttt{error(a)}: Displays \emph{any} value \texttt{a} in the console with error flag. The evaluation
-  of any call of \texttt{error} aborts the running program immediately.
-\item \texttt{prompt(s)}: Pops up a window that displays the \emph{string} \texttt{s}, provides
-an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' button. The call of \texttt{prompt}
-suspends execution of the program until one of the two buttons is pressed. If 
-the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
-If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
 \item \verb#parse_int#\texttt{(s, i)}:
 interprets the \emph{string} \texttt{s} as an integer, using the positive integer \texttt{i} as radix, and returns the respective value,
 see \href{https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
@@ -53,6 +45,18 @@ see \href{https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parsein
 NaN (``Not a Number'') and Infinity values, respectively.
 \item \verb#is_boolean#\texttt{(x)}, \verb#is_number#\texttt{(x)}, \verb#is_string#\texttt{(x)}, \verb#is_function#\texttt{(x)}:
         return \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. Following
-  JavaScript, we specify that \verb#is_number# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
+        JavaScript, we specify that \verb#is_number# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
+\item \texttt{prompt(s)}: Pops up a window that displays the \emph{string} \texttt{s}, provides
+an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' button. The call of \texttt{prompt}
+suspends execution of the program until one of the two buttons is pressed. If 
+the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
+If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
+\item \texttt{display(x)}: Displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{a}.  
+\item \texttt{error(x)}: Displays the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+  of any call of \texttt{error} aborts the running program immediately.
+\item \verb#stringify#\texttt{(x)}: returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
 \end{itemize}
-All Source built-in functions can be assumed to run in $O(1)$ time.
+All Source built-in functions, except \verb#stringify#, can be assumed to run
+in $O(1)$ time, except \texttt{display}, \texttt{error} and \texttt{stringify}, 
+which run in $O(n)$ time, where $n$ is
+the size (number of components such as pairs) of their argument.
