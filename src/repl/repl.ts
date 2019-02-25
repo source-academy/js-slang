@@ -1,5 +1,3 @@
-// change repl chapter here
-
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
 import { createContext, parseError, runInContext } from '../index'
 
