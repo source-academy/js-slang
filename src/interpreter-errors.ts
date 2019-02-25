@@ -129,7 +129,7 @@ export class UnassignedVariable extends RuntimeSourceError {
       this.name
     }. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${
       this.name
-    } in the same scope. `
+    } in the same scope.`
   }
 }
 
