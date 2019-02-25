@@ -214,7 +214,8 @@ test('Error when calling non function value null', () => {
   return expectParsedError(stripIndent`
     null();
   `).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed. null literals are not allowed
+"Line 1, Column 0: null literals are not allowed
+null literals are not allowed
 "
 `)
 })

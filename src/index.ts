@@ -36,7 +36,7 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     if (verbose) {
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
-      return `Line ${line}, Column ${column}: ${explanation}. ${elaboration}\n`
+      return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
       return `Line ${line}: ${explanation}`
     }

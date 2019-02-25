@@ -76,12 +76,14 @@ Object {
 `;
 
 exports[`Error when assigning to builtin - verbose 1`] = `
-"Line 2, Column 0: Cannot assign new value to constant map. TODO
+"Line 2, Column 0: Cannot assign new value to constant map
+TODO
 "
 `;
 
 exports[`Error when assigning to builtin - verbose 2`] = `
-"Line 2, Column 0: Cannot assign new value to constant undefined. TODO
+"Line 2, Column 0: Cannot assign new value to constant undefined
+TODO
 "
 `;
 
@@ -108,7 +110,8 @@ map = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map. TODO
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -139,7 +142,8 @@ undefined = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined. TODO
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -334,7 +338,8 @@ f(1, 2);",
 `;
 
 exports[`Error when calling non function value "string" - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value \\"string\\". TODO
+"Line 2, Column 2: Calling non-function value \\"string\\"
+TODO
 "
 `;
 
@@ -361,7 +366,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\". TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\"
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -399,7 +405,8 @@ Object {
 `;
 
 exports[`Error when calling non function value 0 - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value 0. TODO
+"Line 2, Column 2: Calling non-function value 0
+TODO
 "
 `;
 
@@ -426,7 +433,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value 0. TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -464,7 +472,8 @@ Object {
 `;
 
 exports[`Error when calling non function value array - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value [1]. TODO
+"Line 2, Column 0: Calling non-function value [1]
+TODO
 "
 `;
 
@@ -493,7 +502,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]. TODO
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -533,7 +543,8 @@ Object {
 `;
 
 exports[`Error when calling non function value null - verbose 1`] = `
-"Line 2, Column 2: null literals are not allowed. null literals are not allowed
+"Line 2, Column 2: null literals are not allowed
+null literals are not allowed
 "
 `;
 
@@ -566,7 +577,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: null literals are not allowed. null literals are not allowed
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed
+null literals are not allowed
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -602,7 +614,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 1, Column 0: null literals are not allowed. null literals are not allowed
+  "parsedErrors": "Line 1, Column 0: null literals are not allowed
+null literals are not allowed
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -611,7 +624,8 @@ Object {
 `;
 
 exports[`Error when calling non function value object - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value {\\"a\\": 1}. TODO
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
+TODO
 "
 `;
 
@@ -640,7 +654,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}. TODO
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -680,7 +695,8 @@ Object {
 `;
 
 exports[`Error when calling non function value true - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value true. TODO
+"Line 2, Column 2: Calling non-function value true
+TODO
 "
 `;
 
@@ -707,7 +723,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value true. TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -745,7 +762,8 @@ Object {
 `;
 
 exports[`Error when calling non function value undefined - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value undefined. TODO
+"Line 2, Column 2: Calling non-function value undefined
+TODO
 "
 `;
 
@@ -772,7 +790,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined. TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined
+TODO
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -1303,8 +1322,8 @@ Object {
 `;
 
 exports[`Undefined variable error is thrown - verbose 1`] = `
-"Line 2, Column 0: Name im_undefined not declared. Before you can read the value of im_undefined, you need to declare it as a variable or a constant.
-		You can do this using the let or const keywords.
+"Line 2, Column 0: Name im_undefined not declared
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 "
 `;
 
@@ -1331,8 +1350,8 @@ im_undefined;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared. Before you can read the value of im_undefined, you need to declare it as a variable or a constant.
-		You can do this using the let or const keywords.
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 ",
   "result": undefined,
   "resultStatus": "error",
