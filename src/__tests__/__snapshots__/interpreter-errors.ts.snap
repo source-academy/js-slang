@@ -967,6 +967,74 @@ Object {
 }
 `;
 
+exports[`Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "12
+*
+'string';",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with non boolean in if statement, error line at if statement, not at 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (
+1
+) {
+  2;
+} else {}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Undefined variable error is thrown: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
