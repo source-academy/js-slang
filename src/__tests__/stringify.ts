@@ -488,7 +488,7 @@ test('String representation with custom indent', () => {
     stripIndent`
   stringify(parse('x=>x;'), ' ... ');
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
 "[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
@@ -513,7 +513,7 @@ test('String representation with long custom indent gets trimmed to 10 character
     stripIndent`
   stringify(parse('x=>x;'), '.................................');
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
 "[.........{.........\\"tag\\": \\"function_definition\\",
 ....................\\"parameters\\":
