@@ -7,10 +7,17 @@ import {
   stripIndent
 } from '../utils/testing'
 
+// TODO: fix wording (parse error and detect reference error in native)
 test('Undefined variable error is thrown', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     im_undefined;
-  `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`
+"native:\\"Line 1: ReferenceError: im_undefined is not defined\\"
+interpreted:\\"Line 1: Name im_undefined not declared\\""
+`)
 })
 
 test('Error when assigning to builtin', () => {
@@ -167,13 +174,10 @@ test('Infinite recursion of mutually recursive functions', () => {
 test('Error when calling non function value undefined', () => {
   return expectParsedError(
     stripIndent`
-    (() => undefined())();
+    undefined();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
-interpreted:\\"Line 1: Calling non-function value undefined\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
 })
 
 test('Error when calling non function value null', () => {
@@ -183,21 +187,30 @@ test('Error when calling non function value null', () => {
 })
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     true();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
 })
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     0();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
 })
 
 test('Error when calling non function value "string"', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     'string'();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
 })
 
 test('Error when calling non function value array', () => {
@@ -205,7 +218,7 @@ test('Error when calling non function value array', () => {
     stripIndent`
     [1]();
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
@@ -219,35 +232,58 @@ test('Error when calling non function value object', () => {
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f();
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f();
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+})
+
+test('Error when calling arrow function in tail call with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1"`)
 })
 
 test('Error when redeclaring constant', () => {
@@ -633,7 +669,7 @@ test('Type error with non boolean in if statement, error line at if statement, n
       2;
     } else {}
     `,
-    { chapter: 1 }
+    { chapter: 1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 

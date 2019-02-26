@@ -5,6 +5,7 @@ import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
+import * as operators from './utils/operators'
 import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
@@ -31,7 +32,7 @@ export const createEmptyContext = <T>(
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     builtins: new Map(),
     globals: new Map(),
-    operators: new Map(),
+    operators: new Map(Object.entries(operators)),
     properTailCalls
   })
   return {

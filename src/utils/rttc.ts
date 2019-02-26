@@ -24,7 +24,7 @@ export class TypeError extends RuntimeSourceError {
 }
 
 // We need to define our own typeof in order for null/array to display properly in error messages
-const typeOf = (v: Value) => {
+export const typeOf = (v: Value) => {
   if (v === null) {
     return 'null'
   } else if (Array.isArray(v)) {
@@ -34,11 +34,11 @@ const typeOf = (v: Value) => {
   }
 }
 
-const isNumber = (v: Value) => typeOf(v) === 'number'
-const isString = (v: Value) => typeOf(v) === 'string'
-const isBool = (v: Value) => typeOf(v) === 'boolean'
-const isObject = (v: Value) => typeOf(v) === 'object'
-const isArray = (v: Value) => typeOf(v) === 'array'
+export const isNumber = (v: Value) => typeOf(v) === 'number'
+export const isString = (v: Value) => typeOf(v) === 'string'
+export const isBool = (v: Value) => typeOf(v) === 'boolean'
+export const isObject = (v: Value) => typeOf(v) === 'object'
+export const isArray = (v: Value) => typeOf(v) === 'array'
 
 export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, value: Value) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
