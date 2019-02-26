@@ -1,3 +1,4 @@
+import { BinaryOperator, UnaryOperator } from 'estree'
 import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
 import { Value } from '../types'
 import * as create from './astCreator'
@@ -33,40 +34,40 @@ export function itselfIfBooleanElseError(candidate: any, line: number, column: n
   }
 }
 
-export function evaluateBinaryExpression(operator: string, left: Value, right: Value) {
+export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
+  if (operator === '!') {
+    return !value
+  } else if (operator === '-') {
+    return -value
+  } else {
+    return +value
+  }
+}
+
+export function evaluateBinaryExpression(operator: BinaryOperator, left: Value, right: Value) {
   switch (operator) {
     case '+':
       return left + right
     case '-':
       return left - right
-
     case '*':
       return left * right
-
     case '/':
       return left / right
-
     case '%':
       return left % right
-
     case '===':
       return left === right
-
     case '!==':
       return left !== right
-
     case '<=':
       return left <= right
-
     case '<':
       return left < right
-
     case '>':
       return left > right
-
     case '>=':
       return left >= right
-
     default:
       return undefined
   }

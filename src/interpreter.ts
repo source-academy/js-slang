@@ -5,7 +5,7 @@ import * as constants from './constants'
 import * as errors from './interpreter-errors'
 import { Context, Environment, Frame, Value } from './types'
 import { createNode } from './utils/node'
-import { evaluateBinaryExpression } from './utils/operators'
+import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
 class BreakValue {}
@@ -304,14 +304,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (error) {
       return handleRuntimeError(context, error)
     }
-
-    if (node.operator === '!') {
-      return !value
-    } else if (node.operator === '-') {
-      return -value
-    } else {
-      return +value
-    }
+    return evaluateUnaryExpression(node.operator, value)
   },
 
   *BinaryExpression(node: es.BinaryExpression, context: Context) {
