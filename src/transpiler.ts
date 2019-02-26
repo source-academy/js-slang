@@ -121,13 +121,30 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
   return statements
 }
 
-function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
+function generateFunctionsToStringMap(program: es.Program) {
+  const map: Map<es.Node, string> = new Map()
+  simple(program, {
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      map.set(node, generate(node))
+    },
+    FunctionDeclaration(node: es.FunctionDeclaration) {
+      map.set(node, generate(node))
+    }
+  })
+  return map
+}
+
+function transformFunctionDeclarationsToArrowFunctions(
+  program: es.Program,
+  functionsToStringMap: Map<es.Node, string>
+) {
   simple(program, {
     FunctionDeclaration(node) {
       const { id, params, body } = node as es.FunctionDeclaration
       node.type = 'VariableDeclaration'
       node = node as es.VariableDeclaration
       const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body)
+      functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!)
       node.declarations = [
         {
           type: 'VariableDeclarator',
@@ -153,13 +170,19 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
  * to allow for iterative processes to take place
  */
 
-function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program) {
+function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
+  program: es.Program,
+  functionsToStringMap: Map<es.Node, string>
+) {
   simple(program, {
     ArrowFunctionExpression(node) {
       const originalNode = { ...node }
       node.type = 'CallExpression'
       const transformedNode = node as es.CallExpression
-      transformedNode.arguments = [originalNode as es.ArrowFunctionExpression]
+      transformedNode.arguments = [
+        originalNode as es.ArrowFunctionExpression,
+        create.literal(functionsToStringMap.get(node)! || 'nothing')
+      ]
       transformedNode.callee = create.memberExpression(
         createStorageLocationAstFor('properTailCalls'),
         'wrap'
@@ -167,7 +190,6 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program
     }
   })
 }
-
 /**
  * Transforms all return statements (including expression arrow functions) to return an intermediate value
  * return nonFnCall + 1;
@@ -358,11 +380,12 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   if (statements.length === 0) {
     return ''
   }
+  const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformTernaryIfAndLogicalsToCheckIfBoolean(program)
-  transformFunctionDeclarationsToArrowFunctions(program)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program)
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   const declarationToAccessNativeStorage = create.constantDeclaration(
     nativeStorageUniqueId,
     create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)

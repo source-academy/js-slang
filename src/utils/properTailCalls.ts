@@ -44,8 +44,10 @@ export const callIteratively = (f: any, ...args: any[]) => {
   }
 }
 
-export const wrap = (f: (...args: any[]) => any) => {
+export const wrap = (f: (...args: any[]) => any, stringified: string) => {
   const wrapped = (...args: any[]) => callIteratively(f, ...args)
   wrapped.transformedFunction = f
+  wrapped[Symbol.toStringTag] = () => stringified
+  wrapped.toString = () => stringified
   return wrapped
 }
