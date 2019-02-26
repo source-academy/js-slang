@@ -53,7 +53,7 @@ export function runInContext(
     if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
       const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
       const theDirective = (firstLineOfProgram as Directive).directive
-      if (theDirective) {
+      if (theDirective !== undefined) {
         return theDirective
       }
     }
