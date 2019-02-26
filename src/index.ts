@@ -40,14 +40,20 @@ export function parseError(errors: SourceError[]): string {
 }
 
 function convertNativeErrorToSourceError(
-  error: Error, line: number | null, column: number | null, name: string | null) {
+  error: Error,
+  line: number | null,
+  column: number | null,
+  name: string | null
+) {
   // brute-forced from MDN website for phrasing of errors from different browsers
   // FWIW node and chrome uses V8 so they'll have the same error messages
   // unable to test on other engines
-  const assignmentToConst = ['invalid assignment to const',
+  const assignmentToConst = [
+    'invalid assignment to const',
     'Assignment to constant variable',
     'Assignment to const',
-    'Redeclaration of const']
+    'Redeclaration of const'
+  ]
   const undefinedVariable = ['is not defined']
 
   const message = error.message
@@ -68,9 +74,9 @@ function convertNativeErrorToSourceError(
       line === null || column === null
         ? UNKNOWN_LOCATION
         : {
-          start: { line, column },
-          end: { line: -1, column: -1 }
-        }
+            start: { line, column },
+            end: { line: -1, column: -1 }
+          }
     return new ExceptionError(error, location)
   }
 }
@@ -119,11 +125,17 @@ export function runInContext(
           line === 1 ? lastStatementSourceMapJson : sourceMapJson,
           null,
           consumer => {
-            const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor({
+            const {
+              line: originalLine,
+              column: originalColumn,
+              name
+            } = consumer.originalPositionFor({
               line,
               column
             })
-            context.errors.push(convertNativeErrorToSourceError(error, originalLine, originalColumn, name))
+            context.errors.push(
+              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+            )
             return resolvedErrorPromise
           }
         )

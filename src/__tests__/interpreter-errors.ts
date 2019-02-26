@@ -177,9 +177,12 @@ test('Error when calling non function value undefined', () => {
 })
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     null();
-  `, {native: true}).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
 })
 
 test('Error when calling non function value true', () => {

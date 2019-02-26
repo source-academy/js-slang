@@ -53,7 +53,11 @@ test('Builtins hide their implementation when toString', () => {
 })
 
 test('Objects toString matches up with JS', () => {
-  return expectToMatchJS('toString({a: 1});', { chapter: 100, native: true, testBuiltins: { toString } })
+  return expectToMatchJS('toString({a: 1});', {
+    chapter: 100,
+    native: true,
+    testBuiltins: { toString }
+  })
 })
 
 test('Arrays toString matches up with JS', () => {
@@ -92,10 +96,13 @@ test('primitives toString matches up with JS', () => {
 })
 
 test('Factorial arrow function', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
-  `, {native: true}).toBe(120)
+  `,
+    { native: true }
+  ).toBe(120)
 })
 
 test('parseError for missing semicolon', () => {
@@ -270,37 +277,49 @@ test('Test equal for different lists', () => {
 })
 
 test('true if with empty if works', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     if (true) {
     } else {
     }
-  `, { native: true }).toBe(undefined)
+  `,
+    { native: true }
+  ).toBe(undefined)
 })
 
 test('true if with nonempty if works', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     if (true) {
       1;
     } else {
     }
-  `, { native: true }).toBe(1)
+  `,
+    { native: true }
+  ).toBe(1)
 })
 
 test('false if with empty else works', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     if (false) {
     } else {
     }
-  `, { native: true }).toBe(undefined)
+  `,
+    { native: true }
+  ).toBe(undefined)
 })
 
 test('false if with nonempty if works', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     if (false) {
     } else {
       2;
     }
-  `, { native: true }).toBe(2)
+  `,
+    { native: true }
+  ).toBe(2)
 })
 
 test('test true conditional expression', () => {
