@@ -703,6 +703,15 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
     *
     'string';
     `,
-    { chapter: 1 }
+    { chapter: 1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
+})
+
+test('Type error with invalid unary operation', () => {
+  return expectParsedError(
+    stripIndent`
+    -'';
+    `,
+    { chapter: 1, native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Expected number, got string."`)
 })

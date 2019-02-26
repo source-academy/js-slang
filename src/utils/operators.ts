@@ -1,6 +1,5 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
 import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
-import { Value } from '../types'
 import * as create from './astCreator'
 import * as rttc from './rttc'
 
@@ -34,6 +33,24 @@ export function itselfIfBooleanElseError(candidate: any, line: number, column: n
   }
 }
 
+export function evaluateUnaryExpressionIfValidElseError(
+  operator: UnaryOperator,
+  argument: any,
+  line: number,
+  column: number
+) {
+  const error = rttc.checkUnaryExpression(
+    create.locationDummyNode(line, column),
+    operator,
+    argument
+  )
+  if (error === undefined) {
+    return evaluateUnaryExpression(operator, argument)
+  } else {
+    throw error
+  }
+}
+
 export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
   if (operator === '!') {
     return !value
@@ -44,7 +61,27 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
   }
 }
 
-export function evaluateBinaryExpression(operator: BinaryOperator, left: Value, right: Value) {
+export function evaluateBinaryExpressionIfValidElseError(
+  operator: BinaryOperator,
+  left: any,
+  right: any,
+  line: number,
+  column: number
+) {
+  const error = rttc.checkBinaryExpression(
+    create.locationDummyNode(line, column),
+    operator,
+    left,
+    right
+  )
+  if (error === undefined) {
+    return evaluateBinaryExpression(operator, left, right)
+  } else {
+    throw error
+  }
+}
+
+export function evaluateBinaryExpression(operator: BinaryOperator, left: any, right: any) {
   switch (operator) {
     case '+':
       return left + right

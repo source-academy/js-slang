@@ -372,6 +372,44 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   ]
 }
 
+function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
+  simple(program, {
+    BinaryExpression(node) {
+      const { line, column } = node.loc!.start
+      const { operator, left, right } = node as es.BinaryExpression
+      node = node as es.CallExpression
+      node.type = 'CallExpression'
+      node.callee = createGetFromStorageLocationAstFor(
+        'evaluateBinaryExpressionIfValidElseError',
+        'operators'
+      )
+      node.arguments = [
+        create.literal(operator),
+        left,
+        right,
+        create.literal(line),
+        create.literal(column)
+      ]
+    },
+    UnaryExpression(node) {
+      const { line, column } = node.loc!.start
+      const { operator, argument } = node as es.UnaryExpression
+      node = node as es.CallExpression
+      node.type = 'CallExpression'
+      node.callee = createGetFromStorageLocationAstFor(
+        'evaluateUnaryExpressionIfValidElseError',
+        'operators'
+      )
+      node.arguments = [
+        create.literal(operator),
+        argument,
+        create.literal(line),
+        create.literal(column)
+      ]
+    }
+  })
+}
+
 export function transpile(untranformedProgram: es.Program, id: number) {
   contextId = id
   refreshLatestNatives(untranformedProgram)
@@ -383,6 +421,7 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformTernaryIfAndLogicalsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)

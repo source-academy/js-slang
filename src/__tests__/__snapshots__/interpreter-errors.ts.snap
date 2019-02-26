@@ -1048,6 +1048,37 @@ Object {
 }
 `;
 
+exports[`Type error with invalid unary operation: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "-'';",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected number, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Type error with non boolean in if statement, error line at if statement, not at 1: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
