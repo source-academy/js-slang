@@ -5,6 +5,7 @@ import * as constants from './constants'
 import * as errors from './interpreter-errors'
 import { Context, Environment, Frame, Value } from './types'
 import { createNode } from './utils/node'
+import { evaluateBinaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
 class BreakValue {}
@@ -321,45 +322,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (error) {
       return handleRuntimeError(context, error)
     }
-    let result
-    switch (node.operator) {
-      case '+':
-        result = left + right
-        break
-      case '-':
-        result = left - right
-        break
-      case '*':
-        result = left * right
-        break
-      case '/':
-        result = left / right
-        break
-      case '%':
-        result = left % right
-        break
-      case '===':
-        result = left === right
-        break
-      case '!==':
-        result = left !== right
-        break
-      case '<=':
-        result = left <= right
-        break
-      case '<':
-        result = left < right
-        break
-      case '>':
-        result = left > right
-        break
-      case '>=':
-        result = left >= right
-        break
-      default:
-        result = undefined
-    }
-    return result
+    return evaluateBinaryExpression(node.operator, left, right)
   },
 
   *ConditionalExpression(node: es.ConditionalExpression, context: Context) {

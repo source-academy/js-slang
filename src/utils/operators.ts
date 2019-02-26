@@ -1,4 +1,5 @@
 import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
+import { Value } from '../types'
 import * as create from './astCreator'
 import * as rttc from './rttc'
 
@@ -29,5 +30,44 @@ export function itselfIfBooleanElseError(candidate: any, line: number, column: n
     return candidate
   } else {
     throw error
+  }
+}
+
+export function evaluateBinaryExpression(operator: string, left: Value, right: Value) {
+  switch (operator) {
+    case '+':
+      return left + right
+    case '-':
+      return left - right
+
+    case '*':
+      return left * right
+
+    case '/':
+      return left / right
+
+    case '%':
+      return left % right
+
+    case '===':
+      return left === right
+
+    case '!==':
+      return left !== right
+
+    case '<=':
+      return left <= right
+
+    case '<':
+      return left < right
+
+    case '>':
+      return left > right
+
+    case '>=':
+      return left >= right
+
+    default:
+      return undefined
   }
 }
