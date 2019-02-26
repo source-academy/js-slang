@@ -44,53 +44,55 @@ export function runInContext(
   const program = parse(code, context)
   if (program) {
     if (theOptions.isNativeRunnable) {
+      let transpiled
+      let sourceMapJson
+      let lastStatementSourceMapJson
       try {
-        const [transpiled, sourceMapJson, lastStatementSourceMapJson] = transpile(
-          program,
-          context.contextId
-        )
-
-        try {
-          return Promise.resolve({
-            status: 'finished',
-            value: sandboxedEval(transpiled)
-          } as Result)
-        } catch (error) {
-          if (error instanceof RuntimeSourceError) {
-            context.errors.push(error)
-            return resolvedErrorPromise
-          }
-          const errorStack = error.stack
-          const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-          if (match === null) {
-            context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-            return resolvedErrorPromise
-          }
-          const line = Number(match![1])
-          const column = Number(match![2])
-          return SourceMapConsumer.with(
-            line === 1 ? lastStatementSourceMapJson : sourceMapJson,
-            null,
-            consumer => {
-              const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
-                line,
-                column
-              })
-              const location =
-                line === null
-                  ? UNKNOWN_LOCATION
-                  : {
-                      start: { line: originalLine!, column: originalColumn! },
-                      end: { line: -1, column: -1 }
-                    }
-              context.errors.push(new ExceptionError(error, location))
-              return resolvedErrorPromise
-            }
-          )
-        }
+        const temp = transpile(program, context.contextId)
+        // some issues with formatting and semicolons and tslint so
+        transpiled = temp[0]
+        sourceMapJson = temp[1]
+        lastStatementSourceMapJson = temp[2]
+        return Promise.resolve({
+          status: 'finished',
+          value: sandboxedEval(transpiled)
+        } as Result)
       } catch (error) {
-        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-        return resolvedErrorPromise
+        if (error instanceof RuntimeSourceError) {
+          context.errors.push(error)
+          return resolvedErrorPromise
+        }
+        const errorStack = error.stack
+        const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
+        if (
+          match === null ||
+          sourceMapJson === undefined ||
+          lastStatementSourceMapJson === undefined
+        ) {
+          context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+          return resolvedErrorPromise
+        }
+        const line = Number(match![1])
+        const column = Number(match![2])
+        return SourceMapConsumer.with(
+          line === 1 ? lastStatementSourceMapJson : sourceMapJson,
+          null,
+          consumer => {
+            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
+              line,
+              column
+            })
+            const location =
+              line === null
+                ? UNKNOWN_LOCATION
+                : {
+                    start: { line: originalLine!, column: originalColumn! },
+                    end: { line: -1, column: -1 }
+                  }
+            context.errors.push(new ExceptionError(error, location))
+            return resolvedErrorPromise
+          }
+        )
       }
     } else {
       const it = evaluate(program, context)

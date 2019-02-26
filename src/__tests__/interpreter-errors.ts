@@ -292,7 +292,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -302,7 +302,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -312,7 +312,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -322,11 +322,11 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-test('Runtime error when redeclaring constant', () => {
+test('Runtime error when redeclaring constant in interpreter', () => {
   const code1 = `
     const f = x => x;
   `
@@ -344,6 +344,30 @@ test('Runtime error when redeclaring constant', () => {
       expect(parseError(context.errors)).toMatchSnapshot()
     })
   })
+})
+
+test('Runtime error when redeclaring constant in native', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+    obj1 => {
+      expect(obj1).toMatchSnapshot()
+      expect(obj1.status).toBe('finished')
+      expect(parseError(context.errors)).toMatchSnapshot()
+      return runInContext(code2, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+        obj2 => {
+          expect(obj2).toMatchSnapshot()
+          expect(obj2.status).toBe('error')
+          expect(parseError(context.errors)).toMatchSnapshot()
+        }
+      )
+    }
+  )
 })
 
 test('Runtime error when redeclaring constant as variable', () => {
