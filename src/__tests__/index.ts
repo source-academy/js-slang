@@ -36,7 +36,7 @@ test('Arrow function definition returns itself', () => {
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expectResult('stringify(pair);', { chapter: 2 }).toMatchInlineSnapshot(`
+  return expectResult('stringify(pair);', { chapter: 2, native: true }).toMatchInlineSnapshot(`
 "function pair(left, right) {
 	[implementation hidden]
 }"
@@ -53,7 +53,7 @@ test('Builtins hide their implementation when toString', () => {
 })
 
 test('Objects toString matches up with JS', () => {
-  return expectToMatchJS('toString({a: 1});', { chapter: 100, testBuiltins: { toString } })
+  return expectToMatchJS('toString({a: 1});', { chapter: 100, native: true, testBuiltins: { toString } })
 })
 
 test('Arrays toString matches up with JS', () => {
@@ -72,7 +72,7 @@ test('functions toString (mostly) matches up with JS', () => {
   }
   toString(a=>b) + toString(f);
   `,
-    { testBuiltins: { toString } }
+    { native: true, testBuiltins: { toString } }
   )
 })
 
@@ -95,7 +95,7 @@ test('Factorial arrow function', () => {
   return expectResult(stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
-  `).toBe(120)
+  `, {native: true}).toBe(120)
 })
 
 test('parseError for missing semicolon', () => {
@@ -135,7 +135,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant"`)
 })
 
@@ -205,7 +205,7 @@ test('Functions passed into non-source functions remain equal', () => {
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: 1, testBuiltins: { 'identity(x)': (x: any) => x } }
+    { chapter: 1, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
   ).toBe(true)
 })
 
@@ -216,7 +216,7 @@ test('Simple object assignment and retrieval', () => {
     o.a = 1;
     o.a;
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toBe(1)
 })
 
@@ -229,7 +229,7 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toBe('string')
 })
 
@@ -274,7 +274,7 @@ test('true if with empty if works', () => {
     if (true) {
     } else {
     }
-  `).toBe(undefined)
+  `, { native: true }).toBe(undefined)
 })
 
 test('true if with nonempty if works', () => {
@@ -283,7 +283,7 @@ test('true if with nonempty if works', () => {
       1;
     } else {
     }
-  `).toBe(1)
+  `, { native: true }).toBe(1)
 })
 
 test('false if with empty else works', () => {
@@ -291,7 +291,7 @@ test('false if with empty else works', () => {
     if (false) {
     } else {
     }
-  `).toBe(undefined)
+  `, { native: true }).toBe(undefined)
 })
 
 test('false if with nonempty if works', () => {
@@ -300,53 +300,53 @@ test('false if with nonempty if works', () => {
     } else {
       2;
     }
-  `).toBe(2)
+  `, { native: true }).toBe(2)
 })
 
 test('test true conditional expression', () => {
-  return expectToMatchJS('true ? true : false;')
+  return expectToMatchJS('true ? true : false;', { native: true })
 })
 
 test('test false conditional expression', () => {
-  return expectToMatchJS('false ? true : false;')
+  return expectToMatchJS('false ? true : false;', { native: true })
 })
 
 test('test false && true', () => {
-  return expectToMatchJS('false && true;')
+  return expectToMatchJS('false && true;', { native: true })
 })
 
 test('test false && false', () => {
-  return expectToMatchJS('false && false;')
+  return expectToMatchJS('false && false;', { native: true })
 })
 
 test('test true && false', () => {
-  return expectToMatchJS('true && false;')
+  return expectToMatchJS('true && false;', { native: true })
 })
 
 test('test true && true', () => {
-  return expectToMatchJS('true && true;')
+  return expectToMatchJS('true && true;', { native: true })
 })
 
 test('test && shortcircuiting', () => {
-  return expectToMatchJS('false && 1();')
+  return expectToMatchJS('false && 1();', { native: true })
 })
 
 test('test false || true', () => {
-  return expectToMatchJS('false || true;')
+  return expectToMatchJS('false || true;', { native: true })
 })
 
 test('test false || false', () => {
-  return expectToMatchJS('false || false;')
+  return expectToMatchJS('false || false;', { native: true })
 })
 
 test('test true || false', () => {
-  return expectToMatchJS('true || false;')
+  return expectToMatchJS('true || false;', { native: true })
 })
 
 test('test true || true', () => {
-  return expectToMatchJS('true || true;')
+  return expectToMatchJS('true || true;', { native: true })
 })
 
 test('test || shortcircuiting', () => {
-  return expectToMatchJS('true || 1();')
+  return expectToMatchJS('true || 1();', { native: true })
 })

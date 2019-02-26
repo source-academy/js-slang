@@ -7,17 +7,13 @@ import {
   stripIndent
 } from '../utils/testing'
 
-// TODO: fix wording (parse error and detect reference error in native)
 test('Undefined variable error is thrown', () => {
   return expectParsedError(
     stripIndent`
     im_undefined;
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line 1: ReferenceError: im_undefined is not defined\\"
-interpreted:\\"Line 1: Name im_undefined not declared\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
 })
 
 test('Error when assigning to builtin', () => {
@@ -25,7 +21,7 @@ test('Error when assigning to builtin', () => {
     stripIndent`
     map = 5;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant map"`)
 })
 
@@ -34,7 +30,7 @@ test('Error when assigning to builtin', () => {
     stripIndent`
     undefined = 5;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
 })
 
@@ -95,7 +91,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse_int("10");
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
   )
@@ -106,7 +102,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse("'");
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
@@ -118,7 +114,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     }
     map(f, list(1, 2));
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`"Line 2: Name a not declared"`)
 })
 
@@ -183,7 +179,7 @@ test('Error when calling non function value undefined', () => {
 test('Error when calling non function value null', () => {
   return expectParsedError(stripIndent`
     null();
-  `).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
+  `, {native: true}).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
 })
 
 test('Error when calling non function value true', () => {
