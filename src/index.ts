@@ -64,11 +64,7 @@ export function runInContext(
   context.errors = []
   const program = parse(code, context)
   if (program) {
-    if (getFirstLine(program) === 'enable verbose') {
-      verboseErrors = true
-    } else {
-      verboseErrors = false
-    }
+    verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
       try {
         return Promise.resolve({
