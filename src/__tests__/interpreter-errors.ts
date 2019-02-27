@@ -86,7 +86,7 @@ TODO
 })
 
 test('Assigning to builtin error message differs from verbose version', () => {
-  return expectDifferentParsedErrors(assignToBuiltin_1, assignToBuiltinVerbose_1).toBe(undefined)
+  return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1).toBe(undefined)
 })
 
 // NOTE: Obsoleted due to strict types on member access
