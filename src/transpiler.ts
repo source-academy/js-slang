@@ -3,12 +3,10 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import * as sourceMap from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-// import * as constants from "./constants";
 import * as errors from './interpreter-errors'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
 import * as random from './utils/random'
-// import * as rttc from "./utils/rttc";
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -223,9 +221,12 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
       case 'CallExpression':
         expression = expression as es.CallExpression
         const { line, column } = expression.loc!.start
+        const functionName =
+          expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
           create.property('function', expression.callee as es.Expression),
+          create.property('functionName', create.literal(functionName)),
           create.property('arguments', {
             type: 'ArrayExpression',
             elements: expression.arguments
@@ -272,23 +273,36 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
 }
 
 function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
-  const transform = (test: es.Expression, line: number, column: number) =>
-    create.callExpression(
+  function transform(
+    node:
+      | es.IfStatement
+      | es.ConditionalExpression
+      | es.LogicalExpression
+      | es.ForStatement
+      | es.WhileStatement
+  ) {
+    const { line, column } = node.loc!.start
+    const test = node.type === 'LogicalExpression' ? 'left' : 'test'
+    node[test] = create.callExpression(
       createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators'),
-      [test, create.literal(line), create.literal(column)]
+      [node[test], create.literal(line), create.literal(column)]
     )
+  }
   simple(program, {
     IfStatement(node: es.IfStatement) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
+      transform(node)
     },
     ConditionalExpression(node: es.ConditionalExpression) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
+      transform(node)
     },
     LogicalExpression(node: es.LogicalExpression) {
-      const { line, column } = node.loc!.start
-      node.left = transform(node.left, line, column)
+      transform(node)
+    },
+    ForStatement(node: es.ForStatement) {
+      transform(node)
+    },
+    WhileStatement(node: es.WhileStatement) {
+      transform(node)
     }
   })
 }
