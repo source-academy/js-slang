@@ -1,4 +1,4 @@
-import { SourceMapConsumer } from 'source-map'
+import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
@@ -92,8 +92,8 @@ export function runInContext(
   if (program) {
     if (theOptions.isNativeRunnable) {
       let transpiled
-      let sourceMapJson
-      let lastStatementSourceMapJson
+      let sourceMapJson: RawSourceMap
+      let lastStatementSourceMapJson: RawSourceMap
       try {
         const temp = transpile(program, context.contextId)
         // some issues with formatting and semicolons and tslint so
@@ -111,18 +111,14 @@ export function runInContext(
         }
         const errorStack = error.stack
         const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-        if (
-          match === null ||
-          sourceMapJson === undefined ||
-          lastStatementSourceMapJson === undefined
-        ) {
+        if (match === null) {
           context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
           return resolvedErrorPromise
         }
-        const line = Number(match![1])
-        const column = Number(match![2])
+        const line = Number(match[1])
+        const column = Number(match[2])
         return SourceMapConsumer.with(
-          line === 1 ? lastStatementSourceMapJson : sourceMapJson,
+          line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
             const {
