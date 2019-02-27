@@ -1,5 +1,5 @@
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
-import { UNKNOWN_LOCATION } from './constants'
+import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import {
@@ -81,6 +81,8 @@ function convertNativeErrorToSourceError(
   }
 }
 
+let previousCode = ''
+
 export function runInContext(
   code: string,
   context: Context,
@@ -91,6 +93,12 @@ export function runInContext(
   const program = parse(code, context)
   if (program) {
     if (theOptions.isNativeRunnable) {
+      if (previousCode === code) {
+        JSSLANG_PROPERTIES.maxExecTime *= 10
+      } else {
+        JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
+      }
+      previousCode = code
       let transpiled
       let sourceMapJson: RawSourceMap
       let lastStatementSourceMapJson: RawSourceMap

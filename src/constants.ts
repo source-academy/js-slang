@@ -13,3 +13,7 @@ export const UNKNOWN_LOCATION: es.SourceLocation = {
     column: -1
   }
 }
+export const JSSLANG_PROPERTIES = {
+  maxExecTime: 1000,
+  originalMaxExecTime: 1000
+}
