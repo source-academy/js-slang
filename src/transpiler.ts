@@ -173,17 +173,11 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   functionsToStringMap: Map<es.Node, string>
 ) {
   simple(program, {
-    ArrowFunctionExpression(node) {
-      const originalNode = { ...node }
-      node.type = 'CallExpression'
-      const transformedNode = node as es.CallExpression
-      transformedNode.arguments = [
-        originalNode as es.ArrowFunctionExpression,
-        create.literal(functionsToStringMap.get(node)! || 'nothing')
-      ]
-      transformedNode.callee = create.memberExpression(
-        createStorageLocationAstFor('properTailCalls'),
-        'wrap'
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      create.mutateToCallExpression(
+        node,
+        create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap'),
+        [{ ...node }, create.literal(functionsToStringMap.get(node)!)]
       )
     }
   })
@@ -203,21 +197,19 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
-        return {
-          type: 'LogicalExpression',
-          operator: expression.operator,
-          left: expression.left,
-          right: transformLogicalExpression(expression.right),
-          loc: expression.loc!
-        }
+        return create.logicalExpression(
+          expression.operator,
+          expression.left,
+          transformLogicalExpression(expression.right),
+          expression.loc!
+        )
       case 'ConditionalExpression':
-        return {
-          type: 'ConditionalExpression',
-          test: expression.test,
-          consequent: transformLogicalExpression(expression.consequent),
-          alternate: transformLogicalExpression(expression.alternate),
-          loc: expression.loc!
-        }
+        return create.conditionalExpression(
+          expression.test,
+          transformLogicalExpression(expression.consequent),
+          transformLogicalExpression(expression.alternate),
+          expression.loc!
+        )
       case 'CallExpression':
         expression = expression as es.CallExpression
         const { line, column } = expression.loc!.start
@@ -227,10 +219,10 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           create.property('isTail', create.literal(true)),
           create.property('function', expression.callee as es.Expression),
           create.property('functionName', create.literal(functionName)),
-          create.property('arguments', {
-            type: 'ArrayExpression',
-            elements: expression.arguments
-          }),
+          create.property(
+            'arguments',
+            create.arrayExpression(expression.arguments as es.Expression[])
+          ),
           create.property('line', create.literal(line)),
           create.property('column', create.literal(column))
         ])
@@ -258,21 +250,21 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
-      node.arguments = [
-        node.callee as es.Expression,
-        create.literal(line),
-        create.literal(column),
-        ...node.arguments
-      ]
-      node.callee = createGetFromStorageLocationAstFor(
-        'callIfFunctionAndRightArgumentsElseError',
-        'operators'
+      create.mutateToCallExpression(
+        node,
+        createGetFromStorageLocationAstFor('callIfFunctionAndRightArgumentsElseError', 'operators'),
+        [
+          node.callee as es.Expression,
+          create.literal(line),
+          create.literal(column),
+          ...(node.arguments as es.Expression[])
+        ]
       )
     }
   })
 }
 
-function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
+function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   function transform(
     node:
       | es.IfStatement
@@ -391,35 +383,20 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
     BinaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, left, right } = node as es.BinaryExpression
-      node = node as es.CallExpression
-      node.type = 'CallExpression'
-      node.callee = createGetFromStorageLocationAstFor(
-        'evaluateBinaryExpressionIfValidElseError',
-        'operators'
+      create.mutateToCallExpression(
+        node,
+        createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators'),
+        [create.literal(operator), left, right, create.literal(line), create.literal(column)]
       )
-      node.arguments = [
-        create.literal(operator),
-        left,
-        right,
-        create.literal(line),
-        create.literal(column)
-      ]
     },
     UnaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, argument } = node as es.UnaryExpression
-      node = node as es.CallExpression
-      node.type = 'CallExpression'
-      node.callee = createGetFromStorageLocationAstFor(
-        'evaluateUnaryExpressionIfValidElseError',
-        'operators'
+      create.mutateToCallExpression(
+        node,
+        createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators'),
+        [create.literal(operator), argument, create.literal(line), create.literal(column)]
       )
-      node.arguments = [
-        create.literal(operator),
-        argument,
-        create.literal(line),
-        create.literal(column)
-      ]
     }
   })
 }
@@ -436,7 +413,7 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
-  transformTernaryIfAndLogicalsToCheckIfBoolean(program)
+  transformSomeExpressionsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   const declarationToAccessNativeStorage = create.constantDeclaration(
