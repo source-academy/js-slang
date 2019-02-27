@@ -75,18 +75,6 @@ Object {
 }
 `;
 
-exports[`Error when assigning to builtin - verbose 1`] = `
-"Line 2, Column 0: Cannot assign new value to constant map
-TODO
-"
-`;
-
-exports[`Error when assigning to builtin - verbose 2`] = `
-"Line 2, Column 0: Cannot assign new value to constant undefined
-TODO
-"
-`;
-
 exports[`Error when assigning to builtin - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -337,12 +325,6 @@ f(1, 2);",
 }
 `;
 
-exports[`Error when calling non function value "string" - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value \\"string\\"
-TODO
-"
-`;
-
 exports[`Error when calling non function value "string" - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -404,12 +386,6 @@ Object {
 }
 `;
 
-exports[`Error when calling non function value 0 - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value 0
-TODO
-"
-`;
-
 exports[`Error when calling non function value 0 - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -469,12 +445,6 @@ Object {
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
-`;
-
-exports[`Error when calling non function value array - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value [1]
-TODO
-"
 `;
 
 exports[`Error when calling non function value array - verbose: expectParsedError 1`] = `
@@ -540,12 +510,6 @@ Object {
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
-`;
-
-exports[`Error when calling non function value null - verbose 1`] = `
-"Line 2, Column 2: null literals are not allowed
-null literals are not allowed
-"
 `;
 
 exports[`Error when calling non function value null - verbose: expectParsedError 1`] = `
@@ -623,12 +587,6 @@ null literals are not allowed
 }
 `;
 
-exports[`Error when calling non function value object - verbose 1`] = `
-"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
-TODO
-"
-`;
-
 exports[`Error when calling non function value object - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -694,12 +652,6 @@ Object {
 }
 `;
 
-exports[`Error when calling non function value true - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value true
-TODO
-"
-`;
-
 exports[`Error when calling non function value true - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -759,12 +711,6 @@ Object {
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
-`;
-
-exports[`Error when calling non function value undefined - verbose 1`] = `
-"Line 2, Column 2: Calling non-function value undefined
-TODO
-"
 `;
 
 exports[`Error when calling non function value undefined - verbose: expectParsedError 1`] = `
@@ -1319,12 +1265,6 @@ Object {
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
-`;
-
-exports[`Undefined variable error is thrown - verbose 1`] = `
-"Line 2, Column 0: Name im_undefined not declared
-Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
-"
 `;
 
 exports[`Undefined variable error is thrown - verbose: expectParsedError 1`] = `

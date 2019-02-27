@@ -17,7 +17,12 @@ test('Undefined variable error is thrown - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	im_undefined;
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 0: Name im_undefined not declared
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. \
+You can do this using the let or const keywords.
+"
+`)
 })
 
 test('Error when assigning to builtin', () => {
@@ -36,7 +41,11 @@ test('Error when assigning to builtin - verbose', () => {
 	  map = 5;
 	`,
     { chapter: 3 }
-  ).toMatchSnapshot()
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Cannot assign new value to constant map
+TODO
+"
+`)
 })
 
 test('Error when assigning to builtin', () => {
@@ -55,7 +64,11 @@ test('Error when assigning to builtin - verbose', () => {
 	  undefined = 5;
 	`,
     { chapter: 3 }
-  ).toMatchSnapshot()
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Cannot assign new value to constant undefined
+TODO
+"
+`)
 })
 
 // NOTE: Obsoleted due to strict types on member access
@@ -207,7 +220,11 @@ test('Error when calling non function value undefined - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	  undefined();
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value undefined
+TODO
+"
+`)
 })
 
 test('Error when calling non function value null', () => {
@@ -224,7 +241,11 @@ test('Error when calling non function value null - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	  null();
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 2: null literals are not allowed
+null literals are not allowed
+"
+`)
 })
 
 test('Error when calling non function value true', () => {
@@ -237,7 +258,11 @@ test('Error when calling non function value true - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	  true();
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value true
+TODO
+"
+`)
 })
 
 test('Error when calling non function value 0', () => {
@@ -250,7 +275,11 @@ test('Error when calling non function value 0 - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	  0();
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value 0
+TODO
+"
+`)
 })
 
 test('Error when calling non function value "string"', () => {
@@ -263,7 +292,11 @@ test('Error when calling non function value "string" - verbose', () => {
   return expectParsedError(stripIndent`
 	"enable verbose";
 	  'string'();
-	`).toMatchSnapshot()
+	`).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value \\"string\\"
+TODO
+"
+`)
 })
 
 test('Error when calling non function value array', () => {
@@ -282,7 +315,11 @@ test('Error when calling non function value array - verbose', () => {
 	  [1]();
 	`,
     { chapter: 3 }
-  ).toMatchSnapshot()
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value [1]
+TODO
+"
+`)
 })
 
 test('Error when calling non function value object', () => {
@@ -301,7 +338,11 @@ test('Error when calling non function value object - verbose', () => {
 	  ({a: 1})();
 	`,
     { chapter: 100 }
-  ).toMatchSnapshot()
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
+TODO
+"
+`)
 })
 
 test('Error when calling function with too few arguments', () => {
