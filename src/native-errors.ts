@@ -5,6 +5,14 @@ import { JSSLANG_PROPERTIES } from './constants'
 import { RuntimeSourceError } from './interpreter-errors'
 import { ErrorSeverity, ErrorType } from './types'
 
+function getWarningMessage() {
+  const from = JSSLANG_PROPERTIES.maxExecTime / 1000
+  const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy
+  return stripIndent`If you are certain your code is correct, press run again without editing your code.
+      The time limit will be increased from ${from} to ${to} seconds.
+      This page may be unresponsive for up to ${to} seconds if you do so.`
+}
+
 export class PotentialInfiniteLoopError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
@@ -14,10 +22,8 @@ export class PotentialInfiniteLoopError extends RuntimeSourceError {
   }
 
   public explain() {
-    const from = JSSLANG_PROPERTIES.maxExecTime
-    const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy * from
     return stripIndent`Potential infinite loop detected.
-      'If you are certain your code is correct, rerun the same code to increase the time limit from ${from} to ${to}.`
+    ${getWarningMessage()}`
   }
 
   public elaborate() {
@@ -35,14 +41,12 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
 
   public explain() {
     const formattedCalls = []
-    const from = JSSLANG_PROPERTIES.maxExecTime
-    const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy * from
     for (let i = 0; i < 3; i++) {
       const [executedName, executedArguments] = this.calls.pop()!
       formattedCalls.push(`${executedName}(${executedArguments})`)
     }
     return stripIndent`Potential infinite recursion detected: ${formattedCalls.join(' ... ')}.
-      If you are certain your code is correct, rerun the same code to increase the time limit from ${from} to ${to}.`
+      ${getWarningMessage()}`
   }
 
   public elaborate() {
