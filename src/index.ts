@@ -1,7 +1,5 @@
-// import { generate } from 'astring'
-import { SourceMapConsumer } from 'source-map'
+import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
-// import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import { ExceptionError, InterruptedError, RuntimeSourceError } from './interpreter-errors'
@@ -45,14 +43,14 @@ export function runInContext(
   if (program) {
     if (theOptions.isNativeRunnable) {
       let transpiled
-      let sourceMapJson
-      let lastStatementSourceMapJson
+      let sourceMapJson: RawSourceMap | undefined
+      let lastStatementSourceMapJson: RawSourceMap | undefined
       try {
         const temp = transpile(program, context.contextId)
-        // some issues with formatting and semicolons and tslint so
-        transpiled = temp[0]
-        sourceMapJson = temp[1]
-        lastStatementSourceMapJson = temp[2]
+        // some issues with formatting and semicolons and tslint so no destructure
+        transpiled = temp.transpiled
+        sourceMapJson = temp.codeMap
+        lastStatementSourceMapJson = temp.evalMap
         return Promise.resolve({
           status: 'finished',
           value: sandboxedEval(transpiled)
@@ -64,18 +62,14 @@ export function runInContext(
         }
         const errorStack = error.stack
         const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-        if (
-          match === null ||
-          sourceMapJson === undefined ||
-          lastStatementSourceMapJson === undefined
-        ) {
+        if (match === null) {
           context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
           return resolvedErrorPromise
         }
         const line = Number(match![1])
         const column = Number(match![2])
         return SourceMapConsumer.with(
-          line === 1 ? lastStatementSourceMapJson : sourceMapJson,
+          line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
             const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({

@@ -1,6 +1,7 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
+import { RawSourceMap } from 'source-map'
 import * as sourceMap from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 // import * as constants from "./constants";
@@ -190,6 +191,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
     }
   })
 }
+
 /**
  * Transforms all return statements (including expression arrow functions) to return an intermediate value
  * return nonFnCall + 1;
@@ -201,6 +203,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
+
 function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
@@ -349,9 +352,12 @@ function getStatementsToAppend(program: es.Program): es.Statement[] {
 
 function splitLastStatementIntoStorageOfResultAndAccessorPair(
   lastStatement: es.Statement
-): [es.Statement, es.Statement, {}?] {
+): { storage: es.Statement; lastLineToReturnResult: es.Statement; evalMap?: RawSourceMap } {
   if (lastStatement.type === 'VariableDeclaration') {
-    return [lastStatement, create.returnStatement(create.identifier('undefined'))]
+    return {
+      storage: lastStatement,
+      lastLineToReturnResult: create.returnStatement(create.identifier('undefined'))
+    }
   }
   const uniqueIdentifier = getUnqiueId()
   const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
@@ -365,11 +371,11 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   const returnStatementToReturnLastStatementResult = create.returnStatement(
     create.identifier(uniqueIdentifier)
   )
-  return [
-    uniqueDeclarationToStoreLastStatementResult,
-    returnStatementToReturnLastStatementResult,
-    map.toJSON()
-  ]
+  return {
+    storage: uniqueDeclarationToStoreLastStatementResult,
+    lastLineToReturnResult: returnStatementToReturnLastStatementResult,
+    evalMap: map.toJSON()
+  }
 }
 
 export function transpile(untranformedProgram: es.Program, id: number) {
@@ -378,7 +384,7 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   const program: es.Program = untranformedProgram
   const statements = program.body as es.Statement[]
   if (statements.length === 0) {
-    return ''
+    return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
@@ -393,24 +399,24 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
   const lastStatement = statements.pop() as es.Statement
-  const [
-    uniqueDeclarationToStoreLastStatementResult,
-    returnStatementToReturnLastStatementResult,
-    lastStatementSourceMap
-  ] = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+  const {
+    lastLineToReturnResult,
+    storage,
+    evalMap
+  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
   const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
     ...statementsToPrepend,
     ...statements,
-    uniqueDeclarationToStoreLastStatementResult,
+    storage,
     ...statementsToAppend,
-    returnStatementToReturnLastStatementResult
+    lastLineToReturnResult
   ])
   program.body = [declarationToAccessNativeStorage, wrapped]
 
   const map = new sourceMap.SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
-  const consumer = map.toJSON()
-  return [transpiled, consumer, lastStatementSourceMap]
+  const codeMap = map.toJSON()
+  return { transpiled, codeMap, evalMap }
 }
 
 /**
