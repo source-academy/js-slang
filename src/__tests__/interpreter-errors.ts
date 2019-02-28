@@ -7,17 +7,10 @@ import {
   stripIndent
 } from '../utils/testing'
 
-// TODO: fix wording (parse error and detect reference error in native)
 test('Undefined variable error is thrown', () => {
-  return expectParsedError(
-    stripIndent`
+  return expectParsedError(stripIndent`
     im_undefined;
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line 1: ReferenceError: im_undefined is not defined\\"
-interpreted:\\"Line 1: Name im_undefined not declared\\""
-`)
+  `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
 })
 
 test('Error when assigning to builtin', () => {
@@ -174,10 +167,13 @@ test('Infinite recursion of mutually recursive functions', () => {
 test('Error when calling non function value undefined', () => {
   return expectParsedError(
     stripIndent`
-    undefined();
+    (() => undefined())();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
+  ).toMatchInlineSnapshot(`
+"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
+interpreted:\\"Line 1: Calling non-function value undefined\\""
+`)
 })
 
 test('Error when calling non function value null', () => {
