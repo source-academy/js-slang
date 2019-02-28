@@ -133,6 +133,38 @@ Object {
 }
 `;
 
+exports[`Error when calling arrow function in tail call with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "expected": 0,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 0 arguments, but got 1",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling arrow function with too few arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -448,18 +480,18 @@ Object {
 exports[`Error when calling non function value undefined: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "(() => undefined())();",
+  "code": "undefined();",
   "displayResult": Array [],
   "errors": Array [
     CallingNonFunctionValue {
       "callee": undefined,
       "location": SourceLocation {
         "end": Position {
-          "column": 18,
+          "column": 11,
           "line": 1,
         },
         "start": Position {
-          "column": 7,
+          "column": 0,
           "line": 1,
         },
       },
@@ -467,8 +499,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "native:\\"Line -1: TypeError: Calling non-function value undefined\\"
-interpreted:\\"Line 1: Calling non-function value undefined\\"",
+  "parsedErrors": "Line 1: Calling non-function value undefined",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -653,23 +684,6 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant 1`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f"`;
-
 exports[`Runtime error when redeclaring constant as function 1`] = `
 Object {
   "status": "finished",
@@ -703,6 +717,40 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring constant in interpreter 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant in interpreter 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant in interpreter 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f"`;
+
+exports[`Runtime error when redeclaring constant in native 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant in native 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant in native 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f"`;
 
 exports[`Runtime error when redeclaring function 1`] = `
 Object {
@@ -961,6 +1009,74 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "12
+*
+'string';",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with non boolean in if statement, error line at if statement, not at 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (
+1
+) {
+  2;
+} else {}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
