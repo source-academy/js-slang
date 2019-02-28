@@ -167,13 +167,10 @@ test('Infinite recursion of mutually recursive functions', () => {
 test('Error when calling non function value undefined', () => {
   return expectParsedError(
     stripIndent`
-    (() => undefined())();
+    undefined();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
-interpreted:\\"Line 1: Calling non-function value undefined\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
 })
 
 test('Error when calling non function value null', () => {
@@ -183,21 +180,30 @@ test('Error when calling non function value null', () => {
 })
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     true();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
 })
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     0();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
 })
 
 test('Error when calling non function value "string"', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     'string'();
-  `).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
 })
 
 test('Error when calling non function value array', () => {
@@ -205,7 +211,7 @@ test('Error when calling non function value array', () => {
     stripIndent`
     [1]();
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
@@ -219,35 +225,58 @@ test('Error when calling non function value object', () => {
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f();
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f();
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+})
+
+test('Error when calling arrow function in tail call with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1"`)
 })
 
 test('Error when redeclaring constant', () => {
@@ -256,7 +285,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -266,7 +295,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -276,7 +305,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -286,11 +315,11 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-test('Runtime error when redeclaring constant', () => {
+test('Runtime error when redeclaring constant in interpreter', () => {
   const code1 = `
     const f = x => x;
   `
@@ -308,6 +337,30 @@ test('Runtime error when redeclaring constant', () => {
       expect(parseError(context.errors)).toMatchSnapshot()
     })
   })
+})
+
+test('Runtime error when redeclaring constant in native', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+    obj1 => {
+      expect(obj1).toMatchSnapshot()
+      expect(obj1.status).toBe('finished')
+      expect(parseError(context.errors)).toMatchSnapshot()
+      return runInContext(code2, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+        obj2 => {
+          expect(obj2).toMatchSnapshot()
+          expect(obj2.status).toBe('error')
+          expect(parseError(context.errors)).toMatchSnapshot()
+        }
+      )
+    }
+  )
 })
 
 test('Runtime error when redeclaring constant as variable', () => {
@@ -633,7 +686,7 @@ test('Type error with non boolean in if statement, error line at if statement, n
       2;
     } else {}
     `,
-    { chapter: 1 }
+    { chapter: 1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 
