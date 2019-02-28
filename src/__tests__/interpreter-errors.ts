@@ -623,3 +623,27 @@ test('Type error when assigning property of function', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
+
+test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
+  return expectParsedError(
+    stripIndent`
+    if (
+    1
+    ) {
+      2;
+    } else {}
+    `,
+    { chapter: 1 }
+  ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
+})
+
+test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
+  return expectParsedError(
+    stripIndent`
+    12
+    *
+    'string';
+    `,
+    { chapter: 1 }
+  ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
+})
