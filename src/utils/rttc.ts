@@ -24,7 +24,7 @@ export class TypeError extends RuntimeSourceError {
 }
 
 // We need to define our own typeof in order for null/array to display properly in error messages
-export const typeOf = (v: Value) => {
+const typeOf = (v: Value) => {
   if (v === null) {
     return 'null'
   } else if (Array.isArray(v)) {
