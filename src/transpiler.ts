@@ -1,15 +1,12 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { RawSourceMap } from 'source-map'
-import * as sourceMap from 'source-map'
+import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-// import * as constants from "./constants";
 import * as errors from './interpreter-errors'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
 import * as random from './utils/random'
-// import * as rttc from "./utils/rttc";
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -360,7 +357,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
     }
   }
   const uniqueIdentifier = getUnqiueId()
-  const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
+  const map = new SourceMapGenerator({ file: 'lastline' })
   const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
@@ -413,7 +410,7 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   ])
   program.body = [declarationToAccessNativeStorage, wrapped]
 
-  const map = new sourceMap.SourceMapGenerator({ file: 'source' })
+  const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }
