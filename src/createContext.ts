@@ -1,3 +1,5 @@
+// Variable determining chapter of Source is contained in this file.
+
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'

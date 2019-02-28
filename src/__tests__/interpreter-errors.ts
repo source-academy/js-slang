@@ -1,34 +1,92 @@
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import {
+  expectDifferentParsedErrors,
   expectParsedError,
   expectParsedErrorNoSnapshot,
   expectResult,
   stripIndent
 } from '../utils/testing'
 
+const undefinedVariable = stripIndent`
+im_undefined;
+`
+const undefinedVariableVerbose = stripIndent`
+"enable verbose";
+im_undefined;
+`
+
 test('Undefined variable error is thrown', () => {
-  return expectParsedError(stripIndent`
-    im_undefined;
-  `).toMatchInlineSnapshot(`"Line 1: Name im_undefined not declared"`)
+  return expectParsedError(undefinedVariable).toMatchInlineSnapshot(
+    `"Line 1: Name im_undefined not declared"`
+  )
 })
 
-test('Error when assigning to builtin', () => {
-  return expectParsedError(
-    stripIndent`
-    map = 5;
-  `,
-    { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant map"`)
+test('Undefined variable error is thrown - verbose', () => {
+  return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 0: Name im_undefined not declared
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. \
+You can do this using the let or const keywords.
+"
+`)
 })
 
+test('Undefined variable error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose).toBe(undefined)
+})
+
+const assignToBuiltin = stripIndent`
+map = 5;
+`
+
+const assignToBuiltinVerbose = stripIndent`
+  "enable verbose";
+  map = 5;
+`
+
 test('Error when assigning to builtin', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined = 5;
-  `,
-    { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot assign new value to constant undefined"`)
+  return expectParsedError(assignToBuiltin, { chapter: 3 }).toMatchInlineSnapshot(
+    `"Line 1: Cannot assign new value to constant map"`
+  )
+})
+
+test('Error when assigning to builtin - verbose', () => {
+  return expectParsedError(assignToBuiltinVerbose, { chapter: 3 }).toMatchInlineSnapshot(`
+"Line 2, Column 0: Cannot assign new value to constant map
+TODO
+"
+`)
+})
+
+test('Assigning to builtin error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(assignToBuiltin, assignToBuiltinVerbose).toBe(undefined)
+})
+
+const assignToBuiltin1 = stripIndent`
+undefined = 5;
+`
+
+const assignToBuiltinVerbose1 = stripIndent`
+  "enable verbose";
+  undefined = 5;
+`
+
+test('Error when assigning to builtin', () => {
+  return expectParsedError(assignToBuiltin1, { chapter: 3 }).toMatchInlineSnapshot(
+    `"Line 1: Cannot assign new value to constant undefined"`
+  )
+})
+
+test('Error when assigning to builtin - verbose', () => {
+  return expectParsedError(assignToBuiltinVerbose1, { chapter: 3 }).toMatchInlineSnapshot(`
+"Line 2, Column 0: Cannot assign new value to constant undefined
+TODO
+"
+`)
+})
+
+test('Assigning to builtin error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1).toBe(undefined)
 })
 
 // NOTE: Obsoleted due to strict types on member access
@@ -163,65 +221,218 @@ test('Infinite recursion of mutually recursive functions', () => {
   )
 })
 
+const callingNonFunctionValueUndefined = stripIndent`
+undefined();
+`
+
+const callingNonFunctionValueUndefinedVerbose = stripIndent`
+"enable verbose";
+  undefined();
+`
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
+  return expectParsedError(callingNonFunctionValueUndefined, {
+    native: true
+  }).toMatchInlineSnapshot('"Line 1: Calling non-function value undefined"')
 })
+
+test('Error when calling non function value undefined - verbose', () => {
+  return expectParsedError(callingNonFunctionValueUndefinedVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value undefined
+TODO
+"
+`)
+})
+
+test('Calling non function value undefined error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueUndefined,
+    callingNonFunctionValueUndefinedVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueNull = stripIndent`
+null();
+`
+
+const callingNonFunctionValueNullVerbose = stripIndent`
+"enable verbose";
+  null();
+`
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(stripIndent`
-    null();
-  `).toMatchInlineSnapshot(`"Line 1: null literals are not allowed"`)
+  return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(`
+"Line 1, Column 0: null literals are not allowed
+null literals are not allowed
+"
+`)
 })
+
+test('Error when calling non function value null - verbose', () => {
+  return expectParsedError(callingNonFunctionValueNullVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: null literals are not allowed
+null literals are not allowed
+"
+`)
+})
+
+test('Calling non function value null error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueNull,
+    callingNonFunctionValueNullVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueTrue = stripIndent`
+true();
+`
+const callingNonFunctionValueTrueVerbose = stripIndent`
+"enable verbose";
+  true();
+`
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(
-    stripIndent`
-    true();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value true"`)
+  return expectParsedError(callingNonFunctionValueTrue, { native: true }).toMatchInlineSnapshot(
+    `"Line 1: Calling non-function value true"`
+  )
 })
+
+test('Error when calling non function value true - verbose', () => {
+  return expectParsedError(callingNonFunctionValueTrueVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value true
+TODO
+"
+`)
+})
+
+test('Calling non function value true error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueTrue,
+    callingNonFunctionValueTrueVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValue0 = stripIndent`
+0();
+`
+
+const callingNonFunctionValue0Verbose = stripIndent`
+"enable verbose";
+  0();
+`
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(
-    stripIndent`
-    0();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value 0"`)
+  return expectParsedError(callingNonFunctionValue0, { native: true }).toMatchInlineSnapshot(
+    `"Line 1: Calling non-function value 0"`
+  )
 })
+
+test('Error when calling non function value 0 - verbose', () => {
+  return expectParsedError(callingNonFunctionValue0Verbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value 0
+TODO
+"
+`)
+})
+
+test('Calling non function value 0 error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValue0,
+    callingNonFunctionValue0Verbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueString = stripIndent`
+'string'();
+`
+
+const callingNonFunctionValueStringVerbose = stripIndent`
+"enable verbose";
+  'string'();
+`
 
 test('Error when calling non function value "string"', () => {
-  return expectParsedError(
-    stripIndent`
-    'string'();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\""`)
+  return expectParsedError(callingNonFunctionValueString, { native: true }).toMatchInlineSnapshot(
+    `"Line 1: Calling non-function value \\"string\\""`
+  )
 })
+
+test('Error when calling non function value "string" - verbose', () => {
+  return expectParsedError(callingNonFunctionValueStringVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value \\"string\\"
+TODO
+"
+`)
+})
+
+test('Calling non function value string error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueString,
+    callingNonFunctionValueStringVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueArray = stripIndent`
+[1]();
+`
+
+const callingNonFunctionValueArrayVerbose = stripIndent`
+"enable verbose";
+[1]();
+`
 
 test('Error when calling non function value array', () => {
-  return expectParsedError(
-    stripIndent`
-    [1]();
-  `,
-    { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
+  return expectParsedError(callingNonFunctionValueArray, {
+    chapter: 3,
+    native: true
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
+test('Error when calling non function value array - verbose', () => {
+  return expectParsedError(callingNonFunctionValueArrayVerbose, { chapter: 3 })
+    .toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value [1]
+TODO
+"
+`)
+})
+
+test('Calling non function value array error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueArray,
+    callingNonFunctionValueArrayVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueObject = stripIndent`
+({a: 1})();
+`
+
+const callingNonFunctionValueObjectVerbose = stripIndent`
+"enable verbose";
+({a: 1})();
+`
+
 test('Error when calling non function value object', () => {
-  return expectParsedError(
-    stripIndent`
-    ({a: 1})();
-  `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value {\\"a\\": 1}"`)
+  return expectParsedError(callingNonFunctionValueObject, { chapter: 100 }).toMatchInlineSnapshot(
+    `"Line 1: Calling non-function value {\\"a\\": 1}"`
+  )
+})
+
+test('Error when calling non function value object - verbose', () => {
+  return expectParsedError(callingNonFunctionValueObjectVerbose, { chapter: 100 })
+    .toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
+TODO
+"
+`)
+})
+
+test('Calling non function value object error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueObject,
+    callingNonFunctionValueObjectVerbose
+  ).toBe(undefined)
 })
 
 test('Error when calling function with too few arguments', () => {

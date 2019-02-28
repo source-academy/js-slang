@@ -1,4 +1,4 @@
-/* tslint:disable:max-classes-per-file */
+/* tslint:disable: max-classes-per-file */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
@@ -107,7 +107,9 @@ export class UndefinedVariable extends RuntimeSourceError {
   }
 
   public elaborate() {
-    return 'TODO'
+    return `Before you can read the value of ${
+      this.name
+    }, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
   }
 }
 
@@ -117,11 +119,17 @@ export class UnassignedVariable extends RuntimeSourceError {
   }
 
   public explain() {
-    return `Name ${this.name} not yet assigned`
+    return `Name ${this.name} declared later in current scope but not yet assigned`
   }
 
   public elaborate() {
-    return 'TODO'
+    return `If you're trying to access the value of ${
+      this.name
+    } from an outer scope, please rename the inner ${
+      this.name
+    }. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${
+      this.name
+    } in the same scope.`
   }
 }
 

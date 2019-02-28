@@ -237,6 +237,22 @@ export function expectParsedError(code: string, options: TestOptions = {}) {
   ).resolves
 }
 
+export function expectDifferentParsedErrors(
+  code1: string,
+  code2: string,
+  options: TestOptions = {}
+) {
+  return expect(
+    testFailure(code1, options).then(error1 => {
+      expect(
+        testFailure(code2, options).then(error2 => {
+          return expect(error1).not.toEqual(error2)
+        })
+      )
+    })
+  ).resolves
+}
+
 export function expectWarning(code: string, options: TestOptions = {}) {
   return expect(
     testSuccessWithErrors(code, options)
