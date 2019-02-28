@@ -231,11 +231,9 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
-  return expectParsedError(callingNonFunctionValueUndefined, { native: true })
-    .toMatchInlineSnapshot(`
-"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
-interpreted:\\"Line 1: Calling non-function value undefined\\""
-`)
+  return expectParsedError(callingNonFunctionValueUndefined, {
+    native: true
+  }).toMatchInlineSnapshot('Line 1: Calling non-function value undefined')
 })
 
 test('Error when calling non function value undefined - verbose', () => {
@@ -294,7 +292,7 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
 `
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(callingNonFunctionValueTrue).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueTrue, { native: true }).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value true"`
   )
 })
@@ -324,7 +322,7 @@ const callingNonFunctionValue0Verbose = stripIndent`
 `
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(callingNonFunctionValue0).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValue0, { native: true }).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value 0"`
   )
 })
@@ -354,7 +352,7 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 `
 
 test('Error when calling non function value "string"', () => {
-  return expectParsedError(callingNonFunctionValueString).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueString, { native: true }).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value \\"string\\""`
   )
 })
@@ -384,9 +382,10 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 `
 
 test('Error when calling non function value array', () => {
-  return expectParsedError(callingNonFunctionValueArray, { chapter: 3 }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value [1]"`
-  )
+  return expectParsedError(callingNonFunctionValueArray, {
+    chapter: 3,
+    native: true
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
 })
 
 test('Error when calling non function value array - verbose', () => {
@@ -437,35 +436,58 @@ test('Calling non function value object error message differs from verbose versi
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f();
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f();
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
     f(1, 2);
-  `).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+})
+
+test('Error when calling arrow function in tail call with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1"`)
 })
 
 test('Error when redeclaring constant', () => {
@@ -474,7 +496,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -484,7 +506,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -494,7 +516,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -504,11 +526,11 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-test('Runtime error when redeclaring constant', () => {
+test('Runtime error when redeclaring constant in interpreter', () => {
   const code1 = `
     const f = x => x;
   `
@@ -526,6 +548,30 @@ test('Runtime error when redeclaring constant', () => {
       expect(parseError(context.errors)).toMatchSnapshot()
     })
   })
+})
+
+test('Runtime error when redeclaring constant in native', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+    obj1 => {
+      expect(obj1).toMatchSnapshot()
+      expect(obj1.status).toBe('finished')
+      expect(parseError(context.errors)).toMatchSnapshot()
+      return runInContext(code2, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+        obj2 => {
+          expect(obj2).toMatchSnapshot()
+          expect(obj2.status).toBe('error')
+          expect(parseError(context.errors)).toMatchSnapshot()
+        }
+      )
+    }
+  )
 })
 
 test('Runtime error when redeclaring constant as variable', () => {
@@ -840,4 +886,28 @@ test('Type error when assigning property of function', () => {
     `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
+})
+
+test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
+  return expectParsedError(
+    stripIndent`
+    if (
+    1
+    ) {
+      2;
+    } else {}
+    `,
+    { chapter: 1, native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
+})
+
+test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
+  return expectParsedError(
+    stripIndent`
+    12
+    *
+    'string';
+    `,
+    { chapter: 1 }
+  ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
 })

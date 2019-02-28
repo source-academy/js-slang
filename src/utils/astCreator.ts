@@ -1,14 +1,18 @@
 import * as es from 'estree'
 import { AllowedDeclarations } from '../types'
 
+export const locationDummyNode = (line: number, column: number) =>
+  literal('Dummy', { start: { line, column }, end: { line, column } })
+
 export const identifier = (name: string): es.Identifier => ({
   type: 'Identifier',
   name
 })
 
-export const literal = (value: string | number | boolean): es.Literal => ({
+export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({
   type: 'Literal',
-  value
+  value,
+  loc
 })
 
 export const memberExpression = (
@@ -24,7 +28,8 @@ export const memberExpression = (
 export const declaration = (
   name: string,
   kind: AllowedDeclarations,
-  init: es.Expression
+  init: es.Expression,
+  loc?: es.SourceLocation
 ): es.VariableDeclaration => ({
   type: 'VariableDeclaration',
   declarations: [
@@ -34,19 +39,22 @@ export const declaration = (
       init
     }
   ],
-  kind
+  kind,
+  loc
 })
 
-export const constantDeclaration = (name: string, init: es.Expression) =>
-  declaration(name, 'const', init)
+export const constantDeclaration = (name: string, init: es.Expression, loc?: es.SourceLocation) =>
+  declaration(name, 'const', init, loc)
 
 export const callExpression = (
   callee: es.Expression,
-  args: es.Expression[]
+  args: es.Expression[],
+  loc?: es.SourceLocation
 ): es.CallExpression => ({
   type: 'CallExpression',
   callee,
-  arguments: args
+  arguments: args,
+  loc
 })
 
 export const expressionStatement = (expression: es.Expression): es.ExpressionStatement => ({

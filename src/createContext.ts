@@ -7,6 +7,7 @@ import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
+import * as operators from './utils/operators'
 import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
@@ -33,7 +34,7 @@ export const createEmptyContext = <T>(
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     builtins: new Map(),
     globals: new Map(),
-    operators: new Map(),
+    operators: new Map(Object.entries(operators)),
     properTailCalls
   })
   return {
@@ -150,7 +151,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
     defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
     defineBuiltin(context, 'equal(value1, value2)', list.equal)
-    defineBuiltin(context, 'draw_list(xs)', visualiseList)
+    defineBuiltin(context, 'draw_data(xs)', visualiseList)
   }
 
   if (context.chapter >= 3) {
