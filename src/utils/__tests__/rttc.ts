@@ -29,7 +29,8 @@ describe('Unary type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([operator, value]: [UnaryOperator, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkUnaryExpression(context, operator, value)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkUnaryExpression(node, operator, value)
       expect(error).toBeUndefined()
     })
   })
@@ -37,7 +38,8 @@ describe('Unary type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([operator, value]: [UnaryOperator, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkUnaryExpression(context, operator, value)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkUnaryExpression(node, operator, value)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -72,7 +74,8 @@ describe('Binary + type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -80,7 +83,8 @@ describe('Binary + type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -121,7 +125,8 @@ describe('Binary (-|*|/|%) type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -129,7 +134,8 @@ describe('Binary (-|*|/|%) type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -159,7 +165,8 @@ describe('Binary (===|!==) type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -167,7 +174,8 @@ describe('Binary (===|!==) type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -212,7 +220,8 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -220,7 +229,8 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkBinaryExpression(context, operator, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkBinaryExpression(node, operator, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -246,7 +256,8 @@ describe('Ternary/if test expression type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach((value: Value) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkIfStatement(context, value)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkIfStatement(node, value)
       expect(error).toBeUndefined()
     })
   })
@@ -254,7 +265,8 @@ describe('Ternary/if test expression type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach((value: Value) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkIfStatement(context, value)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkIfStatement(node, value)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         value,
@@ -280,7 +292,8 @@ describe('Member expression type combinations:', () => {
   test('Valid type combinations are OK', () => {
     valid.forEach(([left, right]: [Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkMemberAccess(context, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkMemberAccess(node, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -288,7 +301,8 @@ describe('Member expression type combinations:', () => {
   test('Invalid type combinations return TypeError', () => {
     invalid.forEach(([left, right]: [Value, Value]) => {
       const context = mockRuntimeContext()
-      const error = rttc.checkMemberAccess(context, left, right)
+      const node = context.runtime.nodes[0]
+      const error = rttc.checkMemberAccess(node, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         left,
