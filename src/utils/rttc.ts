@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../interpreter-errors'
-import { ErrorSeverity, ErrorType, Value } from '../types'
+import { Context, ErrorSeverity, ErrorType, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -40,7 +40,12 @@ const isBool = (v: Value) => typeOf(v) === 'boolean'
 const isObject = (v: Value) => typeOf(v) === 'object'
 const isArray = (v: Value) => typeOf(v) === 'array'
 
-export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, value: Value) => {
+export const checkUnaryExpression = (
+  context: Context,
+  operator: es.UnaryOperator,
+  value: Value
+) => {
+  const node = context.runtime.nodes[0]
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
     return new TypeError(node, '', 'number', typeOf(value))
   } else if (operator === '!' && !isBool(value)) {
@@ -51,11 +56,12 @@ export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, 
 }
 
 export const checkBinaryExpression = (
-  node: es.Node,
+  context: Context,
   operator: es.BinaryOperator,
   left: Value,
   right: Value
 ) => {
+  const node = context.runtime.nodes[0]
   switch (operator) {
     case '-':
     case '*':
@@ -87,11 +93,13 @@ export const checkBinaryExpression = (
   }
 }
 
-export const checkIfStatement = (node: es.Node, test: Value) => {
+export const checkIfStatement = (context: Context, test: Value) => {
+  const node = context.runtime.nodes[0]
   return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
 }
 
-export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
+export const checkMemberAccess = (context: Context, obj: Value, prop: Value) => {
+  const node = context.runtime.nodes[0]
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
   } else if (isArray(obj)) {

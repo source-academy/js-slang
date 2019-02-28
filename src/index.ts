@@ -1,10 +1,9 @@
+import { generate } from 'astring'
 import { ExpressionStatement, Program } from 'estree'
-import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
-// import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
-import { ExceptionError, InterruptedError, RuntimeSourceError } from './interpreter-errors'
+import { ExceptionError, InterruptedError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
@@ -26,7 +25,6 @@ const DEFAULT_OPTIONS: IOptions = {
 // deals with parsing error objects and converting them to strings (for repl at least)
 
 let verboseErrors = false
-const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
@@ -68,51 +66,14 @@ export function runInContext(
   if (program) {
     verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
-      let transpiled
-      let sourceMapJson: RawSourceMap | undefined
-      let lastStatementSourceMapJson: RawSourceMap | undefined
       try {
-        const temp = transpile(program, context.contextId)
-        // some issues with formatting and semicolons and tslint so no destructure
-        transpiled = temp.transpiled
-        sourceMapJson = temp.codeMap
-        lastStatementSourceMapJson = temp.evalMap
         return Promise.resolve({
           status: 'finished',
-          value: sandboxedEval(transpiled)
+          value: sandboxedEval(generate(transpile(program, context.contextId)))
         } as Result)
       } catch (error) {
-        if (error instanceof RuntimeSourceError) {
-          context.errors.push(error)
-          return resolvedErrorPromise
-        }
-        const errorStack = error.stack
-        const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-        if (match === null) {
-          context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-          return resolvedErrorPromise
-        }
-        const line = Number(match![1])
-        const column = Number(match![2])
-        return SourceMapConsumer.with(
-          line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
-          null,
-          consumer => {
-            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
-              line,
-              column
-            })
-            const location =
-              line === null
-                ? UNKNOWN_LOCATION
-                : {
-                    start: { line: originalLine!, column: originalColumn! },
-                    end: { line: -1, column: -1 }
-                  }
-            context.errors.push(new ExceptionError(error, location))
-            return resolvedErrorPromise
-          }
-        )
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+        return Promise.resolve({ status: 'error' } as Result)
       }
     } else {
       const it = evaluate(program, context)
@@ -125,7 +86,7 @@ export function runInContext(
       return scheduler.run(it, context)
     }
   } else {
-    return resolvedErrorPromise
+    return Promise.resolve({ status: 'error' } as Result)
   }
 }
 

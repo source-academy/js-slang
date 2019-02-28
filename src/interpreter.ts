@@ -217,7 +217,7 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
 function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Context) {
   const test = yield* evaluate(node.test, context)
 
-  const error = rttc.checkIfStatement(node, test)
+  const error = rttc.checkIfStatement(context, test)
   if (error) {
     return handleRuntimeError(context, error)
   }
@@ -299,7 +299,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *UnaryExpression(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
 
-    const error = rttc.checkUnaryExpression(node, node.operator, value)
+    const error = rttc.checkUnaryExpression(context, node.operator, value)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -317,7 +317,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    const error = rttc.checkBinaryExpression(node, node.operator, left, right)
+    const error = rttc.checkBinaryExpression(context, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -451,7 +451,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       prop = (node.property as es.Identifier).name
     }
 
-    const error = rttc.checkMemberAccess(node, obj, prop)
+    const error = rttc.checkMemberAccess(context, obj, prop)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -482,7 +482,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         prop = (left.property as es.Identifier).name
       }
 
-      const error = rttc.checkMemberAccess(node, obj, prop)
+      const error = rttc.checkMemberAccess(context, obj, prop)
       if (error) {
         return handleRuntimeError(context, error)
       }

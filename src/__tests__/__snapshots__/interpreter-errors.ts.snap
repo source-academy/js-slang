@@ -197,38 +197,6 @@ Object {
 }
 `;
 
-exports[`Error when calling arrow function in tail call with too many arguments: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const g = () => 1;
-const f = x => g(x);
-f(1);",
-  "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "expected": 0,
-      "got": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 15,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 2: Expected 0 arguments, but got 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Error when calling arrow function with too few arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -780,18 +748,18 @@ TODO
 exports[`Error when calling non function value undefined: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "undefined();",
+  "code": "(() => undefined())();",
   "displayResult": Array [],
   "errors": Array [
     CallingNonFunctionValue {
       "callee": undefined,
       "location": SourceLocation {
         "end": Position {
-          "column": 11,
+          "column": 18,
           "line": 1,
         },
         "start": Position {
-          "column": 0,
+          "column": 7,
           "line": 1,
         },
       },
@@ -799,7 +767,8 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value undefined",
+  "parsedErrors": "native:\\"Line -1: TypeError: Calling non-function value undefined\\"
+interpreted:\\"Line 1: Calling non-function value undefined\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -984,6 +953,23 @@ Object {
 }
 `;
 
+exports[`Runtime error when redeclaring constant 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f"`;
+
 exports[`Runtime error when redeclaring constant as function 1`] = `
 Object {
   "status": "finished",
@@ -1017,40 +1003,6 @@ Object {
 `;
 
 exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
-
-exports[`Runtime error when redeclaring constant in interpreter 1`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant in interpreter 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant in interpreter 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f"`;
-
-exports[`Runtime error when redeclaring constant in native 1`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant in native 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant in native 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f"`;
 
 exports[`Runtime error when redeclaring function 1`] = `
 Object {

@@ -1,21 +1,14 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { RawSourceMap } from 'source-map'
-import * as sourceMap from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
+import { transform } from './transformer'
 // import * as constants from "./constants";
-import * as errors from './interpreter-errors'
+// import * as errors from "./interpreter-errors";
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
 import * as random from './utils/random'
 // import * as rttc from "./utils/rttc";
-
-/**
- * This whole transpiler includes many many many many hacks to get stuff working.
- * Order in which certain functions are called matter as well.
- * There should be an explanation on it coming up soon.
- */
 
 type StorageLocations = 'builtins' | 'globals' | 'operators' | 'properTailCalls'
 
@@ -112,33 +105,11 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
   for (const statement of program.body) {
     if (statement.type === 'VariableDeclaration') {
       const name = (statement.declarations[0].id as es.Identifier).name
-      if (NATIVE_STORAGE[contextId].globals.has(name)) {
-        throw new errors.VariableRedeclaration(statement, name)
-      }
       const kind = statement.kind as AllowedDeclarations
       statements.push(createStatementAstToStoreBackCurrentlyDeclaredGlobal(name, kind))
     }
   }
   return statements
-}
-
-function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
-  simple(program, {
-    FunctionDeclaration(node) {
-      const { id, params, body } = node as es.FunctionDeclaration
-      node.type = 'VariableDeclaration'
-      node = node as es.VariableDeclaration
-      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body)
-      node.declarations = [
-        {
-          type: 'VariableDeclarator',
-          id: id as es.Identifier,
-          init: asArrowFunction
-        }
-      ]
-      node.kind = 'const'
-    }
-  })
 }
 
 /**
@@ -154,7 +125,7 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
  * to allow for iterative processes to take place
  */
 
-function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program) {
+function wrapArrowFunctionsToAllowNormalCalls(program: es.Program) {
   simple(program, {
     ArrowFunctionExpression(node) {
       const originalNode = { ...node }
@@ -170,7 +141,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program
 }
 
 /**
- * Transforms all return statements (including expression arrow functions) to return an intermediate value
+ * Transforms all return statements to return an intermediate value
  * return nonFnCall + 1;
  *  =>
  * return {isTail: false, value: nonFnCall + 1};
@@ -181,93 +152,43 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program
  * conditional and logical expressions will be recursively looped through as well
  */
 function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
-  function transformLogicalExpression(expression: es.Expression): es.Expression {
-    switch (expression.type) {
-      case 'LogicalExpression':
-        return {
-          type: 'LogicalExpression',
-          operator: expression.operator,
-          left: expression.left,
-          right: transformLogicalExpression(expression.right),
-          loc: expression.loc!
-        }
-      case 'ConditionalExpression':
-        return {
-          type: 'ConditionalExpression',
-          test: expression.test,
-          consequent: transformLogicalExpression(expression.consequent),
-          alternate: transformLogicalExpression(expression.alternate),
-          loc: expression.loc!
-        }
-      case 'CallExpression':
-        expression = expression as es.CallExpression
-        const { line, column } = expression.loc!.start
-        return create.objectExpression([
-          create.property('isTail', create.literal(true)),
-          create.property('function', expression.callee as es.Expression),
-          create.property('arguments', {
-            type: 'ArrayExpression',
-            elements: expression.arguments
-          }),
-          create.property('line', create.literal(line)),
-          create.property('column', create.literal(column))
-        ])
-      default:
-        return create.objectExpression([
-          create.property('isTail', create.literal(false)),
-          create.property('value', expression)
-        ])
-    }
-  }
-
   simple(program, {
     ReturnStatement(node: es.ReturnStatement) {
-      node.argument = transformLogicalExpression(node.argument!)
-    },
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      if (node.expression) {
-        node.body = transformLogicalExpression(node.body as es.Expression)
+      function transformLogicalExpression(expression: es.Expression): es.Expression {
+        switch (expression.type) {
+          case 'LogicalExpression':
+            return {
+              type: 'LogicalExpression',
+              operator: expression.operator,
+              left: expression.left,
+              right: transformLogicalExpression(expression.right)
+            }
+          case 'ConditionalExpression':
+            return {
+              type: 'ConditionalExpression',
+              test: expression.test,
+              consequent: transformLogicalExpression(expression.consequent),
+              alternate: transformLogicalExpression(expression.alternate)
+            } as es.ConditionalExpression
+          case 'CallExpression':
+            expression = expression as es.CallExpression
+            return create.objectExpression([
+              create.property('isTail', create.literal(true)),
+              create.property('function', expression.callee as es.Expression),
+              create.property('arguments', {
+                type: 'ArrayExpression',
+                elements: expression.arguments
+              })
+            ])
+          default:
+            return create.objectExpression([
+              create.property('isTail', create.literal(false)),
+              create.property('value', expression)
+            ])
+        }
       }
-    }
-  })
-}
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program) {
-  simple(program, {
-    CallExpression(node: es.CallExpression) {
-      const { line, column } = node.loc!.start
-      node.arguments = [
-        node.callee as es.Expression,
-        create.literal(line),
-        create.literal(column),
-        ...node.arguments
-      ]
-      node.callee = createGetFromStorageLocationAstFor(
-        'callIfFunctionAndRightArgumentsElseError',
-        'operators'
-      )
-    }
-  })
-}
-
-function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
-  const transform = (test: es.Expression, line: number, column: number) =>
-    create.callExpression(
-      createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators'),
-      [test, create.literal(line), create.literal(column)]
-    )
-  simple(program, {
-    IfStatement(node: es.IfStatement) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
-    },
-    ConditionalExpression(node: es.ConditionalExpression) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
-    },
-    LogicalExpression(node: es.LogicalExpression) {
-      const { line, column } = node.loc!.start
-      node.left = transform(node.left, line, column)
+      node.argument = transformLogicalExpression(node.argument!)
     }
   })
 }
@@ -328,70 +249,51 @@ function getStatementsToAppend(program: es.Program): es.Statement[] {
 
 function splitLastStatementIntoStorageOfResultAndAccessorPair(
   lastStatement: es.Statement
-): { storage: es.Statement; lastLineToReturnResult: es.Statement; evalMap?: RawSourceMap } {
+): es.Statement[] {
   if (lastStatement.type === 'VariableDeclaration') {
-    return {
-      storage: lastStatement,
-      lastLineToReturnResult: create.returnStatement(create.identifier('undefined'))
-    }
+    return [lastStatement, create.returnStatement(create.identifier('undefined'))]
   }
   const uniqueIdentifier = getUnqiueId()
-  const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
-  const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
+  const lastStatementAsCode = generate(lastStatement)
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
-    create.callExpression(create.identifier('eval'), [
-      create.literal(lastStatementAsCode, lastStatement.loc!)
-    ])
+    create.callExpression(create.identifier('eval'), [create.literal(lastStatementAsCode)])
   )
   const returnStatementToReturnLastStatementResult = create.returnStatement(
     create.identifier(uniqueIdentifier)
   )
-  return {
-    storage: uniqueDeclarationToStoreLastStatementResult,
-    lastLineToReturnResult: returnStatementToReturnLastStatementResult,
-    evalMap: map.toJSON()
-  }
+  return [uniqueDeclarationToStoreLastStatementResult, returnStatementToReturnLastStatementResult]
 }
 
 export function transpile(untranformedProgram: es.Program, id: number) {
   contextId = id
   refreshLatestNatives(untranformedProgram)
-  const program: es.Program = untranformedProgram
+  const program: es.Program = transform(untranformedProgram)
   const statements = program.body as es.Statement[]
-  if (statements.length === 0) {
-    return { transpiled: '' }
+  if (statements.length > 0) {
+    transformReturnStatementsToAllowProperTailCalls(program)
+    wrapArrowFunctionsToAllowNormalCalls(program)
+    const declarationToAccessNativeStorage = create.constantDeclaration(
+      nativeStorageUniqueId,
+      create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
+    )
+    const statementsToPrepend = getStatementsToPrepend()
+    const statementsToAppend = getStatementsToAppend(program)
+    const lastStatement = statements.pop() as es.Statement
+    const [
+      uniqueDeclarationToStoreLastStatementResult,
+      returnStatementToReturnLastStatementResult
+    ] = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+    const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
+      ...statementsToPrepend,
+      ...statements,
+      uniqueDeclarationToStoreLastStatementResult,
+      ...statementsToAppend,
+      returnStatementToReturnLastStatementResult
+    ])
+    program.body = [declarationToAccessNativeStorage, wrapped]
   }
-  transformReturnStatementsToAllowProperTailCalls(program)
-  transformCallExpressionsToCheckIfFunction(program)
-  transformTernaryIfAndLogicalsToCheckIfBoolean(program)
-  transformFunctionDeclarationsToArrowFunctions(program)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program)
-  const declarationToAccessNativeStorage = create.constantDeclaration(
-    nativeStorageUniqueId,
-    create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
-  )
-  const statementsToPrepend = getStatementsToPrepend()
-  const statementsToAppend = getStatementsToAppend(program)
-  const lastStatement = statements.pop() as es.Statement
-  const {
-    lastLineToReturnResult,
-    storage,
-    evalMap
-  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
-  const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
-    ...statementsToPrepend,
-    ...statements,
-    storage,
-    ...statementsToAppend,
-    lastLineToReturnResult
-  ])
-  program.body = [declarationToAccessNativeStorage, wrapped]
-
-  const map = new sourceMap.SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap: map })
-  const codeMap = map.toJSON()
-  return { transpiled, codeMap, evalMap }
+  return program
 }
 
 /**
