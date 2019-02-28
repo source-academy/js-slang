@@ -222,7 +222,7 @@ test('Infinite recursion of mutually recursive functions', () => {
 })
 
 const callingNonFunctionValueUndefined = stripIndent`
-(() => undefined())();
+undefined();
 `
 
 const callingNonFunctionValueUndefinedVerbose = stripIndent`
@@ -233,7 +233,7 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 test('Error when calling non function value undefined', () => {
   return expectParsedError(callingNonFunctionValueUndefined, {
     native: true
-  }).toMatchInlineSnapshot('Line 1: Calling non-function value undefined')
+  }).toMatchInlineSnapshot('"Line 1: Calling non-function value undefined"')
 })
 
 test('Error when calling non function value undefined - verbose', () => {
