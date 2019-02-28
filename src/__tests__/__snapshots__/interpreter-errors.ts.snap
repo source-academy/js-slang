@@ -1105,8 +1105,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "native:\\"Line 1: ReferenceError: im_undefined is not defined\\"
-interpreted:\\"Line 1: Name im_undefined not declared\\"",
+  "parsedErrors": "Line 1: Name im_undefined not declared",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

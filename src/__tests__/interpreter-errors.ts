@@ -167,13 +167,10 @@ test('Infinite recursion of mutually recursive functions', () => {
 test('Error when calling non function value undefined', () => {
   return expectParsedError(
     stripIndent`
-    (() => undefined())();
+    undefined();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line -1: TypeError: Calling non-function value undefined\\"
-interpreted:\\"Line 1: Calling non-function value undefined\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined"`)
 })
 
 test('Error when calling non function value null', () => {
