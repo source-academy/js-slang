@@ -64,9 +64,7 @@ export function runInContext(
         }
         const errorStack = error.stack
         const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-        if (
-          match === null
-        ) {
+        if (match === null) {
           context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
           return resolvedErrorPromise
         }
