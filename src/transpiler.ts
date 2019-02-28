@@ -179,7 +179,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       const transformedNode = node as es.CallExpression
       transformedNode.arguments = [
         originalNode as es.ArrowFunctionExpression,
-        create.literal(functionsToStringMap.get(node)! || 'nothing')
+        create.literal(functionsToStringMap.get(node)!)
       ]
       transformedNode.callee = create.memberExpression(
         createStorageLocationAstFor('properTailCalls'),
