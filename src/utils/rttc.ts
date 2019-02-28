@@ -34,11 +34,11 @@ export const typeOf = (v: Value) => {
   }
 }
 
-export const isNumber = (v: Value) => typeOf(v) === 'number'
-export const isString = (v: Value) => typeOf(v) === 'string'
-export const isBool = (v: Value) => typeOf(v) === 'boolean'
-export const isObject = (v: Value) => typeOf(v) === 'object'
-export const isArray = (v: Value) => typeOf(v) === 'array'
+const isNumber = (v: Value) => typeOf(v) === 'number'
+const isString = (v: Value) => typeOf(v) === 'string'
+const isBool = (v: Value) => typeOf(v) === 'boolean'
+const isObject = (v: Value) => typeOf(v) === 'object'
+const isArray = (v: Value) => typeOf(v) === 'array'
 
 export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, value: Value) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
