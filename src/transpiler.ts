@@ -401,12 +401,50 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+function addInfiniteLoopProtection(program: es.Program) {
+  const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
+  function instrumentLoops(node: es.Program | es.BlockStatement) {
+    const newStatements = []
+    for (const statement of node.body) {
+      if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
+        const startTimeConst = getUnqiueId()
+        newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
+        if (statement.body.type === 'BlockStatement') {
+          const { line, column } = statement.loc!.start
+          statement.body.body.unshift(
+            create.expressionStatement(
+              create.callExpression(
+                createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators'),
+                [
+                  create.identifier(startTimeConst),
+                  getRuntimeAst(),
+                  create.literal(line),
+                  create.literal(column)
+                ]
+              )
+            )
+          )
+        }
+      }
+      newStatements.push(statement)
+    }
+    node.body = newStatements
+  }
+  simple(program, {
+    Program(node: es.Program) {
+      instrumentLoops(node)
+    },
+    BlockStatement(node: es.BlockStatement) {
+      instrumentLoops(node)
+    }
+  })
+}
+
 export function transpile(untranformedProgram: es.Program, id: number) {
   contextId = id
   refreshLatestNatives(untranformedProgram)
   const program: es.Program = untranformedProgram
-  const statements = program.body as es.Statement[]
-  if (statements.length === 0) {
+  if (program.body.length === 0) {
     return ''
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
@@ -416,12 +454,14 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   transformSomeExpressionsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
+  addInfiniteLoopProtection(program)
   const declarationToAccessNativeStorage = create.constantDeclaration(
     nativeStorageUniqueId,
     create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
   )
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
+  const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
   const [
     uniqueDeclarationToStoreLastStatementResult,

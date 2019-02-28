@@ -1,5 +1,6 @@
 import { JSSLANG_PROPERTIES } from '../constants'
 import { InvalidNumberOfArguments } from '../interpreter-errors'
+import { PotentialInfiniteRecursionError } from '../native-errors'
 import { locationDummyNode } from './astCreator'
 
 /**
@@ -16,18 +17,11 @@ export const callIteratively = (f: any, ...args: any[]) => {
   const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
   let iterations = 0
   const startTime = Date.now()
-  const pastCalls = []
+  const pastCalls: Array<[string, any[]]> = []
   while (true) {
     if (iterations > ITERATIONS_BEFORE_TIME_CHECK) {
       if (Date.now() - startTime > MAX_TIME) {
-        const formattedCalls = []
-        for (let i = 0; i < 3; i++) {
-          const [executedName, executedArguments] = pastCalls.pop()!
-          formattedCalls.push(`${executedName}(${executedArguments})`)
-        }
-        throw new Error(`Possible infinite recursion detected: ${formattedCalls.join(' ... ')}.
-If you are certain your code is correct but needs a longer time to run, rerun the same code to increase the time limit.
-        `)
+        throw new PotentialInfiniteRecursionError(locationDummyNode(line, column), pastCalls)
       }
       iterations = 0
     } else if (typeof f !== 'function') {

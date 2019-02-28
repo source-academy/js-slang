@@ -94,7 +94,7 @@ export function runInContext(
   if (program) {
     if (theOptions.isNativeRunnable) {
       if (previousCode === code) {
-        JSSLANG_PROPERTIES.maxExecTime *= 10
+        JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
       } else {
         JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
       }

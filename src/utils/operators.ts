@@ -1,7 +1,20 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
+import { JSSLANG_PROPERTIES } from '../constants'
 import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
+import { PotentialInfiniteLoopError } from '../native-errors'
 import * as create from './astCreator'
 import * as rttc from './rttc'
+
+export function throwIfExceedsTimeLimit(
+  start: number,
+  current: number,
+  line: number,
+  column: number
+) {
+  if (current - start > JSSLANG_PROPERTIES.maxExecTime) {
+    throw new PotentialInfiniteLoopError(create.locationDummyNode(line, column))
+  }
+}
 
 export function callIfFunctionAndRightArgumentsElseError(
   candidate: any,
