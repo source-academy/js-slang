@@ -49,6 +49,10 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
+export interface Observers {
+  callbacks: Array<( arg0: Context) => void>
+}
+
 export interface Context<T = any> {
   /** The source version used */
   chapter: number
@@ -65,6 +69,17 @@ export interface Context<T = any> {
     isRunning: boolean
     frames: Frame[]
     nodes: es.Node[]
+  }
+
+  /** the state of the debugger */
+  debugger: {
+    /** External observers watching this context */
+    observers: Observers
+    status: boolean
+    state: {
+      it: IterableIterator<T>
+      scheduler: Scheduler
+    }
   }
 
   /**
@@ -109,5 +124,5 @@ export interface Suspended {
 export type Result = Suspended | Finished | Error
 
 export interface Scheduler {
-  run(it: IterableIterator<Value>, context: Context):any
+  run(it: IterableIterator<Value>, context: Context): any
 }

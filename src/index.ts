@@ -51,7 +51,12 @@ export function resume(result: Result): Finished | Error | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
   } else {
-    return result.scheduler.run(result.it, result.context)
+    if (result.context.runtime.break) {
+      result.context.runtime.break = false
+      return result.scheduler.run(result.it, result.context)
+    } else {
+      return { status: 'error' }
+    }
   }
 }
 

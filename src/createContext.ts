@@ -1,4 +1,5 @@
 import { stringify } from './interop'
+import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
@@ -13,6 +14,15 @@ const createEmptyRuntime = () => ({
   frames: [],
   value: undefined,
   nodes: []
+})
+
+const createEmptyDebugger = () => ({
+  observers: { callbacks: Array<() => void>() },
+  status: false,
+  state: {
+    it: (function*(): any { return })(),
+    scheduler: new AsyncScheduler()
+  }
 })
 
 const createGlobalFrame = () => ({
@@ -30,7 +40,8 @@ export const createEmptyContext = <T>(
   externalSymbols,
   errors: [],
   externalContext,
-  runtime: createEmptyRuntime()
+  runtime: createEmptyRuntime(),
+  debugger: createEmptyDebugger()
 })
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {

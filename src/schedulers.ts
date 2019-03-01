@@ -1,7 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import { MaximumStackLimitExceeded } from './interpreter-errors'
+import { saveState } from './stdlib/inspector'
 import { Context, Result, Scheduler, Value } from './types'
-import { expose } from './interop'
 
 export class AsyncScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
@@ -11,16 +11,26 @@ export class AsyncScheduler implements Scheduler {
       try {
         while (!itValue.done) {
           itValue = it.next()
+          if (context.runtime.break) {
+            saveState(context, it, this)
+            itValue.done = true;
+          }
         }
       } catch (e) {
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false
       }
-      resolve({
-        status: 'finished',
-        value: itValue.value
-      })
+      if (context.runtime.break) {
+        resolve({
+          status: 'suspended',
+          it,
+          scheduler: this,
+          context
+        })
+      } else {
+        resolve({ status: 'finished', value: itValue.value })
+      }
     })
   }
 }
@@ -32,16 +42,16 @@ export class PreemptiveScheduler implements Scheduler {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
-      let interval: number = setInterval(async ()=>{
+      const interval: number = setInterval(() => {
         let step = 0
         try {
           while (!itValue.done && step < this.steps) {
             step++
-            if (context.runtime.break){
-              context = await expose(context)
-              context.runtime.break = false
+            itValue = it.next()
+            if (context.runtime.break) {
+              saveState(context, it, this)
+              itValue.done = true
             }
-            else itValue = it.next()
           }
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
@@ -63,10 +73,18 @@ export class PreemptiveScheduler implements Scheduler {
           context.runtime.isRunning = false
           clearInterval(interval)
           resolve({ status: 'error' })
-        } finally {
-          if (itValue.done) {
-            context.runtime.isRunning = false
-            clearInterval(interval)
+        }
+        if (itValue.done) {
+          context.runtime.isRunning = false
+          clearInterval(interval)
+          if (context.runtime.break) {
+            resolve({
+              status: 'suspended',
+              it,
+              scheduler: this,
+              context
+            })
+          } else {
             resolve({ status: 'finished', value: itValue.value })
           }
         }

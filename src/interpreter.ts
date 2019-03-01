@@ -256,7 +256,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   *DebuggerStatement(node: es.DebuggerStatement, context: Context) {
     context.runtime.break = true
-    return node
+    yield
   },
 
   *FunctionExpression(node: es.FunctionExpression, context: Context) {
