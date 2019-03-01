@@ -1,3 +1,4 @@
+import astr = require('astring')
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -17,7 +18,21 @@ export class NoAssignmentExpression implements SourceError {
   }
 
   public elaborate() {
-    return ''
+    function lastAssignmentNode(theNode: es.AssignmentExpression): es.AssignmentExpression {
+      if (theNode.right.type === 'AssignmentExpression') {
+        return lastAssignmentNode(theNode.right)
+      } else {
+        return theNode
+      }
+    }
+
+    const lastNode = lastAssignmentNode(this.node)
+    const leftStr = astr.generate(lastNode.left)
+    const rightStr = astr.generate(lastNode.right)
+
+    const elabStr = `Try moving this to another line: \n\n\t${leftStr} = ${rightStr};`
+
+    return elabStr
   }
 }
 

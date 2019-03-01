@@ -1,3 +1,4 @@
+import astr = require('astring')
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -13,11 +14,17 @@ export class BracesAroundForError implements SourceError {
   }
 
   public explain() {
-    return 'Missing curly braces around "for" block'
+    return 'Missing curly braces around "for" block.'
   }
 
   public elaborate() {
-    return 'TODO'
+    const initStr = astr.generate(this.node.init)
+    const testStr = astr.generate(this.node.test)
+    const updateStr = astr.generate(this.node.update)
+
+    const forStr = `\tfor (${initStr} ${testStr}; ${updateStr}) {\n\t\t//code goes here\n\t}`
+
+    return `Remember to enclose your "for" block with braces:\n\n ${forStr}`
   }
 }
 

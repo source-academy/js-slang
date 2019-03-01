@@ -25,7 +25,7 @@ export class NoDeclareMutableError implements SourceError {
     const name = (this.node.declarations[0].id as es.Identifier).name
     const value = astr.generate(this.node.declarations[0].init)
 
-    return `Use keyword "const" instead, to declare a constant:\n\tconst ${name} = ${value};`
+    return `Use keyword "const" instead, to declare a constant:\n\n\tconst ${name} = ${value};`
   }
 }
 

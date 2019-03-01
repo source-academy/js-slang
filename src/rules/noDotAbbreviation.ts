@@ -17,7 +17,8 @@ export class NoDotAbbreviationError implements SourceError {
   }
 
   public elaborate() {
-    return ''
+    return `Source doesn't use object-oriented programming, so you don't need any dots in your code (except decimal \
+        points in numbers).`
   }
 }
 

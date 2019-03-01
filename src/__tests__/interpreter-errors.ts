@@ -18,15 +18,15 @@ im_undefined;
 
 test('Undefined variable error is thrown', () => {
   return expectParsedError(undefinedVariable).toMatchInlineSnapshot(
-    `"Line 1: Name im_undefined not declared"`
+    `"Line 1: Name im_undefined not declared."`
   )
 })
 
 test('Undefined variable error is thrown - verbose', () => {
   return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 0: Name im_undefined not declared
-Before you can read the value of im_undefined, you need to declare it as a variable or a constant. \
-You can do this using the let or const keywords.
+"Line 2, Column 0: Name im_undefined not declared.
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this \
+using the let or const keywords.
 "
 `)
 })
@@ -46,14 +46,14 @@ const assignToBuiltinVerbose = stripIndent`
 
 test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin, { chapter: 3 }).toMatchInlineSnapshot(
-    `"Line 1: Cannot assign new value to constant map"`
+    `"Line 1: Cannot assign new value to constant map."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose, { chapter: 3 }).toMatchInlineSnapshot(`
-"Line 2, Column 0: Cannot assign new value to constant map
-TODO
+"Line 2, Column 0: Cannot assign new value to constant map.
+As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 "
 `)
 })
@@ -73,14 +73,14 @@ const assignToBuiltinVerbose1 = stripIndent`
 
 test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin1, { chapter: 3 }).toMatchInlineSnapshot(
-    `"Line 1: Cannot assign new value to constant undefined"`
+    `"Line 1: Cannot assign new value to constant undefined."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose1, { chapter: 3 }).toMatchInlineSnapshot(`
-"Line 2, Column 0: Cannot assign new value to constant undefined
-TODO
+"Line 2, Column 0: Cannot assign new value to constant undefined.
+As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 "
 `)
 })
@@ -170,7 +170,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     map(f, list(1, 2));
   `,
     { chapter: 4 }
-  ).toMatchInlineSnapshot(`"Line 2: Name a not declared"`)
+  ).toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
 test('Infinite recursion with a block bodied function', () => {
@@ -238,8 +238,8 @@ test('Error when calling non function value undefined', () => {
 
 test('Error when calling non function value undefined - verbose', () => {
   return expectParsedError(callingNonFunctionValueUndefinedVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value undefined
-TODO
+"Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined().
 "
 `)
 })
@@ -262,16 +262,16 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 
 test('Error when calling non function value null', () => {
   return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed
-null literals are not allowed
+"Line 1, Column 0: null literals are not allowed.
+They're not part of the Source §1 specs.
 "
 `)
 })
 
 test('Error when calling non function value null - verbose', () => {
   return expectParsedError(callingNonFunctionValueNullVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: null literals are not allowed
-null literals are not allowed
+"Line 2, Column 2: null literals are not allowed.
+They're not part of the Source §1 specs.
 "
 `)
 })
@@ -299,8 +299,8 @@ test('Error when calling non function value true', () => {
 
 test('Error when calling non function value true - verbose', () => {
   return expectParsedError(callingNonFunctionValueTrueVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value true
-TODO
+"Line 2, Column 2: Calling non-function value true.
+Because true is not a function, you cannot run true().
 "
 `)
 })
@@ -329,8 +329,9 @@ test('Error when calling non function value 0', () => {
 
 test('Error when calling non function value 0 - verbose', () => {
   return expectParsedError(callingNonFunctionValue0Verbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value 0
-TODO
+"Line 2, Column 2: Calling non-function value 0.
+Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use \
+the * operator.
 "
 `)
 })
@@ -359,8 +360,8 @@ test('Error when calling non function value "string"', () => {
 
 test('Error when calling non function value "string" - verbose', () => {
   return expectParsedError(callingNonFunctionValueStringVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value \\"string\\"
-TODO
+"Line 2, Column 2: Calling non-function value \\"string\\".
+Because \\"string\\" is not a function, you cannot run \\"string\\"().
 "
 `)
 })
@@ -391,8 +392,8 @@ test('Error when calling non function value array', () => {
 test('Error when calling non function value array - verbose', () => {
   return expectParsedError(callingNonFunctionValueArrayVerbose, { chapter: 3 })
     .toMatchInlineSnapshot(`
-"Line 2, Column 0: Calling non-function value [1]
-TODO
+"Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
 "
 `)
 })
@@ -415,15 +416,15 @@ const callingNonFunctionValueObjectVerbose = stripIndent`
 
 test('Error when calling non function value object', () => {
   return expectParsedError(callingNonFunctionValueObject, { chapter: 100 }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value {\\"a\\": 1}"`
+    `"Line 1: Calling non-function value {\\"a\\": 1}."`
   )
 })
 
 test('Error when calling non function value object - verbose', () => {
   return expectParsedError(callingNonFunctionValueObjectVerbose, { chapter: 100 })
     .toMatchInlineSnapshot(`
-"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
-TODO
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 "
 `)
 })
@@ -435,16 +436,42 @@ test('Calling non function value object error message differs from verbose versi
   ).toBe(undefined)
 })
 
-test('Error when calling function with too few arguments', () => {
+test('Error when calling non function value object - verbose', () => {
   return expectParsedError(
     stripIndent`
+      "enable verbose";
+      ({a: 1})();
+    `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+"
+`)
+})
+
+test('Error when calling function with too few arguments', () => {
+  return expectParsedError(stripIndent`
     function f(x) {
       return x;
     }
     f();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
+  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
+})
+
+test('Error when calling function with too few arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      function f(x) {
+        return x;
+      }
+      f();
+    `).toMatchInlineSnapshot(`
+"Line 5, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
+',' (comma).
+"
+`)
 })
 
 test('Error when calling function with too many arguments', () => {
@@ -454,9 +481,23 @@ test('Error when calling function with too many arguments', () => {
       return x;
     }
     f(1, 2);
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
+  `
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
+})
+
+test('Error when calling function with too many arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      function f(x) {
+        return x;
+      }
+      f(1, 2);
+    `).toMatchInlineSnapshot(`
+"Line 5, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
+',' (comma).
+"
+`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
@@ -464,9 +505,21 @@ test('Error when calling arrow function with too few arguments', () => {
     stripIndent`
     const f = x => x;
     f();
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
+  `
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
+})
+
+test('Error when calling arrow function with too few arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+  "enable verbose";
+    const f = x => x;
+    f();
+  `).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
+',' (comma).
+"
+`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
@@ -474,20 +527,21 @@ test('Error when calling arrow function with too many arguments', () => {
     stripIndent`
     const f = x => x;
     f(1, 2);
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+  `
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
-test('Error when calling arrow function in tail call with too many arguments', () => {
-  return expectParsedError(
-    stripIndent`
-    const g = () => 1;
-    const f = x => g(x);
-    f(1);
-  `,
-    { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1"`)
+test('Error when calling arrow function with too many arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      const f = x => x;
+      f(1, 2);
+    `).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
+',' (comma).
+"
+`)
 })
 
 test('Error when redeclaring constant', () => {
@@ -497,7 +551,11 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
+There is a syntax error in your program
+"
+`)
 })
 
 test('Error when redeclaring constant as variable', () => {
@@ -507,7 +565,11 @@ test('Error when redeclaring constant as variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
+There is a syntax error in your program
+"
+`)
 })
 
 test('Error when redeclaring variable as constant', () => {
@@ -517,7 +579,11 @@ test('Error when redeclaring variable as constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
+There is a syntax error in your program
+"
+`)
 })
 
 test('Error when redeclaring variable', () => {
@@ -527,7 +593,11 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
+There is a syntax error in your program
+"
+`)
 })
 
 test('Runtime error when redeclaring constant in interpreter', () => {
@@ -805,7 +875,7 @@ test('Error when accessing inherited property of object', () => {
     ({}).valueOf;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}"`)
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
 })
 
 // NOTE: Obsoleted due to strict types on member access

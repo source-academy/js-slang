@@ -67,7 +67,13 @@ const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+
+    if (descriptors[name].writable) {
+      return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, true))
+    } else {
+      return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, false))
+    }
   }
   environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return environment
@@ -101,7 +107,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
+      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
     )
   }
 

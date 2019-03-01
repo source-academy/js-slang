@@ -81,7 +81,7 @@ test('Cannot have if without else', () => {
   if (true) { 5; }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Missing \\"else\\" in \\"if-else\\" statement"`)
+  ).toMatchInlineSnapshot(`"Line 1: Missing \\"else\\" in \\"if-else\\" statement."`)
 })
 
 test('Cannot use assignment expressions', () => {
@@ -132,7 +132,7 @@ test('Cannot use multiple declarations', () => {
   x;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Multiple declaration in a single statement"`)
+  ).toMatchInlineSnapshot(`"Line 1: Multiple declaration in a single statement."`)
 })
 
 test('Cannot use destructuring declarations', () => {
@@ -152,7 +152,7 @@ test('no declaration without assignment', () => {
   let x;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Missing value in variable declaration"`)
+  ).toMatchInlineSnapshot(`"Line 1: Missing value in variable declaration."`)
 })
 
 test('Cannot use update statements', () => {
@@ -163,7 +163,7 @@ test('Cannot use update statements', () => {
   x;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 2: The assignment operator += is not allowed. Use = instead"`)
+  ).toMatchInlineSnapshot(`"Line 2: The assignment operator += is not allowed. Use = instead."`)
 })
 
 test('Cannot use function expressions', () => {
@@ -194,8 +194,8 @@ test('if needs braces', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-"Line 1: Missing curly braces around \\"if\\" block
-Line 1: Missing curly braces around \\"else\\" block"
+"Line 1: Missing curly braces around \\"if\\" block.
+Line 1: Missing curly braces around \\"else\\" block."
 `)
 })
 
@@ -206,7 +206,7 @@ test('for needs braces', () => {
       i;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Missing curly braces around \\"for\\" block"`)
+  ).toMatchInlineSnapshot(`"Line 1: Missing curly braces around \\"for\\" block."`)
 })
 
 test('while needs braces', () => {
@@ -217,7 +217,7 @@ test('while needs braces', () => {
       i = i + 1;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 2: Missing curly braces around \\"while\\" block"`)
+  ).toMatchInlineSnapshot(`"Line 2: Missing curly braces around \\"while\\" block."`)
 })
 
 test('No empty statements', () => {
@@ -311,7 +311,7 @@ test('no for of loops', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-"Line 1: Missing value in variable declaration
+"Line 1: Missing value in variable declaration.
 Line 1: For of statements are not allowed"
 `)
 })
@@ -324,7 +324,7 @@ test('no for in loops', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-"Line 1: Missing value in variable declaration
+"Line 1: Missing value in variable declaration.
 Line 1: For in statements are not allowed"
 `)
 })
@@ -454,7 +454,7 @@ Line 1: Template literals are not allowed"
 test('no regexp', () => {
   return expectParsedError('/pattern/', { chapter: 100 }).toMatchInlineSnapshot(`
 "Line 1: Missing semicolon at the end of statement
-Line 1: 'RegExp' literals are not allowed"
+Line 1: 'RegExp' literals are not allowed."
 `)
 })
 
@@ -497,7 +497,7 @@ test('no implicit undefined return', () => {
     }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 2: Missing value in return statement"`)
+  ).toMatchInlineSnapshot(`"Line 2: Missing value in return statement."`)
 })
 
 test('no repeated params', () => {
