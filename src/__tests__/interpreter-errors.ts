@@ -233,7 +233,7 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 test('Error when calling non function value undefined', () => {
   return expectParsedError(callingNonFunctionValueUndefined, {
     native: true
-  }).toMatchInlineSnapshot('"Line 1: Calling non-function value undefined"')
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
 })
 
 test('Error when calling non function value undefined - verbose', () => {
@@ -293,7 +293,7 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
 
 test('Error when calling non function value true', () => {
   return expectParsedError(callingNonFunctionValueTrue, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value true"`
+    `"Line 1: Calling non-function value true."`
   )
 })
 
@@ -323,7 +323,7 @@ const callingNonFunctionValue0Verbose = stripIndent`
 
 test('Error when calling non function value 0', () => {
   return expectParsedError(callingNonFunctionValue0, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value 0"`
+    `"Line 1: Calling non-function value 0."`
   )
 })
 
@@ -354,7 +354,7 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 
 test('Error when calling non function value "string"', () => {
   return expectParsedError(callingNonFunctionValueString, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value \\"string\\""`
+    `"Line 1: Calling non-function value \\"string\\"."`
   )
 })
 
@@ -386,7 +386,7 @@ test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, {
     chapter: 3,
     native: true
-  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]."`)
 })
 
 test('Error when calling non function value array - verbose', () => {
