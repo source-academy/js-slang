@@ -8,7 +8,6 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import * as errors from './interpreter-errors'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
-import * as random from './utils/random'
 // import * as rttc from "./utils/rttc";
 
 /**
@@ -29,7 +28,14 @@ let usedIdentifiers: Set<string>
 
 function getUniqueId(uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
-    uniqueId += random.character()
+    const start = uniqueId.slice(0, -1)
+    const end = uniqueId[uniqueId.length - 1]
+    const endToDigit = Number(end)
+    if (Number.isNaN(endToDigit) || endToDigit === 9) {
+      uniqueId += '0'
+    } else {
+      uniqueId = start + String(endToDigit + 1)
+    }
   }
   usedIdentifiers.add(uniqueId)
   return uniqueId

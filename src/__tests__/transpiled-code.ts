@@ -24,13 +24,11 @@ test('Ensure no name clashes', () => {
     boolOrErr[123] = 1;
     function f(callIfFuncAndRightArgs) {
       let wrap = 2;
+      wrap0;wrap1;wrap2;wrap3;wrap4;wrap5;wrap6;wrap7;wrap8;wrap9;
     }
     native;
   `
   const context = mockContext(4)
   const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
-  expect(transpiled.match(/const boolOrErr[A-Z0-9_$] = /)).not.toBe(null)
-  expect(transpiled.match(/const wrap[A-Z0-9_$] = /)).not.toBe(null)
-  expect(transpiled.match(/const callIfFuncAndRightArgs[A-Z0-9_$] = /)).not.toBe(null)
-  expect(transpiled.match(/const native[A-Z0-9_$] = /)).not.toBe(null)
+  expect(transpiled).toMatchSnapshot()
 })
