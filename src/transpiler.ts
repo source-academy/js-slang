@@ -27,8 +27,7 @@ let NATIVE_STORAGE: {
 
 let usedIdentifiers: Set<string>
 
-function getUnqiueId() {
-  let uniqueId = `$$unique${random.integer()}`
+function getUniqueId(uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
     uniqueId += random.character()
   }
@@ -275,7 +274,7 @@ function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
 function refreshLatestNatives(program: es.Program) {
   NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
   usedIdentifiers = getAllIdentifiersUsed(program)
-  nativeStorageUniqueId = getUnqiueId()
+  nativeStorageUniqueId = getUniqueId('NATIVE')
 }
 
 function getAllIdentifiersUsed(program: es.Program) {
@@ -335,7 +334,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
       lastLineToReturnResult: create.returnStatement(create.identifier('undefined'))
     }
   }
-  const uniqueIdentifier = getUnqiueId()
+  const uniqueIdentifier = getUniqueId('lastStatementResult')
   const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
   const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
