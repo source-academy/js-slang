@@ -84,7 +84,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 }
 
 export class CallingNonFunctionValue extends RuntimeSourceError {
-  constructor(private callee: Value, private node?: es.Node) {
+  constructor(private callee: Value, private node: es.Node) {
     super(node)
   }
 
@@ -97,18 +97,14 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
     const calleeStr = stringify(calleeVal)
     let argStr = ''
 
-    if (this.node) {
-      const callArgs = (this.node as es.CallExpression).arguments
+    const callArgs = (this.node as es.CallExpression).arguments
 
-      callArgs.forEach(x => {
-        argStr += generate(x)
-        argStr += ', '
-      })
+    callArgs.forEach(x => {
+      argStr += generate(x)
+      argStr += ', '
+    })
 
-      argStr = argStr.substring(0, argStr.length - 2)
-    } else {
-      argStr = ''
-    }
+    argStr = argStr.substring(0, argStr.length - 2)
 
     const elabStr = `Because ${calleeStr} is not a function, you cannot run ${calleeStr}(${argStr}).`
     const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
