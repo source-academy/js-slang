@@ -606,6 +606,21 @@ Try calling function f[0] again in the same way, but with 1 argument instead. Re
 `)
 })
 
+test('Error when calling arrow function in tail call with too many arguments - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 15: Expected 0 arguments, but got 1.
+Try calling function g again in the same way, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
+})
+
 test('Error when calling arrow function in tail call with too many arguments', () => {
   return expectParsedError(
     stripIndent`
@@ -721,11 +736,53 @@ test('Runtime error when redeclaring constant as variable', () => {
   })
 })
 
+test('Runtime error when redeclaring constant as variable - verbose', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring constant as function', () => {
   const code1 = `
     const f = x => x;
   `
   const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring constant as function - verbose', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
     function f(x) { return x; }
   `
   const context = mockContext(3)
@@ -761,11 +818,53 @@ test('Runtime error when redeclaring variable as constant', () => {
   })
 })
 
+test('Runtime error when redeclaring variable as constant - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
 test('Runtime error when redeclaring variable', () => {
   const code1 = `
     let f = x => x;
   `
   const code2 = `
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring variable - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
     let f = x => x;
   `
   const context = mockContext(3)
@@ -801,11 +900,53 @@ test('Runtime error when redeclaring variable as function', () => {
   })
 })
 
+test('Runtime error when redeclaring variable as function - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring function as constant', () => {
   const code1 = `
     function f(x) { return x; }
   `
   const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
+test('Runtime error when redeclaring function as constant - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
     const f = x => x;
   `
   const context = mockContext(3)
@@ -841,11 +982,53 @@ test('Runtime error when redeclaring function as variable', () => {
   })
 })
 
+test('Runtime error when redeclaring function as variable - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring function', () => {
   const code1 = `
     function f(x) { return x; }
   `
   const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring function - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
     function f(x) { return x; }
   `
   const context = mockContext(3)

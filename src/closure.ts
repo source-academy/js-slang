@@ -2,9 +2,9 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import * as create from './utils/astCreator'
 import { apply } from './interpreter'
 import { Context, Environment, Value } from './types'
+import * as create from './utils/astCreator'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {

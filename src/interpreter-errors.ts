@@ -190,23 +190,15 @@ export class VariableRedeclaration extends RuntimeSourceError {
         this.name
       } has already been declared, you can assign a value to it without re-declaring.`
 
-      if (!!this.node) {
-        let initStr = ''
+      let initStr = ''
 
-        if (this.node.type === 'FunctionDeclaration') {
-          const theNodeId = (this.node as es.FunctionDeclaration).id
-
-          if (!!theNodeId) {
-            initStr = generate(theNodeId)
-          }
-        } else if (this.node.type === 'VariableDeclaration') {
-          initStr = generate((this.node as es.VariableDeclaration).declarations[0].init)
-        }
-
-        return `${elabStr} As such, you can just do\n\n\t${this.name} = ${initStr};\n`
-      } else {
-        return elabStr
+      if (this.node.type === 'FunctionDeclaration') {
+        initStr = '...'
+      } else if (this.node.type === 'VariableDeclaration') {
+        initStr = generate((this.node as es.VariableDeclaration).declarations[0].init)
       }
+
+      return `${elabStr} As such, you can just do\n\n\t${this.name} = ${initStr};\n`
     } else if (this.writable === false) {
       return `You will need to declare another variable, as ${this.name} is read-only.`
     } else {
