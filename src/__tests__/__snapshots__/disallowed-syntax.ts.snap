@@ -94,13 +94,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing \\"else\\" in \\"if-else\\" statement.
-This \\"if\\" block requires corresponding \\"else\\" block which will be
-evaluated when true expression evaluates to false.
-
-Later in the course we will lift this restriction and allow \\"if\\" without
-else.
-",
+  "parsedErrors": "Line 2: Missing \\"else\\" in \\"if-else\\" statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -229,9 +223,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing semicolon at the end of statement
-Every statement must be terminated by a semicolon.
-",
+  "parsedErrors": "Line 2: Missing semicolon at the end of statement",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -336,9 +328,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing init, test, update expressions in for statement.
-This for statement requires all three parts (initialiser, test, update) to be present.
-",
+  "parsedErrors": "Line 2: Missing init, test, update expressions in for statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -617,9 +607,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing init expression in for statement.
-This for statement requires all three parts (initialiser, test, update) to be present.
-",
+  "parsedErrors": "Line 2: Missing init expression in for statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1041,9 +1029,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing test expression in for statement.
-This for statement requires all three parts (initialiser, test, update) to be present.
-",
+  "parsedErrors": "Line 2: Missing test expression in for statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1450,9 +1436,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 3: Missing update expression in for statement.
-This for statement requires all three parts (initialiser, test, update) to be present.
-",
+  "parsedErrors": "Line 2: Missing update expression in for statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1671,9 +1655,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 7: SyntaxError: Unexpected token (2:7)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Unexpected token (2:7)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1774,11 +1756,7 @@ x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 8: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line:
-
-	x = 5;
-",
+  "parsedErrors": "Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1849,11 +1827,7 @@ x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 4, Column 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line:
-
-	y = 5;
-",
+  "parsedErrors": "Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -2010,16 +1984,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 5, Column 9: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line:
-
-	z = 6;
-
-Line 5, Column 5: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line:
-
-	y = 6;
-",
+  "parsedErrors": "Line 5: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Line 5: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -2090,11 +2056,7 @@ for (let x = y = 1; x < 1; x = x + 1) {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 13: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line:
-
-	y = 1;
-",
+  "parsedErrors": "Line 3: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -2531,9 +2493,7 @@ a;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 4: Array patterns are not allowed
-You are trying to use Array patterns, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 3: Array patterns are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -2966,9 +2926,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Function expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -3105,9 +3063,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Function expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -3869,13 +3825,7 @@ x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Multiple declaration in a single statement.
-Split the variable declaration into multiple lines as follows
-
-	let x = 3;
-	let y = 5;
-
-",
+  "parsedErrors": "Line 2: Multiple declaration in a single statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4193,9 +4143,7 @@ x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Update expressions are not allowed
-You are trying to use Update expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 3: Update expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4319,10 +4267,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 1: The assignment operator += is not allowed. Use = instead.
-
-	x = x + 5;
-",
+  "parsedErrors": "Line 3: The assignment operator += is not allowed. Use = instead.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4392,9 +4337,7 @@ x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
-
-",
+  "parsedErrors": "Line 3: The assignment operator <<= is not allowed. Use = instead.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4568,9 +4511,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Array expressions are not allowed
-You are trying to use Array expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Array expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4640,9 +4581,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Empty statements are not allowed
-You are trying to use Empty statements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Empty statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4730,9 +4669,7 @@ return rest;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 12: Rest elements are not allowed
-You are trying to use Rest elements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Rest elements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -4874,9 +4811,7 @@ return x + y;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 5, Column 3: Spread elements are not allowed
-You are trying to use Spread elements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 5: Spread elements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -5317,13 +5252,7 @@ i;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing curly braces around \\"for\\" block.
-Remember to enclose your \\"for\\" block with braces:
-
- 	for (let i = 0; i < 1; i = i + 1) {
-		//code goes here
-	}
-",
+  "parsedErrors": "Line 2: Missing curly braces around \\"for\\" block.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -5804,64 +5733,8 @@ false;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing curly braces around \\"if\\" block.
-if block need to be enclosed with a pair of curly braces.
-
-if (true) {
-  true;
-}
-
-An exception is when you have an \\"if\\" followed by \\"else if\\", in this case
-\\"else if\\" block does not need to be surrounded by curly braces.
-
-if (someCondition) {
-  // ...
-} else /* notice missing { here */ if (someCondition) {
-  // ...
-} else {
-  // ...
-}
-
-Rationale: Readability in dense packed code.
-
-In the snippet below, for instance, with poor indentation it is easy to
-mistaken hello() and world() to belong to the same branch of logic.
-
-if (someCondition) {
-  2;
-} else
-  hello();
-world();
-
-Line 2, Column 1: Missing curly braces around \\"else\\" block.
-else block need to be enclosed with a pair of curly braces.
-
-else {
-  false;
-}
-
-An exception is when you have an \\"if\\" followed by \\"else if\\", in this case
-\\"else if\\" block does not need to be surrounded by curly braces.
-
-if (someCondition) {
-  // ...
-} else /* notice missing { here */ if (someCondition) {
-  // ...
-} else {
-  // ...
-}
-
-Rationale: Readability in dense packed code.
-
-In the snippet below, for instance, with poor indentation it is easy to
-mistaken hello() and world() to belong to the same branch of logic.
-
-if (someCondition) {
-  2;
-} else
-  hello();
-world();
-",
+  "parsedErrors": "Line 2: Missing curly braces around \\"if\\" block.
+Line 2: Missing curly braces around \\"else\\" block.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6111,9 +5984,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 3: SyntaxError: The keyword 'package' is reserved (2:3)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: The keyword 'package' is reserved (2:3)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6232,12 +6103,8 @@ class Box {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 10: Class bodys are not allowed
-You are trying to use Class bodys, which is not yet allowed (yet).
-
-Line 2, Column 0: Class declarations are not allowed
-You are trying to use Class declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Class bodys are not allowed
+Line 2: Class declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6362,9 +6229,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 3: Debugger statements are not allowed
-You are trying to use Debugger statements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Debugger statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6433,14 +6298,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 5: Missing value in variable declaration.
-A variable declaration assigns a value to a name.
-For instance, to assign 20 to x, you can write:
-
-  let x = 20;
-
-  x + x; // 40
-",
+  "parsedErrors": "Line 2: Missing value in variable declaration.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6504,9 +6362,7 @@ let yield = 5;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 4: SyntaxError: The keyword 'yield' is reserved (2:4)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: The keyword 'yield' is reserved (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6638,9 +6494,7 @@ export const x = 1;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Export named declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6794,9 +6648,7 @@ export default x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Export default declarations are not allowed
-You are trying to use Export default declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 3: Export default declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -6985,9 +6837,7 @@ return x;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Export named declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -7367,17 +7217,8 @@ for (let i in { a: 1, b: 2 }) {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 9: Missing value in variable declaration.
-A variable declaration assigns a value to a name.
-For instance, to assign 20 to i, you can write:
-
-  let i = 20;
-
-  i + i; // 40
-
-Line 2, Column 0: For in statements are not allowed
-You are trying to use For in statements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Missing value in variable declaration.
+Line 2: For in statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -7774,17 +7615,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 12: Missing value in variable declaration.
-A variable declaration assigns a value to a name.
-For instance, to assign 20 to i, you can write:
-
-  let i = 20;
-
-  i + i; // 40
-
-Line 2, Column 3: For of statements are not allowed
-You are trying to use For of statements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Missing value in variable declaration.
+Line 2: For of statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -7994,9 +7826,7 @@ return 1;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Yield expressions are not allowed
-You are trying to use Yield expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 3: Yield expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8088,12 +7918,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 5: Missing value in return statement.
-This return statement is missing a value.
-For instance, to return the value 42, you can write
-
-  return 42;
-",
+  "parsedErrors": "Line 3: Missing value in return statement.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8282,12 +8107,8 @@ import { stripIndent } from 'common-tags';",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 9: Import specifiers are not allowed
-You are trying to use Import specifiers, which is not yet allowed (yet).
-
-Line 2, Column 0: Import declarations are not allowed
-You are trying to use Import declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Import specifiers are not allowed
+Line 2: Import declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8471,9 +8292,7 @@ interface Box {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: SyntaxError: The keyword 'interface' is reserved (2:0)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: The keyword 'interface' is reserved (2:0)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8558,12 +8377,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 10: Missing semicolon at the end of statement
-Every statement must be terminated by a semicolon.
-
-Line 3, Column 1: 'RegExp' literals are not allowed.
-
-",
+  "parsedErrors": "Line 3: Missing semicolon at the end of statement
+Line 3: 'RegExp' literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8649,9 +8464,7 @@ return x;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 15: SyntaxError: Argument name clash (2:15)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Argument name clash (2:15)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -8753,9 +8566,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Sequence expressions are not allowed
-You are trying to use Sequence expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 2: Sequence expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -9467,21 +9278,11 @@ constructor() {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 4, Column 2: Supers are not allowed
-You are trying to use Supers, which is not yet allowed (yet).
-
-Line 3, Column 11: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
-
-Line 3, Column 0: Method definitions are not allowed
-You are trying to use Method definitions, which is not yet allowed (yet).
-
-Line 2, Column 30: Class bodys are not allowed
-You are trying to use Class bodys, which is not yet allowed (yet).
-
-Line 2, Column 1: Class declarations are not allowed
-You are trying to use Class declarations, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 4: Supers are not allowed
+Line 3: Function expressions are not allowed
+Line 3: Method definitions are not allowed
+Line 2: Class bodys are not allowed
+Line 2: Class declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -10156,9 +9957,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 5: Missing semicolon at the end of statement
-Every statement must be terminated by a semicolon.
-",
+  "parsedErrors": "Line 3: Missing semicolon at the end of statement",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -10294,9 +10093,7 @@ this[0] = 5;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: 'this' expressions are not allowed
-You are trying to use 'this' expressions, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 3: 'this' expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -10807,15 +10604,9 @@ display(e);
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 6, Column 2: Spread elements are not allowed
-You are trying to use Spread elements, which is not yet allowed (yet).
-
-Line 7, Column 3: Catch clauses are not allowed
-You are trying to use Catch clauses, which is not yet allowed (yet).
-
-Line 5, Column 1: Try statements are not allowed
-You are trying to use Try statements, which is not yet allowed (yet).
-",
+  "parsedErrors": "Line 6: Spread elements are not allowed
+Line 7: Catch clauses are not allowed
+Line 5: Try statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -11360,9 +11151,7 @@ Object {
       "unspecifiedOperator": "<<",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Operator '<<' is not allowed.
-
-",
+  "parsedErrors": "Line 2: Operator '<<' is not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -11485,9 +11274,7 @@ typeof x;",
       "unspecifiedOperator": "typeof",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Operator 'typeof' is not allowed.
-
-",
+  "parsedErrors": "Line 3: Operator 'typeof' is not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -11721,13 +11508,7 @@ i = i + 1;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 1: Missing curly braces around \\"while\\" block.
-Remember to enclose your \\"while\\" block with braces:
-
- 	while (i < 1) {
-		//code goes here
-	}
-",
+  "parsedErrors": "Line 3: Missing curly braces around \\"while\\" block.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
