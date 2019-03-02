@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import {
@@ -580,6 +581,31 @@ Try calling function f again in the same way, but with 1 argument instead. Remem
 `)
 })
 
+test('Error when calling function from member expression with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const f = [x => x];
+    f[0](1, 2);
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+})
+
+test('Error when calling function from member expression with too many arguments - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+      const f = [x => x];
+      f[0](1, 2);
+    `,
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
+})
+
 test('Error when calling arrow function in tail call with too many arguments', () => {
   return expectParsedError(
     stripIndent`
@@ -588,10 +614,7 @@ test('Error when calling arrow function in tail call with too many arguments', (
     f(1);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line 3: TypeError: Cannot read property 'name' of undefined\\"
-interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
 })
 
 test('Error when redeclaring constant', () => {

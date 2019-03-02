@@ -223,8 +223,7 @@ f(1);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "native:\\"Line 3: TypeError: Cannot read property 'name' of undefined\\"
-interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\"",
+  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -347,6 +346,73 @@ f(1, 2);",
       "location": SourceLocation {
         "end": Position {
           "column": 7,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = [x => x];
+  f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = [x => x];
+f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
           "line": 2,
         },
         "start": Position {

@@ -59,7 +59,7 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
   private customGenerator = {
     ...baseGenerator,
     CallExpression(node: any, state: any) {
-      state.write(node.callee.name)
+      state.write(generate(node.callee))
       state.write('(')
       const argsRepr = node.arguments.map((arg: any) => stringify(arg.value))
       state.write(argsRepr.join(', '))
@@ -162,7 +162,7 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
 
   constructor(node: es.Node, private expected: number, private got: number) {
     super(node)
-    this.calleeStr = ((node as es.CallExpression).callee as es.Identifier).name
+    this.calleeStr = generate((node as es.CallExpression).callee)
   }
 
   public explain() {
@@ -201,7 +201,7 @@ export class VariableRedeclaration extends RuntimeSourceError {
           const theNodeId = (this.node as es.FunctionDeclaration).id
 
           if (!!theNodeId) {
-            initStr = generate(theNodeId.name)
+            initStr = generate(theNodeId)
           }
         } else if (this.node.type === 'VariableDeclaration') {
           initStr = generate((this.node as es.VariableDeclaration).declarations[0].init)
