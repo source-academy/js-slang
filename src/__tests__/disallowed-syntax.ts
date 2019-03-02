@@ -462,6 +462,33 @@ test('Cannot use update statements - verbose', () => {
 `)
 })
 
+test('Cannot use update statements', () => {
+  return expectParsedError(
+    stripIndent`
+	let x = 3;
+	x <<= 5;
+	x;
+	`,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`"Line 2: The assignment operator <<= is not allowed. Use = instead."`)
+})
+
+test('Cannot use update statements - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	  "enable verbose";
+	let x = 3;
+	x <<= 5;
+	x;
+	`,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
+
+"
+`)
+})
+
 test('Cannot use function expressions', () => {
   return expectParsedError(
     stripIndent`

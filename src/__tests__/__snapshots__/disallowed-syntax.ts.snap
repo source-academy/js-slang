@@ -4329,6 +4329,78 @@ Object {
 }
 `;
 
+exports[`Cannot use update statements - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+let x = 3;
+x <<= 5;
+x;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoUpdateAssignment {
+      "node": Node {
+        "end": 36,
+        "left": Node {
+          "end": 30,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 3,
+            },
+          },
+          "name": "x",
+          "start": 29,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 3,
+          },
+        },
+        "operator": "<<=",
+        "right": Node {
+          "end": 36,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 3,
+            },
+          },
+          "raw": "5",
+          "start": 35,
+          "type": "Literal",
+          "value": 5,
+        },
+        "start": 29,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
+
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Cannot use update statements: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -4392,6 +4464,75 @@ x;",
     },
   ],
   "parsedErrors": "Line 2: The assignment operator += is not allowed. Use = instead.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cannot use update statements: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = 3;
+x <<= 5;
+x;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoUpdateAssignment {
+      "node": Node {
+        "end": 18,
+        "left": Node {
+          "end": 12,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 2,
+            },
+          },
+          "name": "x",
+          "start": 11,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "operator": "<<=",
+        "right": Node {
+          "end": 18,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 2,
+            },
+          },
+          "raw": "5",
+          "start": 17,
+          "type": "Literal",
+          "value": 5,
+        },
+        "start": 11,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: The assignment operator <<= is not allowed. Use = instead.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
