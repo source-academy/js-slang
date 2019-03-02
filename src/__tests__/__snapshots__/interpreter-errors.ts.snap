@@ -197,6 +197,40 @@ Object {
 }
 `;
 
+exports[`Error when calling arrow function in tail call with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "g",
+      "expected": 0,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "native:\\"Line 3: TypeError: Cannot read property 'name' of undefined\\"
+interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling arrow function with too few arguments - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1791,9 +1825,7 @@ let f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1823,9 +1855,7 @@ const f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1855,9 +1885,7 @@ const f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1887,9 +1915,7 @@ let f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

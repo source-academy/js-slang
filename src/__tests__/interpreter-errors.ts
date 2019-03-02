@@ -481,12 +481,15 @@ Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     function f(x) {
       return x;
     }
     f();
-  `).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
 })
 
 test('Error when calling function with too few arguments - verbose', () => {
@@ -511,7 +514,8 @@ test('Error when calling function with too many arguments', () => {
       return x;
     }
     f(1, 2);
-  `
+  `,
+    { native: true }
   ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
 })
 
@@ -535,7 +539,8 @@ test('Error when calling arrow function with too few arguments', () => {
     stripIndent`
     const f = x => x;
     f();
-  `
+  `,
+    { native: true }
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
 })
 
@@ -557,7 +562,8 @@ test('Error when calling arrow function with too many arguments', () => {
     stripIndent`
     const f = x => x;
     f(1, 2);
-  `
+  `,
+    { native: true }
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
@@ -574,6 +580,20 @@ Try calling function f again in the same way, but with 1 argument instead. Remem
 `)
 })
 
+test('Error when calling arrow function in tail call with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`
+"native:\\"Line 3: TypeError: Cannot read property 'name' of undefined\\"
+interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\""
+`)
+})
+
 test('Error when redeclaring constant', () => {
   return expectParsedError(
     stripIndent`
@@ -581,11 +601,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring constant as variable', () => {
@@ -595,11 +611,7 @@ test('Error when redeclaring constant as variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Error when redeclaring variable as constant', () => {
@@ -609,11 +621,7 @@ test('Error when redeclaring variable as constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring variable', () => {
@@ -623,11 +631,7 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Runtime error when redeclaring constant in interpreter', () => {
