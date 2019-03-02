@@ -284,6 +284,15 @@ function getAllIdentifiersUsed(program: es.Program) {
   simple(program, {
     Identifier(node: es.Identifier) {
       identifiers.add(node.name)
+    },
+    Pattern(node: es.Pattern) {
+      if (node.type === 'Identifier') {
+        identifiers.add(node.name)
+      } else if (node.type === 'MemberExpression') {
+        if (node.object.type === 'Identifier') {
+          identifiers.add(node.object.name)
+        }
+      }
     }
   })
   return identifiers

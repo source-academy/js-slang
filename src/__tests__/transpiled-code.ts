@@ -3,10 +3,10 @@ import { mockContext } from '../mocks/context'
 import { parse } from '../parser'
 import { transpile } from '../transpiler'
 
-// DO NOT HAVE 'native' AS A SUBSTRING IN CODE STRINGS ANYWHERE IN THIS FILE!
+// DO NOT HAVE 'native[<digit>]' AS A SUBSTRING IN CODE STRINGS ANYWHERE IN THIS FILE!
 function expectTranspiledToMatchSnapshot(code: string) {
   return () => {
-    const context = mockContext(4)
+    const context = mockContext(100)
     const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
     // replace native[<number>] as they may be inconsistent
     const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
@@ -150,3 +150,19 @@ test(
     }
   `)
 )
+
+test('Ensure no name clashes', () => {
+  const code = stripIndent`
+    boolOrErr[123] = 1;
+    function f(callIfFuncAndRightArgs) {
+      let wrap = 2;
+    }
+    native;
+  `
+  const context = mockContext(4)
+  const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
+  expect(transpiled.match(/const boolOrErr[A-Z0-9_$] = /)).not.toBe(null)
+  expect(transpiled.match(/const wrap[A-Z0-9_$] = /)).not.toBe(null)
+  expect(transpiled.match(/const callIfFuncAndRightArgs[A-Z0-9_$] = /)).not.toBe(null)
+  expect(transpiled.match(/const native[A-Z0-9_$] = /)).not.toBe(null)
+})
