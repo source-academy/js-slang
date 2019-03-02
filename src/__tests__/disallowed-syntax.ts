@@ -279,6 +279,47 @@ Try moving this to another line:
 test('Cannot use assignment expressions', () => {
   return expectParsedError(
     stripIndent`
+	let x = 3;
+	let y = 4;
+	let z = 5;
+	x = y = z = 6;
+	x;
+	`,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed."
+`)
+})
+
+test('Cannot use assignment expressions - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+		"enable verbose";
+	  let x = 3;
+	  let y = 4;
+	  let z = 5;
+	  x = y = z = 6;
+	  x;
+	  `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 5, Column 9: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Try moving this to another line:
+
+	z = 6;
+
+Line 5, Column 5: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Try moving this to another line:
+
+	y = 6;
+"
+`)
+})
+
+test('Cannot use assignment expressions', () => {
+  return expectParsedError(
+    stripIndent`
   let y = 4;
   for (let x = y = 1; x < 1; x = x + 1) {
     y;

@@ -1864,6 +1864,172 @@ exports[`Cannot use assignment expressions - verbose: expectParsedError 3`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
+ let x = 3;
+ let y = 4;
+ let z = 5;
+ x = y = z = 6;
+ x;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoAssignmentExpression {
+      "node": Node {
+        "end": 68,
+        "left": Node {
+          "end": 64,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 9,
+              "line": 5,
+            },
+          },
+          "name": "z",
+          "start": 63,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "line": 5,
+          },
+          "start": Position {
+            "column": 9,
+            "line": 5,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 68,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 14,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 13,
+              "line": 5,
+            },
+          },
+          "raw": "6",
+          "start": 67,
+          "type": "Literal",
+          "value": 6,
+        },
+        "start": 63,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    NoAssignmentExpression {
+      "node": Node {
+        "end": 68,
+        "left": Node {
+          "end": 60,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 5,
+              "line": 5,
+            },
+          },
+          "name": "y",
+          "start": 59,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "line": 5,
+          },
+          "start": Position {
+            "column": 5,
+            "line": 5,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 68,
+          "left": Node {
+            "end": 64,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 5,
+              },
+            },
+            "name": "z",
+            "start": 63,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 14,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 9,
+              "line": 5,
+            },
+          },
+          "operator": "=",
+          "right": Node {
+            "end": 68,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 5,
+              },
+            },
+            "raw": "6",
+            "start": 67,
+            "type": "Literal",
+            "value": 6,
+          },
+          "start": 63,
+          "type": "AssignmentExpression",
+        },
+        "start": 59,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 5, Column 9: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Try moving this to another line:
+
+	z = 6;
+
+Line 5, Column 5: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Try moving this to another line:
+
+	y = 6;
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cannot use assignment expressions - verbose: expectParsedError 4`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
 let y = 4;
 for (let x = y = 1; x < 1; x = x + 1) {
   y;
@@ -2075,6 +2241,163 @@ x;",
 `;
 
 exports[`Cannot use assignment expressions: expectParsedError 3`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = 3;
+let y = 4;
+let z = 5;
+x = y = z = 6;
+x;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoAssignmentExpression {
+      "node": Node {
+        "end": 46,
+        "left": Node {
+          "end": 42,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 4,
+            },
+          },
+          "name": "z",
+          "start": 41,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 8,
+            "line": 4,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 46,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 4,
+            },
+          },
+          "raw": "6",
+          "start": 45,
+          "type": "Literal",
+          "value": 6,
+        },
+        "start": 41,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    NoAssignmentExpression {
+      "node": Node {
+        "end": 46,
+        "left": Node {
+          "end": 38,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 5,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 4,
+              "line": 4,
+            },
+          },
+          "name": "y",
+          "start": 37,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 4,
+            "line": 4,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 46,
+          "left": Node {
+            "end": 42,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 4,
+              },
+            },
+            "name": "z",
+            "start": 41,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 4,
+            },
+          },
+          "operator": "=",
+          "right": Node {
+            "end": 46,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 4,
+              },
+            },
+            "raw": "6",
+            "start": 45,
+            "type": "Literal",
+            "value": 6,
+          },
+          "start": 41,
+          "type": "AssignmentExpression",
+        },
+        "start": 37,
+        "type": "AssignmentExpression",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
+Line 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cannot use assignment expressions: expectParsedError 4`] = `
 Object {
   "alertResult": Array [],
   "code": "let y = 4;
