@@ -8,7 +8,7 @@ export function callIfFunctionAndRightArgumentsElseError(
   column: number,
   ...args: any[]
 ) {
-  const dummy = create.callExpression(candidate, args, {
+  const dummy = create.callExpression(create.locationDummyNode(line, column), args, {
     start: { line, column },
     end: { line, column }
   })
