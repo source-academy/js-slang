@@ -958,9 +958,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 1, Column 0: null literals are not allowed.
-They're not part of the Source §1 specs.
-",
+  "parsedErrors": "Line 1: null literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1596,9 +1594,7 @@ let f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1628,9 +1624,7 @@ const f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1660,9 +1654,7 @@ const f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1692,9 +1684,7 @@ let f = x => x;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1759,24 +1749,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant as function 1`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant as function 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function 4`] = `"Line 1: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring constant as variable 1`] = `
+exports[`Runtime error when redeclaring constant 1`] = `
 Object {
   "status": "finished",
   "value": undefined,
@@ -1791,7 +1764,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f."`;
+exports[`Runtime error when redeclaring constant 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Runtime error when redeclaring constant in interpreter 1`] = `
 Object {
@@ -1808,7 +1781,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f."`;
+exports[`Runtime error when redeclaring constant as function 4`] = `"Line 1: Redeclaring name f."`;
 
 exports[`Runtime error when redeclaring constant in native 1`] = `
 Object {
@@ -1825,7 +1798,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f."`;
+exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Runtime error when redeclaring function 1`] = `
 Object {

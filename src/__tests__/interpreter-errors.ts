@@ -261,11 +261,9 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 `
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed.
-They're not part of the Source §1 specs.
-"
-`)
+  return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(
+    `"Line 1: null literals are not allowed."`
+  )
 })
 
 test('Error when calling non function value null - verbose', () => {
@@ -551,11 +549,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring constant as variable', () => {
@@ -565,11 +559,7 @@ test('Error when redeclaring constant as variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Error when redeclaring variable as constant', () => {
@@ -579,11 +569,7 @@ test('Error when redeclaring variable as constant', () => {
     const f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 6: SyntaxError: Identifier 'f' has already been declared (2:6)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
 test('Error when redeclaring variable', () => {
@@ -593,11 +579,7 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 4: SyntaxError: Identifier 'f' has already been declared (2:4)
-There is a syntax error in your program
-"
-`)
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
 test('Runtime error when redeclaring constant in interpreter', () => {
