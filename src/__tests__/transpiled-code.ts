@@ -30,5 +30,7 @@ test('Ensure no name clashes', () => {
   `
   const context = mockContext(4)
   const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
-  expect(transpiled).toMatchSnapshot()
+  const replacedNative = transpiled.replace(/native0\[\d+]/g, 'native')
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
