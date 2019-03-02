@@ -35,14 +35,19 @@ function getUniqueId(uniqueId = 'unique') {
   return uniqueId
 }
 
-let nativeStorageUniqueId: string
+const globalIds = {
+  native: '',
+  callIfFuncAndRightArgs: '',
+  boolOrErr: '',
+  wrap: ''
+}
 let contextId: number
 
 function createStorageLocationAstFor(type: StorageLocations): es.MemberExpression {
   return create.memberExpression(
     {
       type: 'MemberExpression',
-      object: create.identifier(nativeStorageUniqueId),
+      object: create.identifier(globalIds.native),
       property: create.literal(contextId),
       computed: true
     },
@@ -160,10 +165,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program
       node.type = 'CallExpression'
       const transformedNode = node as es.CallExpression
       transformedNode.arguments = [originalNode as es.ArrowFunctionExpression]
-      transformedNode.callee = create.memberExpression(
-        createStorageLocationAstFor('properTailCalls'),
-        'wrap'
-      )
+      transformedNode.callee = create.identifier(globalIds.wrap)
     }
   })
 }
@@ -241,20 +243,18 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
         create.literal(column),
         ...node.arguments
       ]
-      node.callee = createGetFromStorageLocationAstFor(
-        'callIfFunctionAndRightArgumentsElseError',
-        'operators'
-      )
+      node.callee = create.identifier(globalIds.callIfFuncAndRightArgs)
     }
   })
 }
 
 function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
   const transform = (test: es.Expression, line: number, column: number) =>
-    create.callExpression(
-      createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators'),
-      [test, create.literal(line), create.literal(column)]
-    )
+    create.callExpression(create.identifier(globalIds.boolOrErr), [
+      test,
+      create.literal(line),
+      create.literal(column)
+    ])
   simple(program, {
     IfStatement(node: es.IfStatement) {
       const { line, column } = node.loc!.start
@@ -271,10 +271,12 @@ function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
   })
 }
 
-function refreshLatestNatives(program: es.Program) {
+function refreshLatestIdentifiers(program: es.Program) {
   NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
   usedIdentifiers = getAllIdentifiersUsed(program)
-  nativeStorageUniqueId = getUniqueId('NATIVE')
+  for (const identifier of Object.getOwnPropertyNames(globalIds)) {
+    globalIds[identifier] = getUniqueId(identifier)
+  }
 }
 
 function getAllIdentifiersUsed(program: es.Program) {
@@ -355,7 +357,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 
 export function transpile(untranformedProgram: es.Program, id: number) {
   contextId = id
-  refreshLatestNatives(untranformedProgram)
+  refreshLatestIdentifiers(untranformedProgram)
   const program: es.Program = untranformedProgram
   const statements = program.body as es.Statement[]
   if (statements.length === 0) {
@@ -366,10 +368,6 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   transformTernaryIfAndLogicalsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program)
-  const declarationToAccessNativeStorage = create.constantDeclaration(
-    nativeStorageUniqueId,
-    create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
-  )
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
   const lastStatement = statements.pop() as es.Statement
@@ -385,12 +383,33 @@ export function transpile(untranformedProgram: es.Program, id: number) {
     ...statementsToAppend,
     lastLineToReturnResult
   ])
-  program.body = [declarationToAccessNativeStorage, wrapped]
+  program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
   const map = new sourceMap.SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }
+}
+
+function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
+  return [
+    create.constantDeclaration(
+      globalIds.native,
+      create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
+    ),
+    create.constantDeclaration(
+      globalIds.boolOrErr,
+      createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.callIfFuncAndRightArgs,
+      createGetFromStorageLocationAstFor('callIfFunctionAndRightArgumentsElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.wrap,
+      create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap')
+    )
+  ]
 }
 
 /**
