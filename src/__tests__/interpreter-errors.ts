@@ -251,6 +251,36 @@ test('Calling non function value undefined error message differs from verbose ve
   ).toBe(undefined)
 })
 
+const callingNonFunctionValueUndefinedArgs = stripIndent`
+undefined(1, true);
+`
+
+const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
+"enable verbose";
+  undefined(1, true);
+`
+// should not be different when error passing is fixed
+test('Error when calling non function value undefined with arguments', () => {
+  return expectParsedError(callingNonFunctionValueUndefinedArgs, {
+    native: false
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
+})
+
+test('Error when calling non function value undefined with arguments - verbose', () => {
+  return expectParsedError(callingNonFunctionValueUndefinedArgsVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+"
+`)
+})
+
+test('Calling non function value undefined with arguments error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueUndefinedArgs,
+    callingNonFunctionValueUndefinedArgsVerbose
+  ).toBe(undefined)
+})
+
 const callingNonFunctionValueNull = stripIndent`
 null();
 `

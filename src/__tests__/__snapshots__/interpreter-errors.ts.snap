@@ -1510,6 +1510,300 @@ Because undefined is not a function, you cannot run undefined().
 }
 `;
 
+exports[`Error when calling non function value undefined - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 31,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 30,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 37,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 2,
+              },
+            },
+            "raw": "true",
+            "start": 33,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 38,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 20,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 31,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 30,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 37,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 2,
+              },
+            },
+            "raw": "true",
+            "start": 33,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 38,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 20,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 11,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 10,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 17,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 13,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 9,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "name": "undefined",
+          "start": 0,
+          "type": "Identifier",
+        },
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 18,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling non function value undefined: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
