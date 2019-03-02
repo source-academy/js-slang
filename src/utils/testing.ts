@@ -102,11 +102,14 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
     return interpreted.then(interpretedResult => {
       return runInContext(code, nativeTestContext, { scheduler, isNativeRunnable: true }).then(
         result => {
-          const isInterpretedFinished = interpretedResult.resultStatus === 'finished'
-          const transpilerContext = createTestContext(options)
-          const transpiled = isInterpretedFinished
-            ? transpile(parse(code, transpilerContext)!, transpilerContext.contextId).transpiled
-            : 'parseError'
+          let transpiled: string
+          try {
+            const transpilerContext = createTestContext(options)
+            const parsed = parse(code, transpilerContext)!
+            transpiled = transpile(parsed, transpilerContext.contextId).transpiled
+          } catch {
+            transpiled = 'parseError'
+          }
           // replace native[<number>] as they may be inconsistent
           const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
           // replace the line hiding globals as they may differ between environments
