@@ -1,10 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import {
-  Options as AcornOptions,
-  parse as acornParse,
-  parseExpressionAt as acornParseAt,
-  Position
-} from 'acorn'
+import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
 import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
@@ -94,21 +89,6 @@ export class TrailingCommaError implements SourceError {
 
   public elaborate() {
     return 'Please remove the trailing comma'
-  }
-}
-
-export function parseAt(source: string, num: number) {
-  let program: es.Program | undefined
-  try {
-    program = (acornParseAt(source, num) as unknown) as es.Program
-    ancestor(program as es.Node, walkers, undefined)
-  } catch (error) {
-    throw error
-  }
-  if (program) {
-    return program
-  } else {
-    return undefined
   }
 }
 
