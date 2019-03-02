@@ -297,6 +297,7 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -364,6 +365,7 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -500,6 +502,7 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -571,6 +574,7 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -605,6 +609,7 @@ f(1, 2);",
   "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -732,6 +737,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -859,6 +865,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value 0.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1024,6 +1031,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value [1].",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1743,6 +1751,7 @@ Because undefined is not a function, you cannot run undefined(1, true).
 ",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1900,6 +1909,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value undefined.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1930,6 +1940,7 @@ let f = x => x;",
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1960,6 +1971,7 @@ const f = x => x;",
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -1990,6 +2002,7 @@ const f = x => x;",
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2020,6 +2033,7 @@ let f = x => x;",
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2654,6 +2668,7 @@ Object {
   "parsedErrors": "Line 1: Expected boolean as condition, got number.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;

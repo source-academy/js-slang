@@ -154,6 +154,17 @@ Object {
   "parsedErrors": "",
   "result": NaN,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -167,6 +178,17 @@ Object {
   "parsedErrors": "",
   "result": 6485,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -180,6 +202,17 @@ Object {
   "parsedErrors": "",
   "result": 39961,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
