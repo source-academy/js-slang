@@ -1,4 +1,4 @@
-import astr = require('astring')
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -18,8 +18,8 @@ export class NoUpdateAssignment implements SourceError {
   }
 
   public elaborate() {
-    const leftStr = astr.generate(this.node.left)
-    const rightStr = astr.generate(this.node.right)
+    const leftStr = generate(this.node.left)
+    const rightStr = generate(this.node.right)
     const newOpStr = this.node.operator.slice(0, -1)
 
     if (newOpStr === '+' || newOpStr === '-' || newOpStr === '/' || newOpStr === '*') {

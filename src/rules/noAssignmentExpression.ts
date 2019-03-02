@@ -1,4 +1,4 @@
-import astr = require('astring')
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -27,8 +27,8 @@ export class NoAssignmentExpression implements SourceError {
     }
 
     const lastNode = lastAssignmentNode(this.node)
-    const leftStr = astr.generate(this.node.left)
-    const rightStr = astr.generate(lastNode.right)
+    const leftStr = generate(this.node.left)
+    const rightStr = generate(lastNode.right)
 
     const elabStr = `Try moving this to another line:\n\n\t${leftStr} = ${rightStr};`
 

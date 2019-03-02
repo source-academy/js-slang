@@ -1,4 +1,4 @@
-import astr = require('astring')
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -18,9 +18,9 @@ export class BracesAroundForError implements SourceError {
   }
 
   public elaborate() {
-    const initStr = astr.generate(this.node.init)
-    const testStr = astr.generate(this.node.test)
-    const updateStr = astr.generate(this.node.update)
+    const initStr = generate(this.node.init)
+    const testStr = generate(this.node.test)
+    const updateStr = generate(this.node.update)
 
     const forStr = `\tfor (${initStr} ${testStr}; ${updateStr}) {\n\t\t//code goes here\n\t}`
 

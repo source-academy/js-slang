@@ -1,4 +1,4 @@
-import * as astr from 'astring'
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -23,7 +23,7 @@ export class NoDeclareMutableError implements SourceError {
 
   public elaborate() {
     const name = (this.node.declarations[0].id as es.Identifier).name
-    const value = astr.generate(this.node.declarations[0].init)
+    const value = generate(this.node.declarations[0].init)
 
     return `Use keyword "const" instead, to declare a constant:\n\n\tconst ${name} = ${value};`
   }
