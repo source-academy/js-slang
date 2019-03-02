@@ -30,7 +30,7 @@ export class NoAssignmentExpression implements SourceError {
     const leftStr = astr.generate(lastNode.left)
     const rightStr = astr.generate(lastNode.right)
 
-    const elabStr = `Try moving this to another line: \n\n\t${leftStr} = ${rightStr};`
+    const elabStr = `Try moving this to another line:\n\n\t${leftStr} = ${rightStr};`
 
     return elabStr
   }

@@ -1775,7 +1775,7 @@ x;",
     },
   ],
   "parsedErrors": "Line 3, Column 8: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	x = 5;
 ",
@@ -1850,7 +1850,7 @@ x;",
     },
   ],
   "parsedErrors": "Line 4, Column 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	y = 5;
 ",
@@ -1925,7 +1925,7 @@ for (let x = y = 1; x < 1; x = x + 1) {
     },
   ],
   "parsedErrors": "Line 3, Column 13: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	y = 1;
 ",

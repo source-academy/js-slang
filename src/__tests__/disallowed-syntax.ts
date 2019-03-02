@@ -236,7 +236,7 @@ test('Cannot use assignment expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 8: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	x = 5;
 "
@@ -269,7 +269,7 @@ test('Cannot use assignment expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 4, Column 4: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	y = 5;
 "
@@ -302,7 +302,7 @@ test('Cannot use assignment expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 13: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.
-Try moving this to another line: 
+Try moving this to another line:
 
 	y = 1;
 "
