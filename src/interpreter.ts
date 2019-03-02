@@ -95,7 +95,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
         hoistVariableDeclarations(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, node)
+        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
@@ -626,7 +626,7 @@ export function* apply(
   context: Context,
   fun: Closure | Value,
   args: Value[],
-  node?: es.CallExpression,
+  node: es.CallExpression,
   thisContext?: Value
 ) {
   let result: Value
