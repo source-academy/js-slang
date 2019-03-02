@@ -29,7 +29,7 @@ export class AsyncScheduler implements Scheduler {
           context
         })
       } else {
-        resolve({ status: 'finished', value: itValue.value })
+        resolve({ status: 'finished', value: itValue.value, context})
       }
     })
   }
@@ -41,6 +41,9 @@ export class PreemptiveScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
+      // This is used in the evaluation of the REPL during a paused state.
+      // The debugger is turned off while the code evaluates just above the debugger statement.
+      let actuallyBreak: boolean = false
       let itValue = it.next()
       const interval: number = setInterval(() => {
         let step = 0
@@ -48,11 +51,12 @@ export class PreemptiveScheduler implements Scheduler {
           while (!itValue.done && step < this.steps) {
             step++
             itValue = it.next()
-            if (context.runtime.break) {
-              saveState(context, it, this)
+            actuallyBreak = context.runtime.break && context.runtime.debuggerOn
+            if (actuallyBreak) {
               itValue.done = true
             }
           }
+          saveState(context, it, this)
         } catch (e) {
           if (/Maximum call stack/.test(e.toString())) {
             const frames = context.runtime.frames
@@ -77,7 +81,7 @@ export class PreemptiveScheduler implements Scheduler {
         if (itValue.done) {
           context.runtime.isRunning = false
           clearInterval(interval)
-          if (context.runtime.break) {
+          if (actuallyBreak) {
             resolve({
               status: 'suspended',
               it,
@@ -85,7 +89,7 @@ export class PreemptiveScheduler implements Scheduler {
               context
             })
           } else {
-            resolve({ status: 'finished', value: itValue.value })
+            resolve({ status: 'finished', value: itValue.value, context})
           }
         }
       })

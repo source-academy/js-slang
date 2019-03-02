@@ -10,6 +10,7 @@ const GLOBAL = typeof window === 'undefined' ? global : window
 
 const createEmptyRuntime = () => ({
   break: false,
+  debuggerOn: true,
   isRunning: false,
   frames: [],
   value: undefined,

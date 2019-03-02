@@ -66,6 +66,7 @@ export interface Context<T = any> {
   /** Runtime Sepecific state */
   runtime: {
     break: boolean
+    debuggerOn: boolean
     isRunning: boolean
     frames: Frame[]
     nodes: es.Node[]
@@ -111,7 +112,8 @@ export interface Error {
 
 export interface Finished {
   status: 'finished'
-  value: Value
+  value: Value,
+  context: Context
 }
 
 export interface Suspended {

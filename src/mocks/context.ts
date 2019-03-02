@@ -12,6 +12,7 @@ export function mockRuntimeContext(): Context {
   const context = createContext()
   context.runtime = {
     break: false,
+    debuggerOn: true,
     isRunning: true,
     frames: [],
     nodes: [
