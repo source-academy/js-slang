@@ -262,6 +262,36 @@ f(1);",
   "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const g = wrap(() => ({
+      isTail: false,
+      value: 1
+    }));
+    const f = wrap(x => ({
+      isTail: true,
+      function: g,
+      arguments: [x],
+      line: 2,
+      column: 15
+    }));
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
+    native.globals.set(\\"g\\", {
+      kind: \\"const\\",
+      value: g
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -297,36 +327,6 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-(( <globals redacted> ) => {
-  return (() => {
-    const g = wrap(() => ({
-      isTail: false,
-      value: 1
-    }));
-    const f = wrap(x => ({
-      isTail: true,
-      function: g,
-      arguments: [x],
-      line: 2,
-      column: 15
-    }));
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
-    native.globals.set(\\"g\\", {
-      kind: \\"const\\",
-      value: g
-    });
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
-    return lastStatementResult;
-  })();
-})();
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -359,6 +359,25 @@ f();",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const f = wrap(x => ({
+      isTail: false,
+      value: x
+    }));
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -394,25 +413,6 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-(( <globals redacted> ) => {
-  return (() => {
-    const f = wrap(x => ({
-      isTail: false,
-      value: x
-    }));
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
-    return lastStatementResult;
-  })();
-})();
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -445,6 +445,25 @@ f(1, 2);",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const f = wrap(x => ({
+      isTail: false,
+      value: x
+    }));
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -512,6 +531,25 @@ f[0](1, 2);",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const f = [wrap(x => ({
+      isTail: false,
+      value: x
+    }))];
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f[0], 2, 0, 1, 2);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -549,25 +587,6 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-(( <globals redacted> ) => {
-  return (() => {
-    const f = wrap(x => ({
-      isTail: false,
-      value: x
-    }));
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
-    return lastStatementResult;
-  })();
-})();
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -602,6 +621,27 @@ f();",
   "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const f = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -639,27 +679,6 @@ Try calling function f again, but with 1 argument instead. Remember that argumen
 ",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-(( <globals redacted> ) => {
-  return (() => {
-    const f = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    });
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
-    return lastStatementResult;
-  })();
-})();
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1723,6 +1742,17 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value true.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -1886,17 +1916,6 @@ Because undefined is not a function, you cannot run undefined(1, true).
 ",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-(( <globals redacted> ) => {
-  return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
-    return lastStatementResult;
-  })();
-})();
-",
   "visualiseListResult": Array [],
 }
 `;
