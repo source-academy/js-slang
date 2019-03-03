@@ -69,11 +69,10 @@ function hoistIdentifier(context: Context, name: string, node: es.Node) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
-    if (descriptors[name].writable) {
-      return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, true))
-    } else {
-      return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, false))
-    }
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+    )
   }
   environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return environment

@@ -99,17 +99,12 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
 
     const callArgs = (this.node as es.CallExpression).arguments
 
-    callArgs.forEach(x => {
-      argStr += generate(x)
-      argStr += ', '
-    })
-
-    argStr = argStr.substring(0, argStr.length - 2)
+    argStr = callArgs.map(generate).join(', ')
 
     const elabStr = `Because ${calleeStr} is not a function, you cannot run ${calleeStr}(${argStr}).`
     const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
 
-    if (typeof calleeVal === 'number' && calleeVal !== Infinity && !isNaN(calleeVal)) {
+    if (Number.isFinite(calleeVal)) {
       return `${elabStr} ${multStr}`
     } else {
       return elabStr
@@ -185,7 +180,7 @@ export class VariableRedeclaration extends RuntimeSourceError {
   }
 
   public elaborate() {
-    if (this.writable) {
+    if (this.writable === true) {
       const elabStr = `Since ${
         this.name
       } has already been declared, you can assign a value to it without re-declaring.`
