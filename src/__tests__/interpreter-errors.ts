@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import {
@@ -18,15 +19,15 @@ im_undefined;
 
 test('Undefined variable error is thrown', () => {
   return expectParsedError(undefinedVariable).toMatchInlineSnapshot(
-    `"Line 1: Name im_undefined not declared"`
+    `"Line 1: Name im_undefined not declared."`
   )
 })
 
 test('Undefined variable error is thrown - verbose', () => {
   return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 0: Name im_undefined not declared
-Before you can read the value of im_undefined, you need to declare it as a variable or a constant. \
-You can do this using the let or const keywords.
+"Line 2, Column 0: Name im_undefined not declared.
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this \
+using the let or const keywords.
 "
 `)
 })
@@ -46,14 +47,14 @@ const assignToBuiltinVerbose = stripIndent`
 
 test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin, { chapter: 3 }).toMatchInlineSnapshot(
-    `"Line 1: Cannot assign new value to constant map"`
+    `"Line 1: Cannot assign new value to constant map."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose, { chapter: 3 }).toMatchInlineSnapshot(`
-"Line 2, Column 0: Cannot assign new value to constant map
-TODO
+"Line 2, Column 0: Cannot assign new value to constant map.
+As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 "
 `)
 })
@@ -73,14 +74,14 @@ const assignToBuiltinVerbose1 = stripIndent`
 
 test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin1, { chapter: 3 }).toMatchInlineSnapshot(
-    `"Line 1: Cannot assign new value to constant undefined"`
+    `"Line 1: Cannot assign new value to constant undefined."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose1, { chapter: 3 }).toMatchInlineSnapshot(`
-"Line 2, Column 0: Cannot assign new value to constant undefined
-TODO
+"Line 2, Column 0: Cannot assign new value to constant undefined.
+As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 "
 `)
 })
@@ -170,7 +171,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     map(f, list(1, 2));
   `,
     { chapter: 4 }
-  ).toMatchInlineSnapshot(`"Line 2: Name a not declared"`)
+  ).toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
 test('Infinite recursion with a block bodied function', () => {
@@ -233,13 +234,13 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 test('Error when calling non function value undefined', () => {
   return expectParsedError(callingNonFunctionValueUndefined, {
     native: true
-  }).toMatchInlineSnapshot('"Line 1: Calling non-function value undefined"')
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
 })
 
 test('Error when calling non function value undefined - verbose', () => {
   return expectParsedError(callingNonFunctionValueUndefinedVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value undefined
-TODO
+"Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined().
 "
 `)
 })
@@ -248,6 +249,36 @@ test('Calling non function value undefined error message differs from verbose ve
   return expectDifferentParsedErrors(
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose
+  ).toBe(undefined)
+})
+
+const callingNonFunctionValueUndefinedArgs = stripIndent`
+undefined(1, true);
+`
+
+const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
+"enable verbose";
+  undefined(1, true);
+`
+// should not be different when error passing is fixed
+test('Error when calling non function value undefined with arguments', () => {
+  return expectParsedError(callingNonFunctionValueUndefinedArgs, {
+    native: false
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
+})
+
+test('Error when calling non function value undefined with arguments - verbose', () => {
+  return expectParsedError(callingNonFunctionValueUndefinedArgsVerbose).toMatchInlineSnapshot(`
+"Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+"
+`)
+})
+
+test('Calling non function value undefined with arguments error message differs from verbose version', () => {
+  return expectDifferentParsedErrors(
+    callingNonFunctionValueUndefinedArgs,
+    callingNonFunctionValueUndefinedArgsVerbose
   ).toBe(undefined)
 })
 
@@ -262,16 +293,16 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 
 test('Error when calling non function value null', () => {
   return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed
-null literals are not allowed
+"Line 1, Column 0: null literals are not allowed.
+They're not part of the Source §1 specs.
 "
 `)
 })
 
 test('Error when calling non function value null - verbose', () => {
   return expectParsedError(callingNonFunctionValueNullVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: null literals are not allowed
-null literals are not allowed
+"Line 2, Column 2: null literals are not allowed.
+They're not part of the Source §1 specs.
 "
 `)
 })
@@ -293,14 +324,14 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
 
 test('Error when calling non function value true', () => {
   return expectParsedError(callingNonFunctionValueTrue, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value true"`
+    `"Line 1: Calling non-function value true."`
   )
 })
 
 test('Error when calling non function value true - verbose', () => {
   return expectParsedError(callingNonFunctionValueTrueVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value true
-TODO
+"Line 2, Column 2: Calling non-function value true.
+Because true is not a function, you cannot run true().
 "
 `)
 })
@@ -323,14 +354,15 @@ const callingNonFunctionValue0Verbose = stripIndent`
 
 test('Error when calling non function value 0', () => {
   return expectParsedError(callingNonFunctionValue0, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value 0"`
+    `"Line 1: Calling non-function value 0."`
   )
 })
 
 test('Error when calling non function value 0 - verbose', () => {
   return expectParsedError(callingNonFunctionValue0Verbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value 0
-TODO
+"Line 2, Column 2: Calling non-function value 0.
+Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use \
+the * operator.
 "
 `)
 })
@@ -353,14 +385,14 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 
 test('Error when calling non function value "string"', () => {
   return expectParsedError(callingNonFunctionValueString, { native: true }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value \\"string\\""`
+    `"Line 1: Calling non-function value \\"string\\"."`
   )
 })
 
 test('Error when calling non function value "string" - verbose', () => {
   return expectParsedError(callingNonFunctionValueStringVerbose).toMatchInlineSnapshot(`
-"Line 2, Column 2: Calling non-function value \\"string\\"
-TODO
+"Line 2, Column 2: Calling non-function value \\"string\\".
+Because \\"string\\" is not a function, you cannot run \\"string\\"().
 "
 `)
 })
@@ -385,14 +417,14 @@ test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, {
     chapter: 3,
     native: true
-  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]"`)
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]."`)
 })
 
 test('Error when calling non function value array - verbose', () => {
   return expectParsedError(callingNonFunctionValueArrayVerbose, { chapter: 3 })
     .toMatchInlineSnapshot(`
-"Line 2, Column 0: Calling non-function value [1]
-TODO
+"Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
 "
 `)
 })
@@ -415,15 +447,15 @@ const callingNonFunctionValueObjectVerbose = stripIndent`
 
 test('Error when calling non function value object', () => {
   return expectParsedError(callingNonFunctionValueObject, { chapter: 100 }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value {\\"a\\": 1}"`
+    `"Line 1: Calling non-function value {\\"a\\": 1}."`
   )
 })
 
 test('Error when calling non function value object - verbose', () => {
   return expectParsedError(callingNonFunctionValueObjectVerbose, { chapter: 100 })
     .toMatchInlineSnapshot(`
-"Line 2, Column 0: Calling non-function value {\\"a\\": 1}
-TODO
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 "
 `)
 })
@@ -435,6 +467,20 @@ test('Calling non function value object error message differs from verbose versi
   ).toBe(undefined)
 })
 
+test('Error when calling non function value object - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+      "enable verbose";
+      ({a: 1})();
+    `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+"
+`)
+})
+
 test('Error when calling function with too few arguments', () => {
   return expectParsedError(
     stripIndent`
@@ -444,7 +490,21 @@ test('Error when calling function with too few arguments', () => {
     f();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0"`)
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
+})
+
+test('Error when calling function with too few arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      function f(x) {
+        return x;
+      }
+      f();
+    `).toMatchInlineSnapshot(`
+"Line 5, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
 })
 
 test('Error when calling function with too many arguments', () => {
@@ -456,7 +516,21 @@ test('Error when calling function with too many arguments', () => {
     f(1, 2);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2"`)
+  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
+})
+
+test('Error when calling function with too many arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      function f(x) {
+        return x;
+      }
+      f(1, 2);
+    `).toMatchInlineSnapshot(`
+"Line 5, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
 })
 
 test('Error when calling arrow function with too few arguments', () => {
@@ -466,7 +540,19 @@ test('Error when calling arrow function with too few arguments', () => {
     f();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0"`)
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
+})
+
+test('Error when calling arrow function with too few arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+  "enable verbose";
+    const f = x => x;
+    f();
+  `).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
 })
 
 test('Error when calling arrow function with too many arguments', () => {
@@ -476,7 +562,59 @@ test('Error when calling arrow function with too many arguments', () => {
     f(1, 2);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2"`)
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+})
+
+test('Error when calling arrow function with too many arguments - verbose', () => {
+  return expectParsedError(stripIndent`
+    "enable verbose";
+      const f = x => x;
+      f(1, 2);
+    `).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
+})
+
+test('Error when calling function from member expression with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    const f = [x => x];
+    f[0](1, 2);
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+})
+
+test('Error when calling function from member expression with too many arguments - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+      const f = [x => x];
+      f[0](1, 2);
+    `,
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
+})
+
+test('Error when calling arrow function in tail call with too many arguments - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    const g = () => 1;
+    const f = x => g(x);
+    f(1);
+  `
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 15: Expected 0 arguments, but got 1.
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+"
+`)
 })
 
 test('Error when calling arrow function in tail call with too many arguments', () => {
@@ -487,7 +625,7 @@ test('Error when calling arrow function in tail call with too many arguments', (
     f(1);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1"`)
+  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
 })
 
 test('Error when redeclaring constant', () => {
@@ -594,11 +732,53 @@ test('Runtime error when redeclaring constant as variable', () => {
   })
 })
 
+test('Runtime error when redeclaring constant as variable - verbose', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring constant as function', () => {
   const code1 = `
     const f = x => x;
   `
   const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring constant as function - verbose', () => {
+  const code1 = `
+    const f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
     function f(x) { return x; }
   `
   const context = mockContext(3)
@@ -634,11 +814,53 @@ test('Runtime error when redeclaring variable as constant', () => {
   })
 })
 
+test('Runtime error when redeclaring variable as constant - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
 test('Runtime error when redeclaring variable', () => {
   const code1 = `
     let f = x => x;
   `
   const code2 = `
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring variable - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
     let f = x => x;
   `
   const context = mockContext(3)
@@ -674,11 +896,53 @@ test('Runtime error when redeclaring variable as function', () => {
   })
 })
 
+test('Runtime error when redeclaring variable as function - verbose', () => {
+  const code1 = `
+    let f = x => x;
+  `
+  const code2 = `
+    "enable verbose";
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring function as constant', () => {
   const code1 = `
     function f(x) { return x; }
   `
   const code2 = `
+    const f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(parseError(context.errors)).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(parseError(context.errors)).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+    })
+  })
+})
+
+test('Runtime error when redeclaring function as constant - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
     const f = x => x;
   `
   const context = mockContext(3)
@@ -714,11 +978,53 @@ test('Runtime error when redeclaring function as variable', () => {
   })
 })
 
+test('Runtime error when redeclaring function as variable - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
+    let f = x => x;
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
 test('Runtime error when redeclaring function', () => {
   const code1 = `
     function f(x) { return x; }
   `
   const code2 = `
+    function f(x) { return x; }
+  `
+  const context = mockContext(3)
+  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+    expect(obj1).toMatchSnapshot()
+    expect(obj1.status).toBe('finished')
+    expect(parseError(context.errors)).toMatchSnapshot()
+    return runInContext(code2, context, { scheduler: 'preemptive' }).then(obj2 => {
+      expect(obj2).toMatchSnapshot()
+      expect(obj2.status).toBe('error')
+      expect(parseError(context.errors)).toMatchSnapshot()
+    })
+  })
+})
+
+test('Runtime error when redeclaring function - verbose', () => {
+  const code1 = `
+    function f(x) { return x; }
+  `
+  const code2 = `
+    "enable verbose";
     function f(x) { return x; }
   `
   const context = mockContext(3)
@@ -805,7 +1111,7 @@ test('Error when accessing inherited property of object', () => {
     ({}).valueOf;
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}"`)
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
 })
 
 // NOTE: Obsoleted due to strict types on member access

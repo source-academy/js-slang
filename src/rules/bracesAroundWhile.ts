@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -13,11 +14,14 @@ export class BracesAroundWhileError implements SourceError {
   }
 
   public explain() {
-    return 'Missing curly braces around "while" block'
+    return 'Missing curly braces around "while" block.'
   }
 
   public elaborate() {
-    return 'TODO'
+    const testStr = generate(this.node.test)
+    const whileStr = `\twhile (${testStr}) {\n\t\t//code goes here\n\t}`
+
+    return `Remember to enclose your "while" block with braces:\n\n ${whileStr}`
   }
 }
 

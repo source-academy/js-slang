@@ -15,7 +15,7 @@ export class NoIfWithoutElseError implements SourceError {
   }
 
   public explain() {
-    return 'Missing "else" in "if-else" statement'
+    return 'Missing "else" in "if-else" statement.'
   }
 
   public elaborate() {

@@ -20,7 +20,7 @@ export class NoUnspecifiedOperatorError implements SourceError {
   }
 
   public elaborate() {
-    return this.explain()
+    return ''
   }
 }
 

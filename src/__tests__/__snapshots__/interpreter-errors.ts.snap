@@ -38,7 +38,7 @@ map(f, list(1, 2));",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2: Name a not declared",
+  "parsedErrors": "Line 2: Name a not declared.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -68,7 +68,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}",
+  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -98,8 +98,8 @@ map = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map
-TODO
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map.
+As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -130,8 +130,8 @@ undefined = 5;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined
-TODO
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined.
+As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -161,7 +161,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Cannot assign new value to constant map",
+  "parsedErrors": "Line 1: Cannot assign new value to constant map.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -190,7 +190,43 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Cannot assign new value to constant undefined",
+  "parsedErrors": "Line 1: Cannot assign new value to constant undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function in tail call with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "g",
+      "expected": 0,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -206,6 +242,7 @@ f(1);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "g",
       "expected": 0,
       "got": 1,
       "location": SourceLocation {
@@ -222,7 +259,42 @@ f(1);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2: Expected 0 arguments, but got 1",
+  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -237,6 +309,7 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -253,7 +326,42 @@ f();",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 0",
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -268,6 +376,7 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
@@ -284,7 +393,111 @@ f(1, 2);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 2",
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = [x => x];
+  f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = [x => x];
+f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 5,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -301,6 +514,7 @@ f();",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 0,
       "location": SourceLocation {
@@ -317,7 +531,44 @@ f();",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 4: Expected 1 arguments, but got 0",
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 5,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -334,6 +585,7 @@ f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     InvalidNumberOfArguments {
+      "calleeStr": "f",
       "expected": 1,
       "got": 2,
       "location": SourceLocation {
@@ -350,7 +602,7 @@ f(1, 2);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 4: Expected 1 arguments, but got 2",
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -376,12 +628,45 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 28,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "'string'",
+          "start": 20,
+          "type": "Literal",
+          "value": "string",
+        },
+        "end": 30,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\"
-TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\".
+Because \\"string\\" is not a function, you cannot run \\"string\\"().
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -407,11 +692,44 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 8,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 8,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "'string'",
+          "start": 0,
+          "type": "Literal",
+          "value": "string",
+        },
+        "end": 10,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value \\"string\\"",
+  "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -437,12 +755,45 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 21,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "0",
+          "start": 20,
+          "type": "Literal",
+          "value": 0,
+        },
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value 0
-TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0.
+Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -468,11 +819,44 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 1,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "0",
+          "start": 0,
+          "type": "Literal",
+          "value": 0,
+        },
+        "end": 3,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value 0",
+  "parsedErrors": "Line 1: Calling non-function value 0.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -500,12 +884,62 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "elements": Array [
+            Node {
+              "end": 20,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 2,
+                },
+              },
+              "raw": "1",
+              "start": 19,
+              "type": "Literal",
+              "value": 1,
+            },
+          ],
+          "end": 21,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 2,
+            },
+          },
+          "start": 18,
+          "type": "ArrayExpression",
+        },
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value [1]
-TODO
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -533,11 +967,61 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "elements": Array [
+            Node {
+              "end": 2,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 2,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+              "raw": "1",
+              "start": 1,
+              "type": "Literal",
+              "value": 1,
+            },
+          ],
+          "end": 3,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "start": 0,
+          "type": "ArrayExpression",
+        },
+        "end": 5,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value [1]",
+  "parsedErrors": "Line 1: Calling non-function value [1].",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -573,8 +1057,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: null literals are not allowed
-null literals are not allowed
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed.
+They're not part of the Source §1 specs.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -610,8 +1094,8 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 1, Column 0: null literals are not allowed
-null literals are not allowed
+  "parsedErrors": "Line 1, Column 0: null literals are not allowed.
+They're not part of the Source §1 specs.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -640,12 +1124,216 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 25,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 2,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 24,
+              "key": Node {
+                "end": 21,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 2,
+                  },
+                },
+                "name": "a",
+                "start": 20,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 20,
+              "type": "Property",
+              "value": Node {
+                "end": 24,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 2,
+                  },
+                },
+                "raw": "1",
+                "start": 23,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 19,
+          "type": "ObjectExpression",
+        },
+        "end": 28,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}
-TODO
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 25,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 2,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 24,
+              "key": Node {
+                "end": 21,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 2,
+                  },
+                },
+                "name": "a",
+                "start": 20,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 20,
+              "type": "Property",
+              "value": Node {
+                "end": 24,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 2,
+                  },
+                },
+                "raw": "1",
+                "start": 23,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 19,
+          "type": "ObjectExpression",
+        },
+        "end": 28,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -673,11 +1361,96 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 7,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 1,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 6,
+              "key": Node {
+                "end": 3,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 2,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 1,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 2,
+              "type": "Property",
+              "value": Node {
+                "end": 6,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 1,
+                  },
+                },
+                "raw": "1",
+                "start": 5,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 1,
+          "type": "ObjectExpression",
+        },
+        "end": 10,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value {\\"a\\": 1}",
+  "parsedErrors": "Line 1: Calling non-function value {\\"a\\": 1}.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -703,12 +1476,45 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 24,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "true",
+          "start": 20,
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 26,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 8,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value true
-TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true.
+Because true is not a function, you cannot run true().
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -734,11 +1540,44 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 4,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "true",
+          "start": 0,
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 6,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 6,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value true",
+  "parsedErrors": "Line 1: Calling non-function value true.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -764,13 +1603,240 @@ Object {
           "line": 2,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 31,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined
-TODO
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined().
 ",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 31,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 30,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 37,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 2,
+              },
+            },
+            "raw": "true",
+            "start": 33,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 38,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 20,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 11,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 10,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 17,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 13,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 9,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "name": "undefined",
+          "start": 0,
+          "type": "Identifier",
+        },
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 18,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -795,11 +1861,43 @@ Object {
           "line": 1,
         },
       },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 9,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "name": "undefined",
+          "start": 0,
+          "type": "Identifier",
+        },
+        "end": 11,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 11,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Calling non-function value undefined",
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -984,6 +2082,27 @@ Object {
 }
 `;
 
+exports[`Runtime error when redeclaring constant as function - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant as function - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant as function - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
+"
+`;
+
 exports[`Runtime error when redeclaring constant as function 1`] = `
 Object {
   "status": "finished",
@@ -999,7 +2118,28 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant as function 4`] = `"Line 1: Redeclaring name f"`;
+exports[`Runtime error when redeclaring constant as function 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring constant as variable - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring constant as variable - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring constant as variable - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring constant as variable - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
+"
+`;
 
 exports[`Runtime error when redeclaring constant as variable 1`] = `
 Object {
@@ -1016,7 +2156,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Runtime error when redeclaring constant in interpreter 1`] = `
 Object {
@@ -1033,7 +2173,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Runtime error when redeclaring constant in native 1`] = `
 Object {
@@ -1050,7 +2190,28 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring function - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring function - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
+"
+`;
 
 exports[`Runtime error when redeclaring function 1`] = `
 Object {
@@ -1067,7 +2228,28 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring function 4`] = `"Line 1: Redeclaring name f"`;
+exports[`Runtime error when redeclaring function 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring function as constant - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as constant - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as constant - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
+"
+`;
 
 exports[`Runtime error when redeclaring function as constant 1`] = `
 Object {
@@ -1084,7 +2266,28 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring function as constant 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring function as constant 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring function as variable - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring function as variable - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring function as variable - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
+"
+`;
 
 exports[`Runtime error when redeclaring function as variable 1`] = `
 Object {
@@ -1101,7 +2304,31 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring function as variable 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring function as variable 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring variable - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
+
+	f = x => x;
+
+"
+`;
 
 exports[`Runtime error when redeclaring variable 1`] = `
 Object {
@@ -1118,7 +2345,31 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring variable 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring variable 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring variable as constant - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable as constant - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable as constant - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable as constant - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
+
+	f = x => x;
+
+"
+`;
 
 exports[`Runtime error when redeclaring variable as constant 1`] = `
 Object {
@@ -1135,7 +2386,31 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f"`;
+exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f."`;
+
+exports[`Runtime error when redeclaring variable as function - verbose 1`] = `
+Object {
+  "status": "finished",
+  "value": undefined,
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function - verbose 2`] = `""`;
+
+exports[`Runtime error when redeclaring variable as function - verbose 3`] = `
+Object {
+  "status": "error",
+}
+`;
+
+exports[`Runtime error when redeclaring variable as function - verbose 4`] = `
+"Line 3, Column 4: Redeclaring name f.
+Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
+
+	f = (x) => {...;
+
+"
+`;
 
 exports[`Runtime error when redeclaring variable as function 1`] = `
 Object {
@@ -1152,7 +2427,7 @@ Object {
 }
 `;
 
-exports[`Runtime error when redeclaring variable as function 4`] = `"Line 1: Redeclaring name f"`;
+exports[`Runtime error when redeclaring variable as function 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Type error when accessing property of function: expectParsedError 1`] = `
 Object {
@@ -1406,7 +2681,7 @@ im_undefined;",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared.
 Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 ",
   "result": undefined,
@@ -1437,7 +2712,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Name im_undefined not declared",
+  "parsedErrors": "Line 1: Name im_undefined not declared.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

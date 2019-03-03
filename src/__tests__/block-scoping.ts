@@ -120,7 +120,7 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x"`)
+  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x."`)
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
@@ -173,5 +173,5 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   test();
   `,
     { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 3: Name variable not declared"`)
+  ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
 })
