@@ -225,7 +225,7 @@ f(1);",
     },
   ],
   "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
-Try calling function g again in the same way, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -293,7 +293,7 @@ Object {
     },
   ],
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -360,7 +360,7 @@ Object {
     },
   ],
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -427,7 +427,7 @@ Object {
     },
   ],
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f[0] again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -496,7 +496,7 @@ Object {
     },
   ],
   "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -567,7 +567,7 @@ Object {
     },
   ],
   "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -2407,7 +2407,7 @@ exports[`Runtime error when redeclaring variable as function - verbose 4`] = `
 "Line 3, Column 4: Redeclaring name f.
 Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
 
-	f = ...;
+	f = (x) => {...;
 
 "
 `;

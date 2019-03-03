@@ -502,8 +502,7 @@ test('Error when calling function with too few arguments - verbose', () => {
       f();
     `).toMatchInlineSnapshot(`
 "Line 5, Column 2: Expected 1 arguments, but got 0.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
-',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
@@ -529,8 +528,7 @@ test('Error when calling function with too many arguments - verbose', () => {
       f(1, 2);
     `).toMatchInlineSnapshot(`
 "Line 5, Column 2: Expected 1 arguments, but got 2.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
-',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
@@ -552,8 +550,7 @@ test('Error when calling arrow function with too few arguments - verbose', () =>
     f();
   `).toMatchInlineSnapshot(`
 "Line 3, Column 2: Expected 1 arguments, but got 0.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
-',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
@@ -575,8 +572,7 @@ test('Error when calling arrow function with too many arguments - verbose', () =
       f(1, 2);
     `).toMatchInlineSnapshot(`
 "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f again in the same way, but with 1 argument instead. Remember that arguments are separated by a \
-',' (comma).
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
@@ -601,7 +597,7 @@ test('Error when calling function from member expression with too many arguments
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f[0] again in the same way, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
@@ -616,7 +612,7 @@ test('Error when calling arrow function in tail call with too many arguments - v
   `
   ).toMatchInlineSnapshot(`
 "Line 3, Column 15: Expected 0 arguments, but got 1.
-Try calling function g again in the same way, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
 "
 `)
 })
