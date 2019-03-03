@@ -164,7 +164,7 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
     const calleeStr = this.calleeStr
     const pluralS = this.expected === 1 ? '' : 's'
 
-    return `Try calling function ${calleeStr} again in the same way, but with ${
+    return `Try calling function ${calleeStr} again, but with ${
       this.expected
     } argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
   }
@@ -188,7 +188,8 @@ export class VariableRedeclaration extends RuntimeSourceError {
       let initStr = ''
 
       if (this.node.type === 'FunctionDeclaration') {
-        initStr = '...'
+        initStr =
+          '(' + (this.node as es.FunctionDeclaration).params.map(generate).join(',') + ') => {...'
       } else if (this.node.type === 'VariableDeclaration') {
         initStr = generate((this.node as es.VariableDeclaration).declarations[0].init)
       }
