@@ -157,7 +157,7 @@ test('Cannot use update expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 0: Update expressions are not allowed
-You are trying to use Update expressions, which is not yet allowed (yet).
+You are trying to use Update expressions, which is not allowed (yet).
 "
 `)
 })
@@ -401,7 +401,7 @@ test('Cannot use destructuring declarations - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 4: Array patterns are not allowed
-You are trying to use Array patterns, which is not yet allowed (yet).
+You are trying to use Array patterns, which is not allowed (yet).
 "
 `)
 })
@@ -507,7 +507,7 @@ test('Cannot use function expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
+You are trying to use Function expressions, which is not allowed (yet).
 "
 `)
 })
@@ -530,7 +530,7 @@ test('Cannot use function expressions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
+You are trying to use Function expressions, which is not allowed (yet).
 "
 `)
 })
@@ -700,7 +700,7 @@ test('No empty statements - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 2: Empty statements are not allowed
-You are trying to use Empty statements, which is not yet allowed (yet).
+You are trying to use Empty statements, which is not allowed (yet).
 "
 `)
 })
@@ -723,7 +723,7 @@ test('No array expressions in chapter 2 - verbose', () => {
     { chapter: 2 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 0: Array expressions are not allowed
-You are trying to use Array expressions, which is not yet allowed (yet).
+You are trying to use Array expressions, which is not allowed (yet).
 "
 `)
 })
@@ -787,7 +787,7 @@ test('No rest pattern - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 12: Rest elements are not allowed
-You are trying to use Rest elements, which is not yet allowed (yet).
+You are trying to use Rest elements, which is not allowed (yet).
 "
 `)
 })
@@ -816,7 +816,7 @@ test('No spread operator - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 5, Column 3: Spread elements are not allowed
-You are trying to use Spread elements, which is not yet allowed (yet).
+You are trying to use Spread elements, which is not allowed (yet).
 "
 `)
 })
@@ -857,13 +857,13 @@ test('no try statements - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 6, Column 2: Spread elements are not allowed
-You are trying to use Spread elements, which is not yet allowed (yet).
+You are trying to use Spread elements, which is not allowed (yet).
 
 Line 7, Column 3: Catch clauses are not allowed
-You are trying to use Catch clauses, which is not yet allowed (yet).
+You are trying to use Catch clauses, which is not allowed (yet).
 
 Line 5, Column 1: Try statements are not allowed
-You are trying to use Try statements, which is not yet allowed (yet).
+You are trying to use Try statements, which is not allowed (yet).
 "
 `)
 })
@@ -899,7 +899,7 @@ For instance, to assign 20 to i, you can write:
   i + i; // 40
 
 Line 2, Column 3: For of statements are not allowed
-You are trying to use For of statements, which is not yet allowed (yet).
+You are trying to use For of statements, which is not allowed (yet).
 "
 `)
 })
@@ -935,7 +935,7 @@ For instance, to assign 20 to i, you can write:
   i + i; // 40
 
 Line 2, Column 0: For in statements are not allowed
-You are trying to use For in statements, which is not yet allowed (yet).
+You are trying to use For in statements, which is not allowed (yet).
 "
 `)
 })
@@ -958,7 +958,7 @@ test('no debugger statement - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 3: Debugger statements are not allowed
-You are trying to use Debugger statements, which is not yet allowed (yet).
+You are trying to use Debugger statements, which is not allowed (yet).
 "
 `)
 })
@@ -987,7 +987,7 @@ test('no generator functions - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 0: Yield expressions are not allowed
-You are trying to use Yield expressions, which is not yet allowed (yet).
+You are trying to use Yield expressions, which is not allowed (yet).
 "
 `)
 })
@@ -1015,10 +1015,10 @@ test('no classes - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 10: Class bodys are not allowed
-You are trying to use Class bodys, which is not yet allowed (yet).
+You are trying to use Class bodys, which is not allowed (yet).
 
 Line 2, Column 0: Class declarations are not allowed
-You are trying to use Class declarations, which is not yet allowed (yet).
+You are trying to use Class declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1055,19 +1055,19 @@ test('no super - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 4, Column 2: Supers are not allowed
-You are trying to use Supers, which is not yet allowed (yet).
+You are trying to use Supers, which is not allowed (yet).
 
 Line 3, Column 11: Function expressions are not allowed
-You are trying to use Function expressions, which is not yet allowed (yet).
+You are trying to use Function expressions, which is not allowed (yet).
 
 Line 3, Column 0: Method definitions are not allowed
-You are trying to use Method definitions, which is not yet allowed (yet).
+You are trying to use Method definitions, which is not allowed (yet).
 
 Line 2, Column 30: Class bodys are not allowed
-You are trying to use Class bodys, which is not yet allowed (yet).
+You are trying to use Class bodys, which is not allowed (yet).
 
 Line 2, Column 1: Class declarations are not allowed
-You are trying to use Class declarations, which is not yet allowed (yet).
+You are trying to use Class declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1094,7 +1094,7 @@ test('no export function - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not yet allowed (yet).
+You are trying to use Export named declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1117,7 +1117,7 @@ test('no export constant - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not yet allowed (yet).
+You are trying to use Export named declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1142,7 +1142,7 @@ test('no export default - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 0: Export default declarations are not allowed
-You are trying to use Export default declarations, which is not yet allowed (yet).
+You are trying to use Export default declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1168,10 +1168,10 @@ test('no import - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 9: Import specifiers are not allowed
-You are trying to use Import specifiers, which is not yet allowed (yet).
+You are trying to use Import specifiers, which is not allowed (yet).
 
 Line 2, Column 0: Import declarations are not allowed
-You are trying to use Import declarations, which is not yet allowed (yet).
+You are trying to use Import declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1194,7 +1194,7 @@ test('no sequence expression - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Sequence expressions are not allowed
-You are trying to use Sequence expressions, which is not yet allowed (yet).
+You are trying to use Sequence expressions, which is not allowed (yet).
 "
 `)
 })
@@ -1292,7 +1292,7 @@ test('no this, no new - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
 "Line 3, Column 0: 'this' expressions are not allowed
-You are trying to use 'this' expressions, which is not yet allowed (yet).
+You are trying to use 'this' expressions, which is not allowed (yet).
 "
 `)
 })

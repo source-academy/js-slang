@@ -62,7 +62,7 @@ export function runInContext(
     } catch (error) {
       /*
 			Allow me to explain what's going on here:
-	
+
 				The try block above attempts to get the parse result of only the first line of code.
 				The parser throws an error if there's a syntax error or broken rule anywhere within the code.
 				But we don't want to handle this error, because we are not parsing the entire program - only the first line.
@@ -70,7 +70,7 @@ export function runInContext(
 				So we have an empty catch block that does nothing.
 				But the linter is not okay with empty blocks.
 				We don't want to change the linter settings for this one-off situation.
-	
+
 				THerefore this.
 		*/
       doNothing()

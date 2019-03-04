@@ -31,7 +31,7 @@ export class DisallowedConstructError implements SourceError {
 
   public elaborate() {
     return stripIndent`
-      You are trying to use ${this.nodeType}, which is not yet allowed (yet).
+      You are trying to use ${this.nodeType}, which is not allowed (yet).
     `
   }
 
