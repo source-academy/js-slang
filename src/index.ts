@@ -1,8 +1,6 @@
-import { RawSourceMap, SourceMapConsumer } from 'source-map'
-import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import { ExpressionStatement, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
-import { UNKNOWN_LOCATION } from './constants'
+import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 // import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
@@ -16,7 +14,8 @@ import {
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
+import { Context, Directive, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
+import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -36,8 +35,6 @@ const DEFAULT_OPTIONS: IOptions = {
 SourceMapConsumer.initialize({
   'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
 })
-
-const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
 // deals with parsing error objects and converting them to strings (for repl at least)
 
@@ -135,8 +132,8 @@ export function runInContext(
       }
       previousCode = code
       let transpiled
-      let sourceMapJson: RawSourceMap
-      let lastStatementSourceMapJson: RawSourceMap
+      let sourceMapJson: RawSourceMap | undefined
+      let lastStatementSourceMapJson: RawSourceMap | undefined
       try {
         const temp = transpile(program, context.contextId)
         // some issues with formatting and semicolons and tslint so no destructure
@@ -164,18 +161,11 @@ export function runInContext(
           line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
-            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
+            const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor({
               line,
               column
             })
-            const location =
-              line === null
-                ? UNKNOWN_LOCATION
-                : {
-                    start: { line: originalLine!, column: originalColumn! },
-                    end: { line: -1, column: -1 }
-                  }
-            context.errors.push(new ExceptionError(error, location))
+            context.errors.push(convertNativeErrorToSourceError(error, originalLine, originalColumn, name))
             return resolvedErrorPromise
           }
         )

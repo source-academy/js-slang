@@ -42,7 +42,10 @@ const globalIds = {
   native: '',
   callIfFuncAndRightArgs: '',
   boolOrErr: '',
-  wrap: ''
+  wrap: '',
+  transformUnary: '',
+  transformBinary: '',
+  throwIfTimeout: ''
 }
 let contextId: number
 
@@ -184,11 +187,10 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      create.mutateToCallExpression(
-        node,
-        create.identifier(globalIds.wrap),
-        [{ ...node }, create.literal(functionsToStringMap.get(node)!)]
-      )
+      create.mutateToCallExpression(node, create.identifier(globalIds.wrap), [
+        { ...node },
+        create.literal(functionsToStringMap.get(node)!)
+      ])
     }
   })
 }
@@ -284,7 +286,7 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
     const { line, column } = node.loc!.start
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
     node[test] = create.callExpression(
-      createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators'),
+      create.identifier(globalIds.boolOrErr),
       [node[test], create.literal(line), create.literal(column)]
     )
   }
@@ -407,7 +409,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
       const { operator, left, right } = node as es.BinaryExpression
       create.mutateToCallExpression(
         node,
-        createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators'),
+        create.identifier(globalIds.transformBinary),
         [create.literal(operator), left, right, create.literal(line), create.literal(column)]
       )
     },
@@ -416,7 +418,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
       const { operator, argument } = node as es.UnaryExpression
       create.mutateToCallExpression(
         node,
-        createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators'),
+        create.identifier(globalIds.transformUnary),
         [create.literal(operator), argument, create.literal(line), create.literal(column)]
       )
     }
@@ -429,14 +431,14 @@ function addInfiniteLoopProtection(program: es.Program) {
     const newStatements = []
     for (const statement of node.body) {
       if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
-        const startTimeConst = getUnqiueId()
+        const startTimeConst = getUniqueId('startTime')
         newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
         if (statement.body.type === 'BlockStatement') {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
             create.expressionStatement(
               create.callExpression(
-                createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators'),
+                create.identifier(globalIds.throwIfTimeout),
                 [
                   create.identifier(startTimeConst),
                   getRuntimeAst(),
@@ -462,12 +464,10 @@ function addInfiniteLoopProtection(program: es.Program) {
   })
 }
 
-export function transpile(untranformedProgram: es.Program, id: number) {
+export function transpile(program: es.Program, id: number) {
   contextId = id
-  refreshLatestIdentifiers(untranformedProgram)
-  const program: es.Program = untranformedProgram
-  const statements = program.body as es.Statement[]
-  if (statements.length === 0) {
+  refreshLatestIdentifiers(program)
+  if (program.body.length === 0) {
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
@@ -477,8 +477,10 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   transformSomeExpressionsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
+  addInfiniteLoopProtection(program)
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
+  const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
   const {
     lastLineToReturnResult,
@@ -517,6 +519,18 @@ function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] 
     create.constantDeclaration(
       globalIds.wrap,
       create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap')
+    ),
+    create.constantDeclaration(
+      globalIds.transformUnary,
+      createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.transformBinary,
+      createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.throwIfTimeout,
+      createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators')
     )
   ]
 }

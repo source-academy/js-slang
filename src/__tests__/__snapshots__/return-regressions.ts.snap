@@ -27,19 +27,24 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
-      for (let i = 0; i < 100; i = i + 1) {
+      const startTime = runtime();
+      for (let i = 0; boolOrErr(transformBinary(\\"<\\", i, 100, 6, 22), 6, 6); i = transformBinary(\\"+\\", i, 1, 6, 35)) {
+        throwIfTimeout(startTime, runtime(), 6, 6);
         return {
           isTail: false,
-          value: i + 1
+          value: transformBinary(\\"+\\", i, 1, 7, 15)
         };
         callIfFuncAndRightArgs(unreachable, 8, 8);
       }
@@ -94,12 +99,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
@@ -161,16 +169,21 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
-      while (true) {
+      const startTime = runtime();
+      while (boolOrErr(true, 6, 6)) {
+        throwIfTimeout(startTime, runtime(), 6, 6);
         return {
           isTail: false,
           value: 1
@@ -225,12 +238,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
@@ -329,12 +345,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -344,10 +363,12 @@ const wrap = native.properTailCalls.wrap;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
-      for (let i = 0; i < 100; i = i + 1) {
+      const startTime = runtime();
+      for (let i = 0; boolOrErr(transformBinary(\\"<\\", i, 100, 9, 22), 9, 6); i = transformBinary(\\"+\\", i, 1, 9, 35)) {
+        throwIfTimeout(startTime, runtime(), 9, 6);
         return {
           isTail: false,
-          value: callIfFuncAndRightArgs(id, 10, 15, i + 1) + callIfFuncAndRightArgs(id, 10, 25, i + 2)
+          value: transformBinary(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, transformBinary(\\"+\\", i, 1, 10, 18)), callIfFuncAndRightArgs(id, 10, 25, transformBinary(\\"+\\", i, 2, 10, 28)), 10, 15)
         };
       }
       return {
@@ -406,12 +427,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -424,7 +448,7 @@ const wrap = native.properTailCalls.wrap;
       if (boolOrErr(true, 9, 6)) {
         return {
           isTail: false,
-          value: callIfFuncAndRightArgs(id, 10, 15, 1) + callIfFuncAndRightArgs(id, 10, 23, 2)
+          value: transformBinary(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
         };
         callIfFuncAndRightArgs(unreachable, 11, 8);
       } else {}
@@ -486,12 +510,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -501,10 +528,12 @@ const wrap = native.properTailCalls.wrap;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
-      while (true) {
+      const startTime = runtime();
+      while (boolOrErr(true, 9, 6)) {
+        throwIfTimeout(startTime, runtime(), 9, 6);
         return {
           isTail: false,
-          value: callIfFuncAndRightArgs(id, 10, 15, 1) + callIfFuncAndRightArgs(id, 10, 23, 2)
+          value: transformBinary(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
         };
         callIfFuncAndRightArgs(unreachable, 11, 8);
       }
@@ -563,12 +592,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -580,7 +612,7 @@ const wrap = native.properTailCalls.wrap;
     const f = wrap(() => {
       return {
         isTail: false,
-        value: callIfFuncAndRightArgs(id, 9, 13, 1) + callIfFuncAndRightArgs(id, 9, 21, 2)
+        value: transformBinary(\\"+\\", callIfFuncAndRightArgs(id, 9, 13, 1), callIfFuncAndRightArgs(id, 9, 21, 2), 9, 13)
       };
       callIfFuncAndRightArgs(unreachable, 10, 6);
       return {
@@ -640,12 +672,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -655,11 +690,14 @@ const wrap = native.properTailCalls.wrap;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
-      for (let i = 0; i < 100; i = i + 1) {
+      const startTime = runtime();
+      for (let i = 0; boolOrErr(transformBinary(\\"<\\", i, 100, 9, 22), 9, 6); i = transformBinary(\\"+\\", i, 1, 9, 35)) {
+        throwIfTimeout(startTime, runtime(), 9, 6);
         return {
           isTail: true,
           function: id,
-          arguments: [i + 1],
+          functionName: \\"id\\",
+          arguments: [transformBinary(\\"+\\", i, 1, 10, 18)],
           line: 10,
           column: 15
         };
@@ -723,12 +761,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -742,6 +783,7 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: id,
+          functionName: \\"id\\",
           arguments: [1],
           line: 10,
           column: 15
@@ -806,12 +848,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -821,10 +866,13 @@ const wrap = native.properTailCalls.wrap;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
-      while (true) {
+      const startTime = runtime();
+      while (boolOrErr(true, 9, 6)) {
+        throwIfTimeout(startTime, runtime(), 9, 6);
         return {
           isTail: true,
           function: id,
+          functionName: \\"id\\",
           arguments: [1],
           line: 10,
           column: 15
@@ -886,12 +934,15 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: 1 < true
+        value: transformBinary(\\"<\\", 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
@@ -904,6 +955,7 @@ const wrap = native.properTailCalls.wrap;
       return {
         isTail: true,
         function: id,
+        functionName: \\"id\\",
         arguments: [1],
         line: 9,
         column: 13

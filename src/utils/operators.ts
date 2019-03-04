@@ -16,10 +16,6 @@ export function throwIfExceedsTimeLimit(
   }
 }
 
-import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
-import * as create from './astCreator'
-import * as rttc from './rttc'
-
 export function callIfFunctionAndRightArgumentsElseError(
   candidate: any,
   line: number,
