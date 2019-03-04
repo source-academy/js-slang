@@ -8,7 +8,10 @@ export function callIfFunctionAndRightArgumentsElseError(
   column: number,
   ...args: any[]
 ) {
-  const dummy = create.locationDummyNode(line, column)
+  const dummy = create.callExpression(create.locationDummyNode(line, column), args, {
+    start: { line, column },
+    end: { line, column }
+  })
   if (typeof candidate === 'function') {
     if (candidate.transformedFunction !== undefined) {
       const expectedLength = candidate.transformedFunction.length

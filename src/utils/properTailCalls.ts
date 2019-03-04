@@ -22,7 +22,10 @@ export const callIteratively = (f: any, ...args: any[]) => {
       const receivedLength = args.length
       if (expectedLength !== receivedLength) {
         throw new InvalidNumberOfArguments(
-          locationDummyNode(line, column),
+          create.callExpression(create.locationDummyNode(line, column), args, {
+            start: { line, column },
+            end: { line, column }
+          }),
           expectedLength,
           receivedLength
         )

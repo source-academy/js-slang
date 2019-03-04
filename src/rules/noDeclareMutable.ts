@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -21,7 +22,10 @@ export class NoDeclareMutableError implements SourceError {
   }
 
   public elaborate() {
-    return this.explain()
+    const name = (this.node.declarations[0].id as es.Identifier).name
+    const value = generate(this.node.declarations[0].init)
+
+    return `Use keyword "const" instead, to declare a constant:\n\n\tconst ${name} = ${value};`
   }
 }
 

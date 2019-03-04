@@ -14,7 +14,7 @@ export class NoImplicitDeclareUndefinedError implements SourceError {
   }
 
   public explain() {
-    return 'Missing value in variable declaration'
+    return 'Missing value in variable declaration.'
   }
 
   public elaborate() {
