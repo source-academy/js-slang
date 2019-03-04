@@ -1,14 +1,14 @@
-import { ExpressionStatement, Program } from 'estree'
+import { Literal } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
 // import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import { ExceptionError, InterruptedError, RuntimeSourceError } from './interpreter-errors'
-import { parse } from './parser'
+import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
+import { Context, Error, Finished, Result, Scheduler, SourceError } from './types'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -51,22 +51,43 @@ export function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  function getFirstLine(theProgram: Program) {
-    if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
-      const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
-      const theDirective = (firstLineOfProgram as Directive).directive
-      if (theDirective !== undefined) {
-        return theDirective
-      }
+  function getFirstLine(theCode: string) {
+    function doNothing() {
+      return undefined
+    }
+
+    let theProgram
+    try {
+      theProgram = parseAt(theCode, 0)
+    } catch (error) {
+      /*
+			Allow me to explain what's going on here:
+	
+				The try block above attempts to get the parse result of only the first line of code.
+				The parser throws an error if there's a syntax error or broken rule anywhere within the code.
+				But we don't want to handle this error, because we are not parsing the entire program - only the first line.
+				At the same time we have to catch the error, so we need a catch block.
+				So we have an empty catch block that does nothing.
+				But the linter is not okay with empty blocks.
+				We don't want to change the linter settings for this one-off situation.
+	
+				THerefore this.
+		*/
+      doNothing()
+    }
+
+    if (theProgram) {
+      return ((theProgram as unknown) as Literal).value
     }
 
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
+
+  verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
   if (program) {
-    verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
       let transpiled
       let sourceMapJson: RawSourceMap | undefined

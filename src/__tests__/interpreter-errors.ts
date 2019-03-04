@@ -292,11 +292,9 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 `
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(`
-"Line 1, Column 0: null literals are not allowed.
-They're not part of the Source §1 specs.
-"
-`)
+  return expectParsedError(callingNonFunctionValueNull).toMatchInlineSnapshot(
+    `"Line 1: null literals are not allowed."`
+  )
 })
 
 test('Error when calling non function value null - verbose', () => {
