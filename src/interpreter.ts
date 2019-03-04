@@ -68,7 +68,12 @@ const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+    )
   }
   environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
   return environment
@@ -90,7 +95,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
         hoistVariableDeclarations(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, node)
+        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
@@ -102,7 +107,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
+      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
     )
   }
 
@@ -576,7 +581,7 @@ export function* apply(
   context: Context,
   fun: Closure | Value,
   args: Value[],
-  node?: es.CallExpression,
+  node: es.CallExpression,
   thisContext?: Value
 ) {
   let result: Value

@@ -16,9 +16,9 @@ export class BracesAroundIfElseError implements SourceError {
 
   public explain() {
     if (this.branch === 'consequent') {
-      return 'Missing curly braces around "if" block'
+      return 'Missing curly braces around "if" block.'
     } else {
-      return 'Missing curly braces around "else" block'
+      return 'Missing curly braces around "else" block.'
     }
   }
 

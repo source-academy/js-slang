@@ -1,3 +1,5 @@
+// Variable determining chapter of Source is contained in this file.
+
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import * as list from './stdlib/list'
@@ -149,7 +151,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
     defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
     defineBuiltin(context, 'equal(value1, value2)', list.equal)
-    defineBuiltin(context, 'draw_list(xs)', visualiseList)
+    defineBuiltin(context, 'draw_data(xs)', visualiseList)
   }
 
   if (context.chapter >= 3) {

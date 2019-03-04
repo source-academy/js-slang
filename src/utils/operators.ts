@@ -16,13 +16,20 @@ export function throwIfExceedsTimeLimit(
   }
 }
 
+import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
+import * as create from './astCreator'
+import * as rttc from './rttc'
+
 export function callIfFunctionAndRightArgumentsElseError(
   candidate: any,
   line: number,
   column: number,
   ...args: any[]
 ) {
-  const dummy = create.locationDummyNode(line, column)
+  const dummy = create.callExpression(create.locationDummyNode(line, column), args, {
+    start: { line, column },
+    end: { line, column }
+  })
   if (typeof candidate === 'function') {
     if (candidate.transformedFunction !== undefined) {
       const expectedLength = candidate.transformedFunction.length

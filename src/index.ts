@@ -1,5 +1,9 @@
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
+import { ExpressionStatement, Program } from 'estree'
+import { RawSourceMap, SourceMapConsumer } from 'source-map'
+import { UNKNOWN_LOCATION } from './constants'
+// import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import {
@@ -12,8 +16,7 @@ import {
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
-import { locationDummyNode } from './utils/astCreator'
+import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -36,11 +39,25 @@ SourceMapConsumer.initialize({
 
 const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
-export function parseError(errors: SourceError[]): string {
+// deals with parsing error objects and converting them to strings (for repl at least)
+
+let verboseErrors = false
+const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
+
+export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     const line = error.location ? error.location.start.line : '<unknown>'
+    const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
-    return `Line ${line}: ${explanation}`
+    const elaboration = error.elaborate()
+
+    if (verbose) {
+      // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
+      // way to display it.
+      return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+    } else {
+      return `Line ${line}: ${explanation}`
+    }
   })
   return errorMessagesArr.join('\n')
 }
@@ -94,10 +111,22 @@ export function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  function getFirstLine(theProgram: Program) {
+    if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
+      const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
+      const theDirective = (firstLineOfProgram as Directive).directive
+      if (theDirective !== undefined) {
+        return theDirective
+      }
+    }
+
+    return undefined
+  }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
   const program = parse(code, context)
   if (program) {
+    verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
       if (previousCode === code) {
         JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -110,10 +139,10 @@ export function runInContext(
       let lastStatementSourceMapJson: RawSourceMap
       try {
         const temp = transpile(program, context.contextId)
-        // some issues with formatting and semicolons and tslint so
-        transpiled = temp[0]
-        sourceMapJson = temp[1]
-        lastStatementSourceMapJson = temp[2]
+        // some issues with formatting and semicolons and tslint so no destructure
+        transpiled = temp.transpiled
+        sourceMapJson = temp.codeMap
+        lastStatementSourceMapJson = temp.evalMap
         return Promise.resolve({
           status: 'finished',
           value: sandboxedEval(transpiled)
@@ -129,23 +158,24 @@ export function runInContext(
           context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
           return resolvedErrorPromise
         }
-        const line = Number(match[1])
-        const column = Number(match[2])
+        const line = Number(match![1])
+        const column = Number(match![2])
         return SourceMapConsumer.with(
           line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
-            const {
-              line: originalLine,
-              column: originalColumn,
-              name
-            } = consumer.originalPositionFor({
+            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
               line,
               column
             })
-            context.errors.push(
-              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
-            )
+            const location =
+              line === null
+                ? UNKNOWN_LOCATION
+                : {
+                    start: { line: originalLine!, column: originalColumn! },
+                    end: { line: -1, column: -1 }
+                  }
+            context.errors.push(new ExceptionError(error, location))
             return resolvedErrorPromise
           }
         )
