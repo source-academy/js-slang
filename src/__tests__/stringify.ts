@@ -28,12 +28,15 @@ test('String representation of booleans are nice', () => {
 })
 
 test('String representation of functions are nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   function f(x, y) {
     return z;
   }
   stringify(f);
-  `).toMatchInlineSnapshot(`
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`
 "function f(x, y) {
   return z;
 }"
@@ -41,10 +44,13 @@ test('String representation of functions are nice', () => {
 })
 
 test('String representation of arrow functions are nice', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
   const f = (x, y) => z;
   stringify(f);
-  `).toMatchInlineSnapshot(`"(x, y) => z"`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"(x, y) => z"`)
 })
 
 test('String representation of arrays are nice', () => {
@@ -53,7 +59,7 @@ test('String representation of arrays are nice', () => {
   const xs = [1, 'true', true, () => x];
   stringify(xs);
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => x]"`)
 })
 
@@ -63,7 +69,7 @@ test('String representation of multidimensional arrays are nice', () => {
   const xs = [1, 'true', [true, () => x, [[]]]];
   stringify(xs);
   `,
-    { chapter: 3 }
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => x, [[]]]]"`)
 })
 
@@ -482,7 +488,7 @@ test('String representation with custom indent', () => {
     stripIndent`
   stringify(parse('x=>x;'), ' ... ');
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
 "[... {... \\"tag\\": \\"function_definition\\",
  ...  ... \\"parameters\\":
@@ -507,7 +513,7 @@ test('String representation with long custom indent gets trimmed to 10 character
     stripIndent`
   stringify(parse('x=>x;'), '.................................');
   `,
-    { chapter: 4 }
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
 "[.........{.........\\"tag\\": \\"function_definition\\",
 ....................\\"parameters\\":

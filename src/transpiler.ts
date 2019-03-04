@@ -1,14 +1,11 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { RawSourceMap } from 'source-map'
-import * as sourceMap from 'source-map'
+import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-// import * as constants from "./constants";
 import * as errors from './interpreter-errors'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
-// import * as rttc from "./utils/rttc";
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -132,13 +129,30 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
   return statements
 }
 
-function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
+function generateFunctionsToStringMap(program: es.Program) {
+  const map: Map<es.Node, string> = new Map()
+  simple(program, {
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      map.set(node, generate(node))
+    },
+    FunctionDeclaration(node: es.FunctionDeclaration) {
+      map.set(node, generate(node))
+    }
+  })
+  return map
+}
+
+function transformFunctionDeclarationsToArrowFunctions(
+  program: es.Program,
+  functionsToStringMap: Map<es.Node, string>
+) {
   simple(program, {
     FunctionDeclaration(node) {
       const { id, params, body } = node as es.FunctionDeclaration
       node.type = 'VariableDeclaration'
       node = node as es.VariableDeclaration
       const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body)
+      functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!)
       node.declarations = [
         {
           type: 'VariableDeclarator',
@@ -164,13 +178,19 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
  * to allow for iterative processes to take place
  */
 
-function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program: es.Program) {
+function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
+  program: es.Program,
+  functionsToStringMap: Map<es.Node, string>
+) {
   simple(program, {
     ArrowFunctionExpression(node) {
       const originalNode = { ...node }
       node.type = 'CallExpression'
       const transformedNode = node as es.CallExpression
-      transformedNode.arguments = [originalNode as es.ArrowFunctionExpression]
+      transformedNode.arguments = [
+        originalNode as es.ArrowFunctionExpression,
+        create.literal(functionsToStringMap.get(node)!)
+      ]
       transformedNode.callee = create.identifier(globalIds.wrap)
     }
   })
@@ -352,7 +372,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
     }
   }
   const uniqueIdentifier = getUniqueId('lastStatementResult')
-  const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
+  const map = new SourceMapGenerator({ file: 'lastline' })
   const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
@@ -378,11 +398,12 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   if (statements.length === 0) {
     return { transpiled: '' }
   }
+  const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformTernaryIfAndLogicalsToCheckIfBoolean(program)
-  transformFunctionDeclarationsToArrowFunctions(program)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program)
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
   const lastStatement = statements.pop() as es.Statement
@@ -400,7 +421,7 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   ])
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
-  const map = new sourceMap.SourceMapGenerator({ file: 'source' })
+  const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }

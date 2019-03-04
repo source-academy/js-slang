@@ -550,7 +550,7 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x })));\\");
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"));\\");
     return lastStatementResult;
   })();
 })();
@@ -582,7 +582,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 4, 0, f);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -1035,7 +1035,7 @@ const wrap = native.properTailCalls.wrap;
           value: true
         };
       }
-    });
+    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === runtime()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
     native.globals.set(\\"start\\", {
       kind: \\"const\\",
