@@ -1,6 +1,6 @@
 /* tslint:disable */
 export const sandboxedEval = (code: string) => {
   const evalInGlobalScope = eval
-  console.log(code)
+  // console.log(code)
   return evalInGlobalScope(code)
 }
