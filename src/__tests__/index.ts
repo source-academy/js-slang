@@ -143,7 +143,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     test();
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant"`)
+  ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
 })
 
 test('Can overwrite lets when assignment is allowed', () => {

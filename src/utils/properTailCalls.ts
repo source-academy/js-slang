@@ -1,5 +1,5 @@
 import { InvalidNumberOfArguments } from '../interpreter-errors'
-import { locationDummyNode } from './astCreator'
+import { callExpression, locationDummyNode } from './astCreator'
 
 /**
  * Limitations:
@@ -22,7 +22,7 @@ export const callIteratively = (f: any, ...args: any[]) => {
       const receivedLength = args.length
       if (expectedLength !== receivedLength) {
         throw new InvalidNumberOfArguments(
-          create.callExpression(create.locationDummyNode(line, column), args, {
+          callExpression(locationDummyNode(line, column), args, {
             start: { line, column },
             end: { line, column }
           }),

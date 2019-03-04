@@ -1,4 +1,3 @@
-import { SourceMapConsumer } from 'source-map'
 import { ExpressionStatement, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
@@ -11,13 +10,19 @@ import {
   RuntimeSourceError,
   UndefinedVariable
 } from './interpreter-errors'
-import { ExceptionError, InterruptedError, RuntimeSourceError } from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
+import {
+  Context,
+  Directive,
+  Error as ResultError,
+  Finished,
+  Result,
+  Scheduler,
+  SourceError
+} from './types'
 import { locationDummyNode } from './utils/astCreator'
-import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -37,7 +42,7 @@ const DEFAULT_OPTIONS: IOptions = {
 let verboseErrors = false
 const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
-export function parseError(errors: SourceError[]): string {
+export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
@@ -149,18 +154,17 @@ export function runInContext(
           line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
-            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
+            const {
+              line: originalLine,
+              column: originalColumn,
+              name
+            } = consumer.originalPositionFor({
               line,
               column
             })
-            const location =
-              line === null
-                ? UNKNOWN_LOCATION
-                : {
-                    start: { line: originalLine!, column: originalColumn! },
-                    end: { line: -1, column: -1 }
-                  }
-            context.errors.push(new ExceptionError(error, location))
+            context.errors.push(
+              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+            )
             return resolvedErrorPromise
           }
         )
