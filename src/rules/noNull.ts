@@ -13,11 +13,11 @@ export class NoNullError implements SourceError {
   }
 
   public explain() {
-    return `null literals are not allowed`
+    return `null literals are not allowed.`
   }
 
   public elaborate() {
-    return this.explain()
+    return "They're not part of the Source §1 specs."
   }
 }
 

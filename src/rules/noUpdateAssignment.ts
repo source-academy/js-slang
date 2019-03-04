@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -13,11 +14,21 @@ export class NoUpdateAssignment implements SourceError {
   }
 
   public explain() {
-    return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead'
+    return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead.'
   }
 
   public elaborate() {
-    return ''
+    const leftStr = generate(this.node.left)
+    const rightStr = generate(this.node.right)
+    const newOpStr = this.node.operator.slice(0, -1)
+
+    if (newOpStr === '+' || newOpStr === '-' || newOpStr === '/' || newOpStr === '*') {
+      const elabStr = `\n\t${leftStr} = ${leftStr} ${newOpStr} ${rightStr};`
+
+      return elabStr
+    } else {
+      return ''
+    }
   }
 }
 

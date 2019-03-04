@@ -23,6 +23,46 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const f = wrap(() => {
+      for (let i = 0; i < 100; i = i + 1) {
+        return {
+          isTail: false,
+          value: i + 1
+        };
+        callIfFuncAndRightArgs(unreachable, 8, 8);
+      }
+      callIfFuncAndRightArgs(unreachable, 10, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 12, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -50,6 +90,46 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const f = wrap(() => {
+      if (boolOrErr(true, 6, 6)) {
+        return {
+          isTail: false,
+          value: 1
+        };
+        callIfFuncAndRightArgs(unreachable, 8, 8);
+      } else {}
+      callIfFuncAndRightArgs(unreachable, 10, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 12, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -77,6 +157,46 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const f = wrap(() => {
+      while (true) {
+        return {
+          isTail: false,
+          value: 1
+        };
+        callIfFuncAndRightArgs(unreachable, 8, 8);
+      }
+      callIfFuncAndRightArgs(unreachable, 10, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 12, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -101,6 +221,43 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: 1
+      };
+      callIfFuncAndRightArgs(unreachable, 7, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 9, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -168,6 +325,53 @@ Object {
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      for (let i = 0; i < 100; i = i + 1) {
+        return {
+          isTail: false,
+          value: callIfFuncAndRightArgs(id, 10, 15, i + 1) + callIfFuncAndRightArgs(id, 10, 25, i + 2)
+        };
+      }
+      return {
+        isTail: false,
+        value: 0
+      };
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -198,6 +402,56 @@ Object {
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      if (boolOrErr(true, 9, 6)) {
+        return {
+          isTail: false,
+          value: callIfFuncAndRightArgs(id, 10, 15, 1) + callIfFuncAndRightArgs(id, 10, 23, 2)
+        };
+        callIfFuncAndRightArgs(unreachable, 11, 8);
+      } else {}
+      callIfFuncAndRightArgs(unreachable, 13, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 15, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -228,6 +482,56 @@ Object {
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      while (true) {
+        return {
+          isTail: false,
+          value: callIfFuncAndRightArgs(id, 10, 15, 1) + callIfFuncAndRightArgs(id, 10, 23, 2)
+        };
+        callIfFuncAndRightArgs(unreachable, 11, 8);
+      }
+      callIfFuncAndRightArgs(unreachable, 13, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 15, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -255,6 +559,53 @@ Object {
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: callIfFuncAndRightArgs(id, 9, 13, 1) + callIfFuncAndRightArgs(id, 9, 21, 2)
+      };
+      callIfFuncAndRightArgs(unreachable, 10, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 12, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -285,6 +636,59 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      for (let i = 0; i < 100; i = i + 1) {
+        return {
+          isTail: true,
+          function: id,
+          arguments: [i + 1],
+          line: 10,
+          column: 15
+        };
+        callIfFuncAndRightArgs(unreachable, 11, 8);
+      }
+      callIfFuncAndRightArgs(unreachable, 13, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 15, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -315,6 +719,59 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      if (boolOrErr(true, 9, 6)) {
+        return {
+          isTail: true,
+          function: id,
+          arguments: [1],
+          line: 10,
+          column: 15
+        };
+        callIfFuncAndRightArgs(unreachable, 11, 8);
+      } else {}
+      callIfFuncAndRightArgs(unreachable, 13, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 15, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -345,6 +802,59 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      while (true) {
+        return {
+          isTail: true,
+          function: id,
+          arguments: [1],
+          line: 10,
+          column: 15
+        };
+        callIfFuncAndRightArgs(unreachable, 11, 8);
+      }
+      callIfFuncAndRightArgs(unreachable, 13, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 15, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -372,6 +882,56 @@ Object {
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
+const wrap = native.properTailCalls.wrap;
+(( <globals redacted> ) => {
+  return (() => {
+    const unreachable = wrap(() => {
+      return {
+        isTail: false,
+        value: 1 < true
+      };
+    });
+    const id = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    });
+    const f = wrap(() => {
+      return {
+        isTail: true,
+        function: id,
+        arguments: [1],
+        line: 9,
+        column: 13
+      };
+      callIfFuncAndRightArgs(unreachable, 10, 6);
+      return {
+        isTail: false,
+        value: 0
+      };
+      callIfFuncAndRightArgs(unreachable, 12, 6);
+    });
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+    native.globals.set(\\"unreachable\\", {
+      kind: \\"const\\",
+      value: unreachable
+    });
+    native.globals.set(\\"id\\", {
+      kind: \\"const\\",
+      value: id
+    });
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;

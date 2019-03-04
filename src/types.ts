@@ -3,7 +3,6 @@
 	error-related classes).
 */
 
-/* tslint:disable:interface-functionName max-classes-per-file */
 /* tslint:disable:max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
@@ -124,4 +123,14 @@ export type Result = Suspended | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
+}
+
+/*
+	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
+	As such this interface was created here to fulfil the same purpose.
+ */
+export interface Directive extends es.ExpressionStatement {
+  type: 'ExpressionStatement'
+  expression: es.Literal
+  directive: string
 }

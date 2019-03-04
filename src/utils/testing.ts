@@ -3,6 +3,8 @@ export { stripIndent, oneLine } from 'common-tags'
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
 import { stringify } from '../interop'
+import { parse } from '../parser'
+import { transpile } from '../transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
 
 export interface TestContext extends Context {
@@ -100,6 +102,26 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
     return interpreted.then(interpretedResult => {
       return runInContext(code, nativeTestContext, { scheduler, isNativeRunnable: true }).then(
         result => {
+          let transpiled: string
+          try {
+            const transpilerContext = createTestContext(options)
+            const parsed = parse(code, transpilerContext)!
+            transpiled = transpile(parsed, transpilerContext.contextId).transpiled
+          } catch {
+            transpiled = 'parseError'
+          }
+          // replace native[<number>] as they may be inconsistent
+          const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+          // replace the line hiding globals as they may differ between environments
+          const replacedGlobalsLine = replacedNative.replace(
+            /\n\(\(.*\)/,
+            '\n(( <globals redacted> )'
+          )
+          // replace declaration of builtins since they're repetitive
+          const replacedBuiltins = replacedGlobalsLine.replace(
+            /\n *const \w+ = native\.builtins\.get\("\w+"\);/g,
+            ''
+          )
           const nativeResult = {
             code,
             displayResult: nativeTestContext.displayResult,
@@ -131,7 +153,7 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
               }),
               {}
             )
-          return { ...interpretedResult, ...diff } as TestResult
+          return { ...interpretedResult, ...diff, transpiled: replacedBuiltins } as TestResult
         }
       )
     })
@@ -234,6 +256,22 @@ export function expectParsedError(code: string, options: TestOptions = {}) {
     testFailure(code, options)
       .then(snapshot('expectParsedError'))
       .then(testResult => testResult.parsedErrors)
+  ).resolves
+}
+
+export function expectDifferentParsedErrors(
+  code1: string,
+  code2: string,
+  options: TestOptions = {}
+) {
+  return expect(
+    testFailure(code1, options).then(error1 => {
+      expect(
+        testFailure(code2, options).then(error2 => {
+          return expect(error1).not.toEqual(error2)
+        })
+      )
+    })
   ).resolves
 }
 

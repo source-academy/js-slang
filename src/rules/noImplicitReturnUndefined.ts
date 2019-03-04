@@ -14,7 +14,7 @@ export class NoImplicitReturnUndefinedError implements SourceError {
   }
 
   public explain() {
-    return 'Missing value in return statement'
+    return 'Missing value in return statement.'
   }
 
   public elaborate() {
