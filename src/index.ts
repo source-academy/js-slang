@@ -14,7 +14,15 @@ import {
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Directive, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
+import {
+  Context,
+  Directive,
+  Error as ResultError,
+  Finished,
+  Result,
+  Scheduler,
+  SourceError
+} from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
 
@@ -161,11 +169,17 @@ export function runInContext(
           line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
-            const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor({
+            const {
+              line: originalLine,
+              column: originalColumn,
+              name
+            } = consumer.originalPositionFor({
               line,
               column
             })
-            context.errors.push(convertNativeErrorToSourceError(error, originalLine, originalColumn, name))
+            context.errors.push(
+              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+            )
             return resolvedErrorPromise
           }
         )

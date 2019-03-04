@@ -285,10 +285,11 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   ) {
     const { line, column } = node.loc!.start
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    node[test] = create.callExpression(
-      create.identifier(globalIds.boolOrErr),
-      [node[test], create.literal(line), create.literal(column)]
-    )
+    node[test] = create.callExpression(create.identifier(globalIds.boolOrErr), [
+      node[test],
+      create.literal(line),
+      create.literal(column)
+    ])
   }
   simple(program, {
     IfStatement(node: es.IfStatement) {
@@ -407,20 +408,23 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
     BinaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, left, right } = node as es.BinaryExpression
-      create.mutateToCallExpression(
-        node,
-        create.identifier(globalIds.transformBinary),
-        [create.literal(operator), left, right, create.literal(line), create.literal(column)]
-      )
+      create.mutateToCallExpression(node, create.identifier(globalIds.transformBinary), [
+        create.literal(operator),
+        left,
+        right,
+        create.literal(line),
+        create.literal(column)
+      ])
     },
     UnaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, argument } = node as es.UnaryExpression
-      create.mutateToCallExpression(
-        node,
-        create.identifier(globalIds.transformUnary),
-        [create.literal(operator), argument, create.literal(line), create.literal(column)]
-      )
+      create.mutateToCallExpression(node, create.identifier(globalIds.transformUnary), [
+        create.literal(operator),
+        argument,
+        create.literal(line),
+        create.literal(column)
+      ])
     }
   })
 }
@@ -437,15 +441,12 @@ function addInfiniteLoopProtection(program: es.Program) {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
             create.expressionStatement(
-              create.callExpression(
-                create.identifier(globalIds.throwIfTimeout),
-                [
-                  create.identifier(startTimeConst),
-                  getRuntimeAst(),
-                  create.literal(line),
-                  create.literal(column)
-                ]
-              )
+              create.callExpression(create.identifier(globalIds.throwIfTimeout), [
+                create.identifier(startTimeConst),
+                getRuntimeAst(),
+                create.literal(line),
+                create.literal(column)
+              ])
             )
           )
         }
