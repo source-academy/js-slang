@@ -28,6 +28,12 @@ const DEFAULT_OPTIONS: IOptions = {
   isNativeRunnable: false
 }
 
+// needed to work on browsers
+// @ts-ignore
+SourceMapConsumer.initialize({
+  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+})
+
 const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
 export function parseError(errors: SourceError[]): string {
