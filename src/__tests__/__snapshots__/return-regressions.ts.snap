@@ -34,7 +34,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
       for (let i = 0; i < 100; i = i + 1) {
         return {
@@ -49,7 +49,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 12, 6);
-    });
+    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return i + 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -101,7 +101,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
       if (boolOrErr(true, 6, 6)) {
         return {
@@ -116,7 +116,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 12, 6);
-    });
+    }, \\"function f() {\\\\n  if (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -168,7 +168,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
       while (true) {
         return {
@@ -183,7 +183,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 12, 6);
-    });
+    }, \\"function f() {\\\\n  while (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -232,7 +232,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const f = wrap(() => {
       return {
         isTail: false,
@@ -244,7 +244,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 9, 6);
-    });
+    }, \\"function f() {\\\\n  return 1;\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -336,13 +336,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       for (let i = 0; i < 100; i = i + 1) {
         return {
@@ -354,7 +354,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 0
       };
-    });
+    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1) + id(i + 2);\\\\n  }\\\\n  return 0;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -413,13 +413,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       if (boolOrErr(true, 9, 6)) {
         return {
@@ -434,7 +434,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 15, 6);
-    });
+    }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -493,13 +493,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       while (true) {
         return {
@@ -514,7 +514,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 15, 6);
-    });
+    }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -570,13 +570,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       return {
         isTail: false,
@@ -588,7 +588,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 12, 6);
-    });
+    }, \\"function f() {\\\\n  return id(1) + id(2);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -647,13 +647,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       for (let i = 0; i < 100; i = i + 1) {
         return {
@@ -671,7 +671,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 15, 6);
-    });
+    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -730,13 +730,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       if (boolOrErr(true, 9, 6)) {
         return {
@@ -754,7 +754,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 15, 6);
-    });
+    }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -813,13 +813,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       while (true) {
         return {
@@ -837,7 +837,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 15, 6);
-    });
+    }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",
@@ -893,13 +893,13 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 1 < true
       };
-    });
+    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\");
     const id = wrap(x => {
       return {
         isTail: false,
         value: x
       };
-    });
+    }, \\"function id(x) {\\\\n  return x;\\\\n}\\");
     const f = wrap(() => {
       return {
         isTail: true,
@@ -914,7 +914,7 @@ const wrap = native.properTailCalls.wrap;
         value: 0
       };
       callIfFuncAndRightArgs(unreachable, 12, 6);
-    });
+    }, \\"function f() {\\\\n  return id(1);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
     native.globals.set(\\"unreachable\\", {
       kind: \\"const\\",

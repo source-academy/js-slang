@@ -206,7 +206,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function test() {\\\\n  const x = true;\\\\n  if (true) {\\\\n    const x = false;\\\\n  } else {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",
@@ -248,7 +248,7 @@ const wrap = native.properTailCalls.wrap;
         z[x] = wrap(() => ({
           isTail: false,
           value: x
-        }));
+        }), \\"() => x\\");
       }
       return {
         isTail: true,
@@ -257,7 +257,7 @@ const wrap = native.properTailCalls.wrap;
         line: 6,
         column: 9
       };
-    });
+    }, \\"function test() {\\\\n  let z = [];\\\\n  for (let x = 0; x < 10; x = x + 1) {\\\\n    z[x] = () => x;\\\\n  }\\\\n  return z[1]();\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",
@@ -299,7 +299,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function test() {\\\\n  let x = true;\\\\n  for (let x = 1; x > 0; x = x - 1) {}\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 7, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",
@@ -348,7 +348,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function test() {\\\\n  let x = true;\\\\n  if (true) {\\\\n    let x = false;\\\\n  } else {\\\\n    let x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",
@@ -393,7 +393,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function test() {\\\\n  const x = true;\\\\n  {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",
@@ -440,7 +440,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: x
       };
-    });
+    }, \\"function test() {\\\\n  let x = true;\\\\n  while (true) {\\\\n    let x = false;\\\\n    break;\\\\n  }\\\\n  return x;\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 9, 0);\\");
     native.globals.set(\\"test\\", {
       kind: \\"const\\",

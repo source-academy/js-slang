@@ -37,7 +37,7 @@ const wrap = native.properTailCalls.wrap;
           column: 11
         };
       }
-    });
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -88,7 +88,7 @@ const wrap = native.properTailCalls.wrap;
           column: 20
         });
       }
-    });
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return false || f(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -131,7 +131,7 @@ const wrap = native.properTailCalls.wrap;
         line: 2,
         column: 22
       };
-    });
+    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : f(x - 1, y + 1);\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -177,7 +177,7 @@ const wrap = native.properTailCalls.wrap;
         isTail: false,
         value: 'unreachable'
       };
-    });
+    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : false || x > 0 ? f(x - 1, y + 1) : 'unreachable';\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -228,7 +228,7 @@ const wrap = native.properTailCalls.wrap;
           column: 11
         };
       }
-    });
+    }, \\"(x, y) => {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -267,7 +267,7 @@ const wrap = native.properTailCalls.wrap;
       arguments: [x - 1, y + 1],
       line: 1,
       column: 33
-    });
+    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -318,7 +318,7 @@ const wrap = native.properTailCalls.wrap;
           column: 11
         };
       }
-    });
+    }, \\"function f(x, y, z) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + f(0, z, 0), z);\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000, 2);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -358,7 +358,7 @@ const wrap = native.properTailCalls.wrap;
       arguments: [x - 1, y + 1],
       line: 1,
       column: 33
-    });
+    }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\");
     const g = wrap((x, y) => boolOrErr(x <= 0, 2, 20) ? {
       isTail: false,
       value: y
@@ -368,7 +368,7 @@ const wrap = native.properTailCalls.wrap;
       arguments: [x - 1, y + 1],
       line: 2,
       column: 33
-    });
+    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
@@ -430,7 +430,7 @@ const wrap = native.properTailCalls.wrap;
           column: 11
         };
       }
-    });
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return g(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const g = wrap((x, y) => {
       if (boolOrErr(x <= 0, 9, 2)) {
         return {
@@ -446,7 +446,7 @@ const wrap = native.properTailCalls.wrap;
           column: 11
         };
       }
-    });
+    }, \\"function g(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 15, 0, 5000, 5000);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",

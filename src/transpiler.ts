@@ -372,7 +372,7 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
     }
   }
   const uniqueIdentifier = getUniqueId('lastStatementResult')
-  const map = new sourceMap.SourceMapGenerator({ file: 'lastline' })
+  const map = new SourceMapGenerator({ file: 'lastline' })
   const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
   const uniqueDeclarationToStoreLastStatementResult = create.constantDeclaration(
     uniqueIdentifier,
@@ -402,8 +402,8 @@ export function transpile(untranformedProgram: es.Program, id: number) {
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformTernaryIfAndLogicalsToCheckIfBoolean(program)
-  transformFunctionDeclarationsToArrowFunctions(program)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program)
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
   const lastStatement = statements.pop() as es.Statement
