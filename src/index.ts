@@ -54,11 +54,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
-    const elaboration = error.elaborate()
 
     if (verbose) {
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
+      const elaboration = error.elaborate()
       return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
       return `Line ${line}: ${explanation}`
