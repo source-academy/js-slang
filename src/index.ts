@@ -1,14 +1,28 @@
 import { ExpressionStatement, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { UNKNOWN_LOCATION } from './constants'
-// import { UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
-import { ExceptionError, InterruptedError, RuntimeSourceError } from './interpreter-errors'
+import {
+  ConstAssignment,
+  ExceptionError,
+  InterruptedError,
+  RuntimeSourceError,
+  UndefinedVariable
+} from './interpreter-errors'
 import { parse } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import { Context, Directive, Error, Finished, Result, Scheduler, SourceError } from './types'
+import {
+  Context,
+  Directive,
+  Error as ResultError,
+  Finished,
+  Result,
+  Scheduler,
+  SourceError
+} from './types'
+import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
@@ -44,6 +58,48 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     }
   })
   return errorMessagesArr.join('\n')
+}
+
+function convertNativeErrorToSourceError(
+  error: Error,
+  line: number | null,
+  column: number | null,
+  name: string | null
+) {
+  // brute-forced from MDN website for phrasing of errors from different browsers
+  // FWIW node and chrome uses V8 so they'll have the same error messages
+  // unable to test on other engines
+  const assignmentToConst = [
+    'invalid assignment to const',
+    'Assignment to constant variable',
+    'Assignment to const',
+    'Redeclaration of const'
+  ]
+  const undefinedVariable = ['is not defined']
+
+  const message = error.message
+  if (name === null) {
+    name = 'UNKNOWN'
+  }
+
+  function messageContains(possibleErrorMessages: string[]) {
+    return possibleErrorMessages.some(errorMessage => message.includes(errorMessage))
+  }
+
+  if (messageContains(assignmentToConst)) {
+    return new ConstAssignment(locationDummyNode(line!, column!), name)
+  } else if (messageContains(undefinedVariable)) {
+    return new UndefinedVariable(name, locationDummyNode(line!, column!))
+  } else {
+    const location =
+      line === null || column === null
+        ? UNKNOWN_LOCATION
+        : {
+            start: { line, column },
+            end: { line: -1, column: -1 }
+          }
+    return new ExceptionError(error, location)
+  }
 }
 
 export function runInContext(
@@ -98,18 +154,17 @@ export function runInContext(
           line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
           null,
           consumer => {
-            const { line: originalLine, column: originalColumn } = consumer.originalPositionFor({
+            const {
+              line: originalLine,
+              column: originalColumn,
+              name
+            } = consumer.originalPositionFor({
               line,
               column
             })
-            const location =
-              line === null
-                ? UNKNOWN_LOCATION
-                : {
-                    start: { line: originalLine!, column: originalColumn! },
-                    end: { line: -1, column: -1 }
-                  }
-            context.errors.push(new ExceptionError(error, location))
+            context.errors.push(
+              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+            )
             return resolvedErrorPromise
           }
         )
@@ -129,7 +184,7 @@ export function runInContext(
   }
 }
 
-export function resume(result: Result): Finished | Error | Promise<Result> {
+export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
   } else {
