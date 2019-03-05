@@ -39,13 +39,13 @@ function getUniqueId(uniqueId = 'unique') {
 }
 
 const globalIds = {
-  native: '',
-  callIfFuncAndRightArgs: '',
-  boolOrErr: '',
-  wrap: '',
-  transformUnary: '',
-  transformBinary: '',
-  throwIfTimeout: ''
+  native: create.identifier('dummy'),
+  callIfFuncAndRightArgs: create.identifier('dummy'),
+  boolOrErr: create.identifier('dummy'),
+  wrap: create.identifier('dummy'),
+  unaryOp: create.identifier('dummy'),
+  binaryOp: create.identifier('dummy'),
+  throwIfTimeout: create.identifier('dummy')
 }
 let contextId: number
 
@@ -53,7 +53,7 @@ function createStorageLocationAstFor(type: StorageLocations): es.MemberExpressio
   return create.memberExpression(
     {
       type: 'MemberExpression',
-      object: create.identifier(globalIds.native),
+      object: globalIds.native,
       property: create.literal(contextId),
       computed: true
     },
@@ -187,7 +187,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      create.mutateToCallExpression(node, create.identifier(globalIds.wrap), [
+      create.mutateToCallExpression(node, globalIds.wrap, [
         { ...node },
         create.literal(functionsToStringMap.get(node)!)
       ])
@@ -269,7 +269,7 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
         create.literal(column),
         ...node.arguments
       ]
-      node.callee = create.identifier(globalIds.callIfFuncAndRightArgs)
+      node.callee = globalIds.callIfFuncAndRightArgs
     }
   })
 }
@@ -285,7 +285,7 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   ) {
     const { line, column } = node.loc!.start
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    node[test] = create.callExpression(create.identifier(globalIds.boolOrErr), [
+    node[test] = create.callExpression(globalIds.boolOrErr, [
       node[test],
       create.literal(line),
       create.literal(column)
@@ -314,7 +314,7 @@ function refreshLatestIdentifiers(program: es.Program) {
   NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
   usedIdentifiers = getAllIdentifiersUsed(program)
   for (const identifier of Object.getOwnPropertyNames(globalIds)) {
-    globalIds[identifier] = getUniqueId(identifier)
+    globalIds[identifier] = create.identifier(getUniqueId(identifier))
   }
 }
 
@@ -408,7 +408,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
     BinaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, left, right } = node as es.BinaryExpression
-      create.mutateToCallExpression(node, create.identifier(globalIds.transformBinary), [
+      create.mutateToCallExpression(node, globalIds.binaryOp, [
         create.literal(operator),
         left,
         right,
@@ -419,7 +419,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
     UnaryExpression(node) {
       const { line, column } = node.loc!.start
       const { operator, argument } = node as es.UnaryExpression
-      create.mutateToCallExpression(node, create.identifier(globalIds.transformUnary), [
+      create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,
         create.literal(line),
@@ -441,7 +441,7 @@ function addInfiniteLoopProtection(program: es.Program) {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
             create.expressionStatement(
-              create.callExpression(create.identifier(globalIds.throwIfTimeout), [
+              create.callExpression(globalIds.throwIfTimeout, [
                 create.identifier(startTimeConst),
                 getRuntimeAst(),
                 create.literal(line),
@@ -506,31 +506,31 @@ export function transpile(program: es.Program, id: number) {
 function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
   return [
     create.constantDeclaration(
-      globalIds.native,
+      globalIds.native.name,
       create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
     ),
     create.constantDeclaration(
-      globalIds.boolOrErr,
+      globalIds.boolOrErr.name,
       createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.callIfFuncAndRightArgs,
+      globalIds.callIfFuncAndRightArgs.name,
       createGetFromStorageLocationAstFor('callIfFunctionAndRightArgumentsElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.wrap,
+      globalIds.wrap.name,
       create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap')
     ),
     create.constantDeclaration(
-      globalIds.transformUnary,
+      globalIds.unaryOp.name,
       createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.transformBinary,
+      globalIds.binaryOp.name,
       createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.throwIfTimeout,
+      globalIds.throwIfTimeout.name,
       createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators')
     )
   ]

@@ -15,8 +15,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -71,8 +71,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -98,8 +98,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -125,8 +125,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -152,8 +152,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -179,8 +179,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -206,8 +206,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -233,8 +233,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -260,8 +260,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -287,8 +287,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -314,8 +314,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -341,8 +341,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -368,8 +368,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -395,8 +395,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -422,8 +422,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -449,8 +449,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -476,8 +476,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -503,8 +503,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -530,8 +530,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -557,8 +557,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -584,8 +584,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -611,8 +611,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -641,8 +641,8 @@ is_function(f);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -678,8 +678,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -705,8 +705,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -732,8 +732,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -759,8 +759,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -994,8 +994,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1021,8 +1021,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1048,8 +1048,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1075,8 +1075,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1110,14 +1110,14 @@ repeatUntilDifferentTime();",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const start = callIfFuncAndRightArgs(runtime, 1, 14);
     const repeatUntilDifferentTime = wrap(() => {
-      if (boolOrErr(transformBinary(\\"===\\", start, callIfFuncAndRightArgs(runtime, 3, 16), 3, 6), 3, 2)) {
+      if (boolOrErr(binaryOp(\\"===\\", start, callIfFuncAndRightArgs(runtime, 3, 16), 3, 6), 3, 2)) {
         return {
           isTail: true,
           function: repeatUntilDifferentTime,
@@ -1166,8 +1166,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1199,8 +1199,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1226,8 +1226,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1253,8 +1253,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1280,8 +1280,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1307,8 +1307,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1334,8 +1334,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
@@ -1477,8 +1477,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
-const transformUnary = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const transformBinary = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
