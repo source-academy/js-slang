@@ -13,7 +13,7 @@ export class AsyncScheduler implements Scheduler {
           itValue = it.next()
           if (context.runtime.break) {
             saveState(context, it, this)
-            itValue.done = true;
+            itValue.done = true
           }
         }
       } catch (e) {
@@ -29,7 +29,7 @@ export class AsyncScheduler implements Scheduler {
           context
         })
       } else {
-        resolve({ status: 'finished', value: itValue.value, context})
+        resolve({ status: 'finished', value: itValue.value, context })
       }
     })
   }
@@ -89,7 +89,7 @@ export class PreemptiveScheduler implements Scheduler {
               context
             })
           } else {
-            resolve({ status: 'finished', value: itValue.value, context})
+            resolve({ status: 'finished', value: itValue.value, context })
           }
         }
       })

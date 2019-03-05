@@ -50,7 +50,7 @@ export interface Comment {
 }
 
 export interface Observers {
-  callbacks: Array<( arg0: Context) => void>
+  callbacks: Array<(arg0: Context) => void>
 }
 
 export interface Context<T = any> {
@@ -112,7 +112,7 @@ export interface Error {
 
 export interface Finished {
   status: 'finished'
-  value: Value,
+  value: Value
   context: Context
 }
 
