@@ -334,6 +334,12 @@ function getAllIdentifiersUsed(program: es.Program) {
       }
     }
   })
+  for (const identifier of NATIVE_STORAGE[contextId].builtins.keys()) {
+    identifiers.add(identifier)
+  }
+  for (const identifier of NATIVE_STORAGE[contextId].globals.keys()) {
+    identifiers.add(identifier)
+  }
   return identifiers
 }
 
