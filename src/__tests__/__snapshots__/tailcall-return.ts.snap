@@ -20,10 +20,12 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      if (boolOrErr(x <= 0, 2, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 6), 2, 2)) {
         return {
           isTail: false,
           value: y
@@ -32,7 +34,8 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: f,
-          arguments: [x - 1, y + 1],
+          functionName: \\"f\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 5, 13), binaryOp(\\"+\\", y, 1, 5, 18)],
           line: 5,
           column: 11
         };
@@ -71,10 +74,12 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      if (boolOrErr(x <= 0, 2, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 6), 2, 2)) {
         return {
           isTail: false,
           value: y
@@ -83,7 +88,8 @@ const wrap = native.properTailCalls.wrap;
         return boolOrErr(false, 5, 11) || ({
           isTail: true,
           function: f,
-          arguments: [x - 1, y + 1],
+          functionName: \\"f\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 5, 22), binaryOp(\\"+\\", y, 1, 5, 27)],
           line: 5,
           column: 20
         });
@@ -118,16 +124,19 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      return boolOrErr(x <= 0, 2, 9) ? {
+      return boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 9), 2, 9) ? {
         isTail: false,
         value: y
       } : {
         isTail: true,
         function: f,
-        arguments: [x - 1, y + 1],
+        functionName: \\"f\\",
+        arguments: [binaryOp(\\"-\\", x, 1, 2, 24), binaryOp(\\"+\\", y, 1, 2, 29)],
         line: 2,
         column: 22
       };
@@ -161,16 +170,19 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      return boolOrErr(x <= 0, 2, 9) ? {
+      return boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 9), 2, 9) ? {
         isTail: false,
         value: y
-      } : boolOrErr(boolOrErr(false, 2, 22) || x > 0, 2, 22) ? {
+      } : boolOrErr(boolOrErr(false, 2, 22) || binaryOp(\\">\\", x, 0, 2, 31), 2, 22) ? {
         isTail: true,
         function: f,
-        arguments: [x - 1, y + 1],
+        functionName: \\"f\\",
+        arguments: [binaryOp(\\"-\\", x, 1, 2, 41), binaryOp(\\"+\\", y, 1, 2, 46)],
         line: 2,
         column: 39
       } : {
@@ -211,10 +223,12 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      if (boolOrErr(x <= 0, 2, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 6), 2, 2)) {
         return {
           isTail: false,
           value: y
@@ -223,7 +237,8 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: f,
-          arguments: [x - 1, y + 1],
+          functionName: \\"f\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 5, 13), binaryOp(\\"+\\", y, 1, 5, 18)],
           line: 5,
           column: 11
         };
@@ -256,15 +271,18 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
-    const f = wrap((x, y) => boolOrErr(x <= 0, 1, 20) ? {
+    const f = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", x, 0, 1, 20), 1, 20) ? {
       isTail: false,
       value: y
     } : {
       isTail: true,
       function: f,
-      arguments: [x - 1, y + 1],
+      functionName: \\"f\\",
+      arguments: [binaryOp(\\"-\\", x, 1, 1, 35), binaryOp(\\"+\\", y, 1, 1, 40)],
       line: 1,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\");
@@ -301,10 +319,12 @@ f(5000, 5000, 2);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y, z) => {
-      if (boolOrErr(x <= 0, 2, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 6), 2, 2)) {
         return {
           isTail: false,
           value: y
@@ -313,7 +333,8 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: f,
-          arguments: [x - 1, y + callIfFuncAndRightArgs(f, 5, 20, 0, z, 0), z],
+          functionName: \\"f\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 5, 13), binaryOp(\\"+\\", y, callIfFuncAndRightArgs(f, 5, 20, 0, z, 0), 5, 18), z],
           line: 5,
           column: 11
         };
@@ -347,25 +368,29 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
-    const f = wrap((x, y) => boolOrErr(x <= 0, 1, 20) ? {
+    const f = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", x, 0, 1, 20), 1, 20) ? {
       isTail: false,
       value: y
     } : {
       isTail: true,
       function: g,
-      arguments: [x - 1, y + 1],
+      functionName: \\"g\\",
+      arguments: [binaryOp(\\"-\\", x, 1, 1, 35), binaryOp(\\"+\\", y, 1, 1, 40)],
       line: 1,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\");
-    const g = wrap((x, y) => boolOrErr(x <= 0, 2, 20) ? {
+    const g = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 20), 2, 20) ? {
       isTail: false,
       value: y
     } : {
       isTail: true,
       function: f,
-      arguments: [x - 1, y + 1],
+      functionName: \\"f\\",
+      arguments: [binaryOp(\\"-\\", x, 1, 2, 35), binaryOp(\\"+\\", y, 1, 2, 40)],
       line: 2,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\");
@@ -413,10 +438,12 @@ f(5000, 5000);",
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap((x, y) => {
-      if (boolOrErr(x <= 0, 2, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 6), 2, 2)) {
         return {
           isTail: false,
           value: y
@@ -425,14 +452,15 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: g,
-          arguments: [x - 1, y + 1],
+          functionName: \\"g\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 5, 13), binaryOp(\\"+\\", y, 1, 5, 18)],
           line: 5,
           column: 11
         };
       }
     }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return g(x - 1, y + 1);\\\\n  }\\\\n}\\");
     const g = wrap((x, y) => {
-      if (boolOrErr(x <= 0, 9, 2)) {
+      if (boolOrErr(binaryOp(\\"<=\\", x, 0, 9, 6), 9, 2)) {
         return {
           isTail: false,
           value: y
@@ -441,7 +469,8 @@ const wrap = native.properTailCalls.wrap;
         return {
           isTail: true,
           function: f,
-          arguments: [x - 1, y + 1],
+          functionName: \\"f\\",
+          arguments: [binaryOp(\\"-\\", x, 1, 12, 13), binaryOp(\\"+\\", y, 1, 12, 18)],
           line: 12,
           column: 11
         };

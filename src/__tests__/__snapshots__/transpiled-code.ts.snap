@@ -5,6 +5,8 @@ exports[`Ensure no name clashes 1`] = `
 const boolOrErr0 = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs0 = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap90 = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const runtime = native.builtins.get(\\"runtime\\");
@@ -126,6 +128,8 @@ Object {
 const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
 const wrap = native.properTailCalls.wrap;
+const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
+const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
 (( <globals redacted> ) => {
   return (() => {
     const runtime = native.builtins.get(\\"runtime\\");

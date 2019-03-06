@@ -39,10 +39,12 @@ function getUniqueId(uniqueId = 'unique') {
 }
 
 const globalIds = {
-  native: '',
-  callIfFuncAndRightArgs: '',
-  boolOrErr: '',
-  wrap: ''
+  native: create.identifier('dummy'),
+  callIfFuncAndRightArgs: create.identifier('dummy'),
+  boolOrErr: create.identifier('dummy'),
+  wrap: create.identifier('dummy'),
+  unaryOp: create.identifier('dummy'),
+  binaryOp: create.identifier('dummy')
 }
 let contextId: number
 
@@ -50,7 +52,7 @@ function createStorageLocationAstFor(type: StorageLocations): es.MemberExpressio
   return create.memberExpression(
     {
       type: 'MemberExpression',
-      object: create.identifier(globalIds.native),
+      object: globalIds.native,
       property: create.literal(contextId),
       computed: true
     },
@@ -183,15 +185,11 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   functionsToStringMap: Map<es.Node, string>
 ) {
   simple(program, {
-    ArrowFunctionExpression(node) {
-      const originalNode = { ...node }
-      node.type = 'CallExpression'
-      const transformedNode = node as es.CallExpression
-      transformedNode.arguments = [
-        originalNode as es.ArrowFunctionExpression,
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      create.mutateToCallExpression(node, globalIds.wrap, [
+        { ...node },
         create.literal(functionsToStringMap.get(node)!)
-      ]
-      transformedNode.callee = create.identifier(globalIds.wrap)
+      ])
     }
   })
 }
@@ -211,31 +209,32 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
-        return {
-          type: 'LogicalExpression',
-          operator: expression.operator,
-          left: expression.left,
-          right: transformLogicalExpression(expression.right),
-          loc: expression.loc!
-        }
+        return create.logicalExpression(
+          expression.operator,
+          expression.left,
+          transformLogicalExpression(expression.right),
+          expression.loc!
+        )
       case 'ConditionalExpression':
-        return {
-          type: 'ConditionalExpression',
-          test: expression.test,
-          consequent: transformLogicalExpression(expression.consequent),
-          alternate: transformLogicalExpression(expression.alternate),
-          loc: expression.loc!
-        }
+        return create.conditionalExpression(
+          expression.test,
+          transformLogicalExpression(expression.consequent),
+          transformLogicalExpression(expression.alternate),
+          expression.loc!
+        )
       case 'CallExpression':
         expression = expression as es.CallExpression
         const { line, column } = expression.loc!.start
+        const functionName =
+          expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
           create.property('function', expression.callee as es.Expression),
-          create.property('arguments', {
-            type: 'ArrayExpression',
-            elements: expression.arguments
-          }),
+          create.property('functionName', create.literal(functionName)),
+          create.property(
+            'arguments',
+            create.arrayExpression(expression.arguments as es.Expression[])
+          ),
           create.property('line', create.literal(line)),
           create.property('column', create.literal(column))
         ])
@@ -269,30 +268,43 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
         create.literal(column),
         ...node.arguments
       ]
-      node.callee = create.identifier(globalIds.callIfFuncAndRightArgs)
+      node.callee = globalIds.callIfFuncAndRightArgs
     }
   })
 }
 
-function transformTernaryIfAndLogicalsToCheckIfBoolean(program: es.Program) {
-  const transform = (test: es.Expression, line: number, column: number) =>
-    create.callExpression(create.identifier(globalIds.boolOrErr), [
-      test,
+function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
+  function transform(
+    node:
+      | es.IfStatement
+      | es.ConditionalExpression
+      | es.LogicalExpression
+      | es.ForStatement
+      | es.WhileStatement
+  ) {
+    const { line, column } = node.loc!.start
+    const test = node.type === 'LogicalExpression' ? 'left' : 'test'
+    node[test] = create.callExpression(globalIds.boolOrErr, [
+      node[test],
       create.literal(line),
       create.literal(column)
     ])
+  }
   simple(program, {
     IfStatement(node: es.IfStatement) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
+      transform(node)
     },
     ConditionalExpression(node: es.ConditionalExpression) {
-      const { line, column } = node.loc!.start
-      node.test = transform(node.test, line, column)
+      transform(node)
     },
     LogicalExpression(node: es.LogicalExpression) {
-      const { line, column } = node.loc!.start
-      node.left = transform(node.left, line, column)
+      transform(node)
+    },
+    ForStatement(node: es.ForStatement) {
+      transform(node)
+    },
+    WhileStatement(node: es.WhileStatement) {
+      transform(node)
     }
   })
 }
@@ -301,7 +313,7 @@ function refreshLatestIdentifiers(program: es.Program) {
   NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
   usedIdentifiers = getAllIdentifiersUsed(program)
   for (const identifier of Object.getOwnPropertyNames(globalIds)) {
-    globalIds[identifier] = getUniqueId(identifier)
+    globalIds[identifier] = create.identifier(getUniqueId(identifier))
   }
 }
 
@@ -390,22 +402,48 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   }
 }
 
-export function transpile(untranformedProgram: es.Program, id: number) {
+function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
+  simple(program, {
+    BinaryExpression(node) {
+      const { line, column } = node.loc!.start
+      const { operator, left, right } = node as es.BinaryExpression
+      create.mutateToCallExpression(node, globalIds.binaryOp, [
+        create.literal(operator),
+        left,
+        right,
+        create.literal(line),
+        create.literal(column)
+      ])
+    },
+    UnaryExpression(node) {
+      const { line, column } = node.loc!.start
+      const { operator, argument } = node as es.UnaryExpression
+      create.mutateToCallExpression(node, globalIds.unaryOp, [
+        create.literal(operator),
+        argument,
+        create.literal(line),
+        create.literal(column)
+      ])
+    }
+  })
+}
+
+export function transpile(program: es.Program, id: number) {
   contextId = id
-  refreshLatestIdentifiers(untranformedProgram)
-  const program: es.Program = untranformedProgram
-  const statements = program.body as es.Statement[]
-  if (statements.length === 0) {
+  refreshLatestIdentifiers(program)
+  if (program.body.length === 0) {
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
-  transformTernaryIfAndLogicalsToCheckIfBoolean(program)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program)
+  transformSomeExpressionsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
+  const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
   const {
     lastLineToReturnResult,
@@ -430,20 +468,28 @@ export function transpile(untranformedProgram: es.Program, id: number) {
 function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
   return [
     create.constantDeclaration(
-      globalIds.native,
+      globalIds.native.name,
       create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
     ),
     create.constantDeclaration(
-      globalIds.boolOrErr,
+      globalIds.boolOrErr.name,
       createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.callIfFuncAndRightArgs,
+      globalIds.callIfFuncAndRightArgs.name,
       createGetFromStorageLocationAstFor('callIfFunctionAndRightArgumentsElseError', 'operators')
     ),
     create.constantDeclaration(
-      globalIds.wrap,
+      globalIds.wrap.name,
       create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap')
+    ),
+    create.constantDeclaration(
+      globalIds.unaryOp.name,
+      createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.binaryOp.name,
+      createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators')
     )
   ]
 }

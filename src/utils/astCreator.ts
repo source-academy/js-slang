@@ -97,3 +97,45 @@ export const objectExpression = (properties: es.Property[]): es.ObjectExpression
   type: 'ObjectExpression',
   properties
 })
+
+export const mutateToCallExpression = (
+  node: es.Node,
+  callee: es.Expression,
+  args: es.Expression[]
+) => {
+  node.type = 'CallExpression'
+  node = node as es.CallExpression
+  node.callee = callee
+  node.arguments = args
+}
+
+export const logicalExpression = (
+  operator: es.LogicalOperator,
+  left: es.Expression,
+  right: es.Expression,
+  loc?: es.SourceLocation
+): es.LogicalExpression => ({
+  type: 'LogicalExpression',
+  operator,
+  left,
+  right,
+  loc
+})
+
+export const conditionalExpression = (
+  test: es.Expression,
+  consequent: es.Expression,
+  alternate: es.Expression,
+  loc?: es.SourceLocation
+): es.ConditionalExpression => ({
+  type: 'ConditionalExpression',
+  test,
+  consequent,
+  alternate,
+  loc
+})
+
+export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression => ({
+  type: 'ArrayExpression',
+  elements
+})

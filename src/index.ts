@@ -1,6 +1,6 @@
 import { ExpressionStatement, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
-import { UNKNOWN_LOCATION } from './constants'
+import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import { evaluate } from './interpreter'
 import {
@@ -37,6 +37,12 @@ const DEFAULT_OPTIONS: IOptions = {
   isNativeRunnable: false
 }
 
+// needed to work on browsers
+// @ts-ignore
+SourceMapConsumer.initialize({
+  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+})
+
 // deals with parsing error objects and converting them to strings (for repl at least)
 
 let verboseErrors = false
@@ -47,11 +53,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
-    const elaboration = error.elaborate()
 
     if (verbose) {
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
+      const elaboration = error.elaborate()
       return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
       return `Line ${line}: ${explanation}`
@@ -102,6 +108,8 @@ function convertNativeErrorToSourceError(
   }
 }
 
+let previousCode = ''
+
 export function runInContext(
   code: string,
   context: Context,
@@ -124,6 +132,12 @@ export function runInContext(
   if (program) {
     verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
+      if (previousCode === code) {
+        JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+      } else {
+        JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
+      }
+      previousCode = code
       let transpiled
       let sourceMapJson: RawSourceMap | undefined
       let lastStatementSourceMapJson: RawSourceMap | undefined
