@@ -195,6 +195,7 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -244,11 +245,14 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
       let z = [];
+      const startTime = runtime();
       for (let x = 0; boolOrErr(binaryOp(\\"<\\", x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", x, 1, 3, 30)) {
+        throwIfTimeout(startTime, runtime(), 3, 2);
         z[x] = wrap(() => ({
           isTail: false,
           value: x
@@ -297,11 +301,15 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
       let x = true;
-      for (let x = 1; boolOrErr(binaryOp(\\">\\", x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", x, 1, 3, 29)) {}
+      const startTime = runtime();
+      for (let x = 1; boolOrErr(binaryOp(\\">\\", x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", x, 1, 3, 29)) {
+        throwIfTimeout(startTime, runtime(), 3, 2);
+      }
       return {
         isTail: false,
         value: x
@@ -344,6 +352,7 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -393,6 +402,7 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -441,11 +451,14 @@ const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArg
 const wrap = native.properTailCalls.wrap;
 const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
 const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
+const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
       let x = true;
+      const startTime = runtime();
       while (boolOrErr(true, 3, 2)) {
+        throwIfTimeout(startTime, runtime(), 3, 2);
         let x = false;
         break;
       }
