@@ -98,15 +98,14 @@ export class TrailingCommaError implements SourceError {
 }
 
 export function parseAt(source: string, num: number) {
-  let program: es.Program | undefined
+  let theNode: acorn.Node | undefined
   try {
-    program = (acornParseAt(source, num) as unknown) as es.Program
-    ancestor(program as es.Node, walkers, undefined)
+    theNode = acornParseAt(source, num)
   } catch (error) {
     return undefined
   }
-  if (program) {
-    return program
+  if (theNode) {
+    return theNode
   } else {
     return undefined
   }

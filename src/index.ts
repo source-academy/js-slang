@@ -52,9 +52,9 @@ export function runInContext(
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   function getFirstLine(theCode: string) {
-    let theProgramFirstExpression = parseAt(theCode, 0)
+    const theProgramFirstExpression = parseAt(theCode, 0)
 
-    if (theProgramFirstExpression) {
+    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
       return ((theProgramFirstExpression as unknown) as Literal).value
     }
 
