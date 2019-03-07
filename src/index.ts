@@ -52,32 +52,10 @@ export function runInContext(
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   function getFirstLine(theCode: string) {
-    function doNothing() {
-      return undefined
-    }
+    let theProgramFirstExpression = parseAt(theCode, 0)
 
-    let theProgram
-    try {
-      theProgram = parseAt(theCode, 0)
-    } catch (error) {
-      /*
-			Allow me to explain what's going on here:
-
-				The try block above attempts to get the parse result of only the first line of code.
-				The parser throws an error if there's a syntax error or broken rule anywhere within the code.
-				But we don't want to handle this error, because we are not parsing the entire program - only the first line.
-				At the same time we have to catch the error, so we need a catch block.
-				So we have an empty catch block that does nothing.
-				But the linter is not okay with empty blocks.
-				We don't want to change the linter settings for this one-off situation.
-
-				THerefore this.
-		*/
-      doNothing()
-    }
-
-    if (theProgram) {
-      return ((theProgram as unknown) as Literal).value
+    if (theProgramFirstExpression) {
+      return ((theProgramFirstExpression as unknown) as Literal).value
     }
 
     return undefined

@@ -103,7 +103,7 @@ export function parseAt(source: string, num: number) {
     program = (acornParseAt(source, num) as unknown) as es.Program
     ancestor(program as es.Node, walkers, undefined)
   } catch (error) {
-    throw error
+    return undefined
   }
   if (program) {
     return program
