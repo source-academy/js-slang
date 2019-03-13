@@ -104,11 +104,7 @@ export function parseAt(source: string, num: number) {
   } catch (error) {
     return undefined
   }
-  if (theNode) {
-    return theNode
-  } else {
-    return undefined
-  }
+  return theNode
 }
 
 export function parse(source: string, context: Context) {
