@@ -1,5 +1,10 @@
 /* tslint:disable:max-classes-per-file */
-import { Options as AcornOptions, parse as acornParse, Position } from 'acorn'
+import {
+  Options as AcornOptions,
+  parse as acornParse,
+  parseExpressionAt as acornParseAt,
+  Position
+} from 'acorn'
 import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
@@ -26,7 +31,7 @@ export class DisallowedConstructError implements SourceError {
 
   public elaborate() {
     return stripIndent`
-      You are trying to use ${this.nodeType}, which is not yet allowed (yet).
+      You are trying to use ${this.nodeType}, which is not allowed (yet).
     `
   }
 
@@ -90,6 +95,16 @@ export class TrailingCommaError implements SourceError {
   public elaborate() {
     return 'Please remove the trailing comma'
   }
+}
+
+export function parseAt(source: string, num: number) {
+  let theNode: acorn.Node | undefined
+  try {
+    theNode = acornParseAt(source, num)
+  } catch (error) {
+    return undefined
+  }
+  return theNode
 }
 
 export function parse(source: string, context: Context) {
