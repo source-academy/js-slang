@@ -1,0 +1,98 @@
+\section*{Reduction}
+
+A \emph{thunk} is a pair whose first component is a program or expression
+and whose
+second component is an environment, and an 
+\emph{environment} is a mapping from names to programs, all of which are
+function declarations. The environment extension operation
+$E [ n \leftarrow f]$ returns an environment that is extended by
+a new binding: $E[n \leftarrow f](m) = f$ if $n = m$ and
+$E[n \leftarrow f](m) = E(m)$ otherwise.
+
+The \emph{reducer} $\Rightarrow$ is a partial function from thunks to thunks,
+and $\Rightarrow^*$ is its reflexive transitive closure.
+A \emph{reduction} is a sequence of thunks
+$t_1 \Rightarrow^* t_n$, where $t_n$ is not reducible, i.e. there is no thunk
+s such that $t_n \Rightarrow s$.
+
+The result of evaluating a given program $p$ is a program or expression $r$
+such that $(p, \emptyset) \Rightarrow^* (r, E)$ is a reduction,
+where $\emptyset$ is the empty environment.
+
+The statement $\epsilon$ is the empty statement, introduced for convenience.
+
+A \emph{value} is a primitive number expresssion, primitive boolean expression
+or a primitive string expression.
+\begin{eqnarray*}
+(\epsilon  \ \textit{statement} \ldots, E)
+  & \Rightarrow &
+  (\textit{statement} \ldots, E) \\
+(\textit{statement} \ldots, E)
+  & \Rightarrow &
+  (\textit{statement}' \ldots, E)\\
+                                       && \textrm{if}\
+                                          (\textit{statement},E) \Rightarrow
+                                          (\textit{statement}',E) \\
+( f\ \textit{statement} \ldots, E)
+  & \Rightarrow &
+  ( \textit{statement} \ldots, E[\textit{name} \leftarrow f]) \\
+                                       && \textrm{if}\
+                                 f = \textbf{\texttt{function}}\  \textit{name} \ 
+                                 \textbf{\texttt{(}}\  \textit{parameters}
+                                 \ \textbf{\texttt{)}}\ \textit{block}    \\
+(\textit{expression} \textbf{\texttt{;}} \ldots, E)
+  & \Rightarrow &
+  ( \textit{expression}'\textbf{\texttt{;}} \ldots, E) \\
+                                       && \textrm{if}\
+                                 (\textit{expression}, E) \Rightarrow
+                                 (\textit{expression}', E)  \\
+(v \textbf{\texttt{;}}\ \textit{statement}+, E)
+  & \Rightarrow &
+  ( \epsilon\ \textit{statement}+, E) \\
+                                       && \textrm{if}\
+                                 v \ \mbox{is a value}
+\end{eqnarray*}
+
+
+  %% && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+%%                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
+%%                                                             && \textrm{function parameters}   \\[1mm]
+%% && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textbf{\texttt{return}}\ \textit{expression}   \ \textbf{\texttt{\}}} \quad
+%%                                                            && \textrm{function body}\\[1mm]         
+%% && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
+%% &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
+%%                                                            && \textrm{primitive boolean expression}\\
+%% &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
+%% &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
+%% &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+%%                                             \textit{expression} \qquad
+%%                                                            && \textrm{binary operator combination}\\
+%% &&                       && |   &\quad &&   \textit{unary-operator} \ 
+%%                                             \textit{expression}
+%%                                                            && \textrm{unary operator combination}\\
+%% &&                       && |   &\quad &&   \textit{expression} \ 
+%%                                             \textbf{\texttt{(}}\ \textit{expressions}\
+%%                                             \textbf{\texttt{)}}
+%%                                                            && \textrm{function application}\\
+%% &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
+%%                                             \textit{expression}
+%%                                             \ \textbf{\texttt{:}}\
+%%                                             \textit{expression}\
+%%                                                            && \textrm{conditional expression}\\
+%% &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+%%                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
+%% && \textit{binary-operator}    \ 
+%%                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+%%                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
+%% &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+%%                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}\  \\[1mm]
+%% && \textit{unary-operator}    
+%%                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}\\[1mm]
+%% && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+%%                                                                \ \textbf{\texttt{,}} \
+%%                                                                  \textit{expression} \ 
+%%                                                                       )\ \ldots
+%%                                                             && \textrm{argument expressions} 
+%% \end{alignat*}
+
+    \end{document}
