@@ -21,50 +21,304 @@ where $\emptyset$ is the empty environment.
 
 The statement $\epsilon$ is the empty statement, introduced for convenience.
 
-A \emph{value} is a primitive number expresssion, primitive boolean expression
+A \emph{value} is a primitive number expresssion, primitive boolean expression,
 or a primitive string expression.
-\begin{eqnarray*}
-(\epsilon  \ \textit{statement} \ldots, E)
-  & \Rightarrow &
-  (\textit{statement} \ldots, E) \\
-(\textit{statement} \ldots, E)
-  & \Rightarrow &
-  (\textit{statement}' \ldots, E)\\
-                                       && \textrm{if}\
-                                          (\textit{statement},E) \Rightarrow
-                                          (\textit{statement}',E) \\
+
+The \emph{substitution} function
+$p [ n \leftarrow v ]$ replaces every free occurrence of the name $n$
+in statement or expression $p$ by value $v$.
+(Do we need to formally define the substitution function, or is this clear
+enough?)
+
+%% \[
+%% \frac{}{
+%% (\epsilon  \ \textit{statement} \ldots, E) \Rightarrow 
+%%   (\textit{statement} \ldots, E) 
+%% }
+%% \]
+
+\subsection*{Statement sequences}
+
+
+\textbf{First-statement}: In a sequence of statements, only reduce the first
+one.
+\[
+\frac{
+  (\textit{statement},E) \Rightarrow (\textit{statement}',E)
+}{  
+  (\textit{statement} \ldots, E)
+  \Rightarrow 
+  (\textit{statement}' \ldots, E)
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Eliminate-function-declaration}: Function declarations as first
+statements are moved to the environment.
+\[
+\frac{
+             f = \textbf{\texttt{function}}\  \textit{name} \ 
+                 \textbf{\texttt{(}}\  \textit{parameters}
+                 \ \textbf{\texttt{)}}\ \textit{block}  
+}{
 ( f\ \textit{statement} \ldots, E)
-  & \Rightarrow &
-  ( \textit{statement} \ldots, E[\textit{name} \leftarrow f]) \\
-                                       && \textrm{if}\
-                                 f = \textbf{\texttt{function}}\  \textit{name} \ 
-                                 \textbf{\texttt{(}}\  \textit{parameters}
-                                 \ \textbf{\texttt{)}}\ \textit{block}    \\
-(\textit{expression} \textbf{\texttt{;}} \ldots, E)
-  & \Rightarrow &
-  ( \textit{expression}'\textbf{\texttt{;}} \ldots, E) \\
-                                       && \textrm{if}\
-                                 (\textit{expression}, E) \Rightarrow
-                                 (\textit{expression}', E)  \\
-(v \textbf{\texttt{;}}\ \textit{statement}+, E)
-  & \Rightarrow &
-  ( \epsilon\ \textit{statement}+, E) \\
-                                       && \textrm{if}\
-                                 v \ \mbox{is a value}
-\end{eqnarray*}
+  \Rightarrow
+  ( \textit{statement} \ldots, E[\textit{name} \leftarrow f])
+}
+\]
+
+\vspace{10mm}
+\textbf{Eliminate-Values}: Values as first statemments are discarded, if
+they are preceding one or more statements in a statement sequence.
+\[
+\frac{
+v \ \mbox{is a value}  
+}{
+(v \textbf{\texttt{;}} \textit{statement}+, E)
+   \Rightarrow 
+  ( \textit{statement}+, E)
+}
+\]
+
+\subsection*{Statements}
+
+\textbf{Expression-statement-reduce}: An expression statement
+is reducible if its expression is reducible.
+\[
+\frac{
+  (e,E) \Rightarrow (e',E)
+}{  
+  (e \textbf{\texttt{;}}, E)
+  \Rightarrow 
+  (e' \textbf{\texttt{;}}, E)
+}
+\]
+
+\subsection*{Expressions: Binary operators}
+
+\textbf{Left-binary-reduce}: An expression with binary operator
+can be reduced if its left sub-expression can be reduced.
+\[
+\frac{
+  ( e_1 , E ) \Rightarrow (e_1', E)
+}{
+  (e_1\  \textit{binary-operator} \ e_2, E)
+  \Rightarrow
+  (e_1'\  \textit{binary-operator} \ e_2, E)
+}
+\]
 
 
-  %% && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
-%%                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
-%%                                                             && \textrm{function parameters}   \\[1mm]
-%% && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textbf{\texttt{return}}\ \textit{expression}   \ \textbf{\texttt{\}}} \quad
-%%                                                            && \textrm{function body}\\[1mm]         
-%% && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
-%% &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-%%                                                            && \textrm{primitive boolean expression}\\
-%% &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
-%% &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
-%% &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+\vspace{10mm}
+\textbf{And-shortcut-false}: An expression with binary operator
+$\textbf{\texttt{\&\&}}$ whose left sub-expression is
+$\textbf{\texttt{false}}$ can be reduced to
+$\textbf{\texttt{false}}$.
+\[
+\frac{
+}{
+  (\textbf{\texttt{false}}\  \textbf{\texttt{\&\&}}\ e, E)
+  \Rightarrow
+  (\textbf{\texttt{false}}, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{And-shortcut-true}: An expression with binary operator
+$\textbf{\texttt{\&\&}}$ whose left sub-expression is
+$\textbf{\texttt{true}}$ can be reduced to
+the right sub-expression.
+\[
+\frac{
+}{
+  (\textbf{\texttt{true}}\  \textbf{\texttt{\&\&}}\ e, E)
+  \Rightarrow
+  (e, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Or-shortcut-true}: An expression with binary operator
+$\textbf{\texttt{||}}$ whose left sub-expression is
+$\textbf{\texttt{true}}$ can be reduced to
+$\textbf{\texttt{true}}$.
+\[
+\frac{
+}{
+  (\textbf{\texttt{true}}\  \textbf{\texttt{||}}\ e, E)
+  \Rightarrow
+  (\textbf{\texttt{true}}, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Or-shortcut-false}: An expression with binary operator
+$\textbf{\texttt{||}}$ whose left sub-expression is
+$\textbf{\texttt{false}}$ can be reduced to
+the right sub-expression.
+\[
+\frac{
+}{
+  (\textbf{\texttt{false}}\  \textbf{\texttt{||}}\ e, E)
+  \Rightarrow
+  (e, E)
+}
+\]
+
+
+\vspace{10mm}
+\textbf{Right-binary-reduce}: An expression with binary operator
+can be reduced if its left sub-expression is a value and its right
+sub-expression can be reduced.
+\[
+\frac{
+  ( e_2 , E ) \Rightarrow (e_2', E), \textrm{and}\ \textit{binary-operator}
+  \mbox{is not}\ \textbf{\texttt{\&\&}}\ \textrm{or}\ \texttt{\textbf{||}}
+}{
+  (v\  \textit{binary-operator} \ e_2, E)
+  \Rightarrow
+  (v\  \textit{binary-operator} \ e_2', E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Prim-binary-reduce}: An expression with binary operator
+can be reduced if its left and right sub-expressions are values and
+the corresponding function is defined for those values.
+\[
+\frac{
+  v\ \mbox{is result of}\ v_1\  \textit{binary-operator} \ v_2
+}{
+  (v_1\  \textit{binary-operator} \ v_2, E)
+  \Rightarrow
+  (v, E)
+}
+\]
+
+\subsection*{Expressions: Unary operators}
+
+\textbf{Unary-reduce}: An expression with unary operator
+can be reduced if its sub-expression can be reduced.
+\[
+\frac{
+  ( e , E ) \Rightarrow (e', E)
+}{
+  (\textit{unary-operator} \ e, E)
+  \Rightarrow
+  (\textit{unary-operator} \ e', E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Prim-unary-reduce}: An expression with unary operator
+can be reduced if its left and right sub-expressions are values and
+the corresponding function is defined for that value.
+\[
+\frac{
+  v'\ \mbox{is result of}\ \textit{unary-operator} \ v
+}{
+  (\textit{unary-operator} \ v, E)
+  \Rightarrow
+  (v', E)
+}
+\]
+
+\subsection*{Expressions: conditionals}
+
+\textbf{Conditional-predicate-reduce}: A conditional
+expression 
+can be reduced if its predicate can be reduced.
+\[
+\frac{
+  ( e_1 , E ) \Rightarrow (e_1', E)
+}{
+  (e_1\  \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3, E)
+  \Rightarrow
+  (e_1'\ \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Conditional-true-reduce}: A conditional
+expression whose predicate is the value
+$\textbf{\texttt{true}}$
+can be reduced to its consequent expression.
+\[
+\frac{
+}{
+  (\textbf{\texttt{true}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2, E)
+  \Rightarrow
+  (e_1, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Conditional-false-reduce}: A conditional
+expression whose predicate is the value
+$\textbf{\texttt{false}}$
+can be reduced to its alternative expression.
+\[
+\frac{
+}{
+  (\textbf{\texttt{false}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2, E)
+  \Rightarrow
+  (e_2, E)
+}
+\]
+
+
+\subsection*{Expressions: function application}
+
+\textbf{Application-functor-reduce}: A function application
+can be reduced if its functor expression can be reduced.
+\[
+\frac{
+  ( e_1 , E ) \Rightarrow (e_1', E)
+}{
+  (e\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}, E)
+  \Rightarrow
+  (e'\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Application-argument-reduce}: A function application
+can be reduced if one of its argument expressions can be reduced and all
+preceding arguments are values or names, denoted by $w$.
+\[
+\frac{
+  ( e_i , E ) \Rightarrow (e_i', E)
+}{
+  (w\  \textbf{\texttt{(}}\ w \ldots e_i \ w \ldots\ \textbf{\texttt{)}}, E)
+  \Rightarrow
+  (w\  \textbf{\texttt{(}}\ w \ldots e_i' \ w \ldots\ \textbf{\texttt{)}}, E)
+}
+\]
+
+\vspace{10mm}
+\textbf{Application-reduce}: A function application
+can be reduced if the functor is a name that refers to
+a function declaration in the environment, and if all
+arguments are values or names, denoted by $w$. If an argument
+is a name, it must refer to a function declaration in the
+environment.
+\[
+\frac{
+  E[n] = \textbf{\texttt{function}}\  \textit{n} \ 
+                 \textbf{\texttt{(}}\  x_1 \ldots x_n
+                 \ \textbf{\texttt{)}}\ \textit{block}
+\mbox{, and all names in $w_1 \ldots w_n$ have a binding in $E$}
+}{
+  (n\  \textbf{\texttt{(}}\ w_1 \ldots w_n\ \textbf{\texttt{)}}, E)
+  \Rightarrow
+  (\textit{block}[x_1 \leftarrow w_1]\ldots[x_n \leftarrow w_n], E)
+}
+\]
+
+
+
+
 %%                                             \textit{expression} \qquad
 %%                                                            && \textrm{binary operator combination}\\
 %% &&                       && |   &\quad &&   \textit{unary-operator} \ 
