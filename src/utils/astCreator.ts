@@ -57,9 +57,13 @@ export const callExpression = (
   loc
 })
 
-export const expressionStatement = (expression: es.Expression): es.ExpressionStatement => ({
+export const expressionStatement = (
+  expression: es.Expression,
+  loc?: es.SourceLocation
+): es.ExpressionStatement => ({
   type: 'ExpressionStatement',
-  expression
+  expression,
+  loc
 })
 
 export const blockArrowFunction = (
@@ -73,9 +77,23 @@ export const blockArrowFunction = (
   body: Array.isArray(body) ? blockStatement(body) : body
 })
 
-export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
+export const blockStatement = (
+  body: es.Statement[],
+  loc?: es.SourceLocation
+): es.BlockStatement => ({
   type: 'BlockStatement',
-  body
+  body,
+  loc
+})
+
+export const program = (
+  body: Array<es.Statement | es.ModuleDeclaration>,
+  loc?: es.SourceLocation
+): es.Program => ({
+  type: 'Program',
+  body,
+  loc,
+  sourceType: 'module'
 })
 
 export const returnStatement = (argument: es.Expression): es.ReturnStatement => ({
@@ -138,4 +156,17 @@ export const conditionalExpression = (
 export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression => ({
   type: 'ArrayExpression',
   elements
+})
+
+export const binaryExpression = (
+  operator: es.BinaryOperator,
+  left: es.Expression,
+  right: es.Expression,
+  loc?: es.SourceLocation
+): es.BinaryExpression => ({
+  type: 'BinaryExpression',
+  operator,
+  left,
+  right,
+  loc
 })
