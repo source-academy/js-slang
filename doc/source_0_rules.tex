@@ -2,7 +2,7 @@
 
 A \emph{thunk} is a pair whose first component is a program
 and whose
-second component is an environment, and an 
+second component is an environment, and an
 \emph{environment} is a mapping from names to programs, all of which are
 function declarations. The environment extension operation
 $E [ n \leftarrow f]$ returns an environment that is extended by
@@ -36,9 +36,9 @@ one.
 \[
 \frac{
   (\textit{statement},E) \Rightarrow (\textit{statement}',E)
-}{  
+}{
   (\textit{statement} \ldots, E)
-  \Rightarrow 
+  \Rightarrow
   (\textit{statement}' \ldots, E)
 }
 \]
@@ -49,9 +49,9 @@ one.
 statements are moved to the environment.
 \[
 \frac{
-             f = \textbf{\texttt{function}}\  \textit{name} \ 
-                 \textbf{\texttt{(}}\  \textit{parameters}
-                 \ \textbf{\texttt{)}}\ \textit{block}  
+             f = \textbf{\texttt{function}}\  \textit{name}
+                 \ \textbf{\texttt{(}}\  \textit{parameters}
+                 \ \textbf{\texttt{)}}\ \textit{block}
 }{
 ( f\ \textit{statement} \ldots, E)
   \Rightarrow
@@ -64,10 +64,10 @@ statements are moved to the environment.
 they are preceding one or more statements in a statement sequence.
 \[
 \frac{
-v \ \mbox{is a value}  
+v \ \mbox{is a value}
 }{
 (v \textbf{\texttt{;}} \textit{statement}+, E)
-   \Rightarrow 
+   \Rightarrow
   ( \textit{statement}+, E)
 }
 \]
@@ -79,9 +79,9 @@ is reducible if its expression is reducible.
 \[
 \frac{
   (e,E) \Rightarrow (e',E)
-}{  
+}{
   (e \textbf{\texttt{;}}, E)
-  \Rightarrow 
+  \Rightarrow
   (e' \textbf{\texttt{;}}, E)
 }
 \]
@@ -218,7 +218,7 @@ the corresponding function is defined for that value.
 \subsection*{Expressions: conditionals}
 
 \textbf{Conditional-predicate-reduce}: A conditional
-expression 
+expression
 can be reduced if its predicate can be reduced.
 \[
 \frac{
@@ -296,8 +296,8 @@ is a name, it must refer to a function declaration in the
 environment.
 \[
 \frac{
-  E[n] = \textbf{\texttt{function}}\  \textit{n} \ 
-                 \textbf{\texttt{(}}\  x_1 \ldots x_n
+  E[n] = \textbf{\texttt{function}}\  \textit{n}
+                 \ \textbf{\texttt{(}}\  x_1 \ldots x_n
                  \ \textbf{\texttt{)}}\ \textbf{\texttt{\{}}\ \textbf{\texttt{return}}\ e \textbf{\texttt{;}} \textbf{\texttt{\}}}
 \mbox{, and all names in $w_1 \ldots w_n$ have a binding in $E$}
 }{
@@ -306,5 +306,3 @@ environment.
   (e[x_1 \leftarrow w_1]\ldots[x_n \leftarrow w_n], E)
 }
 \]
-
-    \end{document}
