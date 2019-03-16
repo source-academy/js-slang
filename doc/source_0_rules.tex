@@ -25,8 +25,24 @@ or a primitive string expression.
 The \emph{substitution} function
 $p [ n \leftarrow v ]$ replaces every free occurrence of the name $n$
 in statement or expression $p$ by value $v$.
-(Do we need to formally define the substitution function, or is this clear
-enough?)
+
+\subsection*{How to read inference rules}
+
+To read the rules below, think of each "fraction" as an
+"if we know X then we can infer Y" implication statement.
+For example,
+
+\[
+\frac{
+  X = 5
+}{
+  X + 1 = 5 + 1
+}
+\]
+
+corresponds to the statement
+"If we know $X$ is equal to $5$,
+then we can infer that $X + 1$ is equal to $5 + 1$".
 
 \subsection*{Statement sequences}
 
