@@ -274,7 +274,7 @@ can be reduced to its alternative expression.
 can be reduced if its functor expression can be reduced.
 \[
 \frac{
-  ( e_1 , E ) \Rightarrow (e_1', E)
+  ( e , E ) \Rightarrow (e', E)
 }{
   (e\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}, E)
   \Rightarrow
@@ -290,9 +290,9 @@ preceding arguments are values or names, denoted by $w$.
 \frac{
   ( e_i , E ) \Rightarrow (e_i', E)
 }{
-  (w\  \textbf{\texttt{(}}\ w \ldots e_i \ w \ldots\ \textbf{\texttt{)}}, E)
+  (w\  \textbf{\texttt{(}}\ w \ldots e_i \ e \ldots\ \textbf{\texttt{)}}, E)
   \Rightarrow
-  (w\  \textbf{\texttt{(}}\ w \ldots e_i' \ w \ldots\ \textbf{\texttt{)}}, E)
+  (w\  \textbf{\texttt{(}}\ w \ldots e_i' \ e \ldots\ \textbf{\texttt{)}}, E)
 }
 \]
 
@@ -315,39 +315,5 @@ environment.
   (\textit{block}[x_1 \leftarrow w_1]\ldots[x_n \leftarrow w_n], E)
 }
 \]
-
-
-
-
-
-%%                                             \textit{expression} \qquad
-%%                                                            && \textrm{binary operator combination}\\
-%% &&                       && |   &\quad &&   \textit{unary-operator} \ 
-%%                                             \textit{expression}
-%%                                                            && \textrm{unary operator combination}\\
-%% &&                       && |   &\quad &&   \textit{expression} \ 
-%%                                             \textbf{\texttt{(}}\ \textit{expressions}\
-%%                                             \textbf{\texttt{)}}
-%%                                                            && \textrm{function application}\\
-%% &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
-%%                                             \textit{expression}
-%%                                             \ \textbf{\texttt{:}}\
-%%                                             \textit{expression}\
-%%                                                            && \textrm{conditional expression}\\
-%% &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
-%%                                             \textbf{\texttt{)}} && \textrm{parenthesised expression}\\[1mm]
-%% && \textit{binary-operator}    \ 
-%%                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
-%%                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
-%% &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
-%%                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}\  \\[1mm]
-%% && \textit{unary-operator}    
-%%                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}\\[1mm]
-%% && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
-%%                                                                \ \textbf{\texttt{,}} \
-%%                                                                  \textit{expression} \ 
-%%                                                                       )\ \ldots
-%%                                                             && \textrm{argument expressions} 
-%% \end{alignat*}
 
     \end{document}
