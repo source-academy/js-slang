@@ -44,7 +44,8 @@ const globalIds = {
   boolOrErr: create.identifier('dummy'),
   wrap: create.identifier('dummy'),
   unaryOp: create.identifier('dummy'),
-  binaryOp: create.identifier('dummy')
+  binaryOp: create.identifier('dummy'),
+  throwIfTimeout: create.identifier('dummy')
 }
 let contextId: number
 
@@ -333,6 +334,12 @@ function getAllIdentifiersUsed(program: es.Program) {
       }
     }
   })
+  for (const identifier of NATIVE_STORAGE[contextId].builtins.keys()) {
+    identifiers.add(identifier)
+  }
+  for (const identifier of NATIVE_STORAGE[contextId].globals.keys()) {
+    identifiers.add(identifier)
+  }
   return identifiers
 }
 
@@ -428,6 +435,42 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+function addInfiniteLoopProtection(program: es.Program) {
+  const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
+  function instrumentLoops(node: es.Program | es.BlockStatement) {
+    const newStatements = []
+    for (const statement of node.body) {
+      if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
+        const startTimeConst = getUniqueId('startTime')
+        newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
+        if (statement.body.type === 'BlockStatement') {
+          const { line, column } = statement.loc!.start
+          statement.body.body.unshift(
+            create.expressionStatement(
+              create.callExpression(globalIds.throwIfTimeout, [
+                create.identifier(startTimeConst),
+                getRuntimeAst(),
+                create.literal(line),
+                create.literal(column)
+              ])
+            )
+          )
+        }
+      }
+      newStatements.push(statement)
+    }
+    node.body = newStatements
+  }
+  simple(program, {
+    Program(node: es.Program) {
+      instrumentLoops(node)
+    },
+    BlockStatement(node: es.BlockStatement) {
+      instrumentLoops(node)
+    }
+  })
+}
+
 export function transpile(program: es.Program, id: number) {
   contextId = id
   refreshLatestIdentifiers(program)
@@ -441,6 +484,7 @@ export function transpile(program: es.Program, id: number) {
   transformSomeExpressionsToCheckIfBoolean(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
+  addInfiniteLoopProtection(program)
   const statementsToPrepend = getStatementsToPrepend()
   const statementsToAppend = getStatementsToAppend(program)
   const statements = program.body as es.Statement[]
@@ -490,6 +534,10 @@ function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] 
     create.constantDeclaration(
       globalIds.binaryOp.name,
       createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators')
+    ),
+    create.constantDeclaration(
+      globalIds.throwIfTimeout.name,
+      createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators')
     )
   ]
 }

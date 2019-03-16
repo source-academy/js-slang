@@ -8,7 +8,7 @@ import { ErrorSeverity, ErrorType } from './types'
 function getWarningMessage() {
   const from = JSSLANG_PROPERTIES.maxExecTime / 1000
   const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy
-  return stripIndent`If you are certain your code is correct, press run again without editing your code.
+  return stripIndent`If you are certain your program is correct, press run again without editing your program.
       The time limit will be increased from ${from} to ${to} seconds.
       This page may be unresponsive for up to ${to} seconds if you do so.`
 }
