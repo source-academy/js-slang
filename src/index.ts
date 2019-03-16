@@ -1,4 +1,4 @@
-import { ExpressionStatement, Program } from 'estree'
+import { Literal } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -10,18 +10,10 @@ import {
   RuntimeSourceError,
   UndefinedVariable
 } from './interpreter-errors'
-import { parse } from './parser'
+import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { transpile } from './transpiler'
-import {
-  Context,
-  Directive,
-  Error as ResultError,
-  Finished,
-  Result,
-  Scheduler,
-  SourceError
-} from './types'
+import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
 
@@ -115,22 +107,21 @@ export function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  function getFirstLine(theProgram: Program) {
-    if (theProgram.body[0] && theProgram.body[0].type === 'ExpressionStatement') {
-      const firstLineOfProgram = theProgram.body[0] as ExpressionStatement
-      const theDirective = (firstLineOfProgram as Directive).directive
-      if (theDirective !== undefined) {
-        return theDirective
-      }
+  function getFirstLine(theCode: string) {
+    const theProgramFirstExpression = parseAt(theCode, 0)
+
+    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
+      return ((theProgramFirstExpression as unknown) as Literal).value
     }
 
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
+
+  verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
   if (program) {
-    verboseErrors = getFirstLine(program) === 'enable verbose'
     if (theOptions.isNativeRunnable) {
       if (previousCode === code) {
         JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy

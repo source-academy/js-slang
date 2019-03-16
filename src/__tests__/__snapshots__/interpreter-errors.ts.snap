@@ -1284,9 +1284,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 1, Column 0: null literals are not allowed.
-They're not part of the Source §1 specs.
-",
+  "parsedErrors": "Line 1: null literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
