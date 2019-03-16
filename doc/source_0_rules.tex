@@ -1,6 +1,6 @@
 \section*{Reduction}
 
-A \emph{thunk} is a pair whose first component is a program or expression
+A \emph{thunk} is a pair whose first component is a program
 and whose
 second component is an environment, and an 
 \emph{environment} is a mapping from names to programs, all of which are
@@ -15,11 +15,9 @@ A \emph{reduction} is a sequence of thunks
 $t_1 \Rightarrow^* t_n$, where $t_n$ is not reducible, i.e. there is no thunk
 s such that $t_n \Rightarrow s$.
 
-The result of evaluating a given program $p$ is a program or expression $r$
-such that $(p, \emptyset) \Rightarrow^* (r, E)$ is a reduction,
+The result of evaluating a given program $p$ is a program $p'$
+such that $(p, \emptyset) \Rightarrow^* (p', E)$ is a reduction,
 where $\emptyset$ is the empty environment.
-
-The statement $\epsilon$ is the empty statement, introduced for convenience.
 
 A \emph{value} is a primitive number expresssion, primitive boolean expression,
 or a primitive string expression.
@@ -29,13 +27,6 @@ $p [ n \leftarrow v ]$ replaces every free occurrence of the name $n$
 in statement or expression $p$ by value $v$.
 (Do we need to formally define the substitution function, or is this clear
 enough?)
-
-%% \[
-%% \frac{}{
-%% (\epsilon  \ \textit{statement} \ldots, E) \Rightarrow 
-%%   (\textit{statement} \ldots, E) 
-%% }
-%% \]
 
 \subsection*{Statement sequences}
 
@@ -307,12 +298,12 @@ environment.
 \frac{
   E[n] = \textbf{\texttt{function}}\  \textit{n} \ 
                  \textbf{\texttt{(}}\  x_1 \ldots x_n
-                 \ \textbf{\texttt{)}}\ \textit{block}
+                 \ \textbf{\texttt{)}}\ \textbf{\texttt{\{}}\ \textbf{\texttt{return}}\ e \textbf{\texttt{;}} \textbf{\texttt{\}}}
 \mbox{, and all names in $w_1 \ldots w_n$ have a binding in $E$}
 }{
   (n\  \textbf{\texttt{(}}\ w_1 \ldots w_n\ \textbf{\texttt{)}}, E)
   \Rightarrow
-  (\textit{block}[x_1 \leftarrow w_1]\ldots[x_n \leftarrow w_n], E)
+  (e[x_1 \leftarrow w_1]\ldots[x_n \leftarrow w_n], E)
 }
 \]
 
