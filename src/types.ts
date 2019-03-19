@@ -49,10 +49,6 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export interface Observers {
-  callbacks: Array<(arg0: Context) => void>
-}
-
 export interface Context<T = any> {
   /** The source version used */
   chapter: number
@@ -75,7 +71,6 @@ export interface Context<T = any> {
   /** the state of the debugger */
   debugger: {
     /** External observers watching this context */
-    observers: Observers
     status: boolean
     state: {
       it: IterableIterator<T>
