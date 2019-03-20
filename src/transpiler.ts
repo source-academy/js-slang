@@ -13,10 +13,9 @@ import * as create from './utils/astCreator'
  * There should be an explanation on it coming up soon.
  */
 
-type StorageLocations = 'builtins' | 'globals' | 'operators' | 'properTailCalls'
+type StorageLocations = 'globals' | 'operators'
 
 let NATIVE_STORAGE: {
-  builtins: Map<string, Value>
   globals: Map<string, { kind: AllowedDeclarations; value: Value }>
   operators: Map<string, (...operands: Value[]) => Value>
 }
@@ -80,19 +79,6 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
       ])
     ])
   )
-}
-
-function createStatementsToDeclareBuiltins() {
-  const statements = []
-  for (const builtinName of NATIVE_STORAGE[contextId].builtins.keys()) {
-    statements.push(
-      create.constantDeclaration(
-        builtinName,
-        createGetFromStorageLocationAstFor(builtinName, 'builtins')
-      )
-    )
-  }
-  return statements
 }
 
 function createStatementsToDeclarePreviouslyDeclaredGlobals() {
@@ -174,7 +160,7 @@ function transformFunctionDeclarationsToArrowFunctions(
  *
  * to
  *
- * <NATIVE STORAGE>.properTailCalls.wrap((arg1, arg2, ...) => {
+ * <NATIVE STORAGE>.operators.wrap((arg1, arg2, ...) => {
  *   statement1;statement2;return statement3;
  * })
  *
@@ -291,6 +277,7 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
       create.literal(column)
     ])
   }
+
   simple(program, {
     IfStatement(node: es.IfStatement) {
       transform(node)
@@ -319,7 +306,7 @@ function refreshLatestIdentifiers(program: es.Program) {
 }
 
 function getAllIdentifiersUsed(program: es.Program) {
-  const identifiers = new Set<string>()
+  const identifiers = new Set<string>(NATIVE_STORAGE[contextId].globals.keys())
   simple(program, {
     Identifier(node: es.Identifier) {
       identifiers.add(node.name)
@@ -334,20 +321,11 @@ function getAllIdentifiersUsed(program: es.Program) {
       }
     }
   })
-  for (const identifier of NATIVE_STORAGE[contextId].builtins.keys()) {
-    identifiers.add(identifier)
-  }
-  for (const identifier of NATIVE_STORAGE[contextId].globals.keys()) {
-    identifiers.add(identifier)
-  }
   return identifiers
 }
 
 function getStatementsToPrepend() {
-  return [
-    ...createStatementsToDeclareBuiltins(),
-    ...createStatementsToDeclarePreviouslyDeclaredGlobals()
-  ]
+  return createStatementsToDeclarePreviouslyDeclaredGlobals()
 }
 
 function getStatementsToAppend(program: es.Program): es.Statement[] {
@@ -437,6 +415,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
 
 function addInfiniteLoopProtection(program: es.Program) {
   const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
+
   function instrumentLoops(node: es.Program | es.BlockStatement) {
     const newStatements = []
     for (const statement of node.body) {
@@ -461,6 +440,7 @@ function addInfiniteLoopProtection(program: es.Program) {
     }
     node.body = newStatements
   }
+
   simple(program, {
     Program(node: es.Program) {
       instrumentLoops(node)
@@ -510,36 +490,14 @@ export function transpile(program: es.Program, id: number) {
 }
 
 function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
-  return [
+  return Object.entries(globalIds).map(([key, { name }]) =>
     create.constantDeclaration(
-      globalIds.native.name,
-      create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
-    ),
-    create.constantDeclaration(
-      globalIds.boolOrErr.name,
-      createGetFromStorageLocationAstFor('itselfIfBooleanElseError', 'operators')
-    ),
-    create.constantDeclaration(
-      globalIds.callIfFuncAndRightArgs.name,
-      createGetFromStorageLocationAstFor('callIfFunctionAndRightArgumentsElseError', 'operators')
-    ),
-    create.constantDeclaration(
-      globalIds.wrap.name,
-      create.memberExpression(createStorageLocationAstFor('properTailCalls'), 'wrap')
-    ),
-    create.constantDeclaration(
-      globalIds.unaryOp.name,
-      createGetFromStorageLocationAstFor('evaluateUnaryExpressionIfValidElseError', 'operators')
-    ),
-    create.constantDeclaration(
-      globalIds.binaryOp.name,
-      createGetFromStorageLocationAstFor('evaluateBinaryExpressionIfValidElseError', 'operators')
-    ),
-    create.constantDeclaration(
-      globalIds.throwIfTimeout.name,
-      createGetFromStorageLocationAstFor('throwIfExceedsTimeLimit', 'operators')
+      name,
+      key === 'native'
+        ? create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
+        : createGetFromStorageLocationAstFor(name, 'operators')
     )
-  ]
+  )
 }
 
 /**
