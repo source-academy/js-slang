@@ -279,21 +279,11 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   }
 
   simple(program, {
-    IfStatement(node: es.IfStatement) {
-      transform(node)
-    },
-    ConditionalExpression(node: es.ConditionalExpression) {
-      transform(node)
-    },
-    LogicalExpression(node: es.LogicalExpression) {
-      transform(node)
-    },
-    ForStatement(node: es.ForStatement) {
-      transform(node)
-    },
-    WhileStatement(node: es.WhileStatement) {
-      transform(node)
-    }
+    IfStatement: transform,
+    ConditionalExpression: transform,
+    LogicalExpression: transform,
+    ForStatement: transform,
+    WhileStatement: transform
   })
 }
 
@@ -389,9 +379,9 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   simple(program, {
-    BinaryExpression(node) {
+    BinaryExpression(node: es.BinaryExpression) {
       const { line, column } = node.loc!.start
-      const { operator, left, right } = node as es.BinaryExpression
+      const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.binaryOp, [
         create.literal(operator),
         left,
@@ -400,7 +390,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
         create.literal(column)
       ])
     },
-    UnaryExpression(node) {
+    UnaryExpression(node: es.UnaryExpression) {
       const { line, column } = node.loc!.start
       const { operator, argument } = node as es.UnaryExpression
       create.mutateToCallExpression(node, globalIds.unaryOp, [
@@ -442,12 +432,8 @@ function addInfiniteLoopProtection(program: es.Program) {
   }
 
   simple(program, {
-    Program(node: es.Program) {
-      instrumentLoops(node)
-    },
-    BlockStatement(node: es.BlockStatement) {
-      instrumentLoops(node)
-    }
+    Program: instrumentLoops,
+    BlockStatement: instrumentLoops
   })
 }
 
