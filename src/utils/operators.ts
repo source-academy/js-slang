@@ -1,6 +1,12 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
-import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
+import {
+  CallingNonFunctionValue,
+  GetInheritedPropertyError,
+  GetPropertyError,
+  InvalidNumberOfArguments,
+  SetPropertyError
+} from '../interpreter-errors'
 import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
@@ -175,4 +181,34 @@ export const wrap = (f: (...args: any[]) => any, stringified: string) => {
   wrapped[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified
   return wrapped
+}
+
+export const setProp = (obj: any, prop: any, value: any, line: number, column: number) => {
+  const dummy = locationDummyNode(line, column)
+  const error = rttc.checkMemberAccess(dummy, obj, prop)
+  if (error === undefined) {
+    if (obj === null || obj === undefined) {
+      throw new SetPropertyError(dummy, obj, prop)
+    } else {
+      return (obj[prop] = value)
+    }
+  } else {
+    throw error
+  }
+}
+
+export const getProp = (obj: any, prop: any, line: number, column: number) => {
+  const dummy = locationDummyNode(line, column)
+  const error = rttc.checkMemberAccess(dummy, obj, prop)
+  if (error === undefined) {
+    if (obj === null || obj === undefined) {
+      throw new GetPropertyError(dummy, obj, prop)
+    } else if (obj.hasOwnProperty(prop)) {
+      return obj[prop]
+    } else {
+      throw new GetInheritedPropertyError(dummy, obj, prop)
+    }
+  } else {
+    throw error
+  }
 }

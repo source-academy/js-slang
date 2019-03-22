@@ -1044,7 +1044,7 @@ test.skip('Error when accessing property of null', () => {
     stripIndent`
     null["prop"];
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
 })
 
@@ -1054,7 +1054,7 @@ test.skip('Error when accessing property of undefined', () => {
     stripIndent`
     undefined["prop"];
   `,
-    { chapter: 100 }
+    { chapter: 10, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -1064,7 +1064,7 @@ test.skip('Error when accessing inherited property of builtin', () => {
     stripIndent`
     pair["constructor"];
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`
 "Line 1: Cannot read inherited property constructor of function pair(left, right) {
 	[implementation hidden]
@@ -1079,7 +1079,7 @@ test.skip('Error when accessing inherited property of function', () => {
     function f() {}
     f["constructor"];
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
 })
 
@@ -1089,7 +1089,7 @@ test.skip('Error when accessing inherited property of arrow function', () => {
     stripIndent`
     (() => 1)["constructor"];
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
 })
 
@@ -1099,7 +1099,7 @@ test.skip('Error when accessing inherited property of array', () => {
     stripIndent`
     [].push;
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property push of []"`)
 })
 
@@ -1108,8 +1108,11 @@ test('Error when accessing inherited property of object', () => {
     stripIndent`
     ({}).valueOf;
   `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
+    { chapter: 100, native: true }
+  ).toMatchInlineSnapshot(`
+"native:\\"Line -1: [object Object]\\"
+interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\""
+`)
 })
 
 // NOTE: Obsoleted due to strict types on member access
@@ -1118,7 +1121,7 @@ test.skip('Error when accessing inherited property of string', () => {
     stripIndent`
     'hi'.includes;
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
 })
 
@@ -1128,7 +1131,7 @@ test.skip('Error when accessing inherited property of number', () => {
     stripIndent`
     (1).toPrecision;
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property toPrecision of 1"`)
 })
 
@@ -1137,7 +1140,7 @@ test('Access local property', () => {
     stripIndent`
     ({a: 0})["a"];
   `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`0`)
 })
 
@@ -1146,7 +1149,7 @@ test('Type error when accessing property of null', () => {
     stripIndent`
     null.prop;
     `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
 })
 
@@ -1155,7 +1158,7 @@ test('Type error when accessing property of string', () => {
     stripIndent`
     'hi'.length;
     `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -1167,7 +1170,7 @@ test('Type error when accessing property of function', () => {
     }
     f.prototype;
     `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
 
@@ -1176,7 +1179,7 @@ test('Type error when assigning property of string', () => {
     stripIndent`
     'hi'.prop = 5;
     `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -1188,7 +1191,7 @@ test('Type error when assigning property of function', () => {
     }
     f.prop = 5;
     `,
-    { chapter: 100 }
+    { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
 

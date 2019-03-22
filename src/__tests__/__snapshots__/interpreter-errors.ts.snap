@@ -9,6 +9,22 @@ Object {
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"getProp({   a: 0 }, \\\\\\"a\\\\\\", 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -68,9 +84,26 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
+  "parsedErrors": "native:\\"Line -1: [object Object]\\"
+interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\"",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"getProp({}, \\\\\\"valueOf\\\\\\", 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -269,6 +302,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const g = wrap(() => ({
@@ -370,6 +405,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap(x => ({
@@ -459,6 +496,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap(x => ({
@@ -548,13 +587,15 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = [wrap(x => ({
       isTail: false,
       value: x
     }), \\"x => x\\")];
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(f[0], 2, 0, 1, 2);\\");
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
     native.globals.set(\\"f\\", {
       kind: \\"const\\",
       value: f
@@ -641,6 +682,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap(x => {
@@ -736,6 +779,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const f = wrap(x => {
@@ -887,6 +932,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs('string', 1, 0);\\");
@@ -1028,6 +1075,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(0, 1, 0);\\");
@@ -1207,6 +1256,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs([1], 1, 0);\\");
@@ -1775,6 +1826,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
@@ -2109,6 +2162,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(undefined, 1, 0);\\");
@@ -2679,6 +2734,32 @@ f.prototype;",
   "parsedErrors": "Line 4: Expected object or array, got function.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: 1
+      };
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\");
+    const lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -2710,6 +2791,22 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got null.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"getProp(null, \\\\\\"prop\\\\\\", 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -2741,6 +2838,22 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got string.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"getProp('hi', \\\\\\"length\\\\\\", 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -2775,6 +2888,32 @@ f.prop = 5;",
   "parsedErrors": "Line 4: Expected object or array, got function.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: 1
+      };
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\");
+    const lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
+    native.globals.set(\\"f\\", {
+      kind: \\"const\\",
+      value: f
+    });
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -2806,6 +2945,22 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got string.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"setProp('hi', \\\\\\"prop\\\\\\", 5, 1, 0);\\");
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;
@@ -2881,6 +3036,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"if (boolOrErr(1, 1, 0)) {   2; } else {}\\");

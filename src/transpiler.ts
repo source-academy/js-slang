@@ -44,7 +44,9 @@ const globalIds = {
   wrap: create.identifier('dummy'),
   unaryOp: create.identifier('dummy'),
   binaryOp: create.identifier('dummy'),
-  throwIfTimeout: create.identifier('dummy')
+  throwIfTimeout: create.identifier('dummy'),
+  setProp: create.identifier('dummy'),
+  getProp: create.identifier('dummy')
 }
 let contextId: number
 
@@ -403,6 +405,44 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+function transformPropertyAssignment(program: es.Program) {
+  simple(program, {
+    AssignmentExpression(node) {
+      const assignmentExpression = node as es.AssignmentExpression
+      if (assignmentExpression.left.type === 'MemberExpression') {
+        const { object, property, computed, loc } = assignmentExpression.left
+        const { line, column } = loc!.start
+        node = node as es.CallExpression
+        node.type = 'CallExpression'
+        node.callee = globalIds.setProp
+        const prop = computed ? property : create.literal((property as es.Identifier).name)
+        node.arguments = [
+          object as es.Expression,
+          prop,
+          assignmentExpression.right,
+          create.literal(line),
+          create.literal(column)
+        ]
+      }
+    }
+  })
+}
+
+function transformPropertyAccess(program: es.Program) {
+  simple(program, {
+    MemberExpression(node) {
+      const memberExpression = node as es.MemberExpression
+      const { object, property, computed, loc } = memberExpression
+      const { line, column } = loc!.start
+      node = node as es.CallExpression
+      node.type = 'CallExpression'
+      node.callee = globalIds.getProp
+      const prop = computed ? property : create.literal((property as es.Identifier).name)
+      node.arguments = [object as es.Expression, prop, create.literal(line), create.literal(column)]
+    }
+  })
+}
+
 function addInfiniteLoopProtection(program: es.Program) {
   const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
 
@@ -448,6 +488,8 @@ export function transpile(program: es.Program, id: number) {
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
+  transformPropertyAssignment(program)
+  transformPropertyAccess(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)

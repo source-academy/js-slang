@@ -8,6 +8,8 @@ const wrap90 = native.operators.get(\\"wrap90\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const runtime = native.globals.get(\\"runtime\\").value;
@@ -97,7 +99,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
     const is_array = native.globals.get(\\"is_array\\").value;
     const parse = native.globals.get(\\"parse\\").value;
     const apply_in_underlying_javascript = native.globals.get(\\"apply_in_underlying_javascript\\").value;
-    boolOrErr[123] = 1;
+    setProp(boolOrErr, 123, 1, 1, 0);
     const f = wrap90(callIfFuncAndRightArgs => {
       let wrap = 2;
       wrap0;
@@ -132,6 +134,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const runtime = native.globals.get(\\"runtime\\").value;
