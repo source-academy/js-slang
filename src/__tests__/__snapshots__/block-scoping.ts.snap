@@ -190,12 +190,12 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -240,12 +240,12 @@ test();",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -296,12 +296,12 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -347,12 +347,12 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -397,12 +397,12 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -446,12 +446,12 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
-const boolOrErr = native.operators.get(\\"itselfIfBooleanElseError\\");
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFunctionAndRightArgumentsElseError\\");
-const wrap = native.properTailCalls.wrap;
-const unaryOp = native.operators.get(\\"evaluateUnaryExpressionIfValidElseError\\");
-const binaryOp = native.operators.get(\\"evaluateBinaryExpressionIfValidElseError\\");
-const throwIfTimeout = native.operators.get(\\"throwIfExceedsTimeLimit\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
