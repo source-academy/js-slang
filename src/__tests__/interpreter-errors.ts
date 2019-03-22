@@ -1109,10 +1109,7 @@ test('Error when accessing inherited property of object', () => {
     ({}).valueOf;
   `,
     { chapter: 100, native: true }
-  ).toMatchInlineSnapshot(`
-"native:\\"Line -1: [object Object]\\"
-interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\""
-`)
+  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
 })
 
 // NOTE: Obsoleted due to strict types on member access

@@ -84,8 +84,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "native:\\"Line -1: [object Object]\\"
-interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\"",
+  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
