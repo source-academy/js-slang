@@ -2,9 +2,6 @@ import { Node } from 'estree'
 import { Context, Result } from '..'
 import { Scheduler, Value } from '../types'
 
-var breakpoints: string[] = []
-var previousBreakpoint: number = -1
-
 export const saveState = (
   context: Context,
   it: IterableIterator<Value>,
@@ -15,7 +12,7 @@ export const saveState = (
 }
 
 export const setBreakpointAtLine = (lines: string[]): void => {
-  breakpoints = lines;
+  breakpoints = lines
 }
 
 export const manualToggleDebugger = (context: Context): Result => {
@@ -28,17 +25,22 @@ export const manualToggleDebugger = (context: Context): Result => {
   }
 }
 
+let breakpoints: string[] = [];
+let moved: boolean = true;
+let prevStoppedLine: number = -1;
+
 export const checkEditorBreakpoints = (context: Context, node: Node): void => {
-  if(context.runtime.debuggerOn && node.loc) {
-    if(previousBreakpoint !== -1) {
-      if(node.loc.start.line !== previousBreakpoint) {
-        previousBreakpoint = -1;
-      }
-    } else if(typeof breakpoints[node.loc.start.line - 1] !== typeof undefined) {
-      if(node.loc.start.line !== previousBreakpoint) {
-        previousBreakpoint = node.loc.start.line;
-        context.runtime.break = true;
-      }
+  if (node.loc){
+    const currentLine = node.loc.start.line - 1;
+    if (!moved && currentLine !== prevStoppedLine) {
+      moved = true;
+    }
+    if (context.runtime.debuggerOn
+      && breakpoints[currentLine] === "ace_breakpoint"
+      && moved) {
+      moved = false;
+      prevStoppedLine = currentLine;
+      context.runtime.break = true;
     }
   }
 }
