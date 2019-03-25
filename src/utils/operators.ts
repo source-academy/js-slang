@@ -3,9 +3,7 @@ import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
   GetInheritedPropertyError,
-  GetPropertyError,
-  InvalidNumberOfArguments,
-  SetPropertyError
+  InvalidNumberOfArguments
 } from '../interpreter-errors'
 import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
 import { callExpression, locationDummyNode } from './astCreator'
@@ -187,11 +185,7 @@ export const setProp = (obj: any, prop: any, value: any, line: number, column: n
   const dummy = locationDummyNode(line, column)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
   if (error === undefined) {
-    if (obj === null || obj === undefined) {
-      throw new SetPropertyError(dummy, obj, prop)
-    } else {
-      return (obj[prop] = value)
-    }
+    return (obj[prop] = value)
   } else {
     throw error
   }
@@ -201,9 +195,7 @@ export const getProp = (obj: any, prop: any, line: number, column: number) => {
   const dummy = locationDummyNode(line, column)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
   if (error === undefined) {
-    if (obj === null || obj === undefined) {
-      throw new GetPropertyError(dummy, obj, prop)
-    } else if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
+    if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
       throw new GetInheritedPropertyError(dummy, obj, prop)
     } else {
       return obj[prop]
