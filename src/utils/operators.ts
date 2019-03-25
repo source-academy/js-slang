@@ -203,10 +203,10 @@ export const getProp = (obj: any, prop: any, line: number, column: number) => {
   if (error === undefined) {
     if (obj === null || obj === undefined) {
       throw new GetPropertyError(dummy, obj, prop)
-    } else if (obj.hasOwnProperty(prop)) {
-      return obj[prop]
-    } else {
+    } else if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
       throw new GetInheritedPropertyError(dummy, obj, prop)
+    } else {
+      return obj[prop]
     }
   } else {
     throw error

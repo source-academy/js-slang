@@ -405,24 +405,23 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
+  return computed ? property : create.literal((property as es.Identifier).name)
+}
+
 function transformPropertyAssignment(program: es.Program) {
   simple(program, {
-    AssignmentExpression(node) {
-      const assignmentExpression = node as es.AssignmentExpression
-      if (assignmentExpression.left.type === 'MemberExpression') {
-        const { object, property, computed, loc } = assignmentExpression.left
+    AssignmentExpression(node: es.AssignmentExpression) {
+      if (node.left.type === 'MemberExpression') {
+        const { object, property, computed, loc } = node.left
         const { line, column } = loc!.start
-        node = node as es.CallExpression
-        node.type = 'CallExpression'
-        node.callee = globalIds.setProp
-        const prop = computed ? property : create.literal((property as es.Identifier).name)
-        node.arguments = [
+        create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
-          prop,
-          assignmentExpression.right,
+          getComputedProperty(computed, property),
+          node.right,
           create.literal(line),
           create.literal(column)
-        ]
+        ])
       }
     }
   })
@@ -430,15 +429,15 @@ function transformPropertyAssignment(program: es.Program) {
 
 function transformPropertyAccess(program: es.Program) {
   simple(program, {
-    MemberExpression(node) {
-      const memberExpression = node as es.MemberExpression
-      const { object, property, computed, loc } = memberExpression
+    MemberExpression(node: es.MemberExpression) {
+      const { object, property, computed, loc } = node
       const { line, column } = loc!.start
-      node = node as es.CallExpression
-      node.type = 'CallExpression'
-      node.callee = globalIds.getProp
-      const prop = computed ? property : create.literal((property as es.Identifier).name)
-      node.arguments = [object as es.Expression, prop, create.literal(line), create.literal(column)]
+      create.mutateToCallExpression(node, globalIds.getProp, [
+        object as es.Expression,
+        getComputedProperty(computed, property),
+        create.literal(line),
+        create.literal(column)
+      ])
     }
   })
 }

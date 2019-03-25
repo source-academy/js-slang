@@ -1,5 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Accessing array with nonexistent index returns undefined: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = [];
+a[1];",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const a = [];
+    const lastStatementResult = eval(\\"getProp(a, 1, 2, 0);\\");
+    native.globals.set(\\"a\\", {
+      kind: \\"const\\",
+      value: a
+    });
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Accessing object with nonexistent property returns undefined: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const o = {};
+o.nonexistent;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const o = {};
+    const lastStatementResult = eval(\\"getProp(o, \\\\\\"nonexistent\\\\\\", 2, 0);\\");
+    native.globals.set(\\"o\\", {
+      kind: \\"const\\",
+      value: o
+    });
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Allow display to return value it is displaying: expectResult 1`] = `
 Object {
   "alertResult": Array [],
