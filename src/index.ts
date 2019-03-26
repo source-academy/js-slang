@@ -178,7 +178,7 @@ export function runInContext(
         )
       }
     } else if (options.useSubst) {
-      const steps = getEvaluationSteps(code, context);
+      const steps = getEvaluationSteps(code, context)
       return Promise.resolve({
         status: 'finished',
         value: steps

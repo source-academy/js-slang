@@ -22,7 +22,7 @@ function startRepl(chapter = 1, useSubst: boolean) {
 
 function main() {
   const chapter = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 1
-  const useSubst = process.argv.length > 3 ? process.argv[3] === "subst" : false
+  const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
   startRepl(chapter, useSubst)
 }
 
