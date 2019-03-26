@@ -12,6 +12,7 @@ import {
 } from './interpreter-errors'
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
 import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
 import { locationDummyNode } from './utils/astCreator'
@@ -21,12 +22,14 @@ export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   isNativeRunnable: boolean
+  useSubst: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  isNativeRunnable: false
+  isNativeRunnable: false,
+  useSubst: false
 }
 
 // needed to work on browsers
@@ -93,9 +96,9 @@ function convertNativeErrorToSourceError(
       line === null || column === null
         ? UNKNOWN_LOCATION
         : {
-            start: { line, column },
-            end: { line: -1, column: -1 }
-          }
+          start: { line, column },
+          end: { line: -1, column: -1 }
+        }
     return new ExceptionError(error, location)
   }
 }
@@ -174,6 +177,12 @@ export function runInContext(
           }
         )
       }
+    } else if (options.useSubst) {
+      const steps = getEvaluationSteps(code, context);
+      return Promise.resolve({
+        status: 'finished',
+        value: steps
+      } as Result)
     } else {
       const it = evaluate(program, context)
       let scheduler: Scheduler
