@@ -1,22 +1,18 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import { CallingNonFunctionValue, InvalidNumberOfArguments } from '../interpreter-errors'
-import { PotentialInfiniteLoopError } from '../native-errors'
+import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
+import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
 
-export function throwIfExceedsTimeLimit(
-  start: number,
-  current: number,
-  line: number,
-  column: number
-) {
+export function throwIfTimeout(start: number, current: number, line: number, column: number) {
   if (current - start > JSSLANG_PROPERTIES.maxExecTime) {
     throw new PotentialInfiniteLoopError(create.locationDummyNode(line, column))
   }
 }
 
-export function callIfFunctionAndRightArgumentsElseError(
+export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,
   column: number,
@@ -40,7 +36,7 @@ export function callIfFunctionAndRightArgumentsElseError(
   }
 }
 
-export function itselfIfBooleanElseError(candidate: any, line: number, column: number) {
+export function boolOrErr(candidate: any, line: number, column: number) {
   const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate
@@ -49,12 +45,7 @@ export function itselfIfBooleanElseError(candidate: any, line: number, column: n
   }
 }
 
-export function evaluateUnaryExpressionIfValidElseError(
-  operator: UnaryOperator,
-  argument: any,
-  line: number,
-  column: number
-) {
+export function unaryOp(operator: UnaryOperator, argument: any, line: number, column: number) {
   const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column),
     operator,
@@ -77,7 +68,7 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
   }
 }
 
-export function evaluateBinaryExpressionIfValidElseError(
+export function binaryOp(
   operator: BinaryOperator,
   left: any,
   right: any,
@@ -124,4 +115,64 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
     default:
       return undefined
   }
+}
+
+/**
+ * Limitations for current properTailCalls implementation:
+ * Obviously, if objects ({}) are reintroduced,
+ * we have to change this for a more stringent check,
+ * as isTail and transformedFunctions are properties
+ * and may be added by Source code.
+ */
+export const callIteratively = (f: any, ...args: any[]) => {
+  let line = -1
+  let column = -1
+  const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
+  const startTime = Date.now()
+  const pastCalls: Array<[string, any[]]> = []
+  while (true) {
+    const dummy = locationDummyNode(line, column)
+    if (Date.now() - startTime > MAX_TIME) {
+      throw new PotentialInfiniteRecursionError(dummy, pastCalls)
+    } else if (typeof f !== 'function') {
+      throw new CallingNonFunctionValue(f, dummy)
+    }
+    if (f.transformedFunction! !== undefined) {
+      f = f.transformedFunction
+      const expectedLength = f.length
+      const receivedLength = args.length
+      if (expectedLength !== receivedLength) {
+        throw new InvalidNumberOfArguments(
+          callExpression(locationDummyNode(line, column), args, {
+            start: { line, column },
+            end: { line, column }
+          }),
+          expectedLength,
+          receivedLength
+        )
+      }
+    }
+    const res = f(...args)
+    if (res === null || res === undefined) {
+      return res
+    } else if (res.isTail === true) {
+      f = res.function
+      args = res.arguments
+      line = res.line
+      column = res.column
+      pastCalls.push([res.functionName, args])
+    } else if (res.isTail === false) {
+      return res.value
+    } else {
+      return res
+    }
+  }
+}
+
+export const wrap = (f: (...args: any[]) => any, stringified: string) => {
+  const wrapped = (...args: any[]) => callIteratively(f, ...args)
+  wrapped.transformedFunction = f
+  wrapped[Symbol.toStringTag] = () => stringified
+  wrapped.toString = () => stringified
+  return wrapped
 }

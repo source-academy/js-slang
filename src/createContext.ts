@@ -8,7 +8,6 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
-import * as properTailCalls from './utils/properTailCalls'
 
 const createEmptyRuntime = () => ({
   isRunning: false,
@@ -32,10 +31,8 @@ export const createEmptyContext = <T>(
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
-    builtins: new Map(),
     globals: new Map(),
-    operators: new Map(Object.entries(operators)),
-    properTailCalls
+    operators: new Map(Object.entries(operators))
   })
   return {
     chapter,
@@ -66,7 +63,10 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].builtins.set(name, value)
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.set(name, {
+    kind: 'const',
+    value
+  })
 }
 
 // Defines a builtin in the given context
