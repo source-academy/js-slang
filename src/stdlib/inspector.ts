@@ -25,22 +25,20 @@ export const manualToggleDebugger = (context: Context): Result => {
   }
 }
 
-let breakpoints: string[] = [];
-let moved: boolean = true;
-let prevStoppedLine: number = -1;
+let breakpoints: string[] = []
+let moved: boolean = true
+let prevStoppedLine: number = -1
 
 export const checkEditorBreakpoints = (context: Context, node: Node): void => {
-  if (node.loc){
-    const currentLine = node.loc.start.line - 1;
+  if (node.loc) {
+    const currentLine = node.loc.start.line - 1
     if (!moved && currentLine !== prevStoppedLine) {
-      moved = true;
+      moved = true
     }
-    if (context.runtime.debuggerOn
-      && breakpoints[currentLine] === "ace_breakpoint"
-      && moved) {
-      moved = false;
-      prevStoppedLine = currentLine;
-      context.runtime.break = true;
+    if (context.runtime.debuggerOn && breakpoints[currentLine] === 'ace_breakpoint' && moved) {
+      moved = false
+      prevStoppedLine = currentLine
+      context.runtime.break = true
     }
   }
 }
