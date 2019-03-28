@@ -4,6 +4,7 @@ import * as es from 'estree'
 
 import { apply } from './interpreter'
 import { Context, Environment, Value } from './types'
+import { blockArrowFunction, returnStatement } from './utils/astCreator'
 import * as create from './utils/astCreator'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
@@ -58,45 +59,16 @@ export default class Closure extends Callable {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
     }
+    const functionBody = isExpressionBody(node.body)
+      ? [returnStatement(node.body, node.body.loc!)]
+      : node.body
+    const closure = new Closure(
+      blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!),
+      environment,
+      context
+    )
 
-    let closure = null
-    if (isExpressionBody(node.body)) {
-      closure = new Closure(
-        {
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: {
-            type: 'BlockStatement',
-            loc: node.body.loc,
-            body: [
-              {
-                type: 'ReturnStatement',
-                loc: node.body.loc,
-                argument: node.body
-              }
-            ]
-          } as es.BlockStatement
-        } as es.FunctionExpression,
-        environment,
-        context
-      )
-    } else {
-      closure = new Closure(
-        {
-          type: 'FunctionExpression',
-          loc: node.loc,
-          id: null,
-          params: node.params,
-          body: node.body
-        } as es.FunctionExpression,
-        environment,
-        context
-      )
-    }
-
-    // Set the closure's nod to point back at the original one
+    // Set the closure's node to point back at the original one
     closure.originalNode = node
 
     return closure
@@ -115,16 +87,12 @@ export default class Closure extends Callable {
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(
-    public node: es.FunctionExpression,
-    public environment: Environment,
-    context: Context
-  ) {
+  constructor(public node: es.Function, public environment: Environment, context: Context) {
     super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
     this.originalNode = node
-    if (this.node.id) {
+    if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
       this.functionName = `Anonymous${++Closure.lambdaCtr}`

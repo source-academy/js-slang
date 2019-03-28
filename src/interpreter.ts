@@ -466,7 +466,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *FunctionDeclaration(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    const closure = new Closure(node as any, currentEnvironment(context), context)
+    const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
   },
