@@ -145,3 +145,8 @@ export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression =
   type: 'ArrayExpression',
   elements
 })
+
+// primitive: undefined is a possible value
+export const primitive = (value: any): es.Expression => {
+  return value === undefined ? identifier('undefined') : literal(value)
+}
