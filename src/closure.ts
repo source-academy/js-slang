@@ -4,19 +4,12 @@ import * as es from 'estree'
 
 import { apply } from './interpreter'
 import { Context, Environment, Value } from './types'
-import { blockArrowFunction, returnStatement } from './utils/astCreator'
-import * as create from './utils/astCreator'
+import { blockArrowFunction, callExpression, identifier, returnStatement } from './utils/astCreator'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
     const args: Value[] = Array.prototype.slice.call(arguments)
-    const gen = apply(
-      context,
-      value,
-      args,
-      create.callExpression(create.identifier(klass), args),
-      this
-    )
+    const gen = apply(context, value, args, callExpression(identifier(klass), args), this)
     let it = gen.next()
     while (!it.done) {
       it = gen.next()
