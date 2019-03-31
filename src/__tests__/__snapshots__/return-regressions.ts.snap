@@ -30,6 +30,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -102,6 +104,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -172,6 +176,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -241,6 +247,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -348,6 +356,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -430,6 +440,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -513,6 +525,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -595,6 +609,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -675,6 +691,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -764,6 +782,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -851,6 +871,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
@@ -937,6 +959,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const unreachable = wrap(() => {
