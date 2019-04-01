@@ -24,7 +24,8 @@ in statement $p$ by value $v$. Care must be taken to introduce
 and preserve
 co-references in this process; substitution can introduce
 cyclic references in the result of the substitution. For example,
-$n$ may occur free in $v$, in which every occurrence of $n$ in $p$
+$n$ may occur free in $v$, in which case
+every occurrence of $n$ in $p$
 will be replaced by $v$ such that $n$ in $v$ refers cyclically
 to the node at which the replacement happens.
 
@@ -86,7 +87,7 @@ v \textbf{\texttt{;}} \textit{statement}+\
 }
 \]
 
-\subsection*{Statements}
+\subsection*{Statements: Constant declarations}
 
 \textbf{Evaluate-constant-declaration}: The right-hand expressions
 in constant declarations are evaluated.
@@ -105,7 +106,7 @@ in constant declarations are evaluated.
 \]
 
 
-\vspace{10mm}
+\subsection*{Statements: Conditionals}
 
 \textbf{Conditional-statement-predicate}: A conditional statement
 is reducible if its predicate is reducible.
@@ -189,6 +190,7 @@ whose predicate is false reduces to the alternative block.
 }
 \]
 
+\subsection*{Statements: Blocks}
 
 \textbf{Block-statement-reduce}: A block statement is
 reducible if its program is reducible.
@@ -207,6 +209,70 @@ reducible if its program is reducible.
   \textbf{\texttt{\}}}
 }
 \]
+
+\vspace{10mm}
+
+\textbf{Block-statement-undefined}: A block statement 
+whose body only contains a single value statement reduces to
+the value 
+\textbf{\texttt{undefined}}.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  v \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  \textbf{\texttt{undefined}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Block-statement-reduce-return}: A block statement 
+whose body only contains a single return statement can 
+be reduced by reducing the return expression.
+
+\[
+\frac{
+  e
+\ \Rightarrow \ 
+  e'
+}{  
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ e \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ e' \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Block-statement-eliminate-return}: A block statement 
+whose body only contains a single return value reduces to
+that value.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ v \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  v
+}
+\]
+
+
+\subsection*{Statements: Expression statements}
 
 \textbf{Expression-statement-reduce}: An expression statement
 is reducible if its expression is reducible.
