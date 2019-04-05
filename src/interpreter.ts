@@ -5,7 +5,7 @@ import * as constants from './constants'
 import * as errors from './interpreter-errors'
 import { checkEditorBreakpoints } from './stdlib/inspector'
 import { Context, Environment, Frame, Value } from './types'
-import { createNode } from './utils/node'
+import { conditionalExpression, literal, primitive } from './utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
@@ -34,7 +34,7 @@ const createEnvironment = (
   if (callExpression) {
     environment.callExpression = {
       ...callExpression,
-      arguments: args.map(a => createNode(a) as es.Expression)
+      arguments: args.map(primitive)
     }
   }
   closure.node.params.forEach((param, index) => {
@@ -206,19 +206,9 @@ function* getArgs(context: Context, call: es.CallExpression) {
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
-    return {
-      type: 'ConditionalExpression',
-      test: node.left,
-      consequent: node.right,
-      alternate: createNode(false)
-    } as es.ConditionalExpression
+    return conditionalExpression(node.left, node.right, literal(false), node.loc!)
   } else {
-    return {
-      type: 'ConditionalExpression',
-      test: node.left,
-      consequent: createNode(true),
-      alternate: node.right
-    } as es.ConditionalExpression
+    return conditionalExpression(node.left, literal(true), node.right, node.loc!)
   }
 }
 
@@ -234,6 +224,23 @@ function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Con
 }
 
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
+
+function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
+  hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
+  let result
+  for (const statement of node.body) {
+    result = yield* evaluate(statement, context)
+    if (
+      result instanceof ReturnValue ||
+      result instanceof TailCallReturnValue ||
+      result instanceof BreakValue ||
+      result instanceof ContinueValue
+    ) {
+      break
+    }
+  }
+  return result
+}
 
 /**
  * WARNING: Do not use object literal shorthands, e.g.
@@ -473,7 +480,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *FunctionDeclaration(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    const closure = new Closure(node as any, currentEnvironment(context), context)
+    const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
   },
@@ -547,19 +554,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
-
-    for (const statement of node.body) {
-      result = yield* evaluate(statement, context)
-      if (
-        result instanceof ReturnValue ||
-        result instanceof TailCallReturnValue ||
-        result instanceof BreakValue ||
-        result instanceof ContinueValue
-      ) {
-        break
-      }
-    }
+    result = yield* evaluateBlockSatement(context, node)
     popEnvironment(context)
     return result
   },
@@ -605,7 +600,7 @@ export function* apply(
         pushEnvironment(context, environment)
         total++
       }
-      result = yield* evaluate(fun.node.body, context)
+      result = yield* evaluateBlockSatement(context, fun.node.body as es.BlockStatement)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee
         node = result.node

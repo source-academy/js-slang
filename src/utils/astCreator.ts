@@ -64,13 +64,15 @@ export const expressionStatement = (expression: es.Expression): es.ExpressionSta
 
 export const blockArrowFunction = (
   params: es.Identifier[],
-  body: es.Statement[] | es.BlockStatement
+  body: es.Statement[] | es.BlockStatement,
+  loc?: es.SourceLocation
 ): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',
   expression: false,
   generator: false,
   params,
-  body: Array.isArray(body) ? blockStatement(body) : body
+  body: Array.isArray(body) ? blockStatement(body) : body,
+  loc
 })
 
 export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
@@ -78,9 +80,13 @@ export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
   body
 })
 
-export const returnStatement = (argument: es.Expression): es.ReturnStatement => ({
+export const returnStatement = (
+  argument: es.Expression,
+  loc?: es.SourceLocation
+): es.ReturnStatement => ({
   type: 'ReturnStatement',
-  argument
+  argument,
+  loc
 })
 
 export const property = (key: string, value: es.Expression): es.Property => ({
@@ -139,3 +145,8 @@ export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression =
   type: 'ArrayExpression',
   elements
 })
+
+// primitive: undefined is a possible value
+export const primitive = (value: any): es.Expression => {
+  return value === undefined ? identifier('undefined') : literal(value)
+}
