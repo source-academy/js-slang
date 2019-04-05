@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.2.0-alpha",
+  "version": "0.2.1-alpha.2",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -13,7 +13,8 @@
     "astring": "^1.3.1",
     "commander": "^2.19.0",
     "common-tags": "^1.8.0",
-    "invariant": "^2.2.4"
+    "invariant": "^2.2.4",
+    "source-map": "^0.7.3"
   },
   "main": "dist/index",
   "types": "dist/index",

@@ -1,4 +1,10 @@
+/*
+	This file contains definitions of some interfaces and classes that are used in Source (such as
+	error-related classes).
+*/
+
 /* tslint:disable:max-classes-per-file */
+
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
@@ -25,6 +31,7 @@ export enum ErrorSeverity {
   ERROR = 'Error'
 }
 
+// any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
   type: ErrorType
   severity: ErrorSeverity
@@ -64,7 +71,7 @@ export interface Context<T = any> {
     break: boolean
     debuggerOn: boolean
     isRunning: boolean
-    frames: Frame[]
+    environments: Environment[]
     nodes: es.Node[]
   }
 
@@ -84,20 +91,27 @@ export interface Context<T = any> {
    * context for use in your own built-in functions (like `display(a)`)
    */
   externalContext?: T
+
+  /**
+   * Used for storing id of the context to be referenced by native
+   */
+  contextId: number
 }
 
 // tslint:disable:no-any
-export interface Environment {
+export interface Frame {
   [name: string]: any
 }
 export type Value = any
 // tslint:enable:no-any
 
-export interface Frame {
+export type AllowedDeclarations = 'const' | 'let'
+
+export interface Environment {
   name: string
-  parent: Frame | null
+  tail: Environment | null
   callExpression?: es.CallExpression
-  environment: Environment
+  head: Frame
   thisContext?: Value
 }
 
@@ -122,4 +136,14 @@ export type Result = Suspended | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): any
+}
+
+/*
+	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
+	As such this interface was created here to fulfil the same purpose.
+ */
+export interface Directive extends es.ExpressionStatement {
+  type: 'ExpressionStatement'
+  expression: es.Literal
+  directive: string
 }

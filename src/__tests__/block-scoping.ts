@@ -2,7 +2,8 @@ import { expectParsedError, expectResult, stripIndent } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     function test(){
       const x = true;
       {
@@ -11,12 +12,15 @@ test('standalone block statements', () => {
       return x;
     }
     test();
-  `).toMatchInlineSnapshot(`true`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`true`)
 })
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     function test(){
       const x = true;
       if(true) {
@@ -27,7 +31,9 @@ test('const uses block scoping instead of function scoping', () => {
       return x;
     }
     test();
-  `).toMatchInlineSnapshot(`true`)
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`true`)
 })
 
 // This is bad practice. Don't do this!
@@ -45,7 +51,7 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -61,7 +67,7 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    3
+    { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -79,7 +85,7 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    4
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -97,7 +103,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   }
   test();
   `,
-    4
+    { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -113,8 +119,8 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    3
-  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x"`)
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x."`)
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
@@ -124,7 +130,9 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
         return 1;
       }
       v;
-    `).toMatchInlineSnapshot(`"Line 1: Name f not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 1: Name f declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Error when accessing temporal dead zone', () => {
@@ -135,7 +143,9 @@ test('Error when accessing temporal dead zone', () => {
       const a = 5;
     }
     f();
-    `).toMatchInlineSnapshot(`"Line 3: Name a not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 // tslint:disable-next-line:max-line-length
@@ -146,7 +156,9 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
         a + a;
         const a = 10;
       }
-    `).toMatchInlineSnapshot(`"Line 3: Name a not yet assigned"`)
+    `).toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
@@ -160,6 +172,6 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    3
-  ).toMatchInlineSnapshot(`"Line 3: Name variable not declared"`)
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
 })

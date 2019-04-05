@@ -5,6 +5,7 @@
     "declaration": true,
     "target": "es2016",
     "lib": [
+      "es2018",
       "es2017.object",
       "es2016",
       "es2015",
@@ -31,6 +32,7 @@
     "dist"
   ],
   "types": [
-    "typePatches"
+    "typePatches",
+    "jest"
   ]
 }

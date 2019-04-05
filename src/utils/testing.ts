@@ -2,6 +2,9 @@ export { stripIndent, oneLine } from 'common-tags'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, runInContext } from '../index'
+import { stringify } from '../interop'
+import { parse } from '../parser'
+import { transpile } from '../transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
 
 export interface TestContext extends Context {
@@ -26,30 +29,36 @@ interface TestResult {
   result: Value
 }
 
-function createTestContext(
-  chapter: number | TestContext = 1,
+interface TestOptions {
+  context?: TestContext
+  chapter?: number
   testBuiltins?: TestBuiltins
-): TestContext {
-  if (chapter === undefined) {
-    chapter = 1
-  }
+  native?: boolean
+}
 
-  if (typeof chapter === 'number') {
-    const context: TestContext = {
+function createTestContext({
+  context,
+  chapter = 1,
+  testBuiltins
+}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
+  if (context !== undefined) {
+    return context
+  } else {
+    const testContext: TestContext = {
       ...createContext(chapter, [], undefined, {
         rawDisplay: (str, externalContext) => {
-          context.displayResult.push(str)
+          testContext.displayResult.push(str)
           return str
         },
         prompt: (str, externalContext) => {
-          context.promptResult.push(str)
+          testContext.promptResult.push(str)
           return null
         },
         alert: (str, externalContext) => {
-          context.alertResult.push(str)
+          testContext.alertResult.push(str)
         },
         visualiseList: value => {
-          context.visualiseListResult.push(value)
+          testContext.visualiseListResult.push(value)
         }
       } as CustomBuiltIns),
       displayResult: [],
@@ -61,68 +70,116 @@ function createTestContext(
     if (testBuiltins !== undefined) {
       for (const name in testBuiltins) {
         if (testBuiltins.hasOwnProperty(name)) {
-          defineBuiltin(context, name, testBuiltins[name])
+          defineBuiltin(testContext, name, testBuiltins[name])
         }
       }
     }
 
-    return context
-  } else {
-    return chapter
+    return testContext
   }
 }
 
-function testInContext(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-): Promise<TestResult> {
-  const testContext = createTestContext(chapterOrContext, testBuiltins)
+function testInContext(code: string, options: TestOptions): Promise<TestResult> {
+  const interpretedTestContext = createTestContext(options)
   const scheduler = 'preemptive'
-  return runInContext(code, testContext, { scheduler }).then(result => {
+  const interpreted = runInContext(code, interpretedTestContext, {
+    scheduler,
+    isNativeRunnable: false
+  }).then(result => {
     return {
       code,
-      displayResult: testContext.displayResult,
-      alertResult: testContext.alertResult,
-      visualiseListResult: testContext.visualiseListResult,
-      errors: testContext.errors,
-      parsedErrors: parseError(testContext.errors),
+      displayResult: interpretedTestContext.displayResult,
+      alertResult: interpretedTestContext.alertResult,
+      visualiseListResult: interpretedTestContext.visualiseListResult,
+      errors: interpretedTestContext.errors,
+      parsedErrors: parseError(interpretedTestContext.errors),
       resultStatus: result.status,
       result: result.status === 'finished' ? result.value : undefined
     }
   })
+  if (options.native) {
+    const nativeTestContext = createTestContext(options)
+    return interpreted.then(interpretedResult => {
+      return runInContext(code, nativeTestContext, { scheduler, isNativeRunnable: true }).then(
+        result => {
+          let transpiled: string
+          try {
+            const transpilerContext = createTestContext(options)
+            const parsed = parse(code, transpilerContext)!
+            transpiled = transpile(parsed, transpilerContext.contextId).transpiled
+          } catch {
+            transpiled = 'parseError'
+          }
+          // replace native[<number>] as they may be inconsistent
+          const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+          // replace the line hiding globals as they may differ between environments
+          const replacedGlobalsLine = replacedNative.replace(
+            /\n\(\(.*\)/,
+            '\n(( <globals redacted> )'
+          )
+          // replace declaration of builtins since they're repetitive
+          const replacedBuiltins = replacedGlobalsLine.replace(
+            /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
+            ''
+          )
+          const nativeResult = {
+            code,
+            displayResult: nativeTestContext.displayResult,
+            alertResult: nativeTestContext.alertResult,
+            visualiseListResult: nativeTestContext.visualiseListResult,
+            errors: nativeTestContext.errors,
+            parsedErrors: parseError(nativeTestContext.errors),
+            resultStatus: result.status,
+            result: result.status === 'finished' ? result.value : undefined
+          }
+          const propertiesThatShouldBeEqual = [
+            'code',
+            'displayResult',
+            'alertResult',
+            'parsedErrors',
+            'result'
+          ]
+          const diff = propertiesThatShouldBeEqual
+            .filter(
+              property =>
+                stringify(nativeResult[property]) !== stringify(interpretedResult[property])
+            )
+            .reduce(
+              (acc: object, curr: string) => ({
+                ...acc,
+                [curr]: `native:${stringify(nativeResult[curr])}\ninterpreted:${stringify(
+                  interpretedResult[curr]
+                )}`
+              }),
+              {}
+            )
+          return { ...interpretedResult, ...diff, transpiled: replacedBuiltins } as TestResult
+        }
+      )
+    })
+  } else {
+    return interpreted
+  }
 }
 
-export function testSuccess(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
+export function testSuccess(code: string, options: TestOptions = { native: false }) {
+  return testInContext(code, options).then(testResult => {
     expect(testResult.errors).toEqual([])
     expect(testResult.resultStatus).toBe('finished')
     return testResult
   })
 }
 
-export function testSuccessWithErrors(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
+export function testSuccessWithErrors(code: string, options: TestOptions = { native: false }) {
+  return testInContext(code, options).then(testResult => {
     expect(testResult.errors).not.toEqual([])
     expect(testResult.resultStatus).toBe('finished')
     return testResult
   })
 }
 
-export function testFailure(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return testInContext(code, chapterOrContext, testBuiltins).then(testResult => {
+export function testFailure(code: string, options: TestOptions = { native: false }) {
+  return testInContext(code, options).then(testResult => {
     expect(testResult.errors).not.toEqual([])
     expect(testResult.resultStatus).toBe('error')
     return testResult
@@ -151,64 +208,37 @@ export function snapshot(arg1?: any, arg2?: any): (testResult: TestResult) => Te
   }
 }
 
-export function snapshotSuccess(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  snapshotName?: string,
-  testBuiltins?: TestBuiltins
-) {
-  return testSuccess(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+export function snapshotSuccess(code: string, options: TestOptions, snapshotName?: string) {
+  return testSuccess(code, options).then(snapshot(snapshotName))
 }
 
-export function snapshotWarning(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  snapshotName?: string,
-  testBuiltins?: TestBuiltins
-) {
-  return testSuccessWithErrors(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+export function snapshotWarning(code: string, options: TestOptions, snapshotName: string) {
+  return testSuccessWithErrors(code, options).then(snapshot(snapshotName))
 }
 
-export function snapshotFailure(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  snapshotName?: string,
-  testBuiltins?: TestBuiltins
-) {
-  return testFailure(code, chapterOrContext, testBuiltins).then(snapshot(snapshotName))
+export function snapshotFailure(code: string, options: TestOptions, snapshotName: string) {
+  return testFailure(code, options).then(snapshot(snapshotName))
 }
 
-export function expectDisplayResult(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
+export function expectDisplayResult(code: string, options: TestOptions = {}) {
   return expect(
-    testSuccess(code, chapterOrContext, testBuiltins)
+    testSuccess(code, options)
       .then(snapshot('expectDisplayResult'))
       .then(testResult => testResult.displayResult!)
   ).resolves
 }
 
-export function expectResult(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
+export function expectResult(code: string, options: TestOptions = {}) {
   return expect(
-    testSuccess(code, chapterOrContext, testBuiltins)
+    testSuccess(code, options)
       .then(snapshot('expectResult'))
       .then(testResult => testResult.result)
   ).resolves
 }
 
-export function expectParsedErrorNoErrorSnapshot(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
+export function expectParsedErrorNoErrorSnapshot(code: string, options: TestOptions = {}) {
   return expect(
-    testFailure(code, chapterOrContext, testBuiltins)
+    testFailure(code, options)
       .then(
         snapshot(
           {
@@ -221,38 +251,40 @@ export function expectParsedErrorNoErrorSnapshot(
   ).resolves
 }
 
-export function expectParsedError(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
+export function expectParsedError(code: string, options: TestOptions = {}) {
   return expect(
-    testFailure(code, chapterOrContext, testBuiltins)
+    testFailure(code, options)
       .then(snapshot('expectParsedError'))
       .then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
-export function expectWarning(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
+export function expectDifferentParsedErrors(
+  code1: string,
+  code2: string,
+  options: TestOptions = {}
 ) {
   return expect(
-    testSuccessWithErrors(code, chapterOrContext, testBuiltins)
+    testFailure(code1, options).then(error1 => {
+      expect(
+        testFailure(code2, options).then(error2 => {
+          return expect(error1).not.toEqual(error2)
+        })
+      )
+    })
+  ).resolves
+}
+
+export function expectWarning(code: string, options: TestOptions = {}) {
+  return expect(
+    testSuccessWithErrors(code, options)
       .then(snapshot('expectWarning'))
       .then(testResult => testResult.parsedErrors)
   ).resolves
 }
 
-export function expectParsedErrorNoSnapshot(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return expect(
-    testFailure(code, chapterOrContext, testBuiltins).then(testResult => testResult.parsedErrors)
-  ).resolves
+export function expectParsedErrorNoSnapshot(code: string, options: TestOptions = {}) {
+  return expect(testFailure(code, options).then(testResult => testResult.parsedErrors)).resolves
 }
 
 function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
@@ -267,26 +299,20 @@ function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
   return eval(evalstring + code)
 }
 
-export function expectToMatchJS(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return testSuccess(code, chapterOrContext, testBuiltins)
+export function expectToMatchJS(code: string, options: TestOptions = {}) {
+  return testSuccess(code, options)
     .then(snapshot('expect to match JS'))
-    .then(testResult => expect(testResult.result).toEqual(evalWithBuiltins(code, testBuiltins)))
+    .then(testResult =>
+      expect(testResult.result).toEqual(evalWithBuiltins(code, options.testBuiltins))
+    )
 }
 
-export function expectToLooselyMatchJS(
-  code: string,
-  chapterOrContext?: number | TestContext,
-  testBuiltins?: TestBuiltins
-) {
-  return testSuccess(code, chapterOrContext, testBuiltins)
+export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) {
+  return testSuccess(code, options)
     .then(snapshot('expect to loosely match JS'))
     .then(testResult =>
       expect(testResult.result.replace(/ /g, '')).toEqual(
-        evalWithBuiltins(code, testBuiltins).replace(/ /g, '')
+        evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
       )
     )
 }

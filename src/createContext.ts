@@ -1,3 +1,6 @@
+// Variable determining chapter of Source is contained in this file.
+
+import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
@@ -5,14 +8,13 @@ import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import { Context, CustomBuiltIns, Value } from './types'
-
-const GLOBAL = typeof window === 'undefined' ? global : window
+import * as operators from './utils/operators'
 
 const createEmptyRuntime = () => ({
   break: false,
   debuggerOn: true,
   isRunning: false,
-  frames: [],
+  environments: [],
   value: undefined,
   nodes: []
 })
@@ -28,43 +30,57 @@ const createEmptyDebugger = () => ({
   }
 })
 
-const createGlobalFrame = () => ({
-  parent: null,
+const createGlobalEnvironment = () => ({
+  tail: null,
   name: 'global',
-  environment: {}
+  head: {}
 })
 
 export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
   externalContext?: T
-): Context<T> => ({
-  chapter,
-  externalSymbols,
-  errors: [],
-  externalContext,
-  runtime: createEmptyRuntime(),
-  debugger: createEmptyDebugger()
-})
+): Context<T> => {
+  if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
+    GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
+  }
+  const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
+    globals: new Map(),
+    operators: new Map(Object.entries(operators))
+  })
+  return {
+    chapter,
+    externalSymbols,
+    errors: [],
+    externalContext,
+    runtime: createEmptyRuntime(),
+    debugger: createEmptyDebugger(),
+    contextId: length - 1
+  }
+}
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
-  if (!context.runtime.frames) {
-    context.runtime.frames = []
+  if (!context.runtime.environments) {
+    context.runtime.environments = []
   }
-  if (context.runtime.frames.length === 0) {
-    context.runtime.frames.push(createGlobalFrame())
+  if (context.runtime.environments.length === 0) {
+    context.runtime.environments.push(createGlobalEnvironment())
   }
 }
 
 const defineSymbol = (context: Context, name: string, value: Value) => {
-  const globalFrame = context.runtime.frames[0]
-  Object.defineProperty(globalFrame.environment, name, {
+  const globalEnvironment = context.runtime.environments[0]
+  Object.defineProperty(globalEnvironment.head, name, {
     value,
     writable: false,
     enumerable: true
+  })
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.set(name, {
+    kind: 'const',
+    value
   })
 }
 
@@ -128,7 +144,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
-    defineBuiltin(context, 'null', null)
     defineBuiltin(context, 'pair(left, right)', list.pair)
     defineBuiltin(context, 'is_pair(val)', list.is_pair)
     defineBuiltin(context, 'head(xs)', list.head)
@@ -151,7 +166,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
     defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
     defineBuiltin(context, 'equal(value1, value2)', list.equal)
-    defineBuiltin(context, 'draw_list(xs)', visualiseList)
+    defineBuiltin(context, 'draw_data(xs)', visualiseList)
   }
 
   if (context.chapter >= 3) {

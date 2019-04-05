@@ -3,12 +3,19 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { apply } from './interpreter'
-import { Context, Frame, Value } from './types'
+import { Context, Environment, Value } from './types'
+import * as create from './utils/astCreator'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
     const args: Value[] = Array.prototype.slice.call(arguments)
-    const gen = apply(context, value, args, undefined, this)
+    const gen = apply(
+      context,
+      value,
+      args,
+      create.callExpression(create.identifier(klass), args),
+      this
+    )
     let it = gen.next()
     while (!it.done) {
       it = gen.next()
@@ -45,7 +52,7 @@ class Callable extends Function {
 export default class Closure extends Callable {
   public static makeFromArrowFunction(
     node: es.ArrowFunctionExpression,
-    frame: Frame,
+    environment: Environment,
     context: Context
   ) {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
@@ -72,7 +79,7 @@ export default class Closure extends Callable {
             ]
           } as es.BlockStatement
         } as es.FunctionExpression,
-        frame,
+        environment,
         context
       )
     } else {
@@ -84,7 +91,7 @@ export default class Closure extends Callable {
           params: node.params,
           body: node.body
         } as es.FunctionExpression,
-        frame,
+        environment,
         context
       )
     }
@@ -108,7 +115,11 @@ export default class Closure extends Callable {
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(public node: es.FunctionExpression, public frame: Frame, context: Context) {
+  constructor(
+    public node: es.FunctionExpression,
+    public environment: Environment,
+    context: Context
+  ) {
     super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })

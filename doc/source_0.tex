@@ -2,58 +2,29 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{1920}{Source}{\S 2}
+	\docheader{1920}{Source}{\S 0}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
-
-\section*{Changes}
-
-Compared to Source \S 1, Source \S 2 has the following changes:
-\begin{itemize}
-\item \lstinline{null}: primitive list expression (empty list).
-\item List library: Functions for creating, accessing and processing lists.
-\end{itemize}
-
-\newpage
 
 \input source_bnf.tex
 
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
                                                            && \textrm{statement sequence} \\[1mm]
-&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{constant declaration} \\
-&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{function declaration}\\
-&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{return statement}\\
-&&                       && |   &\quad && \textit{if-statement} \quad
-                                                           && \textrm{conditional statement}\\
-&&                       && |   &\quad &&  \textit{block} 
-                                                           && \textrm{block statement}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{expression statement} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \textrm{function parameters}   \\[1mm]
-&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
-                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
-                                   \textit{block} \\
-&&                       &&     &      && \textbf{\texttt{else}}\
-                                          (\ \textit{block}
-                                          \ | \
-                                          \textit{if-statement} \ )
-                                                            && \textrm{conditional statement}   \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
-                                                           && \textrm{block statement}\\[1mm]         
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textbf{\texttt{return}}\ \textit{expression}   \ \textbf{\texttt{\}}} \quad
+                                                           && \textrm{function body}\\[1mm]         
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{primitive number expression}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{primitive boolean expression}\\
-&&                       && |   &\quad && \textbf{\texttt{null}}
-                                                           && \textrm{primitive list expression}\\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{primitive string expression}\\
 &&                       && |   &\quad &&  \textit{name}   && \textrm{name expression}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
@@ -66,16 +37,6 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
                                                            && \textrm{function application}\\
-&&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
-                                            )\    
-                                            \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{function definition (expr. body)}\\
-&&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
-                                            )\    
-                                            \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \textrm{function definition (block body)}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
@@ -97,13 +58,13 @@ Compared to Source \S 1, Source \S 2 has the following changes:
                                                             && \textrm{argument expressions} 
 \end{alignat*}
 
+\newpage
+
 \input source_boolean_operators
 
 \input source_return
 
 \input source_names
-
-\input source_lists
 
 \input source_numbers
 
@@ -113,8 +74,7 @@ Compared to Source \S 1, Source \S 2 has the following changes:
 
 \input source_comments
 
-\newpage
+\input source_0_rules
 
-\input source_list_library
+\end{document}
 
-    \end{document}

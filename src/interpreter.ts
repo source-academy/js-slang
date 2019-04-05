@@ -6,6 +6,7 @@ import * as errors from './interpreter-errors'
 import { checkEditorBreakpoints } from './stdlib/inspector'
 import { Context, Environment, Frame, Value } from './types'
 import { createNode } from './utils/node'
+import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
 class BreakValue {}
@@ -20,58 +21,63 @@ class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
 
-const createFrame = (
+const createEnvironment = (
   closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
-): Frame => {
-  const frame: Frame = {
+): Environment => {
+  const environment: Environment = {
     name: closure.functionName, // TODO: Change this
-    parent: closure.frame,
-    environment: {}
+    tail: closure.environment,
+    head: {}
   }
   if (callExpression) {
-    frame.callExpression = {
+    environment.callExpression = {
       ...callExpression,
       arguments: args.map(a => createNode(a) as es.Expression)
     }
   }
   closure.node.params.forEach((param, index) => {
     const ident = param as es.Identifier
-    frame.environment[ident.name] = args[index]
+    environment.head[ident.name] = args[index]
   })
-  return frame
+  return environment
 }
 
-const createBlockFrame = (
+const createBlockEnvironment = (
   context: Context,
-  name = 'blockFrame',
-  environment: Environment = {}
-): Frame => {
+  name = 'blockEnvironment',
+  head: Frame = {}
+): Environment => {
   return {
     name,
-    parent: currentFrame(context),
-    environment,
+    tail: currentEnvironment(context),
+    head,
     thisContext: context
   }
 }
 
 const handleRuntimeError = (context: Context, error: errors.RuntimeSourceError): never => {
   context.errors.push(error)
-  const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
-  context.runtime.frames = [globalFrame]
+  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
+  context.runtime.environments = [globalEnvironment]
   throw error
 }
 
 const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
-  const frame = currentFrame(context)
-  if (frame.environment.hasOwnProperty(name)) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name))
+  const environment = currentEnvironment(context)
+  if (environment.head.hasOwnProperty(name)) {
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+    )
   }
-  frame.environment[name] = HOISTED_BUT_NOT_YET_ASSIGNED
-  return frame
+  environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  return environment
 }
 
 function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
@@ -90,29 +96,29 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
         hoistVariableDeclarations(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, node)
+        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
 }
 
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
-  const frame = context.runtime.frames[0]
+  const environment = context.runtime.environments[0]
 
-  if (frame.environment[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
+  if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name)
+      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
     )
   }
 
-  Object.defineProperty(frame.environment, name, {
+  Object.defineProperty(environment.head, name, {
     value,
     writable: !constant,
     enumerable: true
   })
 
-  return frame
+  return environment
 }
 
 function* visit(context: Context, node: es.Node) {
@@ -126,40 +132,42 @@ function* leave(context: Context) {
   yield context
 }
 
-const currentFrame = (context: Context) => context.runtime.frames[0]
-const replaceFrame = (context: Context, frame: Frame) => (context.runtime.frames[0] = frame)
-const popFrame = (context: Context) => context.runtime.frames.shift()
-const pushFrame = (context: Context, frame: Frame) => context.runtime.frames.unshift(frame)
+const currentEnvironment = (context: Context) => context.runtime.environments[0]
+const replaceEnvironment = (context: Context, environment: Environment) =>
+  (context.runtime.environments[0] = environment)
+const popEnvironment = (context: Context) => context.runtime.environments.shift()
+const pushEnvironment = (context: Context, environment: Environment) =>
+  context.runtime.environments.unshift(environment)
 
 const getVariable = (context: Context, name: string) => {
-  let frame: Frame | null = context.runtime.frames[0]
-  while (frame) {
-    if (frame.environment.hasOwnProperty(name)) {
-      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+  let environment: Environment | null = context.runtime.environments[0]
+  while (environment) {
+    if (environment.head.hasOwnProperty(name)) {
+      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
         return handleRuntimeError(
           context,
           new errors.UnassignedVariable(name, context.runtime.nodes[0])
         )
       } else {
-        return frame.environment[name]
+        return environment.head[name]
       }
     } else {
-      frame = frame.parent
+      environment = environment.tail
     }
   }
   return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
 const setVariable = (context: Context, name: string, value: any) => {
-  let frame: Frame | null = context.runtime.frames[0]
-  while (frame) {
-    if (frame.environment.hasOwnProperty(name)) {
-      if (frame.environment[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+  let environment: Environment | null = context.runtime.environments[0]
+  while (environment) {
+    if (environment.head.hasOwnProperty(name)) {
+      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
         break
       }
-      const descriptors = Object.getOwnPropertyDescriptors(frame.environment)
+      const descriptors = Object.getOwnPropertyDescriptors(environment.head)
       if (descriptors[name].writable) {
-        frame.environment[name] = value
+        environment.head[name] = value
         return undefined
       }
       return handleRuntimeError(
@@ -167,7 +175,7 @@ const setVariable = (context: Context, name: string, value: any) => {
         new errors.ConstAssignment(context.runtime.nodes[0]!, name)
       )
     } else {
-      frame = frame.parent
+      environment = environment.tail
     }
   }
   return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
@@ -217,7 +225,7 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
 function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Context) {
   const test = yield* evaluate(node.test, context)
 
-  const error = rttc.checkIfStatement(context, test)
+  const error = rttc.checkIfStatement(node, test)
   if (error) {
     return handleRuntimeError(context, error)
   }
@@ -245,7 +253,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   *ThisExpression(node: es.ThisExpression, context: Context) {
-    return context.runtime.frames[0].thisContext
+    return context.runtime.environments[0].thisContext
   },
 
   *ArrayExpression(node: es.ArrayExpression, context: Context) {
@@ -262,11 +270,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   *FunctionExpression(node: es.FunctionExpression, context: Context) {
-    return new Closure(node, currentFrame(context), context)
+    return new Closure(node, currentEnvironment(context), context)
   },
 
   *ArrowFunctionExpression(node: es.ArrowFunctionExpression, context: Context) {
-    return Closure.makeFromArrowFunction(node, currentFrame(context), context)
+    return Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
 
   *Identifier(node: es.Identifier, context: Context) {
@@ -304,67 +312,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *UnaryExpression(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
 
-    const error = rttc.checkUnaryExpression(context, node.operator, value)
+    const error = rttc.checkUnaryExpression(node, node.operator, value)
     if (error) {
       return handleRuntimeError(context, error)
     }
-
-    if (node.operator === '!') {
-      return !value
-    } else if (node.operator === '-') {
-      return -value
-    } else {
-      return +value
-    }
+    return evaluateUnaryExpression(node.operator, value)
   },
 
   *BinaryExpression(node: es.BinaryExpression, context: Context) {
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    const error = rttc.checkBinaryExpression(context, node.operator, left, right)
+    const error = rttc.checkBinaryExpression(node, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
     }
-    let result
-    switch (node.operator) {
-      case '+':
-        result = left + right
-        break
-      case '-':
-        result = left - right
-        break
-      case '*':
-        result = left * right
-        break
-      case '/':
-        result = left / right
-        break
-      case '%':
-        result = left % right
-        break
-      case '===':
-        result = left === right
-        break
-      case '!==':
-        result = left !== right
-        break
-      case '<=':
-        result = left <= right
-        break
-      case '<':
-        result = left < right
-        break
-      case '>':
-        result = left > right
-        break
-      case '>=':
-        result = left >= right
-        break
-      default:
-        result = undefined
-    }
-    return result
+    return evaluateBinaryExpression(node.operator, left, right)
   },
 
   *ConditionalExpression(node: es.ConditionalExpression, context: Context) {
@@ -394,8 +357,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   *ForStatement(node: es.ForStatement, context: Context) {
     // Create a new block scope for the loop variables
-    const loopFrame = createBlockFrame(context, 'forLoopFrame')
-    pushFrame(context, loopFrame)
+    const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
+    pushEnvironment(context, loopEnvironment)
 
     const initNode = node.init!
     const testNode = node.test!
@@ -407,24 +370,24 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     let value
     while (yield* evaluate(testNode, context)) {
-      // create block context and shallow copy loop frame environment
+      // create block context and shallow copy loop environment head
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
       // We copy this as a const to avoid ES6 funkiness when mutating loop vars
       // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
-      const frame = createBlockFrame(context, 'forBlockFrame')
-      pushFrame(context, frame)
-      for (const name in loopFrame.environment) {
-        if (loopFrame.environment.hasOwnProperty(name)) {
+      const environment = createBlockEnvironment(context, 'forBlockEnvironment')
+      pushEnvironment(context, environment)
+      for (const name in loopEnvironment.head) {
+        if (loopEnvironment.head.hasOwnProperty(name)) {
           hoistIdentifier(context, name, node)
-          defineVariable(context, name, loopFrame.environment[name], true)
+          defineVariable(context, name, loopEnvironment.head[name], true)
         }
       }
 
       value = yield* evaluate(node.body, context)
 
       // Remove block context
-      popFrame(context)
+      popEnvironment(context)
       if (value instanceof ContinueValue) {
         value = undefined
       }
@@ -439,7 +402,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       yield* evaluate(updateNode, context)
     }
 
-    popFrame(context)
+    popEnvironment(context)
 
     return value
   },
@@ -456,7 +419,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       prop = (node.property as es.Identifier).name
     }
 
-    const error = rttc.checkMemberAccess(context, obj, prop)
+    const error = rttc.checkMemberAccess(node, obj, prop)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -487,7 +450,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         prop = (left.property as es.Identifier).name
       }
 
-      const error = rttc.checkMemberAccess(context, obj, prop)
+      const error = rttc.checkMemberAccess(node, obj, prop)
       if (error) {
         return handleRuntimeError(context, error)
       }
@@ -510,7 +473,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *FunctionDeclaration(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    const closure = new Closure(node as any, currentFrame(context), context)
+    const closure = new Closure(node as any, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
   },
@@ -581,9 +544,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   *BlockStatement(node: es.BlockStatement, context: Context) {
     let result: Value
 
-    // Create a new frame (block scoping)
-    const frame = createBlockFrame(context, 'blockFrame')
-    pushFrame(context, frame)
+    // Create a new environment (block scoping)
+    const environment = createBlockEnvironment(context, 'blockEnvironment')
+    pushEnvironment(context, environment)
     hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
 
     for (const statement of node.body) {
@@ -597,7 +560,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
     }
-    popFrame(context)
+    popEnvironment(context)
     return result
   },
 
@@ -625,7 +588,7 @@ export function* apply(
   context: Context,
   fun: Closure | Value,
   args: Value[],
-  node?: es.CallExpression,
+  node: es.CallExpression,
   thisContext?: Value
 ) {
   let result: Value
@@ -634,12 +597,12 @@ export function* apply(
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
-      const frame = createFrame(fun, args, node)
-      frame.thisContext = thisContext
+      const environment = createEnvironment(fun, args, node)
+      environment.thisContext = thisContext
       if (result instanceof TailCallReturnValue) {
-        replaceFrame(context, frame)
+        replaceEnvironment(context, environment)
       } else {
-        pushFrame(context, frame)
+        pushEnvironment(context, environment)
         total++
       }
       result = yield* evaluate(fun.node.body, context)
@@ -657,8 +620,9 @@ export function* apply(
         break
       } catch (e) {
         // Recover from exception
-        const globalFrame = context.runtime.frames[context.runtime.frames.length - 1]
-        context.runtime.frames = [globalFrame]
+        const globalEnvironment =
+          context.runtime.environments[context.runtime.environments.length - 1]
+        context.runtime.environments = [globalEnvironment]
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
         if (!(e instanceof errors.RuntimeSourceError)) {
           // The error could've arisen when the builtin called a source function which errored.
@@ -673,12 +637,12 @@ export function* apply(
       return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
     }
   }
-  // Unwraps return value and release stack frame
+  // Unwraps return value and release stack environment
   if (result instanceof ReturnValue) {
     result = result.value
   }
   for (let i = 1; i <= total; i++) {
-    popFrame(context)
+    popEnvironment(context)
   }
   return result
 }

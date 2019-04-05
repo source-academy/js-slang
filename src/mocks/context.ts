@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import Closure from '../closure'
 import createContext from '../createContext'
-import { Context, Frame } from '../types'
+import { Context, Environment } from '../types'
 
 export function mockContext(chapter = 1): Context {
   return createContext(chapter)
@@ -14,7 +14,7 @@ export function mockRuntimeContext(): Context {
     break: false,
     debuggerOn: true,
     isRunning: true,
-    frames: [],
+    environments: [],
     nodes: [
       {
         type: 'Literal',
@@ -43,7 +43,7 @@ export function mockClosure(): Closure {
         body: []
       }
     } as es.FunctionExpression,
-    {} as Frame,
+    {} as Environment,
     {} as Context
   )
 }
