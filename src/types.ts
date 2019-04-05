@@ -122,7 +122,6 @@ export interface Error {
 export interface Finished {
   status: 'finished'
   value: Value
-  context: Context
 }
 
 export interface Suspended {

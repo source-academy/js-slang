@@ -63,7 +63,7 @@ export const stringify = (
           indentString.repeat(indentLevel + 1),
           valueStrs[0]
         ).substring(indentString.length)},
-          ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
+${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       } else {
         // A regular array,
         // indent second element onwards to match with first element

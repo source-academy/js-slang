@@ -30,7 +30,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 11 } } },
-                    null ],
+          null ],
         \\"body\\":
           { \\"tag\\": \\"return_statement\\",
             \\"expression\\":
@@ -55,8 +55,8 @@ Object {
                           \\"end\\":
                             { \\"line\\": 1,
                               \\"column\\": 16 } } },
-                            [ 1,
-                            null ] ],
+                  [ 1,
+                  null ] ],
                 \\"loc\\":
                   { \\"start\\":
                       { \\"line\\": 1,
@@ -85,7 +85,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 21 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -125,7 +125,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 1 } } },
-                null ],
+      null ],
     \\"body\\":
       { \\"tag\\": \\"return_statement\\",
         \\"expression\\":
@@ -150,8 +150,8 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 6 } } },
-                        [ 1,
-                        null ] ],
+              [ 1,
+              null ] ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -173,7 +173,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 11 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -221,7 +221,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 6 } } },
-          [ { \\"tag\\": \\"assignment\\",
+[ { \\"tag\\": \\"assignment\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"x\\",
@@ -249,7 +249,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 13 } } },
-          [ { \\"tag\\": \\"conditional_statement\\",
+[ { \\"tag\\": \\"conditional_statement\\",
     \\"predicate\\": true,
     \\"consequent\\":
       { \\"tag\\": \\"block\\",
@@ -273,7 +273,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 32 } } },
-                    null ],
+          null ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -298,7 +298,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 42 } } },
-          null ] ] ]",
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -346,7 +346,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 12 } } },
-          [ { \\"tag\\": \\"variable_declaration\\",
+[ { \\"tag\\": \\"variable_declaration\\",
     \\"name\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"y\\",
@@ -374,7 +374,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 23 } } },
-          null ] ]",
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -455,7 +455,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 14 } } },
-                    null ],
+          null ],
         \\"body\\":
           [ { \\"tag\\": \\"return_statement\\",
               \\"expression\\":
@@ -482,8 +482,8 @@ Object {
                                 \\"end\\":
                                   { \\"line\\": 1,
                                     \\"column\\": 26 } } },
-                                  [ 1,
-                                  null ] ],
+                        [ 1,
+                        null ] ],
                       \\"loc\\":
                         { \\"start\\":
                             { \\"line\\": 1,
@@ -547,8 +547,8 @@ Object {
                                             \\"end\\":
                                               { \\"line\\": 1,
                                                 \\"column\\": 43 } } },
-                                              [ 1,
-                                              null ] ],
+                                    [ 1,
+                                    null ] ],
                                   \\"loc\\":
                                     { \\"start\\":
                                         { \\"line\\": 1,
@@ -556,7 +556,7 @@ Object {
                                       \\"end\\":
                                         { \\"line\\": 1,
                                           \\"column\\": 45 } } },
-                                        null ],
+                              null ],
                             \\"loc\\":
                               { \\"start\\":
                                   { \\"line\\": 1,
@@ -564,7 +564,7 @@ Object {
                                 \\"end\\":
                                   { \\"line\\": 1,
                                     \\"column\\": 46 } } },
-                                  [ { \\"tag\\": \\"application\\",
+                        [ { \\"tag\\": \\"application\\",
                             \\"operator\\":
                               { \\"tag\\": \\"name\\",
                                 \\"name\\": \\"fib\\",
@@ -597,8 +597,8 @@ Object {
                                             \\"end\\":
                                               { \\"line\\": 1,
                                                 \\"column\\": 54 } } },
-                                              [ 2,
-                                              null ] ],
+                                    [ 2,
+                                    null ] ],
                                   \\"loc\\":
                                     { \\"start\\":
                                         { \\"line\\": 1,
@@ -606,7 +606,7 @@ Object {
                                       \\"end\\":
                                         { \\"line\\": 1,
                                           \\"column\\": 56 } } },
-                                        null ],
+                              null ],
                             \\"loc\\":
                               { \\"start\\":
                                   { \\"line\\": 1,
@@ -614,7 +614,7 @@ Object {
                                 \\"end\\":
                                   { \\"line\\": 1,
                                     \\"column\\": 57 } } },
-                                  null ] ],
+                        null ] ],
                       \\"loc\\":
                         { \\"start\\":
                             { \\"line\\": 1,
@@ -636,7 +636,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 58 } } },
-                    null ] },
+          null ] },
     \\"loc\\":
       { \\"start\\":
           { \\"line\\": 1,
@@ -644,7 +644,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 60 } } },
-          [ { \\"tag\\": \\"application\\",
+[ { \\"tag\\": \\"application\\",
     \\"operator\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"fib\\",
@@ -657,7 +657,7 @@ Object {
                 \\"column\\": 64 } } },
     \\"operands\\":
       [ 4,
-                null ],
+      null ],
     \\"loc\\":
       { \\"start\\":
           { \\"line\\": 1,
@@ -665,7 +665,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 68 } } },
-          null ] ]",
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -715,7 +715,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 3 } } },
-                null ],
+      null ],
     \\"loc\\":
       { \\"start\\":
           { \\"line\\": 1,
@@ -723,7 +723,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 5 } } },
-          [ { \\"tag\\": \\"application\\",
+[ { \\"tag\\": \\"application\\",
     \\"operator\\":
       { \\"tag\\": \\"application\\",
         \\"operator\\":
@@ -748,7 +748,7 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 19 } } },
-                        null ],
+              null ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -766,7 +766,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 29 } } },
-                    null ],
+          null ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -776,7 +776,7 @@ Object {
                 \\"column\\": 30 } } },
     \\"operands\\":
       [ 0,
-                null ],
+      null ],
     \\"loc\\":
       { \\"start\\":
           { \\"line\\": 1,
@@ -784,7 +784,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 34 } } },
-          null ] ]",
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -827,7 +827,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 15 } } },
-                    null ],
+          null ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -847,7 +847,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 30 } } },
-                    null ],
+          null ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -862,7 +862,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 32 } } },
-          [ { \\"tag\\": \\"conditional_statement\\",
+[ { \\"tag\\": \\"conditional_statement\\",
     \\"predicate\\": false,
     \\"consequent\\":
       { \\"tag\\": \\"block\\",
@@ -891,7 +891,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 54 } } },
-          null ] ]",
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -957,8 +957,8 @@ Object {
                             \\"column\\": 4 } } },
                 \\"operands\\":
                   [ 3,
-                            [ 5,
-                            null ] ],
+                  [ 5,
+                  null ] ],
                 \\"loc\\":
                   { \\"start\\":
                       { \\"line\\": 1,
@@ -966,8 +966,8 @@ Object {
                     \\"end\\":
                       { \\"line\\": 1,
                         \\"column\\": 5 } } },
-                      [ 8,
-                      null ] ],
+            [ 8,
+            null ] ],
           \\"loc\\":
             { \\"start\\":
                 { \\"line\\": 1,
@@ -975,7 +975,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 11 } } },
-                [ { \\"tag\\": \\"boolean_operation\\",
+      [ { \\"tag\\": \\"boolean_operation\\",
           \\"operator\\":
             { \\"tag\\": \\"name\\",
               \\"name\\": \\"&&\\",
@@ -1000,7 +1000,7 @@ Object {
                             \\"column\\": 16 } } },
                 \\"operands\\":
                   [ true,
-                            null ],
+                  null ],
                 \\"loc\\":
                   { \\"start\\":
                       { \\"line\\": 1,
@@ -1008,8 +1008,8 @@ Object {
                     \\"end\\":
                       { \\"line\\": 1,
                         \\"column\\": 20 } } },
-                      [ false,
-                      null ] ],
+            [ false,
+            null ] ],
           \\"loc\\":
             { \\"start\\":
                 { \\"line\\": 1,
@@ -1017,7 +1017,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 29 } } },
-                null ] ],
+      null ] ],
     \\"loc\\":
       { \\"start\\":
           { \\"line\\": 1,
@@ -1025,7 +1025,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 30 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1055,14 +1055,14 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": "[ 3,
-          [ true,
-          [ false,
-          [ \\"\\",
-          [ \\"\\",
-          [ \\"bob\\",
-          [ 1,
-          [ 20,
-          null ] ] ] ] ] ] ] ]",
+[ true,
+[ false,
+[ \\"\\",
+[ \\"\\",
+[ \\"bob\\",
+[ 1,
+[ 20,
+null ] ] ] ] ] ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1104,7 +1104,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 24 } } },
-                    [ { \\"tag\\": \\"break_statement\\",
+          [ { \\"tag\\": \\"break_statement\\",
               \\"loc\\":
                 { \\"start\\":
                     { \\"line\\": 1,
@@ -1112,7 +1112,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 31 } } },
-                    null ] ],
+          null ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1127,7 +1127,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 33 } } },
-          [ { \\"tag\\": \\"for_loop\\",
+[ { \\"tag\\": \\"for_loop\\",
     \\"initialiser\\":
       { \\"tag\\": \\"variable_declaration\\",
         \\"name\\":
@@ -1170,8 +1170,8 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 51 } } },
-                    [ 1,
-                    null ] ],
+          [ 1,
+          null ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1213,8 +1213,8 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 62 } } },
-                        [ 1,
-                        null ] ],
+              [ 1,
+              null ] ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -1240,7 +1240,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 79 } } },
-                    [ { \\"tag\\": \\"break_statement\\",
+          [ { \\"tag\\": \\"break_statement\\",
               \\"loc\\":
                 { \\"start\\":
                     { \\"line\\": 1,
@@ -1248,7 +1248,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 86 } } },
-                    null ] ],
+          null ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1263,7 +1263,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 88 } } },
-          [ { \\"tag\\": \\"for_loop\\",
+[ { \\"tag\\": \\"for_loop\\",
     \\"initialiser\\":
       { \\"tag\\": \\"assignment\\",
         \\"name\\":
@@ -1306,8 +1306,8 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 102 } } },
-                    [ 1,
-                    null ] ],
+          [ 1,
+          null ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1349,8 +1349,8 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 113 } } },
-                        [ 1,
-                        null ] ],
+              [ 1,
+              null ] ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -1376,7 +1376,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 130 } } },
-                    [ { \\"tag\\": \\"break_statement\\",
+          [ { \\"tag\\": \\"break_statement\\",
               \\"loc\\":
                 { \\"start\\":
                     { \\"line\\": 1,
@@ -1384,7 +1384,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 137 } } },
-                    null ] ],
+          null ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1399,7 +1399,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 139 } } },
-          null ] ] ]",
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1451,7 +1451,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 12 } } },
-                    [ { \\"tag\\": \\"name\\",
+          [ { \\"tag\\": \\"name\\",
               \\"name\\": \\"y\\",
               \\"loc\\":
                 { \\"start\\":
@@ -1460,7 +1460,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 15 } } },
-                    null ] ],
+          null ] ],
         \\"body\\":
           { \\"tag\\": \\"return_statement\\",
             \\"expression\\":
@@ -1485,8 +1485,8 @@ Object {
                           \\"end\\":
                             { \\"line\\": 1,
                               \\"column\\": 21 } } },
-                            [ 1,
-                            null ] ],
+                  [ 1,
+                  null ] ],
                 \\"loc\\":
                   { \\"start\\":
                       { \\"line\\": 1,
@@ -1515,7 +1515,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 26 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1555,7 +1555,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 2 } } },
-                [ { \\"tag\\": \\"name\\",
+      [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"y\\",
           \\"loc\\":
             { \\"start\\":
@@ -1564,7 +1564,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 5 } } },
-                null ] ],
+      null ] ],
     \\"body\\":
       { \\"tag\\": \\"return_statement\\",
         \\"expression\\":
@@ -1589,8 +1589,8 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 11 } } },
-                        [ 1,
-                        null ] ],
+              [ 1,
+              null ] ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -1612,7 +1612,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 16 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1652,7 +1652,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 2 } } },
-                [ { \\"tag\\": \\"name\\",
+      [ { \\"tag\\": \\"name\\",
           \\"name\\": \\"y\\",
           \\"loc\\":
             { \\"start\\":
@@ -1661,7 +1661,7 @@ Object {
               \\"end\\":
                 { \\"line\\": 1,
                   \\"column\\": 5 } } },
-                null ] ],
+      null ] ],
     \\"body\\":
       { \\"tag\\": \\"return_statement\\",
         \\"expression\\":
@@ -1686,8 +1686,8 @@ Object {
                       \\"end\\":
                         { \\"line\\": 1,
                           \\"column\\": 11 } } },
-                        [ 1,
-                        null ] ],
+              [ 1,
+              null ] ],
             \\"loc\\":
               { \\"start\\":
                   { \\"line\\": 1,
@@ -1709,7 +1709,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 16 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1747,7 +1747,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 2 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1785,7 +1785,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 2 } } },
-          [ { \\"tag\\": \\"name\\",
+[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"moreNames\\",
     \\"loc\\":
       { \\"start\\":
@@ -1794,7 +1794,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 13 } } },
-          [ { \\"tag\\": \\"name\\",
+[ { \\"tag\\": \\"name\\",
     \\"name\\": \\"undefined\\",
     \\"loc\\":
       { \\"start\\":
@@ -1803,7 +1803,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 24 } } },
-          null ] ] ]",
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1847,11 +1847,11 @@ Object {
       { \\"tag\\": \\"object_expression\\",
         \\"pairs\\":
           [ [ \\"a\\",
-                      5 ],
-                    [ [ \\"b\\",
-                      10 ],
-                    [ [ \\"key\\",
-                      { \\"tag\\": \\"name\\",
+            5 ],
+          [ [ \\"b\\",
+            10 ],
+          [ [ \\"key\\",
+            { \\"tag\\": \\"name\\",
               \\"name\\": \\"value\\",
               \\"loc\\":
                 { \\"start\\":
@@ -1860,7 +1860,7 @@ Object {
                   \\"end\\":
                     { \\"line\\": 1,
                       \\"column\\": 34 } } } ],
-                    null ] ] ],
+          null ] ] ],
         \\"loc\\":
           { \\"start\\":
               { \\"line\\": 1,
@@ -1875,7 +1875,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 36 } } },
-          null ]",
+null ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1916,7 +1916,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 5 } } },
-          [ { \\"tag\\": \\"property_access\\",
+[ { \\"tag\\": \\"property_access\\",
     \\"object\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"a\\",
@@ -1935,7 +1935,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 10 } } },
-          [ { \\"tag\\": \\"property_access\\",
+[ { \\"tag\\": \\"property_access\\",
     \\"object\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"a\\",
@@ -1954,7 +1954,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 16 } } },
-          [ { \\"tag\\": \\"property_access\\",
+[ { \\"tag\\": \\"property_access\\",
     \\"object\\":
       { \\"tag\\": \\"name\\",
         \\"name\\": \\"a\\",
@@ -1973,7 +1973,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 24 } } },
-          null ] ] ] ]",
+null ] ] ] ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -2024,7 +2024,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 9 } } },
-          [ { \\"tag\\": \\"property_assignment\\",
+[ { \\"tag\\": \\"property_assignment\\",
     \\"object\\":
       { \\"tag\\": \\"property_access\\",
         \\"object\\":
@@ -2062,7 +2062,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 22 } } },
-          [ { \\"tag\\": \\"property_assignment\\",
+[ { \\"tag\\": \\"property_assignment\\",
     \\"object\\":
       { \\"tag\\": \\"property_access\\",
         \\"object\\":
@@ -2091,7 +2091,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 38 } } },
-          [ { \\"tag\\": \\"property_assignment\\",
+[ { \\"tag\\": \\"property_assignment\\",
     \\"object\\":
       { \\"tag\\": \\"property_access\\",
         \\"object\\":
@@ -2120,7 +2120,7 @@ Object {
         \\"end\\":
           { \\"line\\": 1,
             \\"column\\": 51 } } },
-          null ] ] ] ]",
+null ] ] ] ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

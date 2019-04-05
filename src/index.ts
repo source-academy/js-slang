@@ -194,12 +194,7 @@ export function resume(result: Result): Finished | ResultError | Promise<Result>
   if (result.status === 'finished' || result.status === 'error') {
     return result
   } else {
-    if (result.context.runtime.break) {
-      result.context.runtime.break = false
-      return result.scheduler.run(result.it, result.context)
-    } else {
-      return { status: 'error' }
-    }
+    return result.scheduler.run(result.it, result.context)
   }
 }
 
