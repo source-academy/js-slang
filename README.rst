@@ -42,10 +42,10 @@ Error messages
 To enable verbose messages, have the statement ``"enable verbose";`` as the first line of your code.
 
 There are two main kinds of error messages: those that occur at runtime and those that occur at parse time. 
-The former can be found in interpreter-errors.ts, while the latter can be found in rules/.
+The first can be found in interpreter-errors.ts, while the second can be found in rules/.
 
-Each error subclass will have explain() and elaborate(). Displaying the error will always cause the former to be
-called; the latter is only called when verbose mode is enabled. As such, explain() should be made to return a string
+Each error subclass will have explain() and elaborate(). Displaying the error will always cause the first to be
+called; the second is only called when verbose mode is enabled. As such, explain() should be made to return a string
 containing the most basic information about what the error entails. Any additional details about the error message,
 including specifics and correction guides, should be left to elaborate().
 
