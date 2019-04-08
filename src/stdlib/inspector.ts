@@ -35,7 +35,7 @@ export const checkEditorBreakpoints = (context: Context, node: Node): void => {
     if (!moved && currentLine !== prevStoppedLine) {
       moved = true
     }
-    if (context.runtime.debuggerOn && breakpoints[currentLine] === 'ace_breakpoint' && moved) {
+    if (context.runtime.debuggerOn && breakpoints[currentLine] !== undefined && moved) {
       moved = false
       prevStoppedLine = currentLine
       context.runtime.break = true
