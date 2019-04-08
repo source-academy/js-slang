@@ -37,14 +37,13 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
 
   constructor(node: es.Node, private calls: Array<[string, any[]]>) {
     super(node)
+    this.calls = this.calls.slice(-3)
   }
 
   public explain() {
-    const formattedCalls = []
-    for (let i = 0; i < 3; i++) {
-      const [executedName, executedArguments] = this.calls.pop()!
-      formattedCalls.push(`${executedName}(${executedArguments})`)
-    }
+    const formattedCalls = this.calls.map(
+      ([executedName, executedArguments]) => `${executedName}(${executedArguments})`
+    )
     return stripIndent`Potential infinite recursion detected: ${formattedCalls.join(' ... ')}.
       ${getWarningMessage()}`
   }

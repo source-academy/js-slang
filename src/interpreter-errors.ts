@@ -233,12 +233,13 @@ export class GetPropertyError extends RuntimeSourceError {
   }
 }
 
-export class GetInheritedPropertyError implements RuntimeSourceError {
+export class GetInheritedPropertyError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node: es.Node, private obj: Value, private prop: string) {
+    super(node)
     this.location = node.loc!
   }
 

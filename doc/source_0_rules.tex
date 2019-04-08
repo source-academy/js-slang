@@ -40,6 +40,26 @@ every occurrence of $n$ in $p$
 will be replaced by $v$ such that $n$ in $v$ refers cyclically
 to the node at which the replacement happens.
 
+
+\subsection*{How to read inference rules}
+
+To read the rules below, think of each "fraction" as an
+"if we know X then we can infer Y" implication statement.
+For example,
+
+\[
+\frac{
+  X = 5
+}{
+  X + 1 = 5 + 1
+}
+\]
+
+corresponds to the statement
+"If we know $X$ is equal to $5$,
+then we can infer that $X + 1$ is equal to $5 + 1$".
+
+
 \subsection*{Programs}
 
 
@@ -136,8 +156,6 @@ reducible if its program is reducible.
   \textbf{\texttt{\{}} \
   \textit{program}' \ 
   \textbf{\texttt{\}}}
-}
-\]
 
 \vspace{10mm}
 
@@ -155,10 +173,7 @@ the value
   \textbf{\texttt{\}}}
 \  \rightarrow \ 
   \textbf{\texttt{undefined}}
-}
 \]
-
-\vspace{10mm}
 
 \textbf{Block-expression-reduce-return}: A block expression
 whose body only contains a single return statement can 
@@ -199,7 +214,6 @@ that value.
   v
 }
 \]
-
 
 
 \subsection*{Expressions: Binary operators}
@@ -421,13 +435,6 @@ arguments are values.
   [n \leftarrow f]
 }
 \]
-
-
-
-
-
-
-
 
 
     \end{document}

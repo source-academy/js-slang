@@ -119,7 +119,7 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
           )
           // replace declaration of builtins since they're repetitive
           const replacedBuiltins = replacedGlobalsLine.replace(
-            /\n *const \w+ = native\.builtins\.get\("\w+"\);/g,
+            /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
             ''
           )
           const nativeResult = {

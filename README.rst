@@ -11,6 +11,10 @@ An open-source interpreter for the *Source* programming language.
 Usage
 -----
 
+To enable verbose messages, have the statement ``"enable verbose";`` as the first line of your code.
+
+To run in native, set isNativeRunnable to true here: https://github.com/source-academy/js-slang/blob/master/src/index.ts#L29
+
 To build,
 
 .. code-block::
