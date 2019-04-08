@@ -8,6 +8,12 @@ js-slang
 
 An open-source interpreter for the *Source* programming language.
 
+Wiki
+----
+
+`Click here for the wiki
+</doc/wiki>`_
+
 Usage
 -----
 
