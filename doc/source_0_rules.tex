@@ -40,6 +40,17 @@ every occurrence of $n$ in $p$
 will be replaced by $v$ such that $n$ in $v$ refers cyclically
 to the node at which the replacement happens.
 
+In summary:
+
+\begin{enumerate}
+\item $\Rrightarrow$: \emph{program reducer}
+\item $\Rrightarrow*$: transitive closure of \emph{program reducer}
+\item $\Rightarrow$: \emph{statement reducer}
+\item $\Rightarrow*$: transitive closure of \emph{statement reducer}
+\item $\rightarrow$: \emph{expression reducer}
+\item $\rightarrow*$: transitive closure of \emph{expression reducer}
+\item $p [ n \leftarrow v ]$: substitution function
+\end{enumerate}
 
 \subsection*{How to read inference rules}
 
