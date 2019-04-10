@@ -115,26 +115,6 @@ v \textbf{\texttt{;}} \textit{statement}+\
 }
 \]
 
-\subsection*{Statements: Blocks}
-
-\textbf{Block-statement-reduce}: A block statement is
-reducible if its program is reducible.
-\[
-\frac{
-  \textit{program} 
-\ \Rrightarrow \ 
-  \textit{program}'
-}{  
-  \textbf{\texttt{\{}} \
-  \textit{program} \ 
-  \textbf{\texttt{\}}}
-\  \Rightarrow \ 
-  \textbf{\texttt{\{}} \
-  \textit{program}' \ 
-  \textbf{\texttt{\}}}
-}
-\]
-
 \subsection*{Statements: Expression statements}
 
 \textbf{Expression-statement-reduce}: An expression statement
@@ -146,86 +126,6 @@ is reducible if its expression is reducible.
   e \textbf{\texttt{;}}
   \ \Rightarrow \ 
   e' \textbf{\texttt{;}}
-}
-\]
-
-
-\subsection*{Expressions: Blocks}
-
-\textbf{Block-expression-reduce}: A block expression is
-reducible if its program is reducible.
-\[
-\frac{
-  \textit{program} 
-\ \Rrightarrow \ 
-  \textit{program}'
-}{  
-  \textbf{\texttt{\{}} \
-  \textit{program} \ 
-  \textbf{\texttt{\}}}
-\  \rightarrow \ 
-  \textbf{\texttt{\{}} \
-  \textit{program}' \ 
-  \textbf{\texttt{\}}}
-}
-\]
-
-\vspace{10mm}
-
-\textbf{Block-expression-undefined}: A block expression
-whose body only contains a single value statement reduces to
-the value 
-\textbf{\texttt{undefined}}.
-
-\[
-\frac{
-}{  
-  \textbf{\texttt{\{}} \
-  v \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-\  \rightarrow \ 
-\textbf{\texttt{undefined}}
-}
-\]
-
-\textbf{Block-expression-reduce-return}: A block expression
-whose body only contains a single return statement can 
-be reduced by reducing the return expression.
-
-\[
-\frac{
-  e
-\ \rightarrow \ 
-  e'
-}{  
-  \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ e \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-\  \rightarrow \ 
-  \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ e' \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-}
-\]
-
-\vspace{10mm}
-
-\textbf{Block-expression-eliminate-return}: A block expression
-whose body only contains a single return value reduces to
-that value.
-
-\[
-\frac{
-}{  
-  \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ v \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-\  \rightarrow \ 
-  v
 }
 \]
 
@@ -441,11 +341,12 @@ arguments are values.
 \frac{
   f = \textbf{\texttt{function}}\  \textit{n} \ 
                  \textbf{\texttt{(}}\  x_1 \ldots x_n
-                 \ \textbf{\texttt{)}}\ \textit{block}
+                 \ \textbf{\texttt{)\ \{\ return}}\ \textit{expression}
+                 \ \textbf{\texttt{;\ \}}}
 }{
   f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
   \ \rightarrow \ 
-  \textit{block} [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
+  \textit{expression} [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
   [n \leftarrow f]
 }
 \]
