@@ -1,23 +1,12 @@
 \section*{Reduction}
 
-The 
-\emph{program reducer} $\Rrightarrow$ is a partial function from
-programs to
-programs
-and $\Rrightarrow^*$ is its reflexive transitive closure.
-Within the definition of $\Rrightarrow$, we make use of
-the following two groups of analogous partial functions:
-The statement
-\emph{reducer} $\Rightarrow$ is a partial function from
-statements to statements
+The \emph{reducer} $\Rightarrow$ is a partial function from
+programs/statements/expressions to
+programs/statements/expressions (with slight abuse of notation
+via overloading)
 and $\Rightarrow^*$ is its reflexive transitive closure.
-The expression
-\emph{reducer} $\rightarrow$ is a partial function from
-expressions to expressions
-and $\rightarrow^*$ is its reflexive transitive closure.
-
-A \emph{program reduction} is a sequence of programs
-$p_1 \Rrightarrow \cdots \Rrightarrow p_n$,
+A \emph{reduction} is a sequence of programs
+$p_1 \Rightarrow \cdots \Rightarrow p_n$,
 where $p_n$ is not reducible, i.e. there is no
 program $q$ such that $p_n \Rightarrow q$.
 Here, the program $p_n$ is called the \emph{result
@@ -40,37 +29,6 @@ every occurrence of $n$ in $p$
 will be replaced by $v$ such that $n$ in $v$ refers cyclically
 to the node at which the replacement happens.
 
-In summary:
-
-\begin{enumerate}
-\item $\Rrightarrow$: \emph{program reducer}
-\item $\Rrightarrow^*$: transitive closure of \emph{program reducer}
-\item $\Rightarrow$: \emph{statement reducer}
-\item $\Rightarrow^*$: transitive closure of \emph{statement reducer}
-\item $\rightarrow$: \emph{expression reducer}
-\item $\rightarrow^*$: transitive closure of \emph{expression reducer}
-\item $p [ n \leftarrow v ]$: substitution function
-\end{enumerate}
-
-\subsection*{How to read inference rules}
-
-To read the rules below, think of each "fraction" as an
-"if we know X then we can infer Y" implication statement.
-For example,
-
-\[
-\frac{
-  X = 5
-}{
-  X + 1 = 5 + 1
-}
-\]
-
-corresponds to the statement
-"If we know $X$ is equal to $5$,
-then we can infer that $X + 1$ is equal to $5 + 1$".
-
-
 \subsection*{Programs}
 
 
@@ -81,7 +39,7 @@ reduce the first one.
   \textit{statement}\ \Rightarrow\ \textit{statement}'
 }{  
   \textit{statement} \ldots
-  \Rrightarrow 
+  \Rightarrow 
   \textit{statement}' \ldots
 }
 \]
@@ -97,8 +55,22 @@ statements are substituted in the remaining statements.
                  \ \textbf{\texttt{)}}\ \textit{block}
 }{
 f\ \textit{statement} \ldots\ 
-  \Rrightarrow\ 
+  \Rightarrow\ 
   \textit{statement} \ldots[\textit{name} \leftarrow f]
+}
+\]
+
+\vspace{10mm}
+\textbf{Eliminate-constant-declaration}: Constant declarations as first
+statements are substituted in the remaining statements.
+\[
+\frac{
+             c = \textbf{\texttt{const}}\  \textit{name} \ 
+             \textbf{\texttt{=}}\  \textit{v}
+}{
+c\ \textit{statement} \ldots\ 
+  \Rightarrow \ 
+  \textit{statement} \ldots[\textit{name} \leftarrow v]
 }
 \]
 
@@ -110,10 +82,195 @@ they are preceding one or more statements in a statement sequence.
 v \ \mbox{is a value}  
 }{
 v \textbf{\texttt{;}} \textit{statement}+\ 
-   \Rrightarrow  \ 
+   \Rightarrow  \ 
   \textit{statement}+
 }
 \]
+
+\subsection*{Statements: Constant declarations}
+
+\textbf{Evaluate-constant-declaration}: The right-hand expressions
+in constant declarations are evaluated.
+\[
+\frac{
+  \textit{expression}
+  \ \Rightarrow \ 
+  \textit{expression}'
+}{
+  \textbf{\texttt{const}}\  \textit{name} \ 
+  \textbf{\texttt{=}}\  \textit{expression} \ 
+  \Rightarrow \ 
+  \textbf{\texttt{const}}\  \textit{name} \ 
+  \textbf{\texttt{=}}\  \textit{expression}'
+}
+\]
+
+
+\subsection*{Statements: Conditionals}
+
+\textbf{Conditional-statement-predicate}: A conditional statement
+is reducible if its predicate is reducible.
+\[
+\frac{
+  e\ \Rightarrow\ e'
+}{  
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  e \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \cdots  
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \
+  \cdots  
+  \textbf{\texttt{\}}}
+\ 
+  \Rightarrow \ 
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  e' \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \cdots  
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \
+  \cdots  
+  \textbf{\texttt{\}}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Conditional-statement-consequent}: A conditional statement
+whose predicate is true reduces to the consequent block.
+\[
+\frac{
+}{  
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  \textbf{\texttt{true}} \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \textit{statement}_1
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \
+\textit{statement}_2  
+  \textbf{\texttt{\}}}
+  \ 
+  \Rightarrow  \ 
+  \textbf{\texttt{\{}} \
+  \textit{statement}_1  
+  \textbf{\texttt{\}}}
+}
+\]
+
+\textbf{Conditional-statement-alternative}: A conditional statement
+whose predicate is false reduces to the alternative block.
+\[
+\frac{
+}{  
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  \textbf{\texttt{false}} \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \textit{statement}_1
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \
+\textit{statement}_2  
+  \textbf{\texttt{\}}}
+\ \Rightarrow \ 
+  \textbf{\texttt{\{}} \
+  \textit{statement}_2 
+  \textbf{\texttt{\}}}
+}
+\]
+
+\subsection*{Statements: Blocks}
+
+\textbf{Block-statement-reduce}: A block statement is
+reducible if its program is reducible.
+\[
+\frac{
+  \textit{program} 
+\ \Rightarrow \ 
+  \textit{program}'
+}{  
+  \textbf{\texttt{\{}} \
+  \textit{program} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  \textbf{\texttt{\{}} \
+  \textit{program}' \ 
+  \textbf{\texttt{\}}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Block-statement-undefined}: A block statement 
+whose body only contains a single value statement reduces to
+the value 
+\textbf{\texttt{undefined}}.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  v \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  \textbf{\texttt{undefined}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Block-statement-reduce-return}: A block statement 
+whose body only contains a single return statement can 
+be reduced by reducing the return expression.
+
+\[
+\frac{
+  e
+\ \Rightarrow \ 
+  e'
+}{  
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ e \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ e' \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Block-statement-eliminate-return}: A block statement 
+whose body only contains a single return value reduces to
+that value.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ v \ 
+  \textbf{\texttt{;}} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow \ 
+  v
+}
+\]
+
 
 \subsection*{Statements: Expression statements}
 
@@ -121,7 +278,7 @@ v \textbf{\texttt{;}} \textit{statement}+\
 is reducible if its expression is reducible.
 \[
 \frac{
-  e\ \rightarrow\ e'
+  e\ \Rightarrow\ e'
 }{  
   e \textbf{\texttt{;}}
   \ \Rightarrow \ 
@@ -136,10 +293,10 @@ is reducible if its expression is reducible.
 can be reduced if its left sub-expression can be reduced.
 \[
 \frac{
-  e_1 \ \rightarrow \ e_1'
+  e_1 \ \Rightarrow \ e_1'
 }{
   e_1\  \textit{binary-operator} \ e_2
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e_1'\  \textit{binary-operator} \ e_2
 }
 \]
@@ -154,7 +311,7 @@ $\textbf{\texttt{false}}$.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{\&\&}}\ e
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   \textbf{\texttt{false}}
 }
 \]
@@ -168,7 +325,7 @@ the right sub-expression.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{\&\&}}\ e
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e
 }
 \]
@@ -182,7 +339,7 @@ $\textbf{\texttt{true}}$.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{||}}\ e
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   \textbf{\texttt{true}}
 }
 \]
@@ -196,7 +353,7 @@ the right sub-expression.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{||}}\ e
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e
 }
 \]
@@ -207,11 +364,11 @@ can be reduced if its left sub-expression is a value and its right
 sub-expression can be reduced.
 \[
 \frac{
-  e_2\ \rightarrow\ e_2', \textrm{and}\ \textit{binary-operator}
-  \ \mbox{is not}\ \textbf{\texttt{\&\&}}\ \textrm{or}\ \texttt{\textbf{||}}
+  e_2\ \Rightarrow\ e_2', \textrm{and}\ \textit{binary-operator}
+  \mbox{is not}\ \textbf{\texttt{\&\&}}\ \textrm{or}\ \texttt{\textbf{||}}
 }{
   v\  \textit{binary-operator} \ e_2
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   v\  \textit{binary-operator} \ e_2'
 }
 \]
@@ -225,7 +382,7 @@ the corresponding function is defined for those values.
   v\ \mbox{is result of}\ v_1\  \textit{binary-operator} \ v_2
 }{
   v_1\  \textit{binary-operator} \ v_2
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   v
 }
 \]
@@ -236,10 +393,10 @@ the corresponding function is defined for those values.
 can be reduced if its sub-expression can be reduced.
 \[
 \frac{
-  e \ \rightarrow \ e'
+  e \ \Rightarrow \ e'
 }{
   \textit{unary-operator} \ e
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   \textit{unary-operator} \ e'
 }
 \]
@@ -253,7 +410,7 @@ the corresponding function is defined for that value.
   v'\ \mbox{is result of}\ \textit{unary-operator} \ v
 }{
   \textit{unary-operator} \ v
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   v'
 }
 \]
@@ -264,10 +421,10 @@ the corresponding function is defined for that value.
 expression can be reduced, if its predicate can be reduced.
 \[
 \frac{
-  e_1 \ \rightarrow \ e_1'
+  e_1 \ \Rightarrow \ e_1'
 }{
   e_1\  \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e_1'\ \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3
 }
 \]
@@ -281,7 +438,7 @@ can be reduced to its consequent expression.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e_1
 }
 \]
@@ -295,7 +452,7 @@ can be reduced to its alternative expression.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e_2
 }
 \]
@@ -307,10 +464,10 @@ can be reduced to its alternative expression.
 can be reduced if its functor expression can be reduced.
 \[
 \frac{
-  e \ \rightarrow \ e'
+  e \ \Rightarrow \ e'
 }{
   e\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   e'\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}
 }
 \]
@@ -322,10 +479,10 @@ can be reduced if one of its argument expressions can be reduced and all
 preceding arguments are values.
 \[
 \frac{
-  e \ \rightarrow \ e'
+  e \ \Rightarrow \ e'
 }{
   v\  \textbf{\texttt{(}}\ v_1 \ldots v_i \ e \ldots\ \textbf{\texttt{)}}
-  \ \rightarrow \ 
+  \ \Rightarrow \ 
   v\  \textbf{\texttt{(}}\ v_1 \ldots v_i \ e' \ldots\ \textbf{\texttt{)}}
 }
 \]
@@ -341,15 +498,35 @@ arguments are values.
 \frac{
   f = \textbf{\texttt{function}}\  \textit{n} \ 
                  \textbf{\texttt{(}}\  x_1 \ldots x_n
-                 \ \textbf{\texttt{)\ \{\ return}}\ \textit{expression}
-                 \ \textbf{\texttt{;\ \}}}
+                 \ \textbf{\texttt{)}}\ \textit{block}
 }{
   f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
-  \ \rightarrow \ 
-  \textit{expression} [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
+  \ \Rightarrow \ 
+  \textit{block} [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
   [n \leftarrow f]
 }
 \]
+
+\vspace{10mm}
+\textbf{Function-definition-application-reduce}:
+The application of a function definition
+can be reduced, if all
+arguments are values. 
+\[
+\frac{
+  f = \textbf{\texttt{(}}\  x_1 \ldots x_n
+                 \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ b
+                   \mbox{, where $b$ is an expression or block}
+}{
+  f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
+  \ \Rightarrow \ 
+  b [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
+}
+\]
+
+
+
+
 
 
     \end{document}
