@@ -170,3 +170,15 @@ export const binaryExpression = (
   right,
   loc
 })
+
+export const unaryExpression = (
+  operator: es.UnaryOperator,
+  argument: es.Expression,
+  loc?: es.SourceLocation
+): es.UnaryExpression => ({
+  type: 'UnaryExpression',
+  operator,
+  prefix: true,
+  argument,
+  loc
+})

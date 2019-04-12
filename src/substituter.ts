@@ -2,7 +2,7 @@ import * as es from 'estree'
 import { parse } from './parser'
 import { Context } from './types'
 import * as ast from './utils/astCreator'
-import { evaluateBinaryExpression } from './utils/operators'
+import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
 const reducers = {
@@ -41,6 +41,70 @@ const reducers = {
       return [reducedExpression, context]
     }
   },
+  UnaryExpression(node: es.UnaryExpression, context: Context) {
+    const { operator, argument } = node
+    if (argument.type === 'Literal') {
+      const error = rttc.checkUnaryExpression(node, operator, argument.value)
+      if (error === undefined) {
+        return [ast.literal(evaluateUnaryExpression(operator, argument.value)), context]
+      } else {
+        throw error
+      }
+    } else {
+      const [reducedArgument] = reduce(argument, context)
+      const reducedExpression = ast.unaryExpression(
+        operator,
+        reducedArgument as es.Expression,
+        node.loc!
+      )
+      return [reducedExpression, context]
+    }
+  },
+  ConditionalExpression(node: es.ConditionalExpression, context: Context) {
+    const { test, consequent, alternate } = node
+    if (test.type === 'Literal') {
+      const error = rttc.checkIfStatement(node, test)
+      if (error === undefined) {
+        return [ast.expressionStatement(test.type ? consequent : alternate), context]
+      } else {
+        throw error
+      }
+    } else {
+      const [reducedTest] = reduce(test, context)
+      const reducedExpression = ast.conditionalExpression(
+        reducedTest as es.Expression,
+        consequent,
+        alternate,
+        node.loc!
+      )
+      return reducedExpression
+    }
+  },
+  /* <WORK IN PROGRESS>
+  CallExpression(node: es.CallExpression, context: Context) {
+    const { callee, arguments } = node
+    // if functor can reduce, reduce functor
+    if (callee.type !== 'Literal') { // in source 0, callee can only be a literal
+      const [reducedFunctor] = reduce(callee, context)
+      const reducedExpression: es.SimpleCallExpression = {
+        type: 'CallExpression',
+        callee: reducedFunctor as es.Expression,
+        arguments
+      }
+      return reducedExpression
+    }
+    // if arguments can reduce, reduce arguments
+    else if {
+      arguments.length 
+    }
+    // else if no error (wrong number of args), replace with return statement
+  },
+  FunctionDeclaration(node: es.FunctionDeclaration, context: Context) {
+    const { id, body } = node
+    // if id is not undefined
+    // saveVariable(id, body);
+  },
+  */
   Program(node: es.Program, context: Context) {
     const [firstStatement, ...otherStatements] = node.body
     if (
@@ -94,9 +158,9 @@ export function getEvaluationSteps(code: string, context: Context): Array<[es.No
     let [reduced, newContext] = reduce(program, context)
     while ((reduced as es.Program).body.length > 0) {
       steps.push([reduced, newContext])
-      // some bug with no semis
-      // tslint:disable-next-line
-      ;[reduced, newContext] = reduce(reduced, newContext)
+        // some bug with no semis
+        // tslint:disable-next-line
+        ;[reduced, newContext] = reduce(reduced, newContext)
     }
     return steps
   } catch (error) {
