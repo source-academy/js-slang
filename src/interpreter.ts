@@ -128,6 +128,7 @@ function* visit(context: Context, node: es.Node) {
 }
 
 function* leave(context: Context) {
+  context.runtime.break = false
   context.runtime.nodes.shift()
   yield context
 }
