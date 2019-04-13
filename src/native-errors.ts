@@ -2,6 +2,7 @@
 import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 import { JSSLANG_PROPERTIES } from './constants'
+import { stringify } from './interop'
 import { RuntimeSourceError } from './interpreter-errors'
 import { ErrorSeverity, ErrorType } from './types'
 
@@ -42,7 +43,8 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
 
   public explain() {
     const formattedCalls = this.calls.map(
-      ([executedName, executedArguments]) => `${executedName}(${executedArguments})`
+      ([executedName, executedArguments]) =>
+        `${executedName}(${executedArguments.map(arg => stringify(arg)).join(', ')})`
     )
     return stripIndent`Potential infinite recursion detected: ${formattedCalls.join(' ... ')}.
       ${getWarningMessage()}`
