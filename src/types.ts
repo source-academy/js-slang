@@ -121,6 +121,7 @@ export interface Error {
 
 export interface Finished {
   status: 'finished'
+  context: Context
   value: Value
 }
 

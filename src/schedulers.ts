@@ -29,7 +29,7 @@ export class AsyncScheduler implements Scheduler {
           context
         })
       } else {
-        resolve({ status: 'finished', value: itValue.value })
+        resolve({ status: 'finished', context, value: itValue.value })
       }
     })
   }
@@ -89,7 +89,7 @@ export class PreemptiveScheduler implements Scheduler {
               context
             })
           } else {
-            resolve({ status: 'finished', value: itValue.value })
+            resolve({ status: 'finished', context, value: itValue.value })
           }
         }
       })
