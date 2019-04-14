@@ -158,9 +158,9 @@ export function getEvaluationSteps(code: string, context: Context): Array<[es.No
     let [reduced, newContext] = reduce(program, context)
     while ((reduced as es.Program).body.length > 0) {
       steps.push([reduced, newContext])
-        // some bug with no semis
-        // tslint:disable-next-line
-        ;[reduced, newContext] = reduce(reduced, newContext)
+      // some bug with no semis
+      // tslint:disable-next-line
+      ;[reduced, newContext] = reduce(reduced, newContext)
     }
     return steps
   } catch (error) {

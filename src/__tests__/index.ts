@@ -216,6 +216,26 @@ test('Functions passed into non-source functions remain equal', () => {
   ).toBe(true)
 })
 
+test('Accessing array with nonexistent index returns undefined', () => {
+  return expectResult(
+    stripIndent`
+    const a = [];
+    a[1];
+  `,
+    { chapter: 4, native: true }
+  ).toBe(undefined)
+})
+
+test('Accessing object with nonexistent property returns undefined', () => {
+  return expectResult(
+    stripIndent`
+    const o = {};
+    o.nonexistent;
+  `,
+    { chapter: 100, native: true }
+  ).toBe(undefined)
+})
+
 test('Simple object assignment and retrieval', () => {
   return expectResult(
     stripIndent`

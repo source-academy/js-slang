@@ -68,13 +68,15 @@ export const expressionStatement = (
 
 export const blockArrowFunction = (
   params: es.Identifier[],
-  body: es.Statement[] | es.BlockStatement
+  body: es.Statement[] | es.BlockStatement,
+  loc?: es.SourceLocation
 ): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',
   expression: false,
   generator: false,
   params,
-  body: Array.isArray(body) ? blockStatement(body) : body
+  body: Array.isArray(body) ? blockStatement(body) : body,
+  loc
 })
 
 export const blockStatement = (
@@ -96,9 +98,13 @@ export const program = (
   sourceType: 'module'
 })
 
-export const returnStatement = (argument: es.Expression): es.ReturnStatement => ({
+export const returnStatement = (
+  argument: es.Expression,
+  loc?: es.SourceLocation
+): es.ReturnStatement => ({
   type: 'ReturnStatement',
-  argument
+  argument,
+  loc
 })
 
 export const property = (key: string, value: es.Expression): es.Property => ({
@@ -182,3 +188,8 @@ export const unaryExpression = (
   argument,
   loc
 })
+
+// primitive: undefined is a possible value
+export const primitive = (value: any): es.Expression => {
+  return value === undefined ? identifier('undefined') : literal(value)
+}

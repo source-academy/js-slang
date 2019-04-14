@@ -44,7 +44,9 @@ const globalIds = {
   wrap: create.identifier('dummy'),
   unaryOp: create.identifier('dummy'),
   binaryOp: create.identifier('dummy'),
-  throwIfTimeout: create.identifier('dummy')
+  throwIfTimeout: create.identifier('dummy'),
+  setProp: create.identifier('dummy'),
+  getProp: create.identifier('dummy')
 }
 let contextId: number
 
@@ -403,6 +405,43 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
+  return computed ? property : create.literal((property as es.Identifier).name)
+}
+
+function transformPropertyAssignment(program: es.Program) {
+  simple(program, {
+    AssignmentExpression(node: es.AssignmentExpression) {
+      if (node.left.type === 'MemberExpression') {
+        const { object, property, computed, loc } = node.left
+        const { line, column } = loc!.start
+        create.mutateToCallExpression(node, globalIds.setProp, [
+          object as es.Expression,
+          getComputedProperty(computed, property),
+          node.right,
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
+    }
+  })
+}
+
+function transformPropertyAccess(program: es.Program) {
+  simple(program, {
+    MemberExpression(node: es.MemberExpression) {
+      const { object, property, computed, loc } = node
+      const { line, column } = loc!.start
+      create.mutateToCallExpression(node, globalIds.getProp, [
+        object as es.Expression,
+        getComputedProperty(computed, property),
+        create.literal(line),
+        create.literal(column)
+      ])
+    }
+  })
+}
+
 function addInfiniteLoopProtection(program: es.Program) {
   const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
 
@@ -448,6 +487,8 @@ export function transpile(program: es.Program, id: number) {
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
+  transformPropertyAssignment(program)
+  transformPropertyAccess(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)

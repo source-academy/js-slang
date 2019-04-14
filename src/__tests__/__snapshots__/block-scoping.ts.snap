@@ -196,6 +196,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -246,6 +248,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -253,14 +257,14 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
       const startTime = runtime();
       for (let x = 0; boolOrErr(binaryOp(\\"<\\", x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", x, 1, 3, 30)) {
         throwIfTimeout(startTime, runtime(), 3, 2);
-        z[x] = wrap(() => ({
+        setProp(z, x, wrap(() => ({
           isTail: false,
           value: x
-        }), \\"() => x\\");
+        }), \\"() => x\\"), 4, 4);
       }
       return {
         isTail: true,
-        function: z[1],
+        function: getProp(z, 1, 6, 9),
         functionName: \\"<anonymous>\\",
         arguments: [],
         line: 6,
@@ -302,6 +306,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -353,6 +359,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -403,6 +411,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
@@ -452,6 +462,8 @@ const wrap = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const test = wrap(() => {
