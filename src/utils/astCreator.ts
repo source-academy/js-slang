@@ -193,3 +193,29 @@ export const unaryExpression = (
 export const primitive = (value: any): es.Expression => {
   return value === undefined ? identifier('undefined') : literal(value)
 }
+
+export const functionExpression = (
+  id: es.Identifier | null,
+  params: es.Pattern[],
+  body: es.BlockStatement,
+  loc?: es.SourceLocation
+): es.FunctionExpression => ({
+  type: 'FunctionExpression',
+  id,
+  params,
+  body,
+  loc
+})
+
+export const functionDeclaration = (
+  id: es.Identifier | null,
+  params: es.Pattern[],
+  body: es.BlockStatement,
+  loc?: es.SourceLocation
+): es.FunctionDeclaration => ({
+  type: 'FunctionDeclaration',
+  id,
+  params,
+  body,
+  loc
+})

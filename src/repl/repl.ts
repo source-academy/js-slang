@@ -8,7 +8,7 @@ function startRepl(chapter = 1, useSubst: boolean) {
     // the object being passed as argument fits the interface ReplOptions in the repl module.
     {
       eval: (cmd, unusedContext, unusedFilename, callback) => {
-        runInContext(cmd, context, { scheduler: 'preemptive', useSubst: useSubst }).then(obj => {
+        runInContext(cmd, context, { scheduler: 'preemptive', useSubst }).then(obj => {
           if (obj.status === 'finished') {
             callback(null, obj.value)
           } else {

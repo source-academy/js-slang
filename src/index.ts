@@ -96,9 +96,9 @@ function convertNativeErrorToSourceError(
       line === null || column === null
         ? UNKNOWN_LOCATION
         : {
-          start: { line, column },
-          end: { line: -1, column: -1 }
-        }
+            start: { line, column },
+            end: { line: -1, column: -1 }
+          }
     return new ExceptionError(error, location)
   }
 }
