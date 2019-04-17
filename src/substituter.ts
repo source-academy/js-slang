@@ -195,6 +195,10 @@ const reducers = {
       }
     }
   },
+  ExpressionStatement(node: es.ExpressionStatement, context: Context): [es.Node, Context] {
+    const [reducedExpression] = reduce(node.expression, context)
+    return [ast.expressionStatement(reducedExpression as es.Expression, node.loc!), context]
+  },
   BinaryExpression(node: es.BinaryExpression, context: Context): [es.Node, Context] {
     const { operator, left, right } = node
     if (left.type === 'Literal') {
@@ -383,8 +387,7 @@ export function getEvaluationSteps(code: string, context: Context): es.Node[] {
       return [parse('', context)!]
     }
     steps.push(program)
-    // starts with substituting predefined fns. visually in the inspector remains
-    // the same, except for the mouseovers.
+    // starts with substituting predefined fns.
     let [reduced] = substPredefinedFns(program, context)
     while ((reduced as es.Program).body.length > 0) {
       steps.push(reduced)

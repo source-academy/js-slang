@@ -8,10 +8,12 @@ test('Test basic substitution', () => {
   const code = stripIndent`
     (1 + 2) * (3 + 4);
   `
-  const steps = getEvaluationSteps(code, mockContext(4)).map(([reduced]) => reduced)
+  const steps = getEvaluationSteps(code, mockContext(4))
   expect(steps).toMatchSnapshot()
   expect(steps.map(generate).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * (3 + 4);
+
+(1 + 2) * (3 + 4);
 
 3 * (3 + 4);
 
@@ -27,10 +29,12 @@ test('Test binary operator error', () => {
     (1 + 2) * ('a' + 'string');
   `
   const context = mockContext(4)
-  const steps = getEvaluationSteps(code, context).map(([reduced]) => reduced)
+  const steps = getEvaluationSteps(code, context)
   expect(steps).toMatchSnapshot()
   expect(steps.map(generate).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * ('a' + 'string');
+
+(1 + 2) * ('a' + 'string');
 
 3 * ('a' + 'string');
 
@@ -47,10 +51,13 @@ test('Test two statement substitution', () => {
     (1 + 2) * (3 + 4);
     3 * 5;
   `
-  const steps = getEvaluationSteps(code, mockContext(4)).map(([reduced]) => reduced)
+  const steps = getEvaluationSteps(code, mockContext(4))
   expect(steps).toMatchSnapshot()
   expect(steps.map(generate).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * (3 + 4);
+3 * 5;
+
+(1 + 2) * (3 + 4);
 3 * 5;
 
 3 * (3 + 4);
