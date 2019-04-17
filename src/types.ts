@@ -135,7 +135,7 @@ export interface Suspended {
 export type Result = Suspended | Finished | Error
 
 export interface Scheduler {
-  run(it: IterableIterator<Value>, context: Context): any
+  run(it: IterableIterator<Value>, context: Context): Promise<Result>
 }
 
 /*
