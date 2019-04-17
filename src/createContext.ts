@@ -2,6 +2,7 @@
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
+import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
@@ -10,10 +11,23 @@ import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 
 const createEmptyRuntime = () => ({
+  break: false,
+  debuggerOn: true,
   isRunning: false,
   environments: [],
   value: undefined,
   nodes: []
+})
+
+const createEmptyDebugger = () => ({
+  observers: { callbacks: Array<() => void>() },
+  status: false,
+  state: {
+    it: (function*(): any {
+      return
+    })(),
+    scheduler: new AsyncScheduler()
+  }
 })
 
 const createGlobalEnvironment = () => ({
@@ -40,6 +54,7 @@ export const createEmptyContext = <T>(
     errors: [],
     externalContext,
     runtime: createEmptyRuntime(),
+    debugger: createEmptyDebugger(),
     contextId: length - 1
   }
 }

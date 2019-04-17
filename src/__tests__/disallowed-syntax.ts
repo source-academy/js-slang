@@ -940,29 +940,6 @@ You are trying to use For in statements, which is not allowed (yet).
 `)
 })
 
-test('no debugger statement', () => {
-  return expectParsedError(
-    stripIndent`
-    debugger;
-  `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Debugger statements are not allowed"`)
-})
-
-test('no debugger statement - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-	"enable verbose";
-    debugger;
-  `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 3: Debugger statements are not allowed
-You are trying to use Debugger statements, which is not allowed (yet).
-"
-`)
-})
-
 test('no generator functions', () => {
   return expectParsedError(
     stripIndent`
