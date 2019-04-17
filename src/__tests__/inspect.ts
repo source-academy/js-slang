@@ -146,7 +146,7 @@ test('setBreakpointAtLine basic', () => {
   const b = 20;
   `
   const context = mockContext(3)
-  setBreakpointAtLine(["helloworld"]);
+  setBreakpointAtLine(['helloworld'])
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
@@ -162,9 +162,9 @@ test('setBreakpointAtLine function 1', () => {
   a(10);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[1] = "asd";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[1] = 'asd'
+  setBreakpointAtLine(breakline)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
@@ -180,9 +180,9 @@ test('setBreakpointAtLine function 2', () => {
   a("bob");
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[2] = "asd";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[2] = 'asd'
+  setBreakpointAtLine(breakline)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
@@ -200,9 +200,9 @@ test('setBreakpointAtLine function 3', () => {
   a(20);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[3] = "asd";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[3] = 'asd'
+  setBreakpointAtLine(breakline)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('finished')
@@ -218,9 +218,9 @@ test('setBreakpointAtLine function 4', () => {
   a(123345898);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[4] = "asd";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[4] = 'asd'
+  setBreakpointAtLine(breakline)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
@@ -239,9 +239,9 @@ test('setBreakpointAtLine granularity 1', () => {
   a(1);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[2] = "a";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[2] = 'a'
+  setBreakpointAtLine(breakline)
   // right now for some reason it breaks twice at the line.
   // this should not happen
   // if you do fix this issue, this is good to modify.
@@ -259,10 +259,10 @@ test('setBreakpointAtLine granularity 1', () => {
             expect(obj5).toMatchSnapshot()
             expect(obj5.status).toBe('suspended')
             expect(parseError(context.errors)).toMatchSnapshot()
-          });
-        });
-      });
-    });
+          })
+        })
+      })
+    })
   })
 })
 
@@ -277,9 +277,9 @@ test('setBreakpointAtLine granularity 2', () => {
   a(1);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[3] = "a";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[3] = 'a'
+  setBreakpointAtLine(breakline)
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
@@ -288,7 +288,7 @@ test('setBreakpointAtLine granularity 2', () => {
       expect(obj2).toMatchSnapshot()
       expect(obj2.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
-    });
+    })
   })
 })
 
@@ -303,9 +303,9 @@ test('setBreakpointAtLine granularity 3', () => {
   a(1);
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[4] = "a";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[4] = 'a'
+  setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -319,8 +319,8 @@ test('setBreakpointAtLine granularity 3', () => {
         expect(obj3).toMatchSnapshot()
         expect(obj3.status).toBe('finished')
         expect(parseError(context.errors)).toMatchSnapshot()
-      });
-    });
+      })
+    })
   })
 })
 
@@ -332,9 +332,9 @@ test('setBreakpointAtLine for loops', () => {
   }
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[2] = "2";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[2] = '2'
+  setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -356,10 +356,10 @@ test('setBreakpointAtLine for loops', () => {
             expect(obj5).toMatchSnapshot()
             expect(obj5.status).toBe('finished')
             expect(parseError(context.errors)).toMatchSnapshot()
-          });
-        });
-      });
-    });
+          })
+        })
+      })
+    })
   })
 })
 
@@ -372,9 +372,9 @@ test('setBreakpointAtLine while loops', () => {
   }
   `
   const context = mockContext(3)
-  const breakline = [];
-  breakline[3] = "3";
-  setBreakpointAtLine(breakline);
+  const breakline = []
+  breakline[3] = '3'
+  setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
@@ -396,9 +396,9 @@ test('setBreakpointAtLine while loops', () => {
             expect(obj5).toMatchSnapshot()
             expect(obj5.status).toBe('finished')
             expect(parseError(context.errors)).toMatchSnapshot()
-          });
-        });
-      });
-    });
+          })
+        })
+      })
+    })
   })
 })
