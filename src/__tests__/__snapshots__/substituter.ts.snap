@@ -1,146 +1,358 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test basic substitution 1`] = `
+exports[`Test "iterative" function calls 1`] = `
 Array [
   Node {
     "body": Array [
       Node {
-        "end": 18,
-        "expression": Node {
-          "end": 17,
-          "left": Node {
-            "end": 6,
-            "left": Node {
-              "end": 2,
+        "body": Node {
+          "body": Array [
+            Node {
+              "argument": Node {
+                "alternate": Node {
+                  "end": 73,
+                  "left": Node {
+                    "end": 56,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 6,
+                        "line": 4,
+                      },
+                    },
+                    "name": "n",
+                    "start": 55,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 24,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 6,
+                      "line": 4,
+                    },
+                  },
+                  "operator": "*",
+                  "right": Node {
+                    "arguments": Array [
+                      Node {
+                        "end": 72,
+                        "left": Node {
+                          "end": 70,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 21,
+                              "line": 4,
+                            },
+                            "start": Position {
+                              "column": 20,
+                              "line": 4,
+                            },
+                          },
+                          "name": "n",
+                          "start": 69,
+                          "type": "Identifier",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 23,
+                            "line": 4,
+                          },
+                          "start": Position {
+                            "column": 20,
+                            "line": 4,
+                          },
+                        },
+                        "operator": "-",
+                        "right": Node {
+                          "end": 72,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 23,
+                              "line": 4,
+                            },
+                            "start": Position {
+                              "column": 22,
+                              "line": 4,
+                            },
+                          },
+                          "raw": "1",
+                          "start": 71,
+                          "type": "Literal",
+                          "value": 1,
+                        },
+                        "start": 69,
+                        "type": "BinaryExpression",
+                      },
+                    ],
+                    "callee": Node {
+                      "end": 68,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 19,
+                          "line": 4,
+                        },
+                        "start": Position {
+                          "column": 10,
+                          "line": 4,
+                        },
+                      },
+                      "name": "factorial",
+                      "start": 59,
+                      "type": "Identifier",
+                    },
+                    "end": 73,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 24,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 10,
+                        "line": 4,
+                      },
+                    },
+                    "start": 59,
+                    "type": "CallExpression",
+                  },
+                  "start": 55,
+                  "type": "BinaryExpression",
+                },
+                "consequent": Node {
+                  "end": 48,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 3,
+                    },
+                    "start": Position {
+                      "column": 6,
+                      "line": 3,
+                    },
+                  },
+                  "raw": "1",
+                  "start": 47,
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "end": 73,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 24,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 9,
+                    "line": 2,
+                  },
+                },
+                "start": 33,
+                "test": Node {
+                  "end": 40,
+                  "left": Node {
+                    "end": 34,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 33,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 16,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 9,
+                      "line": 2,
+                    },
+                  },
+                  "operator": "===",
+                  "right": Node {
+                    "end": 40,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 16,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 15,
+                        "line": 2,
+                      },
+                    },
+                    "raw": "0",
+                    "start": 39,
+                    "type": "Literal",
+                    "value": 0,
+                  },
+                  "start": 33,
+                  "type": "BinaryExpression",
+                },
+                "type": "ConditionalExpression",
+              },
+              "end": 74,
               "loc": SourceLocation {
                 "end": Position {
+                  "column": 25,
+                  "line": 4,
+                },
+                "start": Position {
                   "column": 2,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 1,
+                  "line": 2,
                 },
               },
-              "raw": "1",
-              "start": 1,
-              "type": "Literal",
-              "value": 1,
+              "start": 26,
+              "type": "ReturnStatement",
             },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 1,
-                "line": 1,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 5,
-              "type": "Literal",
-              "value": 2,
-            },
-            "start": 1,
-            "type": "BinaryExpression",
-          },
+          ],
+          "end": 76,
           "loc": SourceLocation {
             "end": Position {
-              "column": 17,
+              "column": 1,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 22,
+              "line": 1,
+            },
+          },
+          "start": 22,
+          "type": "BlockStatement",
+        },
+        "end": 76,
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "end": 18,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
               "line": 1,
             },
             "start": Position {
-              "column": 0,
+              "column": 9,
               "line": 1,
             },
           },
-          "operator": "*",
-          "right": Node {
-            "end": 16,
-            "left": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "3",
-              "start": 11,
-              "type": "Literal",
-              "value": 3,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 16,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 11,
-                "line": 1,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "raw": "4",
-              "start": 15,
-              "type": "Literal",
-              "value": 4,
-            },
-            "start": 11,
-            "type": "BinaryExpression",
-          },
-          "start": 0,
-          "type": "BinaryExpression",
+          "name": "factorial",
+          "start": 9,
+          "type": "Identifier",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 18,
-            "line": 1,
+            "column": 1,
+            "line": 5,
           },
           "start": Position {
             "column": 0,
             "line": 1,
           },
         },
+        "params": Array [
+          Node {
+            "end": 20,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 20,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 19,
+                "line": 1,
+              },
+            },
+            "name": "n",
+            "start": 19,
+            "type": "Identifier",
+          },
+        ],
         "start": 0,
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "end": 90,
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "end": 88,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 11,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 10,
+                  "line": 6,
+                },
+              },
+              "raw": "5",
+              "start": 87,
+              "type": "Literal",
+              "value": 5,
+            },
+          ],
+          "callee": Node {
+            "end": 86,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 6,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 6,
+              },
+            },
+            "name": "factorial",
+            "start": 77,
+            "type": "Identifier",
+          },
+          "end": 89,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 6,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 6,
+            },
+          },
+          "start": 77,
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 6,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 6,
+          },
+        },
+        "start": 77,
         "type": "ExpressionStatement",
       },
     ],
-    "end": 18,
+    "end": 90,
     "loc": SourceLocation {
       "end": Position {
-        "column": 18,
-        "line": 1,
+        "column": 13,
+        "line": 6,
       },
       "start": Position {
         "column": 0,
@@ -151,6 +363,3133 @@ Array [
     "start": 0,
     "type": "Program",
   },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Node {
+              "end": 88,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 11,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 10,
+                  "line": 6,
+                },
+              },
+              "raw": "5",
+              "start": 87,
+              "type": "Literal",
+              "value": 5,
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "alternate": Node {
+                      "end": 73,
+                      "left": Node {
+                        "end": 56,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 7,
+                            "line": 4,
+                          },
+                          "start": Position {
+                            "column": 6,
+                            "line": 4,
+                          },
+                        },
+                        "name": "n",
+                        "start": 55,
+                        "type": "Identifier",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 24,
+                          "line": 4,
+                        },
+                        "start": Position {
+                          "column": 6,
+                          "line": 4,
+                        },
+                      },
+                      "operator": "*",
+                      "right": Node {
+                        "arguments": Array [
+                          Node {
+                            "end": 72,
+                            "left": Node {
+                              "end": 70,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 21,
+                                  "line": 4,
+                                },
+                                "start": Position {
+                                  "column": 20,
+                                  "line": 4,
+                                },
+                              },
+                              "name": "n",
+                              "start": 69,
+                              "type": "Identifier",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 23,
+                                "line": 4,
+                              },
+                              "start": Position {
+                                "column": 20,
+                                "line": 4,
+                              },
+                            },
+                            "operator": "-",
+                            "right": Node {
+                              "end": 72,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 23,
+                                  "line": 4,
+                                },
+                                "start": Position {
+                                  "column": 22,
+                                  "line": 4,
+                                },
+                              },
+                              "raw": "1",
+                              "start": 71,
+                              "type": "Literal",
+                              "value": 1,
+                            },
+                            "start": 69,
+                            "type": "BinaryExpression",
+                          },
+                        ],
+                        "callee": Node {
+                          "end": 68,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 19,
+                              "line": 4,
+                            },
+                            "start": Position {
+                              "column": 10,
+                              "line": 4,
+                            },
+                          },
+                          "name": "factorial",
+                          "start": 59,
+                          "type": "Identifier",
+                        },
+                        "end": 73,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 24,
+                            "line": 4,
+                          },
+                          "start": Position {
+                            "column": 10,
+                            "line": 4,
+                          },
+                        },
+                        "start": 59,
+                        "type": "CallExpression",
+                      },
+                      "start": 55,
+                      "type": "BinaryExpression",
+                    },
+                    "consequent": Node {
+                      "end": 48,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 7,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 6,
+                          "line": 3,
+                        },
+                      },
+                      "raw": "1",
+                      "start": 47,
+                      "type": "Literal",
+                      "value": 1,
+                    },
+                    "end": 73,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 24,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "start": 33,
+                    "test": Node {
+                      "end": 40,
+                      "left": Node {
+                        "end": 34,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 10,
+                            "line": 2,
+                          },
+                          "start": Position {
+                            "column": 9,
+                            "line": 2,
+                          },
+                        },
+                        "name": "n",
+                        "start": 33,
+                        "type": "Identifier",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 16,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "operator": "===",
+                      "right": Node {
+                        "end": 40,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 16,
+                            "line": 2,
+                          },
+                          "start": Position {
+                            "column": 15,
+                            "line": 2,
+                          },
+                        },
+                        "raw": "0",
+                        "start": 39,
+                        "type": "Literal",
+                        "value": 0,
+                      },
+                      "start": 33,
+                      "type": "BinaryExpression",
+                    },
+                    "type": "ConditionalExpression",
+                  },
+                  "end": 74,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 25,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 26,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 76,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 5,
+                },
+                "start": Position {
+                  "column": 22,
+                  "line": 1,
+                },
+              },
+              "start": 22,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 18,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "factorial",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 20,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 20,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 19,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 19,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 6,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 6,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 6,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 6,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+]
+`;
+
+exports[`Test basic bifunction 1`] = `
+Array [
+  Node {
+    "body": Array [
+      Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "argument": Node {
+                "end": 33,
+                "left": Node {
+                  "end": 29,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 9,
+                      "line": 2,
+                    },
+                  },
+                  "name": "n",
+                  "start": 28,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 14,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 9,
+                    "line": 2,
+                  },
+                },
+                "operator": "*",
+                "right": Node {
+                  "end": 33,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 14,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 13,
+                      "line": 2,
+                    },
+                  },
+                  "name": "m",
+                  "start": 32,
+                  "type": "Identifier",
+                },
+                "start": 28,
+                "type": "BinaryExpression",
+              },
+              "end": 34,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "start": 21,
+              "type": "ReturnStatement",
+            },
+          ],
+          "end": 36,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 17,
+              "line": 1,
+            },
+          },
+          "start": 17,
+          "type": "BlockStatement",
+        },
+        "end": 36,
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "end": 10,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "f",
+          "start": 9,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 1,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "params": Array [
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "name": "n",
+            "start": 11,
+            "type": "Identifier",
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "name": "m",
+            "start": 14,
+            "type": "Identifier",
+          },
+        ],
+        "start": 0,
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "end": 54,
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "end": 47,
+              "left": Node {
+                "end": 44,
+                "left": Node {
+                  "end": 40,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 39,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Node {
+                  "end": 44,
+                  "left": Node {
+                    "end": 42,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 5,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 4,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "1",
+                    "start": 41,
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 4,
+                      "line": 4,
+                    },
+                  },
+                  "operator": "*",
+                  "right": Node {
+                    "end": 44,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 6,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "6",
+                    "start": 43,
+                    "type": "Literal",
+                    "value": 6,
+                  },
+                  "start": 41,
+                  "type": "BinaryExpression",
+                },
+                "start": 39,
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 47,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 45,
+                "type": "Literal",
+                "value": 40,
+              },
+              "start": 39,
+              "type": "BinaryExpression",
+            },
+            Node {
+              "end": 52,
+              "left": Node {
+                "end": 50,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 13,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 4,
+                  },
+                },
+                "raw": "2",
+                "start": 49,
+                "type": "Literal",
+                "value": 2,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 52,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 4,
+                  },
+                },
+                "raw": "5",
+                "start": 51,
+                "type": "Literal",
+                "value": 5,
+              },
+              "start": 49,
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Node {
+            "end": 38,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 4,
+              },
+            },
+            "name": "f",
+            "start": 37,
+            "type": "Identifier",
+          },
+          "end": 53,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "start": 37,
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "start": 37,
+        "type": "ExpressionStatement",
+      },
+    ],
+    "end": 54,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 17,
+        "line": 4,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "start": 0,
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "left": Node {
+                  "end": 40,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 39,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Object {
+                  "left": Node {
+                    "end": 42,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 5,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 4,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "1",
+                    "start": 41,
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 4,
+                      "line": 4,
+                    },
+                  },
+                  "operator": "*",
+                  "right": Node {
+                    "end": 44,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 6,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "6",
+                    "start": 43,
+                    "type": "Literal",
+                    "value": 6,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 47,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 45,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+            Object {
+              "left": Node {
+                "end": 50,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 13,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 4,
+                  },
+                },
+                "raw": "2",
+                "start": 49,
+                "type": "Literal",
+                "value": 2,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 52,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 4,
+                  },
+                },
+                "raw": "5",
+                "start": 51,
+                "type": "Literal",
+                "value": 5,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 33,
+                    "left": Node {
+                      "end": 29,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 10,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "name": "n",
+                      "start": 28,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "operator": "*",
+                    "right": Node {
+                      "end": 33,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 13,
+                          "line": 2,
+                        },
+                      },
+                      "name": "m",
+                      "start": 32,
+                      "type": "Identifier",
+                    },
+                    "start": 28,
+                    "type": "BinaryExpression",
+                  },
+                  "end": 34,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 21,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 36,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                },
+                "name": "m",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "left": Node {
+                  "end": 40,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 39,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Object {
+                  "loc": undefined,
+                  "type": "Literal",
+                  "value": 6,
+                },
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 47,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 45,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+            Object {
+              "left": Node {
+                "end": 50,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 13,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 4,
+                  },
+                },
+                "raw": "2",
+                "start": 49,
+                "type": "Literal",
+                "value": 2,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 52,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 4,
+                  },
+                },
+                "raw": "5",
+                "start": 51,
+                "type": "Literal",
+                "value": 5,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 33,
+                    "left": Node {
+                      "end": 29,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 10,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "name": "n",
+                      "start": 28,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "operator": "*",
+                    "right": Node {
+                      "end": 33,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 13,
+                          "line": 2,
+                        },
+                      },
+                      "name": "m",
+                      "start": 32,
+                      "type": "Identifier",
+                    },
+                    "start": 28,
+                    "type": "BinaryExpression",
+                  },
+                  "end": 34,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 21,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 36,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                },
+                "name": "m",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": 11,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 47,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 45,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+            Object {
+              "left": Node {
+                "end": 50,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 13,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 4,
+                  },
+                },
+                "raw": "2",
+                "start": 49,
+                "type": "Literal",
+                "value": 2,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 52,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 4,
+                  },
+                },
+                "raw": "5",
+                "start": 51,
+                "type": "Literal",
+                "value": 5,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 33,
+                    "left": Node {
+                      "end": 29,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 10,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "name": "n",
+                      "start": 28,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "operator": "*",
+                    "right": Node {
+                      "end": 33,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 13,
+                          "line": 2,
+                        },
+                      },
+                      "name": "m",
+                      "start": 32,
+                      "type": "Identifier",
+                    },
+                    "start": 28,
+                    "type": "BinaryExpression",
+                  },
+                  "end": 34,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 21,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 36,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                },
+                "name": "m",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": -29,
+            },
+            Object {
+              "left": Node {
+                "end": 50,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 13,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 4,
+                  },
+                },
+                "raw": "2",
+                "start": 49,
+                "type": "Literal",
+                "value": 2,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 52,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 4,
+                  },
+                },
+                "raw": "5",
+                "start": 51,
+                "type": "Literal",
+                "value": 5,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 33,
+                    "left": Node {
+                      "end": 29,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 10,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "name": "n",
+                      "start": 28,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "operator": "*",
+                    "right": Node {
+                      "end": 33,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 13,
+                          "line": 2,
+                        },
+                      },
+                      "name": "m",
+                      "start": 32,
+                      "type": "Identifier",
+                    },
+                    "start": 28,
+                    "type": "BinaryExpression",
+                  },
+                  "end": 34,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 21,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 36,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                },
+                "name": "m",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": -29,
+            },
+            Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": -3,
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 33,
+                    "left": Node {
+                      "end": 29,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 10,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 9,
+                          "line": 2,
+                        },
+                      },
+                      "name": "n",
+                      "start": 28,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "operator": "*",
+                    "right": Node {
+                      "end": 33,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 13,
+                          "line": 2,
+                        },
+                      },
+                      "name": "m",
+                      "start": 32,
+                      "type": "Identifier",
+                    },
+                    "start": 28,
+                    "type": "BinaryExpression",
+                  },
+                  "end": 34,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 21,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 36,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 15,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                },
+                "name": "m",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+]
+`;
+
+exports[`Test basic function 1`] = `
+Array [
+  Node {
+    "body": Array [
+      Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "argument": Node {
+                "end": 26,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 9,
+                    "line": 2,
+                  },
+                },
+                "name": "n",
+                "start": 25,
+                "type": "Identifier",
+              },
+              "end": 27,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 11,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "start": 18,
+              "type": "ReturnStatement",
+            },
+          ],
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 14,
+              "line": 1,
+            },
+          },
+          "start": 14,
+          "type": "BlockStatement",
+        },
+        "end": 29,
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "end": 10,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "f",
+          "start": 9,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 1,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "params": Array [
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "name": "n",
+            "start": 11,
+            "type": "Identifier",
+          },
+        ],
+        "start": 0,
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "end": 42,
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "end": 40,
+              "left": Node {
+                "end": 37,
+                "left": Node {
+                  "end": 33,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 32,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Node {
+                  "end": 37,
+                  "left": Node {
+                    "end": 35,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 5,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 4,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "1",
+                    "start": 34,
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 4,
+                      "line": 4,
+                    },
+                  },
+                  "operator": "*",
+                  "right": Node {
+                    "end": 37,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 6,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "6",
+                    "start": 36,
+                    "type": "Literal",
+                    "value": 6,
+                  },
+                  "start": 34,
+                  "type": "BinaryExpression",
+                },
+                "start": 32,
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 40,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 38,
+                "type": "Literal",
+                "value": 40,
+              },
+              "start": 32,
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Node {
+            "end": 31,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 4,
+              },
+            },
+            "name": "f",
+            "start": 30,
+            "type": "Identifier",
+          },
+          "end": 41,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "start": 30,
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "start": 30,
+        "type": "ExpressionStatement",
+      },
+    ],
+    "end": 42,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 12,
+        "line": 4,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "start": 0,
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "left": Node {
+                  "end": 33,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 32,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Object {
+                  "left": Node {
+                    "end": 35,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 5,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 4,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "1",
+                    "start": 34,
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 4,
+                      "line": 4,
+                    },
+                  },
+                  "operator": "*",
+                  "right": Node {
+                    "end": 37,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 4,
+                      },
+                      "start": Position {
+                        "column": 6,
+                        "line": 4,
+                      },
+                    },
+                    "raw": "6",
+                    "start": 36,
+                    "type": "Literal",
+                    "value": 6,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 40,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 38,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 26,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 25,
+                    "type": "Identifier",
+                  },
+                  "end": 27,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 11,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 18,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 29,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 1,
+                },
+              },
+              "start": 14,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "left": Node {
+                  "end": 33,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 4,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 4,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 32,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 4,
+                  },
+                },
+                "operator": "+",
+                "right": Object {
+                  "loc": undefined,
+                  "type": "Literal",
+                  "value": 6,
+                },
+                "type": "BinaryExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 40,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 38,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 26,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 25,
+                    "type": "Identifier",
+                  },
+                  "end": 27,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 11,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 18,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 29,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 1,
+                },
+              },
+              "start": 14,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "left": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": 11,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "operator": "-",
+              "right": Node {
+                "end": 40,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                },
+                "raw": "40",
+                "start": 38,
+                "type": "Literal",
+                "value": 40,
+              },
+              "type": "BinaryExpression",
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 26,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 25,
+                    "type": "Identifier",
+                  },
+                  "end": 27,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 11,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 18,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 29,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 1,
+                },
+              },
+              "start": 14,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "arguments": Array [
+            Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": -29,
+            },
+          ],
+          "callee": Object {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 26,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 25,
+                    "type": "Identifier",
+                  },
+                  "end": 27,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 11,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 2,
+                    },
+                  },
+                  "start": 18,
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 29,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 1,
+                },
+              },
+              "start": 14,
+              "type": "BlockStatement",
+            },
+            "id": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "f",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 12,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 11,
+                    "line": 1,
+                  },
+                },
+                "name": "n",
+                "start": 11,
+                "type": "Identifier",
+              },
+            ],
+            "type": "FunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "type": "CallExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "body": Array [
+            Object {
+              "argument": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": -29,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 11,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "type": "ReturnStatement",
+            },
+          ],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "type": "BlockStatement",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "loc": undefined,
+          "type": "Literal",
+          "value": -29,
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": undefined,
+    "sourceType": "module",
+    "type": "Program",
+  },
+]
+`;
+
+exports[`Test basic substitution 1`] = `
+Array [
   Node {
     "body": Array [
       Node {
@@ -639,155 +3978,6 @@ Array [
     "start": 0,
     "type": "Program",
   },
-  Node {
-    "body": Array [
-      Node {
-        "end": 27,
-        "expression": Node {
-          "end": 26,
-          "left": Node {
-            "end": 6,
-            "left": Node {
-              "end": 2,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 1,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 1,
-                "line": 1,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 5,
-              "type": "Literal",
-              "value": 2,
-            },
-            "start": 1,
-            "type": "BinaryExpression",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 26,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "operator": "*",
-          "right": Node {
-            "end": 25,
-            "left": Node {
-              "end": 14,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 14,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "'a'",
-              "start": 11,
-              "type": "Literal",
-              "value": "a",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 25,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 11,
-                "line": 1,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 25,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 25,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 17,
-                  "line": 1,
-                },
-              },
-              "raw": "'string'",
-              "start": 17,
-              "type": "Literal",
-              "value": "string",
-            },
-            "start": 11,
-            "type": "BinaryExpression",
-          },
-          "start": 0,
-          "type": "BinaryExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 27,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "ExpressionStatement",
-      },
-    ],
-    "end": 27,
-    "loc": SourceLocation {
-      "end": Position {
-        "column": 27,
-        "line": 1,
-      },
-      "start": Position {
-        "column": 0,
-        "line": 1,
-      },
-    },
-    "sourceType": "module",
-    "start": 0,
-    "type": "Program",
-  },
   Object {
     "body": Array [
       Object {
@@ -942,78 +4132,186 @@ Array [
 ]
 `;
 
-exports[`Test two statement substitution 1`] = `
+exports[`Test ternary operator 1`] = `
 Array [
   Node {
     "body": Array [
       Node {
-        "end": 18,
+        "end": 63,
         "expression": Node {
-          "end": 17,
-          "left": Node {
-            "end": 6,
-            "left": Node {
-              "end": 2,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 1,
-              "type": "Literal",
-              "value": 1,
-            },
+          "alternate": Node {
+            "end": 62,
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
-                "line": 1,
+                "column": 18,
+                "line": 3,
               },
               "start": Position {
-                "column": 1,
-                "line": 1,
+                "column": 4,
+                "line": 3,
               },
             },
-            "operator": "+",
-            "right": Node {
-              "end": 6,
+            "name": "anotherGarbage",
+            "start": 48,
+            "type": "Identifier",
+          },
+          "consequent": Node {
+            "alternate": Node {
+              "end": 43,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
-                  "line": 1,
+                  "column": 30,
+                  "line": 2,
                 },
                 "start": Position {
-                  "column": 5,
-                  "line": 1,
+                  "column": 22,
+                  "line": 2,
                 },
               },
-              "raw": "2",
-              "start": 5,
-              "type": "Literal",
-              "value": 2,
+              "name": "Infinity",
+              "start": 35,
+              "type": "Identifier",
             },
-            "start": 1,
-            "type": "BinaryExpression",
+            "consequent": Node {
+              "end": 32,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 2,
+                },
+              },
+              "name": "garbage",
+              "start": 25,
+              "type": "Identifier",
+            },
+            "end": 43,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 2,
+              },
+            },
+            "start": 17,
+            "test": Node {
+              "end": 22,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 2,
+                },
+              },
+              "raw": "false",
+              "start": 17,
+              "type": "Literal",
+              "value": false,
+            },
+            "type": "ConditionalExpression",
           },
+          "end": 62,
           "loc": SourceLocation {
             "end": Position {
-              "column": 17,
-              "line": 1,
+              "column": 18,
+              "line": 3,
             },
             "start": Position {
               "column": 0,
               "line": 1,
             },
           },
-          "operator": "*",
-          "right": Node {
-            "end": 16,
+          "start": 0,
+          "test": Node {
+            "end": 12,
             "left": Node {
+              "end": 6,
+              "left": Node {
+                "end": 1,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+                "raw": "1",
+                "start": 0,
+                "type": "Literal",
+                "value": 1,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "operator": "+",
+              "right": Node {
+                "argument": Node {
+                  "end": 6,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 6,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 5,
+                      "line": 1,
+                    },
+                  },
+                  "raw": "1",
+                  "start": 5,
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "end": 6,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 4,
+                    "line": 1,
+                  },
+                },
+                "operator": "-",
+                "prefix": true,
+                "start": 4,
+                "type": "UnaryExpression",
+              },
+              "start": 0,
+              "type": "BinaryExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "===",
+            "right": Node {
               "end": 12,
               "loc": SourceLocation {
                 "end": Position {
@@ -1025,49 +4323,20 @@ Array [
                   "line": 1,
                 },
               },
-              "raw": "3",
+              "raw": "0",
               "start": 11,
               "type": "Literal",
-              "value": 3,
+              "value": 0,
             },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 16,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 11,
-                "line": 1,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "raw": "4",
-              "start": 15,
-              "type": "Literal",
-              "value": 4,
-            },
-            "start": 11,
+            "start": 0,
             "type": "BinaryExpression",
           },
-          "start": 0,
-          "type": "BinaryExpression",
+          "type": "ConditionalExpression",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 18,
-            "line": 1,
+            "column": 19,
+            "line": 3,
           },
           "start": Position {
             "column": 0,
@@ -1077,77 +4346,12 @@ Array [
         "start": 0,
         "type": "ExpressionStatement",
       },
-      Node {
-        "end": 25,
-        "expression": Node {
-          "end": 24,
-          "left": Node {
-            "end": 20,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 2,
-              },
-            },
-            "raw": "3",
-            "start": 19,
-            "type": "Literal",
-            "value": 3,
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "operator": "*",
-          "right": Node {
-            "end": 24,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 2,
-              },
-            },
-            "raw": "5",
-            "start": 23,
-            "type": "Literal",
-            "value": 5,
-          },
-          "start": 19,
-          "type": "BinaryExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 19,
-        "type": "ExpressionStatement",
-      },
     ],
-    "end": 25,
+    "end": 63,
     "loc": SourceLocation {
       "end": Position {
-        "column": 6,
-        "line": 2,
+        "column": 19,
+        "line": 3,
       },
       "start": Position {
         "column": 0,
@@ -1158,6 +4362,485 @@ Array [
     "start": 0,
     "type": "Program",
   },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "alternate": Node {
+            "end": 62,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 3,
+              },
+            },
+            "name": "anotherGarbage",
+            "start": 48,
+            "type": "Identifier",
+          },
+          "consequent": Node {
+            "alternate": Node {
+              "end": 43,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 30,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 22,
+                  "line": 2,
+                },
+              },
+              "name": "Infinity",
+              "start": 35,
+              "type": "Identifier",
+            },
+            "consequent": Node {
+              "end": 32,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 2,
+                },
+              },
+              "name": "garbage",
+              "start": 25,
+              "type": "Identifier",
+            },
+            "end": 43,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 2,
+              },
+            },
+            "start": 17,
+            "test": Node {
+              "end": 22,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 2,
+                },
+              },
+              "raw": "false",
+              "start": 17,
+              "type": "Literal",
+              "value": false,
+            },
+            "type": "ConditionalExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "test": Object {
+            "left": Object {
+              "left": Node {
+                "end": 1,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+                "raw": "1",
+                "start": 0,
+                "type": "Literal",
+                "value": 1,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "operator": "+",
+              "right": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": -1,
+              },
+              "type": "BinaryExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "===",
+            "right": Node {
+              "end": 12,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 12,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 11,
+                  "line": 1,
+                },
+              },
+              "raw": "0",
+              "start": 11,
+              "type": "Literal",
+              "value": 0,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "ConditionalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "alternate": Node {
+            "end": 62,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 3,
+              },
+            },
+            "name": "anotherGarbage",
+            "start": 48,
+            "type": "Identifier",
+          },
+          "consequent": Node {
+            "alternate": Node {
+              "end": 43,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 30,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 22,
+                  "line": 2,
+                },
+              },
+              "name": "Infinity",
+              "start": 35,
+              "type": "Identifier",
+            },
+            "consequent": Node {
+              "end": 32,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 2,
+                },
+              },
+              "name": "garbage",
+              "start": 25,
+              "type": "Identifier",
+            },
+            "end": 43,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 2,
+              },
+            },
+            "start": 17,
+            "test": Node {
+              "end": 22,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 2,
+                },
+              },
+              "raw": "false",
+              "start": 17,
+              "type": "Literal",
+              "value": false,
+            },
+            "type": "ConditionalExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "test": Object {
+            "left": Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": 0,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "===",
+            "right": Node {
+              "end": 12,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 12,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 11,
+                  "line": 1,
+                },
+              },
+              "raw": "0",
+              "start": 11,
+              "type": "Literal",
+              "value": 0,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "ConditionalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "alternate": Node {
+            "end": 62,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 3,
+              },
+            },
+            "name": "anotherGarbage",
+            "start": 48,
+            "type": "Identifier",
+          },
+          "consequent": Node {
+            "alternate": Node {
+              "end": 43,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 30,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 22,
+                  "line": 2,
+                },
+              },
+              "name": "Infinity",
+              "start": 35,
+              "type": "Identifier",
+            },
+            "consequent": Node {
+              "end": 32,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 2,
+                },
+              },
+              "name": "garbage",
+              "start": 25,
+              "type": "Identifier",
+            },
+            "end": 43,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 2,
+              },
+            },
+            "start": 17,
+            "test": Node {
+              "end": 22,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 2,
+                },
+              },
+              "raw": "false",
+              "start": 17,
+              "type": "Literal",
+              "value": false,
+            },
+            "type": "ConditionalExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "test": Object {
+            "loc": undefined,
+            "type": "Literal",
+            "value": true,
+          },
+          "type": "ConditionalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+]
+`;
+
+exports[`Test two statement substitution 1`] = `
+Array [
   Node {
     "body": Array [
       Node {
@@ -1858,6 +5541,431 @@ Array [
       "end": Position {
         "column": 6,
         "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+]
+`;
+
+exports[`Test unary and binary boolean operations 1`] = `
+Array [
+  Node {
+    "body": Array [
+      Node {
+        "end": 16,
+        "expression": Node {
+          "end": 15,
+          "left": Node {
+            "argument": Node {
+              "argument": Node {
+                "argument": Node {
+                  "end": 7,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 7,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 3,
+                      "line": 1,
+                    },
+                  },
+                  "raw": "true",
+                  "start": 3,
+                  "type": "Literal",
+                  "value": true,
+                },
+                "end": 7,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 7,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 1,
+                  },
+                },
+                "operator": "!",
+                "prefix": true,
+                "start": 2,
+                "type": "UnaryExpression",
+              },
+              "end": 7,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 7,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+              "operator": "!",
+              "prefix": true,
+              "start": 1,
+              "type": "UnaryExpression",
+            },
+            "end": 7,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "!",
+            "prefix": true,
+            "start": 0,
+            "type": "UnaryExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "operator": "||",
+          "right": Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 11,
+            "type": "Literal",
+            "value": true,
+          },
+          "start": 0,
+          "type": "LogicalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "ExpressionStatement",
+      },
+    ],
+    "end": 16,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "start": 0,
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "left": Object {
+            "argument": Object {
+              "argument": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": false,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 7,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+              "operator": "!",
+              "prefix": true,
+              "type": "UnaryExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "!",
+            "prefix": true,
+            "type": "UnaryExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "operator": "||",
+          "right": Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 11,
+            "type": "Literal",
+            "value": true,
+          },
+          "type": "LogicalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "left": Object {
+            "argument": Object {
+              "loc": undefined,
+              "type": "Literal",
+              "value": true,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "!",
+            "prefix": true,
+            "type": "UnaryExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "operator": "||",
+          "right": Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 11,
+            "type": "Literal",
+            "value": true,
+          },
+          "type": "LogicalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Object {
+          "left": Object {
+            "loc": undefined,
+            "type": "Literal",
+            "value": false,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "operator": "||",
+          "right": Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 11,
+            "type": "Literal",
+            "value": true,
+          },
+          "type": "LogicalExpression",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "type": "Program",
+  },
+  Object {
+    "body": Array [
+      Object {
+        "expression": Node {
+          "end": 15,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 11,
+              "line": 1,
+            },
+          },
+          "raw": "true",
+          "start": 11,
+          "type": "Literal",
+          "value": true,
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 1,
       },
       "start": Position {
         "column": 0,

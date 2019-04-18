@@ -1,3 +1,4 @@
+// import { generate } from 'astring'
 import * as es from 'estree'
 import * as errors from './interpreter-errors'
 import { parse } from './parser'
@@ -6,42 +7,21 @@ import * as ast from './utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
-function substByIdentifier(
-  node: es.Node,
-  target: es.FunctionDeclaration | [es.Identifier, es.Literal]
-) {
-  if (Array.isArray(target)) {
-    const [id, lit] = target
-    // only accept string, boolean and numbers, throw error if doesn't conform
-    if (!['string', 'boolean', 'number'].includes(typeof lit.value)) {
-      throw new rttc.TypeError(lit, '', 'string, boolean or number', typeof lit.value)
-    } else {
-      return node.type === 'Identifier' && node.name === id.name
-        ? ast.primitive(lit.value)
-        : substitute(target, node)
-    }
-  } else {
-    const fn = target as es.FunctionDeclaration
-    return node.type === 'Identifier' && node.name === fn.id!.name
-      ? ast.functionExpression(fn.id, fn.params, fn.body, fn.loc!)
-      : substitute(fn, node)
-  }
+function isIrreducible(node: es.Node, context: Context) {
+  return ['Identifier', 'Literal', 'FunctionExpression'].includes(node.type)
 }
-
-// TODO: change substbyidentifier into the identifier function below.
-// TODO: allow subbing identifier with builtin (or literal values)
 const substituters = {
   Identifier(target: es.FunctionDeclaration | [es.Identifier, es.Literal], node: es.Identifier) {
     if (Array.isArray(target)) {
       const [id, lit] = target
-      // only accept string, boolean and numbers, throw error if doesn't conform
+      // only accept string, boolean and numbers for arguments, throw error if doesn't conform
       if (!['string', 'boolean', 'number'].includes(typeof lit.value)) {
         throw new rttc.TypeError(lit, '', 'string, boolean or number', typeof lit.value)
       } else {
         return node.name === id.name ? ast.primitive(lit.value) : substitute(target, node)
       }
     } else {
-      const fn = target as es.FunctionDeclaration
+      const fn = target
       return node.name === fn.id!.name
         ? ast.functionExpression(fn.id, fn.params, fn.body, fn.loc!)
         : substitute(fn, node)
@@ -51,7 +31,7 @@ const substituters = {
     target: es.FunctionDeclaration | [es.Identifier, es.Literal],
     node: es.ExpressionStatement
   ) {
-    const substedExpression = substByIdentifier(node.expression, target)
+    const substedExpression = substitute(target, node.expression)
     return ast.expressionStatement(substedExpression as es.Expression, node.loc!)
   },
   BinaryExpression(
@@ -59,7 +39,7 @@ const substituters = {
     node: es.BinaryExpression
   ) {
     const { left, right } = node
-    const [substedLeft, substedRight] = [left, right].map(exp => substByIdentifier(exp, target))
+    const [substedLeft, substedRight] = [left, right].map(exp => substitute(target, exp))
     return ast.binaryExpression(
       node.operator,
       substedLeft as es.Expression,
@@ -72,7 +52,7 @@ const substituters = {
     node: es.UnaryExpression
   ) {
     const { argument } = node
-    const substedArgument = substByIdentifier(argument, target)
+    const substedArgument = substitute(target, argument)
     return ast.unaryExpression(node.operator, substedArgument as es.Expression, node.loc!)
   },
   // done. as model.
@@ -82,7 +62,7 @@ const substituters = {
   ) {
     const { test, consequent, alternate } = node
     const [substedTest, substedConsequent, substedAlternate] = [test, consequent, alternate].map(
-      exp => substByIdentifier(exp, target) as es.Expression
+      exp => substitute(target, exp) as es.Expression
     )
     return ast.conditionalExpression(substedTest, substedConsequent, substedAlternate, node.loc!)
   },
@@ -92,9 +72,7 @@ const substituters = {
     node: es.CallExpression
   ) {
     const [callee, args] = [node.callee, node.arguments]
-    const [substedCallee, ...substedArgs] = [callee, ...args].map(exp =>
-      substByIdentifier(exp, target)
-    )
+    const [substedCallee, ...substedArgs] = [callee, ...args].map(exp => substitute(target, exp))
     return ast.callExpression(
       substedCallee as es.Expression,
       substedArgs as es.Expression[],
@@ -106,9 +84,7 @@ const substituters = {
     node: es.FunctionDeclaration
   ) {
     const { params, body } = node
-    const [substedBody, ...substedParams] = [body, ...params].map(exp =>
-      substByIdentifier(exp, target)
-    )
+    const [substedBody, ...substedParams] = [body, ...params].map(exp => substitute(target, exp))
     return ast.functionDeclaration(
       node.id,
       substedParams as es.Pattern[],
@@ -116,11 +92,15 @@ const substituters = {
       node.loc!
     )
   },
+  Program(target: es.FunctionDeclaration | [es.Identifier, es.Literal], node: es.Program) {
+    const substedBody = node.body.map(exp => substitute(target, exp))
+    return ast.program(substedBody as es.Statement[], node.loc!)
+  },
   BlockStatement(
     target: es.FunctionDeclaration | [es.Identifier, es.Literal],
     node: es.BlockStatement
   ) {
-    const substedBody = node.body.map(exp => substByIdentifier(exp, target))
+    const substedBody = node.body.map(exp => substitute(target, exp))
     return ast.blockStatement(substedBody as es.Statement[], node.loc!)
   },
   ReturnStatement(
@@ -131,7 +111,7 @@ const substituters = {
     if (arg === undefined) {
       return node
     }
-    const substedArgument = substByIdentifier(arg as es.Node, target)
+    const substedArgument = substitute(target, arg as es.Node)
     return ast.returnStatement(substedArgument as es.Expression, node.loc!)
   }
 }
@@ -147,7 +127,7 @@ function substitute(
 ): es.Node {
   const substituter = substituters[node.type]
   if (substituter === undefined) {
-    return node // if substituter is not found we just get stuck
+    return node // no need to subst, such as literals
   } else {
     return substituter(target, node)
   }
@@ -164,19 +144,19 @@ function apply(
   callee: es.FunctionExpression,
   args: Array<es.Identifier | es.Literal>
 ): es.BlockStatement {
-  // you have one job: substitute all parameters with arguments
-  // one way: map into the block statement, using a modified substitute(literal, node) function
-  // substitute the function block repeatedly with the arguments
+  // console.log(`apply is called for ${callee.id}`)
   let substedBlock = callee.body
   for (let i = 0; i < args.length; i++) {
     // source discipline requires parameters to be identifiers.
     const param = callee.params[i] as es.Identifier
+    const arg = args[i] as es.Literal
+    // console.log(`param is ${param.name} and arg is ${arg.value}`)
     substedBlock = ast.blockStatement(
-      substedBlock.body.map(
-        stmt => substitute([param, args[i] as es.Literal], stmt) as es.Statement
-      )
+      substedBlock.body.map(stmt => substitute([param, arg], stmt) as es.Statement),
+      callee.loc!
     )
   }
+  // console.log(generate(substedBlock))
   return substedBlock
 }
 
@@ -249,12 +229,55 @@ const reducers = {
       return [reducedExpression, context]
     }
   },
+  LogicalExpression(node: es.LogicalExpression, context: Context): [es.Node, Context] {
+    const { left, right } = node
+    if (left.type === 'Literal') {
+      if (typeof left.value !== 'boolean') {
+        throw new rttc.TypeError(
+          left,
+          ' on left hand side of operation',
+          'boolean',
+          typeof left.value
+        )
+      } else {
+        if (right.type === 'Literal' && typeof right.value !== 'boolean') {
+          throw new rttc.TypeError(
+            left,
+            ' on left hand side of operation',
+            'boolean',
+            typeof left.value
+          )
+        } else {
+          const result =
+            node.operator === '&&'
+              ? left.value
+                ? right
+                : ast.expressionStatement(ast.literal(false, node.loc!))
+              : left.value
+              ? ast.expressionStatement(ast.literal(true, node.loc!))
+              : right
+          return [result as es.Node, context]
+        }
+      }
+    } else {
+      const [reducedLeft] = reduce(left, context)
+      return [
+        ast.logicalExpression(
+          node.operator,
+          reducedLeft as es.Expression,
+          right,
+          node.loc!
+        ) as es.Node,
+        context
+      ]
+    }
+  },
   ConditionalExpression(node: es.ConditionalExpression, context: Context): [es.Node, Context] {
     const { test, consequent, alternate } = node
     if (test.type === 'Literal') {
       const error = rttc.checkIfStatement(node, test)
       if (error === undefined) {
-        return [ast.expressionStatement(test.type ? consequent : alternate), context]
+        return [ast.expressionStatement(test.value ? consequent : alternate), context]
       } else {
         throw error
       }
@@ -272,60 +295,69 @@ const reducers = {
   // core of the subst model
   CallExpression(node: es.CallExpression, context: Context): [es.Node, Context] {
     const [callee, args] = [node.callee, node.arguments]
+    // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
     // if functor can reduce, reduce functor
-    const [reducedCallee] = reduce(callee, context)
-    // source 0: reducedCallee can only be a builtin function or functionExpression
-    if (reducedCallee.type !== 'FunctionExpression' && reducedCallee.type !== 'Identifier') {
-      throw new errors.CallingNonFunctionValue(reducedCallee, node)
+    if (!['Literal', 'FunctionExpression', 'Identifier'].includes(callee.type)) {
+      return [
+        ast.callExpression(
+          reduce(callee, context)[0] as es.Expression,
+          args as es.Expression[],
+          node.loc!
+        ),
+        context
+      ]
+    } else if (callee.type === 'Literal') {
+      throw new errors.CallingNonFunctionValue(callee, node)
     } else if (
-      reducedCallee.type === 'Identifier' &&
-      !(reducedCallee.name in context.runtime.environments[0].head)
+      callee.type === 'Identifier' &&
+      !(callee.name in context.runtime.environments[0].head)
     ) {
-      throw new errors.UndefinedVariable(reducedCallee.name, reducedCallee)
+      throw new errors.UndefinedVariable(callee.name, callee)
     } else {
-      // callee is a funExp or builtin fn
-      // if arguments can reduce, reduce arguments
-      const reducedArgs = args.map(arg => reduce(arg, context)[0])
-      // check for 1. length of params = length of args
-      // 2. all args are literals or builtins
-      if (
-        reducedCallee.type !== 'Identifier' &&
-        reducedArgs.length !== reducedCallee.params.length
-      ) {
-        throw new errors.InvalidNumberOfArguments(
-          node,
-          reducedArgs.length,
-          reducedCallee.params.length
-        )
+      // callee is builtin or funexp
+      if (callee.type === 'FunctionExpression' && args.length !== callee.params.length) {
+        throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
       } else {
-        for (const currentArg of reducedArgs) {
-          if (currentArg.type === 'Identifier') {
-            if (currentArg.name in context.runtime.environments[0].head) {
-              continue
-            } else {
-              throw new errors.UndefinedVariable(currentArg.name, currentArg)
-            }
-          } else if (currentArg.type === 'Literal') {
-            continue
-          } else {
-            // a proper reduction sequence should not reach here. this is a bug.
+        for (let i = 0; i < args.length; i++) {
+          const currentArg = args[i]
+          if (!isIrreducible(currentArg, context)) {
+            const reducedArgs = [
+              ...args.slice(0, i),
+              reduce(currentArg, context)[0],
+              ...args.slice(i + 1)
+            ]
+            return [
+              ast.callExpression(
+                callee as es.Expression,
+                reducedArgs as es.Expression[],
+                node.loc!
+              ),
+              context
+            ]
+          }
+          if (
+            currentArg.type === 'Identifier' &&
+            !(currentArg.name in context.runtime.environments[0].head)
+          ) {
+            throw new errors.UndefinedVariable(currentArg.name, currentArg)
           }
         }
       }
       // if it reaches here, means all the arguments are legal.
-      return reducedCallee.type === 'FunctionExpression'
-        ? apply(
-            reducedCallee as es.FunctionExpression,
-            reducedArgs as Array<es.Literal | es.Identifier>
-          )[0]
-        : context.runtime.environments[0].head[name](...reducedArgs)
+      return [
+        callee.type === 'FunctionExpression'
+          ? apply(callee as es.FunctionExpression, args as Array<es.Literal | es.Identifier>)
+          : context.runtime.environments[0].head[name](...args),
+        context
+      ]
     }
   },
   Program(node: es.Program, context: Context): [es.Node, Context] {
     const [firstStatement, ...otherStatements] = node.body
     if (
       firstStatement.type === 'ExpressionStatement' &&
-      firstStatement.expression.type === 'Literal'
+      (firstStatement.expression.type === 'Literal' ||
+        firstStatement.expression.type === 'FunctionExpression')
     ) {
       return [ast.program(otherStatements, node.loc!), context]
     } else if (firstStatement.type === 'FunctionDeclaration') {
@@ -344,13 +376,30 @@ const reducers = {
    */
   BlockStatement(node: es.BlockStatement, context: Context) {
     const [firstStatement, ...otherStatements] = node.body
-    const isFirstStatementCompletelyReduced =
-      firstStatement.type === 'ExpressionStatement' && firstStatement.expression.type === 'Literal'
-    if (isFirstStatementCompletelyReduced) {
-      return [ast.blockStatement(otherStatements, node.loc!), context]
+    if (firstStatement.type === 'ReturnStatement') {
+      const arg = firstStatement.argument as es.Expression
+      if (isIrreducible(arg, context)) {
+        return [arg, context]
+      } else {
+        const reducedReturn = ast.returnStatement(
+          reduce(arg, context)[0] as es.Expression,
+          firstStatement.loc!
+        )
+        return ast.blockStatement([reducedReturn, ...otherStatements], node.loc!)
+      }
+    } else if (
+      firstStatement.type === 'ExpressionStatement' &&
+      (firstStatement.expression.type === 'Literal' ||
+        firstStatement.expression.type === 'FunctionExpression')
+    ) {
+      return [ast.program(otherStatements, node.loc!), context]
+    } else if (firstStatement.type === 'FunctionDeclaration') {
+      // substitute the rest of the program
+      const substedStmts = otherStatements.map(stmt => substitute(firstStatement, stmt))
+      return [ast.program(substedStmts as es.Statement[]), context]
     } else {
       const [reduced] = reduce(firstStatement, context)
-      return [ast.blockStatement([reduced as es.Statement, ...otherStatements], node.loc!), context]
+      return [ast.program([reduced as es.Statement, ...otherStatements], node.loc!), context]
     }
   }
 }
@@ -386,11 +435,11 @@ export function getEvaluationSteps(code: string, context: Context): es.Node[] {
     if (program === undefined) {
       return [parse('', context)!]
     }
-    steps.push(program)
     // starts with substituting predefined fns.
     let [reduced] = substPredefinedFns(program, context)
     while ((reduced as es.Program).body.length > 0) {
       steps.push(reduced)
+      // console.log(generate(reduced))
       // some bug with no semis
       // tslint:disable-next-line
       ;[reduced] = reduce(reduced, context)
