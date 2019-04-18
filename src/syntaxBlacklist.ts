@@ -19,6 +19,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   CallExpression: 1,
   Identifier: 1,
   Literal: 1,
+  DebuggerStatement: 1,
 
   // Chapter 2 (no new syntax)
 
@@ -56,7 +57,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ForInStatement: Infinity,
   ForOfStatement: Infinity,
   ForInit: Infinity,
-  DebuggerStatement: Infinity,
   Function: Infinity,
   Pattern: Infinity,
   VariablePattern: Infinity,

@@ -12,6 +12,7 @@ import {
 } from './interpreter-errors'
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
 import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
@@ -213,4 +214,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result }
+export { createContext, Context, Result, setBreakpointAtLine }

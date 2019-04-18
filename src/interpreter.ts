@@ -3,6 +3,7 @@ import * as es from 'estree'
 import Closure from './closure'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
+import { checkEditorBreakpoints } from './stdlib/inspector'
 import { Context, Environment, Frame, Value } from './types'
 import { conditionalExpression, literal, primitive } from './utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
@@ -121,11 +122,13 @@ function defineVariable(context: Context, name: string, value: Value, constant =
 }
 
 function* visit(context: Context, node: es.Node) {
+  checkEditorBreakpoints(context, node)
   context.runtime.nodes.unshift(node)
   yield context
 }
 
 function* leave(context: Context) {
+  context.runtime.break = false
   context.runtime.nodes.shift()
   yield context
 }
@@ -267,6 +270,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       res.push(yield* evaluate(n, context))
     }
     return res
+  },
+
+  *DebuggerStatement(node: es.DebuggerStatement, context: Context) {
+    context.runtime.break = true
+    yield
   },
 
   *FunctionExpression(node: es.FunctionExpression, context: Context) {

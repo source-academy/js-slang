@@ -68,9 +68,21 @@ export interface Context<T = any> {
 
   /** Runtime Sepecific state */
   runtime: {
+    break: boolean
+    debuggerOn: boolean
     isRunning: boolean
     environments: Environment[]
     nodes: es.Node[]
+  }
+
+  /** the state of the debugger */
+  debugger: {
+    /** External observers watching this context */
+    status: boolean
+    state: {
+      it: IterableIterator<T>
+      scheduler: Scheduler
+    }
   }
 
   /**
@@ -109,6 +121,7 @@ export interface Error {
 
 export interface Finished {
   status: 'finished'
+  context: Context
   value: Value
 }
 

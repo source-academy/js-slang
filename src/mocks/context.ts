@@ -11,6 +11,8 @@ export function mockContext(chapter = 1): Context {
 export function mockRuntimeContext(): Context {
   const context = createContext()
   context.runtime = {
+    break: false,
+    debuggerOn: true,
     isRunning: true,
     environments: [],
     nodes: [
