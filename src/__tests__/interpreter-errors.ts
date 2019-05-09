@@ -694,18 +694,19 @@ test('Runtime error when redeclaring constant in native', () => {
     const f = x => x;
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
+  return runInContext(code1, context, { scheduler: 'preemptive', executionMethod: 'native' }).then(
     obj1 => {
       expect(obj1).toMatchSnapshot()
       expect(obj1.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
-      return runInContext(code2, context, { scheduler: 'preemptive', isNativeRunnable: true }).then(
-        obj2 => {
-          expect(obj2).toMatchSnapshot()
-          expect(obj2.status).toBe('error')
-          expect(parseError(context.errors)).toMatchSnapshot()
-        }
-      )
+      return runInContext(code2, context, {
+        scheduler: 'preemptive',
+        executionMethod: 'native'
+      }).then(obj2 => {
+        expect(obj2).toMatchSnapshot()
+        expect(obj2.status).toBe('error')
+        expect(parseError(context.errors)).toMatchSnapshot()
+      })
     }
   )
 })

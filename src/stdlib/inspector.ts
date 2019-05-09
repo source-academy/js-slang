@@ -42,3 +42,5 @@ export const checkEditorBreakpoints = (context: Context, node: Node): void => {
     }
   }
 }
+
+export const areBreakpointsSet = () => breakpoints.length > 0

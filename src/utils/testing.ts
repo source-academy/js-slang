@@ -39,7 +39,7 @@ interface TestOptions {
 function createTestContext({
   context,
   chapter = 1,
-  testBuiltins
+  testBuiltins = {}
 }: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
   if (context !== undefined) {
     return context
@@ -84,7 +84,7 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
   const scheduler = 'preemptive'
   const interpreted = runInContext(code, interpretedTestContext, {
     scheduler,
-    isNativeRunnable: false
+    executionMethod: 'interpreter'
   }).then(result => {
     return {
       code,
@@ -100,7 +100,7 @@ function testInContext(code: string, options: TestOptions): Promise<TestResult> 
   if (options.native) {
     const nativeTestContext = createTestContext(options)
     return interpreted.then(interpretedResult => {
-      return runInContext(code, nativeTestContext, { scheduler, isNativeRunnable: true }).then(
+      return runInContext(code, nativeTestContext, { scheduler, executionMethod: 'native' }).then(
         result => {
           let transpiled: string
           try {

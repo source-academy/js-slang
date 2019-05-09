@@ -10,7 +10,10 @@ test('debugger; statement basic test', () => {
   debugger;
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -26,7 +29,10 @@ test('debugger; statement in function', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -42,7 +48,10 @@ test('debugger; statement execution sequence', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -69,7 +78,10 @@ test('debugger; statement test function scope', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -88,7 +100,10 @@ test('debugger; statement hoisting', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -105,7 +120,10 @@ test('debugger; pauses for', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -123,7 +141,10 @@ test('debugger; pauses while', () => {
   a(10);
   `
   const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -147,7 +168,10 @@ test('setBreakpointAtLine basic', () => {
   `
   const context = mockContext(3)
   setBreakpointAtLine(['helloworld'])
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -165,7 +189,10 @@ test('setBreakpointAtLine function 1', () => {
   const breakline = []
   breakline[1] = 'asd'
   setBreakpointAtLine(breakline)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -183,7 +210,10 @@ test('setBreakpointAtLine function 2', () => {
   const breakline = []
   breakline[2] = 'asd'
   setBreakpointAtLine(breakline)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -203,7 +233,10 @@ test('setBreakpointAtLine function 3', () => {
   const breakline = []
   breakline[3] = 'asd'
   setBreakpointAtLine(breakline)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -221,7 +254,10 @@ test('setBreakpointAtLine function 4', () => {
   const breakline = []
   breakline[4] = 'asd'
   setBreakpointAtLine(breakline)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -245,7 +281,10 @@ test('setBreakpointAtLine granularity 1', () => {
   // right now for some reason it breaks twice at the line.
   // this should not happen
   // if you do fix this issue, this is good to modify.
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -280,7 +319,10 @@ test('setBreakpointAtLine granularity 2', () => {
   const breakline = []
   breakline[3] = 'a'
   setBreakpointAtLine(breakline)
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -307,7 +349,10 @@ test('setBreakpointAtLine granularity 3', () => {
   breakline[4] = 'a'
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -336,7 +381,10 @@ test('setBreakpointAtLine for loops', () => {
   breakline[2] = '2'
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -376,7 +424,10 @@ test('setBreakpointAtLine while loops', () => {
   breakline[3] = '3'
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
-  return runInContext(code1, context, { scheduler: 'preemptive' }).then(obj1 => {
+  return runInContext(code1, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'interpreter'
+  }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()

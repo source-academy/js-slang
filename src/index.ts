@@ -1,4 +1,5 @@
-import { Literal } from 'estree'
+import { simple } from 'acorn-walk/dist/walk'
+import { DebuggerStatement, Literal } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -12,22 +13,30 @@ import {
 } from './interpreter-errors'
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { setBreakpointAtLine } from './stdlib/inspector'
+import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { transpile } from './transpiler'
-import { Context, Error as ResultError, Finished, Result, Scheduler, SourceError } from './types'
+import {
+  Context,
+  Error as ResultError,
+  ExecutionMethod,
+  Finished,
+  Result,
+  Scheduler,
+  SourceError
+} from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
-  isNativeRunnable: boolean
+  executionMethod: ExecutionMethod
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  isNativeRunnable: false
+  executionMethod: 'auto'
 }
 
 // needed to work on browsers
@@ -122,71 +131,92 @@ export function runInContext(
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
-  if (program) {
-    if (theOptions.isNativeRunnable) {
-      if (previousCode === code) {
-        JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+  if (!program) {
+    return resolvedErrorPromise
+  }
+  let isNativeRunnable
+  if (theOptions.executionMethod === 'auto') {
+    if (context.executionMethod === 'auto') {
+      if (verboseErrors) {
+        isNativeRunnable = false
+      } else if (areBreakpointsSet()) {
+        isNativeRunnable = false
       } else {
-        JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
-      }
-      previousCode = code
-      let transpiled
-      let sourceMapJson: RawSourceMap | undefined
-      let lastStatementSourceMapJson: RawSourceMap | undefined
-      try {
-        const temp = transpile(program, context.contextId)
-        // some issues with formatting and semicolons and tslint so no destructure
-        transpiled = temp.transpiled
-        sourceMapJson = temp.codeMap
-        lastStatementSourceMapJson = temp.evalMap
-        return Promise.resolve({
-          status: 'finished',
-          value: sandboxedEval(transpiled)
-        } as Result)
-      } catch (error) {
-        if (error instanceof RuntimeSourceError) {
-          context.errors.push(error)
-          return resolvedErrorPromise
-        }
-        const errorStack = error.stack
-        const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-        if (match === null) {
-          context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-          return resolvedErrorPromise
-        }
-        const line = Number(match![1])
-        const column = Number(match![2])
-        return SourceMapConsumer.with(
-          line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
-          null,
-          consumer => {
-            const {
-              line: originalLine,
-              column: originalColumn,
-              name
-            } = consumer.originalPositionFor({
-              line,
-              column
-            })
-            context.errors.push(
-              convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
-            )
-            return resolvedErrorPromise
+        let hasDeuggerStatement = false
+        simple(program, {
+          DebuggerStatement(node: DebuggerStatement) {
+            hasDeuggerStatement = true
           }
-        )
+        })
+        isNativeRunnable = hasDeuggerStatement
       }
+      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
     } else {
-      const it = evaluate(program, context)
-      let scheduler: Scheduler
-      if (theOptions.scheduler === 'async') {
-        scheduler = new AsyncScheduler()
-      } else {
-        scheduler = new PreemptiveScheduler(theOptions.steps)
-      }
-      return scheduler.run(it, context)
+      isNativeRunnable = context.executionMethod === 'native'
     }
   } else {
-    return resolvedErrorPromise
+    isNativeRunnable = theOptions.executionMethod === 'native'
+  }
+
+  if (isNativeRunnable) {
+    if (previousCode === code) {
+      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
+    }
+    previousCode = code
+    let transpiled
+    let sourceMapJson: RawSourceMap | undefined
+    let lastStatementSourceMapJson: RawSourceMap | undefined
+    try {
+      const temp = transpile(program, context.contextId)
+      // some issues with formatting and semicolons and tslint so no destructure
+      transpiled = temp.transpiled
+      sourceMapJson = temp.codeMap
+      lastStatementSourceMapJson = temp.evalMap
+      return Promise.resolve({
+        status: 'finished',
+        value: sandboxedEval(transpiled)
+      } as Result)
+    } catch (error) {
+      if (error instanceof RuntimeSourceError) {
+        context.errors.push(error)
+        return resolvedErrorPromise
+      }
+      const errorStack = error.stack
+      const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
+      if (match === null) {
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+        return resolvedErrorPromise
+      }
+      const line = Number(match![1])
+      const column = Number(match![2])
+      return SourceMapConsumer.with(
+        line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
+        null,
+        consumer => {
+          const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor(
+            {
+              line,
+              column
+            }
+          )
+          context.errors.push(
+            convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+          )
+          return resolvedErrorPromise
+        }
+      )
+    }
+  } else {
+    const it = evaluate(program, context)
+    let scheduler: Scheduler
+    if (theOptions.scheduler === 'async') {
+      scheduler = new AsyncScheduler()
+    } else {
+      scheduler = new PreemptiveScheduler(theOptions.steps)
+    }
+    return scheduler.run(it, context)
   }
 }
 
