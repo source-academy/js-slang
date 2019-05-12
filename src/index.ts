@@ -148,7 +148,7 @@ export function runInContext(
             hasDeuggerStatement = true
           }
         })
-        isNativeRunnable = hasDeuggerStatement
+        isNativeRunnable = !hasDeuggerStatement
       }
       context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
     } else {
