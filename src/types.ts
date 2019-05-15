@@ -56,6 +56,8 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+
 export interface Context<T = any> {
   /** The source version used */
   chapter: number
@@ -96,6 +98,8 @@ export interface Context<T = any> {
    * Used for storing id of the context to be referenced by native
    */
   contextId: number
+
+  executionMethod: ExecutionMethod
 }
 
 // tslint:disable:no-any

@@ -11,7 +11,10 @@ test('Proper stringify-ing of arguments during potentially infinite iterative fu
     f(list(1, 2, f, () => 1, array));
   `
   const context = mockContext(4)
-  const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native'
+  })
   return promise.then(obj => {
     const errors = parseError(context.errors)
     expect(errors).toMatch(stripIndent`
@@ -33,7 +36,10 @@ test('test increasing time limit for functions', () => {
   `
   const context = mockContext()
   const start = Date.now()
-  const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native'
+  })
   return promise.then(obj => {
     const errors = parseError(context.errors)
     const timeTaken = Date.now() - start
@@ -44,7 +50,7 @@ test('test increasing time limit for functions', () => {
     const longerContext = mockContext()
     const longerPromise = runInContext(code, longerContext, {
       scheduler: 'preemptive',
-      isNativeRunnable: true
+      executionMethod: 'native'
     })
     return longerPromise.then(longerObj => {
       const longerErrors = parseError(longerContext.errors)
@@ -69,7 +75,10 @@ test('test increasing time limit for mutual recursion', () => {
   `
   const context = mockContext()
   const start = Date.now()
-  const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native'
+  })
   return promise.then(obj => {
     const errors = parseError(context.errors)
     const timeTaken = Date.now() - start
@@ -80,7 +89,7 @@ test('test increasing time limit for mutual recursion', () => {
     const longerContext = mockContext()
     const longerPromise = runInContext(code, longerContext, {
       scheduler: 'preemptive',
-      isNativeRunnable: true
+      executionMethod: 'native'
     })
     return longerPromise.then(longerObj => {
       const longerErrors = parseError(longerContext.errors)
@@ -100,7 +109,10 @@ test('test increasing time limit for while loops', () => {
   `
   const context = mockContext(4)
   const start = Date.now()
-  const promise = runInContext(code, context, { scheduler: 'preemptive', isNativeRunnable: true })
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native'
+  })
   return promise.then(obj => {
     const errors = parseError(context.errors)
     const timeTaken = Date.now() - start
@@ -110,7 +122,7 @@ test('test increasing time limit for while loops', () => {
     const longerContext = mockContext(4)
     const longerPromise = runInContext(code, longerContext, {
       scheduler: 'preemptive',
-      isNativeRunnable: true
+      executionMethod: 'native'
     })
     return longerPromise.then(longerObj => {
       const longerErrors = parseError(longerContext.errors)
