@@ -1,9 +1,9 @@
 \section*{Interpreter Support}
 
 \begin{itemize}
-\item \lstinline{parse(x)}: \textit{built-in}, returns the parse tree that results from parsing
+\item \lstinline{parse(x)}: \textit{primitive}, returns the parse tree that results from parsing
 the string \lstinline{x} as a Source program.
-\item \lstinline{apply_in_underlying_javascript(f, xs)}: \textit{built-in}, calls the function \lstinline{f}
+\item \lstinline{apply_in_underlying_javascript(f, xs)}: \textit{primitive}, calls the function \lstinline{f}
 with arguments \lstinline{xs}. For example:
 \begin{lstlisting}
 function times(x, y) {

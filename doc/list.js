@@ -1,4 +1,4 @@
-// \texttt{list.js START} \begin{lstlisting}
+// \texttt{list.js START} \begin{lstlisting} 
 
 // is_list recurses down the list and checks that it ends with the empty list null
 
