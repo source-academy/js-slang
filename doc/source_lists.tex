@@ -3,24 +3,24 @@
 The following list processing functions are supported:
 
 \begin{itemize}
-\item \lstinline{pair(x, y)}: \textit{built-in}, makes a pair from \lstinline{x} and \lstinline{y}.
-\item \lstinline{is_pair(x)}: \textit{built-in}, returns \lstinline{true} if \lstinline{x} is a
+\item \lstinline{pair(x, y)}: \textit{primitive}, makes a pair from \lstinline{x} and \lstinline{y}.
+\item \lstinline{is_pair(x)}: \textit{primitive}, returns \lstinline{true} if \lstinline{x} is a
   pair and \lstinline{false} otherwise.
-\item \lstinline{head(x)}: \textit{built-in}, returns the head (first component) of the pair \lstinline{x}.
-\item \lstinline{tail(x)}: \textit{built-in}, returns the tail (second component) of the
+\item \lstinline{head(x)}: \textit{primitive}, returns the head (first component) of the pair \lstinline{x}.
+\item \lstinline{tail(x)}: \textit{primitive}, returns the tail (second component) of the
   pair \lstinline{x}.
-\item \lstinline{is_null(xs)}: \textit{built-in}, returns \lstinline{true} if \lstinline{xs} is the
+\item \lstinline{is_null(xs)}: \textit{primitive}, returns \lstinline{true} if \lstinline{xs} is the
   empty list \lstinline{null}, and \lstinline{false} otherwise.
 \item \lstinline{is_list(x)}: Returns \lstinline{true} if
   \lstinline{x} is a list as defined in the lectures, and
   \lstinline{false} otherwise. Iterative process; 
 time: $O(n)$, space: $O(1)$, where $n$ is the length of the 
 chain of \lstinline{tail} operations that can be applied to \lstinline{x}.
-\item \lstinline{list(x1, x2,..., xn)}: \textit{built-in}, returns a list with $n$ elements. The
+\item \lstinline{list(x1, x2,..., xn)}: \textit{primitive}, returns a list with $n$ elements. The
 first element is \lstinline{x1}, the second \lstinline{x2}, etc. Iterative
 process; time: $O(n)$, space: $O(n)$, since the constructed list data structure
 consists of $n$ pairs, each of which takes up a constant amount of space.
-\item \lstinline{draw_data(x)}: \textit{built-in}, visualizes \lstinline{x} in a separate drawing
+\item \lstinline{draw_data(x)}: \textit{primitive}, visualizes \lstinline{x} in a separate drawing
   area in the Source Academy using a box-and-pointer diagram; time, space:
   $O(n)$, where $n$ is the number of data structures such as
   pairs in \lstinline{x}.
