@@ -26,7 +26,7 @@ audience with the characters used in names is an important aspect of program rea
 In addition to names that
 are declared using \texttt{\textbf{const}}, \texttt{\textbf{function}},
 $\texttt{\textbf{=>}}$ (and \texttt{\textbf{let}} in Source \S3 and 4), the following
-names refer to built-in functions and constants:
+names refer to primitive functions and constants:
 \begin{itemize}
 \item \lstinline{math_}$\textit{name}$,
 where $\textit{name}$ is any name specified in the
@@ -56,7 +56,7 @@ If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
   of any call of \texttt{error} aborts the running program immediately.
 \item \verb#stringify#\texttt{(x)}: returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
 \end{itemize}
-All Source built-in functions, except \verb#stringify#, can be assumed to run
+All Source primitive functions, except \verb#stringify#, can be assumed to run
 in $O(1)$ time, except \texttt{display}, \texttt{error} and \texttt{stringify}, 
 which run in $O(n)$ time, where $n$ is
 the size (number of components such as pairs) of their argument.
