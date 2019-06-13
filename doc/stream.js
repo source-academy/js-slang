@@ -16,8 +16,8 @@ function is_stream(xs) {
 function list_to_stream(xs) {
     return is_null(xs)
         ? null
-        : pair(head(xs), 
-               () => list_to_stream(tail(xs))); 
+        : pair(head(xs),
+            () => list_to_stream(tail(xs)));
 }
 
 // stream_to_list transforms a given stream to a list
@@ -50,8 +50,8 @@ function stream_length(xs) {
 function stream_map(f, s) {
     return is_null(s)
         ? null
-        : pair(f(head(s)), 
-                 () => stream_map(f, stream_tail(s)));
+        : pair(f(head(s)),
+            () => stream_map(f, stream_tail(s)));
 }
 
 // build_stream takes a non-negative integer n as first argument,
@@ -64,8 +64,8 @@ function build_stream(n, fun) {
     function build(i) {
         return i >= n
             ? null
-            : pair(fun(i), 
-                   () => build(i + 1)); 
+            : pair(fun(i),
+                () => build(i + 1));
     }
     return build(0);
 }
@@ -95,10 +95,10 @@ function stream_reverse(xs) {
     function rev(original, reversed) {
         return is_null(original)
             ? reversed
-            : rev(stream_tail(original), 
-                  pair(head(original), () => reversed));
+            : rev(stream_tail(original),
+                pair(head(original), () => reversed));
     }
-    return rev(xs,null);
+    return rev(xs, null);
 }
 
 // stream_append appends first argument stream and second argument stream.
@@ -111,7 +111,7 @@ function stream_append(xs, ys) {
     return is_null(xs)
         ? ys
         : pair(head(xs),
-               () => stream_append(stream_tail(xs), ys));
+            () => stream_append(stream_tail(xs), ys));
 }
 
 // stream_member looks for a given first-argument element in a given
@@ -136,8 +136,8 @@ function stream_remove(v, xs) {
         ? null
         : v === head(xs)
             ? stream_tail(xs)
-            :  pair(head(xs),
-                    () => stream_remove(v, stream_tail(xs)));
+            : pair(head(xs),
+                () => stream_remove(v, stream_tail(xs)));
 }
 
 // stream_remove_all removes all instances of v instead of just the first.
@@ -161,7 +161,7 @@ function stream_filter(p, s) {
         ? null
         : p(head(s))
             ? pair(head(s),
-                   () => stream_filter(p, stream_tail(s)))
+                () => stream_filter(p, stream_tail(s)))
             : stream_filter(p, stream_tail(s));
 }
 
@@ -174,7 +174,7 @@ function enum_stream(start, end) {
     return start > end
         ? null
         : pair(start,
-               () => enum_stream(start + 1, end));
+            () => enum_stream(start + 1, end));
 }
 
 // integers_from constructs an infinite stream of integers
@@ -183,7 +183,7 @@ function enum_stream(start, end) {
 //            each next element
 function integers_from(n) {
     return pair(n,
-                () => integers_from(n + 1));
+        () => integers_from(n + 1));
 }
 
 // eval_stream constructs the list of the first n elements
@@ -195,8 +195,8 @@ function eval_stream(s, n) {
     return n === 0
         ? null
         : pair(head(s),
-               eval_stream(stream_tail(s),
-                           n - 1));
+            eval_stream(stream_tail(s),
+                n - 1));
 }
 
 // Returns the item in stream s at index n (the first item is at position 0)

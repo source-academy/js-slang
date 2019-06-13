@@ -9,10 +9,10 @@ function is_list(xs) {
 // equal computes the structural equality 
 // over its arguments
 
-function equal(x, y){
+function equal(x, y) {
     return (is_pair(x) && is_pair(y))
         ? (equal(head(x), head(y)) &&
-           equal(tail(x), tail(y)))
+            equal(tail(x), tail(y)))
         : x === y;
 }
 
@@ -21,7 +21,7 @@ function equal(x, y){
 
 function length(xs) {
     return is_null(xs)
-	? 0
+        ? 0
         : 1 + length(tail(xs));
 }
 
@@ -41,7 +41,7 @@ function map(f, xs) {
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 
-function build_list(n, fun){
+function build_list(n, fun) {
     function build(i, fun, already_built) {
         return i < 0
             ? already_built
@@ -80,8 +80,8 @@ function list_to_string(xs) {
     return is_null(xs)
         ? "null"
         : is_pair(xs)
-            ? "[" + list_to_string(head(xs)) + ","+
-                    list_to_string(tail(xs))      + "]"
+            ? "[" + list_to_string(head(xs)) + "," +
+                list_to_string(tail(xs)) + "]"
             : to_string(xs);
 }
 
@@ -92,7 +92,7 @@ function reverse(xs) {
         return is_null(original)
             ? reversed
             : rev(tail(original),
-                  pair(head(original), reversed));
+                pair(head(original), reversed));
     }
     return rev(xs, null);
 }
@@ -132,7 +132,7 @@ function remove(v, xs) {
         : v === head(xs)
             ? tail(xs)
             : pair(head(xs),
-                   remove(v, tail(xs)));
+                remove(v, tail(xs)));
 }
 
 // Similar to remove, but removes all instances of v
@@ -144,7 +144,7 @@ function remove_all(v, xs) {
         : v === head(xs)
             ? remove_all(v, tail(xs))
             : pair(head(xs),
-                     remove_all(v, tail(xs)));
+                remove_all(v, tail(xs)));
 }
 
 // filter returns the sublist of elements of the second argument
@@ -156,7 +156,7 @@ function filter(pred, xs) {
         ? xs
         : pred(head(xs))
             ? pair(head(xs),
-                   filter(pred, tail(xs)))
+                filter(pred, tail(xs)))
             : filter(pred, tail(xs));
 }
 
@@ -168,7 +168,7 @@ function enum_list(start, end) {
     return start > end
         ? null
         : pair(start,
-               enum_list(start + 1, end));
+            enum_list(start + 1, end));
 }
 
 // Returns the item in xs (assumed to be a list) at index n,
@@ -194,7 +194,7 @@ function accumulate(f, initial, xs) {
     return is_null(xs)
         ? initial
         : f(head(xs),
-             accumulate(f, initial, tail(xs)));
+            accumulate(f, initial, tail(xs)));
 }
 
 // \end{lstlisting} // \texttt{list.js END}
