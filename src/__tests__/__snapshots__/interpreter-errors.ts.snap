@@ -2360,7 +2360,7 @@ exports[`Runtime error when redeclaring constant as function - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 103,
+    "contextId": 88,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -2374,6 +2374,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -2501,7 +2502,7 @@ exports[`Runtime error when redeclaring constant as function 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 102,
+    "contextId": 87,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -2515,6 +2516,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -2638,7 +2640,7 @@ exports[`Runtime error when redeclaring constant as variable - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 101,
+    "contextId": 86,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -2652,6 +2654,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -2779,7 +2782,7 @@ exports[`Runtime error when redeclaring constant as variable 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 100,
+    "contextId": 85,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -2793,6 +2796,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -2916,7 +2920,7 @@ exports[`Runtime error when redeclaring constant in interpreter 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 98,
+    "contextId": 83,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -2930,6 +2934,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3070,7 +3075,7 @@ exports[`Runtime error when redeclaring function - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 115,
+    "contextId": 100,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3084,6 +3089,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3211,7 +3217,7 @@ exports[`Runtime error when redeclaring function 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 114,
+    "contextId": 99,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3225,6 +3231,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3348,7 +3355,7 @@ exports[`Runtime error when redeclaring function as constant - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 111,
+    "contextId": 96,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3362,6 +3369,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3489,7 +3497,7 @@ exports[`Runtime error when redeclaring function as constant 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 110,
+    "contextId": 95,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3503,6 +3511,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3626,7 +3635,7 @@ exports[`Runtime error when redeclaring function as variable - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 113,
+    "contextId": 98,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3640,6 +3649,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3767,7 +3777,7 @@ exports[`Runtime error when redeclaring function as variable 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 112,
+    "contextId": 97,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3781,6 +3791,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -3904,7 +3915,7 @@ exports[`Runtime error when redeclaring variable - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 107,
+    "contextId": 92,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3918,6 +3929,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -4048,7 +4060,7 @@ exports[`Runtime error when redeclaring variable 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 106,
+    "contextId": 91,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4062,6 +4074,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -4185,7 +4198,7 @@ exports[`Runtime error when redeclaring variable as constant - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 105,
+    "contextId": 90,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4199,6 +4212,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -4329,7 +4343,7 @@ exports[`Runtime error when redeclaring variable as constant 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 104,
+    "contextId": 89,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4343,6 +4357,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -4466,7 +4481,7 @@ exports[`Runtime error when redeclaring variable as function - verbose 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 109,
+    "contextId": 94,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4480,6 +4495,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {
@@ -4610,7 +4626,7 @@ exports[`Runtime error when redeclaring variable as function 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 108,
+    "contextId": 93,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4624,6 +4640,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "executionMethod": "auto",
     "externalContext": undefined,
     "externalSymbols": Array [],
     "runtime": Object {

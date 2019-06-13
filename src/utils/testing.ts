@@ -1,7 +1,9 @@
+import { mockContext } from '../mocks/context'
+
 export { stripIndent, oneLine } from 'common-tags'
 
 import { default as createContext, defineBuiltin } from '../createContext'
-import { parseError, runInContext } from '../index'
+import { parseError, Result, runInContext } from '../index'
 import { stringify } from '../interop'
 import { parse } from '../parser'
 import { transpile } from '../transpiler'
@@ -39,7 +41,7 @@ interface TestOptions {
 function createTestContext({
   context,
   chapter = 1,
-  testBuiltins
+  testBuiltins = {}
 }: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
   if (context !== undefined) {
     return context
@@ -67,123 +69,101 @@ function createTestContext({
       visualiseListResult: []
     }
 
-    if (testBuiltins !== undefined) {
-      for (const name in testBuiltins) {
-        if (testBuiltins.hasOwnProperty(name)) {
-          defineBuiltin(testContext, name, testBuiltins[name])
-        }
-      }
-    }
+    Object.entries(testBuiltins).forEach(([key, value]) => defineBuiltin(testContext, key, value))
 
     return testContext
   }
 }
 
-function testInContext(code: string, options: TestOptions): Promise<TestResult> {
+async function testInContext(code: string, options: TestOptions): Promise<TestResult> {
   const interpretedTestContext = createTestContext(options)
   const scheduler = 'preemptive'
-  const interpreted = runInContext(code, interpretedTestContext, {
-    scheduler,
-    isNativeRunnable: false
-  }).then(result => {
-    return {
-      code,
-      displayResult: interpretedTestContext.displayResult,
-      alertResult: interpretedTestContext.alertResult,
-      visualiseListResult: interpretedTestContext.visualiseListResult,
-      errors: interpretedTestContext.errors,
-      parsedErrors: parseError(interpretedTestContext.errors),
-      resultStatus: result.status,
-      result: result.status === 'finished' ? result.value : undefined
-    }
+  const getTestResult = (context: TestContext, result: Result) => ({
+    code,
+    displayResult: context.displayResult,
+    alertResult: context.alertResult,
+    visualiseListResult: context.visualiseListResult,
+    errors: context.errors,
+    parsedErrors: parseError(context.errors),
+    resultStatus: result.status,
+    result: result.status === 'finished' ? result.value : undefined
   })
+  const interpretedResult = getTestResult(
+    interpretedTestContext,
+    await runInContext(code, interpretedTestContext, {
+      scheduler,
+      executionMethod: 'interpreter'
+    })
+  )
   if (options.native) {
     const nativeTestContext = createTestContext(options)
-    return interpreted.then(interpretedResult => {
-      return runInContext(code, nativeTestContext, { scheduler, isNativeRunnable: true }).then(
-        result => {
-          let transpiled: string
-          try {
-            const transpilerContext = createTestContext(options)
-            const parsed = parse(code, transpilerContext)!
-            transpiled = transpile(parsed, transpilerContext.contextId).transpiled
-          } catch {
-            transpiled = 'parseError'
-          }
-          // replace native[<number>] as they may be inconsistent
-          const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-          // replace the line hiding globals as they may differ between environments
-          const replacedGlobalsLine = replacedNative.replace(
-            /\n\(\(.*\)/,
-            '\n(( <globals redacted> )'
-          )
-          // replace declaration of builtins since they're repetitive
-          const replacedBuiltins = replacedGlobalsLine.replace(
-            /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
-            ''
-          )
-          const nativeResult = {
-            code,
-            displayResult: nativeTestContext.displayResult,
-            alertResult: nativeTestContext.alertResult,
-            visualiseListResult: nativeTestContext.visualiseListResult,
-            errors: nativeTestContext.errors,
-            parsedErrors: parseError(nativeTestContext.errors),
-            resultStatus: result.status,
-            result: result.status === 'finished' ? result.value : undefined
-          }
-          const propertiesThatShouldBeEqual = [
-            'code',
-            'displayResult',
-            'alertResult',
-            'parsedErrors',
-            'result'
-          ]
-          const diff = propertiesThatShouldBeEqual
-            .filter(
-              property =>
-                stringify(nativeResult[property]) !== stringify(interpretedResult[property])
-            )
-            .reduce(
-              (acc: object, curr: string) => ({
-                ...acc,
-                [curr]: `native:${stringify(nativeResult[curr])}\ninterpreted:${stringify(
-                  interpretedResult[curr]
-                )}`
-              }),
-              {}
-            )
-          return { ...interpretedResult, ...diff, transpiled: replacedBuiltins } as TestResult
-        }
+    let transpiled: string
+    try {
+      const parsed = parse(code, nativeTestContext)!
+      transpiled = transpile(parsed, nativeTestContext.contextId).transpiled
+      // replace native[<number>] as they may be inconsistent
+      const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+      // replace the line hiding globals as they may differ between environments
+      const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+      // replace declaration of builtins since they're repetitive
+      const replacedBuiltins = replacedGlobalsLine.replace(
+        /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
+        ''
       )
-    })
+      transpiled = replacedBuiltins
+    } catch {
+      transpiled = 'parseError'
+    }
+    const nativeResult = getTestResult(
+      nativeTestContext,
+      await runInContext(code, nativeTestContext, {
+        scheduler,
+        executionMethod: 'native'
+      })
+    )
+    const propertiesThatShouldBeEqual = [
+      'code',
+      'displayResult',
+      'alertResult',
+      'parsedErrors',
+      'result'
+    ]
+    const diff = {}
+    for (const property of propertiesThatShouldBeEqual) {
+      const nativeValue = stringify(nativeResult[property])
+      const interpretedValue = stringify(interpretedResult[property])
+      if (nativeValue !== interpretedValue) {
+        diff[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
+      }
+    }
+    return { ...interpretedResult, ...diff, transpiled } as TestResult
   } else {
-    return interpreted
+    return interpretedResult
   }
 }
 
-export function testSuccess(code: string, options: TestOptions = { native: false }) {
-  return testInContext(code, options).then(testResult => {
-    expect(testResult.errors).toEqual([])
-    expect(testResult.resultStatus).toBe('finished')
-    return testResult
-  })
+export async function testSuccess(code: string, options: TestOptions = { native: false }) {
+  const testResult = await testInContext(code, options)
+  expect(testResult.errors).toEqual([])
+  expect(testResult.resultStatus).toBe('finished')
+  return testResult
 }
 
-export function testSuccessWithErrors(code: string, options: TestOptions = { native: false }) {
-  return testInContext(code, options).then(testResult => {
-    expect(testResult.errors).not.toEqual([])
-    expect(testResult.resultStatus).toBe('finished')
-    return testResult
-  })
+export async function testSuccessWithErrors(
+  code: string,
+  options: TestOptions = { native: false }
+) {
+  const testResult = await testInContext(code, options)
+  expect(testResult.errors).not.toEqual([])
+  expect(testResult.resultStatus).toBe('finished')
+  return testResult
 }
 
-export function testFailure(code: string, options: TestOptions = { native: false }) {
-  return testInContext(code, options).then(testResult => {
-    expect(testResult.errors).not.toEqual([])
-    expect(testResult.resultStatus).toBe('error')
-    return testResult
-  })
+export async function testFailure(code: string, options: TestOptions = { native: false }) {
+  const testResult = await testInContext(code, options)
+  expect(testResult.errors).not.toEqual([])
+  expect(testResult.resultStatus).toBe('error')
+  return testResult
 }
 
 export function snapshot<T extends { [P in keyof TestResult]: any }>(
@@ -315,4 +295,18 @@ export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) 
         evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
       )
     )
+}
+
+export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
+  const start = Date.now()
+  const context = mockContext(4)
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native'
+  })
+  await promise
+  const timeTaken = Date.now() - start
+  expect(timeTaken).toBeLessThan(timeout * 2)
+  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
+  return parseError(context.errors)
 }
