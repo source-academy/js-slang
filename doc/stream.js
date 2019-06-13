@@ -111,7 +111,7 @@ function stream_append(xs, ys) {
     return is_null(xs)
         ? ys
         : pair(head(xs),
-               () => stream_append(stream_tail(xs), ys)); 
+               () => stream_append(stream_tail(xs), ys));
 }
 
 // stream_member looks for a given first-argument element in a given
@@ -136,8 +136,8 @@ function stream_remove(v, xs) {
         ? null
         : v === head(xs)
             ? stream_tail(xs)
-            :  pair(head(xs), 
-                    () => stream_remove(v, stream_tail(xs))); 
+            :  pair(head(xs),
+                    () => stream_remove(v, stream_tail(xs)));
 }
 
 // stream_remove_all removes all instances of v instead of just the first.
@@ -147,7 +147,7 @@ function stream_remove_all(v, xs) {
         ? null
         : v === head(xs)
             ? stream_remove_all(v, stream_tail(xs))
-            : pair(head(xs), () => stream_remove_all(v, stream_tail(xs))); 
+            : pair(head(xs), () => stream_remove_all(v, stream_tail(xs)));
 }
 
 // filter returns the substream of elements of given stream s
@@ -160,7 +160,7 @@ function stream_filter(p, s) {
     return is_null(s)
         ? null
         : p(head(s))
-            ? pair(head(s), 
+            ? pair(head(s),
                    () => stream_filter(p, stream_tail(s)))
             : stream_filter(p, stream_tail(s));
 }
@@ -173,8 +173,8 @@ function stream_filter(p, s) {
 function enum_stream(start, end) {
     return start > end
         ? null
-        : pair(start, 
-               () => enum_stream(start + 1, end)); 
+        : pair(start,
+               () => enum_stream(start + 1, end));
 }
 
 // integers_from constructs an infinite stream of integers
