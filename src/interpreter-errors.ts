@@ -1,4 +1,5 @@
 /* tslint:disable: max-classes-per-file */
+/* tslint:disable:max-line-length */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
@@ -122,9 +123,7 @@ export class UndefinedVariable extends RuntimeSourceError {
   }
 
   public elaborate() {
-    return `Before you can read the value of ${
-      this.name
-    }, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
+    return `Before you can read the value of ${this.name}, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
   }
 }
 
@@ -138,13 +137,7 @@ export class UnassignedVariable extends RuntimeSourceError {
   }
 
   public elaborate() {
-    return `If you're trying to access the value of ${
-      this.name
-    } from an outer scope, please rename the inner ${
-      this.name
-    }. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${
-      this.name
-    } in the same scope.`
+    return `If you're trying to access the value of ${this.name} from an outer scope, please rename the inner ${this.name}. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${this.name} in the same scope.`
   }
 }
 
@@ -164,9 +157,7 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
     const calleeStr = this.calleeStr
     const pluralS = this.expected === 1 ? '' : 's'
 
-    return `Try calling function ${calleeStr} again, but with ${
-      this.expected
-    } argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
+    return `Try calling function ${calleeStr} again, but with ${this.expected} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
   }
 }
 
@@ -181,9 +172,7 @@ export class VariableRedeclaration extends RuntimeSourceError {
 
   public elaborate() {
     if (this.writable === true) {
-      const elabStr = `Since ${
-        this.name
-      } has already been declared, you can assign a value to it without re-declaring.`
+      const elabStr = `Since ${this.name} has already been declared, you can assign a value to it without re-declaring.`
 
       let initStr = ''
 
@@ -213,9 +202,7 @@ export class ConstAssignment extends RuntimeSourceError {
   }
 
   public elaborate() {
-    return `As ${
-      this.name
-    } was declared as a constant, its value cannot be changed. You will have to declare a new variable.`
+    return `As ${this.name} was declared as a constant, its value cannot be changed. You will have to declare a new variable.`
   }
 }
 
