@@ -26,10 +26,10 @@ function unreachable() {
 // can be represented by the element itself,
 // instead of constructing a sequence
 
-function makeSequenceIfNeeded(es: es.Node[]) {
-  return es.length === 1
-    ? transform(es[0])
-    : vector_to_list(['sequence', vector_to_list(es.map(transform))])
+function makeSequenceIfNeeded(exs: es.Node[]) {
+  return exs.length === 1
+    ? transform(exs[0])
+    : vector_to_list(['sequence', vector_to_list(exs.map(transform))])
 }
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>
@@ -48,10 +48,7 @@ transformers = new Map([
     'BlockStatement',
     (node: es.Node) => {
       node = node as es.BlockStatement
-      return vector_to_list([
-        'block',
-        makeSequenceIfNeeded(node.body)
-      ])
+      return vector_to_list(['block', makeSequenceIfNeeded(node.body)])
     }
   ],
 
@@ -220,10 +217,10 @@ transformers = new Map([
         'function_definition',
         vector_to_list(node.params.map(transform)),
         node.body.type === 'BlockStatement'
-        // body.body: strip away one layer of block:
-        // The body of a function is the statement
-        // inside the curly braces.
-          ? makeSequenceIfNeeded(node.body.body)
+          ? // body.body: strip away one layer of block:
+            // The body of a function is the statement
+            // inside the curly braces.
+            makeSequenceIfNeeded(node.body.body)
           : vector_to_list([
               'return_statement',
               transform(node.body),
