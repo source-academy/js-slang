@@ -915,56 +915,29 @@ Object {
           ],
           Array [
             Array [
-              "block",
+              "return_statement",
               Array [
                 Array [
-                  "return_statement",
+                  "application",
                   Array [
                     Array [
-                      "application",
+                      "name",
                       Array [
-                        Array [
-                          "name",
-                          Array [
-                            "+",
-                            Array [
-                              Array [
-                                Array [
-                                  1,
-                                  Array [
-                                    23,
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    1,
-                                    Array [
-                                      24,
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
-                          ],
-                        ],
+                        "+",
                         Array [
                           Array [
                             Array [
-                              "name",
+                              1,
                               Array [
-                                "x",
+                                23,
                                 null,
                               ],
                             ],
                             Array [
                               Array [
-                                "name",
+                                1,
                                 Array [
-                                  "y",
+                                  24,
                                   null,
                                 ],
                               ],
@@ -975,7 +948,28 @@ Object {
                         ],
                       ],
                     ],
-                    null,
+                    Array [
+                      Array [
+                        Array [
+                          "name",
+                          Array [
+                            "x",
+                            null,
+                          ],
+                        ],
+                        Array [
+                          Array [
+                            "name",
+                            Array [
+                              "y",
+                              null,
+                            ],
+                          ],
+                          null,
+                        ],
+                      ],
+                      null,
+                    ],
                   ],
                 ],
                 null,

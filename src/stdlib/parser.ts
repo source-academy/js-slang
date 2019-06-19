@@ -22,6 +22,16 @@ function unreachable() {
   `)
 }
 
+// sequences of expressions of length 1
+// can be represented by the element itself,
+// instead of constructing a sequence
+
+function makeSequenceIfNeeded(es: es.Node[]) {
+  return es.length === 1
+    ? transform(es[0])
+    : vector_to_list(['sequence', vector_to_list(es.map(transform))])
+}
+
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
 let transformers: ASTTransformers
@@ -30,9 +40,7 @@ transformers = new Map([
     'Program',
     (node: es.Node) => {
       node = node as es.Program
-      return node.body.length === 1
-        ? transform(node.body[0])
-        : vector_to_list(['sequence', vector_to_list(node.body.map(transform))])
+      return makeSequenceIfNeeded(node.body)
     }
   ],
 
@@ -42,9 +50,7 @@ transformers = new Map([
       node = node as es.BlockStatement
       return vector_to_list([
         'block',
-        node.body.length === 1
-          ? transform(node.body[0])
-          : vector_to_list(['sequence', vector_to_list(node.body.map(transform))])
+        makeSequenceIfNeeded(node.body)
       ])
     }
   ],
@@ -80,9 +86,10 @@ transformers = new Map([
         vector_to_list([
           'function_definition',
           vector_to_list(node.params.map(transform)),
-          node.body.body.length === 1
-            ? transform(node.body.body[0])
-            : vector_to_list(['sequence', vector_to_list(node.body.body.map(transform))])
+          // body.body: strip away one layer of block:
+          // The body of a function is the statement
+          // inside the curly braces.
+          makeSequenceIfNeeded(node.body.body)
         ])
       ])
     }
@@ -209,15 +216,17 @@ transformers = new Map([
     (node: es.Node) => {
       node = node as es.ArrowFunctionExpression
       const loc = node.body.loc as es.SourceLocation
-      const transformedBody = transform(node.body)
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
-        transformedBody[0] === 'block'
-          ? transformedBody
+        node.body.type === 'BlockStatement'
+        // body.body: strip away one layer of block:
+        // The body of a function is the statement
+        // inside the curly braces.
+          ? makeSequenceIfNeeded(node.body.body)
           : vector_to_list([
               'return_statement',
-              transformedBody,
+              transform(node.body),
               vector_to_list([
                 vector_to_list([loc.start.line, loc.start.column]),
                 vector_to_list([loc.end.line, loc.end.column])
