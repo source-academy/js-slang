@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.2.1-alpha.2",
+  "version": "0.2.2",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
