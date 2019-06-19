@@ -209,20 +209,20 @@ transformers = new Map([
     (node: es.Node) => {
       node = node as es.ArrowFunctionExpression
       const loc = node.body.loc as es.SourceLocation
-      const transformed_body = transform(node.body)
+      const transformedBody = transform(node.body)
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
-	transformed_body[0] === 'block'
-	? transformed_body
-        : vector_to_list([
-            'return_statement',
-            transformed_body,
-            vector_to_list([
-              vector_to_list([loc.start.line, loc.start.column]),
-              vector_to_list([loc.end.line, loc.end.column])
+        transformedBody[0] === 'block'
+          ? transformedBody
+          : vector_to_list([
+              'return_statement',
+              transformedBody,
+              vector_to_list([
+                vector_to_list([loc.start.line, loc.start.column]),
+                vector_to_list([loc.end.line, loc.end.column])
+              ])
             ])
-          ])
       ])
     }
   ],
