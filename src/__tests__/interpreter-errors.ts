@@ -1,12 +1,12 @@
 /* tslint:disable:max-line-length */
 import { parseError, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
+import { stripIndent } from '../utils/formatters'
 import {
   expectDifferentParsedErrors,
   expectParsedError,
   expectParsedErrorNoSnapshot,
-  expectResult,
-  stripIndent
+  expectResult
 } from '../utils/testing'
 
 const undefinedVariable = stripIndent`

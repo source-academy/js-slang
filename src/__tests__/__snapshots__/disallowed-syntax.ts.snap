@@ -8069,7 +8069,7 @@ exports[`no import - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-import { stripIndent } from 'common-tags';",
+import { stripIndent } from './utils/testing';",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -8126,10 +8126,10 @@ import { stripIndent } from 'common-tags';",
     },
     DisallowedConstructError {
       "node": Node {
-        "end": 60,
+        "end": 64,
         "loc": SourceLocation {
           "end": Position {
-            "column": 42,
+            "column": 46,
             "line": 2,
           },
           "start": Position {
@@ -8138,10 +8138,10 @@ import { stripIndent } from 'common-tags';",
           },
         },
         "source": Node {
-          "end": 59,
+          "end": 63,
           "loc": SourceLocation {
             "end": Position {
-              "column": 41,
+              "column": 45,
               "line": 2,
             },
             "start": Position {
@@ -8149,10 +8149,10 @@ import { stripIndent } from 'common-tags';",
               "line": 2,
             },
           },
-          "raw": "'common-tags'",
+          "raw": "'./utils/testing'",
           "start": 46,
           "type": "Literal",
-          "value": "common-tags",
+          "value": "./utils/testing",
         },
         "specifiers": Array [
           Node {
@@ -8226,7 +8226,7 @@ You are trying to use Import declarations, which is not allowed (yet).
 exports[`no import: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "import { stripIndent } from 'common-tags';",
+  "code": "import { stripIndent } from './utils/testing';",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -8283,10 +8283,10 @@ Object {
     },
     DisallowedConstructError {
       "node": Node {
-        "end": 42,
+        "end": 46,
         "loc": SourceLocation {
           "end": Position {
-            "column": 42,
+            "column": 46,
             "line": 1,
           },
           "start": Position {
@@ -8295,10 +8295,10 @@ Object {
           },
         },
         "source": Node {
-          "end": 41,
+          "end": 45,
           "loc": SourceLocation {
             "end": Position {
-              "column": 41,
+              "column": 45,
               "line": 1,
             },
             "start": Position {
@@ -8306,10 +8306,10 @@ Object {
               "line": 1,
             },
           },
-          "raw": "'common-tags'",
+          "raw": "'./utils/testing'",
           "start": 28,
           "type": "Literal",
-          "value": "common-tags",
+          "value": "./utils/testing",
         },
         "specifiers": Array [
           Node {

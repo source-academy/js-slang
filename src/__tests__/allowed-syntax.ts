@@ -1,4 +1,5 @@
-import { snapshotFailure, snapshotSuccess, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { snapshotFailure, snapshotSuccess } from '../utils/testing'
 
 test.each([
   [
