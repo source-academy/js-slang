@@ -1,46 +1,9 @@
-\input source_header.tex
-
-\begin{document}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{1920}{Source}{\S 3}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\input source_intro.tex
-
-\section*{Changes}
-
-Compared to Source \S 2, Source \S 3 has the following changes:
-\begin{itemize}
-\item variable declaration
-\item variable assignment
-\item array assignment
-\item \textbf{\texttt{while}} loops
-\item \textbf{\texttt{for}} loops
-\item \textbf{\texttt{break}} and \textbf{\texttt{continue}}
-\item array access expressions
-\item literal array expressions
-\item function
-\lstinline{is_array} is available, with its obvious meaning
-\end{itemize}
-
-\input source_bnf.tex
-
-\newpage
-
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/4}{statement sequence}} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/4}{constant declaration}} \\
-&&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/49}{variable declaration}} \\
-&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/49}{variable assignment}} \\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}}
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function declaration}}\\
@@ -48,20 +11,6 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{return statement}}\\
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/20}{conditional statement}}\\
-&&                       && |   &\quad && \textbf{\texttt{while}}\  
-                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
-                                   \textit{block}
-                                                           && \textrm{while loop}\\
-&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
-                                          (\ \textit{assignment} \ | \  \textit{let}\ ) \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
-                                            \textit{block}
-                                                           && \textrm{for loop}\\
-&&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
-                                                           && \textrm{break statement}\\
-&&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
-                                                           && \textrm{continue statement}\\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/10}{block statement}}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
@@ -78,16 +27,10 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                           \textit{if-statement} \ )
                                                             && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/20}{conditional statement}} \\[1mm]
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/10}{block statement}} \\[1mm]
-&& \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/49}{variable declaration}} \\[1mm]
-&& \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/49}{variable assignment}} \\[1mm]
+                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/10}{block statement}} \\[1mm]         
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{primitive boolean expression}}\\
+                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{primitive boolean expression}} \\
 &&                       && |   &\quad && \textbf{\texttt{null}}
                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/30}{primitive list expression}} \\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/17}{primitive string expression}} \\
@@ -101,7 +44,7 @@ Compared to Source \S 2, Source \S 3 has the following changes:
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function application}} \\
+                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function application}}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
@@ -111,19 +54,12 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/33\#footnote-link-7}{function definition (block body)}} \\
+                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/33\#footnote-link-7}{function definition (block body)}}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{conditional expression}} \\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}}
-                                                           && \textrm{array access} \\
-&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
-                                            \textit{expressions}\
-                                            \textbf{\texttt{]}}
-                                                           && \textrm{literal array expression}\\
+                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{conditional expression}}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{parenthesised expression}}\\[1mm]
 && \textit{binary-operator}    \ 
@@ -131,51 +67,13 @@ Compared to Source \S 2, Source \S 3 has the following changes:
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
 &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{binary operator}}\\[1mm]                                          
+                                          && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{binary operator}}\\[1mm]
 && \textit{unary-operator}    
                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{unary operator}}\\[1mm]                        
+                        && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{unary operator}}\\[1mm]
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
                                                             && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{argument expressions}}
 \end{alignat*}
-
-\newpage
-
-\input source_boolean_operators
-
-\input source_loops
-
-\input source_return_3
-
-\input source_names
-
-\input source_lists
-
-\input source_pair_mutators
-
-\input source_array_support
-
-\input source_streams
-
-\input source_numbers
-
-\input source_strings
-
-\input source_arrays
-
-\input source_typing_3
-
-\input source_comments
-
-\newpage
-
-\input source_list_library
-
-\newpage
-
-\input source_stream_library
-
-    \end{document}
