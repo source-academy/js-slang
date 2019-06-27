@@ -1,6 +1,6 @@
 PDFLATEX = pdflatex
 
-SPECSNUMS = 0 1 2 3 4 styleguide
+SPECSNUMS = 1 2 3 4 styleguide
 
 SPECS = $(SPECSNUMS:%=source_%)
 
@@ -19,4 +19,7 @@ clean:
 	rm -f *~ *.dvi *.aux *.log *.ps *.out
 
 install: $(PDFSPECS)
+	scp $(PDFSPECS) sicp@web1.comp.nus.edu.sg:public_html/source/.
+
+installinternal: $(PDFSPECS)
 	scp *.pdf cs1101s@sunfire.comp.nus.edu.sg:public_html/source_1920/.

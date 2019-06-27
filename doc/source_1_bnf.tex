@@ -1,77 +1,77 @@
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/4}{statement sequence}} \\[1mm]
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/4}{statement sequence}} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/4}{constant declaration}} \\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/4}{constant declaration}} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function declaration}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/6}{function declaration}}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{return statement}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/6}{return statement}}\\
 &&                       && |   &\quad && \textit{if-statement} \quad
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/20}{conditional statement}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/20}{conditional statement}}\\
 &&                       && |   &\quad &&  \textit{block} 
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/10}{block statement}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/10}{block statement}}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{expression statement}} \\[1mm]
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/3}{expression statement}} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
-                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function parameters}}   \\[1mm]
+                                                            && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/6}{function parameters}}   \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
 &&                       &&     &      && \textbf{\texttt{else}}\
                                           (\ \textit{block}
                                           \ | \
-                                          \textit{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/21\#footnote-1}{if-statement}} \ )
-                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/20}{conditional statement}}   \\[1mm]
+                                          \textit{\href{https://sicp.comp.nus.edu.sg/chapters/21\#footnote-1}{if-statement}} \ )
+                                                            && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/20}{conditional statement}}   \\[1mm]
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/10}{block statement}}\\[1mm]         
-&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{primitive number expression}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/10}{block statement}}\\[1mm]         
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{primitive boolean expression}}\\
-&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/17}{primitive string expression}}\\
-&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/4}{name expression}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/8}{primitive boolean expression}}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/17}{primitive string expression}}\\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/4}{name expression}}\\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
                                             \textit{expression} \qquad
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{binary operator combination}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/3}{binary operator combination}}\\
 &&                       && |   &\quad &&   \textit{unary-operator} \ 
                                             \textit{expression}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{unary operator combination}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/8}{unary operator combination}}\\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{function application}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/6}{function application}}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/20}{function definition (expr. body)}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/20}{function definition (expr. body)}}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/33\#footnote-link-7}{function definition (block body)}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/33\#footnote-link-7}{function definition (block body)}}\\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
-                                                           && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{conditional expression}}\\
+                                                           && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/8}{conditional expression}}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
-                                            \textbf{\texttt{)}} && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{parenthesised expression}}\\[1mm]
+                                            \textbf{\texttt{)}} && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/3}{parenthesised expression}}\\[1mm]
 && \textit{binary-operator}    \ 
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
 &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/3}{binary operator}}\\[1mm]
+                                          && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/3}{binary operator}}\\[1mm]
 && \textit{unary-operator}    
                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/8}{unary operator}}\\[1mm]
+                        && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/8}{unary operator}}\\[1mm]
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
-                                                            && \textrm{\href{https://www.comp.nus.edu.sg/~cs1101s/sicp/chapters/6}{argument expressions}} 
+                                                            && \textrm{\href{https://sicp.comp.nus.edu.sg/chapters/6}{argument expressions}} 
 \end{alignat*}
