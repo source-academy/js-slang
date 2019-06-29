@@ -1,4 +1,5 @@
-import { expectParsedError, expectResult, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectParsedError, expectResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {

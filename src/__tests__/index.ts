@@ -1,12 +1,12 @@
 import { Value } from '../types'
+import { stripIndent } from '../utils/formatters'
 import {
   expectParsedError,
   expectParsedErrorNoErrorSnapshot,
   expectParsedErrorNoSnapshot,
   expectResult,
   expectToLooselyMatchJS,
-  expectToMatchJS,
-  stripIndent
+  expectToMatchJS
 } from '../utils/testing'
 
 const toString = (x: Value) => '' + x
