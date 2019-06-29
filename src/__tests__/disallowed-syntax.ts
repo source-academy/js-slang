@@ -1,4 +1,5 @@
-import { expectParsedError, expectWarning, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectParsedError, expectWarning } from '../utils/testing'
 
 test('Cannot leave blank init in for loop', () => {
   return expectParsedError(
@@ -1127,7 +1128,7 @@ You are trying to use Export default declarations, which is not allowed (yet).
 test('no import', () => {
   return expectParsedError(
     stripIndent`
-    import { stripIndent } from 'common-tags';
+    import { stripIndent } from './utils/testing';
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
@@ -1140,7 +1141,7 @@ test('no import - verbose', () => {
   return expectParsedError(
     stripIndent`
 	  "enable verbose";
-	  import { stripIndent } from 'common-tags';
+	  import { stripIndent } from './utils/testing';
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`

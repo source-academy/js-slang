@@ -1,8 +1,8 @@
-import { oneLine } from 'common-tags'
 import * as es from 'estree'
 
 import { parse as sourceParse } from '../parser'
 import { Context, Value } from '../types'
+import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
 
 class ParseError extends Error {

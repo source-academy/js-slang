@@ -6,11 +6,11 @@ import {
   Position
 } from 'acorn'
 import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
-import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from './types'
+import { stripIndent } from './utils/formatters'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX

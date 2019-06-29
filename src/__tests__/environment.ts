@@ -1,8 +1,8 @@
-import { stripIndent } from 'common-tags'
 import { Program } from 'estree'
 import { evaluate } from '../interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser'
+import { stripIndent } from '../utils/formatters'
 
 test('Function params and body identifiers are in the same environment', () => {
   const code = stripIndent`
