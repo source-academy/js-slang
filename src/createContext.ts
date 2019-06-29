@@ -115,10 +115,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value, s: string) =>
-      externalBuiltIns.rawDisplay(v, s, context.externalContext)
+    externalBuiltIns.rawDisplay(v, s, context.externalContext)
   const display = (v: Value, s: string) => rawDisplay(v, s)
-  const prompt = (v: Value) => externalBuiltIns.prompt(v, "", context.externalContext)
-  const alert = (v: Value) => externalBuiltIns.alert(v, "", context.externalContext)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, '', context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {

@@ -10,12 +10,12 @@ import { Context, Value } from '../types'
  */
 export function rawDisplay(value: Value, str: string, externalContext: any) {
   // tslint:disable-next-line:no-console
-  console.log( (str === undefined ? "" : str + " ") + value.toString())
+  console.log((str === undefined ? '' : str + ' ') + value.toString())
   return value
 }
 
 export function error_message(value: Value, str?: string) {
-  const output = (str === undefined ? "" : str + " ") + stringify(value)
+  const output = (str === undefined ? '' : str + ' ') + stringify(value)
   throw new Error(output)
 }
 
@@ -30,7 +30,7 @@ export function timed(
     const start = runtime()
     const result = f(...args)
     const diff = runtime() - start
-    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', "", externalContext)
+    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', '', externalContext)
     return result
   }
 }
