@@ -1,7 +1,7 @@
-import { stripIndent } from 'common-tags'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser'
 import { transpile } from '../transpiler'
+import { stripIndent } from '../utils/formatters'
 
 /*  DO NOT HAVE 'native[<digit>]' AS A SUBSTRING IN CODE STRINGS ANYWHERE IN THIS FILE!
  *  Some code here have a redundant '1;' as the last statement to prevent the

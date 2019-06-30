@@ -1,4 +1,5 @@
-import { expectParsedErrorNoSnapshot, expectResult, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectParsedErrorNoSnapshot, expectResult } from '../utils/testing'
 
 test('Check that stack is at most 10k in size', () => {
   return expectParsedErrorNoSnapshot(stripIndent`

@@ -1,10 +1,11 @@
 /* tslint:disable:max-classes-per-file */
-import { stripIndent } from 'common-tags'
 import * as es from 'estree'
 import { JSSLANG_PROPERTIES } from './constants'
 import { stringify } from './interop'
+
 import { RuntimeSourceError } from './interpreter-errors'
 import { ErrorSeverity, ErrorType } from './types'
+import { stripIndent } from './utils/formatters'
 
 function getWarningMessage() {
   const from = JSSLANG_PROPERTIES.maxExecTime / 1000

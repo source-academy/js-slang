@@ -1,4 +1,5 @@
-import { expectResult, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectResult } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
   return expectResult(

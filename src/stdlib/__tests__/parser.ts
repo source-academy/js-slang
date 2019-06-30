@@ -1,4 +1,5 @@
-import { oneLine, snapshotSuccess, stripIndent } from '../../utils/testing'
+import { oneLine, stripIndent } from '../../utils/formatters'
+import { snapshotSuccess } from '../../utils/testing'
 
 test('Parses empty program', () => {
   return snapshotSuccess(
