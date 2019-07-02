@@ -51,8 +51,11 @@ an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' bu
 suspends execution of the program until one of the two buttons is pressed. If 
 the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
 If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
-\item \texttt{display(x)}: Displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{a}.  
+\item \texttt{display(x)}: Displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{x}.  
+\item \texttt{display(x, s)}: Displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{x}.  
 \item \texttt{error(x)}: Displays the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+  of any call of \texttt{error} aborts the running program immediately.
+\item \texttt{error(x, s)}: Displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
   of any call of \texttt{error} aborts the running program immediately.
 \item \verb#stringify#\texttt{(x)}: returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
 \end{itemize}
