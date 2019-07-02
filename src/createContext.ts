@@ -166,7 +166,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'filter(pred, xs)', list.filter)
     defineBuiltin(context, 'enum_list(start, end)', list.enum_list)
     defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
-    defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
+    defineBuiltin(context, 'reduce(fun, initial, xs)', list.reduce)
     defineBuiltin(context, 'equal(value1, value2)', list.equal)
     defineBuiltin(context, 'draw_data(xs)', visualiseList)
   }

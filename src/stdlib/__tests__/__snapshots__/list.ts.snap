@@ -1,34 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`accumulate: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": 10,
-  "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-(( <globals redacted> ) => {
-  return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, wrap((curr, acc) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", curr, acc, 1, 26) }), \\\\\\"(curr, acc) => curr + acc\\\\\\"), 0, callIfFuncAndRightArgs(list, 1, 41, 2, 3, 4, 1));\\");
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`append: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -771,64 +742,6 @@ const getProp = native.operators.get(\\"getProp\\");
 }
 `;
 
-exports[`non-list error accumulate: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error accumulate: expectParsedError 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`non-list error append: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1061,6 +974,64 @@ Object {
 }
 `;
 
+exports[`non-list error reduce: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "reduce((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 34,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-list error reduce: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "reduce((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 34,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`non-list error remove: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1259,6 +1230,35 @@ const getProp = native.operators.get(\\"getProp\\");
 (( <globals redacted> ) => {
   return (() => {
     const lastStatementResult = eval(\\"callIfFuncAndRightArgs(pair, 1, 0, 1, 'a string \\\\\\"\\\\\\"');\\");
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`reduce: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "reduce((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+(( <globals redacted> ) => {
+  return (() => {
+    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(reduce, 1, 0, wrap((curr, acc) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", curr, acc, 1, 22) }), \\\\\\"(curr, acc) => curr + acc\\\\\\"), 0, callIfFuncAndRightArgs(list, 1, 37, 2, 3, 4, 1));\\");
     return lastStatementResult;
   })();
 })();

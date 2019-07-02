@@ -147,7 +147,7 @@ expression.
 \begin{lstlisting}
 // good style
 function count_buttons(garment) {
-    return accumulate((sleaves, total) => sleaves + total,
+    return reduce((sleaves, total) => sleaves + total,
         0, 
         map(jacket =>
             is_checkered(jacket)
@@ -158,7 +158,7 @@ function count_buttons(garment) {
 
 // good style
 function count_buttons(garment) {
-    return accumulate(
+    return reduce(
         (sleaves, total) =>
             delicate_calculation(sleaves + total),
         0,
@@ -171,7 +171,7 @@ function count_buttons(garment) {
 
 // bad style: too much indentation
 function count_buttons(garment) {
-    return accumulate((sleaves, total) =>
+    return reduce((sleaves, total) =>
                       delicate_calculation(sleaves + total),
                       0, 
 		      map(jacket =>
@@ -183,7 +183,7 @@ function count_buttons(garment) {
 
 // no newline allowed between parameters and =>
 function count_buttons(garment) {
-    return accumulate(
+    return reduce(
         (sleaves, total) 
             => delicate_calculation(sleaves + total),
         0,

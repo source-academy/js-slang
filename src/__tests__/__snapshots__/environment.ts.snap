@@ -50,7 +50,6 @@ Array [
       "head": Object {
         "Infinity": Infinity,
         "NaN": NaN,
-        "accumulate": [Function],
         "append": [Function],
         "apply_in_underlying_javascript": [Function],
         "array_length": [Function],
@@ -127,6 +126,7 @@ Array [
         "parse_int": [Function],
         "prompt": [Function],
         "raw_display": [Function],
+        "reduce": [Function],
         "remove": [Function],
         "remove_all": [Function],
         "reverse": [Function],
@@ -146,7 +146,6 @@ Array [
     "head": Object {
       "Infinity": Infinity,
       "NaN": NaN,
-      "accumulate": [Function],
       "append": [Function],
       "apply_in_underlying_javascript": [Function],
       "array_length": [Function],
@@ -223,6 +222,7 @@ Array [
       "parse_int": [Function],
       "prompt": [Function],
       "raw_display": [Function],
+      "reduce": [Function],
       "remove": [Function],
       "remove_all": [Function],
       "reverse": [Function],

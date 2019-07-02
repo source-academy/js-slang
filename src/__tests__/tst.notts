@@ -27,7 +27,7 @@
 //   "HOFs work",
 //   () => {
 //     const code = `
-//     accumulate((x, y) => x + y, 0, list(1,2,3));
+//     reduce((x, y) => x + y, 0, list(1,2,3));
 //   `;
 //     const context = mockContext(2);
 //     const promise = runInContext(code, context, { scheduler: "preemptive" });

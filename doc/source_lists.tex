@@ -81,13 +81,13 @@ of list \lstinline{xs} at position \lstinline{n},
 where the first element has index 0.
 Iterative process;
 time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
-\item \lstinline{accumulate(op, initial, xs)}: Applies binary
+\item \lstinline{reduce(op, initial, xs)}: Applies binary
 function \lstinline{op} to the elements of \lstinline{xs} from
 right-to-left order, first applying \lstinline{op} to the last element
 and the value \lstinline{initial}, resulting in $r_1$, then to the 
 second-last element and $r_1$, resulting in $r_2$, etc, and finally
 to the first element and $r_{n-1}$, where $n$ is the length of the
-list. Thus, \lstinline{accumulate(op,zero,list(1,2,3))} results in
+list. Thus, \lstinline{reduce(op,zero,list(1,2,3))} results in
 \lstinline{op(1, op(2, op(3, zero)))}.
 Recursive process;
 time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs},

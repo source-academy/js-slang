@@ -181,20 +181,20 @@ function list_ref(xs, n) {
         : list_ref(tail(xs), n - 1);
 }
 
-// accumulate applies an operation op (assumed to be a binary function)
+// reduce applies an operation op (assumed to be a binary function)
 // to elements of sequence (assumed to be a list) in a right-to-left order.
 // first apply op to the last element and initial, resulting in r1, then to
 // the  second-last element and r1, resulting in r2, etc, and finally
 // to the first element and r_n-1, where n is the length of the
 // list.
-// accumulate(op, zero, list(1, 2, 3)) results in
+// reduce(op, zero, list(1, 2, 3)) results in
 // op(1, op(2, op(3, zero)))
 
-function accumulate(f, initial, xs) {
+function reduce(f, initial, xs) {
     return is_null(xs)
         ? initial
         : f(head(xs),
-            accumulate(f, initial, tail(xs)));
+            reduce(f, initial, tail(xs)));
 }
 
 // \end{lstlisting} // \texttt{list.js END}

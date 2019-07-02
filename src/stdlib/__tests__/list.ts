@@ -78,7 +78,7 @@ test('empty list is null', () => {
     list();
   `,
     { chapter: 2, native: true }
-  ).toMatchInlineSnapshot('null')
+  ).toMatchInlineSnapshot(`null`)
 })
 
 test('for_each', () => {
@@ -218,10 +218,10 @@ test('list_ref', () => {
   ).toMatchInlineSnapshot(`4`)
 })
 
-test('accumulate', () => {
+test('reduce', () => {
   return expectResult(
     stripIndent`
-    accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
+    reduce((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`10`)
@@ -410,10 +410,10 @@ test('non-list error filter', () => {
   )
 })
 
-test('non-list error accumulate', () => {
+test('non-list error reduce', () => {
   return expectParsedError(
     stripIndent`
-    accumulate((x, y) => x + y, [1, 2, 3]);
+    reduce((x, y) => x + y, [1, 2, 3]);
   `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(
@@ -421,10 +421,10 @@ test('non-list error accumulate', () => {
   )
 })
 
-test('non-list error accumulate', () => {
+test('non-list error reduce', () => {
   return expectParsedError(
     stripIndent`
-    accumulate((x, y) => x + y, [1, 2, 3]);
+    reduce((x, y) => x + y, [1, 2, 3]);
   `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(
