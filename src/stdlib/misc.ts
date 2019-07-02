@@ -8,14 +8,14 @@ import { Context, Value } from '../types'
  * @param externalContext a property of Context that can hold
  *   any information required for external use (optional).
  */
-export function rawDisplay(value: Value, externalContext: any) {
+export function rawDisplay(value: Value, str: string, externalContext: any) {
   // tslint:disable-next-line:no-console
-  console.log(value.toString())
+  console.log((str === undefined ? '' : str + ' ') + value.toString())
   return value
 }
 
-export function error_message(value: Value) {
-  const output = stringify(value)
+export function error_message(value: Value, str?: string) {
+  const output = (str === undefined ? '' : str + ' ') + stringify(value)
   throw new Error(output)
 }
 
@@ -24,13 +24,13 @@ export function timed(
   // tslint:disable-next-line:ban-types
   f: Function,
   externalContext: any,
-  displayBuiltin: (value: Value, externalContext: any) => Value
+  displayBuiltin: (value: Value, str: string, externalContext: any) => Value
 ) {
   return (...args: any[]) => {
     const start = runtime()
     const result = f(...args)
     const diff = runtime() - start
-    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', externalContext)
+    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', '', externalContext)
     return result
   }
 }
