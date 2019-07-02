@@ -45,9 +45,9 @@ function createTestContext({
   } else {
     const testContext: TestContext = {
       ...createContext(chapter, [], undefined, {
-        rawDisplay: (str, externalContext) => {
-          testContext.displayResult.push(str)
-          return str
+        rawDisplay: (str1, str2, externalContext) => {
+          testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+          return str1
         },
         prompt: (str, externalContext) => {
           testContext.promptResult.push(str)
