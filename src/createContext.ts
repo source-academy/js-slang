@@ -114,10 +114,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
-  const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
-  const display = (v: Value) => (rawDisplay(stringify(v)), v)
-  const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
-  const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  const rawDisplay = (v: Value, s: string) =>
+    externalBuiltIns.rawDisplay(v, s, context.externalContext)
+  const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, '', context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
