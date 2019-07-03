@@ -59,8 +59,9 @@ const createBlockEnvironment = (
 
 const handleRuntimeError = (context: Context, error: errors.RuntimeSourceError): never => {
   context.errors.push(error)
-  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
-  context.runtime.environments = [globalEnvironment]
+  context.runtime.environments = context.runtime.environments.slice(
+    -context.numberOfOuterEnvironments
+  )
   throw error
 }
 
@@ -561,15 +562,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   *Program(node: es.BlockStatement, context: Context) {
-    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
-    let result: Value
-    for (const statement of node.body) {
-      result = yield* evaluate(statement, context)
-      if (result instanceof ReturnValue || result instanceof TailCallReturnValue) {
-        break
-      }
-    }
-    return result
+    context.numberOfOuterEnvironments += 1
+    const environment = createBlockEnvironment(context, 'programEnvironment')
+    pushEnvironment(context, environment)
+    return yield* evaluateBlockSatement(context, node)
   }
 }
 

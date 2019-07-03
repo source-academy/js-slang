@@ -54,6 +54,7 @@ export const createEmptyContext = <T>(
     errors: [],
     externalContext,
     runtime: createEmptyRuntime(),
+    numberOfOuterEnvironments: 1,
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto'
