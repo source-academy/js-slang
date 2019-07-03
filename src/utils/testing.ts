@@ -107,7 +107,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
       // replace declaration of builtins since they're repetitive
       const replacedBuiltins = replacedGlobalsLine.replace(
-        /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
+        /\n      const \w+ = native\.globals\.(previousScope.)+variables.get\("\w+"\)\.value;/g,
         ''
       )
       transpiled = replacedBuiltins

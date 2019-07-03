@@ -198,25 +198,30 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      const x = true;
-      if (boolOrErr(true, 3, 2)) {
-        const x = false;
-      } else {
-        const x = false;
+    {
+      {
+        const test = wrap(() => {
+          const x = true;
+          if (boolOrErr(true, 3, 2)) {
+            const x = false;
+          } else {
+            const x = false;
+          }
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function test() {\\\\n  const x = true;\\\\n  if (true) {\\\\n    const x = false;\\\\n  } else {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  const x = true;\\\\n  if (true) {\\\\n    const x = false;\\\\n  } else {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -250,32 +255,37 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      let z = [];
-      const startTime = runtime();
-      for (let x = 0; boolOrErr(binaryOp(\\"<\\", x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", x, 1, 3, 30)) {
-        throwIfTimeout(startTime, runtime(), 3, 2);
-        setProp(z, x, wrap(() => ({
-          isTail: false,
-          value: x
-        }), \\"() => x\\"), 4, 4);
+    {
+      {
+        const test = wrap(() => {
+          let z = [];
+          const startTime = runtime();
+          for (let x = 0; boolOrErr(binaryOp(\\"<\\", x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", x, 1, 3, 30)) {
+            throwIfTimeout(startTime, runtime(), 3, 2);
+            setProp(z, x, wrap(() => ({
+              isTail: false,
+              value: x
+            }), \\"() => x\\"), 4, 4);
+          }
+          return {
+            isTail: true,
+            function: getProp(z, 1, 6, 9),
+            functionName: \\"<anonymous>\\",
+            arguments: [],
+            line: 6,
+            column: 9
+          };
+        }, \\"function test() {\\\\n  let z = [];\\\\n  for (let x = 0; x < 10; x = x + 1) {\\\\n    z[x] = () => x;\\\\n  }\\\\n  return z[1]();\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: true,
-        function: getProp(z, 1, 6, 9),
-        functionName: \\"<anonymous>\\",
-        arguments: [],
-        line: 6,
-        column: 9
-      };
-    }, \\"function test() {\\\\n  let z = [];\\\\n  for (let x = 0; x < 10; x = x + 1) {\\\\n    z[x] = () => x;\\\\n  }\\\\n  return z[1]();\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -308,24 +318,29 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      let x = true;
-      const startTime = runtime();
-      for (let x = 1; boolOrErr(binaryOp(\\">\\", x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", x, 1, 3, 29)) {
-        throwIfTimeout(startTime, runtime(), 3, 2);
+    {
+      {
+        const test = wrap(() => {
+          let x = true;
+          const startTime = runtime();
+          for (let x = 1; boolOrErr(binaryOp(\\">\\", x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", x, 1, 3, 29)) {
+            throwIfTimeout(startTime, runtime(), 3, 2);
+          }
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function test() {\\\\n  let x = true;\\\\n  for (let x = 1; x > 0; x = x - 1) {}\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 7, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  for (let x = 1; x > 0; x = x - 1) {}\\\\n  return x;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 7, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -361,25 +376,30 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      let x = true;
-      if (boolOrErr(true, 3, 2)) {
-        let x = false;
-      } else {
-        let x = false;
+    {
+      {
+        const test = wrap(() => {
+          let x = true;
+          if (boolOrErr(true, 3, 2)) {
+            let x = false;
+          } else {
+            let x = false;
+          }
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function test() {\\\\n  let x = true;\\\\n  if (true) {\\\\n    let x = false;\\\\n  } else {\\\\n    let x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  if (true) {\\\\n    let x = false;\\\\n  } else {\\\\n    let x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -413,23 +433,28 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      const x = true;
+    {
       {
-        const x = false;
+        const test = wrap(() => {
+          const x = true;
+          {
+            const x = false;
+          }
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function test() {\\\\n  const x = true;\\\\n  {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  const x = true;\\\\n  {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -464,26 +489,31 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
 (( <globals redacted> ) => {
   return (() => {
-    const test = wrap(() => {
-      let x = true;
-      const startTime = runtime();
-      while (boolOrErr(true, 3, 2)) {
-        throwIfTimeout(startTime, runtime(), 3, 2);
-        let x = false;
-        break;
+    {
+      {
+        const test = wrap(() => {
+          let x = true;
+          const startTime = runtime();
+          while (boolOrErr(true, 3, 2)) {
+            throwIfTimeout(startTime, runtime(), 3, 2);
+            let x = false;
+            break;
+          }
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function test() {\\\\n  let x = true;\\\\n  while (true) {\\\\n    let x = false;\\\\n    break;\\\\n  }\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 9, 0);\\");
+        native.globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          value: test
+        });
       }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  while (true) {\\\\n    let x = false;\\\\n    break;\\\\n  }\\\\n  return x;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 9, 0);\\");
-    native.globals.set(\\"test\\", {
-      kind: \\"const\\",
-      value: test
-    });
+    }
     return lastStatementResult;
   })();
 })();

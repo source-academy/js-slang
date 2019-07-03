@@ -692,7 +692,8 @@ test('Runtime error when redeclaring constant in interpreter', () => {
   })
 })
 
-test('Runtime error when redeclaring constant in native', () => {
+/** The below test case is outdated! A new scope is created for each run of the code. **/
+test.skip('Runtime error when redeclaring constant in native', () => {
   const code1 = `
     const f = x => x;
   `
