@@ -1,11 +1,11 @@
 /* tslint:disable:max-line-length */
+import { stripIndent } from '../utils/formatters'
 import {
   expectDifferentParsedErrors,
   expectParsedError,
   expectParsedErrorNoSnapshot,
   expectResult
 } from '../utils/testing'
-import { stripIndent } from '../utils/formatters'
 
 const undefinedVariable = stripIndent`
 im_undefined;
