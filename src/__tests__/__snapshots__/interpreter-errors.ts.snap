@@ -2239,6 +2239,71 @@ let lastStatementResult = undefined;
 }
 `;
 
+exports[`Error when redeclaring const after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring const after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when redeclaring constant as variable: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -2294,6 +2359,266 @@ const f = x => x;",
     },
   ],
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "parseError",
@@ -2420,2411 +2745,6 @@ Object {
   "visualiseListResult": Array [],
 }
 `;
-
-exports[`Runtime error when redeclaring constant as function - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 87,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant as function - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-You will need to declare another variable, as f is read-only.
-"
-`;
-
-exports[`Runtime error when redeclaring constant as function 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 86,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant as function 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant as function 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring constant as variable - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 85,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant as variable - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant as variable - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant as variable - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-You will need to declare another variable, as f is read-only.
-"
-`;
-
-exports[`Runtime error when redeclaring constant as variable 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 84,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant as variable 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant as variable 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant as variable 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring constant in interpreter 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 83,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant in interpreter 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant in interpreter 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring constant in interpreter 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring constant in native 1`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant in native 2`] = `""`;
-
-exports[`Runtime error when redeclaring constant in native 3`] = `
-Object {
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring constant in native 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring function - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 99,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring function - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-You will need to declare another variable, as f is read-only.
-"
-`;
-
-exports[`Runtime error when redeclaring function 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 98,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function 2`] = `""`;
-
-exports[`Runtime error when redeclaring function 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring function as constant - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 95,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function as constant - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring function as constant - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function as constant - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-You will need to declare another variable, as f is read-only.
-"
-`;
-
-exports[`Runtime error when redeclaring function as constant 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 94,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function as constant 2`] = `""`;
-
-exports[`Runtime error when redeclaring function as constant 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function as constant 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring function as variable - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 97,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function as variable - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring function as variable - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function as variable - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-You will need to declare another variable, as f is read-only.
-"
-`;
-
-exports[`Runtime error when redeclaring function as variable 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 96,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring function as variable 2`] = `""`;
-
-exports[`Runtime error when redeclaring function as variable 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring function as variable 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring variable - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 91,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
-
-	f = x => x;
-
-"
-`;
-
-exports[`Runtime error when redeclaring variable 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 90,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring variable as constant - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 89,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable as constant - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable as constant - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable as constant - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
-
-	f = x => x;
-
-"
-`;
-
-exports[`Runtime error when redeclaring variable as constant 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 88,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable as constant 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable as constant 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable as constant 4`] = `"Line 2: Redeclaring name f."`;
-
-exports[`Runtime error when redeclaring variable as function - verbose 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 93,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable as function - verbose 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable as function - verbose 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable as function - verbose 4`] = `
-"Line 3, Column 4: Redeclaring name f.
-Since f has already been declared, you can assign a value to it without re-declaring. As such, you can just do
-
-	f = (x) => {...;
-
-"
-`;
-
-exports[`Runtime error when redeclaring variable as function 1`] = `
-Object {
-  "context": Object {
-    "chapter": 3,
-    "contextId": 92,
-    "debugger": Object {
-      "observers": Object {
-        "callbacks": Array [],
-      },
-      "state": Object {
-        "it": Object {},
-        "scheduler": PreemptiveScheduler {
-          "steps": 1000,
-        },
-      },
-      "status": false,
-    },
-    "errors": Array [],
-    "executionMethod": "auto",
-    "externalContext": undefined,
-    "externalSymbols": Array [],
-    "runtime": Object {
-      "break": false,
-      "debuggerOn": true,
-      "environments": Array [
-        Object {
-          "head": Object {
-            "Infinity": Infinity,
-            "NaN": NaN,
-            "accumulate": [Function],
-            "append": [Function],
-            "array_length": [Function],
-            "build_list": [Function],
-            "display": [Function],
-            "draw_data": [Function],
-            "enum_list": [Function],
-            "equal": [Function],
-            "error": [Function],
-            "f": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "head": [Function],
-            "is_array": [Function],
-            "is_boolean": [Function],
-            "is_function": [Function],
-            "is_list": [Function],
-            "is_null": [Function],
-            "is_number": [Function],
-            "is_pair": [Function],
-            "is_string": [Function],
-            "is_undefined": [Function],
-            "length": [Function],
-            "list": [Function],
-            "list_ref": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "math_E": 2.718281828459045,
-            "math_LN10": 2.302585092994046,
-            "math_LN2": 0.6931471805599453,
-            "math_LOG10E": 0.4342944819032518,
-            "math_LOG2E": 1.4426950408889634,
-            "math_PI": 3.141592653589793,
-            "math_SQRT1_2": 0.7071067811865476,
-            "math_SQRT2": 1.4142135623730951,
-            "math_abs": [Function],
-            "math_acos": [Function],
-            "math_acosh": [Function],
-            "math_asin": [Function],
-            "math_asinh": [Function],
-            "math_atan": [Function],
-            "math_atan2": [Function],
-            "math_atanh": [Function],
-            "math_cbrt": [Function],
-            "math_ceil": [Function],
-            "math_clz32": [Function],
-            "math_cos": [Function],
-            "math_cosh": [Function],
-            "math_exp": [Function],
-            "math_expm1": [Function],
-            "math_floor": [Function],
-            "math_fround": [Function],
-            "math_hypot": [Function],
-            "math_imul": [Function],
-            "math_log": [Function],
-            "math_log10": [Function],
-            "math_log1p": [Function],
-            "math_log2": [Function],
-            "math_max": [Function],
-            "math_min": [Function],
-            "math_pow": [Function],
-            "math_random": [Function],
-            "math_round": [Function],
-            "math_sign": [Function],
-            "math_sin": [Function],
-            "math_sinh": [Function],
-            "math_sqrt": [Function],
-            "math_tan": [Function],
-            "math_tanh": [Function],
-            "math_trunc": [Function],
-            "member": [Function],
-            "pair": [Function],
-            "parse_int": [Function],
-            "prompt": [Function],
-            "raw_display": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "runtime": [Function],
-            "set_head": [Function],
-            "set_tail": [Function],
-            "stringify": [Function],
-            "tail": [Function],
-            "undefined": undefined,
-          },
-          "name": "global",
-          "tail": null,
-        },
-      ],
-      "isRunning": false,
-      "nodes": Array [],
-      "value": undefined,
-    },
-  },
-  "status": "finished",
-  "value": undefined,
-}
-`;
-
-exports[`Runtime error when redeclaring variable as function 2`] = `""`;
-
-exports[`Runtime error when redeclaring variable as function 3`] = `
-Object {
-  "status": "error",
-}
-`;
-
-exports[`Runtime error when redeclaring variable as function 4`] = `"Line 2: Redeclaring name f."`;
 
 exports[`Type error when accessing property of function: expectParsedError 1`] = `
 Object {
