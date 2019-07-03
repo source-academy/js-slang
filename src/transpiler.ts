@@ -62,15 +62,15 @@ const globalIds = {
 let contextId: number
 
 function createStorageLocationAstFor(type: StorageLocations): es.MemberExpression {
-    return create.memberExpression(
-      {
-        type: 'MemberExpression',
-        object: globalIds.native,
-        property: create.literal(contextId),
-        computed: true
-      },
-      type
-    )
+  return create.memberExpression(
+    {
+      type: 'MemberExpression',
+      object: globalIds.native,
+      property: create.literal(contextId),
+      computed: true
+    },
+    type
+  )
 }
 
 function createGetFromStorageLocationAstFor(name: string, type: StorageLocations): es.Expression {
