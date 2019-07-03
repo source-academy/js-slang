@@ -3,11 +3,19 @@
 // Supporting streams in the Scheme style, following
 // "stream discipline"
 
+// stream_tail assumes that the tail (second component) of the
+//  pair xs is a nullary function, and returns the result of
+//  applying that function.
+
+function stream_tail(xs) {
+    return tail(xs)();
+}
+
 // is_stream recurses down the stream and checks that it ends with the
 // empty list null
 
 function is_stream(xs) {
-    return is_null(xs) || (is_pair(xs) && is_list(stream_tail(xs)));
+    return is_null(xs) || (is_pair(xs) && is_stream(stream_tail(xs)));
 }
 
 // A stream is either null or a pair whose tail is

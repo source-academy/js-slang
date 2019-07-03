@@ -4,6 +4,7 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
+import * as stream from './stdlib/stream'
 import { list_to_vector } from './stdlib/list'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
@@ -176,6 +177,24 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
     defineBuiltin(context, 'array_length(arr)', misc.array_length)
     defineBuiltin(context, 'is_array(val)', misc.is_array)
+    // Stream library
+    defineBuiltin(context, 'is_stream(val)', stream.is_stream)
+    defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
+    defineBuiltin(context, 'stream_to_list(xs)', stream.stream_to_list)
+    defineBuiltin(context, 'stream_length(xs)', stream.stream_length)
+    defineBuiltin(context, 'stream_map(fun, xs)', stream.stream_map)
+    defineBuiltin(context, 'build_stream(n, fun)', stream.build_stream)
+    defineBuiltin(context, 'stream_for_each(fun, xs)', stream.stream_for_each)
+    defineBuiltin(context, 'stream_reverse(xs)', stream.stream_reverse)
+    defineBuiltin(context, 'stream_append(xs, ys)', stream.stream_append)
+    defineBuiltin(context, 'stream_member(val, xs)', stream.stream_member)
+    defineBuiltin(context, 'stream_remove(val, xs)', stream.stream_remove)
+    defineBuiltin(context, 'stream_remove_all(val, xs)', stream.stream_remove_all)
+    defineBuiltin(context, 'stream_filter(pred, xs)', stream.stream_filter)
+    defineBuiltin(context, 'enum_stream(start, end)', stream.enum_stream)
+    defineBuiltin(context, 'integers_from(n)', stream.integers_from)
+    defineBuiltin(context, 'eval_stream(xs, n)', stream.eval_stream)
+    defineBuiltin(context, 'stream_ref(xs, n)', stream.stream_ref)
   }
 
   if (context.chapter >= 4) {

@@ -3,7 +3,7 @@
 The following stream processing functions are supported:
 
 \begin{itemize}
-\item \lstinline{stream_tail(x)}: \textit{Built-in}, assumes that the tail (second component) of the
+\item \lstinline{stream_tail(x)}: assumes that the tail (second component) of the
   pair \lstinline{x} is a nullary function, and returns the result of
   applying that function.\\
 \emph{Laziness:}  Yes: \lstinline{stream_tail} only forces the direct tail of a given
