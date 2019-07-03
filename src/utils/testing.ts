@@ -1,10 +1,7 @@
-import { mockContext } from '../mocks/context'
-
-export { stripIndent, oneLine } from 'common-tags'
-
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, Result, runInContext } from '../index'
 import { stringify } from '../interop'
+import { mockContext } from '../mocks/context'
 import { parse } from '../parser'
 import { transpile } from '../transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
@@ -48,9 +45,9 @@ function createTestContext({
   } else {
     const testContext: TestContext = {
       ...createContext(chapter, [], undefined, {
-        rawDisplay: (str, externalContext) => {
-          testContext.displayResult.push(str)
-          return str
+        rawDisplay: (str1, str2, externalContext) => {
+          testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+          return str1
         },
         prompt: (str, externalContext) => {
           testContext.promptResult.push(str)

@@ -1,4 +1,4 @@
-import { stripIndent } from 'common-tags'
+import { stripIndent } from '../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../utils/testing'
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {

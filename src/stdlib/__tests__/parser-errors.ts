@@ -1,4 +1,5 @@
-import { expectParsedError, stripIndent } from '../../utils/testing'
+import { stripIndent } from '../../utils/formatters'
+import { expectParsedError } from '../../utils/testing'
 
 test('Blatant syntax error', () => {
   return expectParsedError(

@@ -3,9 +3,9 @@ import {
   expectDifferentParsedErrors,
   expectParsedError,
   expectParsedErrorNoSnapshot,
-  expectResult,
-  stripIndent
+  expectResult
 } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
 
 const undefinedVariable = stripIndent`
 im_undefined;
