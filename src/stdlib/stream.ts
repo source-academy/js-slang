@@ -54,11 +54,11 @@ export function stream_to_list(xs: Stream): List | null {
 // Lazy? No: In this implementation, we generate first a
 //           complete list, and then a stream using list_to_stream
 export function stream(): Stream | null {
-  let the_list = null
+  let theList = null
   for (let i = arguments.length - 1; i >= 0; i--) {
-    the_list = list.pair(arguments[i], the_list)
+    theList = list.pair(arguments[i], theList)
   }
-  return list_to_stream(the_list as List)
+  return list_to_stream(theList as List)
 }
 
 // stream_length returns the length of a given argument stream
