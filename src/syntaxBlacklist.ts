@@ -19,7 +19,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   CallExpression: 1,
   Identifier: 1,
   Literal: 1,
-  DebuggerStatement: 1,
 
   // Chapter 2 (no new syntax)
 
@@ -33,6 +32,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   AssignmentExpression: 3,
   MemberExpression: 3,
   Property: 3,
+  DebuggerStatement: 3,
 
   // Disabled (aka chapter 100)
   ObjectExpression: 100,
