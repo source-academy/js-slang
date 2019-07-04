@@ -6,7 +6,9 @@ js-slang
 .. image:: https://coveralls.io/repos/github/source-academy/js-slang/badge.svg?branch=master
     :target: https://coveralls.io/github/source-academy/js-slang?branch=master
 
-An open-source interpreter for the *Source* programming language.
+Open-source implementations of the programming language *Source*. Source is a series of
+small subsets of JavaScript, designed for teaching university-level programming courses
+for computer science majors, following [Structure and Interpretation of Computer Programs, JavaScript Adaptation](https://sicp.comp.nus.edu.sg).
 
 Usage
 -----
