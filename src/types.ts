@@ -77,6 +77,8 @@ export interface Context<T = any> {
     nodes: es.Node[]
   }
 
+  numberOfOuterEnvironments: number
+
   /** the state of the debugger */
   debugger: {
     /** External observers watching this context */

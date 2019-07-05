@@ -1,6 +1,4 @@
 /* tslint:disable:max-line-length */
-import { parseError, runInContext } from '../index'
-import { mockContext } from '../mocks/context'
 import { stripIndent } from '../utils/formatters'
 import {
   expectDifferentParsedErrors,
@@ -666,479 +664,129 @@ test('Error when redeclaring variable', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-test('Runtime error when redeclaring constant in interpreter', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
-    const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring constant in native', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
-    const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, { scheduler: 'preemptive', executionMethod: 'native' }).then(
-    obj1 => {
-      expect(obj1).toMatchSnapshot()
-      expect(obj1.status).toBe('finished')
-      expect(parseError(context.errors)).toMatchSnapshot()
-      return runInContext(code2, context, {
-        scheduler: 'preemptive',
-        executionMethod: 'native'
-      }).then(obj2 => {
-        expect(obj2).toMatchSnapshot()
-        expect(obj2.status).toBe('error')
-        expect(parseError(context.errors)).toMatchSnapshot()
-      })
-    }
-  )
-})
-
-test('Runtime error when redeclaring constant as variable', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
+test('Error when redeclaring function after let', () => {
+  return expectParsedError(
+    stripIndent`
     let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-test('Runtime error when redeclaring constant as variable - verbose', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
+test('Error when redeclaring function after let --verbose', () => {
+  return expectParsedError(
+    stripIndent`
     "enable verbose";
     let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+"
+`)
 })
 
-test('Runtime error when redeclaring constant as function', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+test('Error when redeclaring function after function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {}
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-test('Runtime error when redeclaring constant as function - verbose', () => {
-  const code1 = `
-    const f = x => x;
-  `
-  const code2 = `
+test('Error when redeclaring function after function --verbose', () => {
+  return expectParsedError(
+    stripIndent`
     "enable verbose";
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+    function f() {}
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+"
+`)
 })
 
-test('Runtime error when redeclaring variable as constant', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
+test('Error when redeclaring function after const', () => {
+  return expectParsedError(
+    stripIndent`
     const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(parseError(context.errors)).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-    })
-  })
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-test('Runtime error when redeclaring variable as constant - verbose', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
+test('Error when redeclaring function after const --verbose', () => {
+  return expectParsedError(
+    stripIndent`
     "enable verbose";
     const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(parseError(context.errors)).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-    })
-  })
+    function f() {}
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+"
+`)
 })
 
-test('Runtime error when redeclaring variable', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
-    let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring variable - verbose', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
-    "enable verbose";
-    let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring variable as function', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring variable as function - verbose', () => {
-  const code1 = `
-    let f = x => x;
-  `
-  const code2 = `
-    "enable verbose";
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring function as constant', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
+test('Error when redeclaring const after function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {}
     const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(parseError(context.errors)).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-    })
-  })
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
-test('Runtime error when redeclaring function as constant - verbose', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
+test('Error when redeclaring const after function --verbose', () => {
+  return expectParsedError(
+    stripIndent`
     "enable verbose";
+    function f() {}
     const f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(parseError(context.errors)).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(parseError(context.errors)).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-    })
-  })
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
+There is a syntax error in your program
+"
+`)
 })
 
-test('Runtime error when redeclaring function as variable', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
+test('Error when redeclaring let after function', () => {
+  return expectParsedError(
+    stripIndent`
+    function f() {}
     let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-test('Runtime error when redeclaring function as variable - verbose', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
+test('Error when redeclaring let after function --verbose', () => {
+  return expectParsedError(
+    stripIndent`
     "enable verbose";
+    function f() {}
     let f = x => x;
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring function', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
-})
-
-test('Runtime error when redeclaring function - verbose', () => {
-  const code1 = `
-    function f(x) { return x; }
-  `
-  const code2 = `
-    "enable verbose";
-    function f(x) { return x; }
-  `
-  const context = mockContext(3)
-  return runInContext(code1, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'interpreter'
-  }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('finished')
-    expect(parseError(context.errors)).toMatchSnapshot()
-    return runInContext(code2, context, {
-      scheduler: 'preemptive',
-      executionMethod: 'interpreter'
-    }).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('error')
-      expect(parseError(context.errors)).toMatchSnapshot()
-    })
-  })
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+"Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
+There is a syntax error in your program
+"
+`)
 })
 
 // NOTE: Obsoleted due to strict types on member access

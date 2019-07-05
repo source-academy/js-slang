@@ -146,6 +146,16 @@ export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression =
   elements
 })
 
+export const assignmentExpression = (
+  left: es.Identifier | es.MemberExpression,
+  right: es.Expression
+): es.AssignmentExpression => ({
+  type: 'AssignmentExpression',
+  operator: '=',
+  left,
+  right
+})
+
 // primitive: undefined is a possible value
 export const primitive = (value: any): es.Expression => {
   return value === undefined ? identifier('undefined') : literal(value)
