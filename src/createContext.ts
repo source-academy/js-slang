@@ -45,7 +45,7 @@ export const createEmptyContext = <T>(
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
-    globals: new Map(),
+    globals: { variables: new Map(), previousScope: null },
     operators: new Map(Object.entries(operators))
   })
   return {
@@ -54,6 +54,7 @@ export const createEmptyContext = <T>(
     errors: [],
     externalContext,
     runtime: createEmptyRuntime(),
+    numberOfOuterEnvironments: 1,
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto'
@@ -79,7 +80,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.set(name, {
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables.set(name, {
     kind: 'const',
     value
   })

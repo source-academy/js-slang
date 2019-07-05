@@ -59,8 +59,9 @@ const createBlockEnvironment = (
 
 const handleRuntimeError = (context: Context, error: errors.RuntimeSourceError): never => {
   context.errors.push(error)
-  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
-  context.runtime.environments = [globalEnvironment]
+  context.runtime.environments = context.runtime.environments.slice(
+    -context.numberOfOuterEnvironments
+  )
   throw error
 }
 
@@ -502,7 +503,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     while (
       returnExpression.type === 'LogicalExpression' ||
       returnExpression.type === 'ConditionalExpression'
-      ) {
+    ) {
       if (returnExpression.type === 'LogicalExpression') {
         returnExpression = transformLogicalExpression(returnExpression)
       }
@@ -523,11 +524,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
-    (yield* evaluate(node.test, context)) &&
-    !(value instanceof ReturnValue) &&
-    !(value instanceof BreakValue) &&
-    !(value instanceof TailCallReturnValue)
-      ) {
+      (yield* evaluate(node.test, context)) &&
+      !(value instanceof ReturnValue) &&
+      !(value instanceof BreakValue) &&
+      !(value instanceof TailCallReturnValue)
+    ) {
       value = yield* evaluate(node.body, context)
     }
     if (value instanceof BreakValue) {
@@ -562,18 +563,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
-    hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
-    let result: Value
-    for (const statement of node.body) {
-      result = yield* evaluate(statement, context)
-      if (result instanceof ReturnValue || result instanceof TailCallReturnValue) {
-        break
-      }
-    }
-    return result
+    context.numberOfOuterEnvironments += 1
+    const environment = createBlockEnvironment(context, 'programEnvironment')
+    pushEnvironment(context, environment)
+    return yield* evaluateBlockSatement(context, node)
   }
 }
-// tslint:disable:object-literal-shorthand
+// tslint:enable:object-literal-shorthand
 
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
