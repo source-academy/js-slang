@@ -20,26 +20,55 @@ main() {
 
 run() {
 
-    # SOUNDS
+    # LISTS
     
     ${JSDOC} -r -t ${TMPL} \
-	     -d ${DST}/SOUND \
-	     -R ${SRC}/externalLibs/sound/README.md \
-	     ${SRC}/externalLibs/sound
-
+	     -d ${DST}/LISTS \
+	     doc/list.js
+    
+    # STREAMS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -d ${DST}/STREAMS \
+	     doc/stream.js
+    
     # RUNES
     
     ${JSDOC} -r -t ${TMPL} \
 	     -d ${DST}/RUNES \
-	     -R ${SRC}/externalLibs/graphics/README.md \
+	     -R ${SRC}/externalLibs/graphics/RUNES_README.md \
 	     ${SRC}/externalLibs/graphics/webGLrune.js
+
+    # CURVES
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -d ${DST}/CURVES \
+	     -R ${SRC}/externalLibs/graphics/CURVES_README.md \
+	     ${SRC}/externalLibs/graphics/webGLcurve.js
+
+    # SOUNDS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -d ${DST}/SOUNDS \
+	     -R ${SRC}/externalLibs/sound/README.md \
+	     ${SRC}/externalLibs/sound
+
+    # BINARYTREES
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -d ${DST}/BINARYTREES \
+	     ${SRC}/externalLibs/tree.js
 
 }
 
 install() {
 
-    cd doc; scp -r ${PDFSPECS} sicp@web1.comp.nus.edu.sg:public_html/source/.; cd ..   
-    cd doc/jsdoc; scp -r libraries sicp@web1.comp.nus.edu.sg:public_html/source/.
+    cd doc; scp -r ${PDFSPECS} \
+		sicp@web1.comp.nus.edu.sg:public_html/source/.; \
+    cd ..   
+
+    cd doc/jsdoc; \
+	scp -r libraries sicp@web1.comp.nus.edu.sg:public_html/source/.
     
 }
 
