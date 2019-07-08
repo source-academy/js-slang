@@ -8317,8 +8317,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 54`] = `
 Object {
-  "elaborate": "Expected number as prop, got boolean.",
-  "explain": "Expected number as prop, got boolean.",
+  "elaborate": "Expected integer as prop, got boolean.",
+  "explain": "Expected integer as prop, got boolean.",
   "left": Array [
     2,
   ],
@@ -8328,8 +8328,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 55`] = `
 Object {
-  "elaborate": "Expected number as prop, got string.",
-  "explain": "Expected number as prop, got string.",
+  "elaborate": "Expected integer as prop, got string.",
+  "explain": "Expected integer as prop, got string.",
   "left": Array [
     2,
   ],
@@ -8339,8 +8339,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 56`] = `
 Object {
-  "elaborate": "Expected number as prop, got function.",
-  "explain": "Expected number as prop, got function.",
+  "elaborate": "Expected integer as prop, got function.",
+  "explain": "Expected integer as prop, got function.",
   "left": Array [
     2,
   ],
@@ -8350,8 +8350,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 57`] = `
 Object {
-  "elaborate": "Expected number as prop, got function.",
-  "explain": "Expected number as prop, got function.",
+  "elaborate": "Expected integer as prop, got function.",
+  "explain": "Expected integer as prop, got function.",
   "left": Array [
     2,
   ],
@@ -8361,8 +8361,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 58`] = `
 Object {
-  "elaborate": "Expected number as prop, got object.",
-  "explain": "Expected number as prop, got object.",
+  "elaborate": "Expected integer as prop, got object.",
+  "explain": "Expected integer as prop, got object.",
   "left": Array [
     2,
   ],
@@ -8374,8 +8374,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 59`] = `
 Object {
-  "elaborate": "Expected number as prop, got array.",
-  "explain": "Expected number as prop, got array.",
+  "elaborate": "Expected integer as prop, got array.",
+  "explain": "Expected integer as prop, got array.",
   "left": Array [
     2,
   ],
@@ -8387,8 +8387,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 60`] = `
 Object {
-  "elaborate": "Expected number as prop, got undefined.",
-  "explain": "Expected number as prop, got undefined.",
+  "elaborate": "Expected integer as prop, got undefined.",
+  "explain": "Expected integer as prop, got undefined.",
   "left": Array [
     2,
   ],
@@ -8398,8 +8398,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 61`] = `
 Object {
-  "elaborate": "Expected number as prop, got null.",
-  "explain": "Expected number as prop, got null.",
+  "elaborate": "Expected integer as prop, got null.",
+  "explain": "Expected integer as prop, got null.",
   "left": Array [
     2,
   ],
@@ -8574,6 +8574,39 @@ Object {
   "explain": "Expected object or array, got null.",
   "left": null,
   "right": null,
+}
+`;
+
+exports[`Member expression type combinations: Invalid type combinations return TypeError 80`] = `
+Object {
+  "elaborate": "Expected integer as prop, got number.",
+  "explain": "Expected integer as prop, got number.",
+  "left": Array [
+    2,
+  ],
+  "right": -1,
+}
+`;
+
+exports[`Member expression type combinations: Invalid type combinations return TypeError 81`] = `
+Object {
+  "elaborate": "Expected integer as prop, got number.",
+  "explain": "Expected integer as prop, got number.",
+  "left": Array [
+    2,
+  ],
+  "right": 0.5,
+}
+`;
+
+exports[`Member expression type combinations: Invalid type combinations return TypeError 82`] = `
+Object {
+  "elaborate": "Expected integer as prop, got number.",
+  "explain": "Expected integer as prop, got number.",
+  "left": Array [
+    2,
+  ],
+  "right": 4294967296,
 }
 `;
 
