@@ -53,7 +53,7 @@ textbook. Below are the features that Source §3 adds to Source §2.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3.pdf">Source §3 Language specification</a>. Feel free to
+<a href="../source_3.pdf">Specification of Source §3</a>. Feel free to
 take a peek!
 
 

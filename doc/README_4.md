@@ -52,5 +52,5 @@ textbook. Below are the features that Source §4 adds to Source §3.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_4.pdf">Source §4 Language specification</a>. Feel free to
+<a href="../source_4.pdf">Specification of Source §4</a>. Feel free to
 take a peek!

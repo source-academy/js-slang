@@ -50,7 +50,7 @@ To work with lists, you can use the functions in the
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_2.pdf">Source §2 Language specification</a>. Feel free to
+<a href="../source_2.pdf">Specification of Source §2</a>. Feel free to
 take a peek!
 
 

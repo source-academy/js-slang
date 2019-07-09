@@ -25,10 +25,10 @@ run() {
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README.md \
-	     -d ${DST}/
+	     -d ${DST}/ \
 	     doc/empty.js
 
-    # Source 1
+    # Source §1
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
@@ -36,7 +36,7 @@ run() {
 	     -d ${DST}/"Source §1"/ \
 	     doc/misc.js 
     
-    # Source 2
+    # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
@@ -45,7 +45,7 @@ run() {
 	     doc/misc.js \
 	     doc/list.js
     
-    # Source 3
+    # Source §3
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
@@ -55,7 +55,7 @@ run() {
 	     doc/list.js \
 	     doc/stream.js
     
-    # Source 4
+    # Source §4
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \

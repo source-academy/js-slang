@@ -49,6 +49,6 @@ textbook section that introduces it and a small example.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_1.pdf">Source §1 Language specification</a>. Feel free to
+<a href="../source_1.pdf">Specification of Source §1</a>. Feel free to
 take a peek.
 
