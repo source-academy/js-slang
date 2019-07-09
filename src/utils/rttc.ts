@@ -36,8 +36,9 @@ const typeOf = (v: Value) => {
 
 const isNumber = (v: Value) => typeOf(v) === 'number'
 // See section 4 of https://2ality.com/2012/12/arrays.html
+// v >>> 0 === v checks that v is a valid unsigned 32-bit int
 // tslint:disable-next-line:no-bitwise
-const isUint32 = (v: Value) => isNumber(v) && v >>> 0 === v
+const isArrayIndex = (v: Value) => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
 const isObject = (v: Value) => typeOf(v) === 'object'
@@ -98,7 +99,7 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
   } else if (isArray(obj)) {
-    return isUint32(prop) ? undefined : new TypeError(node, ' as prop', 'integer', typeOf(prop))
+    return isArrayIndex(prop) ? undefined : new TypeError(node, ' as prop', 'integer', typeOf(prop))
   } else {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
