@@ -5,73 +5,21 @@
   corresponding to the respective chapters 1, 2, 3 and 4 of the
   textbook. Each previous Source language is a sublanguage of the
   next, and all Source languages are sublanguages of JavaScript.
-  This webpage contains
-  the specifications of the Source languages and the libraries they
+  This webpage contains the description of the Source languages
+  and the libraries they
   come with.
 
 ## <a href="Source §1/">Source §1</a>
-
-  <a href="source_1.pdf">Language specification</a>
-  <p/>
-  Predeclared names:
-  <ul>
-    <li>
-      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
-    </li>
-  </ul>
   
 ## <a href="Source §2/">Source §2</a>
 
-  <a href="source_2.pdf">Language specification</a>
-  <p/>
-  Predeclared names:
-  <ul>
-    <li>
-      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
-    </li>
-    <li>
-      <a href="LISTS/index.html">LISTS</a>: Support for lists
-    </li>
-  </ul>
-
 ## <a href="Source §3/">Source §3</a>
 
-  <a href="source_3.pdf">Language specification</a>
-  <p/>
-  Predeclared names:
-  <ul>
-    <li>
-      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
-    </li>
-    <li>
-      <a href="LISTS/index.html">LISTS</a>: Support for lists
-    </li>
-    <li>
-      <a href="STREAMS/index.html">STREAMS</a>: Support for streams
-    </li>
-  </ul>
-  
 ## <a href="Source §4/">Source §4</a>
 
-<a href="source_4.pdf">Language specification</a>
-<p/>
-Predeclared names:
-<ul>
-<li>
-<a href="MISC/index.html">MISC</a>: Miscellaneous functions
-</li>
-<li>
-<a href="LISTS/index.html">LISTS</a>: Support for lists
-</li>
-<li>
-<a href="STREAMS/index.html">STREAMS</a>: Support for streams
-</li>
-</ul>
-  
 ## <a href="External libraries/">External Libraries</a>
 
-The following libraries can be loaded, in addition to the
-predeclared names above.
+The following libraries can be loaded in any of these.
 
 <ul>
 <li>

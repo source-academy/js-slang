@@ -25,14 +25,8 @@ run() {
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README.md \
-	     -d ${DST}/ \
-	     doc/misc.js \
-	     doc/list.js \
-	     doc/stream.js \
-	     ${SRC}/externalLibs/graphics/webGLrune.js \
-	     ${SRC}/externalLibs/graphics/webGLcurve.js \
-             ${SRC}/externalLibs/graphics ${SRC}/externalLibs/sound \
-	     ${SRC}/externalLibs/tree.js
+	     -d ${DST}/
+	     doc/empty.js
 
     # Source 1
     
