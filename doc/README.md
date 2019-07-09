@@ -9,81 +9,81 @@
   the specifications of the Source languages and the libraries they
   come with.
 
-## Source §1
+## <a href="Source §1/">Source §1</a>
 
   <a href="source_1.pdf">Language specification</a>
   <p/>
   Predeclared names:
   <ul>
     <li>
-      <a href="libraries/MISC/index.html">MISC</a>
+      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
     </li>
   </ul>
   
-## Source §2
+## <a href="Source §2/">Source §2</a>
 
   <a href="source_2.pdf">Language specification</a>
   <p/>
   Predeclared names:
   <ul>
     <li>
-      <a href="MISC/index.html">MISC</a>
+      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
     </li>
     <li>
-      <a href="LISTS/index.html">LISTS</a>
+      <a href="LISTS/index.html">LISTS</a>: Support for lists
     </li>
   </ul>
 
-## Source §3
+## <a href="Source §3/">Source §3</a>
 
-  <a href="source_4.pdf">Language specification</a>
+  <a href="source_3.pdf">Language specification</a>
   <p/>
   Predeclared names:
   <ul>
     <li>
-      <a href="MISC/index.html">MISC</a>
+      <a href="MISC/index.html">MISC</a>: Miscellaneous functions
     </li>
     <li>
-      <a href="LISTS/index.html">LISTS</a>
+      <a href="LISTS/index.html">LISTS</a>: Support for lists
     </li>
     <li>
-      <a href="STREAMS/index.html">STREAMS</a>
+      <a href="STREAMS/index.html">STREAMS</a>: Support for streams
     </li>
   </ul>
   
-## Source §4
+## <a href="Source §4/">Source §4</a>
 
 <a href="source_4.pdf">Language specification</a>
 <p/>
 Predeclared names:
 <ul>
 <li>
-<a href="MISC/index.html">MISC</a>
+<a href="MISC/index.html">MISC</a>: Miscellaneous functions
 </li>
 <li>
-<a href="LISTS/index.html">LISTS</a>
+<a href="LISTS/index.html">LISTS</a>: Support for lists
 </li>
 <li>
-<a href="STREAMS/index.html">STREAMS</a>
+<a href="STREAMS/index.html">STREAMS</a>: Support for streams
 </li>
 </ul>
   
-## External Libraries
+## <a href="External libraries/">External Libraries</a>
 
 The following libraries can be loaded, in addition to the
 predeclared names above.
 
 <ul>
 <li>
-<a href="RUNES/index.html">RUNES</a>
+<a href="RUNES/index.html">RUNES</a>: programming with rune graphics
 </li>
 <li>
-<a href="CURVES/index.html">CURVES</a>
+<a href="CURVES/index.html">CURVES</a>: programming with curve graphics
 </li>
 <li>
-<a href="SOUNDS/index.html">SOUNDS</a>
+<a href="SOUNDS/index.html">SOUNDS</a>: sound processing
 </li>
 <li>
-<a href="BINARYTREES/index.html">BINARYTREES</a>
+<a href="BINARYTREES/index.html">BINARYTREES</a>: binary trees
 </li>
 </ul>
