@@ -2,6 +2,7 @@ import { BinaryOperator, UnaryOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
+  ExceptionError,
   GetInheritedPropertyError,
   InvalidNumberOfArguments
 } from '../interpreter-errors'
@@ -27,14 +28,20 @@ export function callIfFuncAndRightArgs(
     end: { line, column }
   })
   if (typeof candidate === 'function') {
-    if (candidate.transformedFunction !== undefined) {
+    if (candidate.transformedFunction === undefined) {
+      try {
+        return candidate(...args)
+      } catch (error) {
+        throw new ExceptionError(error, dummy.loc!)
+      }
+    } else {
       const expectedLength = candidate.transformedFunction.length
       const receivedLength = args.length
       if (expectedLength !== receivedLength) {
         throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
       }
+      return candidate(...args)
     }
-    return candidate(...args)
   } else {
     throw new CallingNonFunctionValue(candidate, dummy)
   }

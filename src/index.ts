@@ -179,7 +179,7 @@ export function runInContext(
         value: sandboxedEval(transpiled)
       } as Result)
     } catch (error) {
-      if (error instanceof RuntimeSourceError) {
+      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
         context.errors.push(error)
         return resolvedErrorPromise
       }

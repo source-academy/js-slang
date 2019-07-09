@@ -614,9 +614,10 @@ export function* apply(
         break
       } catch (e) {
         // Recover from exception
-        const globalEnvironment =
-          context.runtime.environments[context.runtime.environments.length - 1]
-        context.runtime.environments = [globalEnvironment]
+        context.runtime.environments = context.runtime.environments.slice(
+          -context.numberOfOuterEnvironments
+        )
+
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
         if (!(e instanceof errors.RuntimeSourceError)) {
           // The error could've arisen when the builtin called a source function which errored.
