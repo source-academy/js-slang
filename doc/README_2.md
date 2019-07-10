@@ -19,7 +19,8 @@ order. Click on a name to see how it is used. They come in these two groups:
     </li>
   </ul>
 
-In the missions and lectures, we use of the following libraries:
+In the missions and lectures, we use of the following
+<a href="External libraries/">external libraries</a>:
   <ul>
     <li>
       <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics

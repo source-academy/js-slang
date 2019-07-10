@@ -16,12 +16,7 @@ order. Click on a name to see how it is used. They come in these two groups:
     </li>
   </ul>
 In addition, the missions, lectures and textbook section 2.2.4 make
-use of the following library:
-  <ul>
-    <li>
-      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
-    </li>
-  </ul>
+use of <a href="../RUNES/index.html">RUNES</a>, a library for runes graphics.
 
 ## What can you do in Source §1?
 
