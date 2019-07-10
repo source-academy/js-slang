@@ -289,6 +289,14 @@ describe('Member expression type combinations:', () => {
     })
   })
 
+  // Extra tests for array indices integral check.
+  valid.push([arr, 0])
+  valid.push([arr, 10])
+  valid.push([arr, 2 ** 32 - 2])
+  invalid.push([arr, -1])
+  invalid.push([arr, 0.5])
+  invalid.push([arr, 2 ** 32 - 1])
+
   test('Valid type combinations are OK', () => {
     valid.forEach(([left, right]: [Value, Value]) => {
       const context = mockRuntimeContext()
