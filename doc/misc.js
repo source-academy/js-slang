@@ -41,17 +41,6 @@ function is_undefined(v) {
 }
 
 /**
- * interprets the {string} str as an integer, using the positive integer 
- * i as radix, and returns the respective value,
- * see <a href="https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parseint-string-radix">ECMAScript Specification, Section 18.2.5</a>
- * @param {string} str to be converted
- * @param {number} radix 
- * @returns {number} result of conversion
- */
-export function parse_int(str, radix) {
-}
-
-/**
  * Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
  * See also <a href="https://sicp.comp.nus.edu.sg/chapters/17#ex_1.22">textbook example</a>.
  * @returns {number} current time in milliseconds
@@ -76,7 +65,7 @@ function parse_int(s, i) {}
 
 /**
  * The name <CODE>undefined</CODE> refers to the special value <CODE>undefined</CODE>.
- * See also <a href="https://sicp.comp.nus.edu.sg/chapters/4">textbook explanation in chapter 4</a>.
+ * See also <a href="https://sicp.comp.nus.edu.sg/chapters/4">textbook explanation in section 1.1.2</a>.
  * @const {undefined}
  */
 const undefined = (() => {})();
@@ -167,9 +156,9 @@ function error(v, s) {
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
  * but also displays <CODE>undefined</CODE> and function objects.
  * See also <a href="https://sicp.comp.nus.edu.sg/chapters/62">textbook example</a>.
- * @returns {value} v, the first argument value
+ * @param {value} v, the argument value
+ * @returns {string} string representation of v
  */
-function stringify(v) {
-}
+function stringify(v) {}
 
 

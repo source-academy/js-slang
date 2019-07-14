@@ -57,14 +57,11 @@ Read more on conditional expressions in
 Conditional Expressions and Predicates</a>.
 <EM>Conditional evaluation</EM> is also possible within statements, for
 example the body of a function declaration. For that, you can use <EM>conditional
-statements</EM>, for example:
-<PRE>
-<CODE>if (p(x)) {
+statements</EM>, for example:<PRE><CODE>if (p(x)) {
     return 7;
 } else {
     return f(y);
-}</CODE>
-</PRE>
+}</CODE></PRE>
 Read about <EM>conditional statements</EM> in
 <a href="https://sicp.comp.nus.edu.sg/chapters/20">section 1.3.2
 Function Definition Expressions</a>.
@@ -85,11 +82,11 @@ Sometimes, it's not necessary to give a name to a function: You may
 want to create a function only to pass it to some other function as argument.
 For that, Source
 supports function definition expressions. For example
-<PRE><CODE>map(x => x * x, list(1, 2, 3)); // returns [1, [4, [9, null]]]</CODE>
+<PRE><CODE>(x => x * x)(3); // returns 9</CODE>
 </PRE>
 creates a square function just like the function declaration above,
 but does not give it a name.
-Its only purpose it to be passed as argument to `map`. See also
+Its only purpose it to be applied to the number 3. See also
 textbook
 <a href="https://sicp.comp.nus.edu.sg/chapters/20">section 1.3.2 Function Definition Expressions</a>.
 
