@@ -20,7 +20,7 @@ To build,
 .. code-block::
 
   $ git clone https://github.com/source-academy/js-slang.git
-  $ cd slang
+  $ cd js-slang
   $ yarn
   $ yarn build
 
@@ -37,6 +37,19 @@ or alternatively, install js-slang and run
   $ npm -g install js-slang   # Install js-slang
   $ js-slang [chapter] # default: 1
 
+Documentation
+-------------
+
+Source is documented here: https://sicp.comp.nus.edu.sg
+
+To build the documentation, run
+
+..code-block::
+
+  $ git clone https://github.com/source-academy/js-slang.git
+  $ cd js-slang
+  $ make           # to make the PDF documents using LaTeX
+  $ yarn run jsdoc # to make the web pages in js-slang/doc/source
 
 Error messages
 --------------
