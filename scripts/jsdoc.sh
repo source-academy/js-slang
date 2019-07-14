@@ -10,6 +10,8 @@ main() {
 
     if [ "$1" == "install" ]; then
 	install
+    elif [ "$1" == "tocs1101s" ]; then
+	tocs1101s
     elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
         run
     else
@@ -20,7 +22,7 @@ main() {
 
 run() {
 
-    # ALL
+    # Source landing page
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
@@ -33,16 +35,18 @@ run() {
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README_1.md \
-	     -d ${DST}/"Source §1"/ \
-	     doc/misc.js 
+	     -d ${DST}/"source_1"/ \
+	     doc/misc.js \
+	     doc/math.js
     
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README_2.md \
-	     -d ${DST}/"Source §2"/ \
+	     -d ${DST}/"source_2"/ \
 	     doc/misc.js \
+	     doc/math.js \
 	     doc/list.js
     
     # Source §3
@@ -50,34 +54,67 @@ run() {
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README_3.md \
-	     -d ${DST}/"Source §3"/ \
+	     -d ${DST}/"source_3"/ \
 	     doc/misc.js \
-	     doc/list.js \
-	     doc/stream.js
+	     doc/math.js \
+             doc/list.js \
+	     doc/stream.js \
+	     doc/array.js \
+	     doc/pairmutator.js
     
     # Source §4
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
 	     -R doc/README_4.md \
-	     -d ${DST}/"Source §4"/ \
+	     -d ${DST}/"source_4"/ \
 	     doc/misc.js \
+	     doc/math.js \
 	     doc/list.js \
-	     doc/stream.js
+	     doc/stream.js \
+	     doc/array.js \
+	     doc/pairmutator.js \
+	     doc/mce.js
     
     # MISC
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
+	     -R doc/README_MISC.md \
 	     -d ${DST}/MISC/ \
 	     doc/misc.js
+    
+    # MATH
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_MATH.md \
+	     -d ${DST}/MATH/ \
+	     doc/math.js
     
     # LISTS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
+	     -R doc/README_LISTS.md \
 	     -d ${DST}/LISTS/ \
 	     doc/list.js
+    
+    # ARRAYS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_ARRAYS.md \
+	     -d ${DST}/ARRAYS/ \
+	     doc/array.js
+    
+    # PAIRMUTATORS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_PAIRMUTATORS.md \
+	     -d ${DST}/PAIRMUTATORS/ \
+	     doc/pairmutator.js
     
     # STREAMS
     
@@ -85,6 +122,14 @@ run() {
 	     -c doc/jsdoc/conf.json \
 	     -d ${DST}/STREAMS/ \
 	     doc/stream.js
+
+    # MCE
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_MCE.md \
+	     -d ${DST}/MCE/ \
+	     doc/mce.js
     
     # RUNES
     
@@ -100,7 +145,8 @@ run() {
 	     -c doc/jsdoc/conf.json \
 	     -d ${DST}/CURVES/ \
 	     -R ${SRC}/externalLibs/graphics/CURVES_README.md \
-	     ${SRC}/externalLibs/graphics/webGLcurve.js
+	     ${SRC}/externalLibs/graphics/webGLcurve.js \
+	     ${SRC}/externalLibs/graphics/webGLhi_graph.js
 
     # SOUNDS
     
@@ -114,6 +160,7 @@ run() {
     
     ${JSDOC} -r -t ${TMPL}/ \
 	     -c doc/jsdoc/conf.json \
+	     -R doc/README_BINARYTREES.md \
 	     -d ${DST}/BINARYTREES \
 	     ${SRC}/externalLibs/tree.js
 
@@ -125,7 +172,8 @@ run() {
 	     -d ${DST}/"External libraries"/ \
 	     ${SRC}/externalLibs/graphics/webGLrune.js \
 	     ${SRC}/externalLibs/graphics/webGLcurve.js \
-	     ${SRC}/externalLibs/sound
+	     ${SRC}/externalLibs/graphics/webGLhi_graph.js \
+	     ${SRC}/externalLibs/sound 
     
 }
 
@@ -135,6 +183,17 @@ install() {
     cd doc; cp ${PDFSPECS} source; cd ..; \
     cd doc; scp -r source \
 		sicp@web1.comp.nus.edu.sg:public_html/.
+
+}
+
+tocs1101s() {
+
+    cp -r doc/images ${DST} ; \
+    cd doc; cp ${PDFSPECS} source; cd ..; \
+    cd doc; scp -r source \
+		cs1101s@sunfire.comp.nus.edu.sg:. ; \
+    echo "now: ssh cs1101s@sunfire.comp.nus.edu.sg and: "; \
+    echo "scp -r source sicp@web1.comp.nus.edu.sg:public_html"
 
 }
 

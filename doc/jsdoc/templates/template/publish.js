@@ -382,7 +382,10 @@ function buildNav(members) {
 
         if (!globalNav) {
             // turn the heading into a link so you can actually get to the global page
-            nav += `<h3>${linkto('global', 'Predeclared in '+ path.basename(outdir))}</h3>`;
+	    // MH: 9/7/19: use the basename of the folder as heading
+	    // MH: 13/7/19: we turn "_" into " §", in order to have nice headings
+	    const displayName = path.basename(outdir).replace(/_/g, " §");
+            nav += `<h3>${linkto('global', 'Predeclared in '+ displayName)}</h3>`;
         }
         else {
             nav += `<h3>Predeclared names</h3><ul>${globalNav}</ul>`;
@@ -609,18 +612,20 @@ exports.publish = (taffyData, opts, tutorials) => {
         generateSourceFiles(sourceFiles, opts.encoding);
     }
 
-    if (members.globals.length) { generate('Predeclared in '+ path.basename(outdir), [{kind: 'globalobj'}], globalUrl); }
+    // MH: 9/7/19: use the basename of the folder as heading
+    let baseName = path.basename(outdir);
+    // MH: 9/7/19: print "Source..." if the folder is "source..." 
+    let capName = baseName.replace(/source/g, "Source");
+    // MH: 13/7/19: turn "_" into " §", in order to have nice headings
+    const displayName = capName.replace(/_/g, " §");
+    
+    if (members.globals.length) { generate('Predeclared in '+ displayName, [{kind: 'globalobj'}], globalUrl); }
 
     // index page displays information from package.json and lists files
     files = find({kind: 'file'});
     packages = find({kind: 'package'});
 
-    let basenam = path.basename(outdir);
-    let displayname = basenam === "source" ? "Source" : basenam;
-    
-    generate(displayname,  // MH: 1/7/2019: a little hack to get
-	                             // a more meaningful title on the
-	                             // homepage. This was:
+    generate(displayName,            // MH: 1/7/2019: This was:
 	                             // generate('Home',
         packages.concat(
             [{

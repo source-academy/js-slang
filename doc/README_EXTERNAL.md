@@ -1,6 +1,11 @@
 The following libraries can be loaded, in addition to the
 predeclared names for each Source language.
 
+On the right, you see all predeclared external library
+names, in alphabetical
+order. Click on a name to see how it is defined and used.
+In order to use these names, you need to load the respective
+library in the Source Academy interface.
 <ul>
 <li>
 <a href="../RUNES/index.html">RUNES</a>: programming with rune graphics
