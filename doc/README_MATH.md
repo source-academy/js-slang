@@ -1,7 +1,8 @@
 All names in the JavaScript `Math` library are predeclared in Source. The
-complete list is given in 
+complete specifications are given in 
 <a href="https://www.ecma-international.org/ecma-262/9.0/index.html#sec-math-object">ECMAScript
-Specification, Section 20.2</a>, and included here for completeness, on the right.
+Specification, Section 20.2</a>, and a summary is available here, by clicking
+on the names on the right.
 <B>As learner of Source, you are not expected to learn all of these, right away. But
 you might want to remember where you can look for them: Here!</B>
 Click on a name to see how it is defined and used.
