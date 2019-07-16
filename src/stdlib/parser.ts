@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { parse as sourceParse } from '../parser'
 import { Context, Value } from '../types'
 import { oneLine } from '../utils/formatters'
-import { vector_to_list } from './list'
+import { pair, vector_to_list } from './list'
 
 class ParseError extends Error {
   constructor(message: string) {
@@ -27,9 +27,7 @@ function unreachable() {
 // instead of constructing a sequence
 
 function makeSequenceIfNeeded(exs: es.Node[]) {
-  return exs.length === 1
-    ? transform(exs[0])
-    : vector_to_list(['sequence', vector_to_list(exs.map(transform))])
+  return exs.length === 1 ? transform(exs[0]) : pair('sequence', vector_to_list(exs.map(transform)))
 }
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>
@@ -127,11 +125,7 @@ transformers = new Map([
     'CallExpression',
     (node: es.Node) => {
       node = node as es.CallExpression
-      return vector_to_list([
-        'application',
-        transform(node.callee),
-        vector_to_list(node.arguments.map(transform))
-      ])
+      return pair('application', pair(transform(node.callee), node.arguments.map(transform)))
     }
   ],
 
@@ -139,18 +133,10 @@ transformers = new Map([
     'UnaryExpression',
     (node: es.Node) => {
       node = node as es.UnaryExpression
-      const loc = node.loc as es.SourceLocation
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column]),
-            vector_to_list([loc.start.line, loc.start.column + 1])
-          ])
-        ]),
-        vector_to_list([transform(node.argument)])
+        vector_to_list(['name', node.operator]),
+        transform(node.argument)
       ])
     }
   ],
@@ -159,18 +145,11 @@ transformers = new Map([
     'BinaryExpression',
     (node: es.Node) => {
       node = node as es.BinaryExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
-        vector_to_list([transform(node.left), transform(node.right)])
+        vector_to_list(['name', node.operator]),
+        transform(node.left),
+        transform(node.right)
       ])
     }
   ],
@@ -179,18 +158,11 @@ transformers = new Map([
     'LogicalExpression',
     (node: es.Node) => {
       node = node as es.LogicalExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'boolean_operation',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
-        vector_to_list([transform(node.left), transform(node.right)])
+        vector_to_list(['name', node.operator]),
+        transform(node.left),
+        transform(node.right)
       ])
     }
   ],
@@ -212,7 +184,6 @@ transformers = new Map([
     'ArrowFunctionExpression',
     (node: es.Node) => {
       node = node as es.ArrowFunctionExpression
-      const loc = node.body.loc as es.SourceLocation
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
@@ -221,14 +192,7 @@ transformers = new Map([
             // The body of a function is the statement
             // inside the curly braces.
             makeSequenceIfNeeded(node.body.body)
-          : vector_to_list([
-              'return_statement',
-              transform(node.body),
-              vector_to_list([
-                vector_to_list([loc.start.line, loc.start.column]),
-                vector_to_list([loc.end.line, loc.end.column])
-              ])
-            ])
+          : vector_to_list(['return_statement', transform(node.body)])
       ])
     }
   ],
@@ -253,7 +217,7 @@ transformers = new Map([
     'ArrayExpression',
     (node: es.Node) => {
       node = node as es.ArrayExpression
-      return vector_to_list(['array_expression', vector_to_list(node.elements.map(transform))])
+      return pair('array_expression', vector_to_list(node.elements.map(transform)))
     }
   ],
 
@@ -322,7 +286,7 @@ transformers = new Map([
     'ObjectExpression',
     (node: es.Node) => {
       node = node as es.ObjectExpression
-      return vector_to_list(['object_expression', vector_to_list(node.properties.map(transform))])
+      return pair('object_expression', vector_to_list(node.properties.map(transform)))
     }
   ],
 
