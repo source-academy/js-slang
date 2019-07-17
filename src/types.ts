@@ -79,6 +79,8 @@ export interface Context<T = any> {
 
   numberOfOuterEnvironments: number
 
+  prelude: string | null
+
   /** the state of the debugger */
   debugger: {
     /** External observers watching this context */

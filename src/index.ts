@@ -1,5 +1,5 @@
 import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal } from 'estree'
+import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -112,28 +112,7 @@ function convertNativeErrorToSourceError(
 
 let previousCode = ''
 
-export function runInContext(
-  code: string,
-  context: Context,
-  options: Partial<IOptions> = {}
-): Promise<Result> {
-  function getFirstLine(theCode: string) {
-    const theProgramFirstExpression = parseAt(theCode, 0)
-
-    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-      return ((theProgramFirstExpression as unknown) as Literal).value
-    }
-
-    return undefined
-  }
-  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.errors = []
-
-  verboseErrors = getFirstLine(code) === 'enable verbose'
-  const program = parse(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
+function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
   let isNativeRunnable
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
@@ -157,7 +136,38 @@ export function runInContext(
   } else {
     isNativeRunnable = theOptions.executionMethod === 'native'
   }
+  return isNativeRunnable
+}
 
+export async function runInContext(
+  code: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  function getFirstLine(theCode: string) {
+    const theProgramFirstExpression = parseAt(theCode, 0)
+
+    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
+      return ((theProgramFirstExpression as unknown) as Literal).value
+    }
+
+    return undefined
+  }
+  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
+  context.errors = []
+
+  verboseErrors = getFirstLine(code) === 'enable verbose'
+  const program = parse(code, context)
+  if (!program) {
+    return resolvedErrorPromise
+  }
+  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+  if (context.prelude !== null) {
+    const prelude = context.prelude
+    context.prelude = null
+    await runInContext(prelude, context, options)
+    return runInContext(code, context, options)
+  }
   if (isNativeRunnable) {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
