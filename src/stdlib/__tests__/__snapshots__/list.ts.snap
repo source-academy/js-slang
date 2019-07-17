@@ -1,5 +1,1099 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad index error list_ref: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_ref(list(1, 2, 3), 3);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 27,
+          "line": 147,
+        },
+        "start": Position {
+          "column": 19,
+          "line": 147,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "native:\\"Line -1: Error: head(xs) expects a pair as argument xs, but encountered null\\"
+interpreted:\\"Line 147: Error: head(xs) expects a pair as argument xs, but encountered null\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), 3);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad index error list_ref: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_ref(list(1, 2, 3), -1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 47,
+          "line": 147,
+        },
+        "start": Position {
+          "column": 39,
+          "line": 147,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), unaryOp(\\\\\\"-\\\\\\", 1, 1, 24));\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad index error list_ref: expectParsedError 3`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_ref(list(1, 2, 3), 1.5);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 47,
+          "line": 147,
+        },
+        "start": Position {
+          "column": 39,
+          "line": 147,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), 1.5);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad index error list_ref: expectParsedError 4`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_ref(list(1, 2, 3), '1');",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 54,
+          "line": 147,
+        },
+        "start": Position {
+          "column": 49,
+          "line": 147,
+        },
+      },
+      "severity": "Error",
+      "side": " on left hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 147: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), '1');\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad number error build_list: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "build_list('1', x => x);",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 45,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 45,
+        },
+      },
+      "severity": "Error",
+      "side": " on left hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 45: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(build_list, 1, 0, '1', wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"));\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad number error enum_list: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "enum_list('1', '5');",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "string",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 61,
+          "line": 139,
+        },
+        "start": Position {
+          "column": 52,
+          "line": 139,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, '1', '5');\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad number error enum_list: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "enum_list('1', 5);",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "string",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 139,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 139,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, '1', 5);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad number error enum_list: expectParsedError 3`] = `
+Object {
+  "alertResult": Array [],
+  "code": "enum_list(1, '5');",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 139,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 139,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 139: Expected number on right hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, 1, '5');\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error accumulate: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "accumulate",
+      "expected": 3,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 38,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected 3 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, wrap((x, y) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 21) }), \\\\\\"(x, y) => x + y\\\\\\"), [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error accumulate: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "accumulate",
+      "expected": 3,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 38,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected 3 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, wrap((x, y) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 21) }), \\\\\\"(x, y) => x + y\\\\\\"), [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error append: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "append([1, 2, 3], list(1, 2, 3));",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 41,
+          "line": 91,
+        },
+        "start": Position {
+          "column": 33,
+          "line": 91,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 91: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(append, 1, 0, [1, 2, 3], callIfFuncAndRightArgs(list, 1, 18, 1, 2, 3));\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error assoc: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "assoc(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "assoc",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Name assoc not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error filter: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "filter(x => true, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 129,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 129,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 129: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(filter, 1, 0, wrap(x => ({   isTail: false,   value: true }), \\\\\\"x => true\\\\\\"), [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error for_each: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "for_each(x=>x, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 58,
+        },
+        "start": Position {
+          "column": 8,
+          "line": 58,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 58: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(for_each, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"), [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error length: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "length([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 46,
+          "line": 24,
+        },
+        "start": Position {
+          "column": 38,
+          "line": 24,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 24: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(length, 1, 0, [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error map: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "map(x=>x, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 45,
+          "line": 33,
+        },
+        "start": Position {
+          "column": 37,
+          "line": 33,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 33: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(map, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"), [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error member: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "member(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 44,
+          "line": 100,
+        },
+        "start": Position {
+          "column": 36,
+          "line": 100,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 100: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(member, 1, 0, 1, [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error remove: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 44,
+          "line": 108,
+        },
+        "start": Position {
+          "column": 36,
+          "line": 108,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 108: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(remove, 1, 0, 1, [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error remove_all: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove_all(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 117,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 117,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 117: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(remove_all, 1, 0, 1, [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error reverse: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "reverse([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 60,
+          "line": 80,
+        },
+        "start": Position {
+          "column": 46,
+          "line": 80,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 80: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(reverse, 1, 0, [1, 2, 3]);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error set_head: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "set_head([1, 2, 3], 4);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(set_head, 1, 0, [1, 2, 3], 4);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error set_tail: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "set_tail([1, 2, 3], 4);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(set_tail, 1, 0, [1, 2, 3], 4);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`accumulate: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -58,574 +1152,6 @@ let lastStatementResult = undefined;
     {
       {
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(append, 1, 6, callIfFuncAndRightArgs(list, 1, 13, \\\\\\"string\\\\\\", 123), callIfFuncAndRightArgs(list, 1, 34, 456, null, undefined)), callIfFuncAndRightArgs(list, 1, 63, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`assoc not found: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(assoc, 1, 6, 2, callIfFuncAndRightArgs(list, 1, 15, callIfFuncAndRightArgs(pair, 1, 20, 1, 2), callIfFuncAndRightArgs(pair, 1, 32, 3, 4))), false);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`assoc: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(assoc, 1, 6, 3, callIfFuncAndRightArgs(list, 1, 15, callIfFuncAndRightArgs(pair, 1, 20, 1, 2), callIfFuncAndRightArgs(pair, 1, 32, 3, 4))), callIfFuncAndRightArgs(pair, 1, 46, 3, 4));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad index error list_ref: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "list_ref(list(1, 2, 3), 3);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 26,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered null",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), 3);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad index error list_ref: expectParsedError 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "list_ref(list(1, 2, 3), -1);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: list_ref(xs, n) expects a positive integer as argument n, but encountered -1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 27,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered -1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), unaryOp(\\\\\\"-\\\\\\", 1, 1, 24));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad index error list_ref: expectParsedError 3`] = `
-Object {
-  "alertResult": Array [],
-  "code": "list_ref(list(1, 2, 3), 1.5);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1.5],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 28,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1.5",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), 1.5);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad index error list_ref: expectParsedError 4`] = `
-Object {
-  "alertResult": Array [],
-  "code": "list_ref(list(1, 2, 3), '1');",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 28,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: list_ref(xs, n) expects a positive integer as argument n, but encountered 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, callIfFuncAndRightArgs(list, 1, 9, 1, 2, 3), '1');\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error build_list: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "build_list(-1, x => x);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: build_list(n, fun) expects a positive integer as argument n, but encountered -1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 22,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered -1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(build_list, 1, 0, unaryOp(\\\\\\"-\\\\\\", 1, 1, 11), wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error build_list: expectParsedError 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "build_list(1.5, x => x);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1.5],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 23,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1.5",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(build_list, 1, 0, 1.5, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error build_list: expectParsedError 3`] = `
-Object {
-  "alertResult": Array [],
-  "code": "build_list('1', x => x);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 23,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(build_list, 1, 0, '1', wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error enum_list: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "enum_list('1', '5');",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: enum_list(start, end) expects a number as argument start, but encountered 1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, '1', '5');\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error enum_list: expectParsedError 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "enum_list('1', 5);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: enum_list(start, end) expects a number as argument start, but encountered 1],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 17,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 1",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, '1', 5);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`bad number error enum_list: expectParsedError 3`] = `
-Object {
-  "alertResult": Array [],
-  "code": "enum_list(1, '5');",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: enum_list(start, end) expects a number as argument start, but encountered 5],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 17,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: enum_list(start, end) expects a number as argument start, but encountered 5",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, 1, '5');\\");
       }
     }
     return lastStatementResult;
@@ -990,7 +1516,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, [2, [3, null]]]",
+  "result": "[1,[2,[3,null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1087,285 +1613,6 @@ let lastStatementResult = undefined;
 }
 `;
 
-exports[`non-list error accumulate: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, wrap((x, y) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 21) }), \\\\\\"(x, y) => x + y\\\\\\"), [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error accumulate: expectParsedError 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered undefined],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered undefined",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, wrap((x, y) => ({   isTail: false,   value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 21) }), \\\\\\"(x, y) => x + y\\\\\\"), [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error append: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "append([1, 2, 3], list(1, 2, 3));",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 32,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(append, 1, 0, [1, 2, 3], callIfFuncAndRightArgs(list, 1, 18, 1, 2, 3));\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error assoc: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "assoc(1, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error filter: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "filter(x => true, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 28,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(filter, 1, 0, wrap(x => ({   isTail: false,   value: true }), \\\\\\"x => true\\\\\\"), [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error for_each: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "for_each(x=>x, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: for_each expects a list as argument xs, but encountered 1,2,3],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 25,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: for_each expects a list as argument xs, but encountered 1,2,3",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(for_each, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"), [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`non-list error head: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1406,406 +1653,6 @@ let lastStatementResult = undefined;
     {
       {
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error length: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "length([1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 17,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(length, 1, 0, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error map: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "map(x=>x, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(map, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\"), [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error member: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "member(1, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(member, 1, 0, 1, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error remove: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "remove(1, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(remove, 1, 0, 1, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error remove_all: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "remove_all(1, [1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 24,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(remove_all, 1, 0, 1, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error reverse: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "reverse([1, 2, 3]);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: reverse(xs) expects a list as argument xs, but encountered 1,2,3],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: reverse(xs) expects a list as argument xs, but encountered 1,2,3",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(reverse, 1, 0, [1, 2, 3]);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error set_head: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "set_head([1, 2, 3], 4);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 22,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(set_head, 1, 0, [1, 2, 3], 4);\\");
-      }
-    }
-    return lastStatementResult;
-  })();
-})();
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`non-list error set_tail: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "set_tail([1, 2, 3], 4);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 22,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
-  "result": undefined,
-  "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(set_tail, 1, 0, [1, 2, 3], 4);\\");
       }
     }
     return lastStatementResult;

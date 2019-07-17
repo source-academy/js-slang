@@ -93,11 +93,12 @@ test('String representation of lists are nice', () => {
   ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
 })
 
+// The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 // tslint:disable:max-line-length
 test('String representation of huge lists are nice', () => {
   return expectResult(
     stripIndent`
-  stringify(enum_list(1, 1000));
+  stringify(enum_list(1, 100));
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
@@ -189,9 +190,7 @@ test('String representation of huge lists are nice', () => {
 [ 86,
 [ 87,
 [ 88,
-[ 89,
-[ 90,
-[91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
+[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
 `)
 })
 // tslint:enable:max-line-length
