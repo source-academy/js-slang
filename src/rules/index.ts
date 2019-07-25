@@ -17,6 +17,7 @@ import noNull from './noNull'
 import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
 import noUpdateAssignment from './noUpdateAssignment'
+import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
 const rules: Array<Rule<es.Node>> = [
@@ -34,6 +35,7 @@ const rules: Array<Rule<es.Node>> = [
   noUnspecifiedLiteral,
   noUnspecifiedOperator,
   noUpdateAssignment,
+  noVar,
   singleVariableDeclaration,
   noEval
 ]

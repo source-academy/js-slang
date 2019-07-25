@@ -11476,6 +11476,179 @@ typeof x;",
 }
 `;
 
+exports[`no var statements - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+ var x = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoVarError {
+      "node": Node {
+        "declarations": Array [
+          Node {
+            "end": 28,
+            "id": Node {
+              "end": 24,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 5,
+                  "line": 2,
+                },
+              },
+              "name": "x",
+              "start": 23,
+              "type": "Identifier",
+            },
+            "init": Node {
+              "end": 28,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+              },
+              "raw": "1",
+              "start": 27,
+              "type": "Literal",
+              "value": 1,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 5,
+                "line": 2,
+              },
+            },
+            "start": 23,
+            "type": "VariableDeclarator",
+          },
+        ],
+        "end": 29,
+        "kind": "var",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 11,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 1,
+            "line": 2,
+          },
+        },
+        "start": 19,
+        "type": "VariableDeclaration",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 1: Variable declaration using \\"var\\" is not allowed.
+Use keyword \\"let\\" instead, to declare a variable:
+
+	let x = 1;
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no var statements: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "var x = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoVarError {
+      "node": Node {
+        "declarations": Array [
+          Node {
+            "end": 9,
+            "id": Node {
+              "end": 5,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 1,
+                },
+              },
+              "name": "x",
+              "start": 4,
+              "type": "Identifier",
+            },
+            "init": Node {
+              "end": 9,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 1,
+                },
+              },
+              "raw": "1",
+              "start": 8,
+              "type": "Literal",
+              "value": 1,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 1,
+              },
+            },
+            "start": 4,
+            "type": "VariableDeclarator",
+          },
+        ],
+        "end": 10,
+        "kind": "var",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "VariableDeclaration",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Variable declaration using \\"var\\" is not allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`while needs braces - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
