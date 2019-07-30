@@ -435,6 +435,31 @@ For instance, to assign 20 to x, you can write:
 `)
 })
 
+test('no var statements', () => {
+  return expectParsedError(
+    stripIndent`
+  var x = 1;
+  `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`"Line 1: Variable declaration using \\"var\\" is not allowed."`)
+})
+
+test('no var statements - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+	"enable verbose";
+  var x = 1;
+  `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+"Line 2, Column 1: Variable declaration using \\"var\\" is not allowed.
+Use keyword \\"let\\" instead, to declare a variable:
+
+	let x = 1;
+"
+`)
+})
+
 test('Cannot use update statements', () => {
   return expectParsedError(
     stripIndent`
