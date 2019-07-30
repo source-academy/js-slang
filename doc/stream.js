@@ -3,6 +3,35 @@
 // Supporting streams in the Scheme style, following
 // "stream discipline"
 
+/**
+ * assumes that the tail (second component) of the
+ * pair {x} is a nullary function, and returns the result of
+ * applying that function. Throws an exception if the argument 
+ * is not a pair, or if the tail is not a function.
+ * Laziness: Yes: {stream_tail} only forces the direct tail 
+ * stream, but not the rest of the stream, i.e. not the tail 
+ * of the tail, etc.
+ * @param {Stream} xs - given stream
+ * @returns {Stream} result stream (if stream discipline is used)
+ */
+
+function stream_tail(xs) {
+    if (is_pair(xs)) {
+	const tail = head(xs);
+	if (is_function(tail)) {
+	    return tail();
+	} else {
+	    error(tail,
+		  'stream_tail(xs) expects a function as ' +
+		  'the tail of the argument pair xs, ' +
+		  'but encountered ');
+	}
+    } else {
+	error(xs, 'stream_tail(xs) expects a pair as ' +
+	      'argument xs, but encountered ');
+    }
+}
+
 // is_stream recurses down the stream and checks that it ends with the
 // empty list null
 
@@ -26,6 +55,18 @@ function stream_to_list(xs) {
     return is_null(xs)
         ? null
         : pair(head(xs), stream_to_list(stream_tail(xs)));
+}
+
+// stream makes a stream out of its arguments
+// LOW-LEVEL FUNCTION, NOT JEDISCRIPT
+// Lazy? No: In this implementation, we generate first a
+//           complete list, and then a stream using list_to_stream
+function stream() {
+  var the_list = null
+  for (var i = arguments.length - 1; i >= 0; i--) {
+    the_list = pair(arguments[i], the_list)
+  }
+  return list_to_stream(the_list)
 }
 
 // stream_length returns the length of a given argument stream
