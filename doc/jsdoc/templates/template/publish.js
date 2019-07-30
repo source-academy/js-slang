@@ -226,6 +226,8 @@ function generate(title, docs, filename, resolveLinks) {
     docData = {
         env: env,
         title: title,
+	// remove tags from header, also see layout.tmpl
+        header: title.replace(/<a[^>]*>/,"").replace(/<\/a>/,""), 
         docs: docs
     };
 
