@@ -66,3 +66,25 @@ including specifics and correction guides, should be left to elaborate().
 
 Please remember to write test cases to reflect your added functionalities. The god of this repository is self-professed
 to be very particular about test cases.
+
+Documentation
+-------------
+
+Documentation on Source §x is generated from LaTeX sources in folder ``doc``.
+Currently the documents are generated as follows:
+``
+cd doc; make 
+``
+
+Documentation on the Source libraries are generated from inline documentation
+in the library sources. The libraries are in repository ``cadet-frontend``, which
+is assumed to be located in ``../cadet-frontend``, from the root of this repo.
+The documentation is generated as follows:
+``
+yarn run jsdoc
+``
+This command makes the documentation available in folder
+``
+doc/jsdoc/libraries/
+``
+
