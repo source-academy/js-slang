@@ -1,4 +1,5 @@
 import { simple } from 'acorn-walk/dist/walk'
+import { generate } from 'astring'
 import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
@@ -14,6 +15,7 @@ import {
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
+import { getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
 import {
   Context,
@@ -32,13 +34,15 @@ export interface IOptions {
   steps: number
   executionMethod: ExecutionMethod
   originalMaxExecTime: number
+  useSubst: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
-  originalMaxExecTime: 1000
+  originalMaxExecTime: 1000,
+  useSubst: false
 }
 
 // needed to work on browsers
@@ -132,6 +136,12 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
         isNativeRunnable = !hasDeuggerStatement
       }
       context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+    } else if (theOptions.useSubst) {
+      const steps = getEvaluationSteps(program, context)
+      return Promise.resolve({
+        status: 'finished',
+        value: steps.map(generate)
+      } as Result)
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }
