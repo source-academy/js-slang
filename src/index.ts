@@ -15,7 +15,7 @@ import {
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { getEvaluationSteps } from './substituter'
+import { getEvaluationSteps, treeifyMain } from './substituter'
 import { transpile } from './transpiler'
 import {
   Context,
@@ -140,7 +140,7 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
       const steps = getEvaluationSteps(program, context)
       return Promise.resolve({
         status: 'finished',
-        value: steps.map(generate)
+        value: steps.map(treeifyMain).map(generate)
       } as Result)
     } else {
       isNativeRunnable = context.executionMethod === 'native'

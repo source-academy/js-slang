@@ -151,10 +151,9 @@ function substituteMain(
     },
     // done
     Program(target: es.Program): es.Program {
-      let substedBody = target.body.map(() => dummyStatement())
-      const substedProgram = ast.program(substedBody)
+      const substedProgram = ast.program(target.body.map(() => dummyStatement()))
       seenBefore.set(target, substedProgram)
-      substedBody = target.body.map(stmt => substitute(stmt) as es.Statement)
+      substedProgram.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedProgram
     },
     // done
@@ -520,6 +519,71 @@ function substPredefinedFns(node: es.Node, context: Context): [es.Node, Context]
   return [node, context]
 }
 
+export function treeifyMain(program: es.Program): es.Program {
+  // recurse down the program like substitute
+  // if see a function at expression position,
+  //   has an identifier: replace with the name
+  //   else: replace with an identifer "=>"
+  const treeifiers = {
+    // Identifier: return
+    ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
+      return ast.expressionStatement(treeify(target.expression) as es.Expression)
+    },
+    BinaryExpression: (target: es.BinaryExpression) => {
+      return ast.binaryExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
+      )
+    },
+    UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
+      return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
+    },
+    ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
+      return ast.conditionalExpression(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.Expression,
+        treeify(target.alternate) as es.Expression
+      )
+    },
+    CallExpression: (target: es.CallExpression): es.CallExpression => {
+      return ast.callExpression(
+        treeify(target.callee) as es.Expression,
+        target.arguments.map(arg => treeify(arg) as es.Expression)
+      )
+    },
+    FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
+      return ast.functionDeclaration(target.id, target.params, treeify(
+        target.body
+      ) as es.BlockStatement)
+    },
+    // CORE
+    FunctionExpression: (target: es.FunctionExpression): es.Identifier => {
+      return ast.identifier(target.id ? target.id.name : '=>')
+    },
+    Program: (target: es.Program): es.Program => {
+      return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
+    BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
+      return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
+    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+      return ast.returnStatement(treeify(target.argument!) as es.Expression)
+    }
+  }
+
+  function treeify(target: es.Node): es.Node {
+    const treeifier = treeifiers[target.type]
+    if (treeifier === undefined) {
+      return target
+    } else {
+      return treeifier(target)
+    }
+  }
+
+  return treeify(program) as es.Program
+}
+
 // the context here is for builtins
 export function getEvaluationSteps(program: es.Program, context: Context): es.Node[] {
   const steps: es.Node[] = []
@@ -532,9 +596,9 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.No
       // tslint:disable-next-line
       ;[reduced] = reduce(reduced, context)
     }
-    return steps
+    return steps.map(step => treeifyMain(step as es.Program))
   } catch (error) {
     context.errors.push(error)
-    return steps
+    return steps.map(step => treeifyMain(step as es.Program))
   }
 }
