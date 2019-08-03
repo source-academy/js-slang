@@ -31,12 +31,14 @@ export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
+  originalMaxExecTime: number
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  executionMethod: 'auto'
+  executionMethod: 'auto',
+  originalMaxExecTime: 1000
 }
 
 // needed to work on browsers
@@ -172,7 +174,7 @@ export async function runInContext(
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
-      JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
     }
     previousCode = code
     let transpiled

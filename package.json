@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -14,7 +14,7 @@
     "source-map": "^0.7.3"
   },
   "main": "dist/index",
-  "types": "dist/index",
+    "types": "dist/index",
   "files": [
     "dist"
   ],
@@ -29,7 +29,8 @@
     "prepublishOnly": "tsc",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\""
+    "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
+    "jsdoc": "./scripts/jsdoc.sh"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "coveralls": "^3.0.2",
     "husky": "^2.3.0",
     "jest": "^23.6.0",
+    "jsdoc": "3.5.5",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.0",
