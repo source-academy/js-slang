@@ -15,6 +15,5 @@ export const UNKNOWN_LOCATION: es.SourceLocation = {
 }
 export const JSSLANG_PROPERTIES = {
   maxExecTime: 1000,
-  originalMaxExecTime: 1000,
   factorToIncreaseBy: 10
 }
