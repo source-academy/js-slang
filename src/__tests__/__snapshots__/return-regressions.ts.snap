@@ -63,17 +63,11 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique0 => {
-            return f = this.value = unique0;
-          }
+          value: f
         });
       }
     }
@@ -146,17 +140,11 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique0 => {
-            return f = this.value = unique0;
-          }
+          value: f
         });
       }
     }
@@ -231,17 +219,11 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique0 => {
-            return f = this.value = unique0;
-          }
+          value: f
         });
       }
     }
@@ -308,17 +290,11 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique0 => {
-            return f = this.value = unique0;
-          }
+          value: f
         });
       }
     }
@@ -436,24 +412,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -535,24 +502,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -636,24 +594,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -729,24 +678,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -834,24 +774,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -937,24 +868,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -1042,24 +964,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }
@@ -1139,24 +1052,15 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
         native.globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable,
-          assignNewValue: unique => {
-            return unreachable = this.value = unique;
-          }
+          value: unreachable
         });
         native.globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id,
-          assignNewValue: unique0 => {
-            return id = this.value = unique0;
-          }
+          value: id
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique1 => {
-            return f = this.value = unique1;
-          }
+          value: f
         });
       }
     }

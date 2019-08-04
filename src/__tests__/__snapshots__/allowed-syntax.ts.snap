@@ -781,10 +781,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(name, 15, 0, 1, 2);\\");
         native.globals.variables.set(\\"name\\", {
           kind: \\"const\\",
-          value: name,
-          assignNewValue: unique => {
-            return name = this.value = unique;
-          }
+          value: name
         });
       }
     }
@@ -3191,10 +3188,7 @@ let lastStatementResult = undefined;
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime,
-          assignNewValue: unique0 => {
-            return startTime = this.value = unique0;
-          }
+          value: startTime
         });
       }
     }
@@ -3915,10 +3909,7 @@ let lastStatementResult = undefined;
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime,
-          assignNewValue: unique0 => {
-            return startTime = this.value = unique0;
-          }
+          value: startTime
         });
       }
     }
@@ -5378,10 +5369,7 @@ let lastStatementResult = undefined;
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime,
-          assignNewValue: unique0 => {
-            return startTime = this.value = unique0;
-          }
+          value: startTime
         });
       }
     }

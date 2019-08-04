@@ -218,10 +218,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }
@@ -285,10 +282,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }
@@ -343,10 +337,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 7, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }
@@ -405,10 +396,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }
@@ -463,10 +451,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }
@@ -525,10 +510,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 9, 0);\\");
         native.globals.variables.set(\\"test\\", {
           kind: \\"const\\",
-          value: test,
-          assignNewValue: unique => {
-            return test = this.value = unique;
-          }
+          value: test
         });
       }
     }

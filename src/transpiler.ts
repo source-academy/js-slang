@@ -86,36 +86,38 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
 ): es.ExpressionStatement {
   const paramName = create.identifier(getUniqueId())
   const variableIdentifier = create.identifier(name)
+  const properties = [
+    create.property('kind', create.literal(kind)),
+    create.property('value', variableIdentifier)
+  ]
+  if (kind === 'let') {
+    properties.push(
+      create.property(
+        'assignNewValue',
+        create.blockArrowFunction(
+          [paramName],
+          [
+            create.returnStatement(
+              create.assignmentExpression(
+                variableIdentifier,
+                create.assignmentExpression(
+                  create.memberExpression({ type: 'ThisExpression' }, 'value'),
+                  paramName
+                )
+              )
+            )
+          ]
+        )
+      )
+    )
+  }
   return create.expressionStatement(
     create.callExpression(
       create.memberExpression(
         create.memberExpression(createStorageLocationAstFor('globals'), 'variables'),
         'set'
       ),
-      [
-        create.literal(name),
-        create.objectExpression([
-          create.property('kind', create.literal(kind)),
-          create.property('value', variableIdentifier),
-          create.property(
-            'assignNewValue',
-            create.blockArrowFunction(
-              [paramName],
-              [
-                create.returnStatement(
-                  create.assignmentExpression(
-                    variableIdentifier,
-                    create.assignmentExpression(
-                      create.memberExpression({ type: 'ThisExpression' }, 'value'),
-                      paramName
-                    )
-                  )
-                )
-              ]
-            )
-          )
-        ])
-      ]
+      [create.literal(name), create.objectExpression(properties)]
     )
   )
 }

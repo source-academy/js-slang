@@ -814,10 +814,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 4, 0, f);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique => {
-            return f = this.value = unique;
-          }
+          value: f
         });
       }
     }
@@ -1361,17 +1358,11 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
         native.globals.variables.set(\\"start\\", {
           kind: \\"const\\",
-          value: start,
-          assignNewValue: unique => {
-            return start = this.value = unique;
-          }
+          value: start
         });
         native.globals.variables.set(\\"repeatUntilDifferentTime\\", {
           kind: \\"const\\",
-          value: repeatUntilDifferentTime,
-          assignNewValue: unique0 => {
-            return repeatUntilDifferentTime = this.value = unique0;
-          }
+          value: repeatUntilDifferentTime
         });
       }
     }

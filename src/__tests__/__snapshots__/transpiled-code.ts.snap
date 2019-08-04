@@ -106,10 +106,7 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"native;\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f,
-          assignNewValue: unique => {
-            return f = this.value = unique;
-          }
+          value: f
         });
       }
     }
