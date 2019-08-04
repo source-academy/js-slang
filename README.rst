@@ -40,7 +40,7 @@ or alternatively, install js-slang and run
 Documentation
 -------------
 
-Source is documented here: https://sicp.comp.nus.edu.sg
+Source is documented here: https://sicp.comp.nus.edu.sg/source/
 
 To build the documentation, run
 
