@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedErrorNoSnapshot, expectResult } from '../../utils/testing'
 
 describe('primitive stream functions', () => {
   test('empty stream is null', () => {
@@ -25,7 +25,7 @@ Array [
   })
 
   test('infinite stream is infinite', () => {
-    return expectParsedError(
+    return expectParsedErrorNoSnapshot(
       stripIndent`
     stream_length(integers_from(0));
     `,
