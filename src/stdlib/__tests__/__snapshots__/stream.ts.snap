@@ -209,7 +209,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"sum;\\");
         native.globals.variables.set(\\"sum\\", {
           kind: \\"let\\",
-          value: sum
+          value: sum,
+          assignNewValue: unique => {
+            return sum = this.value = unique;
+          }
         });
       }
     }
@@ -509,11 +512,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"boolOrErr(boolOrErr(binaryOp(\\\\\\"===\\\\\\", callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 0, s, 4), 4, 0, 22), 22, 4, 0), 4, 0) && binaryOp(\\\\\\"===\\\\\\", callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 30, s, 7), 4, 30, callIfFuncAndRightArgs(pair, 4, 46, '', '1')), '1', 4, 30), 4, 0) && result;\\");
         native.globals.variables.set(\\"s\\", {
           kind: \\"const\\",
-          value: s
+          value: s,
+          assignNewValue: unique => {
+            return s = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"result\\", {
           kind: \\"const\\",
-          value: result
+          value: result,
+          assignNewValue: unique0 => {
+            return result = this.value = unique0;
+          }
         });
       }
     }

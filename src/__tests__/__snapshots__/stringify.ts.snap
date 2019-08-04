@@ -31,7 +31,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
         native.globals.variables.set(\\"xs\\", {
           kind: \\"const\\",
-          value: xs
+          value: xs,
+          assignNewValue: unique => {
+            return xs = this.value = unique;
+          }
         });
       }
     }
@@ -74,7 +77,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, f);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -144,7 +150,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
         native.globals.variables.set(\\"o\\", {
           kind: \\"const\\",
-          value: o
+          value: o,
+          assignNewValue: unique => {
+            return o = this.value = unique;
+          }
         });
       }
     }
@@ -254,7 +263,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
         native.globals.variables.set(\\"xs\\", {
           kind: \\"const\\",
-          value: xs
+          value: xs,
+          assignNewValue: unique => {
+            return xs = this.value = unique;
+          }
         });
       }
     }
@@ -303,7 +315,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 4, 0, f);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -450,11 +465,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 5, 0, arr);\\");
         native.globals.variables.set(\\"arr\\", {
           kind: \\"const\\",
-          value: arr
+          value: arr,
+          assignNewValue: unique => {
+            return arr = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime
+          value: startTime,
+          assignNewValue: unique0 => {
+            return startTime = this.value = unique0;
+          }
         });
       }
     }
@@ -653,7 +674,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
         native.globals.variables.set(\\"xs\\", {
           kind: \\"const\\",
-          value: xs
+          value: xs,
+          assignNewValue: unique => {
+            return xs = this.value = unique;
+          }
         });
       }
     }
@@ -704,7 +728,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
         native.globals.variables.set(\\"o\\", {
           kind: \\"const\\",
-          value: o
+          value: o,
+          assignNewValue: unique => {
+            return o = this.value = unique;
+          }
         });
       }
     }
@@ -746,7 +773,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 3, 0, o);\\");
         native.globals.variables.set(\\"o\\", {
           kind: \\"let\\",
-          value: o
+          value: o,
+          assignNewValue: unique => {
+            return o = this.value = unique;
+          }
         });
       }
     }
@@ -861,7 +891,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
         native.globals.variables.set(\\"o\\", {
           kind: \\"const\\",
-          value: o
+          value: o,
+          assignNewValue: unique => {
+            return o = this.value = unique;
+          }
         });
       }
     }

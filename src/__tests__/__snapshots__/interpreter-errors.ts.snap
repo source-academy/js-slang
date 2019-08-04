@@ -333,11 +333,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
         native.globals.variables.set(\\"g\\", {
           kind: \\"const\\",
-          value: g
+          value: g,
+          assignNewValue: unique => {
+            return g = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique0 => {
+            return f = this.value = unique0;
+          }
         });
       }
     }
@@ -433,7 +439,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -529,7 +538,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -625,7 +637,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -727,7 +742,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -829,7 +847,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -2799,7 +2820,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }
@@ -2968,7 +2992,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          value: f,
+          assignNewValue: unique => {
+            return f = this.value = unique;
+          }
         });
       }
     }

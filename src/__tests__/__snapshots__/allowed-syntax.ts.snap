@@ -781,7 +781,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(name, 15, 0, 1, 2);\\");
         native.globals.variables.set(\\"name\\", {
           kind: \\"const\\",
-          value: name
+          value: name,
+          assignNewValue: unique => {
+            return name = this.value = unique;
+          }
         });
       }
     }
@@ -3181,11 +3184,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: unique => {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime
+          value: startTime,
+          assignNewValue: unique0 => {
+            return startTime = this.value = unique0;
+          }
         });
       }
     }
@@ -3899,11 +3908,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: unique => {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime
+          value: startTime,
+          assignNewValue: unique0 => {
+            return startTime = this.value = unique0;
+          }
         });
       }
     }
@@ -5356,11 +5371,17 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: unique => {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
-          value: startTime
+          value: startTime,
+          assignNewValue: unique0 => {
+            return startTime = this.value = unique0;
+          }
         });
       }
     }
@@ -6325,7 +6346,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"getProp(x, 1, 2, 0);\\");
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
-          value: x
+          value: x,
+          assignNewValue: unique => {
+            return x = this.value = unique;
+          }
         });
       }
     }
@@ -6818,7 +6842,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"setProp(x, 1, 4, 2, 0);\\");
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
-          value: x
+          value: x,
+          assignNewValue: unique => {
+            return x = this.value = unique;
+          }
         });
       }
     }

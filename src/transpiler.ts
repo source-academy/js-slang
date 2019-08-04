@@ -1,12 +1,13 @@
 /* tslint:disable */
 
-import { simple } from 'acorn-walk/dist/walk'
+import { ancestor, simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
+import { ConstAssignment, UndefinedVariable } from './interpreter-errors'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -83,6 +84,8 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
   kind: AllowedDeclarations
 ): es.ExpressionStatement {
+  const paramName = create.identifier(getUniqueId())
+  const variableIdentifier = create.identifier(name)
   return create.expressionStatement(
     create.callExpression(
       create.memberExpression(
@@ -93,7 +96,24 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
         create.literal(name),
         create.objectExpression([
           create.property('kind', create.literal(kind)),
-          create.property('value', create.identifier(name))
+          create.property('value', variableIdentifier),
+          create.property(
+            'assignNewValue',
+            create.blockArrowFunction(
+              [paramName],
+              [
+                create.returnStatement(
+                  create.assignmentExpression(
+                    variableIdentifier,
+                    create.assignmentExpression(
+                      create.memberExpression({ type: 'ThisExpression' }, 'value'),
+                      paramName
+                    )
+                  )
+                )
+              ]
+            )
+          )
         ])
       ]
     )
@@ -106,7 +126,6 @@ function wrapWithPreviouslyDeclaredGlobals(statements: es.Statement[]) {
   let wrapped = create.blockStatement(statements)
   while (currentVariableScope !== null) {
     const initialisingStatements: es.Statement[] = []
-    const updatingStatements: es.Statement[] = []
     currentVariableScope.variables.forEach(({ kind }: ValueWrapper, name: string) => {
       let unwrappedValueAst: es.Expression = createStorageLocationAstFor('globals')
       for (let i = 0; i < timesToGoUp; i += 1) {
@@ -120,17 +139,10 @@ function wrapWithPreviouslyDeclaredGlobals(statements: es.Statement[]) {
         'value'
       )
       initialisingStatements.push(create.declaration(name, kind, unwrappedValueAst))
-      if (kind === 'let') {
-        updatingStatements.push(
-          create.expressionStatement(
-            create.assignmentExpression(unwrappedValueAst, create.identifier(name))
-          )
-        )
-      }
     })
     timesToGoUp += 1
     currentVariableScope = currentVariableScope.previousScope
-    wrapped = create.blockStatement([...initialisingStatements, wrapped, ...updatingStatements])
+    wrapped = create.blockStatement([...initialisingStatements, wrapped])
   }
   return wrapped
 }
@@ -286,6 +298,110 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
       node.callee = globalIds.callIfFuncAndRightArgs
     }
   })
+}
+
+export function transformAssignmentsToPropagateBackNewValue(program: es.Program) {
+  const globalEnvironment = NATIVE_STORAGE[contextId].globals
+  const previousVariablesToTimesGoneUp = new Map<
+    string,
+    { isConstant: boolean; timesGoneUp: number }
+  >()
+  let variableScope = globalEnvironment
+  let timesGoneUp = 0
+  while (variableScope !== null) {
+    for (const [name, { kind }] of variableScope.variables) {
+      if (!previousVariablesToTimesGoneUp.has(name)) {
+        previousVariablesToTimesGoneUp.set(name, { isConstant: kind === 'const', timesGoneUp })
+      }
+    }
+    variableScope = variableScope.previousScope
+    timesGoneUp += 1
+  }
+
+  const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
+  function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
+    const identifiers = new Set<string>()
+    for (const statement of node.body) {
+      if (statement.type === 'VariableDeclaration') {
+        identifiers.add((statement.declarations[0].id as es.Identifier).name)
+      } else if (statement.type === 'FunctionDeclaration') {
+        identifiers.add((statement.id as es.Identifier).name)
+      }
+    }
+    identifiersIntroducedByNode.set(node, identifiers)
+  }
+  function processFunction(
+    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
+    ancestors: es.Node[]
+  ) {
+    identifiersIntroducedByNode.set(
+      node,
+      new Set((node.params as es.Identifier[]).map(id => id.name))
+    )
+  }
+  const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
+  ancestor(program, {
+    Program: processBlock,
+    BlockStatement: processBlock,
+    FunctionDeclaration: processFunction,
+    ArrowFunctionExpression: processFunction,
+    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+      const init = forStatement.init!
+      if (init.type === 'VariableDeclaration') {
+        identifiersIntroducedByNode.set(
+          forStatement,
+          new Set([(init.declarations[0].id as es.Identifier).name])
+        )
+      }
+    },
+    AssignmentExpression(assignmentExpression: es.AssignmentExpression, ancestors: es.Node[]) {
+      // Only care about plain `varName = aNewValue`
+      // `arrayName[0] = aNewValue` will propagate to the right scope already
+      if (assignmentExpression.left.type === 'Identifier') {
+        identifiersToAncestors.set(assignmentExpression.left, [...ancestors])
+      }
+    }
+  })
+  for (const [identifier, ancestors] of identifiersToAncestors) {
+    const lastAncestor: es.AssignmentExpression = ancestors[
+      ancestors.length - 1
+    ] as es.AssignmentExpression
+    const name = identifier.name
+    let isCurrentlyDeclared = false
+    for (const ancestor of ancestors) {
+      if (identifiersIntroducedByNode.has(ancestor)) {
+        if (identifiersIntroducedByNode.get(ancestor)!.has(name)) {
+          isCurrentlyDeclared = true
+          break
+        }
+      }
+    }
+    if (!isCurrentlyDeclared) {
+      if (previousVariablesToTimesGoneUp.has(name)) {
+        const { isConstant, timesGoneUp } = previousVariablesToTimesGoneUp.get(name)!
+        if (isConstant) {
+          throw new ConstAssignment(identifier, name)
+        } else {
+          let variableScope: es.Expression = createStorageLocationAstFor('globals')
+          for (let i = 0; i < timesGoneUp; i += 1) {
+            variableScope = create.memberExpression(variableScope, 'previousScope')
+          }
+          lastAncestor.right = create.callExpression(
+            create.memberExpression(
+              create.callExpression(
+                create.memberExpression(create.memberExpression(variableScope, 'variables'), 'get'),
+                [create.literal(name)]
+              ),
+              'assignNewValue'
+            ),
+            [lastAncestor.right]
+          )
+        }
+      } else {
+        throw new UndefinedVariable(name, identifier)
+      }
+    }
+  }
 }
 
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
@@ -511,6 +627,7 @@ export function transpile(program: es.Program, id: number) {
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
   transformPropertyAccess(program)
+  transformAssignmentsToPropagateBackNewValue(program)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
