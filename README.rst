@@ -44,7 +44,7 @@ Source is documented here: https://sicp.comp.nus.edu.sg/source/
 
 To build the documentation, run
 
-..code-block::
+.. code-block::
 
   $ git clone https://github.com/source-academy/js-slang.git
   $ cd js-slang
