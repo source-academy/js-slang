@@ -32,14 +32,14 @@ test('String representation of functions are nice', () => {
   return expectResult(
     stripIndent`
   function f(x, y) {
-    return z;
+    return x;
   }
   stringify(f);
   `,
     { native: true }
   ).toMatchInlineSnapshot(`
 "function f(x, y) {
-  return z;
+  return x;
 }"
 `)
 })
@@ -47,31 +47,31 @@ test('String representation of functions are nice', () => {
 test('String representation of arrow functions are nice', () => {
   return expectResult(
     stripIndent`
-  const f = (x, y) => z;
+  const f = (x, y) => x;
   stringify(f);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"(x, y) => z"`)
+  ).toMatchInlineSnapshot(`"(x, y) => x"`)
 })
 
 test('String representation of arrays are nice', () => {
   return expectResult(
     stripIndent`
-  const xs = [1, 'true', true, () => x];
+  const xs = [1, 'true', true, () => 1];
   stringify(xs);
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => x]"`)
+  ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => 1]"`)
 })
 
 test('String representation of multidimensional arrays are nice', () => {
   return expectResult(
     stripIndent`
-  const xs = [1, 'true', [true, () => x, [[]]]];
+  const xs = [1, 'true', [true, () => 1, [[]]]];
   stringify(xs);
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => x, [[]]]]"`)
+  ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => 1, [[]]]]"`)
 })
 
 test('String representation of empty arrays are nice', () => {
@@ -312,36 +312,36 @@ test('String representation of huge arrays are nice', () => {
 test('String representation of objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x };
+  const o = { a: 1, b: true, c: () => 1 };
   stringify(o);
   `,
     { chapter: 100, native: true }
-  ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}"`)
+  ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
 })
 
 test('String representation of nested objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
+  const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
   stringify(o);
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(
-    `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
+    `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
   )
 })
 
 test('String representation of big objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
+  const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`
 "{ \\"a\\": 1,
   \\"b\\": true,
-  \\"c\\": () => x,
+  \\"c\\": () => 1,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
   \\"g\\": 0,
   \\"h\\": 0,

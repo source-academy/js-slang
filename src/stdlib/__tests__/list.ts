@@ -5,7 +5,7 @@ test('list creates list', () => {
   return expectResult(
     stripIndent`
     function f() { return 1; }
-    list(1, 'a string ""', () => a, f, true, 3.14);
+    list(1, 'a string ""', () => f, f, true, 3.14);
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`

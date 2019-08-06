@@ -74,7 +74,7 @@ test('functions toString (mostly) matches up with JS', () => {
   function f(x) {
     return 5;
   }
-  toString(a=>b) + toString(f);
+  toString(a=>a) + toString(f);
   `,
     { native: true, testBuiltins: { toString } }
   )

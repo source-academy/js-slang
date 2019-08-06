@@ -3,12 +3,12 @@
 exports[`String representation of arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const xs = [1, 'true', true, () => x];
+  "code": "const xs = [1, 'true', true, () => 1];
 stringify(xs);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, \\"true\\", true, () => x]",
+  "result": "[1, \\"true\\", true, () => 1]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -26,8 +26,8 @@ let lastStatementResult = undefined;
       {
         const xs = [1, 'true', true, wrap(() => ({
           isTail: false,
-          value: x
-        }), \\"() => x\\")];
+          value: 1
+        }), \\"() => 1\\")];
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
         native.globals.variables.set(\\"xs\\", {
           kind: \\"const\\",
@@ -46,12 +46,12 @@ let lastStatementResult = undefined;
 exports[`String representation of arrow functions are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const f = (x, y) => z;
+  "code": "const f = (x, y) => x;
 stringify(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "(x, y) => z",
+  "result": "(x, y) => x",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -69,8 +69,8 @@ let lastStatementResult = undefined;
       {
         const f = wrap((x, y) => ({
           isTail: false,
-          value: z
-        }), \\"(x, y) => z\\");
+          value: x
+        }), \\"(x, y) => x\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, f);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
@@ -89,14 +89,14 @@ let lastStatementResult = undefined;
 exports[`String representation of big objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
+  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
   "result": "{ \\"a\\": 1,
   \\"b\\": true,
-  \\"c\\": () => x,
+  \\"c\\": () => 1,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
   \\"g\\": 0,
   \\"h\\": 0,
@@ -126,8 +126,8 @@ let lastStatementResult = undefined;
           b: true,
           c: wrap(() => ({
             isTail: false,
-            value: x
-          }), \\"() => x\\"),
+            value: 1
+          }), \\"() => 1\\"),
           d: {
             e: 5,
             f: 6
@@ -270,14 +270,14 @@ exports[`String representation of functions are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function f(x, y) {
-  return z;
+  return x;
 }
 stringify(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
   "result": "function f(x, y) {
-  return z;
+  return x;
 }",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -297,9 +297,9 @@ let lastStatementResult = undefined;
         const f = wrap((x, y) => {
           return {
             isTail: false,
-            value: z
+            value: x
           };
-        }, \\"function f(x, y) {\\\\n  return z;\\\\n}\\");
+        }, \\"function f(x, y) {\\\\n  return x;\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 4, 0, f);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
@@ -625,12 +625,12 @@ let lastStatementResult = undefined;
 exports[`String representation of multidimensional arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const xs = [1, 'true', [true, () => x, [[]]]];
+  "code": "const xs = [1, 'true', [true, () => 1, [[]]]];
 stringify(xs);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, \\"true\\", [true, () => x, [[]]]]",
+  "result": "[1, \\"true\\", [true, () => 1, [[]]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -648,8 +648,8 @@ let lastStatementResult = undefined;
       {
         const xs = [1, 'true', [true, wrap(() => ({
           isTail: false,
-          value: x
-        }), \\"() => x\\"), [[]]]];
+          value: 1
+        }), \\"() => 1\\"), [[]]]];
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
         native.globals.variables.set(\\"xs\\", {
           kind: \\"const\\",
@@ -668,12 +668,12 @@ let lastStatementResult = undefined;
 exports[`String representation of nested objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
+  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -694,8 +694,8 @@ let lastStatementResult = undefined;
           b: true,
           c: wrap(() => ({
             isTail: false,
-            value: x
-          }), \\"() => x\\"),
+            value: 1
+          }), \\"() => 1\\"),
           d: {
             e: 5,
             f: 6
@@ -747,7 +747,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"o\\", {
           kind: \\"let\\",
           value: o,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return o = this.value = unique;
           }
         });
@@ -832,12 +832,12 @@ let lastStatementResult = undefined;
 exports[`String representation of objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x };
+  "code": "const o = { a: 1, b: true, c: () => 1 };
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -858,8 +858,8 @@ let lastStatementResult = undefined;
           b: true,
           c: wrap(() => ({
             isTail: false,
-            value: x
-          }), \\"() => x\\")
+            value: 1
+          }), \\"() => 1\\")
         };
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
         native.globals.variables.set(\\"o\\", {

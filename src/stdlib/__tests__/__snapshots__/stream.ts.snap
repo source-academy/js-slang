@@ -210,7 +210,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"sum\\", {
           kind: \\"let\\",
           value: sum,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return sum = this.value = unique;
           }
         });

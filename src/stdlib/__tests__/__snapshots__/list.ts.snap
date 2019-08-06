@@ -1367,7 +1367,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"sum\\", {
           kind: \\"let\\",
           value: sum,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return sum = this.value = unique;
           }
         });
@@ -1419,7 +1419,7 @@ exports[`list creates list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function f() { return 1; }
-list(1, 'a string \\"\\"', () => a, f, true, 3.14);",
+list(1, 'a string \\"\\"', () => f, f, true, 3.14);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1463,7 +1463,7 @@ let lastStatementResult = undefined;
             value: 1
           };
         }, \\"function f() {\\\\n  return 1;\\\\n}\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 2, 0, 1, 'a string \\\\\\"\\\\\\"', wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\"), f, true, 3.14);\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 2, 0, 1, 'a string \\\\\\"\\\\\\"', wrap(() => ({   isTail: false,   value: f }), \\\\\\"() => f\\\\\\"), f, true, 3.14);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
           value: f
@@ -1959,7 +1959,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"p\\", {
           kind: \\"let\\",
           value: p,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return p = this.value = unique;
           }
         });
@@ -2010,7 +2010,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"p\\", {
           kind: \\"let\\",
           value: p,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return p = this.value = unique;
           }
         });

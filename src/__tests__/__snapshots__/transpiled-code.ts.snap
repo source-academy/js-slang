@@ -89,8 +89,9 @@ let lastStatementResult = undefined;
       const parse = native.globals.previousScope.variables.get(\\"parse\\").value;
       const apply_in_underlying_javascript = native.globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").value;
       {
-        setProp(boolOrErr, 123, 1, 1, 0);
-        const f = wrap90(callIfFuncAndRightArgs => {
+        const boolOrErr = 1;
+        setProp(boolOrErr, 123, 1, 2, 0);
+        const f = wrap90((callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) => {
           let wrap = 2;
           wrap0;
           wrap1;
@@ -102,11 +103,19 @@ let lastStatementResult = undefined;
           wrap7;
           wrap8;
           wrap9;
-        }, \\"function f(callIfFuncAndRightArgs) {\\\\n  let wrap = 2;\\\\n  wrap0;\\\\n  wrap1;\\\\n  wrap2;\\\\n  wrap3;\\\\n  wrap4;\\\\n  wrap5;\\\\n  wrap6;\\\\n  wrap7;\\\\n  wrap8;\\\\n  wrap9;\\\\n}\\");
-        lastStatementResult = eval(\\"native;\\");
+        }, \\"function f(callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) {\\\\n  let wrap = 2;\\\\n  wrap0;\\\\n  wrap1;\\\\n  wrap2;\\\\n  wrap3;\\\\n  wrap4;\\\\n  wrap5;\\\\n  wrap6;\\\\n  wrap7;\\\\n  wrap8;\\\\n  wrap9;\\\\n}\\");
+        const native = 123;
+        native.globals.variables.set(\\"boolOrErr\\", {
+          kind: \\"const\\",
+          value: boolOrErr
+        });
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
           value: f
+        });
+        native.globals.variables.set(\\"native\\", {
+          kind: \\"const\\",
+          value: native
         });
       }
     }
@@ -118,7 +127,7 @@ let lastStatementResult = undefined;
 
 exports[`builtins do get prepended 1`] = `
 Object {
-  "code": "ensure_builtins;",
+  "code": "\\"ensure_builtins\\";",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -207,7 +216,7 @@ let lastStatementResult = undefined;
       const parse = native.globals.previousScope.variables.get(\\"parse\\").value;
       const apply_in_underlying_javascript = native.globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").value;
       {
-        lastStatementResult = eval(\\"ensure_builtins;\\");
+        lastStatementResult = eval(\\"\\\\\\"ensure_builtins\\\\\\";\\");
       }
     }
     return lastStatementResult;

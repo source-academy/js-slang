@@ -3182,7 +3182,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
           value: i,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return i = this.value = unique;
           }
         });
@@ -3903,7 +3903,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
           value: i,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return i = this.value = unique;
           }
         });
@@ -5363,7 +5363,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
           value: i,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return i = this.value = unique;
           }
         });
@@ -6335,7 +6335,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
           value: x,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return x = this.value = unique;
           }
         });
@@ -6831,7 +6831,7 @@ let lastStatementResult = undefined;
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
           value: x,
-          assignNewValue: unique => {
+          assignNewValue: function (unique) {
             return x = this.value = unique;
           }
         });

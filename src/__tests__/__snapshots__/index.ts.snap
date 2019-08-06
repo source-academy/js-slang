@@ -878,11 +878,11 @@ Object {
   "code": "function f(x) {
   return 5;
 }
-toString(a=>b) + toString(f);",
+toString(a=>a) + toString(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "a => bfunction f(x) {
+  "result": "a => afunction f(x) {
   return 5;
 }",
   "resultStatus": "finished",
@@ -906,7 +906,7 @@ let lastStatementResult = undefined;
             value: 5
           };
         }, \\"function f(x) {\\\\n  return 5;\\\\n}\\");
-        lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(toString, 4, 0, wrap(a => ({   isTail: false,   value: b }), \\\\\\"a => b\\\\\\")), callIfFuncAndRightArgs(toString, 4, 17, f), 4, 0);\\");
+        lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(toString, 4, 0, wrap(a => ({   isTail: false,   value: a }), \\\\\\"a => a\\\\\\")), callIfFuncAndRightArgs(toString, 4, 17, f), 4, 0);\\");
         native.globals.variables.set(\\"f\\", {
           kind: \\"const\\",
           value: f
