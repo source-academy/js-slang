@@ -240,3 +240,50 @@ export const blockExpression = (
   body,
   loc
 })
+
+export const arrowFunctionExpression = (
+  params: es.Pattern[],
+  body: es.Expression | es.BlockStatement,
+  loc?: es.SourceLocation
+): es.ArrowFunctionExpression => ({
+  type: 'ArrowFunctionExpression',
+  expression: body.type !== 'BlockStatement',
+  generator: false,
+  params,
+  body,
+  loc
+})
+
+export const variableDeclaration = (
+  declarations: es.VariableDeclarator[],
+  loc?: es.SourceLocation
+): es.VariableDeclaration => ({
+  type: 'VariableDeclaration',
+  kind: 'const',
+  declarations,
+  loc
+})
+
+export const variableDeclarator = (
+  id: es.Pattern,
+  init: es.Expression,
+  loc?: es.SourceLocation
+): es.VariableDeclarator => ({
+  type: 'VariableDeclarator',
+  id,
+  init,
+  loc
+})
+
+export const ifStatement = (
+  test: es.Expression,
+  consequent: es.BlockStatement,
+  alternate: es.Statement,
+  loc?: es.SourceLocation
+): es.IfStatement => ({
+  type: 'IfStatement',
+  test,
+  consequent,
+  alternate,
+  loc
+})

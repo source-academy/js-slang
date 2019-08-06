@@ -1,20 +1,31 @@
+import { generate } from 'astring'
 import * as es from 'estree'
+import createContext from './createContext'
 import * as errors from './interpreter-errors'
+import { parse } from './parser'
 import { BlockExpression, Context, FunctionDeclarationExpression } from './types'
 import * as ast from './utils/astCreator'
-import { dummyBlockStatement, dummyExpression, dummyStatement } from './utils/dummyAstCreator'
+import {
+  dummyBlockStatement,
+  dummyExpression,
+  dummyProgram,
+  dummyStatement,
+  dummyVariableDeclarator
+} from './utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
 
 function isIrreducible(node: es.Node) {
-  return ['Identifier', 'Literal', 'FunctionExpression'].includes(node.type)
+  return ['Identifier', 'Literal', 'FunctionExpression', 'ArrowFunctionExpression'].includes(
+    node.type
+  )
 }
 
 /* tslint:disable:no-shadowed-variable */
 // wrapper function, calls substitute immediately.
 function substituteMain(
   name: es.Identifier,
-  replacement: FunctionDeclarationExpression | es.Literal,
+  replacement: es.FunctionExpression | es.Literal | es.ArrowFunctionExpression,
   target: es.Node
 ): es.Node {
   const seenBefore: Map<es.Node, es.Node> = new Map()
@@ -23,13 +34,11 @@ function substituteMain(
    *  therefore each function has the responsbility of registering the
    *  [target, replacement] pair in seenBefore.
    * Substituter have two general steps:
-   * 1. Declare relevant, dummy children
-   * 2. Create dummy replacement with 1. and push [target, dummyReplacement]
+   * 1. Create dummy replacement with 1. and push [target, dummyReplacement]
    *  into the seenBefore array.
-   * 3. [recursive step] we substitute the children, and return the dummyReplacement.
+   * 2. [recursive step] we substitute the children, and return the dummyReplacement.
    */
   const substituters = {
-    // done
     Identifier(
       target: es.Identifier
     ): es.Identifier | FunctionDeclarationExpression | es.Literal | es.Expression {
@@ -47,20 +56,19 @@ function substituteMain(
           return target.name === name.name ? ast.primitive(replacement.value) : target
         }
       } else {
-        // Function Expression
-        return target.name === replacement.id.name
+        return target.name === name.name
           ? (substitute(replacement) as FunctionDeclarationExpression)
           : target
       }
     },
-    // done
+
     ExpressionStatement(target: es.ExpressionStatement): es.ExpressionStatement {
       const substedExpressionStatement = ast.expressionStatement(dummyExpression())
       seenBefore.set(target, substedExpressionStatement)
       substedExpressionStatement.expression = substitute(target.expression) as es.Expression
       return substedExpressionStatement
     },
-    // done
+
     BinaryExpression(target: es.BinaryExpression): es.BinaryExpression {
       const substedBinaryExpression = ast.binaryExpression(
         target.operator,
@@ -73,7 +81,7 @@ function substituteMain(
       substedBinaryExpression.right = substitute(target.right) as es.Expression
       return substedBinaryExpression
     },
-    // done
+
     UnaryExpression(target: es.UnaryExpression): es.UnaryExpression {
       const substedUnaryExpression = ast.unaryExpression(
         target.operator,
@@ -84,7 +92,7 @@ function substituteMain(
       substedUnaryExpression.argument = substitute(target.argument) as es.Expression
       return substedUnaryExpression
     },
-    // done
+
     ConditionalExpression(target: es.ConditionalExpression): es.ConditionalExpression {
       const substedConditionalExpression = ast.conditionalExpression(
         dummyExpression(),
@@ -92,12 +100,13 @@ function substituteMain(
         dummyExpression(),
         target.loc!
       )
+      seenBefore.set(target, substedConditionalExpression)
       substedConditionalExpression.test = substitute(target.test) as es.Expression
       substedConditionalExpression.consequent = substitute(target.consequent) as es.Expression
       substedConditionalExpression.alternate = substitute(target.alternate) as es.Expression
       return substedConditionalExpression
     },
-    // done
+
     CallExpression(target: es.CallExpression): es.CallExpression {
       const dummyArgs = target.arguments.map(() => dummyExpression())
       const substedCallExpression = ast.callExpression(dummyExpression(), dummyArgs, target.loc!)
@@ -115,7 +124,7 @@ function substituteMain(
       }
       return substedCallExpression
     },
-    // done
+
     FunctionDeclaration(target: es.FunctionDeclaration): es.FunctionDeclaration {
       const substedFunctionDeclaration = ast.functionDeclaration(
         target.id,
@@ -133,7 +142,7 @@ function substituteMain(
       substedFunctionDeclaration.body = substitute(target.body) as es.BlockStatement
       return substedFunctionDeclaration
     },
-    // done
+
     FunctionExpression(target: es.FunctionExpression): es.FunctionExpression {
       const substedFunctionExpression = target.id
         ? ast.functionDeclarationExpression(target.id, target.params, dummyBlockStatement())
@@ -149,14 +158,14 @@ function substituteMain(
       substedFunctionExpression.body = substitute(target.body) as es.BlockStatement
       return substedFunctionExpression
     },
-    // done
+
     Program(target: es.Program): es.Program {
       const substedProgram = ast.program(target.body.map(() => dummyStatement()))
       seenBefore.set(target, substedProgram)
       substedProgram.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedProgram
     },
-    // done
+
     BlockStatement(target: es.BlockStatement): es.BlockStatement {
       const substedBody = target.body.map(() => dummyStatement())
       const substedBlockStatement = ast.blockStatement(substedBody)
@@ -164,12 +173,65 @@ function substituteMain(
       substedBlockStatement.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedBlockStatement
     },
-    // done
+
     ReturnStatement(target: es.ReturnStatement): es.ReturnStatement {
       const substedReturnStatement = ast.returnStatement(dummyExpression(), target.loc!)
       seenBefore.set(target, substedReturnStatement)
       substedReturnStatement.argument = substitute(target.argument!) as es.Expression
       return substedReturnStatement
+    },
+
+    // source 1
+    ArrowFunctionExpression(target: es.ArrowFunctionExpression): es.ArrowFunctionExpression {
+      const substedArrow = ast.arrowFunctionExpression(target.params, dummyBlockStatement())
+      seenBefore.set(target, substedArrow)
+      // check for free/bounded variable
+      for (const param of target.params) {
+        if (param.type === 'Identifier' && param.name === name.name) {
+          substedArrow.body = target.body
+          substedArrow.expression = target.body.type !== 'BlockStatement'
+          return substedArrow
+        }
+      }
+      substedArrow.body = substitute(target.body) as es.BlockStatement | es.Expression
+      substedArrow.expression = target.body.type !== 'BlockStatement'
+      return substedArrow
+    },
+
+    VariableDeclaration(target: es.VariableDeclaration): es.VariableDeclaration {
+      const substedVariableDeclaration = ast.variableDeclaration([dummyVariableDeclarator()])
+      seenBefore.set(target, substedVariableDeclaration)
+      substedVariableDeclaration.declarations = target.declarations.map(
+        substitute
+      ) as es.VariableDeclarator[]
+      return substedVariableDeclaration
+    },
+
+    VariableDeclarator(target: es.VariableDeclarator): es.VariableDeclarator {
+      const substedVariableDeclarator = ast.variableDeclarator(target.id, dummyExpression())
+      seenBefore.set(target, substedVariableDeclarator)
+      substedVariableDeclarator.init =
+        target.id.type === 'Identifier' && name.name === target.id.name
+          ? target.init
+          : // in source, we only allow const, and hence init cannot be undefined
+            (substitute(target.init!) as es.Expression)
+      return substedVariableDeclarator
+    },
+
+    IfStatement(target: es.IfStatement): es.IfStatement {
+      const substedIfStatement = ast.ifStatement(
+        dummyExpression(),
+        dummyBlockStatement(),
+        dummyBlockStatement(),
+        target.loc!
+      )
+      seenBefore.set(target, substedIfStatement)
+      substedIfStatement.test = substitute(target.test) as es.Expression
+      substedIfStatement.consequent = substitute(target.consequent) as es.BlockStatement
+      substedIfStatement.alternate = target.alternate
+        ? (substitute(target.alternate) as es.BlockStatement)
+        : null
+      return substedIfStatement
     }
   }
 
@@ -185,7 +247,6 @@ function substituteMain(
     if (result) {
       return result
     }
-
     const substituter = substituters[target.type]
     if (substituter === undefined) {
       seenBefore.set(target, target)
@@ -195,7 +256,6 @@ function substituteMain(
       return substituter(target)
     }
   }
-
   return substitute(target)
 }
 
@@ -207,26 +267,30 @@ function substituteMain(
  * @param args arguments supplied to the call expression
  */
 function apply(
-  callee: FunctionDeclarationExpression,
-  args: Array<es.Identifier | es.Literal>
+  callee: es.FunctionExpression | es.ArrowFunctionExpression,
+  args: Array<es.Identifier | es.Literal | es.FunctionExpression | es.ArrowFunctionExpression>
 ): BlockExpression | es.Expression {
-  const substedBlock = ast.blockExpression(callee.body.body, callee.loc!)
+  let substedBody = callee.body
   for (let i = 0; i < args.length; i++) {
     // source discipline requires parameters to be identifiers.
     const param = callee.params[i] as es.Identifier
     const arg = args[i] as es.Literal
 
-    substedBlock.body = substedBlock.body.map(
-      stmt => substituteMain(param, arg, stmt) as es.Statement
-    )
+    substedBody = substituteMain(param, arg, substedBody) as typeof substedBody
   }
-  const firstStatement: es.Statement = substedBlock.body[0]
+
+  if (callee.type === 'ArrowFunctionExpression' && callee.expression) {
+    return substedBody as es.Expression
+  }
+
+  const firstStatement: es.Statement = (substedBody as es.BlockStatement).body[0]
   return firstStatement.type === 'ReturnStatement'
     ? (firstStatement.argument as es.Expression)
-    : substedBlock
+    : ast.blockExpression((substedBody as es.BlockStatement).body)
 }
 
 const reducers = {
+  // source 0
   Identifier(node: es.Identifier, context: Context): [es.Node, Context] {
     // can only be built ins. the rest should have been declared
     const globalFrame = context.runtime.environments[0].head
@@ -241,6 +305,7 @@ const reducers = {
       }
     }
   },
+
   ExpressionStatement(node: es.ExpressionStatement, context: Context): [es.Node, Context] {
     const [reduced] = reduce(node.expression, context)
     return [
@@ -250,6 +315,7 @@ const reducers = {
       context
     ]
   },
+
   BinaryExpression(node: es.BinaryExpression, context: Context): [es.Node, Context] {
     const { operator, left, right } = node
     if (left.type === 'Literal') {
@@ -282,6 +348,7 @@ const reducers = {
       return [reducedExpression, context]
     }
   },
+
   UnaryExpression(node: es.UnaryExpression, context: Context): [es.Node, Context] {
     const { operator, argument } = node
     if (argument.type === 'Literal') {
@@ -301,6 +368,7 @@ const reducers = {
       return [reducedExpression, context]
     }
   },
+
   LogicalExpression(node: es.LogicalExpression, context: Context): [es.Node, Context] {
     const { left, right } = node
     if (left.type === 'Literal') {
@@ -344,6 +412,7 @@ const reducers = {
       ]
     }
   },
+
   ConditionalExpression(node: es.ConditionalExpression, context: Context): [es.Node, Context] {
     const { test, consequent, alternate } = node
     if (test.type === 'Literal') {
@@ -364,6 +433,7 @@ const reducers = {
       return [reducedExpression, context]
     }
   },
+
   // core of the subst model
   CallExpression(node: es.CallExpression, context: Context): [es.Node, Context] {
     const [callee, args] = [node.callee, node.arguments]
@@ -387,7 +457,10 @@ const reducers = {
       throw new errors.UndefinedVariable(callee.name, callee)
     } else {
       // callee is builtin or funexp
-      if (callee.type === 'FunctionExpression' && args.length !== callee.params.length) {
+      if (
+        (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
+        args.length !== callee.params.length
+      ) {
         throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
       } else {
         for (let i = 0; i < args.length; i++) {
@@ -417,7 +490,7 @@ const reducers = {
       }
       // if it reaches here, means all the arguments are legal.
       return [
-        callee.type === 'FunctionExpression'
+        callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression'
           ? apply(
               callee as FunctionDeclarationExpression,
               args as Array<es.Literal | es.Identifier>
@@ -427,6 +500,7 @@ const reducers = {
       ]
     }
   },
+
   Program(node: es.Program, context: Context): [es.Node, Context] {
     const [firstStatement, ...otherStatements] = node.body
     if (firstStatement.type === 'ExpressionStatement' && isIrreducible(firstStatement.expression)) {
@@ -446,14 +520,64 @@ const reducers = {
       // substitute the rest of the program
       const remainingProgram = ast.program(otherStatements as es.Statement[])
       return [substituteMain(funDecExp.id, funDecExp, remainingProgram), context]
-    } else {
-      const [reduced] = reduce(firstStatement, context)
-      return [
-        ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
-        context
-      ]
+    } else if (firstStatement.type === 'VariableDeclaration') {
+      const { kind, declarations } = firstStatement
+      if (kind !== 'const') {
+        // TODO: cannot use let or var
+        return [dummyProgram(), context]
+      } else if (
+        declarations.length <= 0 ||
+        declarations.length > 1 ||
+        declarations[0].type !== 'VariableDeclarator' ||
+        !declarations[0].init
+      ) {
+        // TODO: syntax error
+        return [dummyProgram(), context]
+      } else {
+        const declarator = declarations[0] as es.VariableDeclarator
+        const rhs = declarator.init!
+        if (declarator.id.type !== 'Identifier') {
+          // TODO: source does not allow destructuring
+        } else if (rhs.type === 'Literal') {
+          const remainingProgram = ast.program(otherStatements as es.Statement[])
+          return [substituteMain(declarator.id, rhs, remainingProgram), context]
+        } else if (rhs.type === 'ArrowFunctionExpression') {
+          let funDecExp = ast.functionDeclarationExpression(
+            declarator.id,
+            rhs.params,
+            rhs.body.type === 'BlockStatement'
+              ? rhs.body
+              : ast.blockStatement([ast.returnStatement(rhs.body)])
+          ) as FunctionDeclarationExpression
+          // substitute body
+          funDecExp = substituteMain(
+            funDecExp.id,
+            funDecExp,
+            funDecExp
+          ) as FunctionDeclarationExpression
+          // substitute the rest of the program
+          const remainingProgram = ast.program(otherStatements as es.Statement[])
+          return [substituteMain(funDecExp.id, funDecExp, remainingProgram), context]
+        } else {
+          const [reducedRhs] = reduce(rhs, context)
+          return [
+            ast.program([
+              ast.declaration(
+                declarator.id.name,
+                'const',
+                reducedRhs as es.Expression
+              ) as es.Statement,
+              ...(otherStatements as es.Statement[])
+            ]),
+            context
+          ]
+        }
+      }
     }
+    const [reduced] = reduce(firstStatement, context)
+    return [ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]), context]
   },
+
   BlockStatement(node: es.BlockStatement, context: Context): [es.Node, Context] {
     const [firstStatement, ...otherStatements] = node.body
     if (firstStatement.type === 'ReturnStatement') {
@@ -492,6 +616,28 @@ const reducers = {
       const [reduced] = reduce(firstStatement, context)
       return [ast.program([reduced as es.Statement, ...otherStatements]), context]
     }
+  },
+
+  // source 1
+  IfStatement(node: es.IfStatement, context: Context): [es.Node, Context] {
+    const { test, consequent, alternate } = node
+    if (test.type === 'Literal') {
+      const error = rttc.checkIfStatement(node, test.value)
+      if (error === undefined) {
+        return [(test.value ? consequent : alternate) as es.Statement, context]
+      } else {
+        throw error
+      }
+    } else {
+      const [reducedTest] = reduce(test, context)
+      const reducedIfStatement = ast.ifStatement(
+        reducedTest as es.Expression,
+        consequent as es.BlockStatement,
+        alternate as es.IfStatement | es.BlockStatement,
+        node.loc!
+      )
+      return [reducedIfStatement, context]
+    }
   }
 }
 
@@ -529,6 +675,7 @@ export function treeifyMain(program: es.Program): es.Program {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
       return ast.expressionStatement(treeify(target.expression) as es.Expression)
     },
+
     BinaryExpression: (target: es.BinaryExpression) => {
       return ast.binaryExpression(
         target.operator,
@@ -536,9 +683,11 @@ export function treeifyMain(program: es.Program): es.Program {
         treeify(target.right) as es.Expression
       )
     },
+
     UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
       return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
     },
+
     ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
       return ast.conditionalExpression(
         treeify(target.test) as es.Expression,
@@ -546,29 +695,57 @@ export function treeifyMain(program: es.Program): es.Program {
         treeify(target.alternate) as es.Expression
       )
     },
+
     CallExpression: (target: es.CallExpression): es.CallExpression => {
       return ast.callExpression(
         treeify(target.callee) as es.Expression,
         target.arguments.map(arg => treeify(arg) as es.Expression)
       )
     },
+
     FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
       return ast.functionDeclaration(target.id, target.params, treeify(
         target.body
       ) as es.BlockStatement)
     },
+
     // CORE
     FunctionExpression: (target: es.FunctionExpression): es.Identifier => {
       return ast.identifier(target.id ? target.id.name : '=>')
     },
+
     Program: (target: es.Program): es.Program => {
       return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
     },
+
     BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
       return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
     },
+
     ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
       return ast.returnStatement(treeify(target.argument!) as es.Expression)
+    },
+
+    // source 1
+    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
+      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
+    },
+
+    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
+      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
+    },
+
+    IfStatement: (target: es.IfStatement): es.IfStatement => {
+      return ast.ifStatement(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.BlockStatement,
+        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
+      )
+    },
+
+    // CORE
+    ArrowFunctionExpression: (target: es.ArrowFunctionExpression): es.Identifier => {
+      return ast.identifier('=>')
     }
   }
 
@@ -602,3 +779,13 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.No
     return steps.map(step => treeifyMain(step as es.Program))
   }
 }
+
+function debug() {
+  const code = `function f(g, x) {return g(x);} f(x=>2, 1);`
+  const context = createContext(1)
+  const program = parse(code, context)
+  const steps = getEvaluationSteps(program!, context)
+  return steps.map(treeifyMain).map(generate)
+}
+
+debug()

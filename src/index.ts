@@ -136,12 +136,6 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
         isNativeRunnable = !hasDeuggerStatement
       }
       context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
-    } else if (theOptions.useSubst) {
-      const steps = getEvaluationSteps(program, context)
-      return Promise.resolve({
-        status: 'finished',
-        value: steps.map(treeifyMain).map(generate)
-      } as Result)
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }
@@ -172,6 +166,13 @@ export async function runInContext(
   const program = parse(code, context)
   if (!program) {
     return resolvedErrorPromise
+  }
+  if (options.useSubst) {
+    const steps = getEvaluationSteps(program, context)
+    return Promise.resolve({
+      status: 'finished',
+      value: steps.map(treeifyMain).map(generate)
+    } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
