@@ -9,7 +9,7 @@ import { stripIndent } from '../utils/formatters'
  *  Check for variables being stored back by looking at all the tests.
  */
 test('builtins do get prepended', () => {
-  const code = 'ensure_builtins;'
+  const code = '"ensure_builtins";'
   const context = mockContext(4)
   const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
   // replace native[<number>] as they may be inconsistent
@@ -21,12 +21,14 @@ test('builtins do get prepended', () => {
 
 test('Ensure no name clashes', () => {
   const code = stripIndent`
+    const boolOrErr = 1;
     boolOrErr[123] = 1;
-    function f(callIfFuncAndRightArgs) {
+    function f(callIfFuncAndRightArgs, wrap0, wrap1, wrap2,
+      wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) {
       let wrap = 2;
       wrap0;wrap1;wrap2;wrap3;wrap4;wrap5;wrap6;wrap7;wrap8;wrap9;
     }
-    native;
+    const native = 123;
   `
   const context = mockContext(4)
   const transpiled = transpile(parse(code, context)!, context.contextId).transpiled

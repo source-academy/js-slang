@@ -182,7 +182,7 @@ test('Infinite recursion with a block bodied function', () => {
   `,
     { chapter: 4 }
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
-}, 10000)
+}, 15000)
 
 test('Infinite recursion with function calls in argument', () => {
   return expectParsedErrorNoSnapshot(

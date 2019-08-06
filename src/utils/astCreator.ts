@@ -75,6 +75,20 @@ export const blockArrowFunction = (
   loc
 })
 
+export const functionExpression = (
+  params: es.Identifier[],
+  body: es.Statement[] | es.BlockStatement,
+  loc?: es.SourceLocation
+): es.FunctionExpression => ({
+  type: 'FunctionExpression',
+  id: null,
+  async: false,
+  generator: false,
+  params,
+  body: Array.isArray(body) ? blockStatement(body) : body,
+  loc
+})
+
 export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
   type: 'BlockStatement',
   body

@@ -1,3 +1,6 @@
+import { runInContext } from '../index'
+import { mockContext } from '../mocks/context'
+import { Finished } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../utils/testing'
 
@@ -61,4 +64,20 @@ test('test increasing time limit for while loops', async () => {
   expect(firstError).toMatch('Line 1: Potential infinite loop detected')
   const secondError = await expectNativeToTimeoutAndError(code, 10000)
   expect(secondError).toMatch('Line 1: Potential infinite loop detected')
+})
+
+test('test proper setting of variables in an outer scope', async () => {
+  const context = mockContext(3)
+  await runInContext(
+    stripIndent`
+    let a = 'old';
+    function f() {
+      return a;
+    }
+  `,
+    context
+  )
+  const result = await runInContext('a = "new"; f();', context)
+  expect(result.status).toBe('finished')
+  expect((result as Finished).value).toBe('new')
 })

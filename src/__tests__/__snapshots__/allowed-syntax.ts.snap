@@ -3181,7 +3181,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: function (unique) {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
@@ -3899,7 +3902,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: function (unique) {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
@@ -5356,7 +5362,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"i;\\");
         native.globals.variables.set(\\"i\\", {
           kind: \\"let\\",
-          value: i
+          value: i,
+          assignNewValue: function (unique) {
+            return i = this.value = unique;
+          }
         });
         native.globals.variables.set(\\"startTime\\", {
           kind: \\"const\\",
@@ -6325,7 +6334,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"getProp(x, 1, 2, 0);\\");
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
-          value: x
+          value: x,
+          assignNewValue: function (unique) {
+            return x = this.value = unique;
+          }
         });
       }
     }
@@ -6818,7 +6830,10 @@ let lastStatementResult = undefined;
         lastStatementResult = eval(\\"setProp(x, 1, 4, 2, 0);\\");
         native.globals.variables.set(\\"x\\", {
           kind: \\"let\\",
-          value: x
+          value: x,
+          assignNewValue: function (unique) {
+            return x = this.value = unique;
+          }
         });
       }
     }
