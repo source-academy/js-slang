@@ -16,6 +16,7 @@ import { ConstAssignment, UndefinedVariable } from './interpreter-errors'
  */
 
 type StorageLocations = 'globals' | 'operators'
+
 interface ValueWrapper {
   kind: AllowedDeclarations
   value: Value
@@ -94,7 +95,7 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
     properties.push(
       create.property(
         'assignNewValue',
-        create.blockArrowFunction(
+        create.functionExpression(
           [paramName],
           [
             create.returnStatement(
@@ -302,7 +303,10 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program) {
   })
 }
 
-export function transformAssignmentsToPropagateBackNewValue(program: es.Program) {
+export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
+  program: es.Program,
+  skipErrors = false
+) {
   const globalEnvironment = NATIVE_STORAGE[contextId].globals
   const previousVariablesToTimesGoneUp = new Map<
     string,
@@ -319,7 +323,6 @@ export function transformAssignmentsToPropagateBackNewValue(program: es.Program)
     variableScope = variableScope.previousScope
     timesGoneUp += 1
   }
-
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
     const identifiers = new Set<string>()
@@ -356,51 +359,59 @@ export function transformAssignmentsToPropagateBackNewValue(program: es.Program)
         )
       }
     },
-    AssignmentExpression(assignmentExpression: es.AssignmentExpression, ancestors: es.Node[]) {
-      // Only care about plain `varName = aNewValue`
-      // `arrayName[0] = aNewValue` will propagate to the right scope already
-      if (assignmentExpression.left.type === 'Identifier') {
-        identifiersToAncestors.set(assignmentExpression.left, [...ancestors])
+    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+      identifiersToAncestors.set(identifier, [...ancestors])
+    },
+    Pattern(node: es.Pattern, ancestors: es.Node[]) {
+      if (node.type === 'Identifier') {
+        identifiersToAncestors.set(node, [...ancestors])
+      } else if (node.type === 'MemberExpression') {
+        if (node.object.type === 'Identifier') {
+          identifiersToAncestors.set(node.object, [...ancestors])
+        }
       }
     }
   })
+  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
   for (const [identifier, ancestors] of identifiersToAncestors) {
-    const lastAncestor: es.AssignmentExpression = ancestors[
-      ancestors.length - 1
-    ] as es.AssignmentExpression
     const name = identifier.name
-    let isCurrentlyDeclared = false
-    for (const ancestor of ancestors) {
-      if (identifiersIntroducedByNode.has(ancestor)) {
-        if (identifiersIntroducedByNode.get(ancestor)!.has(name)) {
-          isCurrentlyDeclared = true
-          break
-        }
-      }
-    }
+    const isCurrentlyDeclared = ancestors.some(
+      ancestor =>
+        identifiersIntroducedByNode.has(ancestor) &&
+        identifiersIntroducedByNode.get(ancestor)!.has(name)
+    )
     if (!isCurrentlyDeclared) {
       if (previousVariablesToTimesGoneUp.has(name)) {
-        const { isConstant, timesGoneUp } = previousVariablesToTimesGoneUp.get(name)!
-        if (isConstant) {
-          throw new ConstAssignment(identifier, name)
-        } else {
-          let variableScope: es.Expression = createStorageLocationAstFor('globals')
-          for (let i = 0; i < timesGoneUp; i += 1) {
-            variableScope = create.memberExpression(variableScope, 'previousScope')
-          }
-          lastAncestor.right = create.callExpression(
-            create.memberExpression(
-              create.callExpression(
-                create.memberExpression(create.memberExpression(variableScope, 'variables'), 'get'),
-                [create.literal(name)]
+        const lastAncestor: es.Node = ancestors[ancestors.length - 2]
+        // if this is an assignment expression, we want to propagate back the change
+        if (lastAncestor.type === 'AssignmentExpression') {
+          const { isConstant, timesGoneUp } = previousVariablesToTimesGoneUp.get(name)!
+          if (isConstant) {
+            throw new ConstAssignment(identifier, name)
+          } else {
+            let variableScope: es.Expression = createStorageLocationAstFor('globals')
+            for (let i = 0; i < timesGoneUp; i += 1) {
+              variableScope = create.memberExpression(variableScope, 'previousScope')
+            }
+            lastAncestor.right = create.callExpression(
+              create.memberExpression(
+                create.callExpression(
+                  create.memberExpression(
+                    create.memberExpression(variableScope, 'variables'),
+                    'get'
+                  ),
+                  [create.literal(name)]
+                ),
+                'assignNewValue'
               ),
-              'assignNewValue'
-            ),
-            [lastAncestor.right]
-          )
+              [lastAncestor.right]
+            )
+          }
         }
-      } else {
-        throw new UndefinedVariable(name, identifier)
+      } else if (!nativeInternalNames.has(name)) {
+        if (!skipErrors) {
+          throw new UndefinedVariable(name, identifier)
+        }
       }
     }
   }
@@ -612,7 +623,7 @@ function addInfiniteLoopProtection(program: es.Program) {
   })
 }
 
-export function transpile(program: es.Program, id: number) {
+export function transpile(program: es.Program, id: number, skipUndefinedVariableErrors = false) {
   contextId = id
   refreshLatestIdentifiers(program)
   NATIVE_STORAGE[contextId].globals = {
@@ -629,7 +640,10 @@ export function transpile(program: es.Program, id: number) {
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
   transformPropertyAccess(program)
-  transformAssignmentsToPropagateBackNewValue(program)
+  checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
+    program,
+    skipUndefinedVariableErrors
+  )
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
