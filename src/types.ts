@@ -173,3 +173,5 @@ export interface BlockExpression extends es.BaseExpression {
   type: 'BlockExpression'
   body: es.Statement[]
 }
+
+export type substituterNodes = es.Node | BlockExpression
