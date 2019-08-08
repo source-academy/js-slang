@@ -396,24 +396,15 @@ const reducers = {
           typeof left.value
         )
       } else {
-        if (right.type === 'Literal' && typeof right.value !== 'boolean') {
-          throw new rttc.TypeError(
-            left,
-            ' on left hand side of operation',
-            'boolean',
-            typeof left.value
-          )
-        } else {
-          const result =
-            node.operator === '&&'
-              ? left.value
-                ? right
-                : ast.expressionStatement(ast.literal(false, node.loc!))
-              : left.value
-              ? ast.expressionStatement(ast.literal(true, node.loc!))
-              : right
-          return [result as substituterNodes, context]
-        }
+        const result =
+          node.operator === '&&'
+            ? left.value
+              ? right
+              : ast.literal(false, node.loc!)
+            : left.value
+            ? ast.literal(true, node.loc!)
+            : right
+        return [result as es.Expression, context]
       }
     } else {
       const [reducedLeft] = reduce(left, context)
@@ -615,7 +606,12 @@ const reducers = {
       firstStatement.type === 'ExpressionStatement' &&
       isIrreducible(firstStatement.expression)
     ) {
-      return [ast.blockStatement(otherStatements as es.Statement[]), context]
+      return [
+        otherStatements.length > 0
+          ? ast.blockStatement(otherStatements as es.Statement[])
+          : ast.expressionStatement(ast.identifier('undefined')),
+        context
+      ]
     } else if (firstStatement.type === 'FunctionDeclaration') {
       let funDecExp = ast.functionDeclarationExpression(
         firstStatement.id!,
@@ -710,7 +706,12 @@ const reducers = {
       firstStatement.type === 'ExpressionStatement' &&
       isIrreducible(firstStatement.expression)
     ) {
-      return [ast.blockExpression(otherStatements as es.Statement[]), context]
+      return [
+        otherStatements.length > 0
+          ? ast.blockExpression(otherStatements as es.Statement[])
+          : ast.identifier('undefined'),
+        context
+      ]
     } else if (firstStatement.type === 'FunctionDeclaration') {
       let funDecExp = ast.functionDeclarationExpression(
         firstStatement.id!,
@@ -956,6 +957,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
       // tslint:disable-next-line
       ;[reduced] = reduce(reduced, context)
       // programString = generate(treeifyMain(reduced as es.Program))
+      // console.log(programString)
     }
     return steps
   } catch (error) {
@@ -965,20 +967,9 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
 }
 
 // function debug() {
-//   const code = `function factorial(n) {
-//     return fact_iter(1, 1, n);
-// }
-// function fact_iter(product, counter, max_count) {
-//     if ( counter > max_count) {
-//         return product;
-//     } else {
-//           return fact_iter(counter * product,
-//                        counter + 1,
-//                        max_count);
-//     }
-// }
-
-// factorial(5);`
+//   const code = `
+// if (true || false) { 1; } else {2;}
+// `
 //   const context = createContext(2)
 //   const program = parse(code, context)
 //   const steps = getEvaluationSteps(program!, context)
