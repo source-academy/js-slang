@@ -1,5 +1,4 @@
 import { simple } from 'acorn-walk/dist/walk'
-import { generate } from 'astring'
 import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
@@ -15,7 +14,7 @@ import {
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { getEvaluationSteps, treeifyMain } from './substituter'
+import { codify, getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
 import {
   Context,
@@ -171,7 +170,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
       status: 'finished',
-      value: steps.map(treeifyMain).map(generate)
+      value: steps.map(codify)
     } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)

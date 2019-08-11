@@ -1,9 +1,8 @@
-// import { generate } from 'astring'
+import { generate } from 'astring'
 import * as es from 'estree'
 // import createContext from './createContext'
 import * as errors from './interpreter-errors'
 import { parse } from './parser'
-import { listPrelude } from './stdlib/list.prelude'
 import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from './types'
 import * as ast from './utils/astCreator'
 import {
@@ -16,6 +15,7 @@ import {
 } from './utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
+import * as builtin from './utils/substituter'
 
 const irreducibleTypes = new Set<string>([
   'Identifier',
@@ -52,17 +52,7 @@ function substituteMain(
     ): es.Identifier | FunctionDeclarationExpression | es.Literal | es.Expression {
       if (replacement.type === 'Literal') {
         // only accept string, boolean and numbers for arguments
-        if (!['string', 'boolean', 'number'].includes(typeof replacement.value)) {
-          throw new rttc.TypeError(
-            replacement,
-            '',
-            'string, boolean or number',
-            typeof replacement.value
-          )
-        } else {
-          // target as Identifier is guaranteed to be a tree.
-          return target.name === name.name ? ast.primitive(replacement.value) : target
-        }
+        return target.name === name.name ? ast.primitive(replacement.value) : target
       } else {
         return target.name === name.name
           ? (substitute(replacement) as FunctionDeclarationExpression)
@@ -248,6 +238,13 @@ function substituteMain(
         ? (substitute(target.alternate) as es.BlockStatement)
         : null
       return substedIfStatement
+    },
+
+    ArrayExpression(target: es.ArrayExpression): es.ArrayExpression {
+      const substedArray = ast.arrayExpression([dummyExpression()])
+      seenBefore.set(target, substedArray)
+      substedArray.elements = target.elements.map(substitute) as es.Expression[]
+      return substedArray
     }
   }
 
@@ -324,12 +321,7 @@ const reducers = {
 
   ExpressionStatement(node: es.ExpressionStatement, context: Context): [substituterNodes, Context] {
     const [reduced] = reduce(node.expression, context)
-    return [
-      reduced.type.includes('Statement')
-        ? reduced
-        : ast.expressionStatement(reduced as es.Expression),
-      context
-    ]
+    return [ast.expressionStatement(reduced as es.Expression), context]
   },
 
   BinaryExpression(node: es.BinaryExpression, context: Context): [substituterNodes, Context] {
@@ -499,15 +491,17 @@ const reducers = {
         }
       }
       // if it reaches here, means all the arguments are legal.
-      return [
-        callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression'
-          ? apply(
-              callee as FunctionDeclarationExpression,
-              args as Array<es.Literal | es.Identifier>
-            )
-          : context.runtime.environments[0].head[(callee as es.Identifier).name](...args),
-        context
-      ]
+      if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
+        return [
+          apply(callee as FunctionDeclarationExpression, args as Array<es.Literal | es.Identifier>),
+          context
+        ]
+      } else {
+        if ((callee as es.Identifier).name.includes('math')) {
+          return [builtin.evaluateMath((callee as es.Identifier).name, ...args), context]
+        }
+        return [builtin[(callee as es.Identifier).name](...args), context]
+      }
     }
   },
 
@@ -822,105 +816,108 @@ function reduce(node: substituterNodes, context: Context): [substituterNodes, Co
   }
 }
 
-export function treeifyMain(program: es.Program): es.Program {
-  // recurse down the program like substitute
-  // if see a function at expression position,
-  //   has an identifier: replace with the name
-  //   else: replace with an identifer "=>"
-  const treeifiers = {
-    // Identifier: return
-    ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
-      return ast.expressionStatement(treeify(target.expression) as es.Expression)
-    },
+// recurse down the program like substitute
+// if see a function at expression position,
+//   has an identifier: replace with the name
+//   else: replace with an identifer "=>"
+const treeifiers = {
+  // Identifier: return
+  ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
+    return ast.expressionStatement(treeify(target.expression) as es.Expression)
+  },
 
-    BinaryExpression: (target: es.BinaryExpression) => {
-      return ast.binaryExpression(
-        target.operator,
-        treeify(target.left) as es.Expression,
-        treeify(target.right) as es.Expression
-      )
-    },
+  BinaryExpression: (target: es.BinaryExpression) => {
+    return ast.binaryExpression(
+      target.operator,
+      treeify(target.left) as es.Expression,
+      treeify(target.right) as es.Expression
+    )
+  },
 
-    UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
-      return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
-    },
+  UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
+    return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
+  },
 
-    ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
-      return ast.conditionalExpression(
-        treeify(target.test) as es.Expression,
-        treeify(target.consequent) as es.Expression,
-        treeify(target.alternate) as es.Expression
-      )
-    },
+  ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
+    return ast.conditionalExpression(
+      treeify(target.test) as es.Expression,
+      treeify(target.consequent) as es.Expression,
+      treeify(target.alternate) as es.Expression
+    )
+  },
 
-    CallExpression: (target: es.CallExpression): es.CallExpression => {
-      return ast.callExpression(
-        treeify(target.callee) as es.Expression,
-        target.arguments.map(arg => treeify(arg) as es.Expression)
-      )
-    },
+  CallExpression: (target: es.CallExpression): es.CallExpression => {
+    return ast.callExpression(
+      treeify(target.callee) as es.Expression,
+      target.arguments.map(arg => treeify(arg) as es.Expression)
+    )
+  },
 
-    FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
-      return ast.functionDeclaration(target.id, target.params, treeify(
-        target.body
-      ) as es.BlockStatement)
-    },
+  FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
+    return ast.functionDeclaration(target.id, target.params, treeify(
+      target.body
+    ) as es.BlockStatement)
+  },
 
-    // CORE
-    FunctionExpression: (target: es.FunctionExpression): es.Identifier => {
-      return ast.identifier(target.id ? target.id.name : '=>')
-    },
+  // CORE
+  FunctionExpression: (target: es.FunctionExpression): es.Identifier => {
+    return ast.identifier(target.id ? target.id.name : '=>')
+  },
 
-    Program: (target: es.Program): es.Program => {
-      return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
-    },
+  Program: (target: es.Program): es.Program => {
+    return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
+  },
 
-    BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
-      return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
-    },
+  BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
+    return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
+  },
 
-    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-      return ast.returnStatement(treeify(target.argument!) as es.Expression)
-    },
+  ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+    return ast.returnStatement(treeify(target.argument!) as es.Expression)
+  },
 
-    BlockExpression: (target: BlockExpression): es.BlockStatement => {
-      return ast.blockStatement(target.body.map(treeify) as es.Statement[])
-    },
+  BlockExpression: (target: BlockExpression): es.BlockStatement => {
+    return ast.blockStatement(target.body.map(treeify) as es.Statement[])
+  },
 
-    // source 1
-    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
-      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
-    },
+  // source 1
+  VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
+    return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
+  },
 
-    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
-      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
-    },
+  VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
+    return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
+  },
 
-    IfStatement: (target: es.IfStatement): es.IfStatement => {
-      return ast.ifStatement(
-        treeify(target.test) as es.Expression,
-        treeify(target.consequent) as es.BlockStatement,
-        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
-      )
-    },
+  IfStatement: (target: es.IfStatement): es.IfStatement => {
+    return ast.ifStatement(
+      treeify(target.test) as es.Expression,
+      treeify(target.consequent) as es.BlockStatement,
+      treeify(target.alternate!) as es.BlockStatement | es.IfStatement
+    )
+  },
 
-    // CORE
-    ArrowFunctionExpression: (target: es.ArrowFunctionExpression): es.Identifier => {
-      return ast.identifier('=>')
-    }
+  // CORE
+  ArrowFunctionExpression: (target: es.ArrowFunctionExpression): es.Identifier => {
+    return ast.identifier('=>')
+  },
+
+  // source 2
+  ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
+    return ast.arrayExpression(target.elements.map(treeify) as es.Expression[])
   }
-
-  function treeify(target: substituterNodes): substituterNodes {
-    const treeifier = treeifiers[target.type]
-    if (treeifier === undefined) {
-      return target
-    } else {
-      return treeifier(target)
-    }
-  }
-
-  return treeify(program) as es.Program
 }
+
+function treeify(target: substituterNodes): substituterNodes {
+  const treeifier = treeifiers[target.type]
+  if (treeifier === undefined) {
+    return target
+  } else {
+    return treeifier(target)
+  }
+}
+
+export const codify = (node: substituterNodes): string => generate(treeify(node))
 
 // strategy: we remember how many statements are there originally in program.
 // since listPrelude are just functions, they will be disposed of one by one
@@ -931,9 +928,9 @@ export function treeifyMain(program: es.Program): es.Program {
 function substPredefinedFns(program: es.Program, context: Context): [es.Program, Context] {
   const originalStatementCount = program.body.length
   let combinedProgram = program
-  if (context.chapter >= 2) {
+  if (context.prelude) {
     // evaluate the list prelude first
-    const listPreludeProgram = parse(listPrelude, context)!
+    const listPreludeProgram = parse(context.prelude, context)!
     combinedProgram.body = listPreludeProgram.body.concat(program.body)
   }
   while (combinedProgram.body.length > originalStatementCount) {
@@ -950,17 +947,24 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
   try {
     // starts with substituting predefined fns.
     let [reduced] = substPredefinedFns(program, context) as [substituterNodes, Context]
-    // let programString = generate(treeifyMain(reduced as es.Program))
+    // let programString = codify(reduced)
     while ((reduced as es.Program).body.length > 0) {
+      if (steps.length === 19999) {
+        steps.push(
+          ast.program([ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))])
+        )
+        break
+      }
       steps.push(reduced)
       // some bug with no semis
       // tslint:disable-next-line
       ;[reduced] = reduce(reduced, context)
-      // programString = generate(treeifyMain(reduced as es.Program))
+      // programString = codify(reduced)
       // console.log(programString)
     }
     return steps
   } catch (error) {
+    // console.log(error)
     context.errors.push(error)
     return steps
   }
@@ -968,12 +972,12 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
 
 // function debug() {
 //   const code = `
-// if (true || false) { 1; } else {2;}
+//   map(x=>x+1, list(1,2,3));
 // `
 //   const context = createContext(2)
 //   const program = parse(code, context)
 //   const steps = getEvaluationSteps(program!, context)
-//   return steps.map(treeifyMain).map(generate)
+//   return steps.map(treeify).map(generate)
 // }
 
 // debug()
