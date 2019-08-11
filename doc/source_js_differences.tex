@@ -28,21 +28,5 @@ sake of internal consistency and esthetics.
   \end{lstlisting}
   The result of evaluating this program can be \texttt{undefined}
   for implementations of Source. Note that this issue only arises
-  at the toplevel---outside of functions.
-\item[Literal object notation at toplevel:] JavaScript implementations support
-  the creation of literal objects using \verb#{...}#. Occasionally,
-  ambiguities with block syntax arises as a result, compounded by
-  optional semicolons in the JavaScript syntax. Apparently,
-  literal objects are preferred in JavaScript in some such cases.
-  Implementations
-  of Source might interpret some programs as blocks, instead. Example:
-  \begin{lstlisting}
-{
-  // empty block
-}    
-  \end{lstlisting}
-  The result of evaluating this program can be \texttt{undefined}
-  for implementations of Source.
-  Note that this issue only arises
-  at the toplevel---outside of functions.  
+  at the toplevel---outside of functions. 
 \end{description}
