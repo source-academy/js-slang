@@ -1,0 +1,32 @@
+\section*{Deviations from JavaScript}
+
+We intend the 
+Source language to be a conservative extension
+of JavaScript: Every correct
+Source program should behave \emph{exactly} the same
+using a Source implementation, as it does using a JavaScript
+implementation. We assume, of course, that suitable libraries are
+used by the JavaScript implementation, to account for the predefined names
+of each Source language.
+
+This section lists some exceptions where we think a Source implementation
+should be allowed to deviate from the JavaScript specification, for the
+sake of internal consistency and esthetics.
+
+\begin{description}
+\item[Empty block as last statement of toplevel sequence:] In JavaScript,
+  empty blocks as last statement of a sequence are apparently
+  ignored. Thus the result of evaluating such a sequence is the
+  result of evaluating the previous statement. Implementations
+  of Source might stick to the more intuitive result: \texttt{undefined}.
+  Example:
+  \begin{lstlisting}
+1;
+{
+  // empty block
+}
+  \end{lstlisting}
+  The result of evaluating this program can be \texttt{undefined}
+  for implementations of Source. Note that this issue only arises
+  at the toplevel---outside of functions. 
+\end{description}
