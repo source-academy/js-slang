@@ -1,6 +1,5 @@
 import { generate } from 'astring'
 import * as es from 'estree'
-// import createContext from './createContext'
 import * as errors from './interpreter-errors'
 import { parse } from './parser'
 import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from './types'
@@ -954,7 +953,6 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
   try {
     // starts with substituting predefined fns.
     let [reduced] = substPredefinedFns(program, context) as [substituterNodes, Context]
-    // let programString = codify(reduced)
     while ((reduced as es.Program).body.length > 0) {
       if (steps.length === 19999) {
         steps.push(
@@ -966,8 +964,6 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
       // some bug with no semis
       // tslint:disable-next-line
       ;[reduced] = reduce(reduced, context)
-      // programString = codify(reduced)
-      // console.log(programString)
     }
     return steps
   } catch (error) {
@@ -976,25 +972,3 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
     return steps
   }
 }
-
-// function debug() {
-//   const code = `
-// function subsets(s) {
-//     if (is_null(s)) {
-//         return list(null);
-//     } else {
-//         const rest = subsets(tail(s));
-//         return append(rest, map(x => pair(head(s), x), rest));
-//     }
-// }
-
-// stringify(subsets);
-// subsets(list(1, 2, 3));
-// `
-//   const context = createContext(2)
-//   const program = parse(code, context)
-//   const steps = getEvaluationSteps(program!, context)
-//   return steps.map(treeify).map(generate)
-// }
-
-// debug()
