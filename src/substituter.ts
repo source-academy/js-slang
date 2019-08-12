@@ -29,11 +29,18 @@ function isIrreducible(node: substituterNodes) {
   return irreducibleTypes.has(node.type)
 }
 
+type irreducibleNodes =
+  | es.Identifier
+  | es.FunctionExpression
+  | es.ArrowFunctionExpression
+  | es.Literal
+  | es.ArrayExpression
+
 /* tslint:disable:no-shadowed-variable */
 // wrapper function, calls substitute immediately.
 function substituteMain(
   name: es.Identifier,
-  replacement: es.FunctionExpression | es.Literal | es.ArrowFunctionExpression,
+  replacement: irreducibleNodes,
   target: substituterNodes
 ): substituterNodes {
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
@@ -281,7 +288,7 @@ function substituteMain(
  */
 function apply(
   callee: es.FunctionExpression | es.ArrowFunctionExpression,
-  args: Array<es.Identifier | es.Literal | es.FunctionExpression | es.ArrowFunctionExpression>
+  args: irreducibleNodes[]
 ): BlockExpression | es.Expression {
   let substedBody = callee.body
   for (let i = 0; i < args.length; i++) {
@@ -543,10 +550,10 @@ const reducers = {
         if (declarator.id.type !== 'Identifier') {
           // TODO: source does not allow destructuring
           return [dummyProgram(), context]
-        } else if (rhs.type === 'Literal') {
+        } else if (rhs.type === 'Literal' || rhs.type === 'ArrayExpression') {
           const remainingProgram = ast.program(otherStatements as es.Statement[])
           return [substituteMain(declarator.id, rhs, remainingProgram), context]
-        } else if (rhs.type === 'ArrowFunctionExpression') {
+        } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
           let funDecExp = ast.functionDeclarationExpression(
             declarator.id,
             rhs.params,
@@ -640,10 +647,10 @@ const reducers = {
         if (declarator.id.type !== 'Identifier') {
           // TODO: source does not allow destructuring
           return [dummyBlockStatement(), context]
-        } else if (rhs.type === 'Literal') {
+        } else if (rhs.type === 'Literal' || rhs.type === 'ArrayExpression') {
           const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
           return [substituteMain(declarator.id, rhs, remainingBlockStatement), context]
-        } else if (rhs.type === 'ArrowFunctionExpression') {
+        } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
           let funDecExp = ast.functionDeclarationExpression(
             declarator.id,
             rhs.params,
@@ -740,10 +747,10 @@ const reducers = {
         if (declarator.id.type !== 'Identifier') {
           // TODO: source does not allow destructuring
           return [dummyBlockExpression(), context]
-        } else if (rhs.type === 'Literal') {
+        } else if (rhs.type === 'Literal' || rhs.type === 'ArrayExpression') {
           const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
           return [substituteMain(declarator.id, rhs, remainingBlockExpression), context]
-        } else if (rhs.type === 'ArrowFunctionExpression') {
+        } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
           let funDecExp = ast.functionDeclarationExpression(
             declarator.id,
             rhs.params,
@@ -972,7 +979,17 @@ export function getEvaluationSteps(program: es.Program, context: Context): subst
 
 // function debug() {
 //   const code = `
-//   map(x=>x+1, list(1,2,3));
+// function subsets(s) {
+//     if (is_null(s)) {
+//         return list(null);
+//     } else {
+//         const rest = subsets(tail(s));
+//         return append(rest, map(x => pair(head(s), x), rest));
+//     }
+// }
+
+// stringify(subsets);
+// subsets(list(1, 2, 3));
 // `
 //   const context = createContext(2)
 //   const program = parse(code, context)

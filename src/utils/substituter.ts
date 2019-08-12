@@ -20,7 +20,9 @@ export function display(val: substituterNodes): substituterNodes {
 
 //   defineBuiltin(context, 'raw_display(str)', rawDisplay)
 //   defineBuiltin(context, 'stringify(val)', stringify)
-export const stringify = codify
+export function stringify(val: substituterNodes): es.Literal {
+  return ast.literal(codify(val))
+}
 
 //   defineBuiltin(context, 'error(str)', misc.error_message)
 export function error(val: substituterNodes, str?: substituterNodes) {
