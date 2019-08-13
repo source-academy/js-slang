@@ -86,7 +86,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
   })
   GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables.set(name, {
     kind: 'const',
-    value
+    getValue: () => value
   })
 }
 
