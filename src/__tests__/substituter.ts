@@ -101,8 +101,6 @@ test('Test ternary operator', () => {
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
 
-1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
-
 0 === 0 ? false ? garbage : Infinity : anotherGarbage;
 
 true ? false ? garbage : Infinity : anotherGarbage;
