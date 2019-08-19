@@ -252,3 +252,168 @@ false ? 1 : 5 * factorial(5 - 1);
 "
 `)
 })
+
+// source 0
+test('undefined || 1', () => {
+  const code = `
+  undefined || 1;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"undefined || 1;
+"
+`)
+})
+
+// source 0
+test('1 + math_sin', () => {
+  const code = `
+  1 + math_sin;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"1 + math_sin;
+"
+`)
+})
+
+// source 0
+test('plus undefined', () => {
+  const code = `
+  math_sin(1) + undefined;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"math_sin(1) + undefined;
+
+0.8414709848078965 + undefined;
+"
+`)
+})
+
+// source 0
+test('math_pow', () => {
+  const code = `
+  math_pow(3,100) || NaN;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"math_pow(3, 100) || NaN;
+
+5.153775207320114e+47 || NaN;
+"
+`)
+})
+
+// source 0
+test('expmod', () => {
+  const code = `
+  function is_even(n) {
+    return n % 2 === 0;
+}
+
+function expmod(base, exp, m) {
+    if (exp === 0) {
+        return 1;
+    } else {
+        if (is_even(exp)) {
+            const to_half = expmod(base, exp / 2, m);
+            return to_half * to_half % m;
+        } else {
+            return base * expmod(base, exp - 1, m) % m;
+        }
+    }
+}
+
+expmod(4, 3, 5);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchSnapshot()
+})
+
+// source 0
+test('Infinite recursion', () => {
+  const code = `
+  function f() {
+    return f();
+}
+f();
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchSnapshot()
+})
+
+// source 0
+test('subsets', () => {
+  const code = `
+  function subsets(s) {
+    if (is_null(s)) {
+        return list(null);
+    } else {
+        const rest = subsets(tail(s));
+        return append(rest, map(x => pair(head(s), x), rest));
+    }
+}
+
+ subsets(list(1, 2, 3));
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`""`)
+})
+
+// source 0
+test('even odd mutual', () => {
+  const code = `
+  const odd = n => n === 0 ? false : even(n-1);
+  const even = n => n === 0 || odd(n-1);
+  even(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"const odd = =>;
+const even = =>;
+even(1);
+
+const even = =>;
+even(1);
+
+=>(1);
+
+n === 0 || odd(n - 1);
+"
+`)
+})
+
+// source 0
+test('assign undefined', () => {
+  const code = `
+  const a = undefined;
+  a;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"const a = undefined;
+a;
+
+undefined;
+"
+`)
+})
