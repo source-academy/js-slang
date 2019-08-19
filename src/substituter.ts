@@ -4,6 +4,7 @@ import * as errors from './interpreter-errors'
 import { parse } from './parser'
 import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from './types'
 import * as ast from './utils/astCreator'
+import { nodeToValue, valueToExpression } from './utils/converter'
 import {
   dummyBlockExpression,
   dummyBlockStatement,
@@ -354,23 +355,6 @@ function apply(
   return firstStatement.type === 'ReturnStatement'
     ? (firstStatement.argument as es.Expression)
     : ast.blockExpression((substedBody as es.BlockStatement).body)
-}
-
-// the value in the parameter is not an ast node, but a underlying javascript value
-// return by evaluateBinaryExpression and evaluateUnaryExpression.
-function valueToExpression(value: any, context: Context): es.Expression {
-  const programString = (typeof value === 'string' ? `"` + value + `"` : String(value)) + ';'
-  const program = parse(programString, context)!
-  return (program.body[0] as es.ExpressionStatement).expression
-}
-
-function nodeToValue(node: substituterNodes): any {
-  return node.type === 'Literal'
-    ? node.value
-    : isBuiltinFunction(node)
-    ? builtin[(node as es.Identifier).name]
-    : // tslint:disable-next-line
-      eval(codify(node))
 }
 
 const reducers = {

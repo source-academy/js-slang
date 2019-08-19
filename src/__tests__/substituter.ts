@@ -427,3 +427,18 @@ undefined;
 "
 `)
 })
+
+test('builtins return identifiers', () => {
+  const code = `
+  math_sin();
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"math_sin();
+
+NaN;
+"
+`)
+})

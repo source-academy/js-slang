@@ -3,6 +3,7 @@ import * as misc from '../stdlib/misc'
 import { codify } from '../substituter'
 import { substituterNodes } from '../types'
 import * as ast from './astCreator'
+import { valueToExpression } from './converter'
 
 // define builtins that takes in AST, and return AST
 //
@@ -31,12 +32,12 @@ export function error(val: substituterNodes, str?: substituterNodes) {
 }
 
 //   defineBuiltin(context, 'prompt(str)', prompt)
-export function prompt(str: substituterNodes): substituterNodes {
+export function prompt(str: substituterNodes): es.Literal {
   if (str.type !== 'Literal' || typeof str.value !== 'string') {
     throw new Error('Argument to error must be a string.')
   }
   const result = window.prompt(str.value as string)
-  return result ? ast.literal(result) : ast.identifier('null')
+  return ast.literal((result ? result : null) as string)
 }
 
 //   defineBuiltin(context, 'is_number(val)', misc.is_number)
@@ -65,7 +66,7 @@ export function is_undefined(val: substituterNodes): es.Literal {
 }
 
 //   defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
-export function parse_int(str: substituterNodes, radix: substituterNodes): es.Literal {
+export function parse_int(str: substituterNodes, radix: substituterNodes): es.Expression {
   if (
     str.type === 'Literal' &&
     typeof str.value === 'string' &&
@@ -74,7 +75,7 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Li
     2 <= radix.value &&
     radix.value <= 36
   ) {
-    return ast.literal(parseInt(str.value, radix.value))
+    return valueToExpression(parseInt(str.value, radix.value))
   } else {
     throw new Error(
       'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
@@ -92,7 +93,7 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Li
 //   }
 // }
 // evaluateMath(mathFn: string, ...args: substituterNodes): substituterNodes
-export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Literal {
+export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Expression {
   const fn = Math[mathFn.split('_')[1]]
   if (!fn) {
     throw new Error(`Math function ${mathFn} not found.`)
@@ -100,7 +101,7 @@ export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Li
     throw new Error(`Math functions must be called with number arguments`)
   }
   const jsArgs = args.map(arg => (arg as es.Literal).value!)
-  return ast.literal(fn(...jsArgs))
+  return valueToExpression(fn(...jsArgs))
 }
 
 // if (context.chapter >= 2) {
