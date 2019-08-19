@@ -43,8 +43,26 @@ function isAllowedLiterals(node: substituterNodes): boolean {
   return node.type === 'Identifier' && ['NaN', 'Infinity', 'undefined'].includes(node.name)
 }
 
+function isBuiltinFunction(node: substituterNodes): boolean {
+  return (
+    node.type === 'Identifier' &&
+    // predeclared, except for evaluateMath
+    ((typeof builtin[node.name] === 'function' && node.name !== 'evaluateMath') ||
+      // one of the math functions
+      Object.getOwnPropertyNames(Math)
+        .filter(name => typeof Math[name] === 'function')
+        .map(name => 'math_' + name)
+        .includes(node.name))
+  )
+}
+
 function isIrreducible(node: substituterNodes) {
-  return isAllowedLiterals(node) || isNegNumber(node) || irreducibleTypes.has(node.type)
+  return (
+    isBuiltinFunction(node) ||
+    isAllowedLiterals(node) ||
+    isNegNumber(node) ||
+    irreducibleTypes.has(node.type)
+  )
 }
 
 type irreducibleNodes =
@@ -334,6 +352,15 @@ function valueToExpression(value: any, context: Context): es.Expression {
   return (program.body[0] as es.ExpressionStatement).expression
 }
 
+function nodeToValue(node: substituterNodes): any {
+  return node.type === 'Literal'
+    ? node.value
+    : isBuiltinFunction(node)
+    ? builtin[(node as es.Identifier).name]
+    : // tslint:disable-next-line
+      eval(codify(node))
+}
+
 const reducers = {
   // source 0
   Identifier(node: es.Identifier, context: Context): [substituterNodes, Context] {
@@ -355,10 +382,7 @@ const reducers = {
     const { operator, left, right } = node
     if (isIrreducible(left)) {
       if (isIrreducible(right)) {
-        const [leftValue, rightValue] = [left, right].map(node =>
-          // tslint:disable-next-line
-          node.type === 'Literal' ? node.value : eval(codify(node))
-        )
+        const [leftValue, rightValue] = [left, right].map(nodeToValue)
         const error = rttc.checkBinaryExpression(node, operator, leftValue, rightValue)
         if (error === undefined) {
           const lit = evaluateBinaryExpression(operator, leftValue, rightValue)
@@ -392,14 +416,10 @@ const reducers = {
     const { operator, argument } = node
     if (isIrreducible(argument)) {
       // tslint:disable-next-line
-      const argumentValue = argument.type === 'Literal' ? argument.value : eval(codify(argument))
+      const argumentValue = nodeToValue(argument)
       const error = rttc.checkUnaryExpression(node, operator, argumentValue)
       if (error === undefined) {
         const result = evaluateUnaryExpression(operator, argumentValue)
-        // weird casting here too
-        // return [Infinity, NaN].includes(result as number)
-        //   ? [ast.identifier(String(result)), context]
-        //   : [ast.literal(result), context]
         return [valueToExpression(result, context), context]
       } else {
         throw error
@@ -417,14 +437,9 @@ const reducers = {
 
   LogicalExpression(node: es.LogicalExpression, context: Context): [substituterNodes, Context] {
     const { left, right } = node
-    if (left.type === 'Literal') {
-      if (typeof left.value !== 'boolean') {
-        throw new rttc.TypeError(
-          left,
-          ' on left hand side of operation',
-          'boolean',
-          typeof left.value
-        )
+    if (isIrreducible(left)) {
+      if (!(left.type === 'Literal' && typeof left.value === 'boolean')) {
+        throw new rttc.TypeError(left, ' on left hand side of operation', 'boolean', left.type)
       } else {
         const result =
           node.operator === '&&'

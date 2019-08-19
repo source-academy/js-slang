@@ -39,32 +39,29 @@ export function prompt(str: substituterNodes): substituterNodes {
   return result ? ast.literal(result) : ast.identifier('null')
 }
 
-const astTrue = ast.literal(true)
-const astFalse = ast.literal(true)
-
 //   defineBuiltin(context, 'is_number(val)', misc.is_number)
 export function is_number(val: substituterNodes): es.Literal {
-  return val.type === 'Literal' && typeof val.value === 'number' ? astTrue : astFalse
+  return ast.literal(val.type === 'Literal' && misc.is_number(val.value))
 }
 
 //   defineBuiltin(context, 'is_string(val)', misc.is_string)
 export function is_string(val: substituterNodes): es.Literal {
-  return val.type === 'Literal' && typeof val.value === 'string' ? astTrue : astFalse
+  return ast.literal(val.type === 'Literal' && misc.is_string(val.value))
 }
 
 //   defineBuiltin(context, 'is_function(val)', misc.is_function)
 export function is_function(val: substituterNodes): es.Literal {
-  return val.type.includes('Function') ? astTrue : astFalse
+  return ast.literal(val.type.includes('Function'))
 }
 
 //   defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
 export function is_boolean(val: substituterNodes): es.Literal {
-  return val.type === 'Literal' && typeof val.value === 'boolean' ? astTrue : astFalse
+  return ast.literal(val.type === 'Literal' && misc.is_boolean(val.value))
 }
 
 //   defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
 export function is_undefined(val: substituterNodes): es.Literal {
-  return val.type === 'Identifier' && val.name === 'undefined' ? astTrue : astFalse
+  return ast.literal(val.type === 'Identifier' && val.name === 'undefined')
 }
 
 //   defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
