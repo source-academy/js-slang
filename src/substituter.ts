@@ -1,5 +1,6 @@
 import { generate } from 'astring'
 import * as es from 'estree'
+import { createContext } from '.'
 import * as errors from './interpreter-errors'
 import { parse } from './parser'
 import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from './types'
@@ -15,7 +16,8 @@ import {
 } from './utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
-import * as builtin from './utils/substituter'
+import { isAllowedLiterals, isBuiltinFunction, isNegNumber } from './utils/substituter'
+import * as builtin from './utils/substStdLib'
 
 const irreducibleTypes = new Set<string>([
   'Literal',
@@ -23,39 +25,6 @@ const irreducibleTypes = new Set<string>([
   'ArrowFunctionExpression',
   'ArrayExpression'
 ])
-
-function isInfinity(node: substituterNodes): boolean {
-  return node.type === 'Identifier' && node.name === 'Infinity'
-}
-
-function isNumber(node: substituterNodes): boolean {
-  return node.type === 'Literal' && typeof node.value === 'number'
-}
-
-function isNegNumber(node: substituterNodes): boolean {
-  return (
-    node.type === 'UnaryExpression' &&
-    node.operator === '-' &&
-    (isInfinity(node.argument) || isNumber(node.argument))
-  )
-}
-
-function isAllowedLiterals(node: substituterNodes): boolean {
-  return node.type === 'Identifier' && ['NaN', 'Infinity', 'undefined'].includes(node.name)
-}
-
-function isBuiltinFunction(node: substituterNodes): boolean {
-  return (
-    node.type === 'Identifier' &&
-    // predeclared, except for evaluateMath
-    ((typeof builtin[node.name] === 'function' && node.name !== 'evaluateMath') ||
-      // one of the math functions
-      Object.getOwnPropertyNames(Math)
-        .filter(name => typeof Math[name] === 'function')
-        .map(name => 'math_' + name)
-        .includes(node.name))
-  )
-}
 
 function isIrreducible(node: substituterNodes) {
   return (
@@ -1031,6 +1000,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     let reduced = substPredefinedConstants(program)
     // and predefined fns.
     reduced = substPredefinedFns(reduced, context)[0]
+    // let programString = codify(reduced)
     while ((reduced as es.Program).body.length > 0) {
       if (steps.length === 19999) {
         steps.push(
@@ -1041,6 +1011,8 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
       steps.push(reduced as es.Program)
       // some bug with no semis
       reduced = reduce(reduced, context)[0] as es.Program
+      // programString = codify(reduced)
+      // console.log(programString)
     }
     return steps
   } catch (error) {
@@ -1048,3 +1020,15 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     return steps
   }
 }
+
+function debug() {
+  const code = `
+  math_sin(-1);
+  `
+  const context = createContext(2)
+  const program = parse(code, context)
+  const steps = getEvaluationSteps(program!, context)
+  return steps.map(codify)
+}
+
+debug()

@@ -442,3 +442,33 @@ NaN;
 "
 `)
 })
+
+test('negative numbers as arguments', () => {
+  const code = `
+  math_sin(-1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"math_sin(-1);
+
+-0.8414709848078965;
+"
+`)
+})
+
+test('is_function checks for builtin', () => {
+  const code = `
+    is_function(is_function);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"is_function(is_function);
+
+true;
+"
+`)
+})
