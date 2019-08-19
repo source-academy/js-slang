@@ -351,7 +351,6 @@ f();
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
-  expect(steps).toMatchSnapshot()
   expect(steps.map(codify).join('\n')).toMatchSnapshot()
 })
 
@@ -369,10 +368,9 @@ test('subsets', () => {
 
  subsets(list(1, 2, 3));
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
-  expect(steps).toMatchSnapshot()
-  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`""`)
+  const program = parse(code, mockContext(2))!
+  const steps = getEvaluationSteps(program, mockContext(2))
+  expect(steps.map(codify).join('\n')).toMatchSnapshot()
 })
 
 // source 0
@@ -395,7 +393,19 @@ even(1);
 
 =>(1);
 
-n === 0 || odd(n - 1);
+1 === 0 || =>(1 - 1);
+
+false || =>(1 - 1);
+
+=>(1 - 1);
+
+=>(0);
+
+0 === 0 ? false : =>(0 - 1);
+
+true ? false : =>(0 - 1);
+
+false;
 "
 `)
 })

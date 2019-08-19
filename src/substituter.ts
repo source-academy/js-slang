@@ -147,6 +147,18 @@ function substituteMain(
       return substedConditionalExpression
     },
 
+    LogicalExpression(target: es.LogicalExpression): es.LogicalExpression {
+      const substedLocialExpression = ast.logicalExpression(
+        target.operator,
+        target.left,
+        target.right
+      )
+      seenBefore.set(target, substedLocialExpression)
+      substedLocialExpression.left = substitute(target.left) as es.Expression
+      substedLocialExpression.right = substitute(target.right) as es.Expression
+      return substedLocialExpression
+    },
+
     CallExpression(target: es.CallExpression): es.CallExpression {
       const dummyArgs = target.arguments.map(() => dummyExpression())
       const substedCallExpression = ast.callExpression(dummyExpression(), dummyArgs, target.loc!)
@@ -896,6 +908,14 @@ const treeifiers = {
     )
   },
 
+  LogicalExpression: (target: es.LogicalExpression) => {
+    return ast.logicalExpression(
+      target.operator,
+      treeify(target.left) as es.Expression,
+      treeify(target.right) as es.Expression
+    )
+  },
+
   UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
     return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
   },
@@ -1035,6 +1055,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
         break
       }
       steps.push(reduced as es.Program)
+      // some bug with no semis
       reduced = reduce(reduced, context)[0] as es.Program
     }
     return steps
