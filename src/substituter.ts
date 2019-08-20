@@ -347,6 +347,14 @@ const reducers = {
     const { operator, left, right } = node
     if (isIrreducible(left)) {
       if (isIrreducible(right)) {
+        // if the ast are the same, then the values are the same
+        if (
+          builtin.is_function(left).value &&
+          builtin.is_function(right).value &&
+          operator === '==='
+        ) {
+          return [valueToExpression(left === right), context]
+        }
         const [leftValue, rightValue] = [left, right].map(nodeToValue)
         const error = rttc.checkBinaryExpression(node, operator, leftValue, rightValue)
         if (error === undefined) {
@@ -1023,7 +1031,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
 
 function debug() {
   const code = `
-  math_sin(-1);
+  math_sin === math_sin;
   `
   const context = createContext(2)
   const program = parse(code, context)

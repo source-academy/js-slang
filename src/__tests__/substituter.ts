@@ -472,3 +472,52 @@ true;
 "
 `)
 })
+
+test('triple equals work on function', () => {
+  const code = `
+    function f() { return g(); } function g() { return f(); }
+    f === f;
+    g === g;
+    f === g;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"function f() {
+  return g();
+}
+function g() {
+  return f();
+}
+f === f;
+g === g;
+f === g;
+
+function g() {
+  return f();
+}
+f === f;
+g === g;
+f === g;
+
+f === f;
+g === g;
+f === g;
+
+true;
+g === g;
+f === g;
+
+g === g;
+f === g;
+
+true;
+f === g;
+
+f === g;
+
+false;
+"
+`)
+})
