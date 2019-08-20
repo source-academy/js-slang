@@ -1,6 +1,5 @@
 import { generate } from 'astring'
 import * as es from 'estree'
-import { createContext } from '.'
 import * as errors from './interpreter-errors'
 import { parse } from './parser'
 import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from './types'
@@ -1008,7 +1007,6 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     let reduced = substPredefinedConstants(program)
     // and predefined fns.
     reduced = substPredefinedFns(reduced, context)[0]
-    // let programString = codify(reduced)
     while ((reduced as es.Program).body.length > 0) {
       if (steps.length === 19999) {
         steps.push(
@@ -1017,10 +1015,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
         break
       }
       steps.push(reduced as es.Program)
-      // some bug with no semis
       reduced = reduce(reduced, context)[0] as es.Program
-      // programString = codify(reduced)
-      // console.log(programString)
     }
     return steps
   } catch (error) {
@@ -1028,15 +1023,3 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     return steps
   }
 }
-
-function debug() {
-  const code = `
-  math_sin === math_sin;
-  `
-  const context = createContext(2)
-  const program = parse(code, context)
-  const steps = getEvaluationSteps(program!, context)
-  return steps.map(codify)
-}
-
-debug()

@@ -4,7 +4,7 @@ exports[`debugger; pauses for 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 7,
+    "contextId": 5,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -1880,7 +1880,7 @@ exports[`debugger; pauses while 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 8,
+    "contextId": 6,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3379,7 +3379,7 @@ exports[`debugger; statement basic test 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 2,
+    "contextId": 0,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -3856,7 +3856,7 @@ exports[`debugger; statement execution sequence 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 4,
+    "contextId": 2,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -4215,7 +4215,7 @@ exports[`debugger; statement hoisting 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 6,
+    "contextId": 4,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -5306,7 +5306,7 @@ exports[`debugger; statement in function 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 3,
+    "contextId": 1,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -6165,7 +6165,7 @@ exports[`debugger; statement test function scope 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 5,
+    "contextId": 3,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -8107,7 +8107,7 @@ exports[`setBreakpointAtLine basic 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 9,
+    "contextId": 7,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -22896,7 +22896,7 @@ exports[`setBreakpointAtLine for loops 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 17,
+    "contextId": 15,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -24416,7 +24416,7 @@ exports[`setBreakpointAtLine for loops 3`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 17,
+    "contextId": 15,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -25936,7 +25936,7 @@ exports[`setBreakpointAtLine for loops 5`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 17,
+    "contextId": 15,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -27456,7 +27456,7 @@ exports[`setBreakpointAtLine for loops 7`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 17,
+    "contextId": 15,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -28976,7 +28976,7 @@ exports[`setBreakpointAtLine for loops 9`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 17,
+    "contextId": 15,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -29333,7 +29333,7 @@ exports[`setBreakpointAtLine function 1 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 10,
+    "contextId": 8,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -30041,7 +30041,7 @@ exports[`setBreakpointAtLine function 2 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 11,
+    "contextId": 9,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -30965,7 +30965,7 @@ exports[`setBreakpointAtLine function 3 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 12,
+    "contextId": 10,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -31324,7 +31324,7 @@ exports[`setBreakpointAtLine function 4 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 13,
+    "contextId": 11,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -31966,7 +31966,7 @@ exports[`setBreakpointAtLine granularity 1 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 14,
+    "contextId": 12,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -33120,7 +33120,7 @@ exports[`setBreakpointAtLine granularity 1 3`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 14,
+    "contextId": 12,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -34274,7 +34274,7 @@ exports[`setBreakpointAtLine granularity 1 5`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 14,
+    "contextId": 12,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -35428,7 +35428,7 @@ exports[`setBreakpointAtLine granularity 2 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 15,
+    "contextId": 13,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -36599,7 +36599,7 @@ exports[`setBreakpointAtLine granularity 2 3`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 15,
+    "contextId": 13,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -36958,7 +36958,7 @@ exports[`setBreakpointAtLine granularity 3 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 16,
+    "contextId": 14,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -38128,7 +38128,7 @@ exports[`setBreakpointAtLine granularity 3 3`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 16,
+    "contextId": 14,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -39298,7 +39298,7 @@ exports[`setBreakpointAtLine granularity 3 5`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 16,
+    "contextId": 14,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -39657,7 +39657,7 @@ exports[`setBreakpointAtLine while loops 1`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 18,
+    "contextId": 16,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -40796,7 +40796,7 @@ exports[`setBreakpointAtLine while loops 3`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 18,
+    "contextId": 16,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -42065,7 +42065,7 @@ exports[`setBreakpointAtLine while loops 5`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 18,
+    "contextId": 16,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -43204,7 +43204,7 @@ exports[`setBreakpointAtLine while loops 7`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 18,
+    "contextId": 16,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
@@ -44473,7 +44473,7 @@ exports[`setBreakpointAtLine while loops 9`] = `
 Object {
   "context": Object {
     "chapter": 3,
-    "contextId": 18,
+    "contextId": 16,
     "debugger": Object {
       "observers": Object {
         "callbacks": Array [],
