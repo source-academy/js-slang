@@ -329,8 +329,7 @@ const reducers = {
   // source 0
   Identifier(node: es.Identifier, context: Context): [substituterNodes, Context] {
     // can only be built ins. the rest should have been declared
-    const globalFrame = context.runtime.environments[0].head
-    if (!(node.name in globalFrame)) {
+    if (!(isAllowedLiterals(node) || isBuiltinFunction(node))) {
       throw new errors.UndefinedVariable(node.name, node)
     } else {
       return [node, context]
