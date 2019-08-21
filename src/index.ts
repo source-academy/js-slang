@@ -14,6 +14,7 @@ import {
 import { parse, parseAt } from './parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
+import { codify, getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
 import {
   Context,
@@ -32,13 +33,15 @@ export interface IOptions {
   steps: number
   executionMethod: ExecutionMethod
   originalMaxExecTime: number
+  useSubst: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
-  originalMaxExecTime: 1000
+  originalMaxExecTime: 1000,
+  useSubst: false
 }
 
 // needed to work on browsers
@@ -162,6 +165,13 @@ export async function runInContext(
   const program = parse(code, context)
   if (!program) {
     return resolvedErrorPromise
+  }
+  if (options.useSubst) {
+    const steps = getEvaluationSteps(program, context)
+    return Promise.resolve({
+      status: 'finished',
+      value: steps.map(codify)
+    } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
