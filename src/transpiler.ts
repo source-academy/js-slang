@@ -282,7 +282,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   skipErrors = false
 ) {
   const globalEnvironment = NATIVE_STORAGE[contextId].globals
-  const previousVariablesToTimesGoneUp = new Map<
+  const previousVariablesToAst = new Map<
     string,
     { isConstant: boolean; variableLocationId: es.Expression }
   >()
@@ -290,8 +290,8 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   let variableScopeId: es.Expression = globalIds.globals
   while (variableScope !== null) {
     for (const [name, { kind }] of variableScope.variables) {
-      if (!previousVariablesToTimesGoneUp.has(name)) {
-        previousVariablesToTimesGoneUp.set(name, {
+      if (!previousVariablesToAst.has(name)) {
+        previousVariablesToAst.set(name, {
           isConstant: kind === 'const',
           variableLocationId: create.callExpression(
             create.memberExpression(create.memberExpression(variableScopeId, 'variables'), 'get'),
@@ -361,9 +361,9 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
         identifiersIntroducedByNode.get(ancestor)!.has(name)
     )
     if (!isCurrentlyDeclared) {
-      if (previousVariablesToTimesGoneUp.has(name)) {
+      if (previousVariablesToAst.has(name)) {
         const lastAncestor: es.Node = ancestors[ancestors.length - 2]
-        const { isConstant, variableLocationId } = previousVariablesToTimesGoneUp.get(name)!
+        const { isConstant, variableLocationId } = previousVariablesToAst.get(name)!
         if (lastAncestor.type === 'AssignmentExpression') {
           // if this is an assignment expression, we want to propagate back the change
           if (isConstant) {
