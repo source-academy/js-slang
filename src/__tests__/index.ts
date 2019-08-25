@@ -1,6 +1,7 @@
 import { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
+  createTestContext,
   expectParsedError,
   expectParsedErrorNoErrorSnapshot,
   expectParsedErrorNoSnapshot,
@@ -388,4 +389,20 @@ test('test true || true', () => {
 
 test('test || shortcircuiting', () => {
   return expectToMatchJS('true || 1();', { native: true })
+})
+
+test('Test context reuse', async () => {
+  const context = createTestContext({ chapter: 4 })
+  const init = stripIndent`
+  let i = 0;
+  function f() {
+    i = i + 1;
+    return i;
+  }
+  i;
+  `
+  await expectResult(init, { context, native: true }).toBe(0)
+  await expectResult('i = 100; f();', { context, native: true }).toBe(101)
+  await expectResult('f(); i;', { context, native: true }).toBe(102)
+  return expectResult('i;', { context, native: true }).toBe(102)
 })

@@ -15,8 +15,6 @@ import { ConstAssignment, UndefinedVariable } from './interpreter-errors'
  * There should be an explanation on it coming up soon.
  */
 
-type StorageLocations = 'globals' | 'operators'
-
 interface ValueWrapper {
   kind: AllowedDeclarations
   value: Value
@@ -59,27 +57,10 @@ const globalIds = {
   throwIfTimeout: create.identifier('dummy'),
   setProp: create.identifier('dummy'),
   getProp: create.identifier('dummy'),
-  lastStatementResult: create.identifier('dummy')
+  lastStatementResult: create.identifier('dummy'),
+  globals: create.identifier('dummy')
 }
 let contextId: number
-
-function createStorageLocationAstFor(type: StorageLocations): es.MemberExpression {
-  return create.memberExpression(
-    {
-      type: 'MemberExpression',
-      object: globalIds.native,
-      property: create.literal(contextId),
-      computed: true
-    },
-    type
-  )
-}
-
-function createGetFromStorageLocationAstFor(name: string, type: StorageLocations): es.Expression {
-  return create.callExpression(create.memberExpression(createStorageLocationAstFor(type), 'get'), [
-    create.literal(name)
-  ])
-}
 
 function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
@@ -89,7 +70,10 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   const variableIdentifier = create.identifier(name)
   const properties = [
     create.property('kind', create.literal(kind)),
-    create.property('value', variableIdentifier)
+    create.property(
+      'getValue',
+      create.blockArrowFunction([], [create.returnStatement(variableIdentifier)])
+    )
   ]
   if (kind === 'let') {
     properties.push(
@@ -97,27 +81,14 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
         'assignNewValue',
         create.functionExpression(
           [paramName],
-          [
-            create.returnStatement(
-              create.assignmentExpression(
-                variableIdentifier,
-                create.assignmentExpression(
-                  create.memberExpression({ type: 'ThisExpression' }, 'value'),
-                  paramName
-                )
-              )
-            )
-          ]
+          [create.returnStatement(create.assignmentExpression(variableIdentifier, paramName))]
         )
       )
     )
   }
   return create.expressionStatement(
     create.callExpression(
-      create.memberExpression(
-        create.memberExpression(createStorageLocationAstFor('globals'), 'variables'),
-        'set'
-      ),
+      create.memberExpression(create.memberExpression(globalIds.globals, 'variables'), 'set'),
       [create.literal(name), create.objectExpression(properties)]
     )
   )
@@ -130,16 +101,19 @@ function wrapWithPreviouslyDeclaredGlobals(statements: es.Statement[]) {
   while (currentVariableScope !== null) {
     const initialisingStatements: es.Statement[] = []
     currentVariableScope.variables.forEach(({ kind }: ValueWrapper, name: string) => {
-      let unwrappedValueAst: es.Expression = createStorageLocationAstFor('globals')
+      let unwrappedValueAst: es.Expression = globalIds.globals
       for (let i = 0; i < timesToGoUp; i += 1) {
         unwrappedValueAst = create.memberExpression(unwrappedValueAst, 'previousScope')
       }
-      unwrappedValueAst = create.memberExpression(
-        create.callExpression(
-          create.memberExpression(create.memberExpression(unwrappedValueAst, 'variables'), 'get'),
-          [create.literal(name)]
+      unwrappedValueAst = create.callExpression(
+        create.memberExpression(
+          create.callExpression(
+            create.memberExpression(create.memberExpression(unwrappedValueAst, 'variables'), 'get'),
+            [create.literal(name)]
+          ),
+          'getValue'
         ),
-        'value'
+        []
       )
       initialisingStatements.push(create.declaration(name, kind, unwrappedValueAst))
     })
@@ -308,20 +282,26 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   skipErrors = false
 ) {
   const globalEnvironment = NATIVE_STORAGE[contextId].globals
-  const previousVariablesToTimesGoneUp = new Map<
+  const previousVariablesToAst = new Map<
     string,
-    { isConstant: boolean; timesGoneUp: number }
+    { isConstant: boolean; variableLocationId: es.Expression }
   >()
   let variableScope = globalEnvironment
-  let timesGoneUp = 0
+  let variableScopeId: es.Expression = globalIds.globals
   while (variableScope !== null) {
     for (const [name, { kind }] of variableScope.variables) {
-      if (!previousVariablesToTimesGoneUp.has(name)) {
-        previousVariablesToTimesGoneUp.set(name, { isConstant: kind === 'const', timesGoneUp })
+      if (!previousVariablesToAst.has(name)) {
+        previousVariablesToAst.set(name, {
+          isConstant: kind === 'const',
+          variableLocationId: create.callExpression(
+            create.memberExpression(create.memberExpression(variableScopeId, 'variables'), 'get'),
+            [create.literal(name)]
+          )
+        })
       }
     }
     variableScope = variableScope.previousScope
-    timesGoneUp += 1
+    variableScopeId = create.memberExpression(variableScopeId, 'previousScope')
   }
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
@@ -381,30 +361,64 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
         identifiersIntroducedByNode.get(ancestor)!.has(name)
     )
     if (!isCurrentlyDeclared) {
-      if (previousVariablesToTimesGoneUp.has(name)) {
+      if (previousVariablesToAst.has(name)) {
         const lastAncestor: es.Node = ancestors[ancestors.length - 2]
-        // if this is an assignment expression, we want to propagate back the change
+        const { isConstant, variableLocationId } = previousVariablesToAst.get(name)!
         if (lastAncestor.type === 'AssignmentExpression') {
-          const { isConstant, timesGoneUp } = previousVariablesToTimesGoneUp.get(name)!
+          // if this is an assignment expression, we want to propagate back the change
           if (isConstant) {
             throw new ConstAssignment(identifier, name)
           } else {
-            let variableScope: es.Expression = createStorageLocationAstFor('globals')
-            for (let i = 0; i < timesGoneUp; i += 1) {
-              variableScope = create.memberExpression(variableScope, 'previousScope')
-            }
             lastAncestor.right = create.callExpression(
-              create.memberExpression(
-                create.callExpression(
-                  create.memberExpression(
-                    create.memberExpression(variableScope, 'variables'),
-                    'get'
-                  ),
-                  [create.literal(name)]
-                ),
-                'assignNewValue'
-              ),
+              create.memberExpression(variableLocationId, 'assignNewValue'),
               [lastAncestor.right]
+            )
+          }
+        } else {
+          /**
+           * if this is not the left side of an assignment expression, we need to replace this with
+           * the actual value stored in the correct scope, as calling functions defined in a
+           * previous block might have side effects that change the variable.
+           * e.g.
+           * // first eval:
+           * let counter = 0;
+           * function f() {
+           *   counter = counter + 1;
+           * }
+           * becomes
+           * let counter = 0;
+           * function f() {
+           *   counter = counter + 1;
+           * }
+           * variables.set("counter", getValue: ()=>counter, assignNewValue: newValue => counter = newValue);
+           * // second eval (wrong):
+           * f(); counter;
+           * becomes
+           * let counter = variables.get("counter").getValue(); // set back counter;
+           * {
+           *   f(); // this has a side effect of incrementing counter
+           *   return counter; // that does not get propagated here
+           * }
+           * // second eval (fixed):
+           * f(); counter;
+           * becomes
+           * let counter = variables.get("counter").getValue(); // set back counter;
+           * {
+           *   f(); // this has a side effect of incrementing counter
+           *   return (counter = variables.get("counter").getValue()); // we have no choice but to
+           *    // always assume that counter is updated through a side effect and always retrieve its
+           *    // real value
+           * }
+           */
+          if (!isConstant) {
+            // if it is a constant, it will definitely not mutate so above change is not needed
+            const toExpression: es.AssignmentExpression = (identifier as unknown) as es.AssignmentExpression
+            toExpression.type = 'AssignmentExpression'
+            toExpression.operator = '='
+            toExpression.left = create.identifier(name)
+            toExpression.right = create.callExpression(
+              create.memberExpression(variableLocationId, 'getValue'),
+              []
             )
           }
         }
@@ -679,8 +693,32 @@ function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] 
     } else if (key === 'lastStatementResult') {
       value = create.primitive(undefined)
       kind = 'let'
+    } else if (key === 'globals') {
+      value = create.memberExpression(
+        {
+          type: 'MemberExpression',
+          object: create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE),
+          property: create.literal(contextId),
+          computed: true
+        },
+        'globals'
+      )
     } else {
-      value = createGetFromStorageLocationAstFor(name, 'operators')
+      value = create.callExpression(
+        create.memberExpression(
+          create.memberExpression(
+            {
+              type: 'MemberExpression',
+              object: globalIds.native,
+              property: create.literal(contextId),
+              computed: true
+            },
+            'operators'
+          ),
+          'get'
+        ),
+        [create.literal(name)]
+      )
     }
     return create.declaration(name, kind, value)
   })

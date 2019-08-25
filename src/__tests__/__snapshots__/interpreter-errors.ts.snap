@@ -19,6 +19,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -102,6 +103,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -314,6 +316,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -331,13 +334,17 @@ let lastStatementResult = undefined;
           column: 15
         }), \\"x => g(x)\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
-        native.globals.variables.set(\\"g\\", {
+        globals.variables.set(\\"g\\", {
           kind: \\"const\\",
-          value: g
+          getValue: () => {
+            return g;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -422,6 +429,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -431,9 +439,11 @@ let lastStatementResult = undefined;
           value: x
         }), \\"x => x\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -518,6 +528,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -527,9 +538,11 @@ let lastStatementResult = undefined;
           value: x
         }), \\"x => x\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -614,6 +627,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -623,9 +637,11 @@ let lastStatementResult = undefined;
           value: x
         }), \\"x => x\\")];
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -714,6 +730,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -725,9 +742,11 @@ let lastStatementResult = undefined;
           };
         }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -816,6 +835,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -827,9 +847,11 @@ let lastStatementResult = undefined;
           };
         }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -974,6 +996,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -1122,6 +1145,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -1308,6 +1332,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -1883,6 +1908,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2224,6 +2250,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2786,6 +2813,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2797,9 +2825,11 @@ let lastStatementResult = undefined;
           };
         }, \\"function f() {\\\\n  return 1;\\\\n}\\");
         lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -2848,6 +2878,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2900,6 +2931,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2955,6 +2987,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -2966,9 +2999,11 @@ let lastStatementResult = undefined;
           };
         }, \\"function f() {\\\\n  return 1;\\\\n}\\");
         lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -3017,6 +3052,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -3106,6 +3142,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {

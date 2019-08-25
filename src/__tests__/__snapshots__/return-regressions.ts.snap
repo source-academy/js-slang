@@ -33,6 +33,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -61,13 +62,17 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 12, 6);
         }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return i + 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -112,6 +117,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -138,13 +144,17 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 12, 6);
         }, \\"function f() {\\\\n  if (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -189,6 +199,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -217,13 +228,17 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 12, 6);
         }, \\"function f() {\\\\n  while (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -265,6 +280,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -288,13 +304,17 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 9, 6);
         }, \\"function f() {\\\\n  return 1;\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -379,6 +399,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -410,17 +431,23 @@ let lastStatementResult = undefined;
           };
         }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1) + id(i + 2);\\\\n  }\\\\n  return 0;\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -468,6 +495,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -500,17 +528,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 15, 6);
         }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -558,6 +592,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -592,17 +627,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 15, 6);
         }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -647,6 +688,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -676,17 +718,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 12, 6);
         }, \\"function f() {\\\\n  return id(1) + id(2);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -734,6 +782,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -772,17 +821,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 15, 6);
         }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -830,6 +885,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -866,17 +922,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 15, 6);
         }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -924,6 +986,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -962,17 +1025,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 15, 6);
         }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }
@@ -1017,6 +1086,7 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -1050,17 +1120,23 @@ let lastStatementResult = undefined;
           callIfFuncAndRightArgs(unreachable, 12, 6);
         }, \\"function f() {\\\\n  return id(1);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\");
         lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-        native.globals.variables.set(\\"unreachable\\", {
+        globals.variables.set(\\"unreachable\\", {
           kind: \\"const\\",
-          value: unreachable
+          getValue: () => {
+            return unreachable;
+          }
         });
-        native.globals.variables.set(\\"id\\", {
+        globals.variables.set(\\"id\\", {
           kind: \\"const\\",
-          value: id
+          getValue: () => {
+            return id;
+          }
         });
-        native.globals.variables.set(\\"f\\", {
+        globals.variables.set(\\"f\\", {
           kind: \\"const\\",
-          value: f
+          getValue: () => {
+            return f;
+          }
         });
       }
     }

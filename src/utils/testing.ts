@@ -35,7 +35,7 @@ interface TestOptions {
   native?: boolean
 }
 
-function createTestContext({
+export function createTestContext({
   context,
   chapter = 1,
   testBuiltins = {}
@@ -104,10 +104,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
       // replace declaration of builtins since they're repetitive
       const replacedBuiltins = replacedGlobalsLine.replace(
-        /\n      const \w+ = native\.globals\.(previousScope.)+variables.get\("\w+"\)\.value;/g,
+        /\n      const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
         ''
       )
-      transpiled = replacedBuiltins
+      // replace the line globals = $$NATIVE_STORAGE[xxx].globals to remove [xxx]
+      transpiled = replacedBuiltins.replace(/\$\$NATIVE_STORAGE\[\d+]/, '$$NATIVE_STORAGE')
     } catch {
       transpiled = 'parseError'
     }
