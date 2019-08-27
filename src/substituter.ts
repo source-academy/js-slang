@@ -15,7 +15,12 @@ import {
 } from './utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
-import { isAllowedLiterals, isBuiltinFunction, isNegNumber } from './utils/substituter'
+import {
+  getDeclaredNames,
+  isAllowedLiterals,
+  isBuiltinFunction,
+  isNegNumber
+} from './utils/substituter'
 import * as builtin from './utils/substStdLib'
 
 const irreducibleTypes = new Set<string>([
@@ -135,14 +140,7 @@ function substituteMain(
       substedCallExpression.arguments = target.arguments.map(
         expn => substitute(expn) as es.Expression
       )
-      // do not subst callee for 1. const declarations and 2. Formal argument
-      // substitution of parameters
-      // TODO
-      if (replacement.type === 'Literal') {
-        substedCallExpression.callee = target.callee as es.Expression
-      } else {
-        substedCallExpression.callee = substitute(target.callee) as es.Expression
-      }
+      substedCallExpression.callee = substitute(target.callee) as es.Expression
       return substedCallExpression
     },
 
@@ -191,6 +189,11 @@ function substituteMain(
       const substedBody = target.body.map(() => dummyStatement())
       const substedBlockStatement = ast.blockStatement(substedBody)
       seenBefore.set(target, substedBlockStatement)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      if (declaredNames.has(name.name)) {
+        substedBlockStatement.body = target.body
+        return substedBlockStatement
+      }
       substedBlockStatement.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedBlockStatement
     },
@@ -199,6 +202,11 @@ function substituteMain(
       const substedBody = target.body.map(() => dummyStatement())
       const substedBlockExpression = ast.blockExpression(substedBody)
       seenBefore.set(target, substedBlockExpression)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      if (declaredNames.has(name.name)) {
+        substedBlockExpression.body = target.body
+        return substedBlockExpression
+      }
       substedBlockExpression.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedBlockExpression
     },
