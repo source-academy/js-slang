@@ -389,26 +389,26 @@ test('even odd mutual', () => {
   expect(steps).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('false;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
-"const odd = =>;
-const even = =>;
+"const odd = n => n === 0 ? false : even(n - 1);
+const even = n => n === 0 || odd(n - 1);
 even(1);
 
-const even = =>;
+const even = n => n === 0 || (n => ...)(n - 1);
 even(1);
 
-=>(1);
+(n => n === 0 || (n => ...)(n - 1))(1);
 
-1 === 0 || =>(1 - 1);
+1 === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-false || =>(1 - 1);
+false || (n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-=>(1 - 1);
+(n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-=>(0);
+(n => n === 0 ? false : (n => ...)(n - 1))(0);
 
-0 === 0 ? false : =>(0 - 1);
+0 === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(0 - 1);
 
-true ? false : =>(0 - 1);
+true ? false : (n => n === 0 || (n => ...)(n - 1))(0 - 1);
 
 false;
 "
@@ -549,23 +549,23 @@ function f(g) {
   const z = 3;
   return g(z);
 }
-f(=>);
+f(y => y + z);
 
 function f(g) {
   const z = 3;
   return g(z);
 }
-f(=>);
+f(y => y + 1);
 
-f(=>);
+f(y => y + 1);
 
 {
   const z = 3;
-  return =>(z);
+  return (y => y + 1)(z);
 };
 
 {
-  return =>(3);
+  return (y => y + 1)(3);
 };
 
 {

@@ -54921,13 +54921,13 @@ exports[`const declarations in blocks subst into call expressions 1`] = `
 "const z = 1;
 function f(g) {
   const z = 3;
-  return =>(z);
+  return (y => z + z)(z);
 }
 f(undefined);
 
 function f(g) {
   const z = 3;
-  return =>(z);
+  return (y => z + z)(z);
 }
 f(undefined);
 
@@ -54935,11 +54935,11 @@ f(undefined);
 
 {
   const z = 3;
-  return =>(z);
+  return (y => z + z)(z);
 };
 
 {
-  return =>(3);
+  return (y => 3 + 3)(3);
 };
 
 {
@@ -61522,7 +61522,7 @@ exports[`subsets 1`] = `
     return list(null);
   } else {
     const rest = subsets(tail(s));
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head(s), x), rest));
   }
 }
 subsets(list(1, 2, 3));
@@ -61536,7 +61536,7 @@ subsets([1, [2, [3, null]]]);
     return list(null);
   } else {
     const rest = subsets(tail([1, [2, [3, null]]]));
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61545,21 +61545,21 @@ subsets([1, [2, [3, null]]]);
     return list(null);
   } else {
     const rest = subsets(tail([1, [2, [3, null]]]));
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
 {
   {
     const rest = subsets(tail([1, [2, [3, null]]]));
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
 {
   {
     const rest = subsets([2, [3, null]]);
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61570,10 +61570,10 @@ subsets([1, [2, [3, null]]]);
         return list(null);
       } else {
         const rest = subsets(tail([2, [3, null]]));
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61584,10 +61584,10 @@ subsets([1, [2, [3, null]]]);
         return list(null);
       } else {
         const rest = subsets(tail([2, [3, null]]));
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61596,10 +61596,10 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = subsets(tail([2, [3, null]]));
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61608,10 +61608,10 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = subsets([3, null]);
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61624,13 +61624,13 @@ subsets([1, [2, [3, null]]]);
             return list(null);
           } else {
             const rest = subsets(tail([3, null]));
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61643,13 +61643,13 @@ subsets([1, [2, [3, null]]]);
             return list(null);
           } else {
             const rest = subsets(tail([3, null]));
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61660,13 +61660,13 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           {
             const rest = subsets(tail([3, null]));
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61677,13 +61677,13 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           {
             const rest = subsets(null);
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61698,16 +61698,16 @@ subsets([1, [2, [3, null]]]);
                 return list(null);
               } else {
                 const rest = subsets(tail(null));
-                return append(rest, map(=>, rest));
+                return append(rest, map(x => pair(head(null), x), rest));
               }
             };
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61722,16 +61722,16 @@ subsets([1, [2, [3, null]]]);
                 return list(null);
               } else {
                 const rest = subsets(tail(null));
-                return append(rest, map(=>, rest));
+                return append(rest, map(x => pair(head(null), x), rest));
               }
             };
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61746,13 +61746,13 @@ subsets([1, [2, [3, null]]]);
                 return list(null);
               }
             };
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61767,13 +61767,13 @@ subsets([1, [2, [3, null]]]);
                 return [null, null];
               }
             };
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61786,13 +61786,13 @@ subsets([1, [2, [3, null]]]);
             const rest = {
               return [null, null];
             };
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61803,13 +61803,13 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           {
             const rest = [null, null];
-            return append(rest, map(=>, rest));
+            return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61819,13 +61819,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], map(=>, [null, null]));
+            return append([null, null], map(x => pair(head([3, null]), x), [null, null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61835,13 +61835,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], is_null([null, null]) ? null : pair(=>(head([null, null])), map(=>, tail([null, null]))));
+            return append([null, null], is_null([null, null]) ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61851,13 +61851,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], false ? null : pair(=>(head([null, null])), map(=>, tail([null, null]))));
+            return append([null, null], false ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61867,13 +61867,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair(=>(head([null, null])), map(=>, tail([null, null]))));
+            return append([null, null], pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61883,13 +61883,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair(=>(null), map(=>, tail([null, null]))));
+            return append([null, null], pair((x => pair(head([3, null]), x))(null), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61899,13 +61899,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair(pair(head([3, null]), null), map(=>, tail([null, null]))));
+            return append([null, null], pair(pair(head([3, null]), null), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61915,13 +61915,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair(pair(3, null), map(=>, tail([null, null]))));
+            return append([null, null], pair(pair(3, null), map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61931,13 +61931,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair([3, null], map(=>, tail([null, null]))));
+            return append([null, null], pair([3, null], map(x => pair(head([3, null]), x), tail([null, null]))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61947,13 +61947,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair([3, null], map(=>, null)));
+            return append([null, null], pair([3, null], map(x => pair(head([3, null]), x), null)));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61963,13 +61963,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair([3, null], is_null(null) ? null : pair(=>(head(null)), map(=>, tail(null)))));
+            return append([null, null], pair([3, null], is_null(null) ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61979,13 +61979,13 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], pair([3, null], true ? null : pair(=>(head(null)), map(=>, tail(null)))));
+            return append([null, null], pair([3, null], true ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -61998,10 +61998,10 @@ subsets([1, [2, [3, null]]]);
             return append([null, null], pair([3, null], null));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62014,10 +62014,10 @@ subsets([1, [2, [3, null]]]);
             return append([null, null], [[3, null], null]);
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62030,10 +62030,10 @@ subsets([1, [2, [3, null]]]);
             return is_null([null, null]) ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62046,10 +62046,10 @@ subsets([1, [2, [3, null]]]);
             return false ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62062,10 +62062,10 @@ subsets([1, [2, [3, null]]]);
             return pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62078,10 +62078,10 @@ subsets([1, [2, [3, null]]]);
             return pair(null, append(tail([null, null]), [[3, null], null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62094,10 +62094,10 @@ subsets([1, [2, [3, null]]]);
             return pair(null, append(null, [[3, null], null]));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62110,10 +62110,10 @@ subsets([1, [2, [3, null]]]);
             return pair(null, is_null(null) ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62126,10 +62126,10 @@ subsets([1, [2, [3, null]]]);
             return pair(null, true ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62142,10 +62142,10 @@ subsets([1, [2, [3, null]]]);
             return pair(null, [[3, null], null]);
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62158,10 +62158,10 @@ subsets([1, [2, [3, null]]]);
             return [null, [[3, null], null]];
           }
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62172,10 +62172,10 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           return [null, [[3, null], null]];
         };
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62184,10 +62184,10 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = [null, [[3, null], null]];
-        return append(rest, map(=>, rest));
+        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62195,10 +62195,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], map(=>, [null, [[3, null], null]]));
+        return append([null, [[3, null], null]], map(x => pair(head([2, [3, null]]), x), [null, [[3, null], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62206,10 +62206,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? null : pair(=>(head([null, [[3, null], null]])), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62217,10 +62217,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], false ? null : pair(=>(head([null, [[3, null], null]])), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62228,10 +62228,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair(=>(head([null, [[3, null], null]])), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62239,10 +62239,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair(=>(null), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62250,10 +62250,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair(pair(head([2, [3, null]]), null), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], pair(pair(head([2, [3, null]]), null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62261,10 +62261,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair(pair(2, null), map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], pair(pair(2, null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62272,10 +62272,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], map(=>, tail([null, [[3, null], null]]))));
+        return append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62283,10 +62283,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], map(=>, [[3, null], null])));
+        return append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), [[3, null], null])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62294,10 +62294,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], is_null([[3, null], null]) ? null : pair(=>(head([[3, null], null])), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], is_null([[3, null], null]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62305,10 +62305,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], false ? null : pair(=>(head([[3, null], null])), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62316,10 +62316,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair(=>(head([[3, null], null])), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62327,10 +62327,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair(=>([3, null]), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))([3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62338,10 +62338,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair(pair(head([2, [3, null]]), [3, null]), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], pair(pair(head([2, [3, null]]), [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62349,10 +62349,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair(pair(2, [3, null]), map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], pair(pair(2, [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62360,10 +62360,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(=>, tail([[3, null], null])))));
+        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62371,10 +62371,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(=>, null))));
+        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), null))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62382,10 +62382,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], is_null(null) ? null : pair(=>(head(null)), map(=>, tail(null))))));
+        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], is_null(null) ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62393,10 +62393,10 @@ subsets([1, [2, [3, null]]]);
   {
     const rest = {
       {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], true ? null : pair(=>(head(null)), map(=>, tail(null))))));
+        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], true ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62407,7 +62407,7 @@ subsets([1, [2, [3, null]]]);
         return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], null)));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62418,7 +62418,7 @@ subsets([1, [2, [3, null]]]);
         return append([null, [[3, null], null]], pair([2, null], [[2, [3, null]], null]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62429,7 +62429,7 @@ subsets([1, [2, [3, null]]]);
         return append([null, [[3, null], null]], [[2, null], [[2, [3, null]], null]]);
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62440,7 +62440,7 @@ subsets([1, [2, [3, null]]]);
         return is_null([null, [[3, null], null]]) ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62451,7 +62451,7 @@ subsets([1, [2, [3, null]]]);
         return false ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62462,7 +62462,7 @@ subsets([1, [2, [3, null]]]);
         return pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62473,7 +62473,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62484,7 +62484,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, append([[3, null], null], [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62495,7 +62495,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, is_null([[3, null], null]) ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62506,7 +62506,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, false ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62517,7 +62517,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62528,7 +62528,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair([3, null], append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62539,7 +62539,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair([3, null], append(null, [[2, null], [[2, [3, null]], null]])));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62550,7 +62550,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair([3, null], is_null(null) ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62561,7 +62561,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair([3, null], true ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62572,7 +62572,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, pair([3, null], [[2, null], [[2, [3, null]], null]]));
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62583,7 +62583,7 @@ subsets([1, [2, [3, null]]]);
         return pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]);
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62594,7 +62594,7 @@ subsets([1, [2, [3, null]]]);
         return [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
       }
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
@@ -62603,224 +62603,224 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       return [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
     };
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
 {
   {
     const rest = [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
-    return append(rest, map(=>, rest));
+    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], map(=>, [null, [[3, null], [[2, null], [[2, [3, null]], null]]]]));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], map(x => pair(head([1, [2, [3, null]]]), x), [null, [[3, null], [[2, null], [[2, [3, null]], null]]]]));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? null : pair(=>(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : pair(=>(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(=>(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(=>(null), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(head([1, [2, [3, null]]]), null), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(head([1, [2, [3, null]]]), null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(1, null), map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(1, null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(=>, tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(=>, [[3, null], [[2, null], [[2, [3, null]], null]]])));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]])));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? null : pair(=>(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], false ? null : pair(=>(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(=>(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(=>([3, null]), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(head([1, [2, [3, null]]]), [3, null]), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(head([1, [2, [3, null]]]), [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(1, [3, null]), map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(1, [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(=>, tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(=>, [[2, null], [[2, [3, null]], null]]))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]]))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], is_null([[2, null], [[2, [3, null]], null]]) ? null : pair(=>(head([[2, null], [[2, [3, null]], null]])), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], is_null([[2, null], [[2, [3, null]], null]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], false ? null : pair(=>(head([[2, null], [[2, [3, null]], null]])), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(=>(head([[2, null], [[2, [3, null]], null]])), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(=>([2, null]), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(head([1, [2, [3, null]]]), [2, null]), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(head([1, [2, [3, null]]]), [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(1, [2, null]), map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(1, [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(=>, tail([[2, null], [[2, [3, null]], null]]))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(=>, [[2, [3, null]], null])))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null])))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], is_null([[2, [3, null]], null]) ? null : pair(=>(head([[2, [3, null]], null])), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], is_null([[2, [3, null]], null]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], false ? null : pair(=>(head([[2, [3, null]], null])), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(=>(head([[2, [3, null]], null])), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(=>([2, [3, null]]), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(1, [2, [3, null]]), map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(1, [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(=>, tail([[2, [3, null]], null])))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(=>, null))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), null))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], is_null(null) ? null : pair(=>(head(null)), map(=>, tail(null))))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], is_null(null) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
   }
 };
 
 {
   {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], true ? null : pair(=>(head(null)), map(=>, tail(null))))))));
+    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], true ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
   }
 };
 
