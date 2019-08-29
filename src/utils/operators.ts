@@ -63,6 +63,11 @@ export function callIfFuncAndRightArgs(
 
   if (typeof candidate === 'function') {
     if (candidate.transformedFunction === undefined) {
+      const expectedLength = candidate.length
+      const receivedLength = args.length
+      if (candidate.hasVarArgs === false && expectedLength !== receivedLength) {
+        throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
+      }
       try {
         const forcedArgs = args.map(forceIt)
         return candidate(...forcedArgs)
@@ -210,7 +215,20 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
         const receivedLength = args.length
         if (expectedLength !== receivedLength) {
           throw new InvalidNumberOfArguments(
-            callExpression(locationDummyNode(line, column), args, {
+            callExpression(dummy, args, {
+              start: { line, column },
+              end: { line, column }
+            }),
+            expectedLength,
+            receivedLength
+          )
+        }
+      } else {
+        const expectedLength = f.length
+        const receivedLength = args.length
+        if (f.hasVarArgs === false && expectedLength !== receivedLength) {
+          throw new InvalidNumberOfArguments(
+            callExpression(dummy, args, {
               start: { line, column },
               end: { line, column }
             }),

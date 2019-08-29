@@ -117,12 +117,12 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export const defineBuiltin = (context: Context, name: string, value: Value) => {
   if (typeof value === 'function') {
-    const wrapped = (...args: any) => value(...args)
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
-    wrapped.toString = () => repr
+    value.toString = () => repr
+    value.hasVarArgs = name.includes('...') || name.includes('=')
 
-    defineSymbol(context, funName, wrapped)
+    defineSymbol(context, funName, value)
   } else if (value instanceof LazyBuiltIn) {
     const wrapped = (...args: any) => value.func(...args)
     const funName = name.split('(')[0].trim()
@@ -166,10 +166,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time)
-    defineBuiltin(context, 'display(val)', display)
-    defineBuiltin(context, 'raw_display(str)', rawDisplay)
-    defineBuiltin(context, 'stringify(val)', stringify)
-    defineBuiltin(context, 'error(str)', misc.error_message)
+    defineBuiltin(context, 'display(val, prepend = undefined)', display)
+    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay)
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify)
+    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message)
     defineBuiltin(context, 'prompt(str)', prompt)
     defineBuiltin(context, 'is_number(val)', misc.is_number)
     defineBuiltin(context, 'is_string(val)', misc.is_string)
@@ -181,9 +181,22 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
     // Define all Math libraries
-    const props = Object.getOwnPropertyNames(Math)
-    for (const prop of props) {
-      defineBuiltin(context, 'math_' + prop, Math[prop])
+    const mathLibraryNames = Object.getOwnPropertyNames(Math)
+    // Short param names for stringified version of math functions
+    const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
+    for (const name of mathLibraryNames) {
+      const value = Math[name]
+      if (typeof value === 'function') {
+        let paramString: string
+        if (name === 'max' || 'min') {
+          paramString = '...values'
+        } else {
+          paramString = parameterNames.slice(0, value.length).join(', ')
+        }
+        defineBuiltin(context, `math_${name}(${paramString})`, value)
+      } else {
+        defineBuiltin(context, `math_${name}`, value)
+      }
     }
   }
 
