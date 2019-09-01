@@ -1,4 +1,5 @@
-import { substituterNodes } from '../types'
+import * as es from 'estree'
+import { BlockExpression, substituterNodes } from '../types'
 import * as builtin from './substStdLib'
 
 export function isBuiltinFunction(node: substituterNodes): boolean {
@@ -36,4 +37,22 @@ export function isNumber(node: substituterNodes): boolean {
 
 export function isAllowedLiterals(node: substituterNodes): boolean {
   return node.type === 'Identifier' && ['NaN', 'Infinity', 'undefined'].includes(node.name)
+}
+
+export function getDeclaredNames(node: es.BlockStatement | BlockExpression): Set<string> {
+  const declaredNames = new Set<string>()
+  for (const stmt of node.body) {
+    // if stmt is assignment or functionDeclaration
+    // add stmt into a set of identifiers
+    // return that set
+    if (stmt.type === 'VariableDeclaration') {
+      stmt.declarations
+        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+        .map(id => id.name)
+        .forEach(name => declaredNames.add(name))
+    } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+      declaredNames.add(stmt.id.name)
+    }
+  }
+  return declaredNames
 }

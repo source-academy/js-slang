@@ -15,7 +15,12 @@ import {
 } from './utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
-import { isAllowedLiterals, isBuiltinFunction, isNegNumber } from './utils/substituter'
+import {
+  getDeclaredNames,
+  isAllowedLiterals,
+  isBuiltinFunction,
+  isNegNumber
+} from './utils/substituter'
 import * as builtin from './utils/substStdLib'
 
 const irreducibleTypes = new Set<string>([
@@ -135,14 +140,7 @@ function substituteMain(
       substedCallExpression.arguments = target.arguments.map(
         expn => substitute(expn) as es.Expression
       )
-      // do not subst callee for 1. const declarations and 2. Formal argument
-      // substitution of parameters
-      // TODO
-      if (replacement.type === 'Literal') {
-        substedCallExpression.callee = target.callee as es.Expression
-      } else {
-        substedCallExpression.callee = substitute(target.callee) as es.Expression
-      }
+      substedCallExpression.callee = substitute(target.callee) as es.Expression
       return substedCallExpression
     },
 
@@ -191,6 +189,11 @@ function substituteMain(
       const substedBody = target.body.map(() => dummyStatement())
       const substedBlockStatement = ast.blockStatement(substedBody)
       seenBefore.set(target, substedBlockStatement)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      if (declaredNames.has(name.name)) {
+        substedBlockStatement.body = target.body
+        return substedBlockStatement
+      }
       substedBlockStatement.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedBlockStatement
     },
@@ -199,6 +202,11 @@ function substituteMain(
       const substedBody = target.body.map(() => dummyStatement())
       const substedBlockExpression = ast.blockExpression(substedBody)
       seenBefore.set(target, substedBlockExpression)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      if (declaredNames.has(name.name)) {
+        substedBlockExpression.body = target.body
+        return substedBlockExpression
+      }
       substedBlockExpression.body = target.body.map(stmt => substitute(stmt) as es.Statement)
       return substedBlockExpression
     },
@@ -849,116 +857,150 @@ function reduce(node: substituterNodes, context: Context): [substituterNodes, Co
   }
 }
 
-// recurse down the program like substitute
-// if see a function at expression position,
-//   has an identifier: replace with the name
-//   else: replace with an identifer "=>"
-const treeifiers = {
-  // Identifier: return
-  ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
-    return ast.expressionStatement(treeify(target.expression) as es.Expression)
-  },
+// Main creates a scope for us to control the verbosity
+function treeifyMain(target: substituterNodes): substituterNodes {
+  // recurse down the program like substitute
+  // if see a function at expression position,
+  //   has an identifier: replace with the name
+  //   else: replace with an identifer "=>"
+  let verbose = true
+  const treeifiers = {
+    // Identifier: return
+    ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
+      return ast.expressionStatement(treeify(target.expression) as es.Expression)
+    },
 
-  BinaryExpression: (target: es.BinaryExpression) => {
-    return ast.binaryExpression(
-      target.operator,
-      treeify(target.left) as es.Expression,
-      treeify(target.right) as es.Expression
-    )
-  },
+    BinaryExpression: (target: es.BinaryExpression) => {
+      return ast.binaryExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
+      )
+    },
 
-  LogicalExpression: (target: es.LogicalExpression) => {
-    return ast.logicalExpression(
-      target.operator,
-      treeify(target.left) as es.Expression,
-      treeify(target.right) as es.Expression
-    )
-  },
+    LogicalExpression: (target: es.LogicalExpression) => {
+      return ast.logicalExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
+      )
+    },
 
-  UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
-    return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
-  },
+    UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
+      return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
+    },
 
-  ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
-    return ast.conditionalExpression(
-      treeify(target.test) as es.Expression,
-      treeify(target.consequent) as es.Expression,
-      treeify(target.alternate) as es.Expression
-    )
-  },
+    ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
+      return ast.conditionalExpression(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.Expression,
+        treeify(target.alternate) as es.Expression
+      )
+    },
 
-  CallExpression: (target: es.CallExpression): es.CallExpression => {
-    return ast.callExpression(
-      treeify(target.callee) as es.Expression,
-      target.arguments.map(arg => treeify(arg) as es.Expression)
-    )
-  },
+    CallExpression: (target: es.CallExpression): es.CallExpression => {
+      return ast.callExpression(
+        treeify(target.callee) as es.Expression,
+        target.arguments.map(arg => treeify(arg) as es.Expression)
+      )
+    },
 
-  FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
-    return ast.functionDeclaration(target.id, target.params, treeify(
-      target.body
-    ) as es.BlockStatement)
-  },
+    FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
+      return ast.functionDeclaration(target.id, target.params, treeify(
+        target.body
+      ) as es.BlockStatement)
+    },
 
-  // CORE
-  FunctionExpression: (target: es.FunctionExpression): es.Identifier => {
-    return ast.identifier(target.id ? target.id.name : '=>')
-  },
+    // CORE
+    FunctionExpression: (
+      target: es.FunctionExpression
+    ): es.Identifier | es.ArrowFunctionExpression => {
+      if (target.id) {
+        return target.id
+      } else if (verbose) {
+        // here onwards is guarding against arrow turned function expressions
+        verbose = false
+        const redacted = ast.arrowFunctionExpression(target.params, treeify(
+          target.body
+        ) as es.BlockStatement)
+        verbose = true
+        return redacted
+      } else {
+        // simplify the body with ellipses
+        return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
+      }
+    },
 
-  Program: (target: es.Program): es.Program => {
-    return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
-  },
+    Program: (target: es.Program): es.Program => {
+      return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
 
-  BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
-    return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
-  },
+    BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
+      return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
 
-  ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-    return ast.returnStatement(treeify(target.argument!) as es.Expression)
-  },
+    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+      return ast.returnStatement(treeify(target.argument!) as es.Expression)
+    },
 
-  BlockExpression: (target: BlockExpression): es.BlockStatement => {
-    return ast.blockStatement(target.body.map(treeify) as es.Statement[])
-  },
+    BlockExpression: (target: BlockExpression): es.BlockStatement => {
+      return ast.blockStatement(target.body.map(treeify) as es.Statement[])
+    },
 
-  // source 1
-  VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
-    return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
-  },
+    // source 1
+    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
+      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
+    },
 
-  VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
-    return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
-  },
+    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
+      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
+    },
 
-  IfStatement: (target: es.IfStatement): es.IfStatement => {
-    return ast.ifStatement(
-      treeify(target.test) as es.Expression,
-      treeify(target.consequent) as es.BlockStatement,
-      treeify(target.alternate!) as es.BlockStatement | es.IfStatement
-    )
-  },
+    IfStatement: (target: es.IfStatement): es.IfStatement => {
+      return ast.ifStatement(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.BlockStatement,
+        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
+      )
+    },
 
-  // CORE
-  ArrowFunctionExpression: (target: es.ArrowFunctionExpression): es.Identifier => {
-    return ast.identifier('=>')
-  },
+    // CORE
+    ArrowFunctionExpression: (
+      target: es.ArrowFunctionExpression
+    ): es.Identifier | es.ArrowFunctionExpression => {
+      if (verbose) {
+        // here onwards is guarding against arrow turned function expressions
+        verbose = false
+        const redacted = ast.arrowFunctionExpression(target.params, treeify(
+          target.body
+        ) as es.BlockStatement)
+        verbose = true
+        return redacted
+      } else {
+        // simplify the body with ellipses
+        return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
+      }
+    },
 
-  // source 2
-  ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-    return ast.arrayExpression(target.elements.map(treeify) as es.Expression[])
+    // source 2
+    ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
+      return ast.arrayExpression(target.elements.map(treeify) as es.Expression[])
+    }
   }
+
+  function treeify(target: substituterNodes): substituterNodes {
+    const treeifier = treeifiers[target.type]
+    if (treeifier === undefined) {
+      return target
+    } else {
+      return treeifier(target)
+    }
+  }
+
+  return treeify(target)
 }
 
-function treeify(target: substituterNodes): substituterNodes {
-  const treeifier = treeifiers[target.type]
-  if (treeifier === undefined) {
-    return target
-  } else {
-    return treeifier(target)
-  }
-}
-
-export const codify = (node: substituterNodes): string => generate(treeify(node))
+export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
 
 // strategy: we remember how many statements are there originally in program.
 // since listPrelude are just functions, they will be disposed of one by one

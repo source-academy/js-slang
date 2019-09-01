@@ -1,6 +1,11 @@
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser'
 import { codify, getEvaluationSteps } from '../substituter'
+import { substituterNodes } from '../types'
+
+function getLastStepAsString(steps: substituterNodes[]): string {
+  return codify(steps[steps.length - 1]).trim()
+}
 
 // source 0
 test('Test basic substitution', () => {
@@ -337,7 +342,6 @@ expmod(4, 3, 5);
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
-  expect(steps).toMatchSnapshot()
   expect(steps.map(codify).join('\n')).toMatchSnapshot()
 })
 
@@ -383,27 +387,28 @@ test('even odd mutual', () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('false;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
-"const odd = =>;
-const even = =>;
+"const odd = n => n === 0 ? false : even(n - 1);
+const even = n => n === 0 || odd(n - 1);
 even(1);
 
-const even = =>;
+const even = n => n === 0 || (n => ...)(n - 1);
 even(1);
 
-=>(1);
+(n => n === 0 || (n => ...)(n - 1))(1);
 
-1 === 0 || =>(1 - 1);
+1 === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-false || =>(1 - 1);
+false || (n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-=>(1 - 1);
+(n => n === 0 ? false : (n => ...)(n - 1))(1 - 1);
 
-=>(0);
+(n => n === 0 ? false : (n => ...)(n - 1))(0);
 
-0 === 0 ? false : =>(0 - 1);
+0 === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(0 - 1);
 
-true ? false : =>(0 - 1);
+true ? false : (n => n === 0 || (n => ...)(n - 1))(0 - 1);
 
 false;
 "
@@ -419,6 +424,7 @@ test('assign undefined', () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('undefined;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "const a = undefined;
 a;
@@ -435,6 +441,7 @@ test('builtins return identifiers', () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('NaN;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "math_sin();
 
@@ -520,4 +527,98 @@ f === g;
 false;
 "
 `)
+})
+
+test('constant declarations in blocks are protected', () => {
+  const code = `
+    const z = 1;
+
+function f(g) {
+    const z = 3;
+    return g(z);
+}
+
+f(y => y + z);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps).toMatchSnapshot()
+  expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
+"const z = 1;
+function f(g) {
+  const z = 3;
+  return g(z);
+}
+f(y => y + z);
+
+function f(g) {
+  const z = 3;
+  return g(z);
+}
+f(y => y + 1);
+
+f(y => y + 1);
+
+{
+  const z = 3;
+  return (y => y + 1)(z);
+};
+
+{
+  return (y => y + 1)(3);
+};
+
+{
+  return 3 + 1;
+};
+
+{
+  return 4;
+};
+
+4;
+"
+`)
+  expect(getLastStepAsString(steps)).toEqual('4;')
+})
+
+test('function declarations in blocks are protected', () => {
+  const code = `
+    function repeat_pattern(n, p, r) {
+    function twice_p(r) {
+        return p(p(r));
+    }
+    return n === 0
+        ? r
+        : n % 2 !== 0
+          ? repeat_pattern(n - 1, p, p(r))
+          : repeat_pattern(n / 2, twice_p, r);
+}
+
+function plus_one(x) {
+    return x + 1;
+}
+
+repeat_pattern(5, plus_one, 0);
+
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps.map(codify).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('5;')
+})
+
+test('const declarations in blocks subst into call expressions', () => {
+  const code = `
+  const z = 1;
+  function f(g) {
+    const z = 3;
+    return (y => z + z)(z);
+  }
+  f(undefined);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext())
+  expect(steps.map(codify).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('6;')
 })
