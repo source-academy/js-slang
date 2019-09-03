@@ -40,7 +40,7 @@ a learning environment that uses SICP JS and Source, comes with the following
 ## What can you do in Source §2?
 
 You can use all features of
-<a href="../Source §1/">Source §1</a> and all
+<a href="../source_1/">Source §1</a> and all
 features that are introduced in
 <a href="https://sicp.comp.nus.edu.sg/chapters/23">chapter 2</a> of the
 textbook.

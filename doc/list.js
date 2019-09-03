@@ -55,6 +55,24 @@ function is_list(xs) {
 }
 
 /**
+ * Given <CODE>n</CODE> values, returns a list of length <CODE>n</CODE>.
+ * The elements of the list are the given values in the given order.
+ * @param {number} value1,value2,...,value_n - given values
+ * @returns {list} list containing all values
+ */
+function list(value1, value2, ...values ) {}
+
+/**
+ * visualizes <CODE>x</CODE> in a separate drawing
+ * area in the Source Academy using a box-and-pointer diagram; time, space:
+ * O(n), where n is the number of data structures such as
+ * pairs in <CODE>x</CODE>.
+ * @param {value} x - given value
+ * @returns {value} given <CODE>x</CODE>
+ */
+function draw_data(x) {}
+
+/**
  * Returns <CODE>true</CODE> if both
  * have the same structure with respect to <CODE>pair</CODE>,
  * and the same numbers, boolean values, functions or empty list
