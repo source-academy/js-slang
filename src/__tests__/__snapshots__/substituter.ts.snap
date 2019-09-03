@@ -54942,13 +54942,9 @@ f(undefined);
   return (y => 3 + 3)(3);
 };
 
-{
-  return 3 + 3;
-};
+(y => 3 + 3)(3);
 
-{
-  return 6;
-};
+3 + 3;
 
 6;
 "
@@ -56006,17 +56002,20 @@ Array [
     "body": Array [
       Object {
         "expression": Object {
-          "body": Array [
+          "arguments": Array [
             Object {
-              "argument": Object {
-                "left": Object {
-                  "loc": undefined,
-                  "type": "Literal",
-                  "value": 3,
-                },
+              "loc": undefined,
+              "type": "Literal",
+              "value": 3,
+            },
+          ],
+          "callee": Object {
+            "body": Object {
+              "left": Node {
+                "end": 80,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 12,
+                    "column": 8,
                     "line": 9,
                   },
                   "start": Position {
@@ -56024,29 +56023,62 @@ Array [
                     "line": 9,
                   },
                 },
-                "operator": "+",
-                "right": Object {
-                  "loc": undefined,
-                  "type": "Literal",
-                  "value": 1,
-                },
-                "type": "BinaryExpression",
+                "name": "y",
+                "start": 79,
+                "type": "Identifier",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
-                  "line": 6,
+                  "column": 12,
+                  "line": 9,
                 },
                 "start": Position {
-                  "column": 4,
-                  "line": 6,
+                  "column": 7,
+                  "line": 9,
                 },
               },
-              "type": "ReturnStatement",
+              "operator": "+",
+              "right": Object {
+                "loc": undefined,
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
             },
-          ],
-          "loc": undefined,
-          "type": "BlockExpression",
+            "expression": true,
+            "generator": false,
+            "loc": undefined,
+            "params": Array [
+              Node {
+                "end": 75,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 9,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 9,
+                  },
+                },
+                "name": "y",
+                "start": 74,
+                "type": "Identifier",
+              },
+            ],
+            "type": "ArrowFunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 6,
+            },
+            "start": Position {
+              "column": 11,
+              "line": 6,
+            },
+          },
+          "type": "CallExpression",
         },
         "type": "ExpressionStatement",
       },
@@ -56058,40 +56090,28 @@ Array [
     "body": Array [
       Object {
         "expression": Object {
-          "body": Array [
-            Object {
-              "argument": Node {
-                "end": 1,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 1,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 0,
-                    "line": 1,
-                  },
-                },
-                "raw": "4",
-                "start": 0,
-                "type": "Literal",
-                "value": 4,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 6,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 6,
-                },
-              },
-              "type": "ReturnStatement",
+          "left": Object {
+            "loc": undefined,
+            "type": "Literal",
+            "value": 3,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 9,
             },
-          ],
-          "loc": undefined,
-          "type": "BlockExpression",
+            "start": Position {
+              "column": 7,
+              "line": 9,
+            },
+          },
+          "operator": "+",
+          "right": Object {
+            "loc": undefined,
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "BinaryExpression",
         },
         "type": "ExpressionStatement",
       },
@@ -59934,663 +59954,437 @@ expmod(4, 3, 5);
 
 {
   {
-    {
-      return 4 * expmod(4, 2, 5) % 5;
-    }
+    4 * expmod(4, 3 - 1, 5) % 5;
   }
 };
 
 {
   {
-    {
-      return 4 * {
-        if (2 === 0) {
-          return 1;
-        } else {
-          if (is_even(2)) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
+    4 * expmod(4, 2, 5) % 5;
   }
 };
 
 {
   {
-    {
-      return 4 * {
-        if (false) {
-          return 1;
-        } else {
-          if (is_even(2)) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          if (is_even(2)) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          if (2 % 2 === 0) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          if (0 === 0) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          if (true) {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          } else {
-            return 4 * expmod(4, 2 - 1, 5) % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = expmod(4, 2 / 2, 5);
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = expmod(4, 1, 5);
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              if (1 === 0) {
-                return 1;
-              } else {
-                if (is_even(1)) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              if (false) {
-                return 1;
-              } else {
-                if (is_even(1)) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                if (is_even(1)) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                if (1 % 2 === 0) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                if (1 === 0) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                if (false) {
-                  const to_half = expmod(4, 1 / 2, 5);
-                  return to_half * to_half % 5;
-                } else {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * expmod(4, 1 - 1, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * expmod(4, 0, 5) % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * {
-                    if (0 === 0) {
-                      return 1;
-                    } else {
-                      if (is_even(0)) {
-                        const to_half = expmod(4, 0 / 2, 5);
-                        return to_half * to_half % 5;
-                      } else {
-                        return 4 * expmod(4, 0 - 1, 5) % 5;
-                      }
-                    }
-                  } % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * {
-                    if (true) {
-                      return 1;
-                    } else {
-                      if (is_even(0)) {
-                        const to_half = expmod(4, 0 / 2, 5);
-                        return to_half * to_half % 5;
-                      } else {
-                        return 4 * expmod(4, 0 - 1, 5) % 5;
-                      }
-                    }
-                  } % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * {
-                    {
-                      return 1;
-                    }
-                  } % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * {
-                    return 1;
-                  } % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 * 1 % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4 % 5;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                {
-                  return 4;
-                }
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              {
-                return 4;
-              }
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = {
-              return 4;
-            };
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            const to_half = 4;
-            return to_half * to_half % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            return 4 * 4 % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            return 16 % 5;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          {
-            return 1;
-          }
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
-        {
-          return 1;
-        }
-      } % 5;
-    }
-  }
-};
-
-{
-  {
-    {
-      return 4 * {
+    4 * {
+      if (2 === 0) {
         return 1;
-      } % 5;
-    }
+      } else {
+        if (is_even(2)) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
   }
 };
 
 {
   {
-    {
-      return 4 * 1 % 5;
-    }
+    4 * {
+      if (false) {
+        return 1;
+      } else {
+        if (is_even(2)) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
   }
 };
 
 {
   {
-    {
-      return 4 % 5;
-    }
+    4 * {
+      {
+        if (is_even(2)) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
   }
 };
 
 {
   {
-    {
-      return 4;
-    }
+    4 * {
+      {
+        if (2 % 2 === 0) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
   }
 };
 
 {
   {
-    return 4;
+    4 * {
+      {
+        if (0 === 0) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
   }
 };
 
 {
-  return 4;
+  {
+    4 * {
+      {
+        if (true) {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        } else {
+          return 4 * expmod(4, 2 - 1, 5) % 5;
+        }
+      }
+    } % 5;
+  }
 };
 
-4;
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = expmod(4, 2 / 2, 5);
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = expmod(4, 1, 5);
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            if (1 === 0) {
+              return 1;
+            } else {
+              if (is_even(1)) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            if (false) {
+              return 1;
+            } else {
+              if (is_even(1)) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              if (is_even(1)) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              if (1 % 2 === 0) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              if (1 === 0) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              if (false) {
+                const to_half = expmod(4, 1 / 2, 5);
+                return to_half * to_half % 5;
+              } else {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              {
+                return 4 * expmod(4, 1 - 1, 5) % 5;
+              }
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * expmod(4, 1 - 1, 5) % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * expmod(4, 0, 5) % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * {
+                if (0 === 0) {
+                  return 1;
+                } else {
+                  if (is_even(0)) {
+                    const to_half = expmod(4, 0 / 2, 5);
+                    return to_half * to_half % 5;
+                  } else {
+                    return 4 * expmod(4, 0 - 1, 5) % 5;
+                  }
+                }
+              } % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * {
+                if (true) {
+                  return 1;
+                } else {
+                  if (is_even(0)) {
+                    const to_half = expmod(4, 0 / 2, 5);
+                    return to_half * to_half % 5;
+                  } else {
+                    return 4 * expmod(4, 0 - 1, 5) % 5;
+                  }
+                }
+              } % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * {
+                {
+                  return 1;
+                }
+              } % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * {
+                1;
+              } % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
+
+{
+  {
+    4 * {
+      {
+        {
+          const to_half = {
+            {
+              4 * undefined % 5;
+            }
+          };
+          return to_half * to_half % 5;
+        }
+      }
+    } % 5;
+  }
+};
 "
 `;
 
@@ -60624,427 +60418,135 @@ repeat_pattern(5, plus_one, 0);
   return 5 === 0 ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
 };
 
+5 === 0 ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+
+false ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+
+5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+
+1 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+
+true ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+
+repeat_pattern(5 - 1, plus_one, plus_one(0));
+
+repeat_pattern(4, plus_one, plus_one(0));
+
+repeat_pattern(4, plus_one, 0 + 1);
+
+repeat_pattern(4, plus_one, 1);
+
 {
-  return false ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+  function twice_p(r) {
+    return plus_one(plus_one(r));
+  }
+  return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
 };
 
 {
-  return 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+  return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+};
+
+4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+
+false ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+
+4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+
+0 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+
+false ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
+
+repeat_pattern(4 / 2, twice_p, 1);
+
+repeat_pattern(2, twice_p, 1);
+
+{
+  function twice_p(r) {
+    return twice_p(twice_p(r));
+  }
+  return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
 };
 
 {
-  return 1 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+  return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+};
+
+2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+
+false ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+
+2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+
+0 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+
+false ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
+
+repeat_pattern(2 / 2, twice_p, 1);
+
+repeat_pattern(1, twice_p, 1);
+
+{
+  function twice_p(r) {
+    return twice_p(twice_p(r));
+  }
+  return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
 };
 
 {
-  return true ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+  return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+};
+
+1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+
+false ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+
+1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+
+1 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+
+true ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
+
+repeat_pattern(1 - 1, twice_p, twice_p(1));
+
+repeat_pattern(0, twice_p, twice_p(1));
+
+repeat_pattern(0, twice_p, twice_p(twice_p(1)));
+
+repeat_pattern(0, twice_p, twice_p(plus_one(plus_one(1))));
+
+repeat_pattern(0, twice_p, twice_p(plus_one(1 + 1)));
+
+repeat_pattern(0, twice_p, twice_p(plus_one(2)));
+
+repeat_pattern(0, twice_p, twice_p(2 + 1));
+
+repeat_pattern(0, twice_p, twice_p(3));
+
+repeat_pattern(0, twice_p, plus_one(plus_one(3)));
+
+repeat_pattern(0, twice_p, plus_one(3 + 1));
+
+repeat_pattern(0, twice_p, plus_one(4));
+
+repeat_pattern(0, twice_p, 4 + 1);
+
+repeat_pattern(0, twice_p, 5);
+
+{
+  function twice_p(r) {
+    return twice_p(twice_p(r));
+  }
+  return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
 };
 
 {
-  return repeat_pattern(5 - 1, plus_one, plus_one(0));
+  return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
 };
 
-{
-  return repeat_pattern(4, plus_one, plus_one(0));
-};
+0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
 
-{
-  return repeat_pattern(4, plus_one, 0 + 1);
-};
-
-{
-  return repeat_pattern(4, plus_one, 1);
-};
-
-{
-  return {
-    function twice_p(r) {
-      return plus_one(plus_one(r));
-    }
-    return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return false ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return 0 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return false ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return repeat_pattern(4 / 2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return repeat_pattern(2, twice_p, 1);
-  };
-};
-
-{
-  return {
-    return {
-      function twice_p(r) {
-        return twice_p(twice_p(r));
-      }
-      return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return false ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return 0 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return false ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return repeat_pattern(2 / 2, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return repeat_pattern(1, twice_p, 1);
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        function twice_p(r) {
-          return twice_p(twice_p(r));
-        }
-        return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return false ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return 1 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return true ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(1 - 1, twice_p, twice_p(1));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(1));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(twice_p(1)));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(plus_one(plus_one(1))));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(plus_one(1 + 1)));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(plus_one(2)));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(2 + 1));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, twice_p(3));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, plus_one(plus_one(3)));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, plus_one(3 + 1));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, plus_one(4));
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, 4 + 1);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return repeat_pattern(0, twice_p, 5);
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return {
-          function twice_p(r) {
-            return twice_p(twice_p(r));
-          }
-          return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
-        };
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return {
-          return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
-        };
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return {
-          return true ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
-        };
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return {
-          return 5;
-        };
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return {
-        return 5;
-      };
-    };
-  };
-};
-
-{
-  return {
-    return {
-      return 5;
-    };
-  };
-};
-
-{
-  return {
-    return 5;
-  };
-};
-
-{
-  return 5;
-};
+true ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);
 
 5;
 "
@@ -61763,9 +61265,7 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           {
             const rest = {
-              {
-                return [null, null];
-              }
+              list(null);
             };
             return append(rest, map(x => pair(head([3, null]), x), rest));
           }
@@ -61784,7 +61284,7 @@ subsets([1, [2, [3, null]]]);
         const rest = {
           {
             const rest = {
-              return [null, null];
+              [null, null];
             };
             return append(rest, map(x => pair(head([3, null]), x), rest));
           }
@@ -61802,7 +61302,7 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            const rest = [null, null];
+            const rest = undefined;
             return append(rest, map(x => pair(head([3, null]), x), rest));
           }
         };
@@ -61819,7 +61319,7 @@ subsets([1, [2, [3, null]]]);
       {
         const rest = {
           {
-            return append([null, null], map(x => pair(head([3, null]), x), [null, null]));
+            return append(undefined, map(x => pair(head([3, null]), x), undefined));
           }
         };
         return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
@@ -61834,9 +61334,7 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = {
-          {
-            return append([null, null], is_null([null, null]) ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
+          append(undefined, map(x => pair(head([3, null]), x), undefined));
         };
         return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
@@ -61850,9 +61348,7 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = {
-          {
-            return append([null, null], false ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
+          append(undefined, is_null(undefined) ? null : pair((x => pair(head([3, null]), x))(head(undefined)), map(x => pair(head([3, null]), x), tail(undefined))));
         };
         return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
@@ -61866,9 +61362,7 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = {
-          {
-            return append([null, null], pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
+          append(undefined, false ? null : pair((x => pair(head([3, null]), x))(head(undefined)), map(x => pair(head([3, null]), x), tail(undefined))));
         };
         return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
@@ -61882,9 +61376,7 @@ subsets([1, [2, [3, null]]]);
     const rest = {
       {
         const rest = {
-          {
-            return append([null, null], pair((x => pair(head([3, null]), x))(null), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
+          append(undefined, pair((x => pair(head([3, null]), x))(head(undefined)), map(x => pair(head([3, null]), x), tail(undefined))));
         };
         return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
       }
@@ -61892,1135 +61384,6 @@ subsets([1, [2, [3, null]]]);
     return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
   }
 };
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair(pair(head([3, null]), null), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair(pair(3, null), map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair([3, null], map(x => pair(head([3, null]), x), tail([null, null]))));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair([3, null], map(x => pair(head([3, null]), x), null)));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair([3, null], is_null(null) ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair([3, null], true ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], pair([3, null], null));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return append([null, null], [[3, null], null]);
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return is_null([null, null]) ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return false ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(null, append(tail([null, null]), [[3, null], null]));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(null, append(null, [[3, null], null]));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(null, is_null(null) ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(null, true ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return pair(null, [[3, null], null]);
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          {
-            return [null, [[3, null], null]];
-          }
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = {
-          return [null, [[3, null], null]];
-        };
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        const rest = [null, [[3, null], null]];
-        return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], map(x => pair(head([2, [3, null]]), x), [null, [[3, null], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair(pair(head([2, [3, null]]), null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair(pair(2, null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), [[3, null], null])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], is_null([[3, null], null]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))([3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair(pair(head([2, [3, null]]), [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair(pair(2, [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), null))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], is_null(null) ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], true ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], null)));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], pair([2, null], [[2, [3, null]], null]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return append([null, [[3, null], null]], [[2, null], [[2, [3, null]], null]]);
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return is_null([null, [[3, null], null]]) ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return false ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, append([[3, null], null], [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, is_null([[3, null], null]) ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, false ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair([3, null], append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair([3, null], append(null, [[2, null], [[2, [3, null]], null]])));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair([3, null], is_null(null) ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair([3, null], true ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, pair([3, null], [[2, null], [[2, [3, null]], null]]));
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]);
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      {
-        return [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
-      }
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = {
-      return [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
-    };
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    const rest = [null, [[3, null], [[2, null], [[2, [3, null]], null]]]];
-    return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], map(x => pair(head([1, [2, [3, null]]]), x), [null, [[3, null], [[2, null], [[2, [3, null]], null]]]]));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(head([1, [2, [3, null]]]), null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(1, null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]])));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(head([1, [2, [3, null]]]), [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(1, [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], is_null([[2, null], [[2, [3, null]], null]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(head([1, [2, [3, null]]]), [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(1, [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null])))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], is_null([[2, [3, null]], null]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(1, [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), null))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], is_null(null) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], true ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], null)))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], [[1, [2, [3, null]]], null]))));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]])));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]));
-  }
-};
-
-{
-  {
-    return append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]);
-  }
-};
-
-{
-  {
-    return is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
-  }
-};
-
-{
-  {
-    return false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
-  }
-};
-
-{
-  {
-    return pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
-  }
-};
-
-{
-  {
-    return pair(null, append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
-  }
-};
-
-{
-  {
-    return pair(null, append([[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
-  }
-};
-
-{
-  {
-    return pair(null, is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], append([[2, null], [[2, [3, null]], null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], is_null([[2, null], [[2, [3, null]], null]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], append([[2, [3, null]], null], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], is_null([[2, [3, null]], null]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], is_null(null) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], true ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], pair([2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]])));
-  }
-};
-
-{
-  {
-    return pair(null, pair([3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
-  }
-};
-
-{
-  {
-    return pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]);
-  }
-};
-
-{
-  {
-    return [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
-  }
-};
-
-{
-  return [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
-};
-
-[null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
 "
 `;
 

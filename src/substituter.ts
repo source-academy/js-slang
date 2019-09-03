@@ -620,15 +620,7 @@ const reducers = {
     const [firstStatement, ...otherStatements] = node.body
     if (firstStatement.type === 'ReturnStatement') {
       const arg = firstStatement.argument as es.Expression
-      if (isIrreducible(arg)) {
-        return [firstStatement, context]
-      } else {
-        const reducedReturn = ast.returnStatement(
-          reduce(arg, context)[0] as es.Expression,
-          firstStatement.loc!
-        )
-        return [ast.blockStatement([reducedReturn, ...otherStatements]), context]
-      }
+      return [ast.expressionStatement(arg), context]
     } else if (
       firstStatement.type === 'ExpressionStatement' &&
       isIrreducible(firstStatement.expression)
@@ -724,15 +716,7 @@ const reducers = {
     const [firstStatement, ...otherStatements] = node.body
     if (firstStatement.type === 'ReturnStatement') {
       const arg = firstStatement.argument as es.Expression
-      if (isIrreducible(arg)) {
-        return [arg, context]
-      } else {
-        const reducedReturn = ast.returnStatement(
-          reduce(arg, context)[0] as es.Expression,
-          firstStatement.loc!
-        )
-        return [ast.blockExpression([reducedReturn, ...otherStatements]), context]
-      }
+      return [arg, context]
     } else if (
       firstStatement.type === 'ExpressionStatement' &&
       isIrreducible(firstStatement.expression)
