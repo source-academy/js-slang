@@ -135,14 +135,11 @@ Array [
         "chapter": 4,
         "contextId": 0,
         "debugger": Object {
-          "observers": Object {
-            "callbacks": Array [],
-          },
+          "prevStoppedLine": -1,
           "state": Object {
             "it": Object {},
             "scheduler": AsyncScheduler {},
           },
-          "status": false,
         },
         "errors": Array [],
         "executionMethod": "auto",
@@ -615,14 +612,11 @@ Array [
       "chapter": 4,
       "contextId": 0,
       "debugger": Object {
-        "observers": Object {
-          "callbacks": Array [],
-        },
+        "prevStoppedLine": -1,
         "state": Object {
           "it": Object {},
           "scheduler": AsyncScheduler {},
         },
-        "status": false,
       },
       "errors": Array [],
       "executionMethod": "auto",

@@ -41,8 +41,10 @@ export class PreemptiveScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
-      // This is used in the evaluation of the REPL during a paused state.
-      // The debugger is turned off while the code evaluates just above the debugger statement.
+      // This is used in the evaluation of the REPL during a paused state. The
+      // debugger is turned off while the code evaluates just above the
+      // debugger statement.  The debugger is only turned on by the frontend
+      // when EVAL_EDITOR or DEBUG_RESUME.
       let actuallyBreak: boolean = false
       let itValue = it.next()
       const interval: number = setInterval(() => {

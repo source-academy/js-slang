@@ -153,12 +153,9 @@ test('debugger; pauses while', () => {
 
 /* Breakpoints by line
  * The frontend editor sets breakpoints through this, results might differ
- * with debugger; statements. For all intents and purposes the correctness is:
- * - whatever your little heart desires!
- * - debugger;
- * - setBreakpointAtLine
- * So if anything goes wrong with this, default to your mental model or the
- * behavior of the debugger; statement.
+ * with debugger; statements. It is supposed to stop right at the start of the
+ * line. You can't put breakpoints in the middle of statements.  For example
+ * math_pow(10, *break* 4); It is possible but undefined.
  */
 
 test('setBreakpointAtLine basic', () => {
@@ -173,7 +170,7 @@ test('setBreakpointAtLine basic', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     expect(obj1).toMatchSnapshot()
-    expect(obj1.status).toBe('suspended')
+    expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
 })
@@ -278,9 +275,6 @@ test('setBreakpointAtLine granularity 1', () => {
   const breakline = []
   breakline[2] = 'a'
   setBreakpointAtLine(breakline)
-  // right now for some reason it breaks twice at the line.
-  // this should not happen
-  // if you do fix this issue, this is good to modify.
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -289,18 +283,7 @@ test('setBreakpointAtLine granularity 1', () => {
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
-      return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
-        expect(obj3.status).toBe('suspended')
-        expect(parseError(context.errors)).toMatchSnapshot()
-        return (resume(obj3) as Promise<Result>).then(obj4 => {
-          return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
-            expect(obj5.status).toBe('suspended')
-            expect(parseError(context.errors)).toMatchSnapshot()
-          })
-        })
-      })
+      expect(obj2).toMatchSnapshot()
     })
   })
 })
@@ -348,7 +331,6 @@ test('setBreakpointAtLine granularity 3', () => {
   const breakline = []
   breakline[4] = 'a'
   setBreakpointAtLine(breakline)
-  // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -358,13 +340,8 @@ test('setBreakpointAtLine granularity 3', () => {
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
       expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('suspended')
+      expect(obj2.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
-      return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
-        expect(obj3.status).toBe('finished')
-        expect(parseError(context.errors)).toMatchSnapshot()
-      })
     })
   })
 })
@@ -380,7 +357,6 @@ test('setBreakpointAtLine for loops', () => {
   const breakline = []
   breakline[2] = '2'
   setBreakpointAtLine(breakline)
-  // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -390,23 +366,8 @@ test('setBreakpointAtLine for loops', () => {
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
       expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('suspended')
+      expect(obj2.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
-      return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
-        expect(obj3.status).toBe('suspended')
-        expect(parseError(context.errors)).toMatchSnapshot()
-        return (resume(obj3) as Promise<Result>).then(obj4 => {
-          expect(obj4).toMatchSnapshot()
-          expect(obj4.status).toBe('suspended')
-          expect(parseError(context.errors)).toMatchSnapshot()
-          return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
-            expect(obj5.status).toBe('finished')
-            expect(parseError(context.errors)).toMatchSnapshot()
-          })
-        })
-      })
     })
   })
 })
@@ -433,23 +394,8 @@ test('setBreakpointAtLine while loops', () => {
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
       expect(obj2).toMatchSnapshot()
-      expect(obj2.status).toBe('suspended')
+      expect(obj2.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
-      return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
-        expect(obj3.status).toBe('suspended')
-        expect(parseError(context.errors)).toMatchSnapshot()
-        return (resume(obj3) as Promise<Result>).then(obj4 => {
-          expect(obj4).toMatchSnapshot()
-          expect(obj4.status).toBe('suspended')
-          expect(parseError(context.errors)).toMatchSnapshot()
-          return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
-            expect(obj5.status).toBe('finished')
-            expect(parseError(context.errors)).toMatchSnapshot()
-          })
-        })
-      })
     })
   })
 })

@@ -23,8 +23,7 @@ const createEmptyRuntime = () => ({
 })
 
 const createEmptyDebugger = () => ({
-  observers: { callbacks: Array<() => void>() },
-  status: false,
+  prevStoppedLine: -1,
   state: {
     it: (function*(): any {
       return

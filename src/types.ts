@@ -83,8 +83,7 @@ export interface Context<T = any> {
 
   /** the state of the debugger */
   debugger: {
-    /** External observers watching this context */
-    status: boolean
+    prevStoppedLine: number
     state: {
       it: IterableIterator<T>
       scheduler: Scheduler
