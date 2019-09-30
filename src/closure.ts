@@ -88,7 +88,10 @@ export default class Closure extends Callable {
     if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
-      this.functionName = `Anonymous${++Closure.lambdaCtr}`
+      this.functionName =
+        `Anonymous${++Closure.lambdaCtr} (` +
+        this.node.params.map(o => Object(o).name).join(', ') +
+        ')'
     }
     // TODO: Investigate how relevant this really is.
     // .fun seems to only be used in interpreter's NewExpression handler, which uses .fun.prototype.
