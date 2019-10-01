@@ -90,7 +90,7 @@ export default class Closure extends Callable {
     } else {
       this.functionName =
         `Anonymous${++Closure.lambdaCtr} (` +
-        this.node.params.map(o => Object(o).name).join(', ') +
+        this.node.params.map((o: es.Identifier) => o.name).join(', ') +
         ')'
     }
     // TODO: Investigate how relevant this really is.
