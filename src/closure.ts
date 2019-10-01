@@ -89,7 +89,7 @@ export default class Closure extends Callable {
         (this.node.params.length === 1 ? '' : '(') +
         this.node.params.map((o: es.Identifier) => o.name).join(', ') +
         (this.node.params.length === 1 ? '' : ')') +
-	' => ...'
+        ' => ...'
     }
     // TODO: Investigate how relevant this really is.
     // .fun seems to only be used in interpreter's NewExpression handler, which uses .fun.prototype.
