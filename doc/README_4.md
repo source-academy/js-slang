@@ -21,6 +21,9 @@ order. Click on a name to see how it is used. They come in these two groups:
       <a href="../ARRAYS/index.html">ARRAYS</a>: Support for arrays
     </li>
     <li>
+      <a href="../STREAMS/index.html">STREAMS</a>: Support for streams
+    </li>
+    <li>
       <a href="../MCE/index.html">MCE</a>: Support for the meta-circular evaluator
     </li>
   </ul>

@@ -100,6 +100,14 @@ run() {
 	     -d ${DST}/LISTS/ \
 	     doc/list.js
     
+    # STREAMS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_STREAMS.md \
+	     -d ${DST}/STREAMS/ \
+	     doc/stream.js
+    
     # ARRAYS
     
     ${JSDOC} -r -t ${TMPL} \
@@ -116,13 +124,6 @@ run() {
 	     -d ${DST}/PAIRMUTATORS/ \
 	     doc/pairmutator.js
     
-    # STREAMS
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c doc/jsdoc/conf.json \
-	     -d ${DST}/STREAMS/ \
-	     doc/stream.js
-
     # MCE
     
     ${JSDOC} -r -t ${TMPL} \

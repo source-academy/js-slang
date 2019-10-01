@@ -23,6 +23,9 @@ order. Click on a name to see how it is used. They come in these two groups:
     <li>
       <a href="../ARRAYS/index.html">ARRAYS</a>: Support for arrays
     </li>
+    <li>
+      <a href="../STREAMS/index.html">STREAMS</a>: Support for streams
+    </li>
   </ul>
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
