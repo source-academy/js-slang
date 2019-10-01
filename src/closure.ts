@@ -67,9 +67,6 @@ export default class Closure extends Callable {
     return closure
   }
 
-  /** Keep track how many lambdas are created */
-  private static lambdaCtr = 0
-
   /** Unique ID defined for anonymous closure */
   public functionName: string
 
@@ -89,9 +86,9 @@ export default class Closure extends Callable {
       this.functionName = this.node.id.name
     } else {
       this.functionName =
-        `Anonymous${++Closure.lambdaCtr} (` +
+        `(` +
         this.node.params.map((o: es.Identifier) => o.name).join(', ') +
-        ')'
+        ') => ...'
     }
     // TODO: Investigate how relevant this really is.
     // .fun seems to only be used in interpreter's NewExpression handler, which uses .fun.prototype.
