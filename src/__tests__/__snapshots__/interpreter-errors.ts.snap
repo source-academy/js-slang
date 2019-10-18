@@ -67,6 +67,195 @@ map(f, list(1, 2));",
 }
 `;
 
+exports[`Cascading js errors work properly 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function make_alternating_stream(stream) {
+  return pair(head(stream), () => make_alternating_stream(
+                                    negate_whole_stream(
+                                        stream_tail(stream))));
+}
+
+function negate_whole_stream(stream) {
+    return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));
+}
+
+const ones = pair(1, () => ones);
+eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 8,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const make_alternating_stream = wrap(stream => {
+          return {
+            isTail: true,
+            function: pair,
+            functionName: \\"pair\\",
+            arguments: [callIfFuncAndRightArgs(head, 2, 14, stream), wrap(() => ({
+              isTail: true,
+              function: make_alternating_stream,
+              functionName: \\"make_alternating_stream\\",
+              arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
+              line: 2,
+              column: 34
+            }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\")],
+            line: 2,
+            column: 9
+          };
+        }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\");
+        const negate_whole_stream = wrap(stream => {
+          return {
+            isTail: true,
+            function: pair,
+            functionName: \\"pair\\",
+            arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
+              isTail: true,
+              function: negate_whole_stream,
+              functionName: \\"negate_whole_stream\\",
+              arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
+              line: 8,
+              column: 37
+            }), \\"() => negate_whole_stream(stream_tail(stream))\\")],
+            line: 8,
+            column: 11
+          };
+        }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\");
+        const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
+          isTail: false,
+          value: ones
+        }), \\"() => ones\\"));
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
+        globals.variables.set(\\"make_alternating_stream\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return make_alternating_stream;
+          }
+        });
+        globals.variables.set(\\"negate_whole_stream\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return negate_whole_stream;
+          }
+        });
+        globals.variables.set(\\"ones\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return ones;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cascading js errors work properly: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function h(p) {
+  return head(p);
+}
+
+h(null);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const h = wrap(p => {
+          return {
+            isTail: true,
+            function: head,
+            functionName: \\"head\\",
+            arguments: [p],
+            line: 2,
+            column: 9
+          };
+        }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
+        globals.variables.set(\\"h\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return h;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when accessing inherited property of object: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -3097,6 +3286,28 @@ Object {
   "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 12, 'string', 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
   "visualiseListResult": Array [],
 }
 `;

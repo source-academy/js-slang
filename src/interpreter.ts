@@ -619,7 +619,7 @@ export function* apply(
         )
 
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
-        if (!(e instanceof errors.RuntimeSourceError)) {
+        if (!(e instanceof errors.RuntimeSourceError || e instanceof errors.ExceptionError)) {
           // The error could've arisen when the builtin called a source function which errored.
           // If the cause was a source error, we don't want to include the error.
           // However if the error came from the builtin itself, we need to handle it.
