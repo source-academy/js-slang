@@ -41,11 +41,11 @@ function is_null(x) {}
  
 /**
  * Returns <CODE>true</CODE> if
- * <CODE>x</CODE> is a list as defined in the textbook, and
+ * <CODE>xs</CODE> is a list as defined in the textbook, and
  * <CODE>false</CODE> otherwise. Iterative process; 
  * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>, where <CODE>n</CODE>
  * is the length of the 
- * chain of <CODE>tail</CODE> operations that can be applied to <CODE>x</CODE>.
+ * chain of <CODE>tail</CODE> operations that can be applied to <CODE>xs</CODE>.
  * recurses down the list and checks that it ends with the empty list null
  * @param {value} xs - given candidate
  * @returns whether {xs} is a list
@@ -57,7 +57,7 @@ function is_list(xs) {
 /**
  * Given <CODE>n</CODE> values, returns a list of length <CODE>n</CODE>.
  * The elements of the list are the given values in the given order.
- * @param {number} value1,value2,...,value_n - given values
+ * @param {value} value1,value2,...,value_n - given values
  * @returns {list} list containing all values
  */
 function list(value1, value2, ...values ) {}

@@ -100,6 +100,14 @@ run() {
 	     -d ${DST}/LISTS/ \
 	     doc/list.js
     
+    # STREAMS
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -R doc/README_STREAMS.md \
+	     -d ${DST}/STREAMS/ \
+	     doc/stream.js
+    
     # ARRAYS
     
     ${JSDOC} -r -t ${TMPL} \
@@ -116,13 +124,6 @@ run() {
 	     -d ${DST}/PAIRMUTATORS/ \
 	     doc/pairmutator.js
     
-    # STREAMS
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c doc/jsdoc/conf.json \
-	     -d ${DST}/STREAMS/ \
-	     doc/stream.js
-
     # MCE
     
     ${JSDOC} -r -t ${TMPL} \
@@ -148,7 +149,7 @@ run() {
 	     ${SRC}/externalLibs/graphics/webGLcurve.js \
 	     ${SRC}/externalLibs/graphics/webGLhi_graph.js
 
-    # SOUNDS
+     # SOUNDS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c doc/jsdoc/conf.json \
@@ -164,6 +165,14 @@ run() {
 	     -d ${DST}/BINARYTREES \
 	     ${SRC}/externalLibs/tree.js
 
+   # PIX&FLIX
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c doc/jsdoc/conf.json \
+	     -d "${DST}/PIX&FLIX/" \
+	     -R ${SRC}/externalLibs/video/README.md \
+	     ${SRC}/externalLibs/video/video_lib.js 
+    
     # External
     
     ${JSDOC} -r -t ${TMPL}/ \
@@ -173,7 +182,8 @@ run() {
 	     ${SRC}/externalLibs/graphics/webGLrune.js \
 	     ${SRC}/externalLibs/graphics/webGLcurve.js \
 	     ${SRC}/externalLibs/graphics/webGLhi_graph.js \
-	     ${SRC}/externalLibs/sound 
+	     ${SRC}/externalLibs/video/video_lib.js \
+	     ${SRC}/externalLibs/sound
     
 }
 
