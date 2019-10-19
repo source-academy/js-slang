@@ -23,6 +23,9 @@ order. Click on a name to see how it is used. They come in these two groups:
     <li>
       <a href="../ARRAYS/index.html">ARRAYS</a>: Support for arrays
     </li>
+    <li>
+      <a href="../STREAMS/index.html">STREAMS</a>: Support for streams
+    </li>
   </ul>
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
@@ -40,6 +43,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     </li>
     <li>
       <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
+    </li>
+    <li>
+    <a href="../PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
     </li>
   </ul>
 

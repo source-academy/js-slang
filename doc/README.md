@@ -36,4 +36,7 @@ a learning environment that uses SICP JS and Source, comes with the following
 <li>
 <a href="BINARYTREES/index.html">BINARYTREES</a>: binary trees
 </li>
+<li>
+<a href="PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
+</li>
 </ul>
