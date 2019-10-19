@@ -18,6 +18,9 @@ order. Click on a name to see how it is used. They come in these two groups:
       <a href="../LISTS/index.html">LISTS</a>: Support for lists
     </li>
     <li>
+      <a href="../PAIRMUTATORS/index.html">PAIRMUTATORS</a>: Mutating pairs
+    </li>
+    <li>
       <a href="../ARRAYS/index.html">ARRAYS</a>: Support for arrays
     </li>
     <li>
@@ -43,6 +46,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     </li>
     <li>
       <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
+    </li>
+    <li>
+    <a href="../PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
     </li>
   </ul>
 

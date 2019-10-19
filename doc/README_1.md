@@ -16,9 +16,18 @@ These names come in two groups:
       <a href="../MATH/index.html">MATH</a>: Mathematical constants and functions
     </li>
   </ul>
-In addition,
-<a href="https://sicp.comp.nus.edu.sg/chapters/33">section 2.2.4 SICP JS</a> makes
-use of <a href="../RUNES/index.html">RUNES</a>, a library for runes graphics.
+
+The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
+a learning environment that uses SICP JS and Source, comes with the following 
+<a href="External libraries/">external libraries</a> suitable for Source §1:
+  <ul>
+    <li>
+      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
+    </li>
+    <li>
+      <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
+    </li>
+  </ul>
 
 ## What can you do in Source §1?
 
