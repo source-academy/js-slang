@@ -717,7 +717,7 @@ function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] 
           ),
           'get'
         ),
-        [create.literal(name)]
+        [create.literal(key)]
       )
     }
     return create.declaration(name, kind, value)
