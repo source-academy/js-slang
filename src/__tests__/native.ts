@@ -81,3 +81,19 @@ test('test proper setting of variables in an outer scope', async () => {
   expect(result.status).toBe('finished')
   expect((result as Finished).value).toBe('new')
 })
+
+test('using internal names still work', async () => {
+  const context = mockContext(3)
+  const result = await runInContext(
+    stripIndent`
+    const boolOrErr = 1;
+    function wrap() {
+      return boolOrErr;
+    }
+    wrap();
+  `,
+    context
+  )
+  expect(result.status).toBe('finished')
+  expect((result as Finished).value).toBe(1)
+})
