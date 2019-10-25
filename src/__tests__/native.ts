@@ -97,3 +97,17 @@ test('using internal names still work', async () => {
   expect(result.status).toBe('finished')
   expect((result as Finished).value).toBe(1)
 })
+
+test('assigning a = b where b was from a previous program call works', async () => {
+  const context = mockContext(3)
+  const result = await runInContext(
+    stripIndent`
+    let b = null;
+    b = pair;
+    b = 1;
+  `,
+    context
+  )
+  expect(result.status).toBe('finished')
+  expect((result as Finished).value).toBe(1)
+})
