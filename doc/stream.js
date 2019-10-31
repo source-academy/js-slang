@@ -32,15 +32,31 @@ function stream_tail(xs) {
     }
 }
 
-// is_stream recurses down the stream and checks that it ends with the
-// empty list null
+/**
+ * Returns <CODE>true</CODE> if
+ * <CODE>xs</CODE> is a stream as defined in the textbook, and
+ * <CODE>false</CODE> otherwise. Iterative process; 
+ * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>, where <CODE>n</CODE>
+ * is the length of the 
+ * chain of <CODE>stream_tail</CODE> operations that can be applied to <CODE>xs</CODE>.
+ * recurses down the stream and checks that it ends with the empty stream null.
+ * Laziness:  No: <CODE>is_stream</CODE> needs to force the given stream.
+ * @param {value} xs - given candidate
+ * @returns {boolean} whether <CODE>xs</CODE> is a stream
+ */
 
 function is_stream(xs) {
     return is_null(xs) || (is_pair(xs) && is_list(stream_tail(xs)));
 }
 
-// A stream is either null or a pair whose tail is
-// a nullary function that returns a stream.
+/**
+ * Given list <CODE>xs</CODE>, returns a stream of same length with
+ * the same elements as <CODE>xs</CODE> in the same order.
+ * Laziness:  Yes: <CODE>list_to_stream</CODE> 
+ * goes down the list only when forced. 
+ * @param {list} xs - given list
+ * @returns {stream} stream containing all elements of <CODE>xs</CODE>
+ */
 
 function list_to_stream(xs) {
     return is_null(xs)
@@ -49,18 +65,33 @@ function list_to_stream(xs) {
             () => list_to_stream(tail(xs)));
 }
 
-// stream_to_list transforms a given stream to a list
-// Lazy? No: stream_to_list needs to force the whole stream
+/**
+ * Given stream <CODE>xs</CODE>, returns a list of same length with
+ * the same elements as <CODE>xs</CODE> in the same order.
+ * Laziness:  No: <CODE>stream_to_list</CODE> needs to force the whole 
+ * stream.
+ * @param {stream} xs - stream
+ * @returns {list} containing all elements of <CODE>xs</CODE>
+ */
+
 function stream_to_list(xs) {
     return is_null(xs)
         ? null
         : pair(head(xs), stream_to_list(stream_tail(xs)));
 }
 
-// stream makes a stream out of its arguments
-// LOW-LEVEL FUNCTION, NOT JEDISCRIPT
-// Lazy? No: In this implementation, we generate first a
-//           complete list, and then a stream using list_to_stream
+
+
+/**
+ * Given <CODE>n</CODE> values, returns a stream of length <CODE>n</CODE>.
+ * The elements of the stream are the given values in the given order.
+ * Lazy? No: A
+ * complete list is generated, 
+ * and then a stream using <CODE>list_to_stream</CODE> is generated from it.
+ * @param {value} value1,value2,...,value_n - given values
+ * @returns {stream} stream containing all values
+ */
+
 function stream() {
   var the_list = null
   for (var i = arguments.length - 1; i >= 0; i--) {
@@ -69,25 +100,35 @@ function stream() {
   return list_to_stream(the_list)
 }
 
-// stream_length returns the length of a given argument stream
-// throws an exception if the argument is not a stream
-// Lazy? No: The function needs to explore the whole stream
+/**
+ * Returns the length of the stream
+ * <CODE>xs</CODE>. 
+ * Iterative process; time: <CODE>O(n)</CODE>, space:
+ * <CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Lazy? No: The function needs to explore the whole stream 
+ * @param {stream} xs - given stream
+ * @returns {number} length of <CODE>xs</CODE>
+ */
+
 function stream_length(xs) {
     return is_null(xs)
         ? 0
         : 1 + stream_length(stream_tail(xs));
 }
 
-// stream_map applies first arg f to the elements of the second
-// argument, assumed to be a stream.
-// f is applied element-by-element:
-// stream_map(f,list_to_stream(list(1,2)) results in
-// the same as list_to_stream(list(f(1),f(2)))
-// stream_map throws an exception if the second argument is not a
-// stream, and if the second argument is a non-empty stream and the
-// first argument is not a function.
-// Lazy? Yes: The argument stream is only explored as forced by
-//            the result stream.
+/**
+ * Returns a stream that results from stream
+ * <CODE>xs</CODE> by element-wise application 
+ * of unary function <CODE>f</CODE>. 
+ * <CODE>f</CODE> is applied element-by-element:
+ * <CODE>stream_map(f, stream(1,2))</CODE> results in
+ * the same as <CODE>stream(f(1),f(2))</CODE>.
+ * Lazy? Yes: The argument stream is only explored as forced by
+ *            the result stream.
+ * @param {function} f - unary 
+ * @param {stream} xs - given stream
+ * @returns {stream} result of mapping
+ */
 function stream_map(f, s) {
     return is_null(s)
         ? null
@@ -95,12 +136,17 @@ function stream_map(f, s) {
             () => stream_map(f, stream_tail(s)));
 }
 
-// build_stream takes a non-negative integer n as first argument,
-// and a function fun as second argument.
-// build_list returns a stream of n elements, that results from
-// applying fun to the numbers from 0 to n-1.
-// Lazy? Yes: The result stream forces the applications of fun
-//            for the next element
+/** 
+ * Makes a stream with <CODE>n</CODE>
+ * elements by applying the unary function <CODE>f</CODE>
+ * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
+ * Lazy? Yes: The result stream forces the application of <CODE>f</CODE>
+ *           for the next element
+ * @param {number} n - given non-negative integer
+ * @param {function} f - unary function
+ * @returns {stream} resulting stream
+ */
+
 function build_stream(n, fun) {
     function build(i) {
         return i >= n
@@ -111,15 +157,22 @@ function build_stream(n, fun) {
     return build(0);
 }
 
-// stream_for_each applies first arg fun to the elements of the stream
-// passed as second argument. fun is applied element-by-element:
-// for_each(fun,list_to_stream(list(1, 2,null))) results in the calls fun(1)
-// and fun(2).
-// stream_for_each returns true.
-// stream_for_each throws an exception if the second argument is not a 
-// stream, and if the second argument is a non-empty stream and the
-// first argument is not a function.
-// Lazy? No: stream_for_each forces the exploration of the entire stream
+
+/**
+ * Applies unary function <CODE>f</CODE> to every
+ * element of the stream <CODE>xs</CODE>.
+ * Iterative process; time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
+ * Where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * <CODE>f</CODE> is applied element-by-element:
+ * <CODE>stream_for_each(f, stream(1, 2))</CODE> results in the calls
+ * <CODE>f(1)</CODE> and <CODE>f(2)</CODE>.
+ * Lazy? No: <CODE>stream_for_each</CODE> 
+ * forces the exploration of the entire stream
+ * @param {function} f - unary 
+ * @param {stream} xs - given stream
+ * @returns {boolean} true
+ */
+
 function stream_for_each(fun, xs) {
     if (is_null(xs)) {
         return true;
@@ -129,9 +182,18 @@ function stream_for_each(fun, xs) {
     }
 }
 
-// stream_reverse reverses the argument stream
-// stream_reverse throws an exception if the argument is not a stream.
-// Lazy? No: stream_reverse forces the exploration of the entire stream
+/**
+ * Returns stream <CODE>xs</CODE> in reverse
+ * order. Iterative process; time: <CODE>O(n)</CODE>,
+ * space: <CODE>O(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * The process is iterative, but consumes space <CODE>O(n)</CODE>
+ * because of the result stream.
+ * Lazy? No: <CODE>stream_reverse</CODE> 
+ * forces the exploration of the entire stream
+ * @param {stream} xs - given stream
+ * @returns {stream} <CODE>xs</CODE> in reverse
+ */
+
 function stream_reverse(xs) {
     function rev(original, reversed) {
         return is_null(original)
@@ -142,12 +204,18 @@ function stream_reverse(xs) {
     return rev(xs, null);
 }
 
-// stream_append appends first argument stream and second argument stream.
-// In the result, null at the end of the first argument stream
-// is replaced by the second argument stream
-// stream_append throws an exception if the first argument is not a
-// stream.
-// Lazy? Yes: the result stream forces the actual append operation
+/**
+ * Returns a stream that results from 
+ * appending the stream <CODE>ys</CODE> to the stream <CODE>xs</CODE>.
+ * In the result, null at the end of the first argument stream
+ * is replaced by the second argument, regardless what the second
+ * argument consists of.
+ * Lazy? Yes: the result stream forces the actual append operation
+ * @param {stream} xs - given first stream
+ * @param {stream} ys - given second stream
+ * @returns {stream} result of appending <CODE>xs</CODE> and <CODE>ys</CODE>
+ */
+
 function stream_append(xs, ys) {
     return is_null(xs)
         ? ys
@@ -155,11 +223,21 @@ function stream_append(xs, ys) {
             () => stream_append(stream_tail(xs), ys));
 }
 
-// stream_member looks for a given first-argument element in a given
-// second argument stream. It returns the first postfix substream
-// that starts with the given element. It returns null if the
-// element does not occur in the stream
-// Lazy? Sort-of: stream_member forces the stream only until the element is found.
+/**
+ * Returns first postfix substream
+ * whose head is identical to
+ * <CODE>v</CODE> (using <CODE>===</CODE>); returns <CODE>null</CODE> if the
+ * element does not occur in the stream.
+ * Iterative process; time: <CODE>O(n)</CODE>,
+ * space: <CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Lazy? Sort-of: <CODE>stream_member</CODE> 
+ * forces the stream only until the element 
+ * is found.
+ * @param {value} v - given value
+ * @param {stream} xs - given stream
+ * @returns {stream} postfix substream that starts with <CODE>v</CODE>
+ */
+
 function stream_member(x, s) {
     return is_null(s)
         ? null
@@ -168,10 +246,17 @@ function stream_member(x, s) {
             : stream_member(x, stream_tail(s));
 }
 
-// stream_remove removes the first occurrence of a given first-argument element
-// in a given second-argument list. Returns the original list
-// if there is no occurrence.
-// Lazy? Yes: the result stream forces the construction of each next element
+/** Returns a stream that results from
+ * <CODE>xs</CODE> by removing the first item from <CODE>xs</CODE> that
+ * is identical (<CODE>===</CODE>) to <CODE>v</CODE>.
+ * Returns the original
+ * stream if there is no occurrence. 
+ * Lazy? Yes: the result stream forces the construction of each next element
+ * @param {value} v - given value
+ * @param {stream} xs - given stream
+ * @returns {stream} <CODE>xs</CODE> with first occurrence of <CODE>v</CODE> removed
+ */
+
 function stream_remove(v, xs) {
     return is_null(xs)
         ? null
@@ -181,8 +266,20 @@ function stream_remove(v, xs) {
                 () => stream_remove(v, stream_tail(xs)));
 }
 
-// stream_remove_all removes all instances of v instead of just the first.
-// Lazy? Yes: the result stream forces the construction of each next element
+/**
+ * Returns a stream that results from
+ * <CODE>xs</CODE> by removing all items from <CODE>xs</CODE> that
+ * are identical (<CODE>===</CODE>) to <CODE>v</CODE>.
+ * Returns the original
+ * stream if there is no occurrence.  
+ * Recursive process.
+ * Lazy? Yes: the result stream forces the construction of each next 
+ * element 
+ * @param {value} v - given value
+ * @param {stream} xs - given stream
+ * @returns {stream} <CODE>xs</CODE> with all occurrences of <CODE>v</CODE> removed
+ */
+
 function stream_remove_all(v, xs) {
     return is_null(xs)
         ? null
@@ -191,12 +288,21 @@ function stream_remove_all(v, xs) {
             : pair(head(xs), () => stream_remove_all(v, stream_tail(xs)));
 }
 
-// filter returns the substream of elements of given stream s
-// for which the given predicate function p returns true.
-// Lazy? Yes: The result stream forces the construction of
-//            each next element. Of course, the construction
-//            of the next element needs to go down the stream
-//            until an element is found for which p holds.
+/**
+ * Returns a stream that contains
+ * only those elements of given stream <CODE>xs</CODE>
+ * for which the one-argument function
+ * <CODE>pred</CODE>
+ * returns <CODE>true</CODE>.
+ * Lazy? Yes: The result stream forces the construction of
+ *            each next element. Of course, the construction
+ *            of the next element needs to go down the stream
+ *            until an element is found for which <CODE>pred</CODE> holds.
+ * @param {function} pred - unary function returning boolean value
+ * @param {stream} xs - given stream
+ * @returns {stream} stream with those elements of <CODE>xs</CODE> for which <CODE>pred</CODE> holds.
+ */
+
 function stream_filter(p, s) {
     return is_null(s)
         ? null
@@ -206,11 +312,17 @@ function stream_filter(p, s) {
             : stream_filter(p, stream_tail(s));
 }
 
-// enumerates numbers starting from start,
-// using a step size of 1, until the number
-// exceeds end.
-// Lazy? Yes: The result stream forces the construction of
-//            each next element
+/**
+ * Returns a stream that enumerates
+ * numbers starting from <CODE>start</CODE> using a step size of 1, until
+ * the number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.
+ * Lazy? Yes: The result stream forces the construction of
+ *            each next element
+ * @param {number} start - starting number
+ * @param {number} end - ending number
+ * @returns {stream} stream from <CODE>start</CODE> to <CODE>end</CODE>
+ */
+
 function enum_stream(start, end) {
     return start > end
         ? null
@@ -218,20 +330,31 @@ function enum_stream(start, end) {
             () => enum_stream(start + 1, end));
 }
 
-// integers_from constructs an infinite stream of integers
-// starting at a given number n
-// Lazy? Yes: The result stream forces the construction of
-//            each next element
+/**
+ * Returns infinite stream if integers starting 
+ * at given number <CODE>n</CODE> using a step size of 1.
+ * Lazy? Yes: The result stream forces the construction of
+ *            each next element
+ * @param {number} start - starting number
+ * @returns {stream} infinite stream from <CODE>n</CODE>
+ */
+
 function integers_from(n) {
     return pair(n,
         () => integers_from(n + 1));
 }
 
-// eval_stream constructs the list of the first n elements
-// of a given stream s
-// Lazy? Sort-of: eval_stream only forces the computation of
-//                the first n elements, and leaves the rest of
-//                the stream untouched.
+/**
+ * Constructs the list of the first <CODE>n</CODE> elements
+ * of a given stream <CODE>s</CODE>
+ * Lazy? Sort-of: <CODE>eval_stream</CODE> only forces the computation of
+ * the first <CODE>n</CODE> elements, and leaves the rest of
+ * the stream untouched.
+ * @param {stream} s - starting number
+ * @param {number} n - number of elements to place in result list
+ * @returns {list} result list
+ */
+
 function eval_stream(s, n) {
     return n === 0
         ? null
@@ -240,10 +363,21 @@ function eval_stream(s, n) {
                 n - 1));
 }
 
-// Returns the item in stream s at index n (the first item is at position 0)
-// Lazy? Sort-of: stream_ref only forces the computation of
-//                the first n elements, and leaves the rest of
-//                the stream untouched.
+/** 
+ * Returns the element
+ * of stream <CODE>xs</CODE> at position <CODE>n</CODE>, 
+ * where the first element has index 0.
+ * Iterative process;
+ * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
+ * where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Lazy? Sort-of: <CODE>stream_ref</CODE> only forces the computation of
+ *                the first <CODE>n</CODE> elements, and leaves the rest of
+ *                the stream untouched.
+ * @param {stream} xs - given stream
+ * @param {number} n - given position
+ * @returns {value} item in <CODE>xs</CODE> at position <CODE>n</CODE>
+ */
+
 function stream_ref(s, n) {
     return n === 0
         ? head(s)

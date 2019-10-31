@@ -41,11 +41,11 @@ function is_null(x) {}
  
 /**
  * Returns <CODE>true</CODE> if
- * <CODE>x</CODE> is a list as defined in the textbook, and
+ * <CODE>xs</CODE> is a list as defined in the textbook, and
  * <CODE>false</CODE> otherwise. Iterative process; 
  * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>, where <CODE>n</CODE>
  * is the length of the 
- * chain of <CODE>tail</CODE> operations that can be applied to <CODE>x</CODE>.
+ * chain of <CODE>tail</CODE> operations that can be applied to <CODE>xs</CODE>.
  * recurses down the list and checks that it ends with the empty list null
  * @param {value} xs - given candidate
  * @returns whether {xs} is a list
@@ -53,6 +53,24 @@ function is_null(x) {}
 function is_list(xs) {
     return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
 }
+
+/**
+ * Given <CODE>n</CODE> values, returns a list of length <CODE>n</CODE>.
+ * The elements of the list are the given values in the given order.
+ * @param {value} value1,value2,...,value_n - given values
+ * @returns {list} list containing all values
+ */
+function list(value1, value2, ...values ) {}
+
+/**
+ * visualizes <CODE>x</CODE> in a separate drawing
+ * area in the Source Academy using a box-and-pointer diagram; time, space:
+ * O(n), where n is the number of data structures such as
+ * pairs in <CODE>x</CODE>.
+ * @param {value} x - given value
+ * @returns {value} given <CODE>x</CODE>
+ */
+function draw_data(x) {}
 
 /**
  * Returns <CODE>true</CODE> if both
