@@ -343,6 +343,7 @@ expmod(4, 3, 5);
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps.map(codify).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
 // source 0
@@ -457,6 +458,7 @@ test('negative numbers as arguments', () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('-0.8414709848078965;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "math_sin(-1);
 
@@ -472,6 +474,7 @@ test('is_function checks for builtin', () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('true;')
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "is_function(is_function);
 
