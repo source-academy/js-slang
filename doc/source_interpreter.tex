@@ -60,7 +60,7 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                                            && \textrm{see below}\\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
-                                                            && \texttt{list of strings} \\
+                                                            && \texttt{list of <name>} \\
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
@@ -74,7 +74,7 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                                            && \texttt{list("block", <statement>)} \\
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \texttt{list("variable\_declaration", string, <expression>)} \\
+                                                            && \texttt{list("variable\_declaration", <name>, <expression>)} \\
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
                                                             && \texttt{list("assignment", <name>, <expression>)} \\
@@ -102,19 +102,19 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                            && \texttt{list("function\_definition", list of strings,}  \\
+                                            && \texttt{list("function\_definition", <parameters>,}  \\
                                               && && & && && \texttt{list("return\_statement", <expression>))} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \texttt{list("function\_definition", list of strings, <statement>)} \\
+                                                           && \texttt{list("function\_definition", <parameters>, <statement>)} \\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
-                                                           && \texttt{list("conditional\_expression", <expression>, <expression>,} \\
-                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<expression>)} \\
+                                                           && \texttt{list("conditional\_expression", <expression>,} \\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<expression>, <expression>)} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \texttt{list("array\_access", <expression>, <expression>)} \\
@@ -129,10 +129,10 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
 &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \texttt{string} \\[1mm]
+                                          && \texttt{list("name", string)} \\[1mm]
 && \textit{unary-operator}    
                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \texttt{string} \\
+                        && \texttt{list("name", string)} \\
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 

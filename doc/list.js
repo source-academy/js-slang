@@ -100,9 +100,12 @@ function equal(x, y) {
  * @returns {number} length of <CODE>xs</CODE>
  */
 function length(xs) {
-    return is_null(xs)
-        ? 0
-        : 1 + length(tail(xs));
+    function iter(ys, acc) {
+       return is_null(ys)
+           ? acc
+           : iter(tail(ys), acc + 1);
+    }
+    return iter(xs, 0);
 }
 
 /**
