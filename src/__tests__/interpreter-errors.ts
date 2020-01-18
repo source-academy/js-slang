@@ -963,6 +963,43 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
     *
     'string';
     `,
-    { chapter: 1 }
+    { chapter: 1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
+})
+
+test('Cascading js errors work properly 1', () => {
+  return expectParsedError(
+    stripIndent`
+    function make_alternating_stream(stream) {
+      return pair(head(stream), () => make_alternating_stream(
+                                        negate_whole_stream(
+                                            stream_tail(stream))));
+    }
+
+    function negate_whole_stream(stream) {
+        return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));
+    }
+
+    const ones = pair(1, () => ones);
+    eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);
+    `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(
+    `"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null"`
+  )
+})
+
+test('Cascading js errors work properly', () => {
+  return expectParsedError(
+    stripIndent`
+    function h(p) {
+      return head(p);
+    }
+
+    h(null);
+    `,
+    { chapter: 2, native: true }
+  ).toMatchInlineSnapshot(
+    `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
+  )
 })

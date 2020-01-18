@@ -201,9 +201,18 @@ export async function runInContext(
         value: sandboxedEval(transpiled)
       } as Result)
     } catch (error) {
-      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+      if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         return resolvedErrorPromise
+      }
+      if (error instanceof ExceptionError) {
+        // if we know the location of the error, just throw it
+        if (error.location.start.line !== -1) {
+          context.errors.push(error)
+          return resolvedErrorPromise
+        } else {
+          error = error.error // else we try to get the location from source map
+        }
       }
       const errorStack = error.stack
       const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)

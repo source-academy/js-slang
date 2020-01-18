@@ -364,7 +364,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
       if (previousVariablesToAst.has(name)) {
         const lastAncestor: es.Node = ancestors[ancestors.length - 2]
         const { isConstant, variableLocationId } = previousVariablesToAst.get(name)!
-        if (lastAncestor.type === 'AssignmentExpression') {
+        if (lastAncestor.type === 'AssignmentExpression' && lastAncestor.left === identifier) {
           // if this is an assignment expression, we want to propagate back the change
           if (isConstant) {
             throw new ConstAssignment(identifier, name)
@@ -717,7 +717,7 @@ function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] 
           ),
           'get'
         ),
-        [create.literal(name)]
+        [create.literal(key)]
       )
     }
     return create.declaration(name, kind, value)

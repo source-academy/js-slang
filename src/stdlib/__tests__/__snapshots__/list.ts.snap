@@ -22,8 +22,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "native:\\"Line -1: Error: head(xs) expects a pair as argument xs, but encountered null\\"
-interpreted:\\"Line 147: Error: head(xs) expects a pair as argument xs, but encountered null\\"",
+  "parsedErrors": "Line 147: Error: head(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;

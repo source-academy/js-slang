@@ -2,9 +2,9 @@
 
 exports[`Ensure no name clashes 1`] = `
 "const native0 = $$NATIVE_STORAGE;
-const callIfFuncAndRightArgs0 = native.operators.get(\\"callIfFuncAndRightArgs0\\");
-const boolOrErr0 = native.operators.get(\\"boolOrErr0\\");
-const wrap90 = native.operators.get(\\"wrap90\\");
+const callIfFuncAndRightArgs0 = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr0 = native.operators.get(\\"boolOrErr\\");
+const wrap90 = native.operators.get(\\"wrap\\");
 const unaryOp = native.operators.get(\\"unaryOp\\");
 const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
