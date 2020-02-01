@@ -89,3 +89,15 @@ This command makes the documentation available in folder
 doc/jsdoc/libraries/
 ``
 
+Using your js-slang in local Source Academy
+-------------------------------------------
+
+A common issue when developing modifications to js-slang is how to test it using your own local frontend. Assume that you have built your own cadet-frontend locally, here is how you can make it use your own js-slang, instead of the one that the Source Academy team has deployed to npm:
+
+.. code-block::
+
+  $ cd js-slang
+  $ yarn build
+  $ cp -r dist ../cadet-frontend/node_modules/js-slang
+  
+Then start frontend and the new js-slang will be used.
