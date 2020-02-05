@@ -106,6 +106,28 @@ export interface Context<T = any> {
   executionMethod: ExecutionMethod
 }
 
+export interface BlockFrame {
+  loc: {
+    start: Position,
+    end: Position
+  }
+  children: Array<DefinitionNode|BlockFrame>
+}
+
+export interface DefinitionNode {
+  name: string
+  nodeType: string,
+  loc?: {
+    start: Position,
+    end: Position
+  }
+}
+
+export interface Position {
+  line: number,
+  column: number
+}
+
 // tslint:disable:no-any
 export interface Frame {
   [name: string]: any

@@ -582,6 +582,10 @@ export function* evaluate(node: es.Node, context: Context) {
   return result
 }
 
+export function* getVariableMappings() {
+
+}
+
 export function* apply(
   context: Context,
   fun: Closure | Value,
