@@ -107,25 +107,15 @@ export interface Context<T = any> {
 }
 
 export interface BlockFrame {
-  loc: {
-    start: Position,
-    end: Position
-  }
-  children: Array<DefinitionNode|BlockFrame>
+  loc?: es.SourceLocation | null,
+  children: Array<DefinitionNode|BlockFrame>,
+  type: string
 }
 
 export interface DefinitionNode {
   name: string
-  nodeType: string,
-  loc?: {
-    start: Position,
-    end: Position
-  }
-}
-
-export interface Position {
-  line: number,
-  column: number
+  type: string,
+  loc?: es.SourceLocation | null
 }
 
 // tslint:disable:no-any
