@@ -7,8 +7,9 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
     type: 'BlockFrame',
     children: []
   }
-  const definitionStatements
-    = getDeclarationStatements(node.body) as Array<es.VariableDeclaration | es.FunctionDeclaration>
+  const definitionStatements = getDeclarationStatements(node.body) as Array<
+    es.VariableDeclaration | es.FunctionDeclaration
+  >
   const blockStatements = getBlockStatements(node.body) as es.BlockStatement[]
 
   const variableDefinitions = definitionStatements
@@ -40,27 +41,34 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
   }
 }
 
-export function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
-  definition: DefinitionNode, body: BlockFrame} {
+export function scopeFunctionDeclaration(
+  node: es.FunctionDeclaration
+): {
+  definition: DefinitionNode
+  body: BlockFrame
+} {
   const definition = {
-      name: (node.id as es.Identifier).name,
-      type: 'DefinitionNode',
-      loc: node.loc
+    name: (node.id as es.Identifier).name,
+    type: 'DefinitionNode',
+    loc: node.loc
   }
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
     // overwrite loc because function parameters loc matches that of the function block
-    loc: node.loc == null ? node.loc : {
-      start: {line: node.loc.start.line, column: node.loc.start.column},
-      end: {line: node.loc.start.line, column: node.loc.start.column},
-    }
+    loc:
+      node.loc == null
+        ? node.loc
+        : {
+            start: { line: node.loc.start.line, column: node.loc.start.column },
+            end: { line: node.loc.start.line, column: node.loc.start.column }
+          }
   }))
   const body = scopeVariables(node.body)
 
   // Modify the body's children attribute to add function parameters
   body.children = [...parameters, ...body.children]
-  return {definition, body}
+  return { definition, body }
 }
 
 export function lookupDefinition(
@@ -114,7 +122,7 @@ function isBlockFrame(node: DefinitionNode | BlockFrame): node is BlockFrame {
 
 // Helper functions
 // Sort by loc sorts the functions by their row. It assumes that there are no repeated definitions in a row
-function sortByLoc(x: DefinitionNode|BlockFrame, y: DefinitionNode|BlockFrame): number {
+function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFrame): number {
   if (x.loc == null && y.loc == null) {
     return 0
   } else if (x.loc == null) {
