@@ -1,21 +1,28 @@
+import { simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import { BlockFrame, DefinitionNode } from './types'
 
-export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame {
+export function scopeVariables(program: es.Program | es.BlockStatement): BlockFrame {
   const block: BlockFrame = {
-    loc: node.loc,
+    loc: program.loc,
     type: 'BlockFrame',
     children: []
   }
-  const definitionStatements = getDeclarationStatements(node.body) as Array<
+  const definitionStatements = getDeclarationStatements(program.body) as Array<
     es.VariableDeclaration | es.FunctionDeclaration
   >
-  const blockStatements = getBlockStatements(node.body) as es.BlockStatement[]
-  const assignmentStatements = getAssignmentStatements(node.body)
+  const blockStatements = getBlockStatements(program.body) as es.BlockStatement[]
+  const assignmentStatements = getAssignmentStatements(program.body)
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement)
   ) as es.VariableDeclaration[]
-  const arrowFunctions = getArrowFunctions(variableStatements)
+
+  const arrowFunctions: es.ArrowFunctionExpression[] = []
+  simple(program, {
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      arrowFunctions.push(node)
+    }
+  })
 
   const functionDeclarations = definitionStatements
     .filter(statement => !isVariableDeclaration(statement))
@@ -91,15 +98,21 @@ function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode 
   }
 }
 
-function scopeArrowFunctions(nodes: es.VariableDeclarator[]): DefinitionNode[] {
-  const arrowFunctionsNested = nodes.map(node =>
-    (node.init! as es.ArrowFunctionExpression).params.map(param => ({
+function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNode[] {
+  const arrowFunctionParamsNested = nodes.map(node =>
+    node.params.map(param => ({
       name: (param as es.Identifier).name,
       type: 'DefinitionNode',
-      loc: param.loc
+      loc:
+        node.loc == null
+          ? node.loc
+          : {
+              start: { line: node.loc.start.line, column: node.loc.start.column },
+              end: { line: node.loc.start.line, column: node.loc.start.column }
+            }
     }))
   )
-  return arrowFunctionsNested.reduce((x, y) => [...x, ...y], [])
+  return arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], [])
 }
 
 export function lookupDefinition(
@@ -152,13 +165,6 @@ function getAssignmentStatements(
       statement.type === 'ExpressionStatement' &&
       statement.expression.type === 'AssignmentExpression'
   ) as es.ExpressionStatement[]
-}
-
-function getArrowFunctions(nodes: es.VariableDeclaration[]): es.VariableDeclarator[] {
-  return nodes
-    .filter(node => node.declarations[0].init != null)
-    .filter(node => node.declarations[0].init!.type === 'ArrowFunctionExpression')
-    .map(node => node.declarations[0])
 }
 
 // Type Guards
