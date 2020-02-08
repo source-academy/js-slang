@@ -107,9 +107,9 @@ export interface Context<T = any> {
 }
 
 export interface BlockFrame {
+  type: string
   loc?: es.SourceLocation | null
   children: Array<DefinitionNode | BlockFrame>
-  type: string
 }
 
 export interface DefinitionNode {

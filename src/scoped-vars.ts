@@ -7,17 +7,27 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
     type: 'BlockFrame',
     children: []
   }
-  const definitionStatements: Array<
-    es.VariableDeclaration | es.FunctionDeclaration
-  > = getDeclarationStatements(node.body) as Array<es.VariableDeclaration | es.FunctionDeclaration>
-  const blockStatements: es.BlockStatement[] = getBlockStatements(node.body) as es.BlockStatement[]
-  const definitionNodes = definitionStatements.map(statement =>
-    isVariableDeclaration(statement)
-      ? scopeVariableDeclaration(statement)
-      : scopeFunctionDeclaration(statement)
-  )
+  const definitionStatements
+    = getDeclarationStatements(node.body) as Array<es.VariableDeclaration | es.FunctionDeclaration>
+  const blockStatements = getBlockStatements(node.body) as es.BlockStatement[]
+
+  const variableDefinitions = definitionStatements
+    .filter(statement => isVariableDeclaration(statement))
+    .map((statement: es.VariableDeclaration) => scopeVariableDeclaration(statement))
+  const functionDeclarations = definitionStatements
+    .filter(statement => !isVariableDeclaration(statement))
+    .map((statement: es.FunctionDeclaration) => scopeFunctionDeclaration(statement))
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
-  block.children = [...definitionNodes, ...blockNodes]
+  const functionDefinitions = functionDeclarations.map(declaration => declaration.definition)
+  const functionBodies = functionDeclarations.map(declaration => declaration.body)
+
+  block.children = [
+    ...variableDefinitions,
+    ...functionDefinitions,
+    ...functionBodies,
+    ...blockNodes
+  ]
+  block.children.sort(sortByLoc)
 
   return block
 }
@@ -30,12 +40,27 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
   }
 }
 
-export function scopeFunctionDeclaration(node: es.FunctionDeclaration): DefinitionNode {
-  return {
-    name: (node.id as es.Identifier).name,
-    type: 'DefinitionNode',
-    loc: node.loc
+export function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
+  definition: DefinitionNode, body: BlockFrame} {
+  const definition = {
+      name: (node.id as es.Identifier).name,
+      type: 'DefinitionNode',
+      loc: node.loc
   }
+  const parameters = node.params.map((param: es.Identifier) => ({
+    name: param.name,
+    type: 'DefinitionNode',
+    // overwrite loc because function parameters loc matches that of the function block
+    loc: node.loc == null ? node.loc : {
+      start: {line: node.loc.start.line, column: node.loc.start.column},
+      end: {line: node.loc.start.line, column: node.loc.start.column},
+    }
+  }))
+  const body = scopeVariables(node.body)
+
+  // Modify the body's children attribute to add function parameters
+  body.children = [...parameters, ...body.children]
+  return {definition, body}
 }
 
 export function lookupDefinition(
@@ -51,7 +76,7 @@ export function lookupDefinition(
   const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
     .filter(child => child.name === variableName)
     .filter(child => (child.loc ? child.loc.end.line <= line : false)) // Only get those definitions above line
-  currentDefinition = matches[matches.length - 1]
+  currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
   const blockToRecurse = (node.children.filter(child =>
     isBlockFrame(child)
   ) as BlockFrame[]).filter(block => isLineNumberInLoc(line, block.loc))
@@ -59,16 +84,6 @@ export function lookupDefinition(
   return blockToRecurse.length === 1
     ? lookupDefinition(variableName, line, blockToRecurse[0], currentDefinition)
     : currentDefinition
-}
-
-function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): boolean {
-  if (location == null) {
-    return false
-  }
-
-  const startLine = location.start.line
-  const endLine = location.end.line
-  return line >= startLine && line <= endLine
 }
 
 function getBlockStatements(
@@ -86,7 +101,7 @@ function getDeclarationStatements(
   )
 }
 
-// Type Guard
+// Type Guards
 function isVariableDeclaration(
   statement: es.VariableDeclaration | es.FunctionDeclaration
 ): statement is es.VariableDeclaration {
@@ -95,4 +110,34 @@ function isVariableDeclaration(
 
 function isBlockFrame(node: DefinitionNode | BlockFrame): node is BlockFrame {
   return node.type === 'BlockFrame'
+}
+
+// Helper functions
+// Sort by loc sorts the functions by their row. It assumes that there are no repeated definitions in a row
+function sortByLoc(x: DefinitionNode|BlockFrame, y: DefinitionNode|BlockFrame): number {
+  if (x.loc == null && y.loc == null) {
+    return 0
+  } else if (x.loc == null) {
+    return -1
+  } else if (y.loc == null) {
+    return 1
+  }
+
+  if (x.loc.start.line === y.loc.start.line) {
+    return 0
+  } else if (x.loc.start.line < y.loc.start.line) {
+    return -1
+  } else {
+    return 1
+  }
+}
+
+function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): boolean {
+  if (location == null) {
+    return false
+  }
+
+  const startLine = location.start.line
+  const endLine = location.end.line
+  return line >= startLine && line <= endLine
 }
