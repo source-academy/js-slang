@@ -12,25 +12,32 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
   >
   const blockStatements = getBlockStatements(node.body) as es.BlockStatement[]
   const assignmentStatements = getAssignmentStatements(node.body)
+  const variableStatements = definitionStatements.filter(statement =>
+    isVariableDeclaration(statement)
+  ) as es.VariableDeclaration[]
+  const arrowFunctions = getArrowFunctions(variableStatements)
 
-  const variableDefinitions = definitionStatements
-    .filter(statement => isVariableDeclaration(statement))
-    .map((statement: es.VariableDeclaration) => scopeVariableDeclaration(statement))
   const functionDeclarations = definitionStatements
     .filter(statement => !isVariableDeclaration(statement))
     .map((statement: es.FunctionDeclaration) => scopeFunctionDeclaration(statement))
-  const variableAssignments = assignmentStatements.map(statement =>
+  const functionDefinitionNodes = functionDeclarations.map(declaration => declaration.definition)
+  const functionBodyNodes = functionDeclarations.map(declaration => declaration.body)
+
+  const variableAssignmentNodes = assignmentStatements.map(statement =>
     scopeAssignmentStatement(statement)
   )
+  const variableDefinitionNodes = variableStatements.map(statement =>
+    scopeVariableDeclaration(statement)
+  )
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
-  const functionDefinitions = functionDeclarations.map(declaration => declaration.definition)
-  const functionBodies = functionDeclarations.map(declaration => declaration.body)
+  const arrowFunctionDefinitionsNodes = scopeArrowFunctions(arrowFunctions)
 
   block.children = [
-    ...variableDefinitions,
-    ...functionDefinitions,
-    ...variableAssignments,
-    ...functionBodies,
+    ...variableDefinitionNodes,
+    ...functionDefinitionNodes,
+    ...variableAssignmentNodes,
+    ...functionBodyNodes,
+    ...arrowFunctionDefinitionsNodes,
     ...blockNodes
   ]
   block.children.sort(sortByLoc)
@@ -84,9 +91,21 @@ function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode 
   }
 }
 
+function scopeArrowFunctions(nodes: es.VariableDeclarator[]): DefinitionNode[] {
+  const arrowFunctionsNested = nodes.map(node =>
+    (node.init! as es.ArrowFunctionExpression).params.map(param => ({
+      name: (param as es.Identifier).name,
+      type: 'DefinitionNode',
+      loc: param.loc
+    }))
+  )
+  return arrowFunctionsNested.reduce((x, y) => [...x, ...y], [])
+}
+
 export function lookupDefinition(
   variableName: string,
   line: number,
+  col: number,
   node: BlockFrame,
   currentDefinition?: DefinitionNode
 ): DefinitionNode | void {
@@ -96,14 +115,16 @@ export function lookupDefinition(
 
   const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
     .filter(child => child.name === variableName)
-    .filter(child => (child.loc ? child.loc.end.line <= line : false)) // Only get those definitions above line
+    .filter(child =>
+      child.loc ? child.loc.start.line <= line && child.loc.start.column <= col : false
+    ) // Only get those definitions above line
   currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
   const blockToRecurse = (node.children.filter(child =>
     isBlockFrame(child)
   ) as BlockFrame[]).filter(block => isLineNumberInLoc(line, block.loc))
 
   return blockToRecurse.length === 1
-    ? lookupDefinition(variableName, line, blockToRecurse[0], currentDefinition)
+    ? lookupDefinition(variableName, line, col, blockToRecurse[0], currentDefinition)
     : currentDefinition
 }
 
@@ -133,6 +154,13 @@ function getAssignmentStatements(
   ) as es.ExpressionStatement[]
 }
 
+function getArrowFunctions(nodes: es.VariableDeclaration[]): es.VariableDeclarator[] {
+  return nodes
+    .filter(node => node.declarations[0].init != null)
+    .filter(node => node.declarations[0].init!.type === 'ArrowFunctionExpression')
+    .map(node => node.declarations[0])
+}
+
 // Type Guards
 function isVariableDeclaration(
   statement: es.VariableDeclaration | es.FunctionDeclaration
@@ -155,12 +183,12 @@ function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFram
     return 1
   }
 
-  if (x.loc.start.line === y.loc.start.line) {
-    return 0
+  if (x.loc.start.line > y.loc.start.line) {
+    return 1
   } else if (x.loc.start.line < y.loc.start.line) {
     return -1
   } else {
-    return 1
+    return x.loc.start.column - y.loc.start.column
   }
 }
 
