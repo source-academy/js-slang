@@ -11,6 +11,7 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
     es.VariableDeclaration | es.FunctionDeclaration
   >
   const blockStatements = getBlockStatements(node.body) as es.BlockStatement[]
+  const assignmentStatements = getAssignmentStatements(node.body)
 
   const variableDefinitions = definitionStatements
     .filter(statement => isVariableDeclaration(statement))
@@ -18,6 +19,9 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
   const functionDeclarations = definitionStatements
     .filter(statement => !isVariableDeclaration(statement))
     .map((statement: es.FunctionDeclaration) => scopeFunctionDeclaration(statement))
+  const variableAssignments = assignmentStatements.map(statement =>
+    scopeAssignmentStatement(statement)
+  )
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
   const functionDefinitions = functionDeclarations.map(declaration => declaration.definition)
   const functionBodies = functionDeclarations.map(declaration => declaration.body)
@@ -25,6 +29,7 @@ export function scopeVariables(node: es.Program | es.BlockStatement): BlockFrame
   block.children = [
     ...variableDefinitions,
     ...functionDefinitions,
+    ...variableAssignments,
     ...functionBodies,
     ...blockNodes
   ]
@@ -71,6 +76,14 @@ export function scopeFunctionDeclaration(
   return { definition, body }
 }
 
+function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode {
+  return {
+    name: ((node.expression as es.AssignmentExpression).left as es.Identifier).name,
+    type: 'DefinitionNode',
+    loc: node.loc
+  }
+}
+
 export function lookupDefinition(
   variableName: string,
   line: number,
@@ -94,6 +107,7 @@ export function lookupDefinition(
     : currentDefinition
 }
 
+// Helper functions to filter nodes
 function getBlockStatements(
   nodes: Array<es.Statement | es.ModuleDeclaration>
 ): Array<es.Statement | es.ModuleDeclaration> {
@@ -107,6 +121,16 @@ function getDeclarationStatements(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
   )
+}
+
+function getAssignmentStatements(
+  nodes: Array<es.Statement | es.ModuleDeclaration>
+): es.ExpressionStatement[] {
+  return nodes.filter(
+    statement =>
+      statement.type === 'ExpressionStatement' &&
+      statement.expression.type === 'AssignmentExpression'
+  ) as es.ExpressionStatement[]
 }
 
 // Type Guards
