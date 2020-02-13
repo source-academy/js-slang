@@ -27,6 +27,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
+import { typeCheck } from './typeChecker'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -163,6 +164,7 @@ export async function runInContext(
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
+  typeCheck(program, context)
   if (!program) {
     return resolvedErrorPromise
   }
