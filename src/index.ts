@@ -16,6 +16,7 @@ import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { codify, getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
+import { typeCheck } from './typeChecker'
 import {
   Context,
   Error as ResultError,
@@ -27,7 +28,6 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { sandboxedEval } from './utils/evalContainer'
-import { typeCheck } from './typeChecker'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -109,9 +109,9 @@ function convertNativeErrorToSourceError(
       line === null || column === null
         ? UNKNOWN_LOCATION
         : {
-            start: { line, column },
-            end: { line: -1, column: -1 }
-          }
+          start: { line, column },
+          end: { line: -1, column: -1 }
+        }
     return new ExceptionError(error, location)
   }
 }
@@ -164,7 +164,7 @@ export async function runInContext(
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
-  typeCheck(program, context)
+  typeCheck(program)
   if (!program) {
     return resolvedErrorPromise
   }
