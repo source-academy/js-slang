@@ -32,7 +32,7 @@ export function scopeVariables(program: es.Program | es.BlockStatement): BlockFr
   const forStatementNodes = scopeForStatements(forStatements)
   const forStatementVariables = forStatementNodes
     .map(node => node.variables)
-    .reduce((x, y) => [...x, ...y])
+    .reduce((x, y) => [...x, ...y], [])
   const forStatementBlocks = forStatementNodes.map(node => node.block)
 
   const functionDeclarations = definitionStatements
@@ -120,7 +120,7 @@ function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNod
 // If statements contain nested predicate and consequent statements
 function scopeIfStatements(nodes: es.IfStatement[]): BlockFrame[] {
   const nestedBlocks = nodes.map(node => scopeIfStatement(node))
-  return nestedBlocks.reduce((x, y) => [...x, ...y])
+  return nestedBlocks.reduce((x, y) => [...x, ...y], [])
 }
 
 function scopeIfStatement(node: es.IfStatement): BlockFrame[] {
@@ -128,11 +128,13 @@ function scopeIfStatement(node: es.IfStatement): BlockFrame[] {
   if (node.alternate == null) {
     return [scopeVariables(block)]
   } else {
-    return [scopeVariables(block), ...scopeIfStatement(node.alternate as es.IfStatement)]
+    return node.alternate.type === 'BlockStatement'
+      ? [scopeVariables(block), scopeVariables(node.alternate)]
+      : [scopeVariables(block), ...scopeIfStatement(node.alternate as es.IfStatement)]
   }
 }
 
-function scopeWhileStatements(nodes: es.WhileStatement[]) {
+function scopeWhileStatements(nodes: es.WhileStatement[]): BlockFrame[] {
   return nodes.map(node => scopeVariables(node.body as es.BlockStatement))
 }
 
