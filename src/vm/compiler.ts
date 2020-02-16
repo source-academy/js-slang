@@ -34,6 +34,7 @@ const DONE = 22
 // some auxiliary constants
 // to keep track of the inline data
 
+// TODO unused
 // const LDF_MAX_OS_SIZE_OFFSET = 1
 // const LDF_ADDRESS_OFFSET = 2
 // const LDF_ENV_EXTENSION_COUNT_OFFSET = 3
@@ -140,6 +141,7 @@ export function compileToIns(program: es.Program, context: Context) {
     machineCode[insertPointer + 1] = arg1
     insertPointer += 2
   }
+  // TODO unused
   // binary instructions have two arguments
   //   function addBinaryInstruction(opCode: number, arg1: any, arg2: any) {
   //     machineCode[insertPointer] = opCode
@@ -159,6 +161,7 @@ export function compileToIns(program: es.Program, context: Context) {
   // toCompile stack keeps track of remaining compiler work:
   // these are function bodies that still need to be compiled
   const toCompile: any[] = []
+  // TODO unused
   //   function no_moreToCompile() {
   //     return toCompile.length === 0
   //   }
