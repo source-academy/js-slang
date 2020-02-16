@@ -12,6 +12,9 @@ export function scopeVariables(program: es.Program | es.BlockStatement): BlockFr
     es.VariableDeclaration | es.FunctionDeclaration
   >
   const blockStatements = getBlockStatements(program.body) as es.BlockStatement[]
+  const forStatements = getForStatements(program.body)
+  const ifStatements = getIfStatements(program.body)
+  const whileStatements = getWhileStatements(program.body)
   const assignmentStatements = getAssignmentStatements(program.body)
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement)
@@ -23,6 +26,14 @@ export function scopeVariables(program: es.Program | es.BlockStatement): BlockFr
       arrowFunctions.push(node)
     }
   })
+
+  const ifStatementNodes = scopeIfStatements(ifStatements)
+  const whileStatementNodes = scopeWhileStatements(whileStatements)
+  const forStatementNodes = scopeForStatements(forStatements)
+  const forStatementVariables = forStatementNodes
+    .map(node => node.variables)
+    .reduce((x, y) => [...x, ...y])
+  const forStatementBlocks = forStatementNodes.map(node => node.block)
 
   const functionDeclarations = definitionStatements
     .filter(statement => !isVariableDeclaration(statement))
@@ -45,6 +56,10 @@ export function scopeVariables(program: es.Program | es.BlockStatement): BlockFr
     ...variableAssignmentNodes,
     ...functionBodyNodes,
     ...arrowFunctionDefinitionsNodes,
+    ...ifStatementNodes,
+    ...whileStatementNodes,
+    ...forStatementVariables,
+    ...forStatementBlocks,
     ...blockNodes
   ]
   block.children.sort(sortByLoc)
@@ -100,6 +115,40 @@ function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNod
     }))
   )
   return arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], [])
+}
+
+// If statements contain nested predicate and consequent statements
+function scopeIfStatements(nodes: es.IfStatement[]): BlockFrame[] {
+  const nestedBlocks = nodes.map(node => scopeIfStatement(node))
+  return nestedBlocks.reduce((x, y) => [...x, ...y])
+}
+
+function scopeIfStatement(node: es.IfStatement): BlockFrame[] {
+  const block = node.consequent as es.BlockStatement
+  if (node.alternate == null) {
+    return [scopeVariables(block)]
+  } else {
+    return [scopeVariables(block), ...scopeIfStatement(node.alternate as es.IfStatement)]
+  }
+}
+
+function scopeWhileStatements(nodes: es.WhileStatement[]) {
+  return nodes.map(node => scopeVariables(node.body as es.BlockStatement))
+}
+
+function scopeForStatements(
+  nodes: es.ForStatement[]
+): Array<{ variables: DefinitionNode[]; block: BlockFrame }> {
+  return nodes.map(node => ({
+    variables: node.init
+      ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
+          type: 'DefinitionNode',
+          name: (dec.id as es.Identifier).name,
+          loc: dec.loc
+        }))
+      : [],
+    block: scopeVariables(node.body as es.BlockStatement)
+  }))
 }
 
 // Functions to lookup definition location of any variable
@@ -212,6 +261,20 @@ function getAssignmentStatements(
       statement.type === 'ExpressionStatement' &&
       statement.expression.type === 'AssignmentExpression'
   ) as es.ExpressionStatement[]
+}
+
+function getIfStatements(nodes: Array<es.Statement | es.ModuleDeclaration>): es.IfStatement[] {
+  return nodes.filter(statement => statement.type === 'IfStatement') as es.IfStatement[]
+}
+
+function getForStatements(nodes: Array<es.Statement | es.ModuleDeclaration>): es.ForStatement[] {
+  return nodes.filter(statement => statement.type === 'ForStatement') as es.ForStatement[]
+}
+
+function getWhileStatements(
+  nodes: Array<es.Statement | es.ModuleDeclaration>
+): es.WhileStatement[] {
+  return nodes.filter(statement => statement.type === 'WhileStatement') as es.WhileStatement[]
 }
 
 // Type Guards
