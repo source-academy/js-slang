@@ -115,6 +115,7 @@ function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNod
   return arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], [])
 }
 
+// Functions to lookup definition location of any variable
 export function lookupDefinition(
   variableName: string,
   line: number,
@@ -139,6 +140,65 @@ export function lookupDefinition(
   return blockToRecurse.length === 1
     ? lookupDefinition(variableName, line, col, blockToRecurse[0], currentDefinition)
     : currentDefinition
+}
+
+// Function to do scope redeclaration
+export function getAllOccurrencesInScope(
+  target: string,
+  line: number,
+  col: number,
+  program: es.Program,
+  occurrences: es.SourceLocation[] = []
+): es.SourceLocation[] {
+  // First we check if there's a redeclaration of the target in the current scope
+  // If there is, set the occurences array to empty because there's a new scope for the name
+  const variableDeclarations = program.body.filter(
+    statement => statement.type === 'VariableDeclaration'
+  ) as es.VariableDeclaration[]
+  if (
+    variableDeclarations.filter(node => (node.declarations[0].id as es.Identifier).name === target)
+      .length === 0
+  ) {
+    occurrences = []
+  }
+
+  // Get all the usages of the variable in the current scope/block
+  const programWithoutBlocks = {
+    ...program,
+    body: program.body.filter(statement => statement.type !== 'BlockStatement')
+  }
+  const allIdentifiers: es.SourceLocation[] = []
+  simple(programWithoutBlocks, {
+    Identifier(node: es.Identifier) {
+      if (node.name === target) {
+        if (node.loc) {
+          allIdentifiers.push(node.loc)
+        }
+      }
+    }
+  })
+  occurrences = occurrences.concat(allIdentifiers)
+
+  // Get the block where the target lies
+  const nextBlock = (program.body.filter(
+    statement => statement.type === 'BlockStatement'
+  ) as es.BlockStatement[]).filter(node => isLineNumberInLoc(line, node.loc))
+  if (nextBlock.length === 0) {
+    return occurrences
+  }
+
+  return getAllOccurrencesInScope(
+    target,
+    line,
+    col,
+    {
+      type: 'Program',
+      loc: nextBlock[0].loc,
+      body: nextBlock[0].body,
+      sourceType: 'script' // Junk value
+    },
+    occurrences
+  )
 }
 
 // Helper functions to filter nodes

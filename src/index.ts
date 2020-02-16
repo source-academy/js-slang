@@ -13,7 +13,7 @@ import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { lookupDefinition, scopeVariables } from './scoped-vars'
+import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { codify, getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -272,4 +272,12 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine, scopeVariables, lookupDefinition }
+export {
+  createContext,
+  Context,
+  Result,
+  setBreakpointAtLine,
+  scopeVariables,
+  lookupDefinition,
+  getAllOccurrencesInScope
+}
