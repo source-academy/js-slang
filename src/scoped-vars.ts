@@ -74,14 +74,7 @@ export function scopeFunctionDeclaration(
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
-    // overwrite loc because function parameters loc matches that of the function block
-    loc:
-      node.loc == null
-        ? node.loc
-        : {
-            start: { line: node.loc.start.line, column: node.loc.start.column },
-            end: { line: node.loc.start.line, column: node.loc.start.column }
-          }
+    loc: node.loc
   }))
   const body = scopeVariables(node.body)
 
@@ -103,13 +96,7 @@ function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNod
     node.params.map(param => ({
       name: (param as es.Identifier).name,
       type: 'DefinitionNode',
-      loc:
-        node.loc == null
-          ? node.loc
-          : {
-              start: { line: node.loc.start.line, column: node.loc.start.column },
-              end: { line: node.loc.start.line, column: node.loc.start.column }
-            }
+      loc: node.loc
     }))
   )
   return arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], [])
