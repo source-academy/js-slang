@@ -61,7 +61,8 @@ export const createEmptyContext = <T>(
     prelude: null,
     debugger: createEmptyDebugger(),
     contextId: length - 1,
-    executionMethod: 'auto'
+    //executionMethod: 'auto'
+    executionMethod: 'interpreter'
   }
 }
 
