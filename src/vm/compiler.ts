@@ -115,7 +115,7 @@ export function printProgram(P: number[]) {
     }
     programStr += s + '\n'
   }
-  console.log(programStr)
+  window.console.log(programStr)
 }
 
 // COMPILER FROM PARSED SOURCE PROGRAM (ESTREE AST) TO SECD INSTRUCTIONS
