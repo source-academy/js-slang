@@ -30,6 +30,13 @@ To try out *Source* in a REPL, run
 
   $ node dist/repl/repl.js [chapter] # default: 1
 
+If you wish, you can pass in a file path instead, to evaluate some *Source* before initialising the REPL
+It will be run in *Source* chapter 4.
+
+.. code-block::
+
+  $ node dist/repl/repl.js [path/to/file]
+
 or alternatively, install js-slang and run
 
 .. code-block::
