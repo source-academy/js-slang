@@ -13,15 +13,13 @@ export function typeCheck(program: es.Program | undefined): void {
   // console.log(program)
   // console.log('Type of program is:')
   // console.log(infer(program.body[0], { next: 0, env: {} })[0])
-  if (program.body[0].type === 'VariableDeclaration') {
-    // console.log((program.body[0] as es.VariableDeclaration).declarations)
-  } else if (program.body[0].type === 'ExpressionStatement') {
-    // console.log((program.body[0] as es.ExpressionStatement).expression)
-    // infer(program.body[0], { next: 0, env: {} })
-  }
+  // const ctx: Ctx = { next: 0, env: {} }
+  // program.body.forEach(node => {
+  //   infer(node, ctx)
+  // })
 }
 
-// Type Definitions
+// // Type Definitions
 // interface Env {
 //   [name: string]: TYPE
 // }
@@ -164,11 +162,29 @@ export function typeCheck(program: es.Program | undefined): void {
 // }
 // type TYPE = NAMED | VAR | FUNCTION
 
+// // tslint:disable-next-line: cyclomatic-complexity
 // function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
 //   const env = ctx.env
 //   switch (node.type) {
 //     case 'ExpressionStatement': {
 //       infer(node.expression, ctx)
+//       return [{ nodeType: 'Named', name: 'undefined' }, {}]
+//     }
+//     case 'ReturnStatement': {
+//       if (node.argument === undefined) {
+//         return [{ nodeType: 'Named', name: 'undefined' }, {}]
+//       } else if (node.argument === null) {
+//         return [{ nodeType: 'Named', name: 'null' }, {}]
+//       }
+//       return infer(node.argument, ctx)
+//     }
+//     case 'BlockStatement': {
+//       for (const currentNode of node.body) {
+//         const inferredType = infer(currentNode, ctx)
+//         if (currentNode.type === 'ReturnStatement') {
+//           return inferredType
+//         }
+//       }
 //       return [{ nodeType: 'Named', name: 'undefined' }, {}]
 //     }
 //     case 'Literal': {
@@ -188,6 +204,7 @@ export function typeCheck(program: es.Program | undefined): void {
 //     case 'Identifier': {
 //       const identifierName = node.name
 //       if (env[identifierName]) {
+//         console.log(env[identifierName])
 //         return [env[identifierName], {}]
 //       }
 //       throw Error('Undefined identifier')
