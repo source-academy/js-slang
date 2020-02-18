@@ -8,29 +8,29 @@ import * as create from '../utils/astCreator'
 // and machine
 
 export enum OpCodes {
-    START = 0,
-    LDCN = 1, // followed by: number
-    LDCB = 2, // followed by: boolean
-    LDCU = 3,
-    PLUS = 4,
-    MINUS = 5,
-    TIMES = 6,
-    EQUAL = 7,
-    LESS = 8,
-    GREATER = 9,
-    LEQ = 10,
-    GEQ = 11,
-    NOT = 12,
-    DIV = 13,
-    POP = 14,
-    ASSIGN = 15, // followed by: index of value in environment
-    JOF = 16, // followed by: jump address
-    GOTO = 17, // followed by: jump address
-    LDF = 18, // followed by: maxStackSize, address, env extensn count
-    CALL = 19,
-    LD = 20, // followed by: index of value in environment
-    RTN = 21,
-    DONE = 22,
+  START = 0,
+  LDCN = 1, // followed by: number
+  LDCB = 2, // followed by: boolean
+  LDCU = 3,
+  PLUS = 4,
+  MINUS = 5,
+  TIMES = 6,
+  EQUAL = 7,
+  LESS = 8,
+  GREATER = 9,
+  LEQ = 10,
+  GEQ = 11,
+  NOT = 12,
+  DIV = 13,
+  POP = 14,
+  ASSIGN = 15, // followed by: index of value in environment
+  JOF = 16, // followed by: jump address
+  GOTO = 17, // followed by: jump address
+  LDF = 18, // followed by: maxStackSize, address, env extensn count
+  CALL = 19,
+  LD = 20, // followed by: index of value in environment
+  RTN = 21,
+  DONE = 22
 }
 
 // some auxiliary constants

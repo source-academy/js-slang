@@ -24,5 +24,5 @@ export function print_compiled_program(code: number[]) {
 }
 
 export function run_vm(code: number[]) {
-    return runWithP(code)
+  return runWithP(code)
 }
