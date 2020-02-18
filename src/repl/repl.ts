@@ -8,7 +8,7 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
-      console.log(preludeResult.value)
+      // console.log(preludeResult.value)
       repl.start(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
