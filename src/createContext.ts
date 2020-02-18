@@ -176,10 +176,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'parse_and_compile(program_string)', (str: string) =>
       parse_and_compile(str, createContext(context.chapter))
     )
-    defineBuiltin(context, 'print_compiled_program(machineCode)', (code: number[]) =>
+    defineBuiltin(context, 'print_compiled_program(machine_code)', (code: number[]) =>
       print_compiled_program(code)
     )
-    defineBuiltin(context, 'run_vm(machineCode)', run_vm)
+    defineBuiltin(context, 'run_vm(machine_code)', run_vm)
   }
 
   if (context.chapter >= 4) {

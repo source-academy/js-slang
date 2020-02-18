@@ -646,6 +646,7 @@ export function runWithP(p: number[]) {
   F = 0
   G = 0
   H = 0
+  RUNNING = true
 
   run()
 }
