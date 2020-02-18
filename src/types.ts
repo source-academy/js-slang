@@ -109,6 +109,7 @@ export interface Context<T = any> {
 export interface BlockFrame {
   type: string
   loc?: es.SourceLocation | null
+  enclosingLoc?: es.SourceLocation | null
   children: Array<DefinitionNode | BlockFrame>
 }
 

@@ -2,10 +2,14 @@ import { simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import { BlockFrame, DefinitionNode } from './types'
 
-export function scopeVariables(program: es.Program | es.BlockStatement): BlockFrame {
+export function scopeVariables(
+  program: es.Program | es.BlockStatement,
+  enclosingLoc?: es.SourceLocation | null
+): BlockFrame {
   const block: BlockFrame = {
-    loc: program.loc,
     type: 'BlockFrame',
+    loc: program.loc,
+    enclosingLoc,
     children: []
   }
   const definitionStatements = getDeclarationStatements(program.body) as Array<
@@ -48,14 +52,15 @@ export function scopeVariables(program: es.Program | es.BlockStatement): BlockFr
     scopeVariableDeclaration(statement)
   )
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
-  const arrowFunctionDefinitionsNodes = scopeArrowFunctions(arrowFunctions)
+  const arrowFunctionNodes = scopeArrowFunctions(arrowFunctions)
 
   block.children = [
     ...variableDefinitionNodes,
     ...functionDefinitionNodes,
     ...variableAssignmentNodes,
     ...functionBodyNodes,
-    ...arrowFunctionDefinitionsNodes,
+    ...arrowFunctionNodes.params,
+    ...arrowFunctionNodes.blocks,
     ...ifStatementNodes,
     ...whileStatementNodes,
     ...forStatementVariables,
@@ -91,7 +96,7 @@ export function scopeFunctionDeclaration(
     type: 'DefinitionNode',
     loc: node.loc
   }))
-  const body = scopeVariables(node.body)
+  const body = scopeVariables(node.body, node.loc)
 
   // Modify the body's children attribute to add function parameters
   body.children = [...parameters, ...body.children]
@@ -106,7 +111,9 @@ function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode 
   }
 }
 
-function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNode[] {
+function scopeArrowFunctions(
+  nodes: es.ArrowFunctionExpression[]
+): { params: DefinitionNode[]; blocks: BlockFrame[] } {
   const arrowFunctionParamsNested = nodes.map(node =>
     node.params.map(param => ({
       name: (param as es.Identifier).name,
@@ -114,7 +121,22 @@ function scopeArrowFunctions(nodes: es.ArrowFunctionExpression[]): DefinitionNod
       loc: node.loc
     }))
   )
-  return arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], [])
+
+  // When processing the arrow function body, we always convert it to a block
+  // for easier processing that has the same loc as the current expression
+  const blocks = nodes.map(node =>
+    node.body.type === 'BlockStatement'
+      ? scopeVariables(node.body, node.loc)
+      : scopeVariables(
+          {
+            type: 'BlockStatement',
+            loc: node.body.loc,
+            body: [{ type: 'ExpressionStatement', expression: node.body }]
+          },
+          node.loc
+        )
+  )
+  return { params: arrowFunctionParamsNested.reduce((x, y) => [...x, ...y], []), blocks }
 }
 
 // If statements contain nested predicate and consequent statements
@@ -149,7 +171,7 @@ function scopeForStatements(
           loc: dec.loc
         }))
       : [],
-    block: scopeVariables(node.body as es.BlockStatement)
+    block: scopeVariables(node.body as es.BlockStatement, node.loc)
   }))
 }
 
@@ -180,61 +202,60 @@ export function lookupDefinition(
     : currentDefinition
 }
 
-// Function to do scope redeclaration
 export function getAllOccurrencesInScope(
   target: string,
   line: number,
   col: number,
-  program: es.Program,
-  occurrences: es.SourceLocation[] = []
+  program: es.Program
 ): es.SourceLocation[] {
-  // First we check if there's a redeclaration of the target in the current scope
-  // If there is, set the occurences array to empty because there's a new scope for the name
-  const variableDeclarations = program.body.filter(
-    statement => statement.type === 'VariableDeclaration'
-  ) as es.VariableDeclaration[]
-  if (
-    variableDeclarations.filter(node => (node.declarations[0].id as es.Identifier).name === target)
-      .length === 0
-  ) {
-    occurrences = []
-  }
+  const lookupTree = scopeVariables(program)
+  const identifiers: es.Identifier[] = []
 
-  // Get all the usages of the variable in the current scope/block
-  const programWithoutBlocks = {
-    ...program,
-    body: program.body.filter(statement => statement.type !== 'BlockStatement')
-  }
-  const allIdentifiers: es.SourceLocation[] = []
-  simple(programWithoutBlocks, {
+  simple(program, {
     Identifier(node: es.Identifier) {
-      if (node.name === target) {
-        if (node.loc) {
-          allIdentifiers.push(node.loc)
-        }
+      if (notEmpty(node.loc)) {
+        identifiers.push(node)
       }
     }
   })
-  occurrences = occurrences.concat(allIdentifiers)
 
-  // Get the block where the target lies
-  const nextBlock = (program.body.filter(
-    statement => statement.type === 'BlockStatement'
-  ) as es.BlockStatement[]).filter(node => isLineNumberInLoc(line, node.loc))
-  if (nextBlock.length === 0) {
-    return occurrences
+  return getAllOccurrencesInScopeHelper(target, line, col, lookupTree, identifiers, [])
+}
+
+export function getAllOccurrencesInScopeHelper(
+  target: string,
+  line: number,
+  col: number,
+  block: BlockFrame,
+  identifiers: es.Identifier[],
+  occurrences: es.SourceLocation[]
+): es.SourceLocation[] {
+  // First we check if there's a redeclaration of the target in the current scope
+  // If there is, set the occurences array to empty because there's a new scope for the name
+  const definitionNodes = block.children.filter(isDefinitionNode)
+  if (definitionNodes.filter(def => def.name === target).length !== 0) {
+    occurrences = []
   }
 
-  return getAllOccurrencesInScope(
+  // Only get identifiers that are not in another nested block
+  const nestedBlocks = block.children.filter(isBlockFrame)
+  const identifiersInCurrentBlock = getIdentifiersInCurrentBlock(identifiers, nestedBlocks)
+  occurrences = [...occurrences, ...identifiersInCurrentBlock]
+
+  // Get the block where the target lies, and the identifiers that lie within it
+  const blockToRecurse = (block.children.filter(child =>
+    isBlockFrame(child)
+  ) as BlockFrame[]).filter(childBlock => isLineNumberInLoc(line, childBlock.loc))
+  const identifiersInBlockToRecurse = identifiers.filter(identifier =>
+    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse[0].loc as es.SourceLocation)
+  )
+
+  return getAllOccurrencesInScopeHelper(
     target,
     line,
     col,
-    {
-      type: 'Program',
-      loc: nextBlock[0].loc,
-      body: nextBlock[0].body,
-      sourceType: 'script' // Junk value
-    },
+    blockToRecurse[0],
+    identifiersInBlockToRecurse,
     occurrences
   )
 }
@@ -290,6 +311,14 @@ function isBlockFrame(node: DefinitionNode | BlockFrame): node is BlockFrame {
   return node.type === 'BlockFrame'
 }
 
+function isDefinitionNode(node: DefinitionNode | BlockFrame): node is DefinitionNode {
+  return node.type === 'DefinitionNode'
+}
+
+function notEmpty<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined
+}
+
 // Helper functions
 // Sort by loc sorts the functions by their row. It assumes that there are no repeated definitions in a row
 function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFrame): number {
@@ -318,4 +347,36 @@ function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): b
   const startLine = location.start.line
   const endLine = location.end.line
   return line >= startLine && line <= endLine
+}
+
+function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolean {
+  if (curr == null) {
+    return false
+  } else {
+    return (
+      curr.start.line >= enclosing.start.line &&
+      curr.start.column >= enclosing.start.column &&
+      curr.end.line <= enclosing.end.line &&
+      curr.end.column <= enclosing.end.column
+    )
+  }
+}
+
+// Returns all identifiers that are not within any nested blocks
+function getIdentifiersInCurrentBlock(
+  identifiers: es.Identifier[],
+  blocks: BlockFrame[]
+): es.SourceLocation[] {
+  const filteredLocs: es.SourceLocation[] = identifiers
+    .map(identifier => identifier.loc)
+    .filter(notEmpty)
+  return filteredLocs.filter(
+    loc =>
+      !blocks
+        // Always select enclosing loc if it is available
+        .map(block => (notEmpty(block.enclosingLoc) ? block.enclosingLoc : block.loc))
+        .filter(notEmpty)
+        .map(blockLoc => isPartOf(loc, blockLoc))
+        .some(el => el === true)
+  )
 }
