@@ -10,9 +10,9 @@ export function typeCheck(program: es.Program | undefined): void {
   if (program === undefined || program.body[0] === undefined) {
     return
   }
-  console.log(program)
-  console.log('Type of program is:')
-  console.log(infer(program.body[0], { next: 0, env: {} })[0])
+  // console.log(program)
+  // console.log('Type of program is:')
+  // console.log(infer(program.body[0], { next: 0, env: {} })[0])
   if (program.body[0].type === 'VariableDeclaration') {
     // console.log((program.body[0] as es.VariableDeclaration).declarations)
   } else if (program.body[0].type === 'ExpressionStatement') {
