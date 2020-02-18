@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { parse_and_compile, print_compiled_program } from './stdlib/vm'
+import { parse_and_compile, print_compiled_program, run_vm } from './stdlib/vm'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 
@@ -179,6 +179,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'print_compiled_program(machineCode)', (code: number[]) =>
       print_compiled_program(code)
     )
+    defineBuiltin(context, 'run_vm(machineCode)', run_vm)
   }
 
   if (context.chapter >= 4) {
