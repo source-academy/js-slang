@@ -76,7 +76,7 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
   return {
     name: (node.declarations[0].id as es.Identifier).name,
     type: 'DefinitionNode',
-    loc: node.loc
+    loc: node.declarations[0].id.loc
   }
 }
 
@@ -213,7 +213,7 @@ export function getAllOccurrencesInScope(
 
   simple(program, {
     Identifier(node: es.Identifier) {
-      if (notEmpty(node.loc)) {
+      if (notEmpty(node.loc) && node.name === target) {
         identifiers.push(node)
       }
     }
@@ -233,7 +233,7 @@ export function getAllOccurrencesInScopeHelper(
   // First we check if there's a redeclaration of the target in the current scope
   // If there is, set the occurences array to empty because there's a new scope for the name
   const definitionNodes = block.children.filter(isDefinitionNode)
-  if (definitionNodes.filter(def => def.name === target).length !== 0) {
+  if (definitionNodes.length !== 0) {
     occurrences = []
   }
 
@@ -243,18 +243,35 @@ export function getAllOccurrencesInScopeHelper(
   occurrences = [...occurrences, ...identifiersInCurrentBlock]
 
   // Get the block where the target lies, and the identifiers that lie within it
-  const blockToRecurse = (block.children.filter(child =>
+  const blocksToRecurse = (block.children.filter(child =>
     isBlockFrame(child)
   ) as BlockFrame[]).filter(childBlock => isLineNumberInLoc(line, childBlock.loc))
-  const identifiersInBlockToRecurse = identifiers.filter(identifier =>
-    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse[0].loc as es.SourceLocation)
-  )
 
+  if (blocksToRecurse.length === 0) {
+    return occurrences
+  }
+  const blockToRecurse = blocksToRecurse[0]
+  // TODO: Find a way to neaten the structure of the block to ensure cleaner recursion
+  // We look for any identifiers that are outside the smaller loc and inside the enclosing loc
+  if (notEmpty(blockToRecurse.enclosingLoc)) {
+    const enclosingDefinitions = definitionNodes.filter(
+      node =>
+        isPartOf(node.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation) &&
+        !isPartOf(node.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
+    )
+    if (enclosingDefinitions.length !== 0) {
+      occurrences = []
+    }
+  }
+
+  const identifiersInBlockToRecurse = identifiers.filter(identifier =>
+    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
+  )
   return getAllOccurrencesInScopeHelper(
     target,
     line,
     col,
-    blockToRecurse[0],
+    blockToRecurse,
     identifiersInBlockToRecurse,
     occurrences
   )
