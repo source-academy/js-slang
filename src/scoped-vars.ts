@@ -265,7 +265,7 @@ export function getAllOccurrencesInScopeHelper(
   }
 
   const identifiersInBlockToRecurse = identifiers.filter(identifier =>
-    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
+    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation)
   )
   return getAllOccurrencesInScopeHelper(
     target,
@@ -367,15 +367,14 @@ function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): b
 }
 
 function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolean {
-  if (curr == null) {
-    return false
+  if (enclosing.start.line < curr.start.line && enclosing.end.line > curr.end.line) {
+    return true
+  } else if (enclosing.start.line === curr.start.line && enclosing.end.line > curr.end.line) {
+    return curr.start.column >= enclosing.start.column
+  } else if (enclosing.start.line < curr.start.line && enclosing.end.line === curr.end.line) {
+    return curr.end.column <= enclosing.end.column
   } else {
-    return (
-      curr.start.line >= enclosing.start.line &&
-      curr.start.column >= enclosing.start.column &&
-      curr.end.line <= enclosing.end.line &&
-      curr.end.column <= enclosing.end.column
-    )
+    return false
   }
 }
 
