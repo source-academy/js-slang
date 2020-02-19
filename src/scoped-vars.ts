@@ -216,6 +216,19 @@ export function getAllOccurrencesInScope(
       if (notEmpty(node.loc) && node.name === target) {
         identifiers.push(node)
       }
+    },
+    Pattern(node: es.Pattern) {
+      if (node.type === 'Identifier') {
+        if (node.name === target) {
+          identifiers.push(node)
+        }
+      } else if (node.type === 'MemberExpression') {
+        if (node.object.type === 'Identifier') {
+          if (node.object.name === target) {
+            identifiers.push(node.object)
+          }
+        }
+      }
     }
   })
 
