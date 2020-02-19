@@ -258,7 +258,7 @@ function NEW_RTS_FRAME() {
   HEAP[RES + RTS_FRAME_OS_SLOT] = OS
 }
 
-const RTS: any[] = []
+let RTS: any[] = []
 let TOP_RTS = -1
 
 // expects stack frame in A
@@ -638,6 +638,11 @@ export function runWithP(p: number[]) {
   ENV = -Infinity
   OS = -Infinity
   RES = -Infinity
+  RTS = []
+  TOP_RTS = -1
+  STATE = NORMAL
+  RUNNING = true
+
   A = 0
   B = 0
   C = 0
@@ -646,7 +651,6 @@ export function runWithP(p: number[]) {
   F = 0
   G = 0
   H = 0
-  RUNNING = true
 
   run()
 }
