@@ -373,6 +373,12 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
     return curr.start.column >= enclosing.start.column
   } else if (enclosing.start.line < curr.start.line && enclosing.end.line === curr.end.line) {
     return curr.end.column <= enclosing.end.column
+  } else if (enclosing.start.line === curr.start.line && enclosing.end.line === curr.end.line) {
+    if (enclosing.start.column <= curr.start.column && enclosing.end.column >= curr.end.column) {
+      return true
+    } else {
+      return false
+    }
   } else {
     return false
   }
