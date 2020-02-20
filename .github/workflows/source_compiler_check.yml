@@ -1,0 +1,23 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    name: Source Compiler Integration Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: add source-academy-compiler
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: format:ci# will run `yarn install` command
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: tslint # will run `yarn build` command
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: test # will run `yarn test` command
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: test-coveralls # will run `yarn test` command
