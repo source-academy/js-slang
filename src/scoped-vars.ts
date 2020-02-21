@@ -94,7 +94,7 @@ export function scopeFunctionDeclaration(
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
-    loc: node.loc
+    loc: param.loc
   }))
   const body = scopeVariables(node.body, node.loc)
 
@@ -107,7 +107,7 @@ function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode 
   return {
     name: ((node.expression as es.AssignmentExpression).left as es.Identifier).name,
     type: 'DefinitionNode',
-    loc: node.loc
+    loc: ((node.expression as es.AssignmentExpression).left as es.Identifier).loc
   }
 }
 
@@ -118,7 +118,7 @@ function scopeArrowFunctions(
     node.params.map(param => ({
       name: (param as es.Identifier).name,
       type: 'DefinitionNode',
-      loc: node.loc
+      loc: param.loc
     }))
   )
 
@@ -168,7 +168,7 @@ function scopeForStatements(
       ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
           type: 'DefinitionNode',
           name: (dec.id as es.Identifier).name,
-          loc: dec.loc
+          loc: (dec.id as es.Identifier).loc
         }))
       : [],
     block: scopeVariables(node.body as es.BlockStatement, node.loc)
@@ -190,7 +190,10 @@ export function lookupDefinition(
   const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
     .filter(child => child.name === variableName)
     .filter(child =>
-      child.loc ? child.loc.start.line <= line && child.loc.start.column <= col : false
+      child.loc
+        ? child.loc.start.line < line ||
+          (child.loc.start.line === line && child.loc.start.column <= col)
+        : false
     ) // Only get those definitions above line
   currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
   const blockToRecurse = (node.children.filter(child =>
