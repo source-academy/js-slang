@@ -7,29 +7,31 @@ import * as create from '../utils/astCreator'
 // op-codes of machine instructions, used by compiler
 // and machine
 
-const START = 0
-const LDCN = 1 // followed by: number
-const LDCB = 2 // followed by: boolean
-const LDCU = 3
-const PLUS = 4
-const MINUS = 5
-const TIMES = 6
-const EQUAL = 7
-const LESS = 8
-const GREATER = 9
-const LEQ = 10
-const GEQ = 11
-const NOT = 12
-const DIV = 13
-const POP = 14
-const ASSIGN = 15 // followed by: index of value in environment
-const JOF = 16 // followed by: jump address
-const GOTO = 17 // followed by: jump address
-const LDF = 18 // followed by: maxStackSize, address, env extensn count
-const CALL = 19
-const LD = 20 // followed by: index of value in environment
-const RTN = 21
-const DONE = 22
+export enum OpCodes {
+  START = 0,
+  LDCN = 1, // followed by: number
+  LDCB = 2, // followed by: boolean
+  LDCU = 3,
+  PLUS = 4,
+  MINUS = 5,
+  TIMES = 6,
+  EQUAL = 7,
+  LESS = 8,
+  GREATER = 9,
+  LEQ = 10,
+  GEQ = 11,
+  NOT = 12,
+  DIV = 13,
+  POP = 14,
+  ASSIGN = 15, // followed by: index of value in environment
+  JOF = 16, // followed by: jump address
+  GOTO = 17, // followed by: jump address
+  LDF = 18, // followed by: maxStackSize, address, env extensn count
+  CALL = 19,
+  LD = 20, // followed by: index of value in environment
+  RTN = 21,
+  DONE = 22
+}
 
 // some auxiliary constants
 // to keep track of the inline data
@@ -43,48 +45,48 @@ const DONE = 22
 
 // printing opcodes for debugging
 
-const OPCODES = {
-  [START]: 'START  ',
-  [LDCN]: 'LDCN   ',
-  [LDCB]: 'LDCB   ',
-  [LDCU]: 'LDCU   ',
-  [PLUS]: 'PLUS   ',
-  [MINUS]: 'MINUS  ',
-  [TIMES]: 'TIMES  ',
-  [EQUAL]: 'EQUAL  ',
-  [LESS]: 'LESS   ',
-  [GREATER]: 'GREATER',
-  [LEQ]: 'LEQ    ',
-  [GEQ]: 'GEQ    ',
-  [NOT]: 'NOT    ',
-  [DIV]: 'DIV    ',
-  [POP]: 'POP    ',
-  [ASSIGN]: 'ASSIGN ',
-  [JOF]: 'JOF    ',
-  [GOTO]: 'GOTO   ',
-  [LDF]: 'LDF    ',
-  [CALL]: 'CALL   ',
-  [LD]: 'LD     ',
-  [RTN]: 'RTN    ',
-  [DONE]: 'DONE   '
+const OPCODES_STR = {
+  [OpCodes.START]: 'START  ',
+  [OpCodes.LDCN]: 'LDCN   ',
+  [OpCodes.LDCB]: 'LDCB   ',
+  [OpCodes.LDCU]: 'LDCU   ',
+  [OpCodes.PLUS]: 'PLUS   ',
+  [OpCodes.MINUS]: 'MINUS  ',
+  [OpCodes.TIMES]: 'TIMES  ',
+  [OpCodes.EQUAL]: 'EQUAL  ',
+  [OpCodes.LESS]: 'LESS   ',
+  [OpCodes.GREATER]: 'GREATER',
+  [OpCodes.LEQ]: 'LEQ    ',
+  [OpCodes.GEQ]: 'GEQ    ',
+  [OpCodes.NOT]: 'NOT    ',
+  [OpCodes.DIV]: 'DIV    ',
+  [OpCodes.POP]: 'POP    ',
+  [OpCodes.ASSIGN]: 'ASSIGN ',
+  [OpCodes.JOF]: 'JOF    ',
+  [OpCodes.GOTO]: 'GOTO   ',
+  [OpCodes.LDF]: 'LDF    ',
+  [OpCodes.CALL]: 'CALL   ',
+  [OpCodes.LD]: 'LD     ',
+  [OpCodes.RTN]: 'RTN    ',
+  [OpCodes.DONE]: 'DONE   '
 }
 
-const VALID_UNARY_OPERATORS = new Map([['!', NOT]])
+const VALID_UNARY_OPERATORS = new Map([['!', OpCodes.NOT]])
 const VALID_BINARY_OPERATORS = new Map([
-  ['+', PLUS],
-  ['-', MINUS],
-  ['*', TIMES],
-  ['/', DIV],
-  ['===', EQUAL],
-  ['<', LESS],
-  ['>', GREATER],
-  ['<=', LEQ],
-  ['>=', GEQ]
+  ['+', OpCodes.PLUS],
+  ['-', OpCodes.MINUS],
+  ['*', OpCodes.TIMES],
+  ['/', OpCodes.DIV],
+  ['===', OpCodes.EQUAL],
+  ['<', OpCodes.LESS],
+  ['>', OpCodes.GREATER],
+  ['<=', OpCodes.LEQ],
+  ['>=', OpCodes.GEQ]
 ])
 
 // get name of opcode for debugging
-function getName(op: number) {
-  return OPCODES[op] // need to add guard in case op does not exist
+export function getName(op: number) {
+  return OPCODES_STR[op] // need to add guard in case op does not exist
 }
 
 // pretty-print the program
@@ -97,19 +99,19 @@ export function printProgram(P: number[]) {
     s += ': ' + getName(P[i])
     i++
     if (
-      op === LDCN ||
-      op === LDCB ||
-      op === GOTO ||
-      op === JOF ||
-      op === ASSIGN ||
-      op === LDF ||
-      op === LD ||
-      op === CALL
+      op === OpCodes.LDCN ||
+      op === OpCodes.LDCB ||
+      op === OpCodes.GOTO ||
+      op === OpCodes.JOF ||
+      op === OpCodes.ASSIGN ||
+      op === OpCodes.LDF ||
+      op === OpCodes.LD ||
+      op === OpCodes.CALL
     ) {
       s += ' ' + P[i].toString()
       i++
     }
-    if (op === LDF) {
+    if (op === OpCodes.LDF) {
       s += ' ' + P[i].toString() + ' ' + P[i + 1].toString()
       i += 2
     }
@@ -273,7 +275,7 @@ export function compileToIns(program: es.Program, context: Context) {
         i === statements.length - 1 ? insertFlag : false
       )
       if (i !== statements.length - 1) {
-        addNullaryInstruction(POP)
+        addNullaryInstruction(OpCodes.POP)
       }
       maxStackSize = Math.max(maxStackSize, curExprSize)
     }
@@ -328,8 +330,8 @@ export function compileToIns(program: es.Program, context: Context) {
           indexTable,
           insertFlag
         )
-        addUnaryInstruction(ASSIGN, index)
-        addNullaryInstruction(LDCU)
+        addUnaryInstruction(OpCodes.ASSIGN, index)
+        addNullaryInstruction(OpCodes.LDCU)
         return { maxStackSize, insertFlag }
       } else {
         // assumes let
@@ -348,7 +350,7 @@ export function compileToIns(program: es.Program, context: Context) {
       node = node as es.CallExpression
       const { maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false)
       const maxStackOperands = compileArguments(node.arguments, indexTable)
-      addUnaryInstruction(CALL, node.arguments.length)
+      addUnaryInstruction(OpCodes.CALL, node.arguments.length)
       return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
     },
 
@@ -404,12 +406,12 @@ export function compileToIns(program: es.Program, context: Context) {
     ConditionalExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
       const { test, consequent, alternate } = node as es.ConditionalExpression
       const { maxStackSize: m1 } = compile(test, indexTable, false)
-      addUnaryInstruction(JOF, NaN)
+      addUnaryInstruction(OpCodes.JOF, NaN)
       const JOFAddressAddress = insertPointer - 1
       const { maxStackSize: m2 } = compile(consequent, indexTable, insertFlag)
       let GOTOAddressAddress = NaN
       if (!insertFlag) {
-        addUnaryInstruction(GOTO, NaN)
+        addUnaryInstruction(OpCodes.GOTO, NaN)
         GOTOAddressAddress = insertPointer - 1
       }
       machineCode[JOFAddressAddress] = insertPointer
@@ -429,7 +431,7 @@ export function compileToIns(program: es.Program, context: Context) {
       const names = localNames(bodyNode.type === 'BlockStatement' ? bodyNode.body : bodyNode)
       const parameters = node.params.map(id => (id as es.Identifier).name)
       const extendedIndexTable = extendIndexTable(indexTable, parameters.concat(names))
-      addTernaryInstruction(LDF, NaN, NaN, names.length + parameters.length)
+      addTernaryInstruction(OpCodes.LDF, NaN, NaN, names.length + parameters.length)
       const maxStackSizeAddress = insertPointer - 3
       const addressAddress = insertPointer - 2
       pushToCompile(
@@ -443,9 +445,9 @@ export function compileToIns(program: es.Program, context: Context) {
 
       // undefined is a special case
       if (node.name === 'undefined') {
-        addNullaryInstruction(LDCU)
+        addNullaryInstruction(OpCodes.LDCU)
       } else {
-        addUnaryInstruction(LD, indexOf(indexTable, node.name))
+        addUnaryInstruction(OpCodes.LD, indexOf(indexTable, node.name))
       }
       return { maxStackSize: 1, insertFlag }
     },
@@ -455,10 +457,10 @@ export function compileToIns(program: es.Program, context: Context) {
       // currently only works with numbers and booleans, excludes strings, null and regexp
       const value = node.value
       if (value === true || value === false) {
-        addUnaryInstruction(LDCB, value)
+        addUnaryInstruction(OpCodes.LDCB, value)
       } else {
         // assumes numeric
-        addUnaryInstruction(LDCN, value)
+        addUnaryInstruction(OpCodes.LDCN, value)
       }
       return { maxStackSize: 1, insertFlag }
     },
@@ -508,7 +510,7 @@ export function compileToIns(program: es.Program, context: Context) {
     // handling of return
     if (newInsertFlag) {
       if (expr.type === 'ReturnStatement') {
-        addNullaryInstruction(RTN)
+        addNullaryInstruction(OpCodes.RTN)
       } else if (
         toplevel &&
         (expr.type === 'Literal' ||
@@ -517,25 +519,25 @@ export function compileToIns(program: es.Program, context: Context) {
           expr.type === 'CallExpression' ||
           (expr.type === 'Identifier' && expr.name === 'undefined'))
       ) {
-        addNullaryInstruction(RTN)
+        addNullaryInstruction(OpCodes.RTN)
       } else if (expr.type === 'Program' || expr.type === 'ExpressionStatement') {
         // do nothing. sidestep the ast wrappers
       } else {
-        addNullaryInstruction(LDCU)
+        addNullaryInstruction(OpCodes.LDCU)
         maxStackSize += 1
-        addNullaryInstruction(RTN)
+        addNullaryInstruction(OpCodes.RTN)
       }
     }
     return { maxStackSize, newInsertFlag }
   }
 
-  addNullaryInstruction(START)
+  addNullaryInstruction(OpCodes.START)
   const locals = localNames(program.body)
-  addTernaryInstruction(LDF, NaN, NaN, locals.length)
+  addTernaryInstruction(OpCodes.LDF, NaN, NaN, locals.length)
   const LDFMaxStackSizeAddress = insertPointer - 3
   const LDFAddressAddress = insertPointer - 2
-  addUnaryInstruction(CALL, 0)
-  addNullaryInstruction(DONE)
+  addUnaryInstruction(OpCodes.CALL, 0)
+  addNullaryInstruction(OpCodes.DONE)
 
   const programNamesIndexTable = extendIndexTable(makeEmptyIndexTable(), locals)
   pushToCompile(

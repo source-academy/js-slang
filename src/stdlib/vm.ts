@@ -1,6 +1,7 @@
 import { parse } from '../parser'
 import { Context, Value } from '../types'
 import { compileToIns, printProgram } from '../vm/compiler'
+import { runWithP } from '../vm/machine'
 import { ParseError } from './parser'
 
 export function parse_and_compile(x: string, context: Context): Value {
@@ -20,4 +21,8 @@ export function parse_and_compile(x: string, context: Context): Value {
 
 export function print_compiled_program(code: number[]) {
   printProgram(code)
+}
+
+export function run_vm(code: number[]) {
+  return runWithP(code)
 }

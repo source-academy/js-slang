@@ -89,6 +89,7 @@ const globals = $$NATIVE_STORAGE[1].globals;
       const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
       const parse_and_compile = globals.previousScope.variables.get(\\"parse_and_compile\\").getValue();
       const print_compiled_program = globals.previousScope.variables.get(\\"print_compiled_program\\").getValue();
+      const run_vm = globals.previousScope.variables.get(\\"run_vm\\").getValue();
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
@@ -225,6 +226,7 @@ const globals = $$NATIVE_STORAGE[0].globals;
       const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
       const parse_and_compile = globals.previousScope.variables.get(\\"parse_and_compile\\").getValue();
       const print_compiled_program = globals.previousScope.variables.get(\\"print_compiled_program\\").getValue();
+      const run_vm = globals.previousScope.variables.get(\\"run_vm\\").getValue();
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
