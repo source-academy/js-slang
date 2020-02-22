@@ -276,34 +276,36 @@ function POP_RTS() {
 // environment nodes layout
 //
 // 0: tag  = -102
-// 1: size = number of entries + 4
-// 2: first child = 4
+// 1: size = number of entries + 5
+// 2: first child = 5
 // 3: last child
-// 4: first entry
-// 5: second entry
+// 4: previous env
+// 5: first entry
+// 6: second entry
 // ...
 
 const ENV_TAG = -102
+// Indicates no previous environment
+const PREVIOUS_ENV_SLOT = 4
 
-// expects number of env entries in A
-// changes B
+// expects number of env entries in A, previous env in D
+// changes B, C
 function NEW_ENVIRONMENT() {
   C = A
   A = ENV_TAG
-  B = C + 4
+  B = C + 5
   NEW()
-  HEAP[RES + FIRST_CHILD_SLOT] = 4
-  HEAP[RES + LAST_CHILD_SLOT] = 3 + C
+  HEAP[RES + FIRST_CHILD_SLOT] = 5
+  HEAP[RES + LAST_CHILD_SLOT] = 4 + C
+  HEAP[RES + PREVIOUS_ENV_SLOT] = D
 }
 
 // expects env in A, by-how-many in B
+// changes A, B, C, D
 function EXTEND() {
   D = A
-  A = HEAP[A + SIZE_SLOT] - 4 + B
+  A = B
   NEW_ENVIRONMENT()
-  for (B = HEAP[D + FIRST_CHILD_SLOT]; B <= HEAP[D + LAST_CHILD_SLOT]; B = B + 1) {
-    HEAP[RES + B] = HEAP[D + B]
-  }
 }
 
 // debugging: show current heap
@@ -349,7 +351,7 @@ function show_heap_value(address: number) {
     'result: heap node of type = ' +
       node_kind(HEAP[address]) +
       ', value = ' +
-      HEAP[address + NUMBER_VALUE_SLOT].toString()
+      HEAP[address + NUMBER_VALUE_SLOT]
   )
 }
 
@@ -531,8 +533,13 @@ M[OpCodes.POP] = () => {
 
 M[OpCodes.ASSIGN] = () => {
   POP_OS()
-  HEAP[ENV + HEAP[ENV + FIRST_CHILD_SLOT] + P[PC + 1]] = RES
-  PC = PC + 2
+  B = P[PC + 1] // num of env to lookup
+  C = ENV
+  for (; B > 0; B = B - 1) {
+    C = HEAP[C + PREVIOUS_ENV_SLOT]
+  }
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 2]] = RES
+  PC = PC + 3
 }
 
 M[OpCodes.JOF] = () => {
@@ -561,9 +568,14 @@ M[OpCodes.LDF] = () => {
 }
 
 M[OpCodes.LD] = () => {
-  A = HEAP[ENV + HEAP[ENV + FIRST_CHILD_SLOT] + P[PC + 1]]
+  B = P[PC + 1] // num of env to lookup
+  C = ENV
+  for (; B > 0; B = B - 1) {
+    C = HEAP[C + PREVIOUS_ENV_SLOT]
+  }
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 2]]
   PUSH_OS()
-  PC = PC + 2
+  PC = PC + 3
 }
 
 M[OpCodes.CALL] = () => {

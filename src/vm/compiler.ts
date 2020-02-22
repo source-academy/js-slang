@@ -23,25 +23,15 @@ export enum OpCodes {
   NOT = 12,
   DIV = 13,
   POP = 14,
-  ASSIGN = 15, // followed by: index of value in environment
+  ASSIGN = 15, // followed by: number of environment to go up, index of name in environment
   JOF = 16, // followed by: jump address
   GOTO = 17, // followed by: jump address
   LDF = 18, // followed by: maxStackSize, address, env extensn count
   CALL = 19,
-  LD = 20, // followed by: index of value in environment
+  LD = 20, // followed by: number of environment to go up, index of name in environment
   RTN = 21,
   DONE = 22
 }
-
-// some auxiliary constants
-// to keep track of the inline data
-
-// TODO unused
-// const LDF_MAX_OS_SIZE_OFFSET = 1
-// const LDF_ADDRESS_OFFSET = 2
-// const LDF_ENV_EXTENSION_COUNT_OFFSET = 3
-// const LDCN_VALUE_OFFSET = 1
-// const LDCB_VALUE_OFFSET = 1
 
 // printing opcodes for debugging
 
@@ -103,11 +93,15 @@ export function printProgram(P: number[]) {
       op === OpCodes.LDCB ||
       op === OpCodes.GOTO ||
       op === OpCodes.JOF ||
-      op === OpCodes.ASSIGN ||
       op === OpCodes.LDF ||
+      op === OpCodes.CALL ||
       op === OpCodes.LD ||
-      op === OpCodes.CALL
+      op === OpCodes.ASSIGN
     ) {
+      s += ' ' + P[i].toString()
+      i++
+    }
+    if (op === OpCodes.LD || op === OpCodes.ASSIGN) {
       s += ' ' + P[i].toString()
       i++
     }
@@ -143,14 +137,13 @@ export function compileToIns(program: es.Program, context: Context) {
     machineCode[insertPointer + 1] = arg1
     insertPointer += 2
   }
-  // TODO unused
   // binary instructions have two arguments
-  //   function addBinaryInstruction(opCode: number, arg1: any, arg2: any) {
-  //     machineCode[insertPointer] = opCode
-  //     machineCode[insertPointer + 1] = arg1
-  //     machineCode[insertPointer + 2] = arg2
-  //     insertPointer += 3
-  //   }
+  function addBinaryInstruction(opCode: number, arg1: any, arg2: any) {
+    machineCode[insertPointer] = opCode
+    machineCode[insertPointer + 1] = arg1
+    machineCode[insertPointer + 2] = arg2
+    insertPointer += 3
+  }
   // ternary instructions have three arguments
   function addTernaryInstruction(opCode: number, arg1: any, arg2: any, arg3: any) {
     machineCode[insertPointer] = opCode
@@ -207,18 +200,25 @@ export function compileToIns(program: es.Program, context: Context) {
 
   // indexTable keeps track of environment addresses
   // assigned to names
-  function makeEmptyIndexTable(): string[] {
+  function makeEmptyIndexTable(): EnvName[][] {
     return []
   }
-  function extendIndexTable(indexTable: string[], names: string[]) {
-    return indexTable.concat(names)
+  function extendIndexTable(indexTable: EnvName[][], names: EnvName[]) {
+    return indexTable.concat([names])
   }
-  function indexOf(indexTable: string[], name: string) {
-    const index = indexTable.lastIndexOf(name)
-    if (index === -1) {
-      throw Error('name not found: ' + name)
+  function indexOf(indexTable: EnvName[][], name: string) {
+    for (let i = indexTable.length - 1; i >= 0; i--) {
+      for (let j = 0; j < indexTable[i].length; j++) {
+        const envName = indexTable[i][j]
+        if (envName.name === name) {
+          const envLevel = indexTable.length - 1 - i
+          const index = j
+          const isVar = envName.isVar
+          return { envLevel, index, isVar }
+        }
+      }
     }
-    return index
+    throw Error('name not found: ' + name)
   }
 
   // a small complication: the toplevel function
@@ -239,8 +239,12 @@ export function compileToIns(program: es.Program, context: Context) {
     }
   }
 
+  interface EnvName {
+    name: string
+    isVar: boolean
+  }
   function localNames(stmts: es.Node | es.Node[]) {
-    const names: string[] = []
+    const names: EnvName[] = []
     if (Array.isArray(stmts)) {
       for (const stmt of stmts) {
         names.push(...localNames(stmt))
@@ -248,16 +252,20 @@ export function compileToIns(program: es.Program, context: Context) {
     } else {
       if (stmts.type === 'VariableDeclaration') {
         const node = stmts as es.VariableDeclaration
-        names.push((node.declarations[0].id as es.Identifier).name)
+        const name = (node.declarations[0].id as es.Identifier).name
+        const isVar = node.kind === 'let'
+        names.push({ name, isVar })
       } else if (stmts.type === 'FunctionDeclaration') {
         const node = stmts as es.FunctionDeclaration
-        names.push((node.id as es.Identifier).name)
+        const name = (node.id as es.Identifier).name
+        const isVar = false
+        names.push({ name, isVar })
       }
     }
     return names
   }
 
-  function compileArguments(exprs: es.Node[], indexTable: string[]) {
+  function compileArguments(exprs: es.Node[], indexTable: EnvName[][]) {
     let maxStackSize = 0
     for (let i = 0; i < exprs.length; i++) {
       const { maxStackSize: curExpSize } = compile(exprs[i], indexTable, false)
@@ -266,7 +274,7 @@ export function compileToIns(program: es.Program, context: Context) {
     return maxStackSize
   }
 
-  function compileStatements(statements: es.Node[], indexTable: string[], insertFlag: boolean) {
+  function compileStatements(statements: es.Node[], indexTable: EnvName[][], insertFlag: boolean) {
     let maxStackSize = 0
     for (let i = 0; i < statements.length; i++) {
       const { maxStackSize: curExprSize } = compile(
@@ -284,28 +292,28 @@ export function compileToIns(program: es.Program, context: Context) {
 
   // each compiler should return a maxStackSize
   const compilers = {
-    Program(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    Program(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.Program
       return compileStatements(node.body, indexTable, insertFlag)
     },
 
-    BlockStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    BlockStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.BlockStatement
       // in base vm, block isnt even considered, so just sidestepping it
       return compileStatements(node.body, indexTable, insertFlag)
     },
 
-    ExpressionStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ExpressionStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.ExpressionStatement
       const { maxStackSize } = compile(node.expression, indexTable, insertFlag)
       return { maxStackSize, insertFlag }
     },
 
-    IfStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    IfStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       // SEL
     },
 
-    FunctionDeclaration(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    FunctionDeclaration(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.FunctionDeclaration
       return compile(
         create.constantDeclaration(
@@ -317,36 +325,33 @@ export function compileToIns(program: es.Program, context: Context) {
       )
     },
 
-    VariableDeclaration(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    VariableDeclaration(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       // only supports const
       node = node as es.VariableDeclaration
-      if (node.kind === 'const') {
+      if (node.kind === 'const' || node.kind === 'let') {
         // assumes the left side can only be a name
         const identifier = (node.declarations[0].id as unknown) as es.Identifier
         const name = identifier.name
-        const index = indexOf(indexTable, name)
+        const { envLevel, index } = indexOf(indexTable, name)
         const { maxStackSize } = compile(
           node.declarations[0].init as es.Expression,
           indexTable,
-          insertFlag
+          false
         )
-        addUnaryInstruction(OpCodes.ASSIGN, index)
+        addBinaryInstruction(OpCodes.ASSIGN, envLevel, index)
         addNullaryInstruction(OpCodes.LDCU)
         return { maxStackSize, insertFlag }
-      } else {
-        // assumes let
-        const maxStackSize = 1
-        return { maxStackSize, insertFlag }
       }
+      throw Error('Invalid declaration')
     },
 
-    ReturnStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ReturnStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.ReturnStatement
       const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false)
       return { maxStackSize, insertFlag }
     },
 
-    CallExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    CallExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.CallExpression
       const { maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false)
       const maxStackOperands = compileArguments(node.arguments, indexTable)
@@ -354,7 +359,7 @@ export function compileToIns(program: es.Program, context: Context) {
       return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
     },
 
-    UnaryExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    UnaryExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.UnaryExpression
       if (VALID_UNARY_OPERATORS.has(node.operator)) {
         const opCode = VALID_UNARY_OPERATORS.get(node.operator) as number
@@ -368,7 +373,7 @@ export function compileToIns(program: es.Program, context: Context) {
       }
     },
 
-    BinaryExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    BinaryExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.BinaryExpression
       // assumes + - * / === !== < > <= >=
       if (VALID_BINARY_OPERATORS.has(node.operator)) {
@@ -383,7 +388,7 @@ export function compileToIns(program: es.Program, context: Context) {
       }
     },
 
-    LogicalExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    LogicalExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.LogicalExpression
       if (node.operator === '&&') {
         const { maxStackSize } = compile(
@@ -403,7 +408,7 @@ export function compileToIns(program: es.Program, context: Context) {
       }
     },
 
-    ConditionalExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ConditionalExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       const { test, consequent, alternate } = node as es.ConditionalExpression
       const { maxStackSize: m1 } = compile(test, indexTable, false)
       addUnaryInstruction(OpCodes.JOF, NaN)
@@ -423,13 +428,15 @@ export function compileToIns(program: es.Program, context: Context) {
       return { maxStackSize, insertFlag: false }
     },
 
-    ArrowFunctionExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ArrowFunctionExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.ArrowFunctionExpression
       // node.body is either a block statement which we can evaluate as statements, or a single node to return
       const bodyNode =
         node.body.type === 'BlockStatement' ? node.body : create.returnStatement(node.body)
       const names = localNames(bodyNode.type === 'BlockStatement' ? bodyNode.body : bodyNode)
-      const parameters = node.params.map(id => (id as es.Identifier).name)
+      const parameters: EnvName[] = node.params.map(id => {
+        return { name: (id as es.Identifier).name, isVar: true }
+      })
       const extendedIndexTable = extendIndexTable(indexTable, parameters.concat(names))
       addTernaryInstruction(OpCodes.LDF, NaN, NaN, names.length + parameters.length)
       const maxStackSizeAddress = insertPointer - 3
@@ -440,19 +447,20 @@ export function compileToIns(program: es.Program, context: Context) {
       return { maxStackSize: 1, insertFlag }
     },
 
-    Identifier(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    Identifier(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.Identifier
 
       // undefined is a special case
       if (node.name === 'undefined') {
         addNullaryInstruction(OpCodes.LDCU)
       } else {
-        addUnaryInstruction(OpCodes.LD, indexOf(indexTable, node.name))
+        const { envLevel, index } = indexOf(indexTable, node.name)
+        addBinaryInstruction(OpCodes.LD, envLevel, index)
       }
       return { maxStackSize: 1, insertFlag }
     },
 
-    Literal(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    Literal(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.Literal
       // currently only works with numbers and booleans, excludes strings, null and regexp
       const value = node.value
@@ -465,44 +473,58 @@ export function compileToIns(program: es.Program, context: Context) {
       return { maxStackSize: 1, insertFlag }
     },
 
-    ArrayExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ArrayExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    AssignmentExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    AssignmentExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+      node = node as es.AssignmentExpression
+
+      if (node.left.type === 'Identifier') {
+        const { envLevel, index, isVar } = indexOf(indexTable, node.left.name)
+        if (!isVar) {
+          throw Error('Tried to assign value to const')
+        }
+        const { maxStackSize } = compile(node.right, indexTable, false)
+        addBinaryInstruction(OpCodes.ASSIGN, envLevel, index)
+        addNullaryInstruction(OpCodes.LDCU)
+        return { maxStackSize, insertFlag }
+      }
+      // node.left.type === 'MemberExpression' is an array assignment
+      // other alternative is invalid
+      throw Error('Invalid assignment')
+    },
+
+    ForStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    ForStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    WhileStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    WhileStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    BreakStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    BreakStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ContinueStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    ContinueStatement(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    ObjectExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    ObjectExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    MemberExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     },
 
-    MemberExpression(node: es.Node, indexTable: string[], insertFlag: boolean) {
-      throw Error('Unsupported operation')
-    },
-
-    Property(node: es.Node, indexTable: string[], insertFlag: boolean) {
+    Property(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       throw Error('Unsupported operation')
     }
   }
 
-  function compile(expr: es.Node, indexTable: any[], insertFlag: boolean) {
+  function compile(expr: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
     const compiler = compilers[expr.type]
     const { maxStackSize: temp, insertFlag: newInsertFlag } = compiler(expr, indexTable, insertFlag)
     let maxStackSize = temp // bypass tslint prefer-const
