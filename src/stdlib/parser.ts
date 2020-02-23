@@ -139,7 +139,6 @@ transformers = new Map([
     'UnaryExpression',
     (node: es.Node) => {
       node = node as es.UnaryExpression
-      const loc = node.loc as es.SourceLocation
       return vector_to_list([
         'application',
         vector_to_list([
@@ -155,7 +154,6 @@ transformers = new Map([
     'BinaryExpression',
     (node: es.Node) => {
       node = node as es.BinaryExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'application',
         vector_to_list([
@@ -171,7 +169,6 @@ transformers = new Map([
     'LogicalExpression',
     (node: es.Node) => {
       node = node as es.LogicalExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'boolean_operation',
         vector_to_list([
@@ -200,7 +197,6 @@ transformers = new Map([
     'ArrowFunctionExpression',
     (node: es.Node) => {
       node = node as es.ArrowFunctionExpression
-      const loc = node.body.loc as es.SourceLocation
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
