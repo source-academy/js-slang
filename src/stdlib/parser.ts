@@ -141,10 +141,7 @@ transformers = new Map([
       node = node as es.UnaryExpression
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.argument)])
       ])
     }
@@ -156,10 +153,7 @@ transformers = new Map([
       node = node as es.BinaryExpression
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -171,10 +165,7 @@ transformers = new Map([
       node = node as es.LogicalExpression
       return vector_to_list([
         'boolean_operation',
-        vector_to_list([
-          'name',
-          node.operator
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -205,10 +196,7 @@ transformers = new Map([
             // The body of a function is the statement
             // inside the curly braces.
             makeSequenceIfNeeded(node.body.body)
-          : vector_to_list([
-              'return_statement',
-              transform(node.body)
-            ])
+          : vector_to_list(['return_statement', transform(node.body)])
       ])
     }
   ],
