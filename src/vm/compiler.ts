@@ -120,7 +120,7 @@ export function printProgram(P: number[]) {
 // return the machine code in an array
 export function compileToIns(program: es.Program, context: Context) {
   // machineCode is array for machine instructions
-  const machineCode: any[] = []
+  const machineCode: Array<number | boolean> = []
 
   // insertPointer keeps track of the next free place
   // in machineCode
@@ -155,16 +155,19 @@ export function compileToIns(program: es.Program, context: Context) {
 
   // toCompile stack keeps track of remaining compiler work:
   // these are function bodies that still need to be compiled
-  const toCompile: any[] = []
+  const toCompile: CompileTask[] = []
   // TODO unused
   //   function no_moreToCompile() {
   //     return toCompile.length === 0
   //   }
-  function popToCompile() {
+  function popToCompile(): CompileTask {
     const next = toCompile.pop()
+    if (!next) {
+      throw Error('Unable to compile')
+    }
     return next
   }
-  function pushToCompile(task: any) {
+  function pushToCompile(task: CompileTask) {
     toCompile.push(task)
   }
 
@@ -176,25 +179,28 @@ export function compileToIns(program: es.Program, context: Context) {
   // a function body is done, the function continueToCompile
   // writes the max operand stack size and the address of the
   // function body to the given addresses.
+  // must ensure body passed in is something that has an array of nodes
+  // Program or BlockStatement
 
+  type CompileTask = [es.BlockStatement | es.Program, number, number, EnvName[][]]
   function makeToCompileTask(
-    functionBody: any,
+    body: es.BlockStatement | es.Program,
     maxStackSizeAddress: number,
     addressAddress: number,
-    indexTable: any
-  ) {
-    return [functionBody, maxStackSizeAddress, addressAddress, indexTable]
+    indexTable: EnvName[][]
+  ): CompileTask {
+    return [body, maxStackSizeAddress, addressAddress, indexTable]
   }
-  function toCompileTaskBody(toCompileTask: any) {
+  function toCompileTaskBody(toCompileTask: CompileTask): es.BlockStatement | es.Program {
     return toCompileTask[0]
   }
-  function toCompileTaskMaxStackSizeAddress(toCompileTask: any) {
+  function toCompileTaskMaxStackSizeAddress(toCompileTask: CompileTask): number {
     return toCompileTask[1]
   }
-  function toCompileTaskAddressAddress(toCompileTask: any) {
+  function toCompileTaskAddressAddress(toCompileTask: CompileTask): number {
     return toCompileTask[2]
   }
-  function toCompileTaskIndexTable(toCompileTask: any) {
+  function toCompileTaskIndexTable(toCompileTask: CompileTask): EnvName[][] {
     return toCompileTask[3]
   }
 
@@ -233,7 +239,7 @@ export function compileToIns(program: es.Program, context: Context) {
       const indexTable = toCompileTaskIndexTable(nextToCompile)
       const maxStackSizeAddress = toCompileTaskMaxStackSizeAddress(nextToCompile)
       const body = toCompileTaskBody(nextToCompile)
-      const { maxStackSize } = compile(body, indexTable, true)
+      const { maxStackSize } = compileStatements(body.body, indexTable, true)
       machineCode[maxStackSizeAddress] = maxStackSize
       toplevel = false
     }
@@ -299,8 +305,20 @@ export function compileToIns(program: es.Program, context: Context) {
 
     BlockStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
       node = node as es.BlockStatement
-      // in base vm, block isnt even considered, so just sidestepping it
-      return compileStatements(node.body, indexTable, insertFlag)
+      const names = localNames(node.body)
+      addTernaryInstruction(OpCodes.LDF, NaN, NaN, names.length)
+      const maxStackSizeAddress = insertPointer - 3
+      const addressAddress = insertPointer - 2
+      addUnaryInstruction(OpCodes.CALL, 0)
+      pushToCompile(
+        makeToCompileTask(
+          node,
+          maxStackSizeAddress,
+          addressAddress,
+          extendIndexTable(indexTable, names)
+        )
+      )
+      return { maxStackSize: 1, insertFlag }
     },
 
     ExpressionStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
@@ -432,8 +450,10 @@ export function compileToIns(program: es.Program, context: Context) {
       node = node as es.ArrowFunctionExpression
       // node.body is either a block statement which we can evaluate as statements, or a single node to return
       const bodyNode =
-        node.body.type === 'BlockStatement' ? node.body : create.returnStatement(node.body)
-      const names = localNames(bodyNode.type === 'BlockStatement' ? bodyNode.body : bodyNode)
+        node.body.type === 'BlockStatement'
+          ? node.body
+          : create.blockStatement([create.returnStatement(node.body)])
+      const names = localNames(bodyNode.body)
       const parameters: EnvName[] = node.params.map(id => {
         return { name: (id as es.Identifier).name, isVar: true }
       })
