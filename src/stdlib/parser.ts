@@ -144,11 +144,7 @@ transformers = new Map([
         'application',
         vector_to_list([
           'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column]),
-            vector_to_list([loc.start.line, loc.start.column + 1])
-          ])
+          node.operator
         ]),
         vector_to_list([transform(node.argument)])
       ])
@@ -164,11 +160,7 @@ transformers = new Map([
         'application',
         vector_to_list([
           'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
+          node.operator
         ]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
@@ -184,11 +176,7 @@ transformers = new Map([
         'boolean_operation',
         vector_to_list([
           'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
+          node.operator
         ]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
@@ -223,11 +211,7 @@ transformers = new Map([
             makeSequenceIfNeeded(node.body.body)
           : vector_to_list([
               'return_statement',
-              transform(node.body),
-              vector_to_list([
-                vector_to_list([loc.start.line, loc.start.column]),
-                vector_to_list([loc.end.line, loc.end.column])
-              ])
+              transform(node.body)
             ])
       ])
     }
