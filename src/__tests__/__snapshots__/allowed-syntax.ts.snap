@@ -122,28 +122,7 @@ Object {
                                       "name",
                                       Array [
                                         "+",
-                                        Array [
-                                          Array [
-                                            Array [
-                                              2,
-                                              Array [
-                                                17,
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                2,
-                                                Array [
-                                                  18,
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
+                                        null,
                                       ],
                                     ],
                                     Array [
@@ -185,28 +164,7 @@ Object {
                                       "name",
                                       Array [
                                         ">",
-                                        Array [
-                                          Array [
-                                            Array [
-                                              3,
-                                              Array [
-                                                11,
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                3,
-                                                Array [
-                                                  12,
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
+                                        null,
                                       ],
                                     ],
                                     Array [
@@ -261,28 +219,7 @@ Object {
                                                   "name",
                                                   Array [
                                                     "===",
-                                                    Array [
-                                                      Array [
-                                                        Array [
-                                                          6,
-                                                          Array [
-                                                            17,
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          Array [
-                                                            6,
-                                                            Array [
-                                                              18,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      null,
-                                                    ],
+                                                    null,
                                                   ],
                                                 ],
                                                 Array [
@@ -294,28 +231,7 @@ Object {
                                                           "name",
                                                           Array [
                                                             "%",
-                                                            Array [
-                                                              Array [
-                                                                Array [
-                                                                  6,
-                                                                  Array [
-                                                                    11,
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                Array [
-                                                                  Array [
-                                                                    6,
-                                                                    Array [
-                                                                      12,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              null,
-                                                            ],
+                                                            null,
                                                           ],
                                                         ],
                                                         Array [
@@ -359,28 +275,7 @@ Object {
                                                             "name",
                                                             Array [
                                                               "-",
-                                                              Array [
-                                                                Array [
-                                                                  Array [
-                                                                    7,
-                                                                    Array [
-                                                                      13,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  Array [
-                                                                    Array [
-                                                                      7,
-                                                                      Array [
-                                                                        14,
-                                                                        null,
-                                                                      ],
-                                                                    ],
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                null,
-                                                              ],
+                                                              null,
                                                             ],
                                                           ],
                                                           Array [
@@ -409,28 +304,7 @@ Object {
                                                           "name",
                                                           Array [
                                                             "===",
-                                                            Array [
-                                                              Array [
-                                                                Array [
-                                                                  8,
-                                                                  Array [
-                                                                    24,
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                Array [
-                                                                  Array [
-                                                                    8,
-                                                                    Array [
-                                                                      25,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              null,
-                                                            ],
+                                                            null,
                                                           ],
                                                         ],
                                                         Array [
@@ -442,28 +316,7 @@ Object {
                                                                   "name",
                                                                   Array [
                                                                     "%",
-                                                                    Array [
-                                                                      Array [
-                                                                        Array [
-                                                                          8,
-                                                                          Array [
-                                                                            18,
-                                                                            null,
-                                                                          ],
-                                                                        ],
-                                                                        Array [
-                                                                          Array [
-                                                                            8,
-                                                                            Array [
-                                                                              19,
-                                                                              null,
-                                                                            ],
-                                                                          ],
-                                                                          null,
-                                                                        ],
-                                                                      ],
-                                                                      null,
-                                                                    ],
+                                                                    null,
                                                                   ],
                                                                 ],
                                                                 Array [
@@ -524,28 +377,7 @@ Object {
                                                                           "name",
                                                                           Array [
                                                                             ">",
-                                                                            Array [
-                                                                              Array [
-                                                                                Array [
-                                                                                  11,
-                                                                                  Array [
-                                                                                    16,
-                                                                                    null,
-                                                                                  ],
-                                                                                ],
-                                                                                Array [
-                                                                                  Array [
-                                                                                    11,
-                                                                                    Array [
-                                                                                      17,
-                                                                                      null,
-                                                                                    ],
-                                                                                  ],
-                                                                                  null,
-                                                                                ],
-                                                                              ],
-                                                                              null,
-                                                                            ],
+                                                                            null,
                                                                           ],
                                                                         ],
                                                                         Array [
@@ -582,28 +414,7 @@ Object {
                                                                               "name",
                                                                               Array [
                                                                                 "-",
-                                                                                Array [
-                                                                                  Array [
-                                                                                    Array [
-                                                                                      11,
-                                                                                      Array [
-                                                                                        25,
-                                                                                        null,
-                                                                                      ],
-                                                                                    ],
-                                                                                    Array [
-                                                                                      Array [
-                                                                                        11,
-                                                                                        Array [
-                                                                                          26,
-                                                                                          null,
-                                                                                        ],
-                                                                                      ],
-                                                                                      null,
-                                                                                    ],
-                                                                                  ],
-                                                                                  null,
-                                                                                ],
+                                                                                null,
                                                                               ],
                                                                             ],
                                                                             Array [
@@ -817,28 +628,7 @@ Object {
               "return_statement",
               Array [
                 true,
-                Array [
-                  Array [
-                    Array [
-                      1,
-                      Array [
-                        7,
-                        null,
-                      ],
-                    ],
-                    Array [
-                      Array [
-                        1,
-                        Array [
-                          11,
-                          null,
-                        ],
-                      ],
-                      null,
-                    ],
-                  ],
-                  null,
-                ],
+                null,
               ],
             ],
             null,
@@ -956,28 +746,7 @@ Object {
                       "name",
                       Array [
                         "+",
-                        Array [
-                          Array [
-                            Array [
-                              1,
-                              Array [
-                                23,
-                                null,
-                              ],
-                            ],
-                            Array [
-                              Array [
-                                1,
-                                Array [
-                                  24,
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
+                        null,
                       ],
                     ],
                     Array [
@@ -1309,28 +1078,7 @@ Object {
         "name",
         Array [
           "+",
-          Array [
-            Array [
-              Array [
-                1,
-                Array [
-                  6,
-                  null,
-                ],
-              ],
-              Array [
-                Array [
-                  1,
-                  Array [
-                    7,
-                    null,
-                  ],
-                ],
-                null,
-              ],
-            ],
-            null,
-          ],
+          null,
         ],
       ],
       Array [
@@ -1344,28 +1092,7 @@ Object {
                   "name",
                   Array [
                     "/",
-                    Array [
-                      Array [
-                        Array [
-                          1,
-                          Array [
-                            28,
-                            null,
-                          ],
-                        ],
-                        Array [
-                          Array [
-                            1,
-                            Array [
-                              29,
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
-                      ],
-                      null,
-                    ],
+                    null,
                   ],
                 ],
                 Array [
@@ -1377,28 +1104,7 @@ Object {
                           "name",
                           Array [
                             "%",
-                            Array [
-                              Array [
-                                Array [
-                                  1,
-                                  Array [
-                                    24,
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    1,
-                                    Array [
-                                      25,
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
+                            null,
                           ],
                         ],
                         Array [
@@ -1410,28 +1116,7 @@ Object {
                                   "name",
                                   Array [
                                     "*",
-                                    Array [
-                                      Array [
-                                        Array [
-                                          1,
-                                          Array [
-                                            19,
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            1,
-                                            Array [
-                                              20,
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                      null,
-                                    ],
+                                    null,
                                   ],
                                 ],
                                 Array [
@@ -1443,28 +1128,7 @@ Object {
                                           "name",
                                           Array [
                                             "-",
-                                            Array [
-                                              Array [
-                                                Array [
-                                                  1,
-                                                  Array [
-                                                    8,
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    1,
-                                                    Array [
-                                                      9,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
+                                            null,
                                           ],
                                         ],
                                         Array [
@@ -1484,28 +1148,7 @@ Object {
                                             "name",
                                             Array [
                                               "-",
-                                              Array [
-                                                Array [
-                                                  Array [
-                                                    1,
-                                                    Array [
-                                                      20,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  Array [
-                                                    Array [
-                                                      1,
-                                                      Array [
-                                                        21,
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    null,
-                                                  ],
-                                                ],
-                                                null,
-                                              ],
+                                              null,
                                             ],
                                           ],
                                           Array [
@@ -1625,28 +1268,7 @@ Object {
         "name",
         Array [
           "||",
-          Array [
-            Array [
-              Array [
-                1,
-                Array [
-                  61,
-                  null,
-                ],
-              ],
-              Array [
-                Array [
-                  1,
-                  Array [
-                    62,
-                    null,
-                  ],
-                ],
-                null,
-              ],
-            ],
-            null,
-          ],
+          null,
         ],
       ],
       Array [
@@ -1658,28 +1280,7 @@ Object {
                 "name",
                 Array [
                   "&&",
-                  Array [
-                    Array [
-                      Array [
-                        1,
-                        Array [
-                          52,
-                          null,
-                        ],
-                      ],
-                      Array [
-                        Array [
-                          1,
-                          Array [
-                            53,
-                            null,
-                          ],
-                        ],
-                        null,
-                      ],
-                    ],
-                    null,
-                  ],
+                  null,
                 ],
               ],
               Array [
@@ -1691,28 +1292,7 @@ Object {
                         "name",
                         Array [
                           "&&",
-                          Array [
-                            Array [
-                              Array [
-                                1,
-                                Array [
-                                  42,
-                                  null,
-                                ],
-                              ],
-                              Array [
-                                Array [
-                                  1,
-                                  Array [
-                                    43,
-                                    null,
-                                  ],
-                                ],
-                                null,
-                              ],
-                            ],
-                            null,
-                          ],
+                          null,
                         ],
                       ],
                       Array [
@@ -1724,28 +1304,7 @@ Object {
                                 "name",
                                 Array [
                                   "&&",
-                                  Array [
-                                    Array [
-                                      Array [
-                                        1,
-                                        Array [
-                                          32,
-                                          null,
-                                        ],
-                                      ],
-                                      Array [
-                                        Array [
-                                          1,
-                                          Array [
-                                            33,
-                                            null,
-                                          ],
-                                        ],
-                                        null,
-                                      ],
-                                    ],
-                                    null,
-                                  ],
+                                  null,
                                 ],
                               ],
                               Array [
@@ -1757,28 +1316,7 @@ Object {
                                         "name",
                                         Array [
                                           "&&",
-                                          Array [
-                                            Array [
-                                              Array [
-                                                1,
-                                                Array [
-                                                  23,
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  1,
-                                                  Array [
-                                                    24,
-                                                    null,
-                                                  ],
-                                                ],
-                                                null,
-                                              ],
-                                            ],
-                                            null,
-                                          ],
+                                          null,
                                         ],
                                       ],
                                       Array [
@@ -1790,28 +1328,7 @@ Object {
                                                 "name",
                                                 Array [
                                                   "===",
-                                                  Array [
-                                                    Array [
-                                                      Array [
-                                                        1,
-                                                        Array [
-                                                          11,
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      Array [
-                                                        Array [
-                                                          1,
-                                                          Array [
-                                                            12,
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    null,
-                                                  ],
+                                                  null,
                                                 ],
                                               ],
                                               Array [
@@ -1823,28 +1340,7 @@ Object {
                                                         "name",
                                                         Array [
                                                           "!",
-                                                          Array [
-                                                            Array [
-                                                              Array [
-                                                                1,
-                                                                Array [
-                                                                  0,
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              Array [
-                                                                Array [
-                                                                  1,
-                                                                  Array [
-                                                                    1,
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                null,
-                                                              ],
-                                                            ],
-                                                            null,
-                                                          ],
+                                                          null,
                                                         ],
                                                       ],
                                                       Array [
@@ -1864,28 +1360,7 @@ Object {
                                                           "name",
                                                           Array [
                                                             "!==",
-                                                            Array [
-                                                              Array [
-                                                                Array [
-                                                                  1,
-                                                                  Array [
-                                                                    17,
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                Array [
-                                                                  Array [
-                                                                    1,
-                                                                    Array [
-                                                                      18,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              null,
-                                                            ],
+                                                            null,
                                                           ],
                                                         ],
                                                         Array [
@@ -1915,28 +1390,7 @@ Object {
                                                   "name",
                                                   Array [
                                                     "<",
-                                                    Array [
-                                                      Array [
-                                                        Array [
-                                                          1,
-                                                          Array [
-                                                            27,
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          Array [
-                                                            1,
-                                                            Array [
-                                                              28,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      null,
-                                                    ],
+                                                    null,
                                                   ],
                                                 ],
                                                 Array [
@@ -1966,28 +1420,7 @@ Object {
                                           "name",
                                           Array [
                                             "<=",
-                                            Array [
-                                              Array [
-                                                Array [
-                                                  1,
-                                                  Array [
-                                                    37,
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    1,
-                                                    Array [
-                                                      38,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
+                                            null,
                                           ],
                                         ],
                                         Array [
@@ -2017,28 +1450,7 @@ Object {
                                   "name",
                                   Array [
                                     ">=",
-                                    Array [
-                                      Array [
-                                        Array [
-                                          1,
-                                          Array [
-                                            47,
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            1,
-                                            Array [
-                                              48,
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                      null,
-                                    ],
+                                    null,
                                   ],
                                 ],
                                 Array [
@@ -2068,28 +1480,7 @@ Object {
                           "name",
                           Array [
                             ">",
-                            Array [
-                              Array [
-                                Array [
-                                  1,
-                                  Array [
-                                    56,
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    1,
-                                    Array [
-                                      57,
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
+                            null,
                           ],
                         ],
                         Array [
@@ -3014,28 +2405,7 @@ Object {
                     "name",
                     Array [
                       "<",
-                      Array [
-                        Array [
-                          Array [
-                            2,
-                            Array [
-                              10,
-                              null,
-                            ],
-                          ],
-                          Array [
-                            Array [
-                              2,
-                              Array [
-                                11,
-                                null,
-                              ],
-                            ],
-                            null,
-                          ],
-                        ],
-                        null,
-                      ],
+                      null,
                     ],
                   ],
                   Array [
@@ -3078,28 +2448,7 @@ Object {
                                 "name",
                                 Array [
                                   "+",
-                                  Array [
-                                    Array [
-                                      Array [
-                                        3,
-                                        Array [
-                                          9,
-                                          null,
-                                        ],
-                                      ],
-                                      Array [
-                                        Array [
-                                          3,
-                                          Array [
-                                            10,
-                                            null,
-                                          ],
-                                        ],
-                                        null,
-                                      ],
-                                    ],
-                                    null,
-                                  ],
+                                  null,
                                 ],
                               ],
                               Array [
@@ -3733,28 +3082,7 @@ Object {
                       "name",
                       Array [
                         "<",
-                        Array [
-                          Array [
-                            Array [
-                              2,
-                              Array [
-                                15,
-                                null,
-                              ],
-                            ],
-                            Array [
-                              Array [
-                                2,
-                                Array [
-                                  16,
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
+                        null,
                       ],
                     ],
                     Array [
@@ -3794,28 +3122,7 @@ Object {
                               "name",
                               Array [
                                 "+",
-                                Array [
-                                  Array [
-                                    Array [
-                                      2,
-                                      Array [
-                                        26,
-                                        null,
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        2,
-                                        Array [
-                                          27,
-                                          null,
-                                        ],
-                                      ],
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
+                                null,
                               ],
                             ],
                             Array [
@@ -4957,28 +4264,7 @@ Object {
                       "name",
                       Array [
                         "<",
-                        Array [
-                          Array [
-                            Array [
-                              2,
-                              Array [
-                                19,
-                                null,
-                              ],
-                            ],
-                            Array [
-                              Array [
-                                2,
-                                Array [
-                                  20,
-                                  null,
-                                ],
-                              ],
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
+                        null,
                       ],
                     ],
                     Array [
@@ -5018,28 +4304,7 @@ Object {
                               "name",
                               Array [
                                 "+",
-                                Array [
-                                  Array [
-                                    Array [
-                                      2,
-                                      Array [
-                                        30,
-                                        null,
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        2,
-                                        Array [
-                                          31,
-                                          null,
-                                        ],
-                                      ],
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
+                                null,
                               ],
                             ],
                             Array [
@@ -5078,28 +4343,7 @@ Object {
                                   "name",
                                   Array [
                                     "<",
-                                    Array [
-                                      Array [
-                                        Array [
-                                          3,
-                                          Array [
-                                            9,
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            3,
-                                            Array [
-                                              10,
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                      null,
-                                    ],
+                                    null,
                                   ],
                                 ],
                                 Array [
@@ -5157,28 +4401,7 @@ Object {
                                                       "name",
                                                       Array [
                                                         "+",
-                                                        Array [
-                                                          Array [
-                                                            Array [
-                                                              6,
-                                                              Array [
-                                                                11,
-                                                                null,
-                                                              ],
-                                                            ],
-                                                            Array [
-                                                              Array [
-                                                                6,
-                                                                Array [
-                                                                  12,
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
+                                                        null,
                                                       ],
                                                     ],
                                                     Array [
@@ -5214,28 +4437,7 @@ Object {
                                                       "name",
                                                       Array [
                                                         ">",
-                                                        Array [
-                                                          Array [
-                                                            Array [
-                                                              7,
-                                                              Array [
-                                                                11,
-                                                                null,
-                                                              ],
-                                                            ],
-                                                            Array [
-                                                              Array [
-                                                                7,
-                                                                Array [
-                                                                  12,
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
+                                                        null,
                                                       ],
                                                     ],
                                                     Array [
