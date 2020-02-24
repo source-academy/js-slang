@@ -1,5 +1,6 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { DebuggerStatement, Literal, Program } from 'estree'
+import { writeFileSync } from 'fs'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -193,6 +194,9 @@ export async function runInContext(
     try {
       const temp = transpile(program, context.contextId)
       // some issues with formatting and semicolons and tslint so no destructure
+      writeFileSync('./output.js', temp.transpiled)
+      writeFileSync('./output1.js', JSON.stringify(temp.codeMap))
+      writeFileSync('./output2.js', JSON.stringify(temp.evalMap))
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap

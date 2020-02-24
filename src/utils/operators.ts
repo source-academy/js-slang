@@ -8,6 +8,7 @@ import {
   RuntimeSourceError
 } from '../interpreter-errors'
 import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
+import { evaluateThunk, makeThunk, Thunk } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -99,9 +100,53 @@ export function binaryOp(
     right
   )
   if (error === undefined) {
-    return evaluateBinaryExpression(operator, left, right)
+    return lazyEvaluateBinaryExpression(operator, makeThunk(left), makeThunk(right))
   } else {
     throw error
+  }
+}
+
+/**
+ * Evaluates a binary expression in Lazy Source,
+ * returning a Thunk that is guaranteed to only be
+ * a wrapper for a primitive value.
+ * @param operator String representing the operator
+ *     to be executed.
+ * @param left The first argument, or the left, of
+ *     this operator.
+ * @param right The second argument, or the right, of
+ *     this operator.
+ */
+export function lazyEvaluateBinaryExpression(
+  operator: BinaryOperator,
+  left: Thunk<any>,
+  right: Thunk<any>
+): Thunk<any> {
+  switch (operator) {
+    case '+':
+      return makeThunk(evaluateThunk(left) + evaluateThunk(right))
+    case '-':
+      return makeThunk(evaluateThunk(left) - evaluateThunk(right))
+    case '*':
+      return makeThunk(evaluateThunk(left) * evaluateThunk(right))
+    case '/':
+      return makeThunk(evaluateThunk(left) / evaluateThunk(right))
+    case '%':
+      return makeThunk(evaluateThunk(left) % evaluateThunk(right))
+    case '===':
+      return makeThunk(evaluateThunk(left) === evaluateThunk(right))
+    case '!==':
+      return makeThunk(evaluateThunk(left) !== evaluateThunk(right))
+    case '<=':
+      return makeThunk(evaluateThunk(left) <= evaluateThunk(right))
+    case '<':
+      return makeThunk(evaluateThunk(left) < evaluateThunk(right))
+    case '>':
+      return makeThunk(evaluateThunk(left) > evaluateThunk(right))
+    case '>=':
+      return makeThunk(evaluateThunk(left) >= evaluateThunk(right))
+    default:
+      return makeThunk(undefined)
   }
 }
 

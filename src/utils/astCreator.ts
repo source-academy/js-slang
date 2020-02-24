@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import { Literal, makeThunk } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 
 export const locationDummyNode = (line: number, column: number) =>
@@ -7,6 +8,13 @@ export const locationDummyNode = (line: number, column: number) =>
 export const identifier = (name: string): es.Identifier => ({
   type: 'Identifier',
   name
+})
+
+// Constructs a new Thunk value for lazy evaluation
+export const lazyLiteral = (value: string | number | boolean, loc?: es.SourceLocation): Literal => ({
+  type: 'Literal',
+  value: makeThunk(value),
+  loc
 })
 
 export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({
