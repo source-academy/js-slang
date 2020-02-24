@@ -13,7 +13,7 @@ HELPERSTEX = $(HELPERS:%=source_%.tex)
 all: $(PDFSPECS)
 
 %.pdf: %.tex $(HELPERSTEX)
-	$(PDFLATEX) $? $@
+	$(PDFLATEX) $*
 
 clean:
 	rm -f *~ *.dvi *.aux *.log *.ps *.out
