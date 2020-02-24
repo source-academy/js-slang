@@ -328,7 +328,19 @@ export function compileToIns(program: es.Program, context: Context) {
     },
 
     IfStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
-      // SEL
+      const { test, consequent, alternate } = node as es.IfStatement
+      const { maxStackSize: m1 } = compile(test, indexTable, false)
+      addUnaryInstruction(OpCodes.JOF, NaN)
+      const JOFAddressAddress = insertPointer - 1
+      const { maxStackSize: m2 } = compile(consequent, indexTable, false)
+      addUnaryInstruction(OpCodes.GOTO, NaN)
+      const GOTOAddressAddress = insertPointer - 1
+      machineCode[JOFAddressAddress] = insertPointer
+      // Source spec: must have else
+      const { maxStackSize: m3 } = compile(alternate as es.Node, indexTable, false)
+      machineCode[GOTOAddressAddress] = insertPointer
+      const maxStackSize = Math.max(m1, m2, m3)
+      return { maxStackSize, insertFlag }
     },
 
     FunctionDeclaration(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
@@ -546,6 +558,9 @@ export function compileToIns(program: es.Program, context: Context) {
 
   function compile(expr: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
     const compiler = compilers[expr.type]
+    if (!compiler) {
+      throw Error('Unsupported operation')
+    }
     const { maxStackSize: temp, insertFlag: newInsertFlag } = compiler(expr, indexTable, insertFlag)
     let maxStackSize = temp // bypass tslint prefer-const
 
