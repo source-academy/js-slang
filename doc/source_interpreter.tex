@@ -1,8 +1,6 @@
 \section*{Interpreter Support}
 
 \begin{itemize}
-\item \lstinline{parse(x)}: \textit{primitive}, returns the parse tree that results from parsing
-the string \lstinline{x} as a Source program.
 \item \lstinline{apply_in_underlying_javascript(f, xs)}: \textit{primitive}, calls the function \lstinline{f}
 with arguments \lstinline{xs}. For example:
 \begin{lstlisting}
@@ -11,4 +9,139 @@ function times(x, y) {
 }
 apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \end{lstlisting}
+\item \lstinline{parse(x)}: \textit{primitive}, returns the parse tree that results from parsing
+the string \lstinline{x} as a Source program. The following two pages describe the shape of the parse tree.
 \end{itemize}
+
+\newpage
+\KOMAoptions{paper=landscape,pagesize}
+\recalctypearea
+
+\begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
+                                                           && \texttt{list("sequence", list of <statement>)} \\[1mm]
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \texttt{list("constant\_declaration", <name>, <expression>)} \\
+&&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
+                                                           &&  \textrm{see below}\\
+&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
+                                                           && \textrm{see below}\\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \texttt{list("array\_assignment", <expression>, <expression>)} \\
+&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
+                                                           &&  \textrm{treat as}:\ \textbf{\texttt{const}}\  \textit{name} \ 
+                                   \textbf{\texttt{=}}\  \textit{parameters} \ \textbf{\texttt{=>}}\ \textit{block} \textbf{\texttt{;}} \\
+&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \texttt{list("return\_statement", <expression>)} \\
+&&                       && |   &\quad && \textit{if-statement} \quad
+                                                           && \textrm{see below}\\
+&&                       && |   &\quad && \textbf{\texttt{while}}\  
+                                   \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
+                                   \textit{block}
+                                                           && \texttt{list("while\_loop", <expression>, <statement>)} \\
+&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+                                          (\ \textit{\hyperlink{for}{assignment}} \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
+                                            \textit{block}
+                                            && \texttt{list("for\_loop", <statement>, <expression>, <statement>,}\\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{ <statement>)} \\
+&&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
+                                                           && \texttt{list("break\_statement")} \\
+&&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
+                                                           && \texttt{list("continue\_statement")} \\
+&&                       && |   &\quad &&  \textit{block} 
+                                                           && \textrm{see below}\\
+&&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{see below}\\[1mm]
+&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
+                                                            && \texttt{list of <name>} \\
+&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
+                                   \textit{block} \\
+&&                       &&     &      && \textbf{\texttt{else}}\
+                                          (\ \textit{block}
+                                          \ | \
+                                          \textit{\href{https://sicp.comp.nus.edu.sg/chapters/21\#footnote-1}{if-statement}} \ )
+                                          && \texttt{list("conditional\_statement", <expression>, } \\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<statement>, <statement>)} \\
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
+                                                           && \texttt{list("block", <statement>)} \\
+&& \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} 
+                                                            && \texttt{list("variable\_declaration", <name>, <expression>)} \\
+&& \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} 
+                                                            && \texttt{list("assignment", <name>, <expression>)} \\
+\end{alignat*}
+
+\begin{alignat*}{9}
+                                           && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{self-evaluating} \\
+&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
+                                                           && \textrm{self-evaluating} \\
+&&                       && |   &\quad && \textbf{\texttt{null}}
+                                                           && \textrm{self-evaluating} \\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{self-evaluating} \\
+&&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)} \ \textrm{or}\ \texttt{list("name", string, location)} \\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+                                            \textit{expression} \qquad
+                                                           && \texttt{list("application", <name>, list of <expression>)} \\
+&&                       && |   &\quad &&   \textit{unary-operator} \ 
+                                            \textit{expression}
+                                                           && \texttt{list("application", <name>, list of <expression>)} \\
+&&                       && |   &\quad &&   \textit{expression} \ 
+                                            \textbf{\texttt{(}}\ \textit{expressions}\
+                                            \textbf{\texttt{)}}
+                                                           && \texttt{list("application", <expression>, list of <expression>)} \\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{expression}
+                                            && \texttt{list("function\_definition", <parameters>,}  \\
+                                              && && & && && \texttt{list("return\_statement", <expression>))} \\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \texttt{list("function\_definition", <parameters>, <statement>)} \\
+&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
+                                            \textit{expression}
+                                            \ \textbf{\texttt{:}}\
+                                            \textit{expression}\
+                                                           && \texttt{list("conditional\_expression", <expression>,} \\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<expression>, <expression>)} \\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}}
+                                                           && \texttt{list("array\_access", <expression>, <expression>)} \\
+&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
+                                            \textit{expressions}\
+                                            \textbf{\texttt{]}}
+                                                           && \texttt{list("array\_expression", list of <expression>)} \\
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+                                            \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
+&& \textit{binary-operator}    \ 
+                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
+&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
+                                          && \texttt{list("name", string)} \\[1mm]
+&& \textit{unary-operator}    
+                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
+                        && \texttt{list("name", string)} \\
+&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{expression} \ 
+                                                                      )\ \ldots
+                                                            && \texttt{list of <expression>} \\
+\end{alignat*}
+
+
+
+\newpage
+\KOMAoptions{paper=portrait,pagesize}
+\recalctypearea

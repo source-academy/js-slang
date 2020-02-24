@@ -524,10 +524,9 @@ describe('These tests are reporting weird line numbers, as list functions are no
     list_ref(list(1, 2, 3), 3);
   `,
       { chapter: 2, native: true }
-    ).toMatchInlineSnapshot(`
-"native:\\"Line -1: Error: head(xs) expects a pair as argument xs, but encountered null\\"
-interpreted:\\"Line 147: Error: head(xs) expects a pair as argument xs, but encountered null\\""
-`)
+    ).toMatchInlineSnapshot(
+      `"Line 147: Error: head(xs) expects a pair as argument xs, but encountered null"`
+    )
   })
 
   test('bad index error list_ref', () => {

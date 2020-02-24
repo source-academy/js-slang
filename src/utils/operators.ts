@@ -4,7 +4,8 @@ import {
   CallingNonFunctionValue,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArguments
+  InvalidNumberOfArguments,
+  RuntimeSourceError
 } from '../interpreter-errors'
 import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
 import { callExpression, locationDummyNode } from './astCreator'
@@ -32,7 +33,12 @@ export function callIfFuncAndRightArgs(
       try {
         return candidate(...args)
       } catch (error) {
-        throw new ExceptionError(error, dummy.loc!)
+        // if we already handled the error, simply pass it on
+        if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+          throw new ExceptionError(error, dummy.loc!)
+        } else {
+          throw error
+        }
       }
     } else {
       const expectedLength = candidate.transformedFunction.length
@@ -163,7 +169,17 @@ export const callIteratively = (f: any, ...args: any[]) => {
         )
       }
     }
-    const res = f(...args)
+    let res
+    try {
+      res = f(...args)
+    } catch (error) {
+      // if we already handled the error, simply pass it on
+      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+        throw new ExceptionError(error, dummy.loc!)
+      } else {
+        throw error
+      }
+    }
     if (res === null || res === undefined) {
       return res
     } else if (res.isTail === true) {
