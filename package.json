@@ -46,14 +46,14 @@
   "devDependencies": {
     "@types/jest": "^25.1.1",
     "@types/node": "^13.7.0",
-    "coveralls": "^3.0.2",
-    "husky": "^2.3.0",
-    "jest": "^23.6.0",
+    "coveralls": "^3.0.9",
+    "husky": "^4.2.1",
+    "jest": "^24.8.0",
     "jsdoc": "3.5.5",
-    "prettier": "^1.14.3",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "jest": {
     "moduleFileExtensions": [
