@@ -66,7 +66,7 @@ is assumed to be located in ``../cadet-frontend``, from the root of this repo.
 The command
 ``yarn jsdoc``
 makes the documentation available in folder
-``doc/jsdoc/libraries/``
+``doc/jsdoc/libraries/``.
 The script `jsdoc` provides an installation command to deploy the documentation via `scp` on a server:
 ``yarn jsdoc install``
 
@@ -94,15 +94,6 @@ including specifics and correction guides, should be left to elaborate().
 
 Please remember to write test cases to reflect your added functionalities. The god of this repository is self-professed
 to be very particular about test cases.
-
-Documentation
--------------
-
-Documentation on Source §x is generated from LaTeX sources in folder ``doc``.
-Currently the documents are generated as follows:
-``cd doc; make``
-
-
 
 Using your js-slang in local Source Academy
 -------------------------------------------
