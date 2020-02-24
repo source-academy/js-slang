@@ -93,7 +93,9 @@ function convertNativeErrorToSourceError(
 
   const message = error.message
   if (name === null) {
-    name = 'UNKNOWN'
+    // make an unknown name more obvious, by making the text
+    // an invalid JavaScript variable name
+    name = '::???UNKNOWN???::'
   }
 
   function messageContains(possibleErrorMessages: string[]) {
@@ -200,9 +202,10 @@ export async function runInContext(
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
+      const result = sandboxedEval(transpiled);
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled)
+        value: result
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {

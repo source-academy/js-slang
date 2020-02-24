@@ -88,8 +88,8 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
 
 export function binaryOp(
   operator: BinaryOperator,
-  left: any,
-  right: any,
+  left: Thunk<any>,
+  right: Thunk<any>,
   line: number,
   column: number
 ) {
@@ -100,7 +100,7 @@ export function binaryOp(
     right
   )
   if (error === undefined) {
-    return lazyEvaluateBinaryExpression(operator, makeThunk(left), makeThunk(right))
+    return evaluateBinaryExpression(operator, left, right)
   } else {
     throw error
   }
@@ -117,7 +117,7 @@ export function binaryOp(
  * @param right The second argument, or the right, of
  *     this operator.
  */
-export function lazyEvaluateBinaryExpression(
+export function evaluateBinaryExpression(
   operator: BinaryOperator,
   left: Thunk<any>,
   right: Thunk<any>
@@ -147,35 +147,6 @@ export function lazyEvaluateBinaryExpression(
       return makeThunk(evaluateThunk(left) >= evaluateThunk(right))
     default:
       return makeThunk(undefined)
-  }
-}
-
-export function evaluateBinaryExpression(operator: BinaryOperator, left: any, right: any) {
-  switch (operator) {
-    case '+':
-      return left + right
-    case '-':
-      return left - right
-    case '*':
-      return left * right
-    case '/':
-      return left / right
-    case '%':
-      return left % right
-    case '===':
-      return left === right
-    case '!==':
-      return left !== right
-    case '<=':
-      return left <= right
-    case '<':
-      return left < right
-    case '>':
-      return left > right
-    case '>=':
-      return left >= right
-    default:
-      return undefined
   }
 }
 

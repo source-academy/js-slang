@@ -1,4 +1,4 @@
-import { BaseExpression, BaseNode } from "estree";
+import { typeOf } from "../utils/typeOf";
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -6,7 +6,10 @@ import { BaseExpression, BaseNode } from "estree";
  */
 
 // Primitive Thunk type
-export type Thunk<T> = () => T;
+export interface Thunk<T> {
+  type: string,
+  value: () => T
+}
 
 export type LazyNullary<R> = () => Thunk<R>;
 
@@ -16,14 +19,6 @@ export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>;
 
 export type LazyTertiary<T, U, V, R> =
   (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>;
-
-// a replacement for estree.Literal, as literal
-// values in Lazy Source are Thunks
-export interface Literal extends BaseNode, BaseExpression {
-  type: "Literal";
-  value: Thunk<string | boolean | number | null>;
-  raw?: string;
-}
 
 /**
  * Primitive function in Lazy Source.
@@ -43,7 +38,10 @@ export function force<T>(expression: Thunk<T>) {
  * @param value The primitive value.
  */
 export function makeThunk<T>(value: T): Thunk<T> {
-  return () => value;
+  return {
+    type: typeOf(value),
+    value: () => value
+  };
 }
 
 /**
@@ -54,7 +52,7 @@ export function makeThunk<T>(value: T): Thunk<T> {
  * @param value The thunk.
  */
 export function evaluateThunk<T>(thunk: Thunk<T>): T {
-  return thunk();
+  return thunk.value();
 }
 
 /**

@@ -135,6 +135,12 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
     )
 }
 
+/**
+ * To make sure lazy Literals (thunks) are still printed as their
+ * original appearance instead of the function appearance, Literals
+ * are mapped as well
+ * @param program The program to be modified
+ */
 function generateFunctionsToStringMap(program: es.Program) {
   const map: Map<es.Node, string> = new Map()
   simple(program, {
@@ -540,6 +546,19 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   }
 }
 
+/**
+ * Converts primitive values in the Abstract Syntax Tree
+ * to Thunks for lazy evaluation.
+ * @param program The program to transform.
+ */
+function transformValuesToThunks(program: es.Program) {
+  simple(program, {
+    Literal(node: es.Literal) {
+      create.mutateToThunk(node)
+    }
+  })
+}
+
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
@@ -647,6 +666,9 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
+  // make literals into Thunks for lazy evaluation
+  transformValuesToThunks(program);
+  // console.log(JSON.stringify(program));
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)

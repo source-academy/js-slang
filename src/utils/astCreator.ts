@@ -1,6 +1,6 @@
 import * as es from 'estree'
-import { Literal, makeThunk } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
+import { typeOf } from './typeOf'
 
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
@@ -10,12 +10,108 @@ export const identifier = (name: string): es.Identifier => ({
   name
 })
 
-// Constructs a new Thunk value for lazy evaluation
-export const lazyLiteral = (value: string | number | boolean, loc?: es.SourceLocation): Literal => ({
-  type: 'Literal',
-  value: makeThunk(value),
-  loc
-})
+/**
+ * Constructs a new Thunk value for lazy evaluation. This function
+ * does this by taking the original Literal in the Abstract Syntax
+ * Tree, and changing it into an ArrowFunctionExpression with the
+ * literal in its body
+ * @param node The Literal to be transformed.
+ */
+export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
+  // creates a new copy of node.loc
+  function copyLoc() {
+    if (!node.loc) {
+      return undefined;
+    } else {
+      return {
+        start: Object.assign({}, node.loc.start),
+        end: Object.assign({}, node.loc.end)
+      };
+    }
+  }
+  // make a new object for the new Thunk
+  const newNode = node as any;
+  newNode.type = "ObjectExpression"
+  // get type of literal
+  const type = typeOf(node.value);
+  // ensure that the raw type becomes a string, not a variable
+  const typeRaw = "\"" + type + "\"";
+  // get rid of old value and old raw
+  const oldValue = newNode.value;
+  newNode.value = undefined;
+  const oldRaw = newNode.raw;
+  newNode.raw = undefined;
+  newNode.properties = [];
+  // set Thunk properties
+  // first, create type property
+  newNode.properties[0] = {
+    type: "Property",
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: "Identifier",
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: "type"
+    },
+    // value of type is a string literal
+    value: {
+      type: "Literal",
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: type,
+      raw: typeRaw
+    },
+    kind: "init"
+  }
+  // get arrow function
+  const arrowFunction = {
+    type: "ArrowFunctionExpression",
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    id: null,
+    expression: true,
+    generator: false,
+    params: [],
+    body: {
+      type: "Literal",
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: oldValue,
+      raw: oldRaw
+    }
+  }
+  // then, create the value property
+  // also create lambda function storing original literal
+  newNode.properties[1] = {
+    type: "Property",
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: "Identifier",
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: "value"
+    },
+    // value of 'value' is an ArrowFunctionExpression
+    value: arrowFunction,
+    kind: "init"
+  }
+  return newNode;
+}
 
 export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({
   type: 'Literal',

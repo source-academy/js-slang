@@ -1,6 +1,8 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../interpreter-errors'
+import { Thunk } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
+import { typeOf } from './typeOf'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -23,16 +25,10 @@ export class TypeError extends RuntimeSourceError {
   }
 }
 
-// We need to define our own typeof in order for null/array to display properly in error messages
-const typeOf = (v: Value) => {
-  if (v === null) {
-    return 'null'
-  } else if (Array.isArray(v)) {
-    return 'array'
-  } else {
-    return typeof v
-  }
-}
+// Checks if a Thunk is a number
+const isNumberT = (v: Thunk<Value>) => v.type === 'number'
+// Checks if Thunk is a string
+const isStringT = (v: Thunk<Value>) => v.type === 'string'
 
 const isNumber = (v: Value) => typeOf(v) === 'number'
 // See section 4 of https://2ality.com/2012/12/arrays.html
@@ -57,17 +53,17 @@ export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, 
 export const checkBinaryExpression = (
   node: es.Node,
   operator: es.BinaryOperator,
-  left: Value,
-  right: Value
+  left: Thunk<Value>,
+  right: Thunk<Value>
 ) => {
   switch (operator) {
     case '-':
     case '*':
     case '/':
     case '%':
-      if (!isNumber(left)) {
+      if (!isNumberT(left)) {
         return new TypeError(node, LHS, 'number', typeOf(left))
-      } else if (!isNumber(right)) {
+      } else if (!isNumberT(right)) {
         return new TypeError(node, RHS, 'number', typeOf(right))
       } else {
         return
@@ -77,10 +73,10 @@ export const checkBinaryExpression = (
     case '<=':
     case '>':
     case '>=':
-      if (isNumber(left)) {
-        return isNumber(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right))
-      } else if (isString(left)) {
-        return isString(right) ? undefined : new TypeError(node, RHS, 'string', typeOf(right))
+      if (isNumberT(left)) {
+        return isNumberT(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right))
+      } else if (isStringT(left)) {
+        return isStringT(right) ? undefined : new TypeError(node, RHS, 'string', typeOf(right))
       } else {
         return new TypeError(node, LHS, 'string or number', typeOf(left))
       }
