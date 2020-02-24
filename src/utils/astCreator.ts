@@ -21,31 +21,31 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
   // creates a new copy of node.loc
   function copyLoc() {
     if (!node.loc) {
-      return undefined;
+      return undefined
     } else {
       return {
         start: Object.assign({}, node.loc.start),
         end: Object.assign({}, node.loc.end)
-      };
+      }
     }
   }
   // make a new object for the new Thunk
-  const newNode = node as any;
-  newNode.type = "ObjectExpression"
+  const newNode = node as any
+  newNode.type = 'ObjectExpression'
   // get type of literal
-  const type = typeOf(node.value);
+  const type = typeOf(node.value)
   // ensure that the raw type becomes a string, not a variable
-  const typeRaw = "\"" + type + "\"";
+  const typeRaw = '"' + type + '"'
   // get rid of old value and old raw
-  const oldValue = newNode.value;
-  newNode.value = undefined;
-  const oldRaw = newNode.raw;
-  newNode.raw = undefined;
-  newNode.properties = [];
+  const oldValue = newNode.value
+  newNode.value = undefined
+  const oldRaw = newNode.raw
+  newNode.raw = undefined
+  newNode.properties = []
   // set Thunk properties
   // first, create type property
   newNode.properties[0] = {
-    type: "Property",
+    type: 'Property',
     start: newNode.start,
     end: newNode.end,
     loc: copyLoc(),
@@ -53,26 +53,26 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     shorthand: false,
     computed: false,
     key: {
-      type: "Identifier",
+      type: 'Identifier',
       start: newNode.start,
       end: newNode.end,
       loc: copyLoc(),
-      name: "type"
+      name: 'type'
     },
     // value of type is a string literal
     value: {
-      type: "Literal",
+      type: 'Literal',
       start: newNode.start,
       end: newNode.end,
       loc: copyLoc(),
       value: type,
       raw: typeRaw
     },
-    kind: "init"
+    kind: 'init'
   }
   // get arrow function
   const arrowFunction = {
-    type: "ArrowFunctionExpression",
+    type: 'ArrowFunctionExpression',
     start: newNode.start,
     end: newNode.end,
     loc: copyLoc(),
@@ -81,7 +81,7 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     generator: false,
     params: [],
     body: {
-      type: "Literal",
+      type: 'Literal',
       start: newNode.start,
       end: newNode.end,
       loc: copyLoc(),
@@ -92,7 +92,7 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
   // then, create the value property
   // also create lambda function storing original literal
   newNode.properties[1] = {
-    type: "Property",
+    type: 'Property',
     start: newNode.start,
     end: newNode.end,
     loc: copyLoc(),
@@ -100,17 +100,17 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     shorthand: false,
     computed: false,
     key: {
-      type: "Identifier",
+      type: 'Identifier',
       start: newNode.start,
       end: newNode.end,
       loc: copyLoc(),
-      name: "value"
+      name: 'value'
     },
     // value of 'value' is an ArrowFunctionExpression
     value: arrowFunction,
-    kind: "init"
+    kind: 'init'
   }
-  return newNode;
+  return newNode
 }
 
 export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({

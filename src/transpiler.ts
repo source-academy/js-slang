@@ -136,10 +136,10 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
 }
 
 /**
- * To make sure lazy Literals (thunks) are still printed as their
- * original appearance instead of the function appearance, Literals
- * are mapped as well
- * @param program The program to be modified
+ * To make sure functions are still printed as their
+ * original appearance instead of the function
+ * object appearing
+ * @param program The program to be mapped
  */
 function generateFunctionsToStringMap(program: es.Program) {
   const map: Map<es.Node, string> = new Map()
@@ -667,7 +667,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
     return { transpiled: '' }
   }
   // make literals into Thunks for lazy evaluation
-  transformValuesToThunks(program);
+  transformValuesToThunks(program)
   // console.log(JSON.stringify(program));
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)

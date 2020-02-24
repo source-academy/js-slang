@@ -1,4 +1,4 @@
-import { Value } from "../types"
+import { Value } from '../types'
 
 // We need to define our own typeof in order for null/array to display properly in error messages
 export const typeOf = (v: Value) => {

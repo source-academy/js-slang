@@ -202,7 +202,7 @@ export async function runInContext(
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
-      const result = sandboxedEval(transpiled);
+      const result = sandboxedEval(transpiled)
       return Promise.resolve({
         status: 'finished',
         value: result

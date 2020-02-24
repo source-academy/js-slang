@@ -1,4 +1,4 @@
-import { typeOf } from "../utils/typeOf";
+import { typeOf } from '../utils/typeOf'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -7,18 +7,17 @@ import { typeOf } from "../utils/typeOf";
 
 // Primitive Thunk type
 export interface Thunk<T> {
-  type: string,
+  type: string
   value: () => T
 }
 
-export type LazyNullary<R> = () => Thunk<R>;
+export type LazyNullary<R> = () => Thunk<R>
 
-export type LazyUnary<T, R> = (x: Thunk<T>) => Thunk<R>;
+export type LazyUnary<T, R> = (x: Thunk<T>) => Thunk<R>
 
-export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>;
+export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>
 
-export type LazyTertiary<T, U, V, R> =
-  (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>;
+export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>
 
 /**
  * Primitive function in Lazy Source.
@@ -27,7 +26,7 @@ export type LazyTertiary<T, U, V, R> =
  * @param expression The expression to be evaluated.
  */
 export function force<T>(expression: Thunk<T>) {
-  return evaluateThunk(expression);
+  return evaluateThunk(expression)
 }
 
 /**
@@ -41,7 +40,7 @@ export function makeThunk<T>(value: T): Thunk<T> {
   return {
     type: typeOf(value),
     value: () => value
-  };
+  }
 }
 
 /**
@@ -52,7 +51,7 @@ export function makeThunk<T>(value: T): Thunk<T> {
  * @param value The thunk.
  */
 export function evaluateThunk<T>(thunk: Thunk<T>): T {
-  return thunk.value();
+  return thunk.value()
 }
 
 /**

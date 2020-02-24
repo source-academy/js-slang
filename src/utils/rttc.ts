@@ -62,9 +62,9 @@ export const checkBinaryExpression = (
     case '/':
     case '%':
       if (!isNumberT(left)) {
-        return new TypeError(node, LHS, 'number', typeOf(left))
+        return new TypeError(node, LHS, 'number', left.type)
       } else if (!isNumberT(right)) {
-        return new TypeError(node, RHS, 'number', typeOf(right))
+        return new TypeError(node, RHS, 'number', right.type)
       } else {
         return
       }
@@ -74,11 +74,11 @@ export const checkBinaryExpression = (
     case '>':
     case '>=':
       if (isNumberT(left)) {
-        return isNumberT(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right))
+        return isNumberT(right) ? undefined : new TypeError(node, RHS, 'number', right.type)
       } else if (isStringT(left)) {
-        return isStringT(right) ? undefined : new TypeError(node, RHS, 'string', typeOf(right))
+        return isStringT(right) ? undefined : new TypeError(node, RHS, 'string', right.type)
       } else {
-        return new TypeError(node, LHS, 'string or number', typeOf(left))
+        return new TypeError(node, LHS, 'string or number', left.type)
       }
     case '!==':
     case '===':
