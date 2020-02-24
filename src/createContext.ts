@@ -3,6 +3,7 @@
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
+import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -139,6 +140,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
     defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
     defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+    defineBuiltin(context, 'force(expression)', lazy.force)
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
