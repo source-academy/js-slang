@@ -20,7 +20,7 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
-const rules: Array<Rule<es.Node>> = [
+const rules: Rule<es.Node>[] = [
   bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,

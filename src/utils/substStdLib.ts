@@ -71,7 +71,8 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Ex
   if (
     str.type === 'Literal' &&
     typeof str.value === 'string' &&
-    (radix.type === 'Literal' && typeof radix.value === 'number') &&
+    radix.type === 'Literal' &&
+    typeof radix.value === 'number' &&
     Number.isInteger(radix.value) &&
     2 <= radix.value &&
     radix.value <= 36
