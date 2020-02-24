@@ -313,7 +313,7 @@ test('math_pow', () => {
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
 "math_pow(3, 100) || NaN;
 
-5.153775207320114e+47 || NaN;
+5.153775207320113e+47 || NaN;
 "
 `)
 })

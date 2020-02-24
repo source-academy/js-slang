@@ -6,6 +6,9 @@
     "name": "Source Academy",
     "url": "https://github.com/source-academy/"
   },
+  "engines": {
+      "node": ">=13.9"
+  },
   "dependencies": {
     "@types/estree": "0.0.39",
     "acorn": "^6.0.5",
