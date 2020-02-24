@@ -139,17 +139,9 @@ transformers = new Map([
     'UnaryExpression',
     (node: es.Node) => {
       node = node as es.UnaryExpression
-      const loc = node.loc as es.SourceLocation
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column]),
-            vector_to_list([loc.start.line, loc.start.column + 1])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.argument)])
       ])
     }
@@ -159,17 +151,9 @@ transformers = new Map([
     'BinaryExpression',
     (node: es.Node) => {
       node = node as es.BinaryExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -179,17 +163,9 @@ transformers = new Map([
     'LogicalExpression',
     (node: es.Node) => {
       node = node as es.LogicalExpression
-      const loc = node.right.loc as es.SourceLocation
       return vector_to_list([
         'boolean_operation',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -212,7 +188,6 @@ transformers = new Map([
     'ArrowFunctionExpression',
     (node: es.Node) => {
       node = node as es.ArrowFunctionExpression
-      const loc = node.body.loc as es.SourceLocation
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
@@ -221,14 +196,7 @@ transformers = new Map([
             // The body of a function is the statement
             // inside the curly braces.
             makeSequenceIfNeeded(node.body.body)
-          : vector_to_list([
-              'return_statement',
-              transform(node.body),
-              vector_to_list([
-                vector_to_list([loc.start.line, loc.start.column]),
-                vector_to_list([loc.end.line, loc.end.column])
-              ])
-            ])
+          : vector_to_list(['return_statement', transform(node.body)])
       ])
     }
   ],
