@@ -136,6 +136,30 @@ export function parse(source: string, context: Context, fallbackToLooseParse: bo
   }
 }
 
+export function parseLoose(source: string, context: Context) {
+  // We want to use the normal parser for programs that violate source rules but
+  // are valid js since the loose parser may give wrong results for poorly
+  // indented code.
+  const options: AcornOptions = {
+    sourceType: 'module',
+    ecmaVersion: 6,
+    locations: true
+  }
+
+  try {
+    // Always try the normal parser first as instructed by acorn parser docs.
+    return (acornParse(source, options) as unknown) as es.Program
+  } catch {
+    try {
+      // Fallback to loose parser
+      return (acornLooseParse(source, options) as unknown) as es.Program
+    } catch {
+      // We don't actually care about the errors
+      return undefined
+    }
+  }
+}
+
 const createAcornParserOptions = (context: Context): AcornOptions => ({
   sourceType: 'module',
   ecmaVersion: 6,

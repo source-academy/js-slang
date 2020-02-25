@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt } from './parser/parser'
+import { parse, parseAt, parseLoose } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -33,6 +33,8 @@ import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
+
+import { generate } from 'escodegen'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -193,6 +195,22 @@ export function getAllOccurrencesInScope(
     return []
   }
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
+export async function getNames(
+  code: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<any> {
+  const program = parseLoose(code, context)
+
+  if (!program) {
+    return ''
+  }
+
+  console.log(program)
+
+  return generate(program)
 }
 
 export async function runInContext(
