@@ -116,6 +116,7 @@ export interface BlockFrame {
 export interface DefinitionNode {
   name: string
   type: string
+  isDeclaration: boolean
   loc?: es.SourceLocation | null
 }
 

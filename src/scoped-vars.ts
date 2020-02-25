@@ -30,10 +30,12 @@ export function scopeVariables(
     isVariableDeclaration(statement)
   ) as es.VariableDeclaration[]
 
-  const arrowFunctions: es.ArrowFunctionExpression[] = []
+  let arrowFunctions: es.ArrowFunctionExpression[] = []
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      arrowFunctions.push(node)
+      if (node.loc != null) {
+        arrowFunctions.push(node)
+      }
     }
   })
 
@@ -54,6 +56,18 @@ export function scopeVariables(
     scopeVariableDeclaration(statement)
   )
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
+  arrowFunctions = getNodesInCurrentBlock(
+    arrowFunctions,
+    block.enclosingLoc as es.SourceLocation,
+    // Need to filter it by all BlockFrames
+    [
+      ...blockNodes,
+      ...forStatementNodes,
+      ...whileStatementNodes,
+      ...ifStatementNodes,
+      ...functionBodyNodes
+    ]
+  )
   const arrowFunctionNodes = arrowFunctions.map(statement => scopeArrowFunction(statement))
 
   block.children = [
@@ -76,6 +90,7 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
   return {
     name: (node.declarations[0].id as es.Identifier).name,
     type: 'DefinitionNode',
+    isDeclaration: true,
     loc: node.declarations[0].id.loc
   }
 }
@@ -89,11 +104,13 @@ export function scopeFunctionDeclaration(
   const definition = {
     name: (node.id as es.Identifier).name,
     type: 'DefinitionNode',
+    isDeclaration: true,
     loc: node.loc
   }
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
+    isDeclaration: true,
     loc: param.loc
   }))
   const body = scopeVariables(node.body, node.loc)
@@ -107,6 +124,7 @@ function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode 
   return {
     name: ((node.expression as es.AssignmentExpression).left as es.Identifier).name,
     type: 'DefinitionNode',
+    isDeclaration: false,
     loc: ((node.expression as es.AssignmentExpression).left as es.Identifier).loc
   }
 }
@@ -115,6 +133,7 @@ function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
   const params = node.params.map(param => ({
     name: (param as es.Identifier).name,
     type: 'DefinitionNode',
+    isDeclaration: true,
     loc: param.loc
   }))
   const body =
@@ -159,6 +178,7 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
     ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
         type: 'DefinitionNode',
         name: (dec.id as es.Identifier).name,
+        isDeclaration: true,
         loc: (dec.id as es.Identifier).loc
       }))
     : []
@@ -173,7 +193,8 @@ export function lookupDefinition(
   line: number,
   col: number,
   node: BlockFrame,
-  currentDefinition?: DefinitionNode
+  currentDefinition?: DefinitionNode,
+  lookupOriginalDeclaration: boolean = false
 ): DefinitionNode | void {
   if (!isInLoc(line, col, node.enclosingLoc as es.SourceLocation)) {
     return undefined
@@ -181,6 +202,9 @@ export function lookupDefinition(
 
   const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
     .filter(child => child.name === variableName)
+    // If the lookupOriginalDeclaration is true, we only search for the original declaration
+    // of the variable. Redefinitions of let variables are hence excluded
+    .filter(child => (lookupOriginalDeclaration ? child.isDeclaration : true))
     .filter(child =>
       child.loc
         ? child.loc.start.line < line ||
@@ -193,7 +217,14 @@ export function lookupDefinition(
     .filter(block => isInLoc(line, col, block.enclosingLoc as es.SourceLocation))
 
   return blockToRecurse.length === 1
-    ? lookupDefinition(variableName, line, col, blockToRecurse[0], currentDefinition)
+    ? lookupDefinition(
+        variableName,
+        line,
+        col,
+        blockToRecurse[0],
+        currentDefinition,
+        lookupOriginalDeclaration
+      )
     : currentDefinition
 }
 
@@ -204,7 +235,7 @@ export function getAllOccurrencesInScope(
   program: es.Program
 ): es.SourceLocation[] {
   const lookupTree = scopeVariables(program)
-  const defNode = lookupDefinition(target, line, col, lookupTree)
+  const defNode = lookupDefinition(target, line, col, lookupTree, undefined, true)
   if (defNode == null || defNode.loc == null) {
     return []
   }
@@ -212,7 +243,7 @@ export function getAllOccurrencesInScope(
   const block = getBlockFromLoc(defLoc, lookupTree)
   const identifiers = getAllIdentifiers(program, target)
   const nestedBlocks = block.children.filter(isBlockFrame)
-  const occurences = getIdentifierLocsInCurrentBlock(
+  const occurences = getNodeLocsInCurrentBlock(
     identifiers,
     block.enclosingLoc as es.SourceLocation,
     nestedBlocks
@@ -233,13 +264,14 @@ function getAllOccurencesInChildScopes(
   const definitionNodes = block.children
     .filter(isDefinitionNode)
     .filter(node => node.name === target)
+    .filter(node => node.isDeclaration)
   if (definitionNodes.length !== 0) {
     return []
   }
 
   // Only get identifiers that are not in another nested block
   const nestedBlocks = block.children.filter(isBlockFrame)
-  const occurences = getIdentifierLocsInCurrentBlock(
+  const occurences = getNodeLocsInCurrentBlock(
     identifiers,
     block.enclosingLoc as es.SourceLocation,
     nestedBlocks
@@ -401,14 +433,14 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
   )
 }
 
-// Returns all identifiers that are not within any nested blocks
-function getIdentifierLocsInCurrentBlock(
-  identifiers: es.Identifier[],
+// Returns all nodes that are not within any nested blocks
+function getNodeLocsInCurrentBlock<E extends es.Node>(
+  nodes: E[],
   currentLoc: es.SourceLocation,
   blocks: BlockFrame[]
 ): es.SourceLocation[] {
-  const filteredLocs: es.SourceLocation[] = identifiers
-    .map(identifier => identifier.loc)
+  const filteredLocs: es.SourceLocation[] = nodes
+    .map(node => node.loc)
     .filter(notEmpty)
     .filter(loc => isPartOf(loc, currentLoc))
   return filteredLocs.filter(
@@ -418,6 +450,26 @@ function getIdentifierLocsInCurrentBlock(
         .map(block => (notEmpty(block.enclosingLoc) ? block.enclosingLoc : block.loc))
         .filter(notEmpty)
         .map(blockLoc => isPartOf(loc, blockLoc))
+        .some(el => el === true)
+  )
+}
+
+// Returns all nodes that are not within any nested blocks
+function getNodesInCurrentBlock<E extends es.Node>(
+  nodes: E[],
+  currentLoc: es.SourceLocation,
+  blocks: BlockFrame[]
+): E[] {
+  const filteredNodes = nodes
+    .filter(node => notEmpty(node.loc))
+    .filter(node => isPartOf(node.loc as es.SourceLocation, currentLoc))
+  return filteredNodes.filter(
+    node =>
+      !blocks
+        // Always select enclosing loc if it is available
+        .map(block => (notEmpty(block.enclosingLoc) ? block.enclosingLoc : block.loc))
+        .filter(notEmpty)
+        .map(blockLoc => isPartOf(node.loc as es.SourceLocation, blockLoc))
         .some(el => el === true)
   )
 }
