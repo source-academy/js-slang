@@ -211,6 +211,95 @@ export function lookupDefinition(
     : currentDefinition
 }
 
+//export function getAllOccurrencesInScope(
+//target: string,
+//line: number,
+//col: number,
+//program: es.Program
+//): es.SourceLocation[] {
+//const lookupTree = scopeVariables(program)
+//const identifiers: es.Identifier[] = []
+
+//simple(program, {
+//Identifier(node: es.Identifier) {
+//if (notEmpty(node.loc) && node.name === target) {
+//identifiers.push(node)
+//}
+//},
+//Pattern(node: es.Pattern) {
+//if (node.type === 'Identifier') {
+//if (node.name === target) {
+//identifiers.push(node)
+//}
+//} else if (node.type === 'MemberExpression') {
+//if (node.object.type === 'Identifier') {
+//if (node.object.name === target) {
+//identifiers.push(node.object)
+//}
+//}
+//}
+//}
+//})
+
+//return getAllOccurrencesInScopeHelper(target, line, col, lookupTree, identifiers, [])
+//}
+
+//function getAllOccurrencesInScopeHelper(
+//target: string,
+//line: number,
+//col: number,
+//block: BlockFrame,
+//identifiers: es.Identifier[],
+//occurrences: es.SourceLocation[]
+//): es.SourceLocation[] {
+//// First we check if there's a redeclaration of the target in the current scope
+//// If there is, set the occurences array to empty because there's a new scope for the name
+//const definitionNodes = block.children
+//.filter(isDefinitionNode)
+//.filter(node => node.name === 'target')
+//if (definitionNodes.length !== 0) {
+//occurrences = []
+//}
+
+//// Only get identifiers that are not in another nested block
+//const nestedBlocks = block.children.filter(isBlockFrame)
+//const identifiersInCurrentBlock = getIdentifierLocsInCurrentBlock(identifiers, nestedBlocks)
+//occurrences = [...occurrences, ...identifiersInCurrentBlock]
+
+//// Get the block where the target lies, and the identifiers that lie within it
+//const blocksToRecurse = (block.children.filter(child =>
+//isBlockFrame(child)
+//) as BlockFrame[]).filter(childBlock => isInLoc(line, col, childBlock.loc as es.SourceLocation))
+
+//if (blocksToRecurse.length === 0) {
+//// TODO: Change and call another helper function
+//return occurrences
+//}
+//const blockToRecurse = blocksToRecurse[0]
+//// TODO: Find a way to neaten the structure of the block to ensure cleaner recursion
+//// We look for any identifiers that are outside the smaller loc and inside the enclosing loc
+//const enclosingDefinitions = definitionNodes.filter(
+//node =>
+//isPartOf(node.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation) &&
+//!isPartOf(node.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
+//)
+//if (enclosingDefinitions.length !== 0) {
+//occurrences = []
+//}
+
+//const identifiersInBlockToRecurse = identifiers.filter(identifier =>
+//isPartOf(identifier.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation)
+//)
+//return getAllOccurrencesInScopeHelper(
+//target,
+//line,
+//col,
+//blockToRecurse,
+//identifiersInBlockToRecurse,
+//occurrences
+//)
+//}
+
 export function getAllOccurrencesInScope(
   target: string,
   line: number,
@@ -218,6 +307,58 @@ export function getAllOccurrencesInScope(
   program: es.Program
 ): es.SourceLocation[] {
   const lookupTree = scopeVariables(program)
+  const defNode = lookupDefinition(target, line, col, lookupTree)
+  if (defNode == null || defNode.loc == null) {
+    return []
+  }
+  const defLoc = defNode.loc
+  const block = getBlockFromLoc(defLoc, lookupTree)
+  const identifiers = getAllIdentifiers(program, target)
+  const nestedBlocks = block.children.filter(isBlockFrame)
+  const occurences = getIdentifierLocsInCurrentBlock(identifiers, nestedBlocks)
+  return [...occurences, ...getAllOccurencesInChildScopes(target, block, identifiers)]
+}
+
+function getAllOccurencesInChildScopes(
+  target: string,
+  block: BlockFrame,
+  identifiers: es.Identifier[]
+): es.SourceLocation[] {
+  // First we check if there's a redeclaration of the target in the current scope
+  // If there is, return empty array because there's a new scope for the name
+  const definitionNodes = block.children
+    .filter(isDefinitionNode)
+    .filter(node => node.name === 'target')
+  if (definitionNodes.length !== 0) {
+    return []
+  }
+
+  // Only get identifiers that are not in another nested block
+  const nestedBlocks = block.children.filter(isBlockFrame)
+  const occurences = getIdentifierLocsInCurrentBlock(identifiers, nestedBlocks)
+  const occurencesInChildScopes = nestedBlocks.map(child =>
+    getAllOccurencesInChildScopes(target, child, identifiers)
+  )
+  return [...occurences, ...occurencesInChildScopes.reduce((x, y) => [...x, ...y], [])]
+}
+
+function getBlockFromLoc(loc: es.SourceLocation, block: BlockFrame): BlockFrame {
+  let childBlocks = block.children.filter(isBlockFrame)
+  let isPartOfChildBlock = childBlocks.some(node =>
+    isPartOf(loc, node.enclosingLoc as es.SourceLocation)
+  )
+  while (isPartOfChildBlock) {
+    // A block containing the loc must necessarily exist by the earlier check
+    block = childBlocks.filter(node => isPartOf(loc, node.enclosingLoc as es.SourceLocation))[0]
+    childBlocks = block.children.filter(isBlockFrame)
+    isPartOfChildBlock = childBlocks.some(node =>
+      isPartOf(loc, node.enclosingLoc as es.SourceLocation)
+    )
+  }
+  return block
+}
+
+function getAllIdentifiers(program: es.Program, target: string): es.Identifier[] {
   const identifiers: es.Identifier[] = []
 
   simple(program, {
@@ -241,63 +382,7 @@ export function getAllOccurrencesInScope(
     }
   })
 
-  return getAllOccurrencesInScopeHelper(target, line, col, lookupTree, identifiers, [])
-}
-
-export function getAllOccurrencesInScopeHelper(
-  target: string,
-  line: number,
-  col: number,
-  block: BlockFrame,
-  identifiers: es.Identifier[],
-  occurrences: es.SourceLocation[]
-): es.SourceLocation[] {
-  // First we check if there's a redeclaration of the target in the current scope
-  // If there is, set the occurences array to empty because there's a new scope for the name
-  const definitionNodes = block.children
-    .filter(isDefinitionNode)
-    .filter(node => node.name === 'target')
-  if (definitionNodes.length !== 0) {
-    occurrences = []
-  }
-
-  // Only get identifiers that are not in another nested block
-  const nestedBlocks = block.children.filter(isBlockFrame)
-  const identifiersInCurrentBlock = getIdentifiersInCurrentBlock(identifiers, nestedBlocks)
-  occurrences = [...occurrences, ...identifiersInCurrentBlock]
-
-  // Get the block where the target lies, and the identifiers that lie within it
-  const blocksToRecurse = (block.children.filter(child =>
-    isBlockFrame(child)
-  ) as BlockFrame[]).filter(childBlock => isInLoc(line, col, childBlock.loc as es.SourceLocation))
-
-  if (blocksToRecurse.length === 0) {
-    // TODO: Change and call another helper function
-    return occurrences
-  }
-  const blockToRecurse = blocksToRecurse[0]
-  // TODO: Find a way to neaten the structure of the block to ensure cleaner recursion
-  // We look for any identifiers that are outside the smaller loc and inside the enclosing loc
-  const enclosingDefinitions = definitionNodes.filter(
-    node =>
-      isPartOf(node.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation) &&
-      !isPartOf(node.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
-  )
-  if (enclosingDefinitions.length !== 0) {
-    occurrences = []
-  }
-
-  const identifiersInBlockToRecurse = identifiers.filter(identifier =>
-    isPartOf(identifier.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation)
-  )
-  return getAllOccurrencesInScopeHelper(
-    target,
-    line,
-    col,
-    blockToRecurse,
-    identifiersInBlockToRecurse,
-    occurrences
-  )
+  return identifiers
 }
 
 // Helper functions to filter nodes
@@ -409,7 +494,7 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
 }
 
 // Returns all identifiers that are not within any nested blocks
-function getIdentifiersInCurrentBlock(
+function getIdentifierLocsInCurrentBlock(
   identifiers: es.Identifier[],
   blocks: BlockFrame[]
 ): es.SourceLocation[] {
