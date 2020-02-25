@@ -44,8 +44,8 @@ describe('Unary type combinations:', () => {
       expect({
         operator,
         value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -90,8 +90,8 @@ describe('Binary + type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -141,8 +141,8 @@ describe('Binary (-|*|/|%) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -181,8 +181,8 @@ describe('Binary (===|!==) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -236,8 +236,8 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -270,8 +270,8 @@ describe('Ternary/if test expression type combinations:', () => {
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -315,8 +315,8 @@ describe('Member expression type combinations:', () => {
       expect({
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })

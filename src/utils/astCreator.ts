@@ -1,6 +1,7 @@
 import * as es from 'estree'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
+import { astThunkNativeTag } from '../stdlib/lazy'
 
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
@@ -108,6 +109,49 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     },
     // value of 'value' is an ArrowFunctionExpression
     value: arrowFunction,
+    kind: 'init'
+  }
+  // get toString to show the normal result
+  const toString = {
+    type: 'ArrowFunctionExpression',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    id: null,
+    expression: true,
+    generator: false,
+    params: [],
+    body: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: '\"' + oldValue + '\"',
+      raw: '\"' + oldRaw + '\"'
+    },
+    // add tag to prevent toString() from getting wrapped in
+    // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
+    // (toString is already giving it a nice string representation)
+    tag: astThunkNativeTag
+  }
+  // lastly create the toString property
+  // so thunks appear as normal values
+  newNode.properties[2] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'toString'
+    },
+    value: toString,
     kind: 'init'
   }
   return newNode

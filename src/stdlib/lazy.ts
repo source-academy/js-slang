@@ -9,6 +9,7 @@ import { typeOf } from '../utils/typeOf'
 export interface Thunk<T> {
   type: string
   value: () => T
+  toString: () => string
 }
 
 export type LazyNullary<R> = () => Thunk<R>
@@ -18,6 +19,10 @@ export type LazyUnary<T, R> = (x: Thunk<T>) => Thunk<R>
 export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>
 
 export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>
+
+// tag for functions in Abstract Syntax Tree
+// of literal converted to Thunk
+export const astThunkNativeTag = 'Thunk-native-function';
 
 /**
  * Primitive function in Lazy Source.
@@ -39,9 +44,35 @@ export function force<T>(expression: Thunk<T>) {
 export function makeThunk<T>(value: T): Thunk<T> {
   return {
     type: typeOf(value),
-    value: () => value
+    value: () => value,
+    toString: () => value + ""
   }
 }
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Makes a Thunk with a binary function and two
+ * Thunks. The binary function is never executed
+ * before the result Thunk is forced.
+ * @param t Thunk containing an operand t of type T.
+ * @param u Thunk containing an operand u of type U.
+ * @param binaryFunc The function to apply to t and u.
+ * @param returnType Type of R, as a string.
+ * @param operator Operator represented by binaryFunc,
+ *     but as a string (will be used in final string
+ *     representation of the result thunk)
+ */
+export function makeThunkWithPrimitiveBinary<T, U, R>(
+    t: Thunk<T>, u: Thunk<U>, binaryFunc: (t: T, u: U) => R,
+    returnType: string, operator: string
+  ): Thunk<R> {
+  return {
+    type: returnType,
+    value: () => binaryFunc(evaluateThunk(t), evaluateThunk(u)),
+    toString: () => t.toString() + " " + operator + " " + u.toString()
+  }
+}
+
 
 /**
  * (NOT a primitive function in Lazy Source)

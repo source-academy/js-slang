@@ -8,7 +8,7 @@ import {
   RuntimeSourceError
 } from '../interpreter-errors'
 import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
-import { evaluateThunk, makeThunk, Thunk } from '../stdlib/lazy'
+import { makeThunk, makeThunkWithPrimitiveBinary, Thunk } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -93,16 +93,16 @@ export function binaryOp(
   line: number,
   column: number
 ) {
-  const error = rttc.checkBinaryExpression(
+  const resultType = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column),
     operator,
     left,
     right
   )
-  if (error === undefined) {
-    return evaluateBinaryExpression(operator, left, right)
+  if (typeof resultType === 'string') {
+    return evaluateBinaryExpression(operator, left, right, resultType)
   } else {
-    throw error
+    throw resultType;
   }
 }
 
@@ -116,35 +116,61 @@ export function binaryOp(
  *     this operator.
  * @param right The second argument, or the right, of
  *     this operator.
+ * @param returnType The return type of the evaluated
+ *     expression.
  */
 export function evaluateBinaryExpression(
   operator: BinaryOperator,
   left: Thunk<any>,
-  right: Thunk<any>
+  right: Thunk<any>,
+  // default value '' to prevent problems with substitutor, intepreter
+  returnType: string = ''
 ): Thunk<any> {
   switch (operator) {
     case '+':
-      return makeThunk(evaluateThunk(left) + evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x + y, returnType, operator
+      )
     case '-':
-      return makeThunk(evaluateThunk(left) - evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x - y, returnType, operator
+      )
     case '*':
-      return makeThunk(evaluateThunk(left) * evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x * y, returnType, operator
+      )
     case '/':
-      return makeThunk(evaluateThunk(left) / evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x / y, returnType, operator
+      )
     case '%':
-      return makeThunk(evaluateThunk(left) % evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x % y, returnType, operator
+      )
     case '===':
-      return makeThunk(evaluateThunk(left) === evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x === y, returnType, operator
+      )
     case '!==':
-      return makeThunk(evaluateThunk(left) !== evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x !== y, returnType, operator
+      )
     case '<=':
-      return makeThunk(evaluateThunk(left) <= evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x <= y, returnType, operator
+      )
     case '<':
-      return makeThunk(evaluateThunk(left) < evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x < y, returnType, operator
+      )
     case '>':
-      return makeThunk(evaluateThunk(left) > evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x > y, returnType, operator
+      )
     case '>=':
-      return makeThunk(evaluateThunk(left) >= evaluateThunk(right))
+      return makeThunkWithPrimitiveBinary(
+        left, right, (x, y) => x >= y, returnType, operator
+      )
     default:
       return makeThunk(undefined)
   }

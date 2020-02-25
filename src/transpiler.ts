@@ -8,6 +8,7 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AllowedDeclarations, Value } from './types'
 import * as create from './utils/astCreator'
 import { ConstAssignment, UndefinedVariable } from './interpreter-errors'
+import { astThunkNativeTag } from './stdlib/lazy'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -177,6 +178,13 @@ function transformFunctionDeclarationsToArrowFunctions(
   })
 }
 
+// type to be used in wrapArrowFunctionsToAllowNormalCallsAndNiceToString
+// to ignore toString lambda found in Thunks (avoid giving
+// toString its own redundant toString!)
+interface ArrowFunctionWithTag extends es.ArrowFunctionExpression {
+  tag?: string
+}
+
 /**
  * Transforms all arrow functions
  * (arg1, arg2, ...) => { statement1; statement2; return statement3; }
@@ -195,11 +203,17 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   functionsToStringMap: Map<es.Node, string>
 ) {
   simple(program, {
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      create.mutateToCallExpression(node, globalIds.wrap, [
-        { ...node },
-        create.literal(functionsToStringMap.get(node)!)
-      ])
+    ArrowFunctionExpression(node: ArrowFunctionWithTag) {
+      // avoid adding toString() to native lambdas present
+      // within literals converted to Thunks
+      if (node.tag && node.tag === astThunkNativeTag) {
+        // do nothing
+      } else {
+        create.mutateToCallExpression(node, globalIds.wrap, [
+          { ...node },
+          create.literal(functionsToStringMap.get(node)!)
+        ])
+      }
     }
   })
 }
@@ -260,8 +274,13 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
     ReturnStatement(node: es.ReturnStatement) {
       node.argument = transformLogicalExpression(node.argument!)
     },
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      if (node.expression) {
+    ArrowFunctionExpression(node: ArrowFunctionWithTag) {
+      // avoid giving Thunk toString return value an isTail property
+      // it cannot be removed later on by
+      // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
+      // as that function will also ignore lambdas with this tag
+      const isThunkNativeFunction = node.tag && node.tag === astThunkNativeTag;
+      if (node.expression && !isThunkNativeFunction) {
         node.body = transformLogicalExpression(node.body as es.Expression)
       }
     }
