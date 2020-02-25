@@ -6,10 +6,16 @@ export function scopeVariables(
   program: es.Program | es.BlockStatement,
   enclosingLoc?: es.SourceLocation | null
 ): BlockFrame {
+  // If program is undefined due to parsing error, throw an error
+  if (program === undefined) {
+    throw new Error('Program to scope was undefined')
+  }
+
   const block: BlockFrame = {
     type: 'BlockFrame',
     loc: program.loc,
-    enclosingLoc,
+    // By default, set enclosingLoc to be the same as loc
+    enclosingLoc: enclosingLoc === undefined ? program.loc : enclosingLoc,
     children: []
   }
   const definitionStatements = getDeclarationStatements(program.body) as Array<
@@ -264,20 +270,19 @@ export function getAllOccurrencesInScopeHelper(
   ) as BlockFrame[]).filter(childBlock => isLineNumberInLoc(line, childBlock.loc))
 
   if (blocksToRecurse.length === 0) {
+    // TODO: Change and call another helper function
     return occurrences
   }
   const blockToRecurse = blocksToRecurse[0]
   // TODO: Find a way to neaten the structure of the block to ensure cleaner recursion
   // We look for any identifiers that are outside the smaller loc and inside the enclosing loc
-  if (notEmpty(blockToRecurse.enclosingLoc)) {
-    const enclosingDefinitions = definitionNodes.filter(
-      node =>
-        isPartOf(node.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation) &&
-        !isPartOf(node.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
-    )
-    if (enclosingDefinitions.length !== 0) {
-      occurrences = []
-    }
+  const enclosingDefinitions = definitionNodes.filter(
+    node =>
+      isPartOf(node.loc as es.SourceLocation, blockToRecurse.enclosingLoc as es.SourceLocation) &&
+      !isPartOf(node.loc as es.SourceLocation, blockToRecurse.loc as es.SourceLocation)
+  )
+  if (enclosingDefinitions.length !== 0) {
+    occurrences = []
   }
 
   const identifiersInBlockToRecurse = identifiers.filter(identifier =>
@@ -372,6 +377,7 @@ function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFram
   }
 }
 
+// TODO: Update or replace with isPartOf
 function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): boolean {
   if (location == null) {
     return false
