@@ -1,7 +1,7 @@
 import * as es from 'estree'
+import { astThunkNativeTag } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
-import { astThunkNativeTag } from '../stdlib/lazy'
 
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
@@ -126,8 +126,8 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
       start: newNode.start,
       end: newNode.end,
       loc: copyLoc(),
-      value: '\"' + oldValue + '\"',
-      raw: '\"' + oldRaw + '\"'
+      value: JSON.stringify(oldValue),
+      raw: JSON.stringify(oldRaw)
     },
     // add tag to prevent toString() from getting wrapped in
     // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
