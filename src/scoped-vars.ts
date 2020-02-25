@@ -189,7 +189,7 @@ export function lookupDefinition(
   node: BlockFrame,
   currentDefinition?: DefinitionNode
 ): DefinitionNode | void {
-  if (!isLineNumberInLoc(line, node.loc)) {
+  if (!isInLoc(line, col, node.loc as es.SourceLocation)) {
     return
   }
 
@@ -204,7 +204,7 @@ export function lookupDefinition(
   currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
   const blockToRecurse = (node.children.filter(child =>
     isBlockFrame(child)
-  ) as BlockFrame[]).filter(block => isLineNumberInLoc(line, block.loc))
+  ) as BlockFrame[]).filter(block => isInLoc(line, col, block.loc as es.SourceLocation))
 
   return blockToRecurse.length === 1
     ? lookupDefinition(variableName, line, col, blockToRecurse[0], currentDefinition)
@@ -254,7 +254,9 @@ export function getAllOccurrencesInScopeHelper(
 ): es.SourceLocation[] {
   // First we check if there's a redeclaration of the target in the current scope
   // If there is, set the occurences array to empty because there's a new scope for the name
-  const definitionNodes = block.children.filter(isDefinitionNode)
+  const definitionNodes = block.children
+    .filter(isDefinitionNode)
+    .filter(node => node.name === 'target')
   if (definitionNodes.length !== 0) {
     occurrences = []
   }
@@ -267,7 +269,7 @@ export function getAllOccurrencesInScopeHelper(
   // Get the block where the target lies, and the identifiers that lie within it
   const blocksToRecurse = (block.children.filter(child =>
     isBlockFrame(child)
-  ) as BlockFrame[]).filter(childBlock => isLineNumberInLoc(line, childBlock.loc))
+  ) as BlockFrame[]).filter(childBlock => isInLoc(line, col, childBlock.loc as es.SourceLocation))
 
   if (blocksToRecurse.length === 0) {
     // TODO: Change and call another helper function
@@ -377,26 +379,19 @@ function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFram
   }
 }
 
-// TODO: Update or replace with isPartOf
-function isLineNumberInLoc(line: number, location?: es.SourceLocation | null): boolean {
+function isInLoc(line: number, col: number, location: es.SourceLocation): boolean {
   if (location == null) {
     return false
   }
 
-  const startLine = location.start.line
-  const endLine = location.end.line
-  return line >= startLine && line <= endLine
-}
-
-function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolean {
-  if (enclosing.start.line < curr.start.line && enclosing.end.line > curr.end.line) {
+  if (location.start.line < line && location.end.line > line) {
     return true
-  } else if (enclosing.start.line === curr.start.line && enclosing.end.line > curr.end.line) {
-    return curr.start.column >= enclosing.start.column
-  } else if (enclosing.start.line < curr.start.line && enclosing.end.line === curr.end.line) {
-    return curr.end.column <= enclosing.end.column
-  } else if (enclosing.start.line === curr.start.line && enclosing.end.line === curr.end.line) {
-    if (enclosing.start.column <= curr.start.column && enclosing.end.column >= curr.end.column) {
+  } else if (location.start.line === line && location.end.line > line) {
+    return location.start.column <= col
+  } else if (location.start.line < line && location.end.line === line) {
+    return location.end.column >= col
+  } else if (location.start.line === line && location.end.line === line) {
+    if (location.start.column <= col && location.end.column >= col) {
       return true
     } else {
       return false
@@ -404,6 +399,13 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
   } else {
     return false
   }
+}
+
+function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolean {
+  return (
+    isInLoc(curr.start.line, curr.start.column, enclosing) &&
+    isInLoc(curr.end.line, curr.end.column, enclosing)
+  )
 }
 
 // Returns all identifiers that are not within any nested blocks
