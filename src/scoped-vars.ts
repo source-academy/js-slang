@@ -30,7 +30,7 @@ export function scopeVariables(
     isVariableDeclaration(statement)
   ) as es.VariableDeclaration[]
 
-  let arrowFunctions: es.ArrowFunctionExpression[] = []
+  const arrowFunctions: es.ArrowFunctionExpression[] = []
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
       if (node.loc != null) {
@@ -56,8 +56,9 @@ export function scopeVariables(
     scopeVariableDeclaration(statement)
   )
   const blockNodes = blockStatements.map(statement => scopeVariables(statement))
-  arrowFunctions = getNodesInCurrentBlock(
-    arrowFunctions,
+  let arrowFunctionNodes = arrowFunctions.map(statement => scopeArrowFunction(statement))
+  arrowFunctionNodes = getNodesInCurrentBlock(
+    arrowFunctionNodes,
     block.enclosingLoc as es.SourceLocation,
     // Need to filter it by all BlockFrames
     [
@@ -65,10 +66,10 @@ export function scopeVariables(
       ...forStatementNodes,
       ...whileStatementNodes,
       ...ifStatementNodes,
-      ...functionBodyNodes
+      ...functionBodyNodes,
+      ...arrowFunctionNodes
     ]
   )
-  const arrowFunctionNodes = arrowFunctions.map(statement => scopeArrowFunction(statement))
 
   block.children = [
     ...variableDefinitionNodes,
@@ -105,7 +106,7 @@ export function scopeFunctionDeclaration(
     name: (node.id as es.Identifier).name,
     type: 'DefinitionNode',
     isDeclaration: true,
-    loc: node.loc
+    loc: (node.id as es.Identifier).loc
   }
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
@@ -455,21 +456,35 @@ function getNodeLocsInCurrentBlock<E extends es.Node>(
 }
 
 // Returns all nodes that are not within any nested blocks
-function getNodesInCurrentBlock<E extends es.Node>(
-  nodes: E[],
+// TODO: Refactor this function
+function getNodesInCurrentBlock(
+  nodes: BlockFrame[],
   currentLoc: es.SourceLocation,
   blocks: BlockFrame[]
-): E[] {
+): BlockFrame[] {
   const filteredNodes = nodes
-    .filter(node => notEmpty(node.loc))
-    .filter(node => isPartOf(node.loc as es.SourceLocation, currentLoc))
+    .filter(node => notEmpty(node.enclosingLoc))
+    .filter(node => isPartOf(node.enclosingLoc as es.SourceLocation, currentLoc))
   return filteredNodes.filter(
     node =>
       !blocks
         // Always select enclosing loc if it is available
         .map(block => (notEmpty(block.enclosingLoc) ? block.enclosingLoc : block.loc))
         .filter(notEmpty)
-        .map(blockLoc => isPartOf(node.loc as es.SourceLocation, blockLoc))
+        .map(
+          blockLoc =>
+            isPartOf(node.enclosingLoc as es.SourceLocation, blockLoc) &&
+            !areLocsEqual(node.enclosingLoc as es.SourceLocation, blockLoc)
+        )
         .some(el => el === true)
+  )
+}
+
+function areLocsEqual(loc1: es.SourceLocation, loc2: es.SourceLocation): boolean {
+  return (
+    loc1.start.line === loc2.start.line &&
+    loc1.start.column === loc2.start.column &&
+    loc1.end.line === loc2.end.line &&
+    loc1.end.column === loc2.end.column
   )
 }
