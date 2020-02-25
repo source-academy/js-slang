@@ -279,7 +279,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
       // it cannot be removed later on by
       // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
       // as that function will also ignore lambdas with this tag
-      const isThunkNativeFunction = node.tag && node.tag === astThunkNativeTag;
+      const isThunkNativeFunction = node.tag && node.tag === astThunkNativeTag
       if (node.expression && !isThunkNativeFunction) {
         node.body = transformLogicalExpression(node.body as es.Expression)
       }

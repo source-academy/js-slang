@@ -102,7 +102,7 @@ export function binaryOp(
   if (typeof resultType === 'string') {
     return evaluateBinaryExpression(operator, left, right, resultType)
   } else {
-    throw resultType;
+    throw resultType
   }
 }
 
@@ -128,49 +128,27 @@ export function evaluateBinaryExpression(
 ): Thunk<any> {
   switch (operator) {
     case '+':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x + y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x + y, returnType, operator)
     case '-':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x - y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x - y, returnType, operator)
     case '*':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x * y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x * y, returnType, operator)
     case '/':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x / y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x / y, returnType, operator)
     case '%':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x % y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x % y, returnType, operator)
     case '===':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x === y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x === y, returnType, operator)
     case '!==':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x !== y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x !== y, returnType, operator)
     case '<=':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x <= y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x <= y, returnType, operator)
     case '<':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x < y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x < y, returnType, operator)
     case '>':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x > y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x > y, returnType, operator)
     case '>=':
-      return makeThunkWithPrimitiveBinary(
-        left, right, (x, y) => x >= y, returnType, operator
-      )
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x >= y, returnType, operator)
     default:
       return makeThunk(undefined)
   }

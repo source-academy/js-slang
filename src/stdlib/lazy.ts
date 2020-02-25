@@ -22,7 +22,7 @@ export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) =
 
 // tag for functions in Abstract Syntax Tree
 // of literal converted to Thunk
-export const astThunkNativeTag = 'Thunk-native-function';
+export const astThunkNativeTag = 'Thunk-native-function'
 
 /**
  * Primitive function in Lazy Source.
@@ -45,7 +45,7 @@ export function makeThunk<T>(value: T): Thunk<T> {
   return {
     type: typeOf(value),
     value: () => value,
-    toString: () => value + ""
+    toString: () => value + ''
   }
 }
 
@@ -63,16 +63,18 @@ export function makeThunk<T>(value: T): Thunk<T> {
  *     representation of the result thunk)
  */
 export function makeThunkWithPrimitiveBinary<T, U, R>(
-    t: Thunk<T>, u: Thunk<U>, binaryFunc: (t: T, u: U) => R,
-    returnType: string, operator: string
-  ): Thunk<R> {
+  t: Thunk<T>,
+  u: Thunk<U>,
+  binaryFunc: (t: T, u: U) => R,
+  returnType: string,
+  operator: string
+): Thunk<R> {
   return {
     type: returnType,
     value: () => binaryFunc(evaluateThunk(t), evaluateThunk(u)),
-    toString: () => t.toString() + " " + operator + " " + u.toString()
+    toString: () => t.toString() + ' ' + operator + ' ' + u.toString()
   }
 }
-
 
 /**
  * (NOT a primitive function in Lazy Source)

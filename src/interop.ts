@@ -111,10 +111,13 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       return v.toString()
     } else if (typeof v === 'string') {
       return JSON.stringify(v)
-    } else if (typeof v !== 'object' ||
+    } else if (
+      typeof v !== 'object' ||
       // check if v is a Thunk, if it is, use toString() method
-      (typeof v === 'object' && v.hasOwnProperty('type')
-      && v.hasOwnProperty('toString') && v.hasOwnProperty('value'))
+      (typeof v === 'object' &&
+        v.hasOwnProperty('type') &&
+        v.hasOwnProperty('toString') &&
+        v.hasOwnProperty('value'))
     ) {
       return v.toString()
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
