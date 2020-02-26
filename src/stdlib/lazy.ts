@@ -7,9 +7,14 @@ import { typeOf } from '../utils/typeOf'
 
 // Primitive Thunk type
 export interface Thunk<T> {
-  type: string
-  value: () => T
+  // whether the Thunk has been peviously evaluated
+  evaluated: boolean
+  // the string representation of this Thunk
   toString: () => string
+  // return type of this Thunk
+  type: string
+  // the lambda that holds the logic for evaluation
+  value: () => T
 }
 
 export type LazyNullary<R> = () => Thunk<R>
@@ -20,8 +25,9 @@ export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>
 
 export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>
 
-// tag for functions in Abstract Syntax Tree
-// of literal converted to Thunk
+// Tag for functions in Abstract Syntax Tree
+// of literal converted to Thunk.
+// Used for methods value, toString.
 export const astThunkNativeTag = 'Thunk-native-function'
 
 /**
@@ -38,14 +44,19 @@ export function force<T>(expression: Thunk<T>) {
  * (NOT a primitive function in Lazy Source)
  * Makes a primitive value into a Thunk. Should not
  * be used on Thunks! Part of the abstraction for
- * Thunks, to be used in the interpreter.
+ * Thunks, to be used in the interpreter. Note that
+ * this function is only to be used for primitive
+ * values, hence the "evaluated" property is set to
+ * "true", and no attempt will be made to memoize
+ * the inner value of the Thunk.
  * @param value The primitive value.
  */
 export function makeThunk<T>(value: T): Thunk<T> {
   return {
     type: typeOf(value),
     value: () => value,
-    toString: () => value + ''
+    toString: () => value + '',
+    evaluated: true
   }
 }
 
@@ -72,7 +83,8 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
   return {
     type: returnType,
     value: () => binaryFunc(evaluateThunk(t), evaluateThunk(u)),
-    toString: () => t.toString() + ' ' + operator + ' ' + u.toString()
+    toString: () => t.toString() + ' ' + operator + ' ' + u.toString(),
+    evaluated: false
   }
 }
 
@@ -80,11 +92,22 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
  * (NOT a primitive function in Lazy Source)
  * Gets the value of the Thunk by forcing its
  * evaluation. Part of the abstraction for
- * Thunks, to be used in the interpreter.
+ * Thunks, to be used in the interpreter. This
+ * function will also memoize the result, such
+ * that future attempts to call the Thunk value
+ * will not result in additional calculation.
  * @param value The thunk.
  */
 export function evaluateThunk<T>(thunk: Thunk<T>): T {
-  return thunk.value()
+  if (thunk.evaluated) {
+    return thunk.value()
+  } else {
+    // calculate the desired value
+    const finalValue = thunk.value()
+    // memoize the calculated value
+    thunk.value = () => finalValue
+    return finalValue
+  }
 }
 
 /**
