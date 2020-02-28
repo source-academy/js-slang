@@ -1,6 +1,7 @@
 node_modules
 *.js
 !*.prelude.js
+!source*.js
 *.map
 dist/
 

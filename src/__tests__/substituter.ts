@@ -305,15 +305,15 @@ test('plus undefined', () => {
 // source 0
 test('math_pow', () => {
   const code = `
-  math_pow(3,100) || NaN;
+  math_pow(2, 20) || NaN;
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext())
   expect(steps).toMatchSnapshot()
   expect(steps.map(codify).join('\n')).toMatchInlineSnapshot(`
-"math_pow(3, 100) || NaN;
+"math_pow(2, 20) || NaN;
 
-5.153775207320114e+47 || NaN;
+1048576 || NaN;
 "
 `)
 })
