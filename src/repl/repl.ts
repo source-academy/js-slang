@@ -1,5 +1,6 @@
 import fs = require('fs')
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
+import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
 
 function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
@@ -8,7 +9,7 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
-      console.log(preludeResult.value)
+      console.dir(preludeResult.value, { depth: null })
       repl.start(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
@@ -20,7 +21,14 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
                 callback(new Error(parseError(context.errors)), undefined)
               }
             })
-          }
+          },
+          // set depth to a large number so that `parse()` output will not be folded,
+          // setting to null also solves the problem, however a reference loop might crash
+          writer: output =>
+            util.inspect(output, {
+              depth: 1000,
+              colors: true
+            })
         }
       )
     } else {
