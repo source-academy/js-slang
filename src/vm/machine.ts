@@ -670,7 +670,7 @@ M[OpCodes.DONE] = () => {
   RUNNING = false
 }
 
-function run() {
+function run(): any {
   while (RUNNING) {
     // show_registers("run loop");
     // show_heap("run loop");
@@ -694,10 +694,11 @@ function run() {
   } else {
     POP_OS()
     show_heap_value(RES)
+    return HEAP[RES]
   }
 }
 
-export function runWithP(p: number[]) {
+export function runWithP(p: number[]): any {
   P = p
   PC = 0
   HEAP = []
@@ -719,5 +720,5 @@ export function runWithP(p: number[]) {
   G = 0
   H = 0
 
-  run()
+  return run()
 }

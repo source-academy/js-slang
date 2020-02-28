@@ -23,6 +23,6 @@ export function print_compiled_program(code: number[]) {
   printProgram(code)
 }
 
-export function run_vm(code: number[]) {
+export function run_vm(code: number[]): any {
   return runWithP(code)
 }
