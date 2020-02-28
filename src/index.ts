@@ -16,7 +16,7 @@ import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { codify, getEvaluationSteps } from './substituter'
 import { transpile } from './transpiler'
-import { typeCheck } from './typeChecker'
+// import { typeCheck } from './typeChecker'
 import {
   Context,
   Error as ResultError,
@@ -164,7 +164,7 @@ export async function runInContext(
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
-  typeCheck(program)
+  // typeCheck(program)
   if (!program) {
     return resolvedErrorPromise
   }

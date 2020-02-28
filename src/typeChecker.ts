@@ -10,29 +10,38 @@ export function typeCheck(program: es.Program | undefined): void {
   if (program === undefined || program.body[0] === undefined) {
     return
   }
-  // console.log(program)
-  const ctx: Ctx = { next: 0, env: {} }
+  const ctx: Ctx = { next: 0, env: initialEnv }
   try {
     program.body.forEach(node => {
-      if (1 + 1 === 0) {
-        infer(node, ctx)
-      }
+      infer(node, ctx)
+      // if (1 + 1 === 0) {
+      //   infer(node, ctx)
+      // }
     })
   } catch (e) {
     console.log(e)
+    throw e
   }
 }
 
 // Type Definitions
+// An environment maps variables (which are expressions) to types. Do not confuse with a
+// substitution which maps type variables to types
 interface Env {
   [name: string]: TYPE
 }
 
+/**
+ * Context contains the environment along with some other information that we might need
+ */
 interface Ctx {
-  next: number
-  env: Env
+  next: number // next type variable to be generated
+  env: Env // mapping of variables in scope to types
 }
 
+// a map of type variable names to types assigned to them
+// A substitution maps type variables to types while an environment maps variables (which are
+// expressions) to types
 interface Subsitution {
   [key: string]: TYPE
 }
@@ -115,10 +124,24 @@ function applySubstToType(subst: Subsitution, type: TYPE): TYPE {
   }
 }
 
+/**
+ * Replace type variables in a type that are present in a given substitution
+ * and return the type with those variables with their substituted values
+ * e.g. applying substitution of {"a": Bool, "b": Int} to type (a -> b) will give
+ * the type: Bool -> Int
+ * @param subst
+ * @param types
+ */
 function applySubstToTypes(subst: Subsitution, types: TYPE[]): TYPE[] {
   return types.map(type => applySubstToType(subst, type))
 }
 
+/**
+ * Applies the first substitution to the types of the second one and then
+ * combines the result with the first substitution
+ * @param s1
+ * @param s2
+ */
 function composeSubsitutions(s1: Subsitution, s2: Subsitution): Subsitution {
   const composedSubst: Subsitution = {}
   Object.keys(s2).forEach(key => {
@@ -176,6 +199,26 @@ type TYPE = NAMED | VAR | FUNCTION
 function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
   const env = ctx.env
   switch (node.type) {
+    case 'BinaryExpression': {
+      const [inferredLeft, leftSubst] = infer(node.left, ctx)
+      const [inferredRight, rightSubst] = infer(node.right, ctx)
+      let composedSubst = composeSubsitutions(leftSubst, rightSubst)
+
+      const funcType = env[node.operator] as FUNCTION
+      const newType = newTypeVar(ctx)
+      const subst1 = unify(
+        {
+          nodeType: 'Function',
+          fromTypes: [inferredLeft, inferredRight],
+          toType: newType
+        },
+        funcType
+      )
+
+      composedSubst = composeSubsitutions(composedSubst, subst1)
+      const inferredReturnType = applySubstToType(composedSubst, funcType.toType)
+      return [inferredReturnType, composedSubst]
+    }
     case 'ExpressionStatement': {
       const inferred = infer(node.expression, ctx)
       return [{ nodeType: 'Named', name: 'undefined' }, inferred[1]]
@@ -218,7 +261,6 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
     case 'Identifier': {
       const identifierName = node.name
       if (env[identifierName]) {
-        // console.log(env[identifierName])
         return [env[identifierName], {}]
       }
       throw Error('Undefined identifier')
@@ -259,7 +301,6 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
         fromTypes: applySubstToTypes(subst, newTypes),
         toType: bodyType
       }
-      console.log(inferredType)
       return [inferredType, subst]
     }
     case 'VariableDeclaration': {
@@ -302,11 +343,49 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       // consolidate new substitutions
       const finalSubst = composeSubsitutions(subst5, subst6)
       const inferredReturnType = applySubstToType(finalSubst, funcType1.toType)
-      console.log(inferredReturnType)
-      console.log(finalSubst)
       return [inferredReturnType, finalSubst]
     }
     default:
       return [{ nodeType: 'Named', name: 'undefined' }, {}]
   }
+}
+
+// =======================================
+// Private Helper Parsing Functions
+// =======================================
+
+function tNamedBool(): NAMED {
+  return {
+    nodeType: 'Named',
+    name: 'boolean'
+  }
+}
+
+function tNamedNumber(): NAMED {
+  return {
+    nodeType: 'Named',
+    name: 'number'
+  }
+}
+
+function tFunc(...types: TYPE[]): FUNCTION {
+  const fromTypes = types.slice(0, -1)
+  const toType = types.slice(-1)[0]
+  return {
+    nodeType: 'Function',
+    fromTypes,
+    toType
+  }
+}
+
+const initialEnv = {
+  // true: tNamedBool(),
+  // false: tNamedBool(),
+  '!': tFunc(tNamedBool(), tNamedBool()),
+  '&&': tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
+  '||': tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
+  // NOTE for now just handle for Number === Number
+  '===': tFunc(tNamedNumber(), tNamedNumber(), tNamedBool()),
+  // "Bool==": tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
+  '+': tFunc(tNamedNumber(), tNamedNumber(), tNamedNumber())
 }
