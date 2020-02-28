@@ -111,7 +111,11 @@ export function printProgram(P: number[]) {
     }
     programStr += s + '\n'
   }
-  window.console.log(programStr)
+  if (typeof window === 'undefined') {
+    console.log(programStr)
+  } else {
+    window.console.log(programStr)
+  }
 }
 
 // COMPILER FROM PARSED SOURCE PROGRAM (ESTREE AST) TO SECD INSTRUCTIONS

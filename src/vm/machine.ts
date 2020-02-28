@@ -39,28 +39,51 @@ let G: any = 0
 let H: any = 0
 
 function show_executing(s: string) {
-  window.console.log('', '--- RUN ---' + s)
-  window.console.log(PC, 'PC :')
-  window.console.log(getName(P[PC]), 'instr:')
+  if (typeof window === 'undefined') {
+    console.log('', '--- RUN ---' + s)
+    console.log(PC, 'PC :')
+    console.log(getName(P[PC]), 'instr:')
+  } else {
+    window.console.log('', '--- RUN ---' + s)
+    window.console.log(PC, 'PC :')
+    window.console.log(getName(P[PC]), 'instr:')
+  }
 }
 
 // for debugging: show all registers
 export function show_registers(s: string) {
   show_executing(s)
-  window.console.log('', '--- REGISTERS ---')
-  window.console.log(RES, 'RES:')
-  window.console.log(A, 'A  :')
-  window.console.log(B, 'B  :')
-  window.console.log(C, 'C  :')
-  window.console.log(D, 'D  :')
-  window.console.log(E, 'E  :')
-  window.console.log(F, 'F  :')
-  window.console.log(G, 'G  :')
-  window.console.log(H, 'H  :')
-  window.console.log(OS, 'OS :')
-  window.console.log(ENV, 'ENV:')
-  window.console.log(RTS, 'RTS:')
-  window.console.log(TOP_RTS, 'TOP_RTS:')
+  if (typeof window === 'undefined') {
+    console.log('', '--- REGISTERS ---')
+    console.log(RES, 'RES:')
+    console.log(A, 'A  :')
+    console.log(B, 'B  :')
+    console.log(C, 'C  :')
+    console.log(D, 'D  :')
+    console.log(E, 'E  :')
+    console.log(F, 'F  :')
+    console.log(G, 'G  :')
+    console.log(H, 'H  :')
+    console.log(OS, 'OS :')
+    console.log(ENV, 'ENV:')
+    console.log(RTS, 'RTS:')
+    console.log(TOP_RTS, 'TOP_RTS:')
+  } else {
+    window.console.log('', '--- REGISTERS ---')
+    window.console.log(RES, 'RES:')
+    window.console.log(A, 'A  :')
+    window.console.log(B, 'B  :')
+    window.console.log(C, 'C  :')
+    window.console.log(D, 'D  :')
+    window.console.log(E, 'E  :')
+    window.console.log(F, 'F  :')
+    window.console.log(G, 'G  :')
+    window.console.log(H, 'H  :')
+    window.console.log(OS, 'OS :')
+    window.console.log(ENV, 'ENV:')
+    window.console.log(RTS, 'RTS:')
+    window.console.log(TOP_RTS, 'TOP_RTS:')
+  }
 }
 
 // register that says if machine is running
@@ -332,27 +355,51 @@ function node_kind(x: number) {
 export function show_heap(s: string) {
   const len = HEAP.length
   let i = 0
-  window.console.log('', '--- HEAP --- ' + s)
+  if (typeof window === 'undefined') {
+    console.log('', '--- HEAP --- ' + s)
+  } else {
+    window.console.log('', '--- HEAP --- ' + s)
+  }
   while (i < len) {
-    window.console.log(
-      '',
-      i.toString() +
-      ': ' +
-      HEAP[i].toString() + // TODO is_number(HEAP[i]) &&
-        (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
-    )
+    if (typeof window === 'undefined') {
+      console.log(
+        '',
+        i.toString() +
+        ': ' +
+        HEAP[i].toString() + // TODO is_number(HEAP[i]) &&
+          (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
+      )
+    } else {
+      window.console.log(
+        '',
+        i.toString() +
+        ': ' +
+        HEAP[i].toString() + // TODO is_number(HEAP[i]) &&
+          (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
+      )
+    }
     i = i + 1
   }
 }
 
 function show_heap_value(address: number) {
-  window.console.log(
-    '',
-    'result: heap node of type = ' +
-      node_kind(HEAP[address]) +
-      ', value = ' +
-      HEAP[address + NUMBER_VALUE_SLOT]
-  )
+  if (typeof window === 'undefined') {
+    console.log(
+      '',
+      'result: heap node of type = ' +
+        node_kind(HEAP[address]) +
+        ', value = ' +
+        HEAP[address + NUMBER_VALUE_SLOT]
+    )
+  } else {
+    window.console.log(
+      '',
+      'result: heap node of type = ' +
+        node_kind(HEAP[address]) +
+        ', value = ' +
+        HEAP[address + NUMBER_VALUE_SLOT]
+    )
+  }
 }
 
 // SVMLa implementation
@@ -628,14 +675,22 @@ function run() {
     // show_registers("run loop");
     // show_heap("run loop");
     if (M[P[PC]] === undefined) {
-      window.console.error(P[PC], 'unknown op-code:')
+      if (typeof window === 'undefined') {
+        console.error(P[PC], 'unknown op-code:')
+      } else {
+        window.console.error(P[PC], 'unknown op-code:')
+      }
     } else {
       M[P[PC]]()
     }
   }
   if (STATE === DIV_ERROR) {
     POP_OS()
-    window.console.error(RES, 'execution aborted:')
+    if (typeof window === 'undefined') {
+      console.error(RES, 'execution aborted:')
+    } else {
+      window.console.error(RES, 'execution aborted:')
+    }
   } else {
     POP_OS()
     show_heap_value(RES)
