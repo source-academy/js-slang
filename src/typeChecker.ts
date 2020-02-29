@@ -1,6 +1,6 @@
 import * as es from 'estree'
 // tslint:disable:no-console
-
+// tslint:disable: object-literal-key-quotes
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
@@ -12,12 +12,14 @@ export function typeCheck(program: es.Program | undefined): void {
   }
   const ctx: Ctx = { next: 0, env: initialEnv }
   try {
-    program.body.forEach(node => {
-      infer(node, ctx)
-      // if (1 + 1 === 0) {
-      //   infer(node, ctx)
-      // }
-    })
+    // dont run type check for predefined functions as they include constructs we can't handle
+    // like lists etc.
+    if (program.body.length < 10) {
+      program.body.forEach(node => {
+        infer(node, ctx)
+      })
+      // console.log(ctx.env)
+    }
   } catch (e) {
     console.log(e)
     throw e
@@ -199,6 +201,22 @@ type TYPE = NAMED | VAR | FUNCTION
 function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
   const env = ctx.env
   switch (node.type) {
+    case 'UnaryExpression': {
+      const [inferredType, subst1] = infer(node.argument, ctx)
+      const funcType = env[node.operator] as FUNCTION
+      const newType = newTypeVar(ctx)
+      const subst2 = unify(
+        {
+          nodeType: 'Function',
+          fromTypes: [inferredType],
+          toType: newType
+        },
+        funcType
+      )
+      const composedSubst = composeSubsitutions(subst1, subst2)
+      return [applySubstToType(composedSubst, funcType.toType), composedSubst]
+    }
+    case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
       const [inferredLeft, leftSubst] = infer(node.left, ctx)
       const [inferredRight, rightSubst] = infer(node.right, ctx)
@@ -214,20 +232,19 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
         },
         funcType
       )
-
-      composedSubst = composeSubsitutions(composedSubst, subst1)
+      composedSubst = composeSubsitutions(subst1, composedSubst)
       const inferredReturnType = applySubstToType(composedSubst, funcType.toType)
       return [inferredReturnType, composedSubst]
     }
     case 'ExpressionStatement': {
       const inferred = infer(node.expression, ctx)
-      return [{ nodeType: 'Named', name: 'undefined' }, inferred[1]]
+      return [tNamedUndef, inferred[1]]
     }
     case 'ReturnStatement': {
       if (node.argument === undefined) {
-        return [{ nodeType: 'Named', name: 'undefined' }, {}]
+        return [tNamedUndef, {}]
       } else if (node.argument === null) {
-        return [{ nodeType: 'Named', name: 'null' }, {}]
+        return [tNamedNull, {}]
       }
       return infer(node.argument, ctx)
     }
@@ -242,19 +259,19 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
           return [inferredType, composedSubst]
         }
       }
-      return [{ nodeType: 'Named', name: 'undefined' }, composedSubst]
+      return [tNamedUndef, composedSubst]
     }
     case 'Literal': {
       const literalVal = node.value
       const typeOfLiteral = typeof literalVal
       if (literalVal === null) {
-        return [{ nodeType: 'Named', name: 'null' }, {}]
+        return [tNamedNull, {}]
       } else if (
         typeOfLiteral === 'boolean' ||
         typeOfLiteral === 'string' ||
         typeOfLiteral === 'number'
       ) {
-        return [{ nodeType: 'Named', name: typeOfLiteral }, {}]
+        return [tNamed(typeOfLiteral), {}]
       }
       throw Error('Unexpected literal type')
     }
@@ -268,13 +285,7 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
     case 'IfStatement': {
       // type check test
       const [testType, subst1] = infer(node.test, ctx)
-      const subst2 = unify(
-        {
-          nodeType: 'Named',
-          name: 'boolean'
-        },
-        testType
-      )
+      const subst2 = unify(tNamedBool, testType)
       const subst3 = composeSubsitutions(subst1, subst2)
       applySubstToCtx(subst3, ctx)
       const [, subst4] = infer(node.consequent, ctx)
@@ -283,17 +294,21 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       if (node.alternate) {
         // Have to decide whether we want both branches to unify. Till then return in if wont work
         const [, subst6] = infer(node.alternate, ctx)
-        return [{ nodeType: 'Named', name: 'undefined' }, composeSubsitutions(subst5, subst6)]
+        return [tNamedUndef, composeSubsitutions(subst5, subst6)]
       }
-      return [{ nodeType: 'Named', name: 'undefined' }, subst5]
+      return [tNamedUndef, subst5]
     }
     case 'ArrowFunctionExpression': {
-      const newCtx = cloneCtx(ctx) // create new scope
       const newTypes: TYPE[] = []
-      node.params.forEach((param: es.Identifier) => {
+      node.params.forEach(() => {
         const newType = newTypeVar(ctx)
-        addToCtx(newCtx, param.name, newType)
         newTypes.push(newType)
+      })
+      // clone scope only after we have accounted for all the new type variables to be created
+      const newCtx = cloneCtx(ctx)
+      node.params.forEach((param: es.Identifier, index) => {
+        const newType = newTypes[index]
+        addToCtx(newCtx, param.name, newType)
       })
       const [bodyType, subst] = infer(node.body, newCtx)
       const inferredType: FUNCTION = {
@@ -312,9 +327,55 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       if (!init || id.type !== 'Identifier') {
         throw Error('Either no initialization or not an identifier on LHS')
       }
-      const [inferredInitType, subst] = infer(init, ctx)
-      addToCtx(ctx, id.name, inferredInitType)
-      return [{ nodeType: 'Named', name: 'undefined' }, subst]
+      // get a reference to the type variable representing our new variable
+      // this is so we know of any references made to our variable in the init
+      // (i.e. perhaps in some kind of recursive definition)
+      const newType = newTypeVar(ctx)
+      addToCtx(ctx, id.name, newType)
+      const [inferredInitType, subst1] = infer(init, ctx)
+      // In case we made a reference to our declared variable in our init, need to type
+      // check the usage to see if the inferred init type is compatible with the inferred type of our
+      // type variable based on the usage inside init
+      const subst2 = unify(inferredInitType, applySubstToType(subst1, newType))
+      const composedSubst = composeSubsitutions(subst1, subst2)
+      addToCtx(ctx, id.name, applySubstToType(composedSubst, inferredInitType))
+      return [tNamedUndef, composedSubst]
+    }
+    case 'FunctionDeclaration': {
+      const id = node.id
+      if (id === null) {
+        throw Error('No identifier for function declaration')
+      }
+      const paramTypes: TYPE[] = []
+      node.params.forEach(() => {
+        const newType = newTypeVar(ctx)
+        paramTypes.push(newType)
+      })
+      // similar to variable declaration, catch possible type errors such as wrongly using identifier
+      // not as a function. for that we need to create a type variable and introduce it into the context
+      const functionType: FUNCTION = {
+        nodeType: 'Function',
+        fromTypes: paramTypes,
+        toType: newTypeVar(ctx)
+      }
+      addToCtx(ctx, id.name, functionType)
+      // clone scope only after we have accounted for all the new type variables to be created
+      const newCtx = cloneCtx(ctx)
+      node.params.forEach((param: es.Identifier, index) => {
+        const newType = paramTypes[index]
+        addToCtx(newCtx, param.name, newType)
+      })
+      const [bodyType, subst1] = infer(node.body, newCtx)
+      // unify, for the same reason as in variable declaration
+      const inferredType: FUNCTION = {
+        nodeType: 'Function',
+        fromTypes: applySubstToTypes(subst1, paramTypes),
+        toType: bodyType
+      }
+      const subst2 = unify(inferredType, applySubstToType(subst1, functionType))
+      const composedSubst = composeSubsitutions(subst1, subst2)
+      addToCtx(ctx, id.name, applySubstToType(composedSubst, inferredType))
+      return [tNamedUndef, composedSubst]
     }
     case 'CallExpression': {
       const [funcType, subst1] = infer(node.callee, ctx)
@@ -330,7 +391,7 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       const newType = newTypeVar(ctx)
       const subst3 = composeSubsitutions(subst1, subst2)
       // Check that our supposed function is an actual function and unify with literal fn type
-      const subst4 = unify({ nodeType: 'Function', fromTypes: argTypes, toType: newType }, funcType)
+      const subst4 = unify(funcType, { nodeType: 'Function', fromTypes: argTypes, toType: newType })
       const funcType1 = applySubstToType(subst4, funcType) as FUNCTION
       // consolidate all substitutions so far
       const subst5 = composeSubsitutions(subst3, subst4)
@@ -346,7 +407,7 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       return [inferredReturnType, finalSubst]
     }
     default:
-      return [{ nodeType: 'Named', name: 'undefined' }, {}]
+      return [tNamedUndef, {}]
   }
 }
 
@@ -354,19 +415,18 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
 // Private Helper Parsing Functions
 // =======================================
 
-function tNamedBool(): NAMED {
+function tNamed(name: NAMED_TYPE): NAMED {
   return {
     nodeType: 'Named',
-    name: 'boolean'
+    name
   }
 }
 
-function tNamedNumber(): NAMED {
-  return {
-    nodeType: 'Named',
-    name: 'number'
-  }
-}
+const tNamedBool = tNamed('boolean')
+const tNamedNumber = tNamed('number')
+const tNamedNull = tNamed('null')
+// const tNamedString = tNamed('string')
+const tNamedUndef = tNamed('undefined')
 
 function tFunc(...types: TYPE[]): FUNCTION {
   const fromTypes = types.slice(0, -1)
@@ -379,13 +439,17 @@ function tFunc(...types: TYPE[]): FUNCTION {
 }
 
 const initialEnv = {
-  // true: tNamedBool(),
-  // false: tNamedBool(),
-  '!': tFunc(tNamedBool(), tNamedBool()),
-  '&&': tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
-  '||': tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
+  Infinity: tNamedNumber,
+  NaN: tNamedNumber,
+  undefined: tNamedUndef,
+  '!': tFunc(tNamedBool, tNamedBool),
+  '&&': tFunc(tNamedBool, tNamedBool, tNamedBool),
+  '||': tFunc(tNamedBool, tNamedBool, tNamedBool),
   // NOTE for now just handle for Number === Number
-  '===': tFunc(tNamedNumber(), tNamedNumber(), tNamedBool()),
+  '===': tFunc(tNamedNumber, tNamedNumber, tNamedBool),
   // "Bool==": tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
-  '+': tFunc(tNamedNumber(), tNamedNumber(), tNamedNumber())
+  '+': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  '-': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  '*': tFunc(tNamedNumber, tNamedNumber, tNamedNumber)
+  // '/': tFunc(tNamedNumber(), tNamedNumber(), tNamedNumber())
 }
