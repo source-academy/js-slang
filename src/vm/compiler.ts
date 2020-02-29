@@ -7,6 +7,14 @@ import * as create from '../utils/astCreator'
 // op-codes of machine instructions, used by compiler
 // and machine
 
+export function printToConsole(s1: any, s2: string) {
+  if (typeof window === 'undefined') {
+    console.log(s1, s2)
+  } else {
+    window.console.log(s1, s2)
+  }
+}
+
 export enum OpCodes {
   START = 0,
   LDCN = 1, // followed by: number
@@ -111,11 +119,7 @@ export function printProgram(P: number[]) {
     }
     programStr += s + '\n'
   }
-  if (typeof window === 'undefined') {
-    console.log(programStr)
-  } else {
-    window.console.log(programStr)
-  }
+  printToConsole('', programStr)
 }
 
 // COMPILER FROM PARSED SOURCE PROGRAM (ESTREE AST) TO SECD INSTRUCTIONS
