@@ -1,105 +1,142 @@
 // import { typeCheck } from '../typeChecker'
 import { createContext } from '../index'
-import { parse } from '../parser'
+import { parse as __parse } from '../parser'
 import { typeCheck } from '../typeChecker'
+
+// simple program to parse program and error if there are syntatical errors
+function parse(code: any) {
+  const program: any = __parse(code, createContext(1))
+  expect(program).not.toBeUndefined()
+  return program
+}
+
+describe('type checking conditional expression and if statement', () => {
+  // happy paths
+  it('no errors for well typed conditional expression', () => {
+    const code = "const flag1 = true; const flag2 = false; const x = flag1 && flag2 ? 1 : 2;"
+    const program = parse(code)
+    expect(() => typeCheck(program)).not.toThrowError()
+  })
+
+  it('no errors for well typed if statement', () => {
+    const code = "const flag1 = true; const flag2 = false; if(flag1 || flag2) {const x = 5;} else {const y=4;}"
+    const program = parse(code)
+    expect(() => typeCheck(program)).not.toThrowError()
+  })
+
+  // sad paths
+  it('errors when adding number to string in conditional expression', () => {
+    const code = "const x = true ? 5 + 'foo' : 4 + 4;"
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+
+    const code2 = "const x = true ? 5 + 1 : 4 + 'foo';"
+    const program2 = parse(code2)
+    expect(program2).not.toBeUndefined()
+    expect(() => typeCheck(program2)).toThrowError()
+  })
+
+  it('errors when conditional test is not bool', () => {
+    const code = "const x = 5 ? 1 : 2;"
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+  })
+  
+  it('errors when if statement test is not bool', () => {
+    const code = "if(5 + 4) {const x = 4;} else {const x = 5;}"
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+  })
+})
 
 describe('binary expressions', () => {
   it('errors when adding number to string', () => {
-    const context = createContext(1)
     const code = "const x = 5; const y = 'bob'; const z = x + y;"
-    const program = parse(code, context)
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+  })
+
+  it('errors when adding number to string', () => {
+    const code = "const x = 5; const y = 'bob'; const z = x + y;"
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('no errors when adding number to number', () => {
-    const context = createContext(1)
     const code = 'const x = 5; const y = 6; const z = x + y;'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it('no errors when comparing number with number', () => {
-    const context = createContext(1)
     const code = 'const x = 5; const y = 6; const z = x === y;'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it('no errors when we have bool AND bool', () => {
-    const context = createContext(1)
     const code = 'function x(a) { a && a; }'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it('errors when we have bool AND number', () => {
-    const context = createContext(1)
     const code = 'function x(a) { a && (a + 2); }'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('no errors when we have NOT bool', () => {
-    const context = createContext(1)
     const code = 'const a = false; !a;'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it('errors when we have NOT string', () => {
-    const context = createContext(1)
     const code = 'const a = "b"; !a;'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('errors when we param used as bool and num in if else', () => {
-    const context = createContext(1)
     const code = 'function x(a) { if (true) {a && a;} else { a + 2; } }'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('errors when having a string arg for function expecting a number', () => {
-    const context = createContext(1)
     const code = 'function f(x) { return x + 2; } f("test");'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('errors when having a function called with wrong number of args', () => {
-    const context = createContext(1)
     const code = 'function f(x) { return x; } f("test", 1);'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it('errors when using a variable recursively wrongly', () => {
-    const context = createContext(1)
     const code = 'const f = (x) => { return f + 1; };'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
   it.skip('Allows for variables declared later, as long as function not called yet', () => {
-    const context = createContext(1)
     const code = 'const a = () => {return x + 1;}; const x = 3;'
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it.skip('Type checks variables declared later', () => {
-    const context = createContext(1)
     const code = "const a = () => {return x + 1;}; const x = 'b';"
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
 
-  // NOTE currently fails, can fix once we introduce polymorphic types
   it.skip('no errors when comparing string with string', () => {
-    const context = createContext(1)
     const code = "const x = 'test'; const y = 'foo'; const z = x === y;"
-    const program = parse(code, context)
+    const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 })
