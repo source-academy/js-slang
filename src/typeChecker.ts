@@ -280,9 +280,9 @@ function infer(node: es.Node, ctx: Ctx): [TYPE, Subsitution] {
       if (env[identifierName]) {
         return [env[identifierName], {}]
       }
-      throw Error('Undefined identifier')
+      throw Error(`Undefined identifier: ${identifierName}`)
     }
-    case 'ConditionalExpression': // both cases are the same 
+    case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
       // type check test
       const [testType, subst1] = infer(node.test, ctx)
@@ -423,10 +423,17 @@ function tNamed(name: NAMED_TYPE): NAMED {
   }
 }
 
+function tVar(name: string): VAR {
+  return {
+    nodeType: 'Var',
+    name
+  }
+}
+
 const tNamedBool = tNamed('boolean')
 const tNamedNumber = tNamed('number')
 const tNamedNull = tNamed('null')
-// const tNamedString = tNamed('string')
+const tNamedString = tNamed('string')
 const tNamedUndef = tNamed('undefined')
 
 function tFunc(...types: TYPE[]): FUNCTION {
@@ -439,10 +446,68 @@ function tFunc(...types: TYPE[]): FUNCTION {
   }
 }
 
-const initialEnv = {
+const predeclaredNames = {
+  // constants
   Infinity: tNamedNumber,
   NaN: tNamedNumber,
   undefined: tNamedUndef,
+  // is something functions
+  is_boolean: tFunc(tVar('any'), tNamedBool),
+  is_function: tFunc(tVar('any'), tNamedBool),
+  is_number: tFunc(tVar('any'), tNamedBool),
+  is_string: tFunc(tVar('any'), tNamedBool),
+  is_undefined: tFunc(tVar('any'), tNamedBool),
+  // math functions
+  math_abs: tFunc(tNamedNumber, tNamedNumber),
+  math_acos: tFunc(tNamedNumber, tNamedNumber),
+  math_acosh: tFunc(tNamedNumber, tNamedNumber),
+  math_asin: tFunc(tNamedNumber, tNamedNumber),
+  math_asinh: tFunc(tNamedNumber, tNamedNumber),
+  math_atan: tFunc(tNamedNumber, tNamedNumber),
+  math_atan2: tFunc(tNamedNumber, tNamedNumber),
+  math_atanh: tFunc(tNamedNumber, tNamedNumber),
+  math_cbrt: tFunc(tNamedNumber, tNamedNumber),
+  math_ceil: tFunc(tNamedNumber, tNamedNumber),
+  math_clz32: tFunc(tNamedNumber, tNamedNumber),
+  math_cos: tFunc(tNamedNumber, tNamedNumber),
+  math_cosh: tFunc(tNamedNumber, tNamedNumber),
+  math_exp: tFunc(tNamedNumber, tNamedNumber),
+  math_expm1: tFunc(tNamedNumber, tNamedNumber),
+  math_floor: tFunc(tNamedNumber, tNamedNumber),
+  math_fround: tFunc(tNamedNumber, tNamedNumber),
+  math_hypot: tFunc(tNamedNumber, tNamedNumber),
+  math_imul: tFunc(tNamedNumber, tNamedNumber),
+  math_LN2: tFunc(tNamedNumber, tNamedNumber),
+  math_LN10: tFunc(tNamedNumber, tNamedNumber),
+  math_log: tFunc(tNamedNumber, tNamedNumber),
+  math_log1p: tFunc(tNamedNumber, tNamedNumber),
+  math_log2: tFunc(tNamedNumber, tNamedNumber),
+  math_LOG2E: tFunc(tNamedNumber, tNamedNumber),
+  math_log10: tFunc(tNamedNumber, tNamedNumber),
+  math_LOG10E: tFunc(tNamedNumber, tNamedNumber),
+  math_max: tFunc(tNamedNumber, tNamedNumber),
+  math_min: tFunc(tNamedNumber, tNamedNumber),
+  math_PI: tFunc(tNamedNumber, tNamedNumber),
+  math_pow: tFunc(tNamedNumber, tNamedNumber),
+  math_random: tFunc(tNamedNumber, tNamedNumber),
+  math_round: tFunc(tNamedNumber, tNamedNumber),
+  math_sign: tFunc(tNamedNumber, tNamedNumber),
+  math_sin: tFunc(tNamedNumber, tNamedNumber),
+  math_sinh: tFunc(tNamedNumber, tNamedNumber),
+  math_sqrt: tFunc(tNamedNumber, tNamedNumber),
+  math_SQRT1_2: tFunc(tNamedNumber, tNamedNumber),
+  math_SQRT2: tFunc(tNamedNumber, tNamedNumber),
+  math_tan: tFunc(tNamedNumber, tNamedNumber),
+  math_tanh: tFunc(tNamedNumber, tNamedNumber),
+  math_trunc: tFunc(tNamedNumber, tNamedNumber),
+  // misc functions
+  parse_int: tFunc(tNamedString, tNamedNumber),
+  prompt: tFunc(tNamedString, tNamedString),
+  runtime: tFunc(tNamedNumber),
+  stringify: tFunc(tVar('any'), tNamedString)
+}
+
+const primitiveFuncs = {
   '!': tFunc(tNamedBool, tNamedBool),
   '&&': tFunc(tNamedBool, tNamedBool, tNamedBool),
   '||': tFunc(tNamedBool, tNamedBool, tNamedBool),
@@ -454,4 +519,9 @@ const initialEnv = {
   '-': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
   '*': tFunc(tNamedNumber, tNamedNumber, tNamedNumber)
   // '/': tFunc(tNamedNumber(), tNamedNumber(), tNamedNumber())
+}
+
+const initialEnv = {
+  ...predeclaredNames,
+  ...primitiveFuncs
 }
