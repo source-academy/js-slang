@@ -10,16 +10,48 @@ function parse(code: any) {
   return program
 }
 
+describe('type checking builtin functions', () => {
+  it('no errors for well defined use of builtin functions', () => {
+    /**
+     * types of functions
+     * 1. is_XXX: any -> bool
+     * 2. math_XXX: number -> number
+     * NOTE parse_int might fail but I think that it is safe to assume that return type is number
+     * 3. parse_int: string -> number
+     * 4. prompt: string -> string
+     * 5. runtime: -> number
+     */
+    const code = `
+    const a = is_boolean(true);
+    const b = math_abs(4 - 5);
+    const c = parse_int("42");
+
+    const d = is_boolean(is_number(45));
+
+    const e = math_sqrt(runtime());
+    `
+    const program = parse(code)
+    expect(() => typeCheck(program)).not.toThrowError()
+  })
+
+  it('errors if apply string to math function', () => {
+    const code = "const a = math_abs('clearly not a number');"
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+  })
+})
+
 describe('type checking conditional expression and if statement', () => {
   // happy paths
   it('no errors for well typed conditional expression', () => {
-    const code = "const flag1 = true; const flag2 = false; const x = flag1 && flag2 ? 1 : 2;"
+    const code = 'const flag1 = true; const flag2 = false; const x = flag1 && flag2 ? 1 : 2;'
     const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
 
   it('no errors for well typed if statement', () => {
-    const code = "const flag1 = true; const flag2 = false; if(flag1 || flag2) {const x = 5;} else {const y=4;}"
+    const code =
+      'const flag1 = true; const flag2 = false; if(flag1 || flag2) {const x = 5;} else {const y=4;}'
     const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
@@ -37,13 +69,13 @@ describe('type checking conditional expression and if statement', () => {
   })
 
   it('errors when conditional test is not bool', () => {
-    const code = "const x = 5 ? 1 : 2;"
+    const code = 'const x = 5 ? 1 : 2;'
     const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
-  
+
   it('errors when if statement test is not bool', () => {
-    const code = "if(5 + 4) {const x = 4;} else {const x = 5;}"
+    const code = 'if(5 + 4) {const x = 4;} else {const x = 5;}'
     const program = parse(code)
     expect(() => typeCheck(program)).toThrowError()
   })
