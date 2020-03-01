@@ -106,6 +106,8 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
     const finalValue = thunk.value()
     // memoize the calculated value
     thunk.value = () => finalValue
+    // set the evaluated property to true
+    thunk.evaluated = true
     return finalValue
   }
 }
