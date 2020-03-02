@@ -123,7 +123,7 @@ function addBinaryInstruction(opCode: number, arg1: Argument, arg2: Argument) {
   functionCode.push(ins)
 }
 
-type CompileTask = [es.BlockStatement | es.Program, number, number, EnvName[][]]
+type CompileTask = [es.BlockStatement | es.Program, number, number, Array<Map<string, EnvEntry>>]
 // toCompile stack keeps track of remaining compiler work:
 // these are function bodies that still need to be compiled
 let toCompile: CompileTask[] = []
@@ -153,7 +153,7 @@ function makeToCompileTask(
   body: es.BlockStatement | es.Program,
   maxStackSizeAddress: number,
   addressAddress: number,
-  indexTable: EnvName[][]
+  indexTable: Array<Map<string, EnvEntry>>
 ): CompileTask {
   return [body, maxStackSizeAddress, addressAddress, indexTable]
 }
@@ -166,28 +166,24 @@ function toCompileTaskMaxStackSizeAddress(toCompileTask: CompileTask): number {
 function toCompileTaskAddressAddress(toCompileTask: CompileTask): number {
   return toCompileTask[2]
 }
-function toCompileTaskIndexTable(toCompileTask: CompileTask): EnvName[][] {
+function toCompileTaskIndexTable(toCompileTask: CompileTask): Array<Map<string, EnvEntry>> {
   return toCompileTask[3]
 }
 
 // indexTable keeps track of environment addresses
 // assigned to names
-function makeEmptyIndexTable(): EnvName[][] {
+function makeEmptyIndexTable(): Array<Map<string, EnvEntry>> {
   return []
 }
-function extendIndexTable(indexTable: EnvName[][], names: EnvName[]) {
+function extendIndexTable(indexTable: Array<Map<string, EnvEntry>>, names: Map<string, EnvEntry>) {
   return indexTable.concat([names])
 }
-function indexOf(indexTable: EnvName[][], name: string) {
+function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
   for (let i = indexTable.length - 1; i >= 0; i--) {
-    for (let j = 0; j < indexTable[i].length; j++) {
-      const envName = indexTable[i][j]
-      if (envName.name === name) {
-        const envLevel = indexTable.length - 1 - i
-        const index = j
-        const isVar = envName.isVar
-        return { envLevel, index, isVar }
-      }
+    if (indexTable[i].has(name)) {
+      const envLevel = indexTable.length - 1 - i
+      const { index, isVar } = indexTable[i].get(name)!
+      return { envLevel, index, isVar }
     }
   }
   throw Error('name not found: ' + name)
@@ -199,33 +195,76 @@ let toplevel = true
 
 // function continueToCompile() {}
 
-interface EnvName {
-  name: string
+interface EnvEntry {
+  index: number
   isVar: boolean
 }
-function localNames(stmts: es.Node | es.Node[]) {
-  const names: EnvName[] = []
-  if (Array.isArray(stmts)) {
-    for (const stmt of stmts) {
-      names.push(...localNames(stmt))
-    }
-  } else {
-    if (stmts.type === 'VariableDeclaration') {
-      const node = stmts as es.VariableDeclaration
-      const name = (node.declarations[0].id as es.Identifier).name
+
+// extracts all name declarations within a function, and renames all shadowed names
+// if env has name, rename to name_line_col
+// recursively rename identifiers in ast if no same scope declaration
+// (check for variable, function declaration in each block. Check for params in each function call)
+// get local names of current scope
+// add to index table
+// for any duplicates, rename recursively within scope
+// recurse for any blocks
+function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string, EnvEntry>) {
+  // get all declared names of current scope and add names to rename to a stack
+  const namesToRename = new Map<string, string>()
+  for (const stmt of baseNode.body) {
+    if (stmt.type === 'VariableDeclaration') {
+      const node = stmt as es.VariableDeclaration
+      let name = (node.declarations[0].id as es.Identifier).name
+      if (names.has(name)) {
+        const loc = node.loc!.start // should be present
+        const oldName = name
+        name = name + '_' + loc.line + '_' + loc.column
+        namesToRename.set(oldName, name)
+      }
       const isVar = node.kind === 'let'
-      names.push({ name, isVar })
-    } else if (stmts.type === 'FunctionDeclaration') {
-      const node = stmts as es.FunctionDeclaration
-      const name = (node.id as es.Identifier).name
+      const index = names.size
+      names.set(name, { index, isVar })
+    } else if (stmt.type === 'FunctionDeclaration') {
+      const node = stmt as es.FunctionDeclaration
+      let name = (node.id as es.Identifier).name
+      if (names.has(name)) {
+        const loc = node.loc!.start // should be present
+        const oldName = name
+        name = name + '_' + loc.line + '_' + loc.column
+        namesToRename.set(oldName, name)
+      }
       const isVar = false
-      names.push({ name, isVar })
+      const index = names.size
+      names.set(name, { index, isVar })
+    }
+  }
+
+  // rename all references within blocks if nested block does not redeclare name
+  for (const name of namesToRename) {
+    renameVariables(baseNode, name[0], name[1])
+  }
+
+  // recurse for blocks
+  for (const stmt of baseNode.body) {
+    if (stmt.type === 'BlockStatement') {
+      const node = stmt as es.BlockStatement
+      localNames(node, names)
+    } else if (stmt.type === 'IfStatement') {
+      const { consequent, alternate } = stmt as es.IfStatement
+      localNames(consequent as es.BlockStatement, names)
+      // Source spec must have alternate
+      localNames(alternate! as es.BlockStatement, names)
     }
   }
   return names
 }
 
-function compileArguments(exprs: es.Node[], indexTable: EnvName[][]) {
+function renameVariables(stmts: es.BlockStatement | es.Program, search: string, replace: string) {
+  // might want to use acorn-walk's recursive for this
+  return
+}
+
+function compileArguments(exprs: es.Node[], indexTable: Array<Map<string, EnvEntry>>) {
   let maxStackSize = 0
   for (let i = 0; i < exprs.length; i++) {
     const { maxStackSize: curExpSize } = compile(exprs[i], indexTable, false)
@@ -234,104 +273,124 @@ function compileArguments(exprs: es.Node[], indexTable: EnvName[][]) {
   return maxStackSize
 }
 
-// function compileStatements(statements: es.Node[], indexTable: EnvName[][], insertFlag: boolean) {}
+// function compileStatements(statements: es.Node[], indexTable: Map<string,EnvEntry>[], insertFlag: boolean) {}
 
 // each compiler should return a maxStackSize
 const compilers = {
-  Program(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  Program(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  BlockStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  BlockStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  ExpressionStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ExpressionStatement(
+    node: es.Node,
+    indexTable: Array<Map<string, EnvEntry>>,
+    insertFlag: boolean
+  ) {
     throw Error('Unsupported operation')
   },
 
-  IfStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  IfStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  VariableDeclaration(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  VariableDeclaration(
+    node: es.Node,
+    indexTable: Array<Map<string, EnvEntry>>,
+    insertFlag: boolean
+  ) {
     throw Error('Unsupported operation')
   },
 
-  ReturnStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ReturnStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  CallExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  CallExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  UnaryExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  UnaryExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  BinaryExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  BinaryExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  LogicalExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  LogicalExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  ConditionalExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ConditionalExpression(
+    node: es.Node,
+    indexTable: Array<Map<string, EnvEntry>>,
+    insertFlag: boolean
+  ) {
     throw Error('Unsupported operation')
   },
 
-  ArrowFunctionExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ArrowFunctionExpression(
+    node: es.Node,
+    indexTable: Array<Map<string, EnvEntry>>,
+    insertFlag: boolean
+  ) {
     throw Error('Unsupported operation')
   },
 
-  Identifier(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  Identifier(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  Literal(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  Literal(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  ArrayExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ArrayExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  AssignmentExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  AssignmentExpression(
+    node: es.Node,
+    indexTable: Array<Map<string, EnvEntry>>,
+    insertFlag: boolean
+  ) {
     throw Error('Unsupported operation')
   },
 
-  ForStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ForStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  WhileStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  WhileStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  BreakStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  BreakStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  ContinueStatement(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ContinueStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  ObjectExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  ObjectExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  MemberExpression(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  MemberExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  Property(node: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+  Property(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   }
 }
 
-function compile(expr: es.Node, indexTable: EnvName[][], insertFlag: boolean) {
+function compile(expr: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
   return { maxStackSize: 0, insertFlag }
 }
 
@@ -342,8 +401,8 @@ function compileToIns(program: es.Program): Program {
   toCompile = []
   toplevel = true
 
-  const locals = localNames(program.body)
-  const topFunction: SVMFunction = [NaN, locals.length, 0, []]
+  const locals = localNames(program, new Map<string, EnvEntry>())
+  const topFunction: SVMFunction = [NaN, Object.keys(locals).length, 0, []]
   SVMFunctions.push(topFunction)
   const topFunctionIndex = SVMFunctions.length
 
