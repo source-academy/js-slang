@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import { recursive } from 'acorn-walk/dist/walk'
 
 export enum OpCodes {
   NOP = 0,
@@ -100,13 +101,11 @@ type Program = [
 ]
 
 let SVMFunctions: SVMFunction[] = []
-
 function addFunction(f: SVMFunction) {
   SVMFunctions.push(f)
 }
 
 let functionCode: Instruction[] = []
-
 // three insert functions (nullary, unary, binary)
 function addNullaryInstruction(opCode: number) {
   const ins: Instruction = [opCode]
@@ -194,22 +193,19 @@ function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
 let toplevel = true
 
 // function continueToCompile() {}
-
 interface EnvEntry {
   index: number
   isVar: boolean
 }
 
 // extracts all name declarations within a function, and renames all shadowed names
-// if env has name, rename to name_line_col
-// recursively rename identifiers in ast if no same scope declaration
+// if parent scope has name, rename to name_line_col
+// then recursively rename identifiers in ast if no same scope declaration
 // (check for variable, function declaration in each block. Check for params in each function call)
-// get local names of current scope
-// add to index table
 // for any duplicates, rename recursively within scope
 // recurse for any blocks
 function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string, EnvEntry>) {
-  // get all declared names of current scope and add names to rename to a stack
+  // get all declared names of current scope and keep track of names to rename
   const namesToRename = new Map<string, string>()
   for (const stmt of baseNode.body) {
     if (stmt.type === 'VariableDeclaration') {
@@ -240,9 +236,7 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
   }
 
   // rename all references within blocks if nested block does not redeclare name
-  for (const name of namesToRename) {
-    renameVariables(baseNode, name[0], name[1])
-  }
+  renameVariables(baseNode, namesToRename)
 
   // recurse for blocks
   for (const stmt of baseNode.body) {
@@ -259,9 +253,113 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
   return names
 }
 
-function renameVariables(stmts: es.BlockStatement | es.Program, search: string, replace: string) {
-  // might want to use acorn-walk's recursive for this
-  return
+// rename variables if nested scope does not redeclare names
+// redeclaration occurs on VariableDeclaration and FunctionDeclaration
+function renameVariables(
+  baseNode: es.BlockStatement | es.Program,
+  namesToRename: Map<string, string>
+) {
+  let baseScope = true
+
+  function recurseBlock(
+    node: es.BlockStatement,
+    inactive: Set<string>,
+    c: (node: es.Node, state: Set<string>) => void
+  ) {
+    // get names in current scope
+    const locals = getLocalsInScope(node)
+    // add names to state
+    const oldActive = new Set(inactive)
+    for (const name of locals) {
+      inactive.add(name)
+    }
+    // recurse
+    for (const stmt of node.body) {
+      c(stmt, inactive)
+    }
+    // reset state to normal
+    for (const name of locals) {
+      if (oldActive.has(name)) {
+        continue
+      }
+      inactive.delete(name) // delete if not in old scope
+    }
+  }
+
+  recursive(baseNode, new Set<string>(), {
+    VariablePattern(node: es.Identifier, inactive, c) {
+      // for declarations
+      const name = node.name
+      if (inactive.has(name)) {
+        return
+      }
+      if (namesToRename.has(name)) {
+        node.name = namesToRename.get(name)!
+      }
+    },
+    Identifier(node: es.Identifier, inactive, c) {
+      // for lone references
+      const name = node.name
+      if (inactive.has(name)) {
+        return
+      }
+      if (namesToRename.has(name)) {
+        node.name = namesToRename.get(name)!
+      }
+    },
+    BlockStatement(node: es.BlockStatement, inactive, c) {
+      if (baseScope) {
+        baseScope = false
+        for (const stmt of node.body) {
+          c(stmt, inactive)
+        }
+      } else {
+        recurseBlock(node, inactive, c)
+      }
+    },
+    IfStatement(node: es.IfStatement, inactive, c) {
+      const { consequent, alternate } = node
+      recurseBlock(consequent as es.BlockStatement, inactive, c)
+      recurseBlock(alternate! as es.BlockStatement, inactive, c)
+    },
+    Function(node: es.Function, inactive, c) {
+      if ('id' in node) {
+        c(node.id!, inactive)
+      }
+      const oldActive = new Set(inactive)
+      const locals = new Set<string>()
+      for (const param of node.params) {
+        const id = param as es.Identifier
+        locals.add(id.name)
+      }
+      for (const name of locals) {
+        inactive.add(name)
+      }
+      c(node.body, inactive, 'expression' in node ? 'Expression' : 'Statement')
+      for (const name of locals) {
+        if (oldActive.has(name)) {
+          continue
+        }
+        inactive.delete(name) // delete if not in old scope
+      }
+    }
+  })
+}
+
+function getLocalsInScope(node: es.BlockStatement | es.Program) {
+  const locals = new Set<string>()
+  for (const stmt of node.body) {
+    if (stmt.type === 'VariableDeclaration') {
+      const stmtNode = stmt as es.VariableDeclaration
+      const name = (stmtNode.declarations[0].id as es.Identifier).name
+      locals.add(name)
+    } else if (stmt.type === 'FunctionDeclaration') {
+      const stmtNode = stmt as es.FunctionDeclaration
+      let name = (stmtNode.id as es.Identifier).name
+      locals.add(name)
+    }
+  }
+  return locals
 }
 
 function compileArguments(exprs: es.Node[], indexTable: Array<Map<string, EnvEntry>>) {
@@ -394,7 +492,7 @@ function compile(expr: es.Node, indexTable: Array<Map<string, EnvEntry>>, insert
   return { maxStackSize: 0, insertFlag }
 }
 
-function compileToIns(program: es.Program): Program {
+export function compileToIns(program: es.Program): Program {
   // reset variables
   SVMFunctions = []
   functionCode = []

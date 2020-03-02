@@ -2,7 +2,7 @@ declare module 'acorn-walk/dist/walk' {
   import * as es from 'estree'
 
   namespace AcornWalk {
-    export type SimpleWalker<S> = (node: es.Node, state?: S) => void
+    export type SimpleWalker<S> = (node: es.Node, state?: S, type?: string) => void
     export interface SimpleWalkers<S> {
       [name: string]: SimpleWalker<S>
     }
