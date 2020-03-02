@@ -1,5 +1,5 @@
-import * as es from 'estree'
 import { recursive } from 'acorn-walk/dist/walk'
+import * as es from 'estree'
 
 export enum OpCodes {
   NOP = 0,
@@ -101,8 +101,10 @@ type Program = [
 ]
 
 let SVMFunctions: SVMFunction[] = []
-function addFunction(f: SVMFunction) {
-  SVMFunctions.push(f)
+function updateFunction(index: number, stackSize: number, ins: Instruction[]) {
+  const f = SVMFunctions[index]
+  f[0] = stackSize
+  f[3] = ins
 }
 
 let functionCode: Instruction[] = []
@@ -122,7 +124,7 @@ function addBinaryInstruction(opCode: number, arg1: Argument, arg2: Argument) {
   functionCode.push(ins)
 }
 
-type CompileTask = [es.BlockStatement | es.Program, number, number, Array<Map<string, EnvEntry>>]
+type CompileTask = [es.BlockStatement | es.Program, Address, Array<Map<string, EnvEntry>>]
 // toCompile stack keeps track of remaining compiler work:
 // these are function bodies that still need to be compiled
 let toCompile: CompileTask[] = []
@@ -150,23 +152,19 @@ function pushToCompile(task: CompileTask) {
 
 function makeToCompileTask(
   body: es.BlockStatement | es.Program,
-  maxStackSizeAddress: number,
-  addressAddress: number,
+  functionAddress: Address,
   indexTable: Array<Map<string, EnvEntry>>
 ): CompileTask {
-  return [body, maxStackSizeAddress, addressAddress, indexTable]
+  return [body, functionAddress, indexTable]
 }
 function toCompileTaskBody(toCompileTask: CompileTask): es.BlockStatement | es.Program {
   return toCompileTask[0]
 }
-function toCompileTaskMaxStackSizeAddress(toCompileTask: CompileTask): number {
+function toCompileTaskFunctionAddress(toCompileTask: CompileTask): Address {
   return toCompileTask[1]
 }
-function toCompileTaskAddressAddress(toCompileTask: CompileTask): number {
-  return toCompileTask[2]
-}
 function toCompileTaskIndexTable(toCompileTask: CompileTask): Array<Map<string, EnvEntry>> {
-  return toCompileTask[3]
+  return toCompileTask[2]
 }
 
 // indexTable keeps track of environment addresses
@@ -192,7 +190,20 @@ function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
 // needs to return the value of the last statement
 let toplevel = true
 
-// function continueToCompile() {}
+function continueToCompile() {
+  while (toCompile.length !== 0) {
+    const nextToCompile = popToCompile()
+    const functionAddress = toCompileTaskFunctionAddress(nextToCompile)
+    const indexTable = toCompileTaskIndexTable(nextToCompile)
+    const body = toCompileTaskBody(nextToCompile)
+    const { maxStackSize } = compile(body, indexTable, true)
+
+    const functionIndex = functionAddress[0]
+    updateFunction(functionIndex, maxStackSize, functionCode)
+    functionCode = []
+    toplevel = false
+  }
+}
 interface EnvEntry {
   index: number
   isVar: boolean
@@ -355,7 +366,7 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
       locals.add(name)
     } else if (stmt.type === 'FunctionDeclaration') {
       const stmtNode = stmt as es.FunctionDeclaration
-      let name = (stmtNode.id as es.Identifier).name
+      const name = (stmtNode.id as es.Identifier).name
       locals.add(name)
     }
   }
@@ -500,9 +511,12 @@ export function compileToIns(program: es.Program): Program {
   toplevel = true
 
   const locals = localNames(program, new Map<string, EnvEntry>())
-  const topFunction: SVMFunction = [NaN, Object.keys(locals).length, 0, []]
+  const topFunction: SVMFunction = [NaN, locals.size, 0, []]
   SVMFunctions.push(topFunction)
   const topFunctionIndex = SVMFunctions.length
 
+  const extendedTable = extendIndexTable(makeEmptyIndexTable(), locals)
+  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
+  continueToCompile()
   return [topFunctionIndex, SVMFunctions]
 }
