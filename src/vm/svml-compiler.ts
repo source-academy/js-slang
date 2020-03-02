@@ -404,7 +404,7 @@ function compileArguments(exprs: es.Node[], indexTable: Array<Map<string, EnvEnt
 
 function compileStatements(
   statements: es.Node[],
-  indexTable: Map<string, EnvEntry>[],
+  indexTable: Array<Map<string, EnvEntry>>,
   insertFlag: boolean
 ) {
   let maxStackSize = 0
@@ -517,7 +517,7 @@ const compilers = {
     const { maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false)
     const maxStackOperands = compileArguments(node.arguments, indexTable)
     addUnaryInstruction(OpCodes.CALL, node.arguments.length)
-    return { maxStackSize: Math.max(maxStackOperands, maxStackOperator + 1), insertFlag }
+    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
   },
 
   UnaryExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {

@@ -13,6 +13,7 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { parse_and_compile, print_compiled_program, run_vm } from './stdlib/vm'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
+import { Program } from './vm/svml-compiler'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -176,7 +177,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'parse_and_compile(program_string)', (str: string) =>
       parse_and_compile(str, createContext(context.chapter))
     )
-    defineBuiltin(context, 'print_compiled_program(machine_code)', (code: number[]) =>
+    defineBuiltin(context, 'print_compiled_program(machine_code)', (code: Program) =>
       print_compiled_program(code)
     )
     defineBuiltin(context, 'run_vm(machine_code)', run_vm)

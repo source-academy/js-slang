@@ -1,7 +1,8 @@
 import { parse } from '../parser'
 import { Context, Value } from '../types'
-import { compileToIns, printProgram } from '../vm/compiler'
 import { runWithP } from '../vm/machine'
+import { compileToIns, Program } from '../vm/svml-compiler'
+import { printProgram } from '../vm/util'
 import { ParseError } from './parser'
 
 export function parse_and_compile(x: string, context: Context): Value {
@@ -13,13 +14,13 @@ export function parse_and_compile(x: string, context: Context): Value {
   }
 
   if (program !== undefined) {
-    return compileToIns(program, context)
+    return compileToIns(program)
   } else {
     throw new ParseError('Unreachable')
   }
 }
 
-export function print_compiled_program(code: number[]) {
+export function print_compiled_program(code: Program) {
   printProgram(code)
 }
 
