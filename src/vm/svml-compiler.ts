@@ -77,7 +77,8 @@ export enum OpCodes {
   RETF = 71,
   RETB = 72,
   RETU = 73,
-  RETN = 74
+  RETN = 74,
+  DUP = 75
 }
 
 const VALID_UNARY_OPERATORS = new Map([['!', OpCodes.NOTG]])
@@ -677,7 +678,23 @@ const compilers = {
 
   // array declarations
   ArrayExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
-    throw Error('Unsupported operation')
+    node = node as es.ArrayExpression
+    addNullaryInstruction(OpCodes.NEWA)
+    const elements = node.elements
+    let maxStackSize = 1
+    for (let i = 0; i < elements.length; i++) {
+      addNullaryInstruction(OpCodes.DUP)
+      addUnaryInstruction(OpCodes.LGCI, i)
+      // special case when element wasnt specified
+      // i.e. [,]. Treat as undefined element
+      if (elements[i] === null) {
+        continue
+      }
+      const { maxStackSize: m1 } = compile(elements[i], indexTable, false)
+      addNullaryInstruction(OpCodes.STAG)
+      maxStackSize = Math.max(1 + 2 + m1, maxStackSize)
+    }
+    return { maxStackSize, insertFlag }
   },
 
   AssignmentExpression(
