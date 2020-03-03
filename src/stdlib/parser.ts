@@ -397,6 +397,20 @@ transformers = new Map([
     (node: es.Super) => {
       return vector_to_list(['super_expression'])
     }
+  ],
+
+  [
+    'TryStatement',
+    (node: es.TryStatement) => {
+      return vector_to_list([
+        'try_statement',
+        transform(node.block),
+        node.handler === null || node.handler === undefined
+          ? null
+          : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
+        node.handler === null || node.handler === undefined ? null : transform(node.handler.body)
+      ])
+    }
   ]
 ])
 
