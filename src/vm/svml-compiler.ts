@@ -451,10 +451,10 @@ const compilers = {
     const { maxStackSize: m2 } = compile(consequent, indexTable, false)
     addUnaryInstruction(OpCodes.BR, NaN)
     const BRIndex = functionCode.length - 1
-    functionCode[BRFIndex][1] = functionCode.length
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
     // source spec: must have alternate
     const { maxStackSize: m3 } = compile(alternate!, indexTable, false)
-    functionCode[BRIndex][1] = functionCode.length
+    functionCode[BRIndex][1] = functionCode.length - BRIndex
     const maxStackSize = Math.max(m1, m2, m3)
     return { maxStackSize, insertFlag }
   },
@@ -578,10 +578,10 @@ const compilers = {
       addUnaryInstruction(OpCodes.BR, NaN)
       BRIndex = functionCode.length - 1
     }
-    functionCode[BRFIndex][1] = functionCode.length
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
     const { maxStackSize: m3 } = compile(alternate!, indexTable, insertFlag)
     if (!insertFlag) {
-      functionCode[BRIndex][1] = functionCode.length
+      functionCode[BRIndex][1] = functionCode.length - BRIndex
     }
     const maxStackSize = Math.max(m1, m2, m3)
     return { maxStackSize, insertFlag: false }
