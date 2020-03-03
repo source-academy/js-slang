@@ -4,10 +4,13 @@ import {
   CallingNonFunctionValue,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArguments,
-  RuntimeSourceError
-} from '../interpreter-errors'
-import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
+  InvalidNumberOfArguments
+} from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import {
+  PotentialInfiniteLoopError,
+  PotentialInfiniteRecursionError
+} from '../errors/timeoutErrors'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
