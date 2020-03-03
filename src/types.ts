@@ -108,7 +108,11 @@ export interface Context<T = any> {
 
 export interface BlockFrame {
   type: string
+  // loc refers to the block defined by every pair of curly braces
   loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
   enclosingLoc?: es.SourceLocation | null
   children: Array<DefinitionNode | BlockFrame>
 }
