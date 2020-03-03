@@ -7,17 +7,17 @@ General Notes
 - Since ``CALLP`` is not yet finalized as of this writing, we refer to the primitive function with ``id`` as ``(OP.RTN)``, where ``OP`` is the opcode of the primitive function.
 
 Execute Rules
--------------
+^^^^^^^^^^^^^
 
 Notes
-^^^^^
+-----
 
 - for simplicity, heap is not represented in the rules
 - ``v1`` and ``v2`` are function values, hereafter known as (concurrent) threads, and may be represented as ``(<>, pc1, e1)`` and ``(<>, pc2, e2)`` respectively
 - ``execute(...)`` cannot appear in either of ``v1`` or ``v2``
 
 Compiling
-^^^^^^^^^
+---------
 
 .. code-block::
 
@@ -26,7 +26,7 @@ Compiling
    execute(E1,E2) -> s1.s2.CALLP (EXECUTE.RTN) 2
 
 Running
-^^^^^^^
+-------
 
 There are additional structures in our VM:
 - ``p``, a register which is a list of thread suspensions
@@ -87,7 +87,7 @@ Ending ``EXECUTE``:
    (<>, <>, <>, (os, pc, e).rs, <>, 0) -> (os, pc, e, rs, p, 0)
 
 Mutex Semantic Domain
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 To prevent mutexes from being mutated outside of the current scope, we need to do something like
 
@@ -97,7 +97,7 @@ To prevent mutexes from being mutated outside of the current scope, we need to d
 To do this, we need to define a new semantic domain. Let us call this domain **Mut**, with definition **Bool**.
 
 Semantic Function
-^^^^^^^^^^^^^^^^^
+-----------------
 
 Where ``m`` is a value in domain **Mut**,
 
@@ -117,15 +117,16 @@ Where ``m`` is a value in domain **Mut**,
    signal(m) -> *true*
 
 Mutex Rules
------------
+^^^^^^^^^^^
 
 Notes
-^^^^^
+-----
+
 - for simplicity, ``p`` and ``n`` registers are not represented in the rules
 - ``Id`` is the name of a variable
 
 Compiling
-^^^^^^^^^
+---------
 
 .. code-block::
 
@@ -146,7 +147,7 @@ where (WAIT.RTN) is the instructions of the wait function.
 where (SIGNAL.RTN) is the instructions of the signal function.
 
 Running
-^^^^^^^
+-------
 
 .. code-block::
 
