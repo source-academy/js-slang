@@ -396,6 +396,14 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   return locals
 }
 
+// break and continue need to know how much to offset for the branch
+// instruction. When compiling the individual instruction, that info
+// is not available, so need to keep track of the break and continue
+// instruction's index to update the offset when the compiler finishes
+// compiling the loop
+const breakTracker: number[][] = []
+const continueTracker: number[][] = []
+
 function compileArguments(exprs: es.Node[], indexTable: Array<Map<string, EnvEntry>>) {
   let maxStackSize = 0
   for (let i = 0; i < exprs.length; i++) {
@@ -707,19 +715,37 @@ const compilers = {
     const { maxStackSize: m1 } = compile(node.test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
+    breakTracker.push([] as number[])
+    continueTracker.push([])
     const { maxStackSize: m2 } = compile(node.body, indexTable, false)
     const endLoopIndex = functionCode.length
     addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex)
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
+
+    // update BR instructions within loop
+    const breaks = breakTracker.pop()!
+    const continues = continueTracker.pop()!
+    for (const b of breaks) {
+      functionCode[b][1] = functionCode.length - b
+    }
+    for (const c of continues) {
+      functionCode[c][1] = condIndex - c
+    }
     return { maxStackSize: Math.max(m1, m2), insertFlag }
   },
 
   BreakStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
-    throw Error('Unsupported operation')
+    // keep track of break instruction
+    breakTracker[breakTracker.length - 1].push(functionCode.length)
+    addUnaryInstruction(OpCodes.BR, NaN)
+    return { maxStackSize: 0, insertFlag }
   },
 
   ContinueStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
-    throw Error('Unsupported operation')
+    // keep track of continue instruction
+    continueTracker[continueTracker.length - 1].push(functionCode.length)
+    addUnaryInstruction(OpCodes.BR, NaN)
+    return { maxStackSize: 0, insertFlag }
   },
 
   ObjectExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
