@@ -8065,317 +8065,6 @@ Object {
 }
 `;
 
-exports[`no import - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-import { stripIndent } from './utils/testing';",
-  "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 38,
-        "imported": Node {
-          "end": 38,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 9,
-              "line": 2,
-            },
-          },
-          "name": "stripIndent",
-          "start": 27,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 9,
-            "line": 2,
-          },
-        },
-        "local": Node {
-          "end": 38,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 9,
-              "line": 2,
-            },
-          },
-          "name": "stripIndent",
-          "start": 27,
-          "type": "Identifier",
-        },
-        "start": 27,
-        "type": "ImportSpecifier",
-      },
-      "nodeType": "Import specifiers",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 64,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 46,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "source": Node {
-          "end": 63,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 45,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 28,
-              "line": 2,
-            },
-          },
-          "raw": "'./utils/testing'",
-          "start": 46,
-          "type": "Literal",
-          "value": "./utils/testing",
-        },
-        "specifiers": Array [
-          Node {
-            "end": 38,
-            "imported": Node {
-              "end": 38,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 20,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-              },
-              "name": "stripIndent",
-              "start": 27,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 20,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 2,
-              },
-            },
-            "local": Node {
-              "end": 38,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 20,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-              },
-              "name": "stripIndent",
-              "start": 27,
-              "type": "Identifier",
-            },
-            "start": 27,
-            "type": "ImportSpecifier",
-          },
-        ],
-        "start": 18,
-        "type": "ImportDeclaration",
-      },
-      "nodeType": "Import declarations",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
-  "parsedErrors": "Line 2, Column 9: Import specifiers are not allowed
-You are trying to use Import specifiers, which is not allowed (yet).
-
-Line 2, Column 0: Import declarations are not allowed
-You are trying to use Import declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no import: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "import { stripIndent } from './utils/testing';",
-  "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 20,
-        "imported": Node {
-          "end": 20,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 9,
-              "line": 1,
-            },
-          },
-          "name": "stripIndent",
-          "start": 9,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 9,
-            "line": 1,
-          },
-        },
-        "local": Node {
-          "end": 20,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 9,
-              "line": 1,
-            },
-          },
-          "name": "stripIndent",
-          "start": 9,
-          "type": "Identifier",
-        },
-        "start": 9,
-        "type": "ImportSpecifier",
-      },
-      "nodeType": "Import specifiers",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 46,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 46,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "source": Node {
-          "end": 45,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 45,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 28,
-              "line": 1,
-            },
-          },
-          "raw": "'./utils/testing'",
-          "start": 28,
-          "type": "Literal",
-          "value": "./utils/testing",
-        },
-        "specifiers": Array [
-          Node {
-            "end": 20,
-            "imported": Node {
-              "end": 20,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 20,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-              },
-              "name": "stripIndent",
-              "start": 9,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 20,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "local": Node {
-              "end": 20,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 20,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-              },
-              "name": "stripIndent",
-              "start": 9,
-              "type": "Identifier",
-            },
-            "start": 9,
-            "type": "ImportSpecifier",
-          },
-        ],
-        "start": 0,
-        "type": "ImportDeclaration",
-      },
-      "nodeType": "Import declarations",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
-  "parsedErrors": "Line 1: Import specifiers are not allowed
-Line 1: Import declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`no interface - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -10202,29 +9891,26 @@ this[0] = 5;
  const box = new Box();",
   "displayResult": Array [],
   "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 40,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 3,
-          },
+    TypeError {
+      "expected": "string",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 3,
         },
-        "start": 36,
-        "type": "ThisExpression",
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
       },
-      "nodeType": "'this' expressions",
       "severity": "Error",
-      "type": "Syntax",
+      "side": " as prop",
+      "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: 'this' expressions are not allowed
-You are trying to use 'this' expressions, which is not allowed (yet).
+  "parsedErrors": "Line 3, Column 0: Expected string as prop, got number.
+Expected string as prop, got number.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -10241,28 +9927,25 @@ Object {
 const box = new Box();",
   "displayResult": Array [],
   "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 23,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
+    TypeError {
+      "expected": "string",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
         },
-        "start": 19,
-        "type": "ThisExpression",
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
       },
-      "nodeType": "'this' expressions",
       "severity": "Error",
-      "type": "Syntax",
+      "side": " as prop",
+      "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2: 'this' expressions are not allowed",
+  "parsedErrors": "Line 2: Expected string as prop, got number.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

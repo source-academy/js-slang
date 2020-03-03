@@ -1,3 +1,5 @@
+export const libraryParserLanguage = 100
+
 const syntaxBlacklist: { [nodeName: string]: number } = {
   // List of all node types taken from
   // https://github.com/acornjs/acorn/blob/master/acorn-walk/src/index.js
@@ -20,6 +22,8 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   Identifier: 1,
   Literal: 1,
   DebuggerStatement: 1,
+  ImportDeclaration: 1,
+  ImportSpecifier: 1,
 
   // Chapter 2 (no new syntax)
 
@@ -34,9 +38,21 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   MemberExpression: 3,
   Property: 3,
 
-  // Disabled (aka chapter 100)
-  ObjectExpression: 100,
-  NewExpression: 100,
+  // we allow more features
+  // in the library parser
+  ObjectExpression: libraryParserLanguage,
+  NewExpression: libraryParserLanguage,
+  TryStatement: libraryParserLanguage,
+  CatchClause: libraryParserLanguage,
+  ThrowStatement: libraryParserLanguage,
+  ThisExpression: libraryParserLanguage,
+  Super: libraryParserLanguage,
+  ClassDeclaration: libraryParserLanguage,
+  ClassExpression: libraryParserLanguage,
+  Class: libraryParserLanguage,
+  ClassBody: libraryParserLanguage,
+  MethodDefinition: libraryParserLanguage,
+  FunctionExpression: libraryParserLanguage,
 
   // Disallowed forever
   UpdateExpression: Infinity,
@@ -49,10 +65,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   SwitchCase: Infinity,
   YieldExpression: Infinity,
   AwaitExpression: Infinity,
-  ThrowStatement: Infinity,
   SpreadElement: Infinity,
-  TryStatement: Infinity,
-  CatchClause: Infinity,
   DoWhileStatement: Infinity,
   ForInStatement: Infinity,
   ForOfStatement: Infinity,
@@ -64,10 +77,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ArrayPattern: Infinity,
   ObjectPattern: Infinity,
   Expression: Infinity,
-  ThisExpression: Infinity,
-  Super: Infinity,
   MetaProperty: Infinity,
-  FunctionExpression: Infinity,
   SequenceExpression: Infinity,
   TemplateLiteral: Infinity,
   TemplateElement: Infinity,
@@ -75,16 +85,9 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ExportNamedDeclaration: Infinity,
   ExportDefaultDeclaration: Infinity,
   ExportAllDeclaration: Infinity,
-  ImportDeclaration: Infinity,
-  ImportSpecifier: Infinity,
   ImportDefaultSpecifier: Infinity,
   ImportNamespaceSpecifier: Infinity,
-  TaggedTemplateExpression: Infinity,
-  ClassDeclaration: Infinity,
-  ClassExpression: Infinity,
-  Class: Infinity,
-  ClassBody: Infinity,
-  MethodDefinition: Infinity
+  TaggedTemplateExpression: Infinity
 }
 
 export default syntaxBlacklist
