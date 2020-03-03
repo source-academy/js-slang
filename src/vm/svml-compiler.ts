@@ -265,7 +265,7 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
   // rename all references within blocks if nested block does not redeclare name
   renameVariables(baseNode, namesToRename)
 
-  // recurse for blocks
+  // recurse for blocks. Need to manually add all cases to recurse
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
@@ -275,6 +275,9 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
       localNames(consequent as es.BlockStatement, names)
       // Source spec must have alternate
       localNames(alternate! as es.BlockStatement, names)
+    } else if (stmt.type === 'WhileStatement') {
+      const node = stmt as es.WhileStatement
+      localNames(node.body as es.BlockStatement, names)
     }
   }
   return names
@@ -699,7 +702,16 @@ const compilers = {
   },
 
   WhileStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
-    throw Error('Unsupported operation')
+    node = node as es.WhileStatement
+    const condIndex = functionCode.length
+    const { maxStackSize: m1 } = compile(node.test, indexTable, false)
+    addUnaryInstruction(OpCodes.BRF, NaN)
+    const BRFIndex = functionCode.length - 1
+    const { maxStackSize: m2 } = compile(node.body, indexTable, false)
+    const endLoopIndex = functionCode.length
+    addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex)
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
+    return { maxStackSize: Math.max(m1, m2), insertFlag }
   },
 
   BreakStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
