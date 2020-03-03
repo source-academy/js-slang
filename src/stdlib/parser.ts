@@ -1,6 +1,7 @@
 import * as es from 'estree'
 
 import { parse as sourceParse } from '../parser'
+import { libraryParserLanguage } from '../syntaxBlacklist'
 import { Context, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
@@ -186,8 +187,7 @@ transformers = new Map([
 
   [
     'ArrowFunctionExpression',
-    (node: es.Node) => {
-      node = node as es.ArrowFunctionExpression
+    (node: es.ArrowFunctionExpression) => {
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
@@ -304,8 +304,7 @@ transformers = new Map([
 
   [
     'Property',
-    (node: es.Node) => {
-      node = node as es.Property
+    (node: es.Property) => {
       if (node.key.type === 'Literal') {
         return [node.key.value, transform(node.value)]
       } else if (node.key.type === 'Identifier') {
@@ -314,6 +313,103 @@ transformers = new Map([
         unreachable()
         throw new ParseError('Invalid property key type')
       }
+    }
+  ],
+
+  [
+    'ImportDeclaration',
+    (node: es.ImportDeclaration) => {
+      return vector_to_list([
+        'import_declaration',
+        vector_to_list(node.specifiers.map(transform)),
+        node.source.value
+      ])
+    }
+  ],
+
+  [
+    'ImportSpecifier',
+    (node: es.ImportSpecifier) => {
+      return vector_to_list(['name', node.imported.name])
+    }
+  ],
+
+  [
+    'ClassDeclaration',
+    (node: es.ClassDeclaration) => {
+      return vector_to_list([
+        'class_declaration',
+        vector_to_list([
+          'name',
+          node.id === null ? null : node.id.name,
+          node.superClass === null || node.superClass === undefined
+            ? null
+            : transform(node.superClass),
+          node.body.body.map(transform)
+        ])
+      ])
+    }
+  ],
+
+  [
+    'NewExpression',
+    (node: es.NewExpression) => {
+      return vector_to_list([
+        'new_expression',
+        transform(node.callee),
+        vector_to_list(node.arguments.map(transform))
+      ])
+    }
+  ],
+
+  [
+    'MethodDefinition',
+    (node: es.MethodDefinition) => {
+      return vector_to_list([
+        'method_definition',
+        node.kind,
+        transform(node.key),
+        transform(node.value)
+      ])
+    }
+  ],
+
+  [
+    'FunctionExpression',
+    (node: es.FunctionExpression) => {
+      return vector_to_list([
+        'function_definition',
+        vector_to_list(node.params.map(transform)),
+        makeSequenceIfNeeded(node.body.body)
+      ])
+    }
+  ],
+
+  [
+    'ThisExpression',
+    (node: es.ThisExpression) => {
+      return vector_to_list(['this_expression'])
+    }
+  ],
+
+  [
+    'Super',
+    (node: es.Super) => {
+      return vector_to_list(['super_expression'])
+    }
+  ],
+
+  [
+    'TryStatement',
+    (node: es.TryStatement) => {
+      return vector_to_list([
+        'try_statement',
+        transform(node.block),
+        node.handler === null || node.handler === undefined
+          ? null
+          : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
+        node.handler === null || node.handler === undefined ? null : transform(node.handler.body)
+      ])
     }
   ]
 ])
@@ -340,6 +436,7 @@ function transform(node: es.Node) {
 
 export function parse(x: string, context: Context): Value {
   let program
+  context.chapter = libraryParserLanguage
   program = sourceParse(x, context)
   if (context.errors.length > 0) {
     throw new ParseError(context.errors[0].explain())

@@ -520,7 +520,7 @@ test('Cannot use function expressions', () => {
     stripIndent`
   (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
   `,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
 
@@ -530,7 +530,7 @@ test('Cannot use function expressions - verbose', () => {
 	  "enable verbose";
 	(function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
 	`,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Function expressions are not allowed
 You are trying to use Function expressions, which is not allowed (yet).
@@ -543,7 +543,7 @@ test('Cannot use function expressions', () => {
     stripIndent`
   (function(x) { return x + 1; })(4);
   `,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
 
@@ -553,7 +553,7 @@ test('Cannot use function expressions - verbose', () => {
 	  "enable verbose";
 	(function(x) { return x + 1; })(4);
 	`,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 1: Function expressions are not allowed
 You are trying to use Function expressions, which is not allowed (yet).
@@ -859,7 +859,7 @@ test('no try statements', () => {
       display(e);
     }
   `,
-    { chapter: 100 }
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`
 "Line 5: Spread elements are not allowed
 Line 6: Catch clauses are not allowed
@@ -880,7 +880,7 @@ test('no try statements - verbose', () => {
 		display(e);
 	  }
 	`,
-    { chapter: 100 }
+    { chapter: 3 }
   ).toMatchInlineSnapshot(`
 "Line 6, Column 2: Spread elements are not allowed
 You are trying to use Spread elements, which is not allowed (yet).
@@ -1001,7 +1001,7 @@ test('no classes', () => {
     class Box {
     }
   `,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 1: Class bodys are not allowed
 Line 1: Class declarations are not allowed"
@@ -1015,7 +1015,7 @@ test('no classes - verbose', () => {
 	  class Box {
 	  }
 	`,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 2, Column 10: Class bodys are not allowed
 You are trying to use Class bodys, which is not allowed (yet).
@@ -1035,7 +1035,7 @@ test('no super', () => {
       }
     }
   `,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 3: Supers are not allowed
 Line 2: Function expressions are not allowed
@@ -1055,7 +1055,7 @@ test('no super - verbose', () => {
 		}
 	  }
 	`,
-    { chapter: 100 }
+    { chapter: 5 }
   ).toMatchInlineSnapshot(`
 "Line 4, Column 2: Supers are not allowed
 You are trying to use Supers, which is not allowed (yet).
@@ -1146,35 +1146,6 @@ test('no export default - verbose', () => {
   ).toMatchInlineSnapshot(`
 "Line 3, Column 0: Export default declarations are not allowed
 You are trying to use Export default declarations, which is not allowed (yet).
-"
-`)
-})
-
-test('no import', () => {
-  return expectParsedError(
-    stripIndent`
-    import { stripIndent } from './utils/testing';
-  `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`
-"Line 1: Import specifiers are not allowed
-Line 1: Import declarations are not allowed"
-`)
-})
-
-test('no import - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-	  "enable verbose";
-	  import { stripIndent } from './utils/testing';
-	`,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`
-"Line 2, Column 9: Import specifiers are not allowed
-You are trying to use Import specifiers, which is not allowed (yet).
-
-Line 2, Column 0: Import declarations are not allowed
-You are trying to use Import declarations, which is not allowed (yet).
 "
 `)
 })
@@ -1280,7 +1251,7 @@ test('no this, no new', () => {
     const box = new Box();
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 2: 'this' expressions are not allowed"`)
+  ).toMatchInlineSnapshot(`"Line 2: Expected string as prop, got number."`)
 })
 
 test('no this, no new - verbose', () => {
@@ -1294,8 +1265,8 @@ test('no this, no new - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-"Line 3, Column 0: 'this' expressions are not allowed
-You are trying to use 'this' expressions, which is not allowed (yet).
+"Line 3, Column 0: Expected string as prop, got number.
+Expected string as prop, got number.
 "
 `)
 })
