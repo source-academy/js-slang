@@ -47,24 +47,21 @@ transformers = new Map([
 
   [
     'BlockStatement',
-    (node: es.Node) => {
-      node = node as es.BlockStatement
+    (node: es.BlockStatement) => {
       return vector_to_list(['block', makeSequenceIfNeeded(node.body)])
     }
   ],
 
   [
     'ExpressionStatement',
-    (node: es.Node) => {
-      node = node as es.ExpressionStatement
+    (node: es.ExpressionStatement) => {
       return transform(node.expression)
     }
   ],
 
   [
     'IfStatement',
-    (node: es.Node) => {
-      node = node as es.IfStatement
+    (node: es.IfStatement) => {
       return vector_to_list([
         'conditional_statement',
         transform(node.test),
@@ -76,8 +73,7 @@ transformers = new Map([
 
   [
     'FunctionDeclaration',
-    (node: es.Node) => {
-      node = node as es.FunctionDeclaration
+    (node: es.FunctionDeclaration) => {
       return vector_to_list([
         'constant_declaration',
         transform(node.id as es.Identifier),
@@ -95,8 +91,7 @@ transformers = new Map([
 
   [
     'VariableDeclaration',
-    (node: es.Node) => {
-      node = node as es.VariableDeclaration
+    (node: es.VariableDeclaration) => {
       if (node.kind === 'let') {
         return vector_to_list([
           'variable_declaration',
@@ -118,16 +113,14 @@ transformers = new Map([
 
   [
     'ReturnStatement',
-    (node: es.Node) => {
-      node = node as es.ReturnStatement
+    (node: es.ReturnStatement) => {
       return vector_to_list(['return_statement', transform(node.argument as es.Expression)])
     }
   ],
 
   [
     'CallExpression',
-    (node: es.Node) => {
-      node = node as es.CallExpression
+    (node: es.CallExpression) => {
       return vector_to_list([
         'application',
         transform(node.callee),
@@ -138,8 +131,7 @@ transformers = new Map([
 
   [
     'UnaryExpression',
-    (node: es.Node) => {
-      node = node as es.UnaryExpression
+    (node: es.UnaryExpression) => {
       return vector_to_list([
         'application',
         vector_to_list(['name', node.operator]),
@@ -150,8 +142,7 @@ transformers = new Map([
 
   [
     'BinaryExpression',
-    (node: es.Node) => {
-      node = node as es.BinaryExpression
+    (node: es.BinaryExpression) => {
       return vector_to_list([
         'application',
         vector_to_list(['name', node.operator]),
@@ -162,8 +153,7 @@ transformers = new Map([
 
   [
     'LogicalExpression',
-    (node: es.Node) => {
-      node = node as es.LogicalExpression
+    (node: es.LogicalExpression) => {
       return vector_to_list([
         'boolean_operation',
         vector_to_list(['name', node.operator]),
@@ -174,8 +164,7 @@ transformers = new Map([
 
   [
     'ConditionalExpression',
-    (node: es.Node) => {
-      node = node as es.ConditionalExpression
+    (node: es.ConditionalExpression) => {
       return vector_to_list([
         'conditional_expression',
         transform(node.test),
@@ -203,32 +192,28 @@ transformers = new Map([
 
   [
     'Identifier',
-    (node: es.Node) => {
-      node = node as es.Identifier
+    (node: es.Identifier) => {
       return vector_to_list(['name', node.name])
     }
   ],
 
   [
     'Literal',
-    (node: es.Node) => {
-      node = node as es.Literal
+    (node: es.Literal) => {
       return node.value
     }
   ],
 
   [
     'ArrayExpression',
-    (node: es.Node) => {
-      node = node as es.ArrayExpression
+    (node: es.ArrayExpression) => {
       return vector_to_list(['array_expression', vector_to_list(node.elements.map(transform))])
     }
   ],
 
   [
     'AssignmentExpression',
-    (node: es.Node) => {
-      node = node as es.AssignmentExpression
+    (node: es.AssignmentExpression) => {
       if (node.left.type === 'Identifier') {
         return vector_to_list([
           'assignment',
@@ -250,8 +235,7 @@ transformers = new Map([
 
   [
     'ForStatement',
-    (node: es.Node) => {
-      node = node as es.ForStatement
+    (node: es.ForStatement) => {
       return vector_to_list([
         'for_loop',
         transform(node.init as es.VariableDeclaration | es.Expression),
@@ -264,41 +248,40 @@ transformers = new Map([
 
   [
     'WhileStatement',
-    (node: es.Node) => {
-      node = node as es.WhileStatement
+    (node: es.WhileStatement) => {
       return vector_to_list(['while_loop', transform(node.test), transform(node.body)])
     }
   ],
 
   [
     'BreakStatement',
-    (node: es.Node) => {
-      node = node as es.BreakStatement
+    (node: es.BreakStatement) => {
       return vector_to_list(['break_statement'])
     }
   ],
 
   [
     'ContinueStatement',
-    (node: es.Node) => {
-      node = node as es.ContinueStatement
+    (node: es.ContinueStatement) => {
       return vector_to_list(['continue_statement'])
     }
   ],
 
   [
     'ObjectExpression',
-    (node: es.Node) => {
-      node = node as es.ObjectExpression
+    (node: es.ObjectExpression) => {
       return vector_to_list(['object_expression', vector_to_list(node.properties.map(transform))])
     }
   ],
 
   [
     'MemberExpression',
-    (node: es.Node) => {
-      node = node as es.MemberExpression
-      return vector_to_list(['array_access', transform(node.object), transform(node.property)])
+    (node: es.MemberExpression) => {
+      const key =
+        node.property.type === 'Identifier'
+          ? vector_to_list(['property', node.property.name])
+          : transform(node.property)
+      return vector_to_list(['array_access', transform(node.object), key])
     }
   ],
 
@@ -308,7 +291,7 @@ transformers = new Map([
       if (node.key.type === 'Literal') {
         return [node.key.value, transform(node.value)]
       } else if (node.key.type === 'Identifier') {
-        return [node.key.name, transform(node.value)]
+        return [vector_to_list(['property', node.key.name]), transform(node.value)]
       } else {
         unreachable()
         throw new ParseError('Invalid property key type')

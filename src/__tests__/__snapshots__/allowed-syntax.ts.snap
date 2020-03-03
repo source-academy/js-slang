@@ -6347,12 +6347,24 @@ Object {
     Array [
       Array [
         Array [
-          "a",
+          Array [
+            "property",
+            Array [
+              "a",
+              null,
+            ],
+          ],
           1,
         ],
         Array [
           Array [
-            "b",
+            Array [
+              "property",
+              Array [
+                "b",
+                null,
+              ],
+            ],
             2,
           ],
           null,
@@ -6559,12 +6571,24 @@ Object {
         Array [
           Array [
             Array [
-              "a",
+              Array [
+                "property",
+                Array [
+                  "a",
+                  null,
+                ],
+              ],
               1,
             ],
             Array [
               Array [
-                "b",
+                Array [
+                  "property",
+                  Array [
+                    "b",
+                    null,
+                  ],
+                ],
                 2,
               ],
               null,
@@ -6932,12 +6956,24 @@ Object {
         Array [
           Array [
             Array [
-              "a",
+              Array [
+                "property",
+                Array [
+                  "a",
+                  null,
+                ],
+              ],
               1,
             ],
             Array [
               Array [
-                "b",
+                Array [
+                  "property",
+                  Array [
+                    "b",
+                    null,
+                  ],
+                ],
                 2,
               ],
               null,
@@ -7775,12 +7811,24 @@ Object {
                 Array [
                   Array [
                     Array [
-                      "a",
+                      Array [
+                        "property",
+                        Array [
+                          "a",
+                          null,
+                        ],
+                      ],
                       1,
                     ],
                     Array [
                       Array [
-                        "b",
+                        Array [
+                          "property",
+                          Array [
+                            "b",
+                            null,
+                          ],
+                        ],
                         2,
                       ],
                       null,
@@ -8069,12 +8117,24 @@ Object {
                 Array [
                   Array [
                     Array [
-                      "a",
+                      Array [
+                        "property",
+                        Array [
+                          "a",
+                          null,
+                        ],
+                      ],
                       1,
                     ],
                     Array [
                       Array [
-                        "b",
+                        Array [
+                          "property",
+                          Array [
+                            "b",
+                            null,
+                          ],
+                        ],
                         2,
                       ],
                       null,
@@ -8334,12 +8394,24 @@ Object {
                 Array [
                   Array [
                     Array [
-                      "a",
+                      Array [
+                        "property",
+                        Array [
+                          "a",
+                          null,
+                        ],
+                      ],
                       1,
                     ],
                     Array [
                       Array [
-                        "b",
+                        Array [
+                          "property",
+                          Array [
+                            "b",
+                            null,
+                          ],
+                        ],
                         2,
                       ],
                       null,
@@ -8594,12 +8666,24 @@ Object {
                 Array [
                   Array [
                     Array [
-                      "a",
+                      Array [
+                        "property",
+                        Array [
+                          "a",
+                          null,
+                        ],
+                      ],
                       1,
                     ],
                     Array [
                       Array [
-                        "b",
+                        Array [
+                          "property",
+                          Array [
+                            "b",
+                            null,
+                          ],
+                        ],
                         2,
                       ],
                       null,
