@@ -81,6 +81,100 @@ export enum OpCodes {
   DUP = 75
 }
 
+const PRIMITIVE_FUNCTION_NAMES = [
+  'accumulate',
+  'append',
+  'array_length',
+  'build_list',
+  'build_stream',
+  'display',
+  'draw_data',
+  'enum_list',
+  'enum_stream',
+  'equal',
+  'error',
+  'eval_stream',
+  'filter',
+  'for_each',
+  'head',
+  'integers_from',
+  'is_array',
+  'is_boolean',
+  'is_function',
+  'is_list',
+  'is_null',
+  'is_number',
+  'is_pair',
+  'is_stream',
+  'is_string',
+  'is_undefined',
+  'length',
+  'list',
+  'list_ref',
+  'list_to_stream',
+  'list_to_string',
+  'map',
+  'math_abs',
+  'math_acos',
+  'math_acosh',
+  'math_asin',
+  'math_asinh',
+  'math_atan',
+  'math_atan2',
+  'math_atanh',
+  'math_cbrt',
+  'math_ceil',
+  'math_clz32',
+  'math_cos',
+  'math_cosh',
+  'math_exp',
+  'math_expm1',
+  'math_floor',
+  'math_fround',
+  'math_hypot',
+  'math_imul',
+  'math_log',
+  'math_log1p',
+  'math_log2',
+  'math_log10',
+  'math_max',
+  'math_min',
+  'math_pow',
+  'math_random',
+  'math_round',
+  'math_sign',
+  'math_sin',
+  'math_sinh',
+  'math_sqrt',
+  'math_tan',
+  'math_tanh',
+  'math_trunc',
+  'member',
+  'pair',
+  'parse_int',
+  'remove',
+  'remove_all',
+  'reverse',
+  'runtime',
+  'set_head',
+  'set_tail',
+  'stream',
+  'stream_append',
+  'stream_filter',
+  'stream_for_each',
+  'stream_length',
+  'stream_map',
+  'stream_member',
+  'stream_ref',
+  'stream_remove',
+  'stream_remove_all',
+  'stream_reverse',
+  'stream_tail',
+  'stream_to_list',
+  'tail',
+  'stringify'
+]
+
 const VALID_UNARY_OPERATORS = new Map([['!', OpCodes.NOTG]])
 const VALID_BINARY_OPERATORS = new Map([
   ['+', OpCodes.ADDG],
@@ -189,6 +283,14 @@ function toCompileTaskIndexTable(toCompileTask: CompileTask): Array<Map<string, 
 function makeEmptyIndexTable(): Array<Map<string, EnvEntry>> {
   return []
 }
+function makeIndexTableWithPrimitives(): Array<Map<string, EnvEntry>> {
+  const primitives = new Map<string, EnvEntry>()
+  for (let i = 0; i < PRIMITIVE_FUNCTION_NAMES.length; i++) {
+    const name = PRIMITIVE_FUNCTION_NAMES[i]
+    primitives.set(name, { index: i, isVar: false, isPrimitive: true })
+  }
+  return extendIndexTable(makeEmptyIndexTable(), primitives)
+}
 function extendIndexTable(indexTable: Array<Map<string, EnvEntry>>, names: Map<string, EnvEntry>) {
   return indexTable.concat([names])
 }
@@ -196,8 +298,8 @@ function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
   for (let i = indexTable.length - 1; i >= 0; i--) {
     if (indexTable[i].has(name)) {
       const envLevel = indexTable.length - 1 - i
-      const { index, isVar } = indexTable[i].get(name)!
-      return { envLevel, index, isVar }
+      const { index, isVar, isPrimitive } = indexTable[i].get(name)!
+      return { envLevel, index, isVar, isPrimitive }
     }
   }
   throw Error('name not found: ' + name)
@@ -224,6 +326,7 @@ function continueToCompile() {
 interface EnvEntry {
   index: number
   isVar: boolean
+  isPrimitive: boolean
 }
 
 // extracts all name declarations within a function, and renames all shadowed names
@@ -247,7 +350,7 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
       }
       const isVar = node.kind === 'let'
       const index = names.size
-      names.set(name, { index, isVar })
+      names.set(name, { index, isVar, isPrimitive: false })
     } else if (stmt.type === 'FunctionDeclaration') {
       const node = stmt as es.FunctionDeclaration
       let name = (node.id as es.Identifier).name
@@ -259,7 +362,7 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
       }
       const isVar = false
       const index = names.size
-      names.set(name, { index, isVar })
+      names.set(name, { index, isVar, isPrimitive: false })
     }
   }
 
@@ -526,9 +629,30 @@ const compilers = {
   // TODO: differentiate primitive functions
   CallExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.CallExpression
-    const { maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false)
+    let maxStackOperator = 0
+    let primitiveCall = false
+    let primitiveCallId = NaN
+    if (node.callee.type === 'Identifier') {
+      const callee = node.callee as es.Identifier
+      const { envLevel, index, isPrimitive } = indexOf(indexTable, callee.name)
+      if (isPrimitive) {
+        primitiveCall = true
+        primitiveCallId = index
+      } else if (envLevel === 0) {
+        addUnaryInstruction(OpCodes.LDLG, index)
+      } else {
+        addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+      }
+    } else {
+      const { maxStackSize: m1 } = compile(node.callee, indexTable, false)
+      maxStackOperator = m1
+    }
     const maxStackOperands = compileArguments(node.arguments, indexTable)
-    addUnaryInstruction(OpCodes.CALL, node.arguments.length)
+    if (primitiveCall) {
+      addBinaryInstruction(OpCodes.CALLP, primitiveCallId, node.arguments.length)
+    } else {
+      addUnaryInstruction(OpCodes.CALL, node.arguments.length)
+    }
     return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
   },
 
@@ -614,7 +738,7 @@ const compilers = {
     for (let param of node.params) {
       param = param as es.Identifier
       const index = names.size
-      names.set(param.name, { index, isVar: true })
+      names.set(param.name, { index, isVar: true, isPrimitive: false })
     }
     localNames(bodyNode, names)
     const extendedIndexTable = extendIndexTable(indexTable, names)
@@ -842,7 +966,7 @@ export function compileToIns(program: es.Program): Program {
   const topFunctionIndex = SVMFunctions.length
   SVMFunctions.push(topFunction)
 
-  const extendedTable = extendIndexTable(makeEmptyIndexTable(), locals)
+  const extendedTable = extendIndexTable(makeIndexTableWithPrimitives(), locals)
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
   return [topFunctionIndex, SVMFunctions]
