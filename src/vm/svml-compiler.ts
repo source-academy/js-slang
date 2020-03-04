@@ -716,9 +716,16 @@ const compilers = {
       }
       addNullaryInstruction(OpCodes.LGCU)
       return { maxStackSize, insertFlag }
-    } else if (node.left.type === 'MemberExpression') {
-      // TODO
+    } else if (node.left.type === 'MemberExpression' && node.left.computed === true) {
+      // case for a[0] = 1
+      const { maxStackSize: m1 } = compile(node.left.object, indexTable, false)
+      const { maxStackSize: m2 } = compile(node.left.property, indexTable, false)
+      const { maxStackSize: m3 } = compile(node.right, indexTable, false)
+      addNullaryInstruction(OpCodes.STAG)
+      addNullaryInstruction(OpCodes.LGCU)
+      return { maxStackSize: Math.max(m1, 1 + m2, 2 + m3), insertFlag }
     }
+    // property assignments are not supported
     throw Error('Invalid Assignment')
   },
 
@@ -770,6 +777,14 @@ const compilers = {
   },
 
   MemberExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
+    node = node as es.MemberExpression
+    if (node.computed) {
+      const { maxStackSize: m1 } = compile(node.object, indexTable, false)
+      const { maxStackSize: m2 } = compile(node.property, indexTable, false)
+      addNullaryInstruction(OpCodes.LDAG)
+      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
+    }
+    // properties are not supported
     throw Error('Unsupported operation')
   },
 
