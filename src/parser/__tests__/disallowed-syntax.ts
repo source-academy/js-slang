@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectWarning } from '../../utils/testing'
+import { expectParsedError } from '../../utils/testing'
 
 test('Cannot leave blank init in for loop', () => {
   return expectParsedError(
@@ -755,7 +755,7 @@ You are trying to use Array expressions, which is not allowed (yet).
 })
 
 test('No trailing commas in arrays', () => {
-  return expectWarning(
+  return expectParsedError(
     stripIndent`
     [1,];
   `,
@@ -764,7 +764,7 @@ test('No trailing commas in arrays', () => {
 })
 
 test('No trailing commas in arrays - verbose', () => {
-  return expectWarning(
+  return expectParsedError(
     stripIndent`
 	  "enable verbose";
 	  [1,];
@@ -778,7 +778,7 @@ Please remove the trailing comma
 })
 
 test('No trailing commas in objects', () => {
-  return expectWarning(
+  return expectParsedError(
     stripIndent`
     ({
       a: 1,

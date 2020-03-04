@@ -149,7 +149,7 @@ export const callIteratively = (f: any, ...args: any[]) => {
   let column = -1
   const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
   const startTime = Date.now()
-  const pastCalls: Array<[string, any[]]> = []
+  const pastCalls: [string, any[]][] = []
   while (true) {
     const dummy = locationDummyNode(line, column)
     if (Date.now() - startTime > MAX_TIME) {
