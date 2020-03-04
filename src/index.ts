@@ -3,19 +3,20 @@ import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
-import { evaluate } from './interpreter'
 import {
   ConstAssignment,
   ExceptionError,
   InterruptedError,
-  RuntimeSourceError,
   UndefinedVariable
-} from './interpreter-errors'
-import { parse, parseAt } from './parser'
+} from './errors/errors'
+import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { evaluate } from './interpreter/interpreter'
+import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './substituter'
-import { transpile } from './transpiler'
+import { codify, getEvaluationSteps } from './stepper/stepper'
+import { sandboxedEval } from './transpiler/evalContainer'
+import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
@@ -26,7 +27,6 @@ import {
   SourceError
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
-import { sandboxedEval } from './utils/evalContainer'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
