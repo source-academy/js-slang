@@ -26,7 +26,7 @@ export function HighlightRulesSelector(id: number) {
 
     const chapter1 = {
       keywords: 'const|else|if|return|function',
-      forbidden: 'while|for|break|continue',
+      forbidden: 'while|for|break|continue|let',
       functions:
         'display|error|is_boolean|is_function|is_number|is_string|is_undefined|' +
         'math_abs|math_acos|math_acosh|math_asin|math_asinh|math_atan|' +
@@ -39,7 +39,7 @@ export function HighlightRulesSelector(id: number) {
 
     const chapter2 = {
       keywords: '',
-      forbidden: 'while|for|break|continue',
+      forbidden: 'while|for|break|continue|let',
       functions:
         'accumulate|append|build_list|' +
         'draw_data|enum_list|equal|error|filter|for_each|head|' +
