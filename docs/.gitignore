@@ -1,6 +1,5 @@
 *.log
 *.aux
-*.pdf
 *.out
 *~
-Source
+/*.pdf

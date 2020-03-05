@@ -9,13 +9,13 @@
   and the libraries they
   come with.
 
-## <a href="source/source_1/">Source §1</a>
+## <a href="source_1/">Source §1</a>
   
-## <a href="source/source_2/">Source §2</a>
+## <a href="source_2/">Source §2</a>
 
-## <a href="source/source_3/">Source §3</a>
+## <a href="source_3/">Source §3</a>
 
-## <a href="source/source_4/">Source §4</a>
+## <a href="source_4/">Source §4</a>
 
 ## <a href="External libraries/">External Libraries</a>
 
