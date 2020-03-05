@@ -13,7 +13,7 @@
  * 2) refactor some code to ES2015 class syntax
  */
 
-export function HighlightRulesSelector(id: Number) {
+export function HighlightRulesSelector(id: number) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
@@ -25,8 +25,8 @@ export function HighlightRulesSelector(id: Number) {
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
     const chapter1 = {
-      constants: '',
-
+      keywords: 'const|else|if|return|function',
+      forbidden: 'while|for|break|continue',
       functions:
         'display|error|is_boolean|is_function|is_number|is_string|is_undefined|' +
         'math_abs|math_acos|math_acosh|math_asin|math_asinh|math_atan|' +
@@ -38,8 +38,8 @@ export function HighlightRulesSelector(id: Number) {
     }
 
     const chapter2 = {
-      constant: '',
-
+      keywords: '',
+      forbidden: 'while|for|break|continue',
       functions:
         'accumulate|append|build_list|' +
         'draw_data|enum_list|equal|error|filter|for_each|head|' +
@@ -48,8 +48,8 @@ export function HighlightRulesSelector(id: Number) {
     }
 
     const chapter3 = {
-      constant: '',
-
+      keywords: 'while|for|break|continue',
+      forbidden: '',
       functions:
         'array_length|build_stream|enum_stream|' +
         'eval_stream|integers_from|is_array|is_stream|' +
@@ -60,26 +60,55 @@ export function HighlightRulesSelector(id: Number) {
     }
 
     const chapter4 = {
-      constants: '',
-
+      keywords: '',
+      forbidden: '',
       functions: 'apply_in_underlying_javascript'
     }
 
-    const ChapterKeywordSelector = () => {
+    const ChapterFunctionNameSelector = () => {
       let output = ''
       if (id >= 1) {
         output += chapter1.functions
       }
       if (id >= 2) {
-        output += chapter2.functions
+        output += '|' + chapter2.functions
       }
       if (id >= 3) {
-        output += chapter3.functions
+        output += '|' + chapter3.functions
       }
       if (id >= 4) {
-        output += chapter4.functions
+        output += '|' + chapter4.functions
       }
       return output
+    }
+
+    const ChapterKeywordSelector = () => {
+      let output = ''
+      if (id >= 1) {
+        output += chapter1.keywords
+      }
+      if (id >= 2) {
+        output += '|' + chapter2.keywords
+      }
+      if (id >= 3) {
+        output += '|' + chapter3.keywords
+      }
+      if (id >= 4) {
+        output += '|' + chapter4.keywords
+      }
+      return output
+    }
+
+    const ChapterForbbidenWordSelector = () => {
+      if (id === 1) {
+        return chapter1.forbidden
+      } else if (id === 2) {
+        return chapter2.forbidden
+      } else if (id === 3) {
+        return chapter3.forbidden
+      } else {
+        return chapter4.forbidden
+      }
     }
 
     // @ts-ignore
@@ -89,16 +118,15 @@ export function HighlightRulesSelector(id: Number) {
         {
           'constant.language':
             'null|Infinity|NaN|undefined|math_LN2|math_LN10|' +
-            'math_LOG2E|math_LOG10E|math_PI|math_SQRT1_2|math_SQRT2' +
-            chapter1.constants,
+            'math_LOG2E|math_LOG10E|math_PI|math_SQRT1_2|math_SQRT2',
 
           'constant.language.boolean': 'true|false',
 
-          keyword: 'const|break|continue|else|for|function|' + 'if|return|let|var|while|',
+          keyword: ChapterKeywordSelector(),
 
           'storage.type': 'const|let|function',
 
-          'support.function': 'alert|' + ChapterKeywordSelector(),
+          'support.function': 'alert|' + ChapterFunctionNameSelector(),
 
           'variable.language':
             'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
@@ -115,7 +143,8 @@ export function HighlightRulesSelector(id: Number) {
             'typeof|__parent__|__count__|escape|unescape|with|__proto__|' +
             'class|enum|extends|super|export|implements|private|public|' +
             'interface|package|protected|static|in|of|instanceof|new|' +
-            'case|catch|default|delete|do|finally|here'
+            'case|catch|default|delete|do|finally|here|' +
+            ChapterForbbidenWordSelector()
         },
         'identifier'
       )
@@ -699,7 +728,7 @@ export function HighlightRulesSelector(id: Number) {
 }
 
 //source mode
-export function ModeSelector(id: Number) {
+export function ModeSelector(id: number) {
   // @ts-ignore
   function _Mode(acequire, exports, module) {
     'use strict'
