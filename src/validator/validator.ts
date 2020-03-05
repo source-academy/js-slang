@@ -73,6 +73,7 @@ export function validateAndAnnotate(
             context.errors.push(new NoAssignmentToForVariable(lastAncestor))
           }
         }
+        break
       }
     }
   }
