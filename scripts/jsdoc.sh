@@ -26,111 +26,111 @@ run() {
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README.md \
+	     -R ${DST}/README_top.md \
 	     -d ${DST}/ \
-	     docs/empty.js
+	     ${DST}/lib/empty.js
 
     # Source §1
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_1.md \
+	     -R ${DST}/README_1.md \
 	     -d ${DST}/"source_1"/ \
-	     docs/misc.js \
-	     docs/math.js
+	     ${DST}/lib/misc.js \
+	     ${DST}/lib/math.js
     
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_2.md \
+	     -R ${DST}/README_2.md \
 	     -d ${DST}/"source_2"/ \
-	     docs/misc.js \
-	     docs/math.js \
-	     docs/list.js
+	     ${DST}/lib/misc.js \
+	     ${DST}/lib/math.js \
+	     ${DST}/lib/list.js
     
     # Source §3
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_3.md \
+	     -R ${DST}/README_3.md \
 	     -d ${DST}/"source_3"/ \
-	     docs/misc.js \
-	     docs/math.js \
-             docs/list.js \
-	     docs/stream.js \
-	     docs/array.js \
-	     docs/pairmutator.js
+	     ${DST}/lib/misc.js \
+	     ${DST}/lib/math.js \
+             ${DST}/lib/list.js \
+	     ${DST}/lib/stream.js \
+	     ${DST}/lib/array.js \
+	     ${DST}/lib/pairmutator.js
     
     # Source §4
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_4.md \
+	     -R ${DST}/README_4.md \
 	     -d ${DST}/"source_4"/ \
-	     docs/misc.js \
-	     docs/math.js \
-	     docs/list.js \
-	     docs/stream.js \
-	     docs/array.js \
-	     docs/pairmutator.js \
-	     docs/mce.js
+	     ${DST}/lib/misc.js \
+	     ${DST}/lib/math.js \
+	     ${DST}/lib/list.js \
+	     ${DST}/lib/stream.js \
+	     ${DST}/lib/array.js \
+	     ${DST}/lib/pairmutator.js \
+	     ${DST}/lib/mce.js
     
     # MISC
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_MISC.md \
+	     -R ${DST}/README_MISC.md \
 	     -d ${DST}/MISC/ \
-	     docs/misc.js
+	     ${DST}/lib/misc.js
     
     # MATH
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_MATH.md \
+	     -R ${DST}/README_MATH.md \
 	     -d ${DST}/MATH/ \
-	     docs/math.js
+	     ${DST}/lib/math.js
     
     # LISTS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_LISTS.md \
+	     -R ${DST}/README_LISTS.md \
 	     -d ${DST}/LISTS/ \
-	     docs/list.js
+	     ${DST}/lib/list.js
     
     # STREAMS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_STREAMS.md \
+	     -R ${DST}/README_STREAMS.md \
 	     -d ${DST}/STREAMS/ \
-	     docs/stream.js
+	     ${DST}/lib/stream.js
     
     # ARRAYS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_ARRAYS.md \
+	     -R ${DST}/README_ARRAYS.md \
 	     -d ${DST}/ARRAYS/ \
-	     docs/array.js
+	     ${DST}/lib/array.js
     
     # PAIRMUTATORS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_PAIRMUTATORS.md \
+	     -R ${DST}/README_PAIRMUTATORS.md \
 	     -d ${DST}/PAIRMUTATORS/ \
-	     docs/pairmutator.js
+	     ${DST}/lib/pairmutator.js
     
     # MCE
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_MCE.md \
+	     -R ${DST}/README_MCE.md \
 	     -d ${DST}/MCE/ \
-	     docs/mce.js
+	     ${DST}/lib/mce.js
     
     # RUNES
     
@@ -161,7 +161,7 @@ run() {
     
     ${JSDOC} -r -t ${TMPL}/ \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_BINARYTREES.md \
+	     -R ${DST}/README_BINARYTREES.md \
 	     -d ${DST}/BINARYTREES \
 	     ${SRC}/externalLibs/tree.js
 
@@ -177,7 +177,7 @@ run() {
     
     ${JSDOC} -r -t ${TMPL}/ \
 	     -c docs/jsdoc/conf.json \
-	     -R docs/README_EXTERNAL.md \
+	     -R ${DST}/README_EXTERNAL.md \
 	     -d ${DST}/"External libraries"/ \
 	     ${SRC}/externalLibs/graphics/webGLrune.js \
 	     ${SRC}/externalLibs/graphics/webGLcurve.js \
