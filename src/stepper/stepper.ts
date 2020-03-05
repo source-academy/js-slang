@@ -901,9 +901,11 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     },
 
     FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
-      return ast.functionDeclaration(target.id, target.params, treeify(
-        target.body
-      ) as es.BlockStatement)
+      return ast.functionDeclaration(
+        target.id,
+        target.params,
+        treeify(target.body) as es.BlockStatement
+      )
     },
 
     // CORE
@@ -915,9 +917,10 @@ function treeifyMain(target: substituterNodes): substituterNodes {
       } else if (verbose) {
         // here onwards is guarding against arrow turned function expressions
         verbose = false
-        const redacted = ast.arrowFunctionExpression(target.params, treeify(
-          target.body
-        ) as es.BlockStatement)
+        const redacted = ast.arrowFunctionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement
+        )
         verbose = true
         return redacted
       } else {
@@ -966,9 +969,10 @@ function treeifyMain(target: substituterNodes): substituterNodes {
       if (verbose) {
         // here onwards is guarding against arrow turned function expressions
         verbose = false
-        const redacted = ast.arrowFunctionExpression(target.params, treeify(
-          target.body
-        ) as es.BlockStatement)
+        const redacted = ast.arrowFunctionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement
+        )
         verbose = true
         return redacted
       } else {

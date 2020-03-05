@@ -215,7 +215,10 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
   }
 }
 
-function* reduceIf(node: es.IfStatement | es.ConditionalExpression, context: Context) {
+function* reduceIf(
+  node: es.IfStatement | es.ConditionalExpression,
+  context: Context
+): IterableIterator<es.Node> {
   const test = yield* evaluate(node.test, context)
 
   const error = rttc.checkIfStatement(node, test)
