@@ -5,7 +5,7 @@ import {
   parseExpressionAt as acornParseAt,
   Position
 } from 'acorn'
-import { ancestor, AncestorWalker } from 'acorn-walk/dist/walk'
+import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
@@ -159,9 +159,9 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
 
 function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
-  parserRules: Array<Rule<es.Node>>
+  parserRules: Rule<es.Node>[]
 ) {
-  const newWalkers = new Map<string, AncestorWalker<Context>>()
+  const newWalkers = new Map<string, AncestorWalkerFn<Context>>()
   const visitedNodes = new Set<es.Node>()
 
   // Provide callbacks checking for disallowed syntaxes, such as case, switch...
@@ -187,14 +187,14 @@ function createWalkers(
       const syntax = pair[0]
       const checker = pair[1]
       const oldCheck = newWalkers.get(syntax)!
-      const newCheck = (node: es.Node, context: Context, ancestors: [es.Node]) => {
+      const newCheck = (node: es.Node, context: Context, ancestors: es.Node[]) => {
         if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
           return
         }
         const errors = checker(node, ancestors)
         errors.forEach(e => context.errors.push(e))
       }
-      newWalkers.set(syntax, (node, context, ancestors) => {
+      newWalkers.set(syntax, (node: es.Node, context: Context<any>, ancestors) => {
         oldCheck(node, context, ancestors)
         newCheck(node, context, ancestors)
       })
@@ -207,4 +207,4 @@ function createWalkers(
 const mapToObj = (map: Map<string, any>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-const walkers: { [name: string]: AncestorWalker<Context> } = createWalkers(syntaxBlacklist, rules)
+const walkers: { [name: string]: AncestorWalkerFn<Context> } = createWalkers(syntaxBlacklist, rules)

@@ -4971,7 +4971,7 @@ f(...[1, 2]);",
 }
 `;
 
-exports[`No trailing commas in arrays - verbose: expectWarning 1`] = `
+exports[`No trailing commas in arrays - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
@@ -4994,15 +4994,13 @@ Object {
   "parsedErrors": "Line 2, Column 2: Trailing comma
 Please remove the trailing comma
 ",
-  "result": Array [
-    1,
-  ],
-  "resultStatus": "finished",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`No trailing commas in arrays: expectWarning 1`] = `
+exports[`No trailing commas in arrays: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "[1,];",
@@ -5022,15 +5020,13 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Trailing comma",
-  "result": Array [
-    1,
-  ],
-  "resultStatus": "finished",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`No trailing commas in objects: expectWarning 1`] = `
+exports[`No trailing commas in objects: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({
@@ -5053,11 +5049,8 @@ Object {
     },
   ],
   "parsedErrors": "Line 3: Trailing comma",
-  "result": Object {
-    "a": 1,
-    "b": 2,
-  },
-  "resultStatus": "finished",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
