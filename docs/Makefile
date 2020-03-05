@@ -16,7 +16,7 @@ all: $(PDFSPECS)
 	$(PDFLATEX) $*
 
 clean:
-	rm -f *~ *.dvi *.aux *.log *.ps *.out
+	rm -f *~ *.dvi *.aux *.log *.ps *.out *.pdf
 
 install: $(PDFSPECS)
 	scp $(PDFSPECS) sicp@web1.comp.nus.edu.sg:public_html/source/.
