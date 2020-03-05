@@ -26,7 +26,6 @@ export function HighlightRulesSelector(id: number) {
 
     const chapter1 = {
       keywords: 'const|else|if|return|function',
-      forbidden: 'while|for|break|continue|let',
       functions:
         'display|error|is_boolean|is_function|is_number|is_string|is_undefined|' +
         'math_abs|math_acos|math_acosh|math_asin|math_asinh|math_atan|' +
@@ -39,7 +38,6 @@ export function HighlightRulesSelector(id: number) {
 
     const chapter2 = {
       keywords: '',
-      forbidden: 'while|for|break|continue|let',
       functions:
         'accumulate|append|build_list|' +
         'draw_data|enum_list|equal|error|filter|for_each|head|' +
@@ -48,8 +46,7 @@ export function HighlightRulesSelector(id: number) {
     }
 
     const chapter3 = {
-      keywords: 'while|for|break|continue',
-      forbidden: '',
+      keywords: 'while|for|break|continue|let',
       functions:
         'array_length|build_stream|enum_stream|' +
         'eval_stream|integers_from|is_array|is_stream|' +
@@ -61,7 +58,6 @@ export function HighlightRulesSelector(id: number) {
 
     const chapter4 = {
       keywords: '',
-      forbidden: '',
       functions: 'apply_in_underlying_javascript'
     }
 
@@ -101,13 +97,13 @@ export function HighlightRulesSelector(id: number) {
 
     const ChapterForbbidenWordSelector = () => {
       if (id === 1) {
-        return chapter1.forbidden
+        return chapter2.keywords + '|' + chapter3.keywords + '|' + chapter4.keywords
       } else if (id === 2) {
-        return chapter2.forbidden
+        return chapter3.keywords + '|' + chapter4.keywords
       } else if (id === 3) {
-        return chapter3.forbidden
+        return chapter4.keywords
       } else {
-        return chapter4.forbidden
+        return ''
       }
     }
 
