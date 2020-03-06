@@ -1,4 +1,4 @@
-import { recursive } from 'acorn-walk/dist/walk'
+import { recursive, simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import * as create from '../utils/astCreator'
 
@@ -78,7 +78,9 @@ export enum OpCodes {
   RETB = 72,
   RETU = 73,
   RETN = 74,
-  DUP = 75
+  DUP = 75,
+  NEWENV = 76, // number of locals in new environment
+  POPENV = 77
 }
 
 const PRIMITIVE_FUNCTION_NAMES = [
@@ -370,6 +372,7 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
   renameVariables(baseNode, namesToRename)
 
   // recurse for blocks. Need to manually add all cases to recurse
+  // loops will have their own environment, so no need to recurse
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
@@ -379,9 +382,6 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
       localNames(consequent as es.BlockStatement, names)
       // Source spec must have alternate
       localNames(alternate! as es.BlockStatement, names)
-    } else if (stmt.type === 'WhileStatement') {
-      const node = stmt as es.WhileStatement
-      localNames(node.body as es.BlockStatement, names)
     }
   }
   return names
@@ -517,11 +517,19 @@ function compileArguments(exprs: es.Node[], indexTable: Array<Map<string, EnvEnt
   return maxStackSize
 }
 
+// tag loop blocks when compiling. Untagged (i.e. undefined) would mean
+// the block is not a loop block.
+// for loop blocks, need to ensure the last statement is also popped to prevent
+// stack overflow. also note that compileStatements for loop blocks will always
+// have insertFlag: false
+type taggedBlockStatement = (es.Program | es.BlockStatement) & { isLoopBlock?: boolean }
+
 function compileStatements(
-  statements: es.Node[],
+  node: taggedBlockStatement,
   indexTable: Array<Map<string, EnvEntry>>,
   insertFlag: boolean
 ) {
+  const statements = node.body
   let maxStackSize = 0
   for (let i = 0; i < statements.length; i++) {
     const { maxStackSize: curExprSize } = compile(
@@ -529,7 +537,7 @@ function compileStatements(
       indexTable,
       i === statements.length - 1 ? insertFlag : false
     )
-    if (i !== statements.length - 1) {
+    if (i !== statements.length - 1 || node.isLoopBlock) {
       addNullaryInstruction(OpCodes.POPG)
     }
     maxStackSize = Math.max(maxStackSize, curExprSize)
@@ -541,12 +549,12 @@ function compileStatements(
 const compilers = {
   Program(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.Program
-    return compileStatements(node.body, indexTable, insertFlag)
+    return compileStatements(node, indexTable, insertFlag)
   },
 
   BlockStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.BlockStatement
-    return compileStatements(node.body, indexTable, insertFlag)
+    return compileStatements(node, indexTable, insertFlag)
   },
 
   ExpressionStatement(
@@ -857,6 +865,7 @@ const compilers = {
     throw Error('Unsupported operation')
   },
 
+  // Loops need to have their own environment due to closures
   WhileStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.WhileStatement
     const condIndex = functionCode.length
@@ -865,7 +874,15 @@ const compilers = {
     const BRFIndex = functionCode.length - 1
     breakTracker.push([] as number[])
     continueTracker.push([])
-    const { maxStackSize: m2 } = compile(node.body, indexTable, false)
+
+    // Add environment for loop and run in new environment
+    const locals = localNames(node.body as es.BlockStatement, new Map())
+    addUnaryInstruction(OpCodes.NEWENV, locals.size)
+    const extendedIndexTable = extendIndexTable(indexTable, locals)
+    const body = node.body as taggedBlockStatement
+    body.isLoopBlock = true
+    const { maxStackSize: m2 } = compile(body, extendedIndexTable, false)
+    addNullaryInstruction(OpCodes.POPENV)
     const endLoopIndex = functionCode.length
     addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex)
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
@@ -935,8 +952,13 @@ function compile(expr: es.Node, indexTable: Array<Map<string, EnvEntry>>, insert
         expr.type === 'UnaryExpression' ||
         expr.type === 'BinaryExpression' ||
         expr.type === 'CallExpression' ||
-        (expr.type === 'Identifier' && expr.name === 'undefined'))
+        expr.type === 'Identifier' ||
+        expr.type === 'ArrayExpression' ||
+        expr.type === 'LogicalExpression' ||
+        expr.type === 'MemberExpression' ||
+        expr.type === 'AssignmentExpression')
     ) {
+      // Conditional expressions are already handled
       addNullaryInstruction(OpCodes.RETG)
     } else if (
       expr.type === 'Program' ||
@@ -961,6 +983,7 @@ export function compileToIns(program: es.Program): Program {
   toCompile = []
   toplevel = true
 
+  transformForLoopsToWhileLoops(program)
   const locals = localNames(program, new Map<string, EnvEntry>())
   const topFunction: SVMFunction = [NaN, locals.size, 0, []]
   const topFunctionIndex = SVMFunctions.length
@@ -970,4 +993,63 @@ export function compileToIns(program: es.Program): Program {
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
   return [topFunctionIndex, SVMFunctions]
+}
+
+// transform according to Source 3 spec. Refer to spec for the way of transformation
+function transformForLoopsToWhileLoops(program: es.Program) {
+  function renameLoopControlVar(node: es.ForStatement, name: string, newName: string) {
+    const walkers = {
+      Identifier(id: es.Identifier) {
+        if (id.name === name) {
+          id.name = newName
+        }
+      },
+      Pattern(id: es.Identifier) {
+        if (id.name === name) {
+          id.name = newName
+        }
+      }
+    }
+    simple(node.init!, walkers)
+    simple(node.test!, walkers)
+    simple(node.update!, walkers)
+  }
+  simple(program, {
+    ForStatement(node) {
+      const { test, body, init, update } = node as es.ForStatement
+      let forLoopBody = body
+      // Source spec: init must be present
+      if (init!.type === 'VariableDeclaration') {
+        const loopVarName = ((init as es.VariableDeclaration).declarations[0].id as es.Identifier)
+          .name
+        const innerBlock = create.blockStatement([
+          create.constantDeclaration(
+            loopVarName,
+            create.identifier('_copy_of_loop_control_var') // purposely long to reduce unintentional clash
+          ),
+          body
+        ])
+        // rename the loop control variable to access it from the for loop expressions
+        renameLoopControlVar(node as es.ForStatement, loopVarName, '_loop_control_var')
+        forLoopBody = create.blockStatement([
+          create.constantDeclaration(
+            '_copy_of_loop_control_var',
+            create.identifier('_loop_control_var')
+          ),
+          innerBlock
+        ])
+      }
+      const assignment1 =
+        init && init.type === 'VariableDeclaration'
+          ? init
+          : create.expressionStatement(init as es.Expression)
+      const assignment2 = create.expressionStatement(update!)
+      const newLoopBody = create.blockStatement([forLoopBody, assignment2])
+      const newLoop = create.whileStatement(newLoopBody, test!)
+      const newBlockBody = [assignment1, newLoop]
+      node = node as es.BlockStatement
+      node.body = newBlockBody
+      node.type = 'BlockStatement'
+    }
+  })
 }
