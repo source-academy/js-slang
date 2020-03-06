@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { RuntimeSourceError } from '../interpreter-errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Thunk } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'

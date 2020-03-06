@@ -1,7 +1,7 @@
 import { Program } from 'estree'
-import { evaluate } from '../interpreter'
+import { evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
-import { parse } from '../parser'
+import { parse } from '../parser/parser'
 import { stripIndent } from '../utils/formatters'
 
 test('Function params and body identifiers are in the same environment', () => {
