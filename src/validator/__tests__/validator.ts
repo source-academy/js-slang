@@ -1,19 +1,10 @@
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
-import { mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
-import { validateAndAnnotate } from '../validator'
 import * as es from 'estree'
 import { simple } from 'acorn-walk/dist/walk'
 import { getVariableDecarationName } from '../../utils/astCreator'
 import { TypeAnnotatedNode } from '../../types'
-
-export async function toValidatedAst(code: string) {
-  const context = mockContext(1)
-  const ast = parse(code, context)
-  expect(ast).not.toBeUndefined()
-  return validateAndAnnotate(ast as es.Program, context)
-}
+import { toValidatedAst } from '../../utils/testing'
 
 test('for loop variable cannot be reassigned', async () => {
   const code = stripIndent`

@@ -1,0 +1,343 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`all Literals whose values are integers are inferred as integers 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 2,
+      "expression": Node {
+        "end": 1,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "integer",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 1,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "1",
+        "start": 0,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 1,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 2,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 14,
+          "id": Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 2,
+              },
+            },
+            "name": "x",
+            "start": 9,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "end": 14,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "integer",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 13,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 2,
+            },
+          },
+          "start": 9,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 15,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 3,
+      "typability": "NotYetTyped",
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 15,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 12,
+      "line": 2,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`other nodes other than int literals are NotYetTyped 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 5,
+      "expression": Node {
+        "end": 4,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "true",
+        "start": 0,
+        "type": "Literal",
+        "value": true,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 12,
+      "expression": Node {
+        "end": 11,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "raw": "false",
+        "start": 6,
+        "type": "Literal",
+        "value": false,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 6,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 18,
+      "expression": Node {
+        "end": 17,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 3,
+          },
+        },
+        "raw": "1.90",
+        "start": 13,
+        "type": "Literal",
+        "value": 1.9,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      "start": 13,
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 18,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 5,
+      "line": 3,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`values equal to integers are integers 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 4,
+      "expression": Node {
+        "end": 3,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "integer",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "1.0",
+        "start": 0,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 1,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 4,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 9,
+      "expression": Node {
+        "end": 8,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "integer",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "raw": "0.0",
+        "start": 5,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 0,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 4,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 5,
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 9,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 2,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
