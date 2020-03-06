@@ -29,6 +29,8 @@ export class TypeError extends RuntimeSourceError {
 const isNumberT = (v: Thunk<Value>) => v.type === 'number'
 // Checks if Thunk is a string
 const isStringT = (v: Thunk<Value>) => v.type === 'string'
+// Checks if Thunk is a boolean
+const isBoolT = (v: Thunk<Value>) => v.type === 'boolean'
 
 const isNumber = (v: Value) => typeOf(v) === 'number'
 // See section 4 of https://2ality.com/2012/12/arrays.html
@@ -40,16 +42,36 @@ const isBool = (v: Value) => typeOf(v) === 'boolean'
 const isObject = (v: Value) => typeOf(v) === 'object'
 const isArray = (v: Value) => typeOf(v) === 'array'
 
-export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, value: Value) => {
-  if ((operator === '+' || operator === '-') && !isNumber(value)) {
-    return new TypeError(node, '', 'number', typeOf(value))
-  } else if (operator === '!' && !isBool(value)) {
-    return new TypeError(node, '', 'boolean', typeOf(value))
-  } else {
-    return undefined
+// Checks that an unary expression has a correctly
+// typed Thunk as its argument, and returns the
+// type of the resultant Thunk (in string)
+export const checkUnaryExpression = (
+  node: es.Node,
+  operator: es.UnaryOperator,
+  value: Thunk<Value>
+) => {
+  switch (operator) {
+    case '+':
+    case '-':
+      if (!isNumberT(value)) {
+        return new TypeError(node, '', 'number', value.type)
+      } else {
+        return 'number'
+      }
+    case '!':
+      if (!isBoolT(value)) {
+        return new TypeError(node, '', 'boolean', value.type)
+      } else {
+        return 'boolean'
+      }
+    default:
+      return ''
   }
 }
 
+// Checks that a binary expression has correctly
+// typed Thunks as arguments, and returns the
+// type of the resultant Thunk (in string)
 export const checkBinaryExpression = (
   node: es.Node,
   operator: es.BinaryOperator,

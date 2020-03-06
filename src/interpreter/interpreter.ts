@@ -327,7 +327,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const value = yield* evaluate(node.argument, context)
 
     const error = rttc.checkUnaryExpression(node, node.operator, value)
-    if (error) {
+    if (typeof error !== 'string') {
       return handleRuntimeError(context, error)
     }
     return evaluateUnaryExpression(node.operator, value)

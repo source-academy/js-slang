@@ -7,7 +7,7 @@ import { typeOf } from '../utils/typeOf'
 
 // Primitive Thunk type
 export interface Thunk<T> {
-  // whether the Thunk has been peviously evaluated
+  // whether the Thunk has been previously evaluated
   evaluated: boolean
   // the string representation of this Thunk
   toString: () => string
@@ -90,6 +90,33 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
 
 /**
  * (NOT a primitive function in Lazy Source)
+ * Makes a Thunk with a unary function and two
+ * Thunks. The unary function passed into
+ * makeThunkWithPrimitiveUnary is never executed
+ * before the result Thunk is forced to evaluate.
+ * @param argument Thunk containing an operand t with type T.
+ * @param unaryFunc The function to apply to t.
+ * @param returnType Type of R, as a string.
+ * @param operator Operator represented by unaryFunc,
+ *     but as a string (will be used in final string
+ *     representation of the result thunk)
+ */
+export function makeThunkWithPrimitiveUnary<T, R>(
+  argument: Thunk<T>,
+  unaryFunc: (t: T) => R,
+  returnType: string,
+  operator: string
+): Thunk<R> {
+  return {
+    type: returnType,
+    value: () => unaryFunc(evaluateThunk(argument)),
+    toString: () => operator + argument.toString(),
+    evaluated: false
+  }
+}
+
+/**
+ * (NOT a primitive function in Lazy Source)
  * Gets the value of the Thunk by forcing its
  * evaluation. Part of the abstraction for
  * Thunks, to be used in the interpreter. This
@@ -119,7 +146,7 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
 // Lazy Source syntax
 const x = 1 + 1;
 // this is translated into normal JS syntax:
-// x is assigned to () => () => { return 1; }() + () => { return 1; }();
+// x is assigned to () => (() => { return 1; })() + (() => { return 1; })();
 
 x; // nothing happens
 force(x); // calculates expression, returns 2

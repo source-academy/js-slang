@@ -11,7 +11,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { makeThunk, makeThunkWithPrimitiveBinary, Thunk } from '../stdlib/lazy'
+import { makeThunk, makeThunkWithPrimitiveBinary, Thunk, makeThunkWithPrimitiveUnary } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -66,26 +66,48 @@ export function boolOrErr(candidate: any, line: number, column: number) {
   }
 }
 
-export function unaryOp(operator: UnaryOperator, argument: any, line: number, column: number) {
-  const error = rttc.checkUnaryExpression(
+export function unaryOp(
+  operator: UnaryOperator,
+  argument: Thunk<any>,
+  line: number,
+  column: number
+) {
+  const resultType = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column),
     operator,
     argument
   )
-  if (error === undefined) {
-    return evaluateUnaryExpression(operator, argument)
+  if (typeof resultType === 'string') {
+    return evaluateUnaryExpression(operator, argument, resultType)
   } else {
-    throw error
+    throw resultType
   }
 }
 
-export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
+/**
+ * Delays evaluation of an unary expression
+ * in Lazy Source, returning a Thunk.
+ * 
+ * @param operator String representing the operator
+ *     to be executed.
+ * @param value The argument of this operator.
+ * @param returnType The return type of the evaluated
+ *     expression.
+ */
+export function evaluateUnaryExpression(
+  operator: UnaryOperator,
+  value: Thunk<any>,
+  // default value '' to prevent problems with substitutor, intepreter
+  returnType: string = ''
+) {
   if (operator === '!') {
-    return !value
+    return makeThunkWithPrimitiveUnary(value, x => !x, returnType, operator)
   } else if (operator === '-') {
-    return -value
+    return makeThunkWithPrimitiveUnary(value, x => -x, returnType, operator)
+  } else if (operator === '+') {
+    return makeThunkWithPrimitiveUnary(value, x => +x, returnType, operator)
   } else {
-    return +value
+    return makeThunk(undefined);
   }
 }
 
@@ -110,9 +132,9 @@ export function binaryOp(
 }
 
 /**
- * Evaluates a binary expression in Lazy Source,
- * returning a Thunk that is guaranteed to only be
- * a wrapper for a primitive value.
+ * Delays evaluation of a binary expression in
+ * Lazy Source, returning a Thunk.
+ * 
  * @param operator String representing the operator
  *     to be executed.
  * @param left The first argument, or the left, of
