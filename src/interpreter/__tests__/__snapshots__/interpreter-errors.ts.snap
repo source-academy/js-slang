@@ -1224,6 +1224,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 21,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "integer",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1236,6 +1240,7 @@ Object {
           },
           "raw": "0",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
@@ -1288,6 +1293,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 1,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "integer",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -1300,6 +1309,7 @@ Object {
           },
           "raw": "0",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
@@ -1377,6 +1387,10 @@ Object {
           "elements": Array [
             Node {
               "end": 20,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "integer",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1389,6 +1403,7 @@ Object {
               },
               "raw": "1",
               "start": 19,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
@@ -1460,6 +1475,10 @@ Object {
           "elements": Array [
             Node {
               "end": 2,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "integer",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1472,6 +1491,7 @@ Object {
               },
               "raw": "1",
               "start": 1,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
@@ -1682,6 +1702,10 @@ Object {
               "type": "Property",
               "value": Node {
                 "end": 24,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "integer",
+                },
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -1694,6 +1718,7 @@ Object {
                 },
                 "raw": "1",
                 "start": 23,
+                "typability": "Typed",
                 "type": "Literal",
                 "value": 1,
               },
@@ -1801,6 +1826,10 @@ Object {
               "type": "Property",
               "value": Node {
                 "end": 24,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "integer",
+                },
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -1813,6 +1842,7 @@ Object {
                 },
                 "raw": "1",
                 "start": 23,
+                "typability": "Typed",
                 "type": "Literal",
                 "value": 1,
               },
@@ -1919,6 +1949,10 @@ Object {
               "type": "Property",
               "value": Node {
                 "end": 6,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "integer",
+                },
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -1931,6 +1965,7 @@ Object {
                 },
                 "raw": "1",
                 "start": 5,
+                "typability": "Typed",
                 "type": "Literal",
                 "value": 1,
               },
@@ -2200,6 +2235,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 31,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "integer",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -2212,6 +2251,7 @@ Object {
             },
             "raw": "1",
             "start": 30,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
@@ -2298,6 +2338,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 11,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "integer",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2310,6 +2354,7 @@ Object {
             },
             "raw": "1",
             "start": 10,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
