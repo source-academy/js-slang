@@ -11,7 +11,12 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { makeThunk, makeThunkWithPrimitiveBinary, Thunk, makeThunkWithPrimitiveUnary } from '../stdlib/lazy'
+import {
+  makeThunk,
+  makeThunkWithPrimitiveBinary,
+  Thunk,
+  makeThunkWithPrimitiveUnary
+} from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -87,7 +92,7 @@ export function unaryOp(
 /**
  * Delays evaluation of an unary expression
  * in Lazy Source, returning a Thunk.
- * 
+ *
  * @param operator String representing the operator
  *     to be executed.
  * @param value The argument of this operator.
@@ -107,7 +112,7 @@ export function evaluateUnaryExpression(
   } else if (operator === '+') {
     return makeThunkWithPrimitiveUnary(value, x => +x, returnType, operator)
   } else {
-    return makeThunk(undefined);
+    return makeThunk(undefined)
   }
 }
 
@@ -134,7 +139,7 @@ export function binaryOp(
 /**
  * Delays evaluation of a binary expression in
  * Lazy Source, returning a Thunk.
- * 
+ *
  * @param operator String representing the operator
  *     to be executed.
  * @param left The first argument, or the left, of
