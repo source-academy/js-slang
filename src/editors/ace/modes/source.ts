@@ -801,11 +801,7 @@ export function ModeSelector(id: number) {
 
       // @ts-ignore
       this.createWorker = function(session) {
-        var worker = new WorkerClient(
-          ['ace'],
-          require('../worker/javascript'),
-          'JavaScriptWorker'
-        )
+        var worker = new WorkerClient(['ace'], require('../worker/javascript'), 'JavaScriptWorker')
         worker.attachToDocument(session.getDocument())
 
         // @ts-ignore
