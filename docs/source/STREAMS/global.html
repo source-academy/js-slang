@@ -1,0 +1,3438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Predeclared in STREAMS</title>
+    <link rel="shortcut icon"
+	  type="image/x-icon"
+	  href="/Source/images/favicon.ico" />
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Predeclared in <a href=".">STREAMS</a></h1>
+
+    <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Functions</h3>  <!-- changed by MH on 1/7/2019, was Methods -->
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="build_stream"><span class="type-signature"></span>build_stream<span class="signature">(n, f)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Makes a stream with <CODE>n</CODE>
+elements by applying the unary function <CODE>f</CODE>
+to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
+Lazy? Yes: The result stream forces the application of <CODE>f</CODE>
+          for the next element
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given non-negative integer</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">unary function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    resulting stream
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="enum_stream"><span class="type-signature"></span>enum_stream<span class="signature">(start, end)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that enumerates
+numbers starting from <CODE>start</CODE> using a step size of 1, until
+the number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.
+Lazy? Yes: The result stream forces the construction of
+           each next element
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">starting number</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ending number</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    stream from <CODE>start</CODE> to <CODE>end</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="eval_stream"><span class="type-signature"></span>eval_stream<span class="signature">(s, n)</span><span class="type-signature"> &rarr; {list}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Constructs the list of the first <CODE>n</CODE> elements
+of a given stream <CODE>s</CODE>
+Lazy? Sort-of: <CODE>eval_stream</CODE> only forces the computation of
+the first <CODE>n</CODE> elements, and leaves the rest of
+the stream untouched.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">starting number</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">number of elements to place in result list</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result list
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">list</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="integers_from"><span class="type-signature"></span>integers_from<span class="signature">(start)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns infinite stream if integers starting 
+at given number <CODE>n</CODE> using a step size of 1.
+Lazy? Yes: The result stream forces the construction of
+           each next element
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">starting number</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    infinite stream from <CODE>n</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="is_stream"><span class="type-signature"></span>is_stream<span class="signature">(xs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns <CODE>true</CODE> if
+<CODE>xs</CODE> is a stream as defined in the textbook, and
+<CODE>false</CODE> otherwise. Iterative process; 
+time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>, where <CODE>n</CODE>
+is the length of the 
+chain of <CODE>stream_tail</CODE> operations that can be applied to <CODE>xs</CODE>.
+recurses down the stream and checks that it ends with the empty stream null.
+Laziness:  No: <CODE>is_stream</CODE> needs to force the given stream.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">value</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given candidate</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    whether <CODE>xs</CODE> is a stream
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="list_to_stream"><span class="type-signature"></span>list_to_stream<span class="signature">(xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Given list <CODE>xs</CODE>, returns a stream of same length with
+the same elements as <CODE>xs</CODE> in the same order.
+Laziness:  Yes: <CODE>list_to_stream</CODE> 
+goes down the list only when forced.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">list</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given list</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    stream containing all elements of <CODE>xs</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream"><span class="type-signature"></span>stream<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Given <CODE>n</CODE> values, returns a stream of length <CODE>n</CODE>.
+The elements of the stream are the given values in the given order.
+Lazy? No: A
+complete list is generated, 
+and then a stream using <CODE>list_to_stream</CODE> is generated from it.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value1,value2,...,value_n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">value</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given values</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    stream containing all values
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_append"><span class="type-signature"></span>stream_append<span class="signature">(xs, ys)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that results from 
+appending the stream <CODE>ys</CODE> to the stream <CODE>xs</CODE>.
+In the result, null at the end of the first argument stream
+is replaced by the second argument, regardless what the second
+argument consists of.
+Lazy? Yes: the result stream forces the actual append operation
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given first stream</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ys</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given second stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result of appending <CODE>xs</CODE> and <CODE>ys</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_filter"><span class="type-signature"></span>stream_filter<span class="signature">(pred, xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that contains
+only those elements of given stream <CODE>xs</CODE>
+for which the one-argument function
+<CODE>pred</CODE>
+returns <CODE>true</CODE>.
+Lazy? Yes: The result stream forces the construction of
+           each next element. Of course, the construction
+           of the next element needs to go down the stream
+           until an element is found for which <CODE>pred</CODE> holds.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>pred</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">unary function returning boolean value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    stream with those elements of <CODE>xs</CODE> for which <CODE>pred</CODE> holds.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_for_each"><span class="type-signature"></span>stream_for_each<span class="signature">(f, xs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Applies unary function <CODE>f</CODE> to every
+element of the stream <CODE>xs</CODE>.
+Iterative process; time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
+Where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+<CODE>f</CODE> is applied element-by-element:
+<CODE>stream_for_each(f, stream(1, 2))</CODE> results in the calls
+<CODE>f(1)</CODE> and <CODE>f(2)</CODE>.
+Lazy? No: <CODE>stream_for_each</CODE> 
+forces the exploration of the entire stream
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">unary</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_length"><span class="type-signature"></span>stream_length<span class="signature">(xs)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the length of the stream
+<CODE>xs</CODE>. 
+Iterative process; time: <CODE>O(n)</CODE>, space:
+<CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+Lazy? No: The function needs to explore the whole stream
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    length of <CODE>xs</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_map"><span class="type-signature"></span>stream_map<span class="signature">(f, xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that results from stream
+<CODE>xs</CODE> by element-wise application 
+of unary function <CODE>f</CODE>. 
+<CODE>f</CODE> is applied element-by-element:
+<CODE>stream_map(f, stream(1,2))</CODE> results in
+the same as <CODE>stream(f(1),f(2))</CODE>.
+Lazy? Yes: The argument stream is only explored as forced by
+           the result stream.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">unary</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result of mapping
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_member"><span class="type-signature"></span>stream_member<span class="signature">(v, xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns first postfix substream
+whose head is identical to
+<CODE>v</CODE> (using <CODE>===</CODE>); returns <CODE>null</CODE> if the
+element does not occur in the stream.
+Iterative process; time: <CODE>O(n)</CODE>,
+space: <CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+Lazy? Sort-of: <CODE>stream_member</CODE> 
+forces the stream only until the element 
+is found.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">value</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    postfix substream that starts with <CODE>v</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_ref"><span class="type-signature"></span>stream_ref<span class="signature">(xs, n)</span><span class="type-signature"> &rarr; {value}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the element
+of stream <CODE>xs</CODE> at position <CODE>n</CODE>, 
+where the first element has index 0.
+Iterative process;
+time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
+where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+Lazy? Sort-of: <CODE>stream_ref</CODE> only forces the computation of
+               the first <CODE>n</CODE> elements, and leaves the rest of
+               the stream untouched.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given position</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    item in <CODE>xs</CODE> at position <CODE>n</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">value</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_remove"><span class="type-signature"></span>stream_remove<span class="signature">(v, xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that results from
+<CODE>xs</CODE> by removing the first item from <CODE>xs</CODE> that
+is identical (<CODE>===</CODE>) to <CODE>v</CODE>.
+Returns the original
+stream if there is no occurrence. 
+Lazy? Yes: the result stream forces the construction of each next element
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">value</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <CODE>xs</CODE> with first occurrence of <CODE>v</CODE> removed
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_remove_all"><span class="type-signature"></span>stream_remove_all<span class="signature">(v, xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a stream that results from
+<CODE>xs</CODE> by removing all items from <CODE>xs</CODE> that
+are identical (<CODE>===</CODE>) to <CODE>v</CODE>.
+Returns the original
+stream if there is no occurrence.  
+Recursive process.
+Lazy? Yes: the result stream forces the construction of each next 
+element
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">value</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <CODE>xs</CODE> with all occurrences of <CODE>v</CODE> removed
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_reverse"><span class="type-signature"></span>stream_reverse<span class="signature">(xs)</span><span class="type-signature"> &rarr; {<a href="global.html#stream">stream</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns stream <CODE>xs</CODE> in reverse
+order. Iterative process; time: <CODE>O(n)</CODE>,
+space: <CODE>O(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+The process is iterative, but consumes space <CODE>O(n)</CODE>
+because of the result stream.
+Lazy? No: <CODE>stream_reverse</CODE> 
+forces the exploration of the entire stream
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <CODE>xs</CODE> in reverse
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_tail"><span class="type-signature"></span>stream_tail<span class="signature">(xs)</span><span class="type-signature"> &rarr; {Stream}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    assumes that the tail (second component) of the
+pair {x} is a nullary function, and returns the result of
+applying that function. Throws an exception if the argument 
+is not a pair, or if the tail is not a function.
+Laziness: Yes: {stream_tail} only forces the direct tail 
+stream, but not the rest of the stream, i.e. not the tail 
+of the tail, etc.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Stream</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result stream (if stream discipline is used)
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Stream</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="stream_to_list"><span class="type-signature"></span>stream_to_list<span class="signature">(xs)</span><span class="type-signature"> &rarr; {list}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Given stream <CODE>xs</CODE>, returns a list of same length with
+the same elements as <CODE>xs</CODE> in the same order.
+Laziness:  No: <CODE>stream_to_list</CODE> needs to force the whole 
+stream.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#stream">stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">stream</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    containing all elements of <CODE>xs</CODE>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">list</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h3>Predeclared names</h3><ul><li><a href="global.html#build_stream">build_stream</a></li><li><a href="global.html#enum_stream">enum_stream</a></li><li><a href="global.html#eval_stream">eval_stream</a></li><li><a href="global.html#integers_from">integers_from</a></li><li><a href="global.html#is_stream">is_stream</a></li><li><a href="global.html#list_to_stream">list_to_stream</a></li><li><a href="global.html#stream">stream</a></li><li><a href="global.html#stream_append">stream_append</a></li><li><a href="global.html#stream_filter">stream_filter</a></li><li><a href="global.html#stream_for_each">stream_for_each</a></li><li><a href="global.html#stream_length">stream_length</a></li><li><a href="global.html#stream_map">stream_map</a></li><li><a href="global.html#stream_member">stream_member</a></li><li><a href="global.html#stream_ref">stream_ref</a></li><li><a href="global.html#stream_remove">stream_remove</a></li><li><a href="global.html#stream_remove_all">stream_remove_all</a></li><li><a href="global.html#stream_reverse">stream_reverse</a></li><li><a href="global.html#stream_tail">stream_tail</a></li><li><a href="global.html#stream_to_list">stream_to_list</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+  generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.5.5</a> from
+  <a href="https://github.com/source-academy/js-slang">Github repository js-slang</a>
+  on Fri Mar 06 2020 09:25:51 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

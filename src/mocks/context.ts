@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
-import Closure from '../closure'
 import createContext from '../createContext'
+import Closure from '../interpreter/closure'
 import { Context, Environment } from '../types'
 
 export function mockContext(chapter = 1): Context {
