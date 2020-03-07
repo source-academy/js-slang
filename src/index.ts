@@ -202,8 +202,6 @@ export async function runInContext(
       const temp = transpile(program, context.contextId)
       // some issues with formatting and semicolons and tslint so no destructure
       writeFileSync('./output.js', temp.transpiled)
-      writeFileSync('./output1.js', JSON.stringify(temp.codeMap))
-      writeFileSync('./output2.js', JSON.stringify(temp.evalMap))
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
