@@ -146,7 +146,7 @@ export const checkIfStatement = (node: es.Node, test: Value) => {
  * @param test The value to be tested (Thunk)
  */
 export const checkIfStatementT = (node: es.Node, test: Thunk<Value>) => {
-  return isBoolT(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
+  return isBoolT(test) ? undefined : new TypeError(node, ' as condition', 'boolean', test.type)
 }
 
 export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
