@@ -52,10 +52,11 @@ export function force<T>(expression: Thunk<T>) {
  * @param value The primitive value.
  */
 export function makeThunk<T>(value: T): Thunk<T> {
+  const stringRep = value + ''
   return {
     type: typeOf(value),
     value: () => value,
-    toString: () => value + '',
+    toString: () => stringRep,
     evaluated: true
   }
 }
@@ -80,10 +81,11 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
   returnType: string,
   operator: string
 ): Thunk<R> {
+  const stringRep = t.toString() + ' ' + operator + ' ' + u.toString()
   return {
     type: returnType,
     value: () => binaryFunc(evaluateThunk(t), evaluateThunk(u)),
-    toString: () => t.toString() + ' ' + operator + ' ' + u.toString(),
+    toString: () => stringRep,
     evaluated: false
   }
 }
@@ -107,10 +109,11 @@ export function makeThunkWithPrimitiveUnary<T, R>(
   returnType: string,
   operator: string
 ): Thunk<R> {
+  const stringRep = operator + argument.toString()
   return {
     type: returnType,
     value: () => unaryFunc(evaluateThunk(argument)),
-    toString: () => operator + argument.toString(),
+    toString: () => stringRep,
     evaluated: false
   }
 }
@@ -172,8 +175,11 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
   } else {
     // calculate the desired value
     const finalValue = thunk.value()
+    const finalString = finalValue + ''
     // memoize the calculated value
     thunk.value = () => finalValue
+    // set the new string representation of the thunk
+    thunk.toString = () => finalString
     // set the evaluated property to true
     thunk.evaluated = true
     return finalValue
