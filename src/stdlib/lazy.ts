@@ -130,7 +130,7 @@ export function makeConditionalThunk<T>(
   consequent: Thunk<T>,
   alternative: Thunk<T>
 ): Thunk<T> {
-  return consequent;
+  return consequent
 }
 
 /**

@@ -458,14 +458,11 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
  */
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   function transform(
-    node:
-      | es.IfStatement
-      | es.ConditionalExpression
-      | es.ForStatement
-      | es.WhileStatement
+    node: es.IfStatement | es.ConditionalExpression | es.ForStatement | es.WhileStatement
   ) {
     const { line, column } = node.loc!.start
-    node.test = create.callExpression(globalIds.boolOrErr,
+    node.test = create.callExpression(
+      globalIds.boolOrErr,
       node.test
         ? [node.test, create.literal(line), create.literal(column)]
         : [create.literal(line), create.literal(column)]
