@@ -86,7 +86,7 @@ export function getName(op: number) {
 }
 
 // pretty-print the program
-export function printProgram(P: Program) {
+export function stringifyProgram(P: Program) {
   const functions = P[1]
   let programStr = ''
   programStr += 'Entry function: ' + P[0] + '\n'
@@ -105,5 +105,5 @@ export function printProgram(P: Program) {
     }
     programStr += s + '\n'
   }
-  console.log('', programStr)
+  return programStr
 }

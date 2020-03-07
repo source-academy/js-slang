@@ -2,7 +2,7 @@ import { parse } from '../parser'
 import { Context, Value } from '../types'
 import { runWithP } from '../vm/machine'
 import { compileToIns, Program } from '../vm/svml-compiler'
-import { printProgram } from '../vm/util'
+import { stringifyProgram } from '../vm/util'
 import { ParseError } from './parser'
 
 export function parse_and_compile(x: string, context: Context): Value {
@@ -20,8 +20,8 @@ export function parse_and_compile(x: string, context: Context): Value {
   }
 }
 
-export function print_compiled_program(code: Program) {
-  printProgram(code)
+export function stringify_compiled(code: Program) {
+  return stringifyProgram(code)
 }
 
 export function run_vm(code: number[]): any {

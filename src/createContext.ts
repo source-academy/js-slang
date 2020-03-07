@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { parse_and_compile, print_compiled_program, run_vm } from './stdlib/vm'
+import { parse_and_compile, run_vm, stringify_compiled } from './stdlib/vm'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 import { Program } from './vm/svml-compiler'
@@ -174,11 +174,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
 
     // VM library
-    defineBuiltin(context, 'parse_and_compile(program_string)', (str: string) =>
+    defineBuiltin(context, 'compile(program_string)', (str: string) =>
       parse_and_compile(str, createContext(context.chapter))
     )
-    defineBuiltin(context, 'print_compiled_program(machine_code)', (code: Program) =>
-      print_compiled_program(code)
+    defineBuiltin(context, 'pretty_print_compiled(machine_code)', (code: Program) =>
+      display('', stringify_compiled(code))
     )
     defineBuiltin(context, 'run_vm(machine_code)', run_vm)
   }
