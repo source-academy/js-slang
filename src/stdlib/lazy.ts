@@ -124,13 +124,36 @@ export function makeThunkWithPrimitiveUnary<T, R>(
  *     evaluated only if 'predicate' evaluates to 'true'
  * @param alternative The alternative expression, to be
  *     evaluated only if 'predicate' evaluates to 'false'
+ * @param stringRepresentation String representation of
+ *     the operator and its operands (used for && and
+ *     || operators). If not provided, the string
+ *     representation will use the normal
+ *     conditional statement syntax
+ *     'predicate ? consequent : alternative'
  */
 export function makeConditionalThunk<T>(
   predicate: Thunk<boolean>,
   consequent: Thunk<T>,
-  alternative: Thunk<T>
+  alternative: Thunk<T>,
+  stringRepresentation?: string
 ): Thunk<T> {
-  return consequent
+  const stringRep =
+    stringRepresentation ||
+    predicate.toString() + ' ? ' + consequent.toString() + ' : ' + alternative.toString()
+  return {
+    // assume consequent.type === alternative.type
+    type: consequent.type,
+    value: () => {
+      const evaluatePredicate = evaluateThunk(predicate)
+      if (evaluatePredicate) {
+        return evaluateThunk(consequent)
+      } else {
+        return evaluateThunk(alternative)
+      }
+    },
+    toString: () => stringRep,
+    evaluated: false
+  }
 }
 
 /**

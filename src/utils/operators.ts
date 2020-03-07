@@ -1,4 +1,4 @@
-import { BinaryOperator, UnaryOperator } from 'estree'
+import { BinaryOperator, UnaryOperator, LogicalOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
@@ -15,7 +15,8 @@ import {
   makeThunk,
   makeThunkWithPrimitiveBinary,
   Thunk,
-  makeThunkWithPrimitiveUnary
+  makeThunkWithPrimitiveUnary,
+  makeConditionalThunk
 } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
@@ -201,7 +202,7 @@ export function evaluateBinaryExpression(
  *     in the program
  */
 export function logicalOp(
-  operator: BinaryOperator,
+  operator: LogicalOperator,
   left: Thunk<any>,
   right: Thunk<any>,
   line: number,
@@ -230,12 +231,17 @@ export function logicalOp(
  *     this operator.
  */
 export function evaluateLogicalExpression(
-  operator: BinaryOperator,
+  operator: LogicalOperator,
   left: Thunk<any>,
   right: Thunk<any>
 ): Thunk<any> {
-  console.log(operator)
+  // string representation of resultant thunk
+  const stringRep = left.toString() + ' ' + operator + ' ' + right.toString()
   switch (operator) {
+    case '&&':
+      return makeConditionalThunk(left, right, makeThunk(false), stringRep)
+    case '||':
+      return makeConditionalThunk(left, makeThunk(true), right, stringRep)
     default:
       return makeThunk(undefined)
   }
