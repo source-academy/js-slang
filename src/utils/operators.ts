@@ -62,12 +62,12 @@ export function callIfFuncAndRightArgs(
   }
 }
 
-export function boolOrErr(candidate: any, line: number, column: number) {
-  const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
+export function boolOrErr(candidate: Thunk<any>, line: number, column: number) {
+  const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
-    return candidate
+    return candidate.toString()
   } else {
-    throw error
+    return error
   }
 }
 
@@ -179,6 +179,63 @@ export function evaluateBinaryExpression(
       return makeThunkWithPrimitiveBinary(left, right, (x, y) => x > y, returnType, operator)
     case '>=':
       return makeThunkWithPrimitiveBinary(left, right, (x, y) => x >= y, returnType, operator)
+    default:
+      return makeThunk(undefined)
+  }
+}
+
+/**
+ * This function will be called in place of logical
+ * operations like && (and) or || (or), in order to
+ * check whether the Thunks on left and right are of
+ * type boolean, and to execute it lazily
+ * @param operator String representing the operator
+ *     to be executed.
+ * @param left The (boolean) expression on the left
+ *     of the operator (Thunk)
+ * @param right The (boolean) expression on the right
+ *     of the operator (Thunk)
+ * @param line Line number of the expression in
+ *     the program
+ * @param column Column number of the expression
+ *     in the program
+ */
+export function logicalOp(
+  operator: BinaryOperator,
+  left: Thunk<any>,
+  right: Thunk<any>,
+  line: number,
+  column: number
+) {
+  const leftType = boolOrErr(left, line, column)
+  const rightType = boolOrErr(right, line, column)
+  if (typeof leftType === 'string' && typeof rightType === 'string') {
+    return evaluateLogicalExpression(operator, left, right)
+  } else if (typeof leftType === 'string') {
+    throw rightType
+  } else {
+    throw leftType
+  }
+}
+
+/**
+ * Delays evaluation of a logical expression && (and)
+ * and || (or) in Lazy Source, returning a Thunk.
+ *
+ * @param operator String representing the operator
+ *     to be executed.
+ * @param left The first argument, or the left, of
+ *     this operator.
+ * @param right The second argument, or the right, of
+ *     this operator.
+ */
+export function evaluateLogicalExpression(
+  operator: BinaryOperator,
+  left: Thunk<any>,
+  right: Thunk<any>
+): Thunk<any> {
+  console.log(operator)
+  switch (operator) {
     default:
       return makeThunk(undefined)
   }

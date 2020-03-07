@@ -116,6 +116,24 @@ export function makeThunkWithPrimitiveUnary<T, R>(
 }
 
 /**
+ * Given a predicate, consequent and alternative
+ * (lazy) expression, return the Thunk representing the
+ * resulting conditional statement
+ * @param predicate The predicate to be evaluated
+ * @param consequent The consequent expression, to be
+ *     evaluated only if 'predicate' evaluates to 'true'
+ * @param alternative The alternative expression, to be
+ *     evaluated only if 'predicate' evaluates to 'false'
+ */
+export function makeConditionalThunk<T>(
+  predicate: Thunk<boolean>,
+  consequent: Thunk<T>,
+  alternative: Thunk<T>
+): Thunk<T> {
+  return consequent;
+}
+
+/**
  * (NOT a primitive function in Lazy Source)
  * Gets the value of the Thunk by forcing its
  * evaluation. Part of the abstraction for

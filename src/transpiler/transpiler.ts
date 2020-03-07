@@ -53,6 +53,7 @@ const globalIds = {
   wrap: create.identifier('dummy'),
   unaryOp: create.identifier('dummy'),
   binaryOp: create.identifier('dummy'),
+  logicalOp: create.identifier('dummy'),
   throwIfTimeout: create.identifier('dummy'),
   setProp: create.identifier('dummy'),
   getProp: create.identifier('dummy'),
@@ -450,28 +451,30 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
 }
 
+/**
+ * Transforms if/conditional/for/while statements to check
+ * whether the condition is a boolean type
+ * @param program The program to be transformed
+ */
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   function transform(
     node:
       | es.IfStatement
       | es.ConditionalExpression
-      | es.LogicalExpression
       | es.ForStatement
       | es.WhileStatement
   ) {
     const { line, column } = node.loc!.start
-    const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    node[test] = create.callExpression(globalIds.boolOrErr, [
-      node[test],
-      create.literal(line),
-      create.literal(column)
-    ])
+    node.test = create.callExpression(globalIds.boolOrErr,
+      node.test
+        ? [node.test, create.literal(line), create.literal(column)]
+        : [create.literal(line), create.literal(column)]
+    )
   }
 
   simple(program, {
     IfStatement: transform,
     ConditionalExpression: transform,
-    LogicalExpression: transform,
     ForStatement: transform,
     WhileStatement: transform
   })
@@ -568,6 +571,28 @@ function transformValuesToThunks(program: es.Program) {
   simple(program, {
     Literal(node: es.Literal) {
       create.mutateToThunk(node)
+    }
+  })
+}
+
+/**
+ * Converts logical operations && (and) and || (or) to
+ * function calls, such that they will lazily evaluate
+ * using the logicalOp function defined in operators.ts
+ * @param program The program to transform.
+ */
+function transformLogicalOperationsToFunctionCalls(program: es.Program) {
+  simple(program, {
+    LogicalExpression(node: es.BinaryExpression) {
+      const { line, column } = node.loc!.start
+      const { operator, left, right } = node
+      create.mutateToCallExpression(node, globalIds.logicalOp, [
+        create.literal(operator),
+        left,
+        right,
+        create.literal(line),
+        create.literal(column)
+      ])
     }
   })
 }
@@ -686,6 +711,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
+  transformLogicalOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
   transformPropertyAccess(program)

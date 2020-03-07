@@ -138,6 +138,17 @@ export const checkIfStatement = (node: es.Node, test: Value) => {
   return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
 }
 
+/**
+ * Given a Thunk expression, checks whether this Thunk
+ * expression is of type boolean (and throws an
+ * TypeError if it is not)
+ * @param node The node representing location of the value
+ * @param test The value to be tested (Thunk)
+ */
+export const checkIfStatementT = (node: es.Node, test: Thunk<Value>) => {
+  return isBoolT(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
+}
+
 export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
