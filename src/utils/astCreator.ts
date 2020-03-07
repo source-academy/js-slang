@@ -137,8 +137,9 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     // (toString is already giving it a nice string representation)
     tag: astThunkNativeTag
   }
-  // lastly create the toString property
+  // create the toString property
   // so thunks appear as normal values
+  // when stringify is called
   newNode.properties[2] = {
     type: 'Property',
     start: newNode.start,
@@ -155,6 +156,34 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
       name: 'toString'
     },
     value: toString,
+    kind: 'init'
+  }
+  // lastly, add the 'evaluated' property
+  // to avoid unnecessary memoization of
+  // literal thunks
+  newNode.properties[3] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'evaluated'
+    },
+    value: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: true,
+      raw: 'true'
+    },
     kind: 'init'
   }
   return newNode
