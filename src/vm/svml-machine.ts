@@ -1,4 +1,5 @@
-import { getName, OpCodes, printToConsole } from './compiler'
+import { OpCodes } from './svml-compiler'
+import { getName } from './util'
 
 const LDF_MAX_OS_SIZE_OFFSET = 1
 const LDF_ADDRESS_OFFSET = 2
@@ -39,28 +40,32 @@ let G: any = 0
 let H: any = 0
 
 function show_executing(s: string) {
-  printToConsole('', '--- RUN ---' + s)
-  printToConsole(PC, 'PC :')
-  printToConsole(getName(P[PC]), 'instr:')
+  let str = ''
+  str += '--- RUN ---' + s
+  str += 'PC :' + PC.toString()
+  str += 'instr:' + getName(P[PC])
+  return str
 }
 
 // for debugging: show all registers
 export function show_registers(s: string) {
-  show_executing(s)
-  printToConsole('', '--- REGISTERS ---')
-  printToConsole(RES, 'RES:')
-  printToConsole(A, 'A  :')
-  printToConsole(B, 'B  :')
-  printToConsole(C, 'C  :')
-  printToConsole(D, 'D  :')
-  printToConsole(E, 'E  :')
-  printToConsole(F, 'F  :')
-  printToConsole(G, 'G  :')
-  printToConsole(H, 'H  :')
-  printToConsole(OS, 'OS :')
-  printToConsole(ENV, 'ENV:')
-  printToConsole(RTS, 'RTS:')
-  printToConsole(TOP_RTS, 'TOP_RTS:')
+  let str = ''
+  str = show_executing(s)
+  str += '--- REGISTERS ---'
+  str += 'RES:' + RES.toString()
+  str += 'A  :' + A.toString()
+  str += 'B  :' + B.toString()
+  str += 'C  :' + C.toString()
+  str += 'D  :' + D.toString()
+  str += 'E  :' + E.toString()
+  str += 'F  :' + F.toString()
+  str += 'G  :' + G.toString()
+  str += 'H  :' + H.toString()
+  str += 'OS :' + OS.toString()
+  str += 'ENV:' + ENV.toString()
+  str += 'RTS:' + RTS.toString()
+  str += 'TOP_RTS:' + TOP_RTS.toString()
+  return str
 }
 
 // register that says if machine is running
@@ -332,26 +337,25 @@ function node_kind(x: number) {
 export function show_heap(s: string) {
   const len = HEAP.length
   let i = 0
-  printToConsole('', '--- HEAP --- ' + s)
+  let str = ''
+  str += '--- HEAP --- ' + s
   while (i < len) {
-    printToConsole(
-      '',
+    str +=
       i.toString() +
       ': ' +
       HEAP[i].toString() + // TODO is_number(HEAP[i]) &&
-        (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
-    )
+      (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
     i = i + 1
   }
+  return str
 }
 
 function show_heap_value(address: number) {
-  printToConsole(
-    '',
+  return (
     'result: heap node of type = ' +
-      node_kind(HEAP[address]) +
-      ', value = ' +
-      HEAP[address + NUMBER_VALUE_SLOT]
+    node_kind(HEAP[address]) +
+    ', value = ' +
+    HEAP[address + NUMBER_VALUE_SLOT]
   )
 }
 
