@@ -630,6 +630,9 @@ const compilers = {
   // handled by insertFlag in compile function
   ReturnStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.ReturnStatement
+    if (continueTracker.length > 0) {
+      throw Error('return not allowed in loops')
+    }
     const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false)
     return { maxStackSize, insertFlag: true }
   },
