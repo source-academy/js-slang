@@ -128,7 +128,7 @@ export function printProgram(P: number[]) {
 // return the machine code in an array
 export function compileToIns(program: es.Program, context: Context) {
   // machineCode is array for machine instructions
-  const machineCode: Array<number | boolean> = []
+  const machineCode: (number | boolean)[] = []
 
   // insertPointer keeps track of the next free place
   // in machineCode
