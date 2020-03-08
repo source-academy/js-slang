@@ -76,8 +76,8 @@ const OPCODES_STR = {
   [OpCodes.RETU]: 'RETU  ',
   [OpCodes.RETN]: 'RETN  ',
   [OpCodes.DUP]: 'DUP   ',
-  [OpCodes.NEWENV]: 'NEWENV   ',
-  [OpCodes.POPENV]: 'POPENV   '
+  [OpCodes.NEWENV]: 'NEWENV',
+  [OpCodes.POPENV]: 'POPENV'
 }
 
 // get name of opcode for debugging

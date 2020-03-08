@@ -631,7 +631,7 @@ const compilers = {
   ReturnStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     node = node as es.ReturnStatement
     const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false)
-    return { maxStackSize, insertFlag }
+    return { maxStackSize, insertFlag: true }
   },
 
   // TODO: differentiate primitive functions
@@ -755,6 +755,8 @@ const compilers = {
     const functionIndex = SVMFunctions.length
     SVMFunctions.push(newSVMFunction)
     pushToCompile(makeToCompileTask(bodyNode, [functionIndex], extendedIndexTable))
+
+    addUnaryInstruction(OpCodes.NEWC, functionIndex)
 
     return { maxStackSize: 1, insertFlag }
   },
@@ -930,6 +932,10 @@ const compilers = {
   },
 
   Property(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
+    throw Error('Unsupported operation')
+  },
+
+  DebuggerStatement(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
     throw Error('Unsupported operation')
   }
 }
