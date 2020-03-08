@@ -83,7 +83,7 @@ export enum OpCodes {
   POPENV = 77
 }
 
-const PRIMITIVE_FUNCTION_NAMES = [
+export const PRIMITIVE_FUNCTION_NAMES = [
   'accumulate',
   'append',
   'array_length',

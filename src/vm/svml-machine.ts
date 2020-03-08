@@ -1,11 +1,9 @@
-import { OpCodes } from './svml-compiler'
+import { OpCodes, PRIMITIVE_FUNCTION_NAMES } from './svml-compiler'
 import { getName } from './util'
 
-const LDF_MAX_OS_SIZE_OFFSET = 1
-const LDF_ADDRESS_OFFSET = 2
-const LDF_ENV_EXTENSION_COUNT_OFFSET = 3
 const LDCN_VALUE_OFFSET = 1
-const LDCB_VALUE_OFFSET = 1
+const LGCS_VALUE_OFFSET = 1
+const NEWA_VALUE_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -92,6 +90,9 @@ function NEW() {
   FREE = FREE + B
 }
 
+// boxed nodes
+const BOXED_VALUE_SLOT = 4
+
 // number nodes layout
 //
 // 0: tag  = -100
@@ -134,6 +135,50 @@ function NEW_BOOL() {
   HEAP[RES + FIRST_CHILD_SLOT] = 6
   HEAP[RES + LAST_CHILD_SLOT] = 5 // no children
   HEAP[RES + BOOL_VALUE_SLOT] = C
+}
+
+// string nodes layout
+//
+// 0: tag  = -107
+// 1: size = 5
+// 2: offset of first child from the tag: 6 (no children)
+// 3: offset of last child from the tag: 5 (must be less than first)
+// 4: value
+
+const STRING_TAG = -107
+const STRING_SIZE = 5
+const STRING_VALUE_SLOT = 4
+
+function NEW_STRING() {
+  C = A
+  A = STRING_TAG
+  B = STRING_SIZE
+  NEW()
+  HEAP[RES + FIRST_CHILD_SLOT] = 6
+  HEAP[RES + LAST_CHILD_SLOT] = 5 // no children
+  HEAP[RES + STRING_VALUE_SLOT] = C
+}
+
+// array nodes layout
+//
+// 0: tag  = -108
+// 1: size = 5
+// 2: offset of first child from the tag: 6 (no children)
+// 3: offset of last child from the tag: 5 (must be less than first)
+// 4: value
+
+const ARRAY_TAG = -108
+const ARRAY_SIZE = 5
+const ARRAY_VALUE_SLOT = 4
+
+function NEW_ARRAY() {
+  C = A
+  A = ARRAY_TAG
+  B = ARRAY_SIZE
+  NEW()
+  HEAP[RES + FIRST_CHILD_SLOT] = 6
+  HEAP[RES + LAST_CHILD_SLOT] = 5 // no children
+  HEAP[RES + ARRAY_VALUE_SLOT] = C
 }
 
 // undefined nodes layout
@@ -381,17 +426,9 @@ function show_heap_value(address: number) {
 
 const M: Array<() => void> = []
 
-M[OpCodes.START] = () => {
-  A = 1 // first OS only needs to hold one closure
-  NEW_OS()
-  OS = RES
-  A = 0
-  NEW_ENVIRONMENT()
-  ENV = RES
-  PC = PC + 1
-}
+M[OpCodes.NOP] = () => undefined
 
-M[OpCodes.LDCN] = () => {
+M[OpCodes.LGCI] = () => {
   A = P[PC + LDCN_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
@@ -399,22 +436,58 @@ M[OpCodes.LDCN] = () => {
   PC = PC + 2
 }
 
-M[OpCodes.LDCB] = () => {
-  A = P[PC + LDCB_VALUE_OFFSET]
-  NEW_BOOL()
+M[OpCodes.LGCF64] = () => {
+  A = P[PC + LDCN_VALUE_OFFSET]
+  NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 2
 }
 
-M[OpCodes.LDCU] = () => {
+M[OpCodes.LGCB0] = () => {
+  A = false
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LGCB1] = () => {
+  A = true
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LGCU] = () => {
   NEW_UNDEFINED()
   A = RES
   PUSH_OS()
   PC = PC + 1
 }
 
-M[OpCodes.PLUS] = () => {
+M[OpCodes.LGCN] = () => {
+  NEW_UNDEFINED()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LGCS] = () => {
+  A = P[PC + LGCS_VALUE_OFFSET]
+  NEW_STRING()
+  A = RES
+  PUSH_OS()
+  PC = PC + 2
+}
+
+M[OpCodes.POPG] = () => {
+  POP_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.ADDG] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
@@ -425,7 +498,7 @@ M[OpCodes.PLUS] = () => {
   PC = PC + 1
 }
 
-M[OpCodes.MINUS] = () => {
+M[OpCodes.SUBG] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
@@ -436,7 +509,7 @@ M[OpCodes.MINUS] = () => {
   PC = PC + 1
 }
 
-M[OpCodes.TIMES] = () => {
+M[OpCodes.MULG] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
@@ -447,71 +520,7 @@ M[OpCodes.TIMES] = () => {
   PC = PC + 1
 }
 
-M[OpCodes.EQUAL] = () => {
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] === A
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.LESS] = () => {
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] < A
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.GEQ] = () => {
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] >= A
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.LEQ] = () => {
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] <= A
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.GREATER] = () => {
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] > A
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.NOT] = () => {
-  POP_OS()
-  A = !HEAP[RES + BOOL_VALUE_SLOT]
-  NEW_BOOL()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
-}
-
-M[OpCodes.DIV] = () => {
+M[OpCodes.DIVG] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   E = A
@@ -530,56 +539,165 @@ M[OpCodes.DIV] = () => {
   }
 }
 
-M[OpCodes.POP] = () => {
+M[OpCodes.MODG] = () => {
   POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] % A
+  NEW_NUMBER()
+  A = RES
+  PUSH_OS()
   PC = PC + 1
 }
 
-M[OpCodes.ASSIGN] = () => {
+M[OpCodes.NOTG] = () => {
   POP_OS()
-  B = P[PC + 1] // num of env to lookup
+  A = !HEAP[RES + BOOL_VALUE_SLOT]
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LTG] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] < A
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.GTG] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] > A
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LEG] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] <= A
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.GEG] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] >= A
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.EQG] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT] === A
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.NEWA] = () => {
+  A = P[PC + NEWA_VALUE_OFFSET]
+  NEW_ARRAY()
+  A = RES
+  PUSH_OS()
+  PC = PC + 2
+}
+
+M[OpCodes.LDLG] = () => {
+  C = ENV
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]]
+  PUSH_OS()
+  PC = PC + 3
+}
+
+M[OpCodes.STLG] = () => {
+  POP_OS()
+  B = P[PC + 2] // index of env to lookup
+  C = ENV
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]] = RES
+  PC = PC + 3
+}
+
+M[OpCodes.LDPG] = () => {
+  B = P[PC + 2] // index of env to lookup
   C = ENV
   for (; B > 0; B = B - 1) {
     C = HEAP[C + PREVIOUS_ENV_SLOT]
   }
-  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 2]] = RES
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]]
+  PUSH_OS()
   PC = PC + 3
 }
 
-M[OpCodes.JOF] = () => {
+M[OpCodes.STPG] = () => {
+  POP_OS()
+  PUSH_OS()
+}
+
+M[OpCodes.LDAG] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
-  if (!A) {
-    PC = P[PC + 1]
-  }
+  POP_OS()
+  A = HEAP[RES + ARRAY_VALUE_SLOT][A]
+  PUSH_OS()
+  PC = PC + 3
+}
+
+M[OpCodes.STAG] = () => {
+  POP_OS()
+  B = HEAP[RES + BOXED_VALUE_SLOT]
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  POP_OS()
+  HEAP[RES + ARRAY_VALUE_SLOT][A] = B
+  PC = PC + 3
+}
+
+M[OpCodes.BRT] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
   if (A) {
+    PC = PC + 1 + P[PC + 1]
+  } else {
     PC = PC + 2
   }
 }
 
-M[OpCodes.GOTO] = () => {
-  PC = P[PC + 1]
-}
-
-M[OpCodes.LDF] = () => {
-  A = P[PC + LDF_MAX_OS_SIZE_OFFSET]
-  B = P[PC + LDF_ADDRESS_OFFSET]
-  C = P[PC + LDF_ENV_EXTENSION_COUNT_OFFSET]
-  NEW_CLOSURE()
-  A = RES
-  PUSH_OS()
-  PC = PC + 4
-}
-
-M[OpCodes.LD] = () => {
-  B = P[PC + 1] // num of env to lookup
-  C = ENV
-  for (; B > 0; B = B - 1) {
-    C = HEAP[C + PREVIOUS_ENV_SLOT]
+M[OpCodes.BRF] = () => {
+  POP_OS()
+  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  if (!A) {
+    PC = PC + 1 + P[PC + 1]
+  } else {
+    PC = PC + 2
   }
-  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 2]]
-  PUSH_OS()
-  PC = PC + 3
+}
+
+M[OpCodes.BR] = () => {
+  PC = PC + 1 + P[PC + 1]
+}
+
+M[OpCodes.JMP] = () => {
+  PC = P[PC + 1]
 }
 
 M[OpCodes.CALL] = () => {
@@ -612,7 +730,13 @@ M[OpCodes.CALL] = () => {
   ENV = E
 }
 
-M[OpCodes.RTN] = () => {
+M[OpCodes.CALLP] = () => {
+  F = PRIMITIVE_FUNCTION_NAMES[P[PC + 1]] // lets keep primitiveCall string in F
+  G = P[PC + 2] // lets keep number of arguments in G
+  // TODO
+}
+
+M[OpCodes.RETG] = () => {
   POP_RTS()
   H = RES
   PC = HEAP[H + RTS_FRAME_PC_SLOT]
@@ -623,8 +747,50 @@ M[OpCodes.RTN] = () => {
   PUSH_OS()
 }
 
-M[OpCodes.DONE] = () => {
-  RUNNING = false
+M[OpCodes.DUP] = () => {
+  POP_OS()
+  A = RES
+  PUSH_OS()
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.NEWENV] = () => {
+  G = P[PC + 1] // lets keep number of arguments in G
+  // we peek down OS to get the closure
+  F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
+  // prep for EXTEND
+  A = HEAP[F + CLOSURE_ENV_SLOT]
+  // A is now env to be extended
+  H = HEAP[A + LAST_CHILD_SLOT]
+  // H is now offset of last child slot
+  B = HEAP[F + CLOSURE_ENV_EXTENSION_COUNT_SLOT]
+  // B is now the environment extension count
+  EXTEND() // after this, RES is new env
+  E = RES
+  H = E + H + G
+  // H is now address where last argument goes in new env
+  for (C = H; C > H - G; C = C - 1) {
+    POP_OS() // now RES has the address of the next arg
+    HEAP[C] = RES // copy argument into new env
+  }
+  POP_OS() // closure is on top of OS; pop it as not needed
+  NEW_RTS_FRAME() // saves PC+2, ENV, OS
+  A = RES
+  PUSH_RTS()
+  PC = HEAP[F + CLOSURE_ADDRESS_SLOT]
+  A = HEAP[F + CLOSURE_OS_SIZE_SLOT] // closure stack size
+  NEW_OS() // uses B and C
+  OS = RES
+  ENV = E
+}
+
+M[OpCodes.POPENV] = () => {
+  POP_RTS()
+  H = RES
+  PC = HEAP[H + RTS_FRAME_PC_SLOT]
+  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+  OS = HEAP[H + RTS_FRAME_OS_SLOT]
 }
 
 function run(): any {
