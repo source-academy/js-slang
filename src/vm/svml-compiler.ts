@@ -1,5 +1,6 @@
 import { recursive, simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
+import { ConstAssignment, UndefinedVariable } from '../interpreter-errors'
 import * as create from '../utils/astCreator'
 
 export enum OpCodes {
@@ -296,7 +297,8 @@ function makeIndexTableWithPrimitives(): Array<Map<string, EnvEntry>> {
 function extendIndexTable(indexTable: Array<Map<string, EnvEntry>>, names: Map<string, EnvEntry>) {
   return indexTable.concat([names])
 }
-function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
+function indexOf(indexTable: Array<Map<string, EnvEntry>>, node: es.Identifier) {
+  const name = node.name
   for (let i = indexTable.length - 1; i >= 0; i--) {
     if (indexTable[i].has(name)) {
       const envLevel = indexTable.length - 1 - i
@@ -304,7 +306,7 @@ function indexOf(indexTable: Array<Map<string, EnvEntry>>, name: string) {
       return { envLevel, index, isVar, isPrimitive }
     }
   }
-  throw Error('name not found: ' + name)
+  throw new UndefinedVariable(name, node)
 }
 
 // a small complication: the toplevel function
@@ -609,8 +611,7 @@ const compilers = {
       // assumes left side can only be name
       // source spec: only 1 declaration at a time
       const id = node.declarations[0].id as es.Identifier
-      const name = id.name
-      const { envLevel, index } = indexOf(indexTable, name)
+      const { envLevel, index } = indexOf(indexTable, id)
       const { maxStackSize } = compile(
         node.declarations[0].init as es.Expression,
         indexTable,
@@ -645,7 +646,7 @@ const compilers = {
     let primitiveCallId = NaN
     if (node.callee.type === 'Identifier') {
       const callee = node.callee as es.Identifier
-      const { envLevel, index, isPrimitive } = indexOf(indexTable, callee.name)
+      const { envLevel, index, isPrimitive } = indexOf(indexTable, callee)
       if (isPrimitive) {
         primitiveCall = true
         primitiveCallId = index
@@ -675,7 +676,7 @@ const compilers = {
       addNullaryInstruction(opCode)
       return { maxStackSize, insertFlag }
     }
-    throw Error('Unsupported unary operation')
+    throw Error('Unsupported operation')
   },
 
   BinaryExpression(node: es.Node, indexTable: Array<Map<string, EnvEntry>>, insertFlag: boolean) {
@@ -707,7 +708,7 @@ const compilers = {
       )
       return { maxStackSize, insertFlag }
     }
-    throw Error('Unsupported logical operator')
+    throw Error('Unsupported operation')
   },
 
   ConditionalExpression(
@@ -771,7 +772,7 @@ const compilers = {
     if (node.name === 'undefined') {
       addNullaryInstruction(OpCodes.LGCU)
     } else {
-      const { envLevel, index } = indexOf(indexTable, node.name)
+      const { envLevel, index } = indexOf(indexTable, node)
       if (envLevel === 0) {
         addUnaryInstruction(OpCodes.LDLG, index)
       } else {
@@ -841,9 +842,9 @@ const compilers = {
   ) {
     node = node as es.AssignmentExpression
     if (node.left.type === 'Identifier') {
-      const { envLevel, index, isVar } = indexOf(indexTable, node.left.name)
+      const { envLevel, index, isVar } = indexOf(indexTable, node.left)
       if (!isVar) {
-        throw Error('Tried to assign value to constant: ' + node.left.name)
+        throw new ConstAssignment(node.left, node.left.name)
       }
       const { maxStackSize } = compile(node.right, indexTable, false)
       if (envLevel === 0) {
