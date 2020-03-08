@@ -3,10 +3,20 @@ import repl = require('repl') // 'repl' here refers to the module named 'repl' i
 import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
 
-function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
+function startRepl(chap = 1, useSubst: boolean, prelude = '') {
+  // for debugging the interpreter, use
+  // chapter 999 to enable interpreter
+  // (999 should function the same as 100,
+  // just that it is run in the interpreter)
+  const chapter = chap === 999 ? 100 : chap;
   // use defaults for everything
   const context = createContext(chapter)
-  const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst }
+  const options: Partial<IOptions> = {
+    scheduler: 'preemptive',
+    useSubst,
+    // use interpreter if 999 is chapter
+    executionMethod: chap === 999 ? 'interpreter' : 'native'
+  }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
       console.dir(preludeResult.value, { depth: null })
