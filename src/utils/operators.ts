@@ -248,6 +248,35 @@ export function evaluateLogicalExpression(
 }
 
 /**
+ * This function will be called in place of conditional
+ * expressions, in order to check whether the predicate
+ * thunk is of type boolean, and to execute it lazily
+ * @param predicate Predicate expression to be evaluated.
+ * @param consequent Consequent to be evaluated, if
+ *     predicate evaluates to true.
+ * @param alternate Alternate to be evaluated, if
+ *     predicate evaluates to false.
+ * @param line Line number of the expression in
+ *     the program
+ * @param column Column number of the expression
+ *     in the program
+ */
+export function conditionalOp(
+  predicate: Thunk<any>,
+  consequent: Thunk<any>,
+  alternate: Thunk<any>,
+  line: number,
+  column: number
+): Thunk<any> {
+  const predicateType = boolOrErr(predicate, line, column)
+  if (typeof predicateType === 'string') {
+    return makeConditionalThunk(predicate, consequent, alternate)
+  } else {
+    throw predicateType
+  }
+}
+
+/**
  * Limitations for current properTailCalls implementation:
  * Obviously, if objects ({}) are reintroduced,
  * we have to change this for a more stringent check,

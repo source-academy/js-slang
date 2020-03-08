@@ -54,6 +54,7 @@ const globalIds = {
   unaryOp: create.identifier('dummy'),
   binaryOp: create.identifier('dummy'),
   logicalOp: create.identifier('dummy'),
+  conditionalOp: create.identifier('dummy'),
   throwIfTimeout: create.identifier('dummy'),
   setProp: create.identifier('dummy'),
   getProp: create.identifier('dummy'),
@@ -457,9 +458,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
  * @param program The program to be transformed
  */
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
-  function transform(
-    node: es.IfStatement | es.ConditionalExpression | es.ForStatement | es.WhileStatement
-  ) {
+  function transform(node: es.IfStatement | es.ForStatement | es.WhileStatement) {
     const { line, column } = node.loc!.start
     node.test = create.callExpression(
       globalIds.boolOrErr,
@@ -471,7 +470,6 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
 
   simple(program, {
     IfStatement: transform,
-    ConditionalExpression: transform,
     ForStatement: transform,
     WhileStatement: transform
   })
@@ -580,7 +578,7 @@ function transformValuesToThunks(program: es.Program) {
  */
 function transformLogicalOperationsToFunctionCalls(program: es.Program) {
   simple(program, {
-    LogicalExpression(node: es.BinaryExpression) {
+    LogicalExpression(node: es.LogicalExpression) {
       const { line, column } = node.loc!.start
       const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.logicalOp, [
@@ -594,6 +592,12 @@ function transformLogicalOperationsToFunctionCalls(program: es.Program) {
   })
 }
 
+/**
+ * Converts unary and binary operators like +, -, *, /
+ * and ! to function calls, such that they will be
+ * lazily evaluated using binaryOp in operators.ts
+ * @param program The program to transform.
+ */
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
@@ -613,6 +617,28 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,
+        create.literal(line),
+        create.literal(column)
+      ])
+    }
+  })
+}
+
+/**
+ * Converts a conditional expression using ?, :
+ * to function calls, such that they will be lazily
+ *  evaluated using conditionalOp in operators.ts
+ * @param program The program to transform.
+ */
+function transformConditionalsToFunctionCalls(program: es.Program) {
+  simple(program, {
+    ConditionalExpression(node: es.ConditionalExpression) {
+      const { line, column } = node.loc!.start
+      const { test, consequent, alternate } = node
+      create.mutateToCallExpression(node, globalIds.conditionalOp, [
+        test,
+        consequent,
+        alternate,
         create.literal(line),
         create.literal(column)
       ])
@@ -709,6 +735,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformLogicalOperationsToFunctionCalls(program)
+  transformConditionalsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
   transformPropertyAccess(program)
