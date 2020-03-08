@@ -1,9 +1,9 @@
-import { parse } from '../parser'
 import { Context, Value } from '../types'
 import { runWithP } from '../vm/machine'
 import { compileToIns, Program } from '../vm/svml-compiler'
 import { stringifyProgram } from '../vm/util'
 import { ParseError } from './parser'
+import { parse } from '../parser/parser'
 
 export function parse_and_compile(x: string, context: Context): Value {
   let program

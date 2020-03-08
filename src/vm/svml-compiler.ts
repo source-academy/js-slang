@@ -1,7 +1,7 @@
 import { recursive, simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
-import { ConstAssignment, UndefinedVariable } from '../interpreter-errors'
 import * as create from '../utils/astCreator'
+import { UndefinedVariable, ConstAssignment } from '../errors/errors'
 
 export enum OpCodes {
   NOP = 0,
