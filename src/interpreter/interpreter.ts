@@ -9,6 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import { makeThunk } from '../stdlib/lazy'
 
 class BreakValue {}
 
@@ -262,8 +263,14 @@ function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
 // prettier-ignore
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
+  /**
+   * When Literals are evaluated, a thunk expression
+   * that is marked as already evaluated is returned
+   * @param node The node that represents the Literal
+   * @param context Context of the execution
+   */
   Literal: function*(node: es.Literal, context: Context) {
-    return node.value
+    return makeThunk(node.value)
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {

@@ -8,7 +8,7 @@ function startRepl(chap = 1, useSubst: boolean, prelude = '') {
   // chapter 999 to enable interpreter
   // (999 should function the same as 100,
   // just that it is run in the interpreter)
-  const chapter = chap === 999 ? 100 : chap;
+  const chapter = chap === 999 ? 100 : chap
   // use defaults for everything
   const context = createContext(chapter)
   const options: Partial<IOptions> = {
@@ -17,6 +17,7 @@ function startRepl(chap = 1, useSubst: boolean, prelude = '') {
     // use interpreter if 999 is chapter
     executionMethod: chap === 999 ? 'interpreter' : 'native'
   }
+  console.log('Running in mode: ' + (chap === 999 ? 'INTERPRETER' : 'TRANSPILER'))
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
       console.dir(preludeResult.value, { depth: null })
