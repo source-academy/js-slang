@@ -1,7 +1,8 @@
 import { OpCodes, PRIMITIVE_FUNCTION_NAMES } from './svml-compiler'
 import { getName } from './util'
 
-const LDCN_VALUE_OFFSET = 1
+const LDCI_VALUE_OFFSET = 1
+const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
 const NEWA_VALUE_OFFSET = 1
 
@@ -430,7 +431,7 @@ const M: Array<() => void> = []
 M[OpCodes.NOP] = () => undefined
 
 M[OpCodes.LGCI] = () => {
-  A = P[PC][LDCN_VALUE_OFFSET]
+  A = P[PC][LDCI_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
@@ -438,7 +439,7 @@ M[OpCodes.LGCI] = () => {
 }
 
 M[OpCodes.LGCF64] = () => {
-  A = P[PC][LDCN_VALUE_OFFSET]
+  A = P[PC][LDCF64_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
