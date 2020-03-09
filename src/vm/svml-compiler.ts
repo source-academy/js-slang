@@ -740,7 +740,7 @@ const compilers = {
     SVMFunctions.push(newSVMFunction)
     pushToCompile(makeToCompileTask(bodyNode, [functionIndex], extendedIndexTable))
 
-    addUnaryInstruction(OpCodes.NEWC, functionIndex)
+    addUnaryInstruction(OpCodes.NEWC, [functionIndex])
 
     return { maxStackSize: 1, insertFlag }
   },
@@ -884,6 +884,7 @@ const compilers = {
   BreakStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of break instruction
     breakTracker[breakTracker.length - 1].push(functionCode.length)
+    addNullaryInstruction(OpCodes.POPENV)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
@@ -891,6 +892,7 @@ const compilers = {
   ContinueStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of continue instruction
     continueTracker[continueTracker.length - 1].push(functionCode.length)
+    addNullaryInstruction(OpCodes.POPENV)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
