@@ -650,7 +650,13 @@ M[OpCodes.LDPG] = () => {
 
 M[OpCodes.STPG] = () => {
   POP_OS()
-  PUSH_OS()
+  B = P[PC + 2] // index of env to lookup
+  C = ENV
+  for (; B > 0; B = B - 1) {
+    C = HEAP[C + PREVIOUS_ENV_SLOT]
+  }
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]] = RES
+  PC = PC + 3
 }
 
 M[OpCodes.LDAG] = () => {
