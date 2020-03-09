@@ -1,10 +1,22 @@
-import { OpCodes, PRIMITIVE_FUNCTION_NAMES } from './svml-compiler'
+import {
+  OpCodes,
+  PRIMITIVE_FUNCTION_NAMES,
+  Program,
+  Instruction,
+  SVMFunction
+} from './svml-compiler'
 import { getName } from './util'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
 const NEWA_VALUE_OFFSET = 1
+const FUNC_MAX_STACK_SIZE_OFFSET = 0
+const FUNC_ENV_SIZE_OFFSET = 1
+// const FUNC_NUM_ARGS_OFFSET = 2
+const FUNC_CODE_OFFSET = 3
+const INS_OPCODE_OFFSET = 0
+const BR_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -14,7 +26,11 @@ const NEWA_VALUE_OFFSET = 1
 
 // P is an array that contains an SVML machine program:
 // the op-codes of instructions and their arguments
-let P: number[] = []
+let PROG: Program
+let ENTRY = -1
+let FUNC: SVMFunction[]
+let CURFUN = -1
+let P: Instruction[]
 // PC is program counter: index of the next instruction
 let PC = 0
 // HEAP is array containing all dynamically allocated data structures
@@ -41,29 +57,29 @@ let H: any = 0
 
 function show_executing(s: string) {
   let str = ''
-  str += '--- RUN ---' + s
-  str += 'PC :' + PC.toString()
-  str += 'instr:' + getName(P[PC])
+  str += '--- RUN ---' + s + '\n'
+  str += 'PC :' + PC.toString() + '\n'
+  str += 'instr:' + getName(P[PC][INS_OPCODE_OFFSET])
   return str
 }
 
 // for debugging: show all registers
 export function show_registers(s: string) {
   let str = ''
-  str = show_executing(s)
-  str += '--- REGISTERS ---'
-  str += 'RES:' + RES.toString()
-  str += 'A  :' + A.toString()
-  str += 'B  :' + B.toString()
-  str += 'C  :' + C.toString()
-  str += 'D  :' + D.toString()
-  str += 'E  :' + E.toString()
-  str += 'F  :' + F.toString()
-  str += 'G  :' + G.toString()
-  str += 'H  :' + H.toString()
-  str += 'OS :' + OS.toString()
-  str += 'ENV:' + ENV.toString()
-  str += 'RTS:' + RTS.toString()
+  str = show_executing(s) + '\n'
+  str += '--- REGISTERS ---' + '\n'
+  str += 'RES:' + RES.toString() + '\n'
+  str += 'A  :' + A.toString() + '\n'
+  str += 'B  :' + B.toString() + '\n'
+  str += 'C  :' + C.toString() + '\n'
+  str += 'D  :' + D.toString() + '\n'
+  str += 'E  :' + E.toString() + '\n'
+  str += 'F  :' + F.toString() + '\n'
+  str += 'G  :' + G.toString() + '\n'
+  str += 'H  :' + H.toString() + '\n'
+  str += 'OS :' + OS.toString() + '\n'
+  str += 'ENV:' + ENV.toString() + '\n'
+  str += 'RTS:' + RTS.toString() + '\n'
   str += 'TOP_RTS:' + TOP_RTS.toString()
   return str
 }
@@ -208,7 +224,7 @@ function NEW_UNDEFINED() {
 // 2: offset of first child from the tag: 5 (no children)
 // 3: offset of last child from the tag: 4 (must be less than first)
 
-const NULL_TAG = -106
+const NULL_TAG = -109
 const NULL_SIZE = 4
 
 function NEW_NULL() {
@@ -279,7 +295,7 @@ const CLOSURE_ENV_SLOT = 6
 const CLOSURE_ENV_EXTENSION_COUNT_SLOT = 7
 
 // expects stack size in A, address in B, environment extension count in C
-function NEW_CLOSURE() {
+export function NEW_CLOSURE() {
   E = A
   F = B
   A = CLOSURE_TAG
@@ -397,6 +413,8 @@ function node_kind(x: number) {
     ? 'environment'
     : x === UNDEFINED_TAG
     ? 'undefined'
+    : x === NULL_TAG
+    ? 'null'
     : ' (unknown node kind)'
 }
 export function show_heap(s: string) {
@@ -444,7 +462,7 @@ function show_heap_value(address: number) {
 // the subroutines could become machine language macros,
 // and the compiler could generate real machine code.
 
-const M: Array<() => void> = []
+const M: (() => void)[] = []
 
 M[OpCodes.NOP] = () => undefined
 
@@ -702,7 +720,7 @@ M[OpCodes.BRT] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   if (A) {
-    PC = PC + P[PC][1]
+    PC = PC + (P[PC][BR_OFFSET] as number)
   } else {
     PC = PC + 1
   }
@@ -712,18 +730,18 @@ M[OpCodes.BRF] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   if (!A) {
-    PC = PC + P[PC][1]
+    PC = PC + (P[PC][BR_OFFSET] as number)
   } else {
     PC = PC + 1
   }
 }
 
 M[OpCodes.BR] = () => {
-  PC = PC + P[PC][1]
+  PC = PC + (P[PC][BR_OFFSET] as number)
 }
 
 M[OpCodes.JMP] = () => {
-  PC = P[PC][1]
+  PC = P[PC][1] as number
 }
 
 M[OpCodes.CALL] = () => {
@@ -757,20 +775,25 @@ M[OpCodes.CALL] = () => {
 }
 
 M[OpCodes.CALLP] = () => {
-  F = PRIMITIVE_FUNCTION_NAMES[P[PC][1]] // lets keep primitiveCall string in F
+  F = PRIMITIVE_FUNCTION_NAMES[P[PC][1] as number] // lets keep primitiveCall string in F
   G = P[PC][2] // lets keep number of arguments in G
   // TODO
 }
 
 M[OpCodes.RETG] = () => {
-  POP_RTS()
-  H = RES
-  PC = HEAP[H + RTS_FRAME_PC_SLOT]
-  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-  POP_OS()
-  A = RES
-  OS = HEAP[H + RTS_FRAME_OS_SLOT]
-  PUSH_OS()
+  if (ENTRY === CURFUN) {
+    // if entry point, then intercept return
+    RUNNING = false
+  } else {
+    POP_RTS()
+    H = RES
+    PC = HEAP[H + RTS_FRAME_PC_SLOT]
+    ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+    POP_OS()
+    A = RES
+    OS = HEAP[H + RTS_FRAME_OS_SLOT]
+    PUSH_OS()
+  }
 }
 
 M[OpCodes.DUP] = () => {
@@ -810,13 +833,27 @@ M[OpCodes.POPENV] = () => {
 }
 
 function run(): any {
+  // startup
+  if (PC === -1) {
+    D = FUNC[ENTRY] // put function header in D
+    A = D[FUNC_MAX_STACK_SIZE_OFFSET]
+    NEW_OS()
+    OS = RES
+    A = D[FUNC_ENV_SIZE_OFFSET]
+    NEW_ENVIRONMENT()
+    ENV = RES
+    P = D[FUNC_CODE_OFFSET]
+    PC = 0
+    CURFUN = ENTRY
+  }
+
   while (RUNNING) {
     // show_registers("run loop");
     // show_heap("run loop");
-    if (M[P[PC]] === undefined) {
-      throw Error('unknown op-code: ' + P[PC])
+    if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
+      throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
     } else {
-      M[P[PC]]()
+      M[P[PC][INS_OPCODE_OFFSET]]()
     }
   }
   if (STATE === DIV_ERROR) {
@@ -825,13 +862,20 @@ function run(): any {
   } else {
     POP_OS()
     show_heap_value(RES)
-    return HEAP[RES]
+    if (node_kind(HEAP[RES + TAG_SLOT]) === 'undefined') {
+      return undefined
+    } else if (node_kind(HEAP[RES + TAG_SLOT]) === 'null') {
+      return null
+    }
+    return HEAP[RES + BOXED_VALUE_SLOT]
   }
 }
 
-export function runWithP(p: number[]): any {
-  P = p
-  PC = 0
+export function runWithP(p: Program): any {
+  PROG = p
+  ENTRY = PROG[0]
+  FUNC = PROG[1] // list of SVMFunctions
+  PC = -1
   HEAP = []
   FREE = 0
   ENV = -Infinity

@@ -1,6 +1,6 @@
 import { Context, Value } from '../types'
-import { runWithP } from '../vm/machine'
 import { compileToIns, Program as machineProgram } from '../vm/svml-compiler'
+import { runWithP } from '../vm/svml-machine'
 import { stringifyProgram } from '../vm/util'
 import { ParseError } from './parser'
 import { parse } from '../parser/parser'
@@ -30,6 +30,6 @@ export function stringify_compiled(code: machineProgram) {
   return stringifyProgram(code)
 }
 
-export function run_vm(code: number[]): any {
+export function run_vm(code: machineProgram): any {
   return runWithP(code)
 }

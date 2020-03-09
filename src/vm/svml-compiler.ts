@@ -197,13 +197,13 @@ type Address = [
   number, // function index
   number? // instruction index within function; optional
 ]
-type Instruction = [
+export type Instruction = [
   number, // opcode
   Argument?,
   Argument?
 ]
 type Argument = number | boolean | string | Offset | Address
-type SVMFunction = [
+export type SVMFunction = [
   number, // stack size
   number, // environment size
   number, // number of arguments
