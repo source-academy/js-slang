@@ -303,7 +303,7 @@ function NEW_RTS_FRAME() {
   NEW()
   HEAP[RES + FIRST_CHILD_SLOT] = RTS_FRAME_ENV_SLOT
   HEAP[RES + LAST_CHILD_SLOT] = RTS_FRAME_OS_SLOT
-  HEAP[RES + RTS_FRAME_PC_SLOT] = PC + 2 // next instruction!
+  HEAP[RES + RTS_FRAME_PC_SLOT] = PC + 1 // next instruction!
   HEAP[RES + RTS_FRAME_ENV_SLOT] = ENV
   HEAP[RES + RTS_FRAME_OS_SLOT] = OS
 }
@@ -429,19 +429,19 @@ const M: Array<() => void> = []
 M[OpCodes.NOP] = () => undefined
 
 M[OpCodes.LGCI] = () => {
-  A = P[PC + LDCN_VALUE_OFFSET]
+  A = P[PC][LDCN_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
-  PC = PC + 2
+  PC = PC + 1
 }
 
 M[OpCodes.LGCF64] = () => {
-  A = P[PC + LDCN_VALUE_OFFSET]
+  A = P[PC][LDCN_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
-  PC = PC + 2
+  PC = PC + 1
 }
 
 M[OpCodes.LGCB0] = () => {
@@ -475,11 +475,11 @@ M[OpCodes.LGCN] = () => {
 }
 
 M[OpCodes.LGCS] = () => {
-  A = P[PC + LGCS_VALUE_OFFSET]
+  A = P[PC][LGCS_VALUE_OFFSET]
   NEW_STRING()
   A = RES
   PUSH_OS()
-  PC = PC + 2
+  PC = PC + 1
 }
 
 M[OpCodes.POPG] = () => {
@@ -615,48 +615,48 @@ M[OpCodes.EQG] = () => {
 }
 
 M[OpCodes.NEWA] = () => {
-  A = P[PC + NEWA_VALUE_OFFSET]
+  A = P[PC][NEWA_VALUE_OFFSET]
   NEW_ARRAY()
   A = RES
   PUSH_OS()
-  PC = PC + 2
+  PC = PC + 1
 }
 
 M[OpCodes.LDLG] = () => {
   C = ENV
-  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]]
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]]
   PUSH_OS()
-  PC = PC + 3
+  PC = PC + 1
 }
 
 M[OpCodes.STLG] = () => {
   POP_OS()
-  B = P[PC + 2] // index of env to lookup
+  B = P[PC][2] // index of env to lookup
   C = ENV
-  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]] = RES
-  PC = PC + 3
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]] = RES
+  PC = PC + 1
 }
 
 M[OpCodes.LDPG] = () => {
-  B = P[PC + 2] // index of env to lookup
+  B = P[PC][2] // index of env to lookup
   C = ENV
   for (; B > 0; B = B - 1) {
     C = HEAP[C + PREVIOUS_ENV_SLOT]
   }
-  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]]
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]]
   PUSH_OS()
-  PC = PC + 3
+  PC = PC + 1
 }
 
 M[OpCodes.STPG] = () => {
   POP_OS()
-  B = P[PC + 2] // index of env to lookup
+  B = P[PC][2] // index of env to lookup
   C = ENV
   for (; B > 0; B = B - 1) {
     C = HEAP[C + PREVIOUS_ENV_SLOT]
   }
-  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC + 1]] = RES
-  PC = PC + 3
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]] = RES
+  PC = PC + 1
 }
 
 M[OpCodes.LDAG] = () => {
@@ -665,7 +665,7 @@ M[OpCodes.LDAG] = () => {
   POP_OS()
   A = HEAP[RES + ARRAY_VALUE_SLOT][A]
   PUSH_OS()
-  PC = PC + 3
+  PC = PC + 1
 }
 
 M[OpCodes.STAG] = () => {
@@ -675,16 +675,16 @@ M[OpCodes.STAG] = () => {
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
   HEAP[RES + ARRAY_VALUE_SLOT][A] = B
-  PC = PC + 3
+  PC = PC + 1
 }
 
 M[OpCodes.BRT] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   if (A) {
-    PC = PC + 1 + P[PC + 1]
+    PC = PC + P[PC][1]
   } else {
-    PC = PC + 2
+    PC = PC + 1
   }
 }
 
@@ -692,22 +692,22 @@ M[OpCodes.BRF] = () => {
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   if (!A) {
-    PC = PC + 1 + P[PC + 1]
+    PC = PC + P[PC][1]
   } else {
-    PC = PC + 2
+    PC = PC + 1
   }
 }
 
 M[OpCodes.BR] = () => {
-  PC = PC + 1 + P[PC + 1]
+  PC = PC + P[PC][1]
 }
 
 M[OpCodes.JMP] = () => {
-  PC = P[PC + 1]
+  PC = P[PC][1]
 }
 
 M[OpCodes.CALL] = () => {
-  G = P[PC + 1] // lets keep number of arguments in G
+  G = P[PC][1] // lets keep number of arguments in G
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
   // prep for EXTEND
@@ -737,8 +737,8 @@ M[OpCodes.CALL] = () => {
 }
 
 M[OpCodes.CALLP] = () => {
-  F = PRIMITIVE_FUNCTION_NAMES[P[PC + 1]] // lets keep primitiveCall string in F
-  G = P[PC + 2] // lets keep number of arguments in G
+  F = PRIMITIVE_FUNCTION_NAMES[P[PC][1]] // lets keep primitiveCall string in F
+  G = P[PC][2] // lets keep number of arguments in G
   // TODO
 }
 
@@ -762,7 +762,7 @@ M[OpCodes.DUP] = () => {
 }
 
 M[OpCodes.NEWENV] = () => {
-  G = P[PC + 1] // lets keep number of arguments in G
+  G = P[PC][1] // lets keep number of arguments in G
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
   // prep for EXTEND
