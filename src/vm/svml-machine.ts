@@ -22,6 +22,7 @@ let HEAP: any[] = []
 let FREE = 0
 // OS is address of current environment in HEAP; initially a dummy value
 let ENV = -Infinity
+let PARENT_ENV = -Infinity
 // OS is address of current operand stack in HEAP; initially a dummy value
 let OS = -Infinity
 // temporary value, used by PUSH and POP; initially a dummy value
@@ -781,22 +782,12 @@ M[OpCodes.NEWENV] = () => {
     HEAP[C] = RES // copy argument into new env
   }
   POP_OS() // closure is on top of OS; pop it as not needed
-  NEW_RTS_FRAME() // saves PC+2, ENV, OS
-  A = RES
-  PUSH_RTS()
-  PC = HEAP[F + CLOSURE_ADDRESS_SLOT]
-  A = HEAP[F + CLOSURE_OS_SIZE_SLOT] // closure stack size
-  NEW_OS() // uses B and C
-  OS = RES
+  PARENT_ENV = ENV // store pointer to current env
   ENV = E
 }
 
 M[OpCodes.POPENV] = () => {
-  POP_RTS()
-  H = RES
-  PC = HEAP[H + RTS_FRAME_PC_SLOT]
-  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-  OS = HEAP[H + RTS_FRAME_OS_SLOT]
+  ENV = PARENT_ENV // restore to parent env
 }
 
 function run(): any {
