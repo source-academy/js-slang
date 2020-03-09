@@ -56,7 +56,8 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type Interpreter = 'interpreter' | 'non-det-interpreter'
+export type ExecutionMethod = 'native' | Interpreter | 'auto'
 
 export interface Context<T = any> {
   /** The source version used */
@@ -140,7 +141,11 @@ export interface Suspended {
   context: Context
 }
 
-export type Result = Suspended | Finished | Error
+export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
+  value: Value
+}
+
+export type Result = Suspended | SuspendedNonDet | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
