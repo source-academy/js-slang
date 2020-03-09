@@ -201,6 +201,24 @@ function NEW_UNDEFINED() {
   HEAP[RES + LAST_CHILD_SLOT] = 4 // no children
 }
 
+// null nodes layout
+//
+// 0: tag  = -109
+// 1: size = 4
+// 2: offset of first child from the tag: 5 (no children)
+// 3: offset of last child from the tag: 4 (must be less than first)
+
+const NULL_TAG = -106
+const NULL_SIZE = 4
+
+function NEW_NULL() {
+  A = NULL_TAG
+  B = NULL_SIZE
+  NEW()
+  HEAP[RES + FIRST_CHILD_SLOT] = 5
+  HEAP[RES + LAST_CHILD_SLOT] = 4 // no children
+}
+
 // operandstack nodes layout
 //
 // 0: tag  = -105
@@ -470,7 +488,7 @@ M[OpCodes.LGCU] = () => {
 }
 
 M[OpCodes.LGCN] = () => {
-  NEW_UNDEFINED()
+  NEW_NULL()
   A = RES
   PUSH_OS()
   PC = PC + 1
