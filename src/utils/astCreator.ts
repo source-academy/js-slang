@@ -1,6 +1,9 @@
 import * as es from 'estree'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 
+export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
+  (decl.declarations[0].id as es.Identifier).name
+
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
 

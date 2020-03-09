@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CURVES</title>
+    <link rel="shortcut icon"
+	  type="image/x-icon"
+	  href="/Source/images/favicon.ico" />
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">CURVES</h1>
+
+    <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+
+
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><p>The CURVES library includes functions for drawing &quot;curves&quot;, i.e. two-dimensional
+lines, on a computer. Below are some useful definitions and examples to
+work with CURVES.</p>
+<h2>Curves</h2><p>A Curve is a unary function which takes a Number argument within the
+unit interval <code>[0,1]</code> and returns a point (a pair of Numbers).
+You can think of the Number argument as time,
+and of the point returned by the Curve as the position
+of your pen on a 2-dimensional plane at the time indicated by the
+argument. We represent the <em>type</em> of such Curve functions like this:</p>
+<p>Curve := Number → Point</p>
+<p>where Point is a pair of Numbers. If <code>C</code> is a Curve, then the starting
+point of the curve is always <code>C(0)</code>, and the ending point is always
+<code>C(1)</code>.</p>
+<h2>Points</h2><p>To work with Points, we need a <em>constructor</em>, <code>make_point</code>, which
+constructs Points from their x and y coordinates, and <em>selectors</em>,
+<code>x_of</code> and <code>y_of</code>, for retrieving the x and y coordinates of a
+Point.  We require only that the constructors and selectors obey the
+rules</p>
+<p>We can represent the <em>types</em> of these functions as follows:</p>
+<p><code>make_point</code> : (Number, Number) → Point</p>
+<p><code>x_of</code>, <code>y_of</code> : Point → Number</p>
+<h2>Examples</h2><p>A very simple curve is one that always returns the same point:
+<a href="https://sourceacademy.nus.edu.sg/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABABzjMUD6EQCcBuApgBRQCUiA3gFCJ2K6FR5IC2AhgNaGarpTEADADoArABpEI0WQDc1AL7UAJrnYB3XmgwBnTAmIBGQYLLE%2BGbHiJygA"></p>
+<pre class="prettyprint source"><code>function point_curve(t) {
+    return make_point(0.5, 0.5);
+}</code></pre><p></a></p>
+<p>We define the Curve <code>unit_circle</code> and draw it as follows:</p>
+<p><a href="https://sourceacademy.nus.edu.sg/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6EYCcIBsCmAFFAJSIDeAUIjYlvlCFkgLYCGA1vmgA5wxgohdlAAWaAM4DCAJkQAqRCPEAFAJILEpADTVa%2Bg4drKMcCbM0n1m0iQDclAL6UAJljYB3U2DD5o%2BFzRQXFw0ADcYfA9CAEYABjiSQhR0TBwCeyA"></p>
+<pre class="prettyprint source"><code>function unit_circle(t) {
+    return make_point(math_sin(2 * math_PI * t),
+                      math_cos(2 * math_PI * t));
+}
+draw_connected_full_view(100)(unit_circle);</code></pre><p></a>
+Here, <code>draw_connected_full_view</code> is applied to 100, which means that 100+1 numbers
+between 0 and 1 are being sampled:
+0, 0.01, 0.02, ..., 0.99, 1. 
+The function <code>draw_connected_full_view</code> is a Curve drawer:
+A function that takes a number and returns a function that turns
+a Curve into a Drawing.</p>
+<p>Drawer := Number → (Curve → Drawing)</p>
+<p>When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.</p>
+<p>The functions returned by <code>draw_connected_full_view</code> stretch or shrink
+the given Curve to show the full curve and maximize its width and height,
+with some padding.</p>
+<p><a href="https://sourceacademy.nus.edu.sg/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6AbGYCmaCGUAFAJ4CUiA3gFCJ2IBOOUIDSUiAvAHyIC2%2BANZ4ADnGzEoAGkQlEAakQAGRAHoAjEqVkA3NQC%2B1ACYN8AdzQQEuaDiNFN2oinRZcBYkoB0AVjK6gA"></p>
+<pre class="prettyprint source"><code>function unit_line_at(y) {
+    return t => make_point(t, y);
+}</code></pre><p></a>
+This function takes a number as argument, the y position, and
+returns a Curve that is a horizontal line at the level given by y.</p>
+<p>The Curve <code>haf_way_line</code></p>
+<p><a href="https://sourceacademy.nus.edu.sg/playground#chap=2&ext=CURVES&prgrm=MYewdgzgLgBAFgQwDYDMD6B3BBPNSCWYApjALwwCuY%2BUehRaCUAFAAwB0ArAJQDcAUABMATggxpQYYsChFBzAIytW3ZolSYcdYnyA"></p>
+<pre class="prettyprint source"><code>const half_way_line = unit_line_at(0.5);</code></pre><p></a></p>
+<p>is a horizontal line starting at <code>(0,0.5)</code> and ending at <code>(1,0.5)</code>.</p>
+<p>The type of <code>unit_line_at</code> is</p>
+<p>Number → Curve</p>
+<p>which is the same as:</p>
+<p>Number → (Number → Point)</p>
+<h2>Unary Curve Operators</h2><p>A unary Curve operator is a function that takes a curve as argument and returns
+a Curve. The following function <code>up_a_bit</code> is a unary Curve operator that moves
+a given curve up by 0.3.</p>
+<p><a href="https://sourceacademy.nus.edu.sg/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABCADgfQIZoEYygCghACcA3AUwEpEBvAKEUcWPKhKSkQF4A%2BRAWwwBrcmhRwYYAgA80cYIRIV8USpQA0iBkx269%2BxAE85ComXIq1iANSIADADoAzJQDcdAL50ICAM6cACwwAG2A0AHcMY2DJcm5kMDw0GLBRDAJHAFY3bz9OVPDk2PjUTBw8fCDQiKii1JyAE2IMQp8wVOhyBvwARjs7SnwCuqpXIA"></p>
+<pre class="prettyprint source"><code>function up_a_bit(curve) {
+    return t => make_point(x_of(curve(t)), 
+                           y_of(curve(t)) + 0.3);
+}</code></pre><p></a></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h3>Predeclared names</h3><ul><li><a href="global.html#arc">arc</a></li><li><a href="global.html#connect_ends">connect_ends</a></li><li><a href="global.html#connect_rigidly">connect_rigidly</a></li><li><a href="global.html#draw_connected">draw_connected</a></li><li><a href="global.html#draw_connected_full_view">draw_connected_full_view</a></li><li><a href="global.html#draw_connected_full_view_proportional">draw_connected_full_view_proportional</a></li><li><a href="global.html#draw_connected_squeezed_to_window">draw_connected_squeezed_to_window</a></li><li><a href="global.html#draw_points_on">draw_points_on</a></li><li><a href="global.html#draw_points_squeezed_to_window">draw_points_squeezed_to_window</a></li><li><a href="global.html#gosper_curve">gosper_curve</a></li><li><a href="global.html#gosperize">gosperize</a></li><li><a href="global.html#invert">invert</a></li><li><a href="global.html#make_point">make_point</a></li><li><a href="global.html#param_gosper">param_gosper</a></li><li><a href="global.html#param_gosperize">param_gosperize</a></li><li><a href="global.html#put_in_standard_position">put_in_standard_position</a></li><li><a href="global.html#rotate_around_origin">rotate_around_origin</a></li><li><a href="global.html#rotate_pi_over_2">rotate_pi_over_2</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scale_x_y">scale_x_y</a></li><li><a href="global.html#show_connected_gosper">show_connected_gosper</a></li><li><a href="global.html#translate">translate</a></li><li><a href="global.html#unit_circle">unit_circle</a></li><li><a href="global.html#unit_line">unit_line</a></li><li><a href="global.html#unit_line_at">unit_line_at</a></li><li><a href="global.html#x_of">x_of</a></li><li><a href="global.html#y_of">y_of</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+  generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.5.5</a> from
+  <a href="https://github.com/source-academy/js-slang">Github repository js-slang</a>
+  on Fri Mar 06 2020 09:25:52 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

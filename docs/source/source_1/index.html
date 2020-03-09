@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source §1</title>
+    <link rel="shortcut icon"
+	  type="image/x-icon"
+	  href="/Source/images/favicon.ico" />
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source §1</h1>
+
+    <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+
+
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><p>Source §1 is a small programming language, designed for the first chapter
+of the textbook
+<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
+of Computer Programs, JavaScript Adaptation</a> (SICP JS). </p>
+<h2>What names are predeclared in Source §1?</h2><p>On the right, you see all predeclared names of Source §1, in alphabetical
+order. Click on a name to see how it is defined and used.
+These names come in two groups:
+  <ul>
+    <li>
+      <a href="../MISC/index.html">MISC</a>: Miscellaneous constants and functions
+    </li>
+    <li>
+      <a href="../MATH/index.html">MATH</a>: Mathematical constants and functions
+    </li>
+  </ul></p>
+<p>The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
+a learning environment that uses SICP JS and Source, comes with the following 
+<a href="External libraries/">external libraries</a> suitable for Source §1:
+  <ul>
+    <li>
+      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
+    </li>
+    <li>
+      <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
+    </li>
+  </ul></p>
+<h2>What can you do in Source §1?</h2><p>You can use all features that are introduced in
+<a href="https://sicp.comp.nus.edu.sg/chapters/1">chapter 1</a> of the
+textbook. Below is the list of features, each with a link to the
+textbook section that introduces it and a small example.</p>
+<h3>Literal values</h3><p>Literal values are simple expressions that directly evaluate to values. These
+include numbers in the usual decimal notation, the two boolean values
+<code>true</code> and <code>false</code>, and the predeclared names
+<code>NaN</code>, <code>Infinity</code> and <code>undefined</code>.
+More on literal values in <a href="https://sicp.comp.nus.edu.sg/chapters/2">section
+1.1 The Elements of Programming</a> of the textbook.</p>
+<h3>Constant declarations</h3><p>Constant declarations are done in Source with <PRE><CODE>const my_name = x + 2;</CODE></PRE>
+Here the name <code>my_name</code> gets declared within the surrounding block,
+and refers to the result of evaluating <code>x + 2</code> in the rest of the block.
+You can read more about the <EM>scope of names</EM> in
+<a href="https://sicp.comp.nus.edu.sg/chapters/10">section 1.1.8
+Functions as Black-Box Abstractions</a>.</p>
+<h3>Conditional statements and conditional expressions</h3><p>Within expressions, you can let a <EM>predicate</EM> determine whether 
+a <EM>consequent expression</EM>
+gets evaluated or an <EM>alternative expression</EM>. This is done by writing,
+for example</p>
+<p><PRE><CODE>return p(x) ? 7 : f(y);</CODE></PRE>
+Read more on conditional expressions in
+<a href="https://sicp.comp.nus.edu.sg/chapters/8">section 1.1.6
+Conditional Expressions and Predicates</a>.</p>
+<p><EM>Conditional evaluation</EM> is also possible within statements, for
+example the body of a function declaration. For that, you can use <EM>conditional
+statements</EM>, for example:<PRE><CODE>if (p(x)) {
+    return 7;
+} else {
+    return f(y);
+}</CODE></PRE>
+Read about <EM>conditional statements</EM> in
+<a href="https://sicp.comp.nus.edu.sg/chapters/20">section 1.3.2
+Function Definition Expressions</a>.</p>
+<h3>Function declarations and function definitions</h3><p>A function declaration is a statement that declares a name and binds it
+to a function. For example</p>
+<p><PRE><CODE>function square(x) {
+    return x * x;
+}</CODE>
+</PRE>
+declares the name <code>square</code> and binds it to a squaring function, so that it can be applied
+as in <code>square(5);</code>. You can read about function declaration statements in textbook
+<a href="https://sicp.comp.nus.edu.sg/chapters/6">section 1.1.4 Functions</a>.</p>
+<p>Sometimes, it's not necessary to give a name to a function: You may
+want to create a function only to pass it to some other function as argument.
+For that, Source
+supports function definition expressions. For example</p>
+<p><PRE><CODE>(x =&gt; x * x)(3); // returns 9</CODE>
+</PRE>
+creates a square function just like the function declaration above,
+but does not give it a name.
+Its only purpose it to be applied to the number 3. See also
+textbook
+<a href="https://sicp.comp.nus.edu.sg/chapters/20">section 1.3.2 Function Definition Expressions</a>.</p>
+<h3>Blocks</h3><p>Blocks make up the bodies of functions and the consequent and alternative statements of
+conditional statements. You can use blocks also elsewhere in your program, if you
+want to declare constants local to a specific scope. For example in this program</p>
+<p><PRE><CODE>const a = 1;
+{
+   const a = 2;
+   display(a);
+}
+display(a);</CODE>
+</PRE>
+the first application of <code>display</code> shows the value 2, because the
+declaration <B>const</B> <code>a = 2;</code> re-declares the constant <code>a</code>.
+However, the second application
+of <code>display</code> shows the value 1, because
+the declaration <B>const</B> <code>a = 2;</code> is limited in scope by its surrounding block.
+You can read more about <EM>blocks</EM> in
+<a href="https://sicp.comp.nus.edu.sg/chapters/10">section 1.1.8
+Functions as Black-Box Abstractions</a>.</p>
+<h3>Boolean operators</h3><p>Boolean operators in Source have a special meaning. Usually, an operator combination
+evaluates all its arguments and then applies the operation to which the operator refers.
+For example, <code>(2 * 3) + (4 * 5)</code> evaluates <code>2 * 3</code> and <code>4 * 5</code> first, before the addition
+is carried out. However, the operator <code>&amp;&amp;</code> works differently. An expression
+<code>e1 &amp;&amp; e2</code> should be seen as an abbreviation for <code>e1 ? e2 : false</code>. The expression
+<code>e2</code> only gets evaluated if <code>e1</code> evaluates to <code>true</code>. The behaviour of <code>||</code> is similar:
+<code>e1 || e2</code> should be seen as an abbreviation for <code>e1 ? true : e2</code>. More on these
+two boolean operators in textbook 
+<a href="https://sicp.comp.nus.edu.sg/chapters/8">section 1.1.6 Conditional
+Expressions and Predicates</a>.</p>
+<h3>Sequences</h3><p>A program or the body of a block does not need to consist of a single statement.
+You can write multiple statements in a row. In the REPL (&quot;Read-Eval-Print-Loop&quot;)
+of a Source implementation, you can write</p>
+<p><PRE><CODE>cube(7);
+square(5);</CODE></PRE>
+The statements in such a sequence are evaluated in the given order. The
+result of evaluating the sequence is the result of evaluating the last
+statement in the sequence, in this case <code>square(5);</code>. 
+Read more about sequences in
+<a href="https://sicp.comp.nus.edu.sg/chapters/4">section 1.1.2
+Naming and the Environment</a> of the textbook.</p>
+<h2>You want the definitive specs?</h2><p>For our development team, we are maintaining a definitive description
+of the language, called the
+<a href="../source_1.pdf">Specification of Source §1</a>. Feel free to
+take a peek.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h3>Predeclared names</h3><ul><li><a href="global.html#display">display</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#Infinity">Infinity</a></li><li><a href="global.html#is_boolean">is_boolean</a></li><li><a href="global.html#is_function">is_function</a></li><li><a href="global.html#is_number">is_number</a></li><li><a href="global.html#is_string">is_string</a></li><li><a href="global.html#is_undefined">is_undefined</a></li><li><a href="global.html#math_abs">math_abs</a></li><li><a href="global.html#math_acos">math_acos</a></li><li><a href="global.html#math_acosh">math_acosh</a></li><li><a href="global.html#math_asin">math_asin</a></li><li><a href="global.html#math_asinh">math_asinh</a></li><li><a href="global.html#math_atan">math_atan</a></li><li><a href="global.html#math_atan2">math_atan2</a></li><li><a href="global.html#math_atanh">math_atanh</a></li><li><a href="global.html#math_cbrt">math_cbrt</a></li><li><a href="global.html#math_ceil">math_ceil</a></li><li><a href="global.html#math_clz32">math_clz32</a></li><li><a href="global.html#math_cos">math_cos</a></li><li><a href="global.html#math_cosh">math_cosh</a></li><li><a href="global.html#math_exp">math_exp</a></li><li><a href="global.html#math_expm1">math_expm1</a></li><li><a href="global.html#math_floor">math_floor</a></li><li><a href="global.html#math_fround">math_fround</a></li><li><a href="global.html#math_hypot">math_hypot</a></li><li><a href="global.html#math_imul">math_imul</a></li><li><a href="global.html#math_LN2">math_LN2</a></li><li><a href="global.html#math_LN10">math_LN10</a></li><li><a href="global.html#math_log">math_log</a></li><li><a href="global.html#math_log1p">math_log1p</a></li><li><a href="global.html#math_log2">math_log2</a></li><li><a href="global.html#math_LOG2E">math_LOG2E</a></li><li><a href="global.html#math_log10">math_log10</a></li><li><a href="global.html#math_LOG10E">math_LOG10E</a></li><li><a href="global.html#math_max">math_max</a></li><li><a href="global.html#math_min">math_min</a></li><li><a href="global.html#math_PI">math_PI</a></li><li><a href="global.html#math_pow">math_pow</a></li><li><a href="global.html#math_random">math_random</a></li><li><a href="global.html#math_round">math_round</a></li><li><a href="global.html#math_sign">math_sign</a></li><li><a href="global.html#math_sin">math_sin</a></li><li><a href="global.html#math_sinh">math_sinh</a></li><li><a href="global.html#math_sqrt">math_sqrt</a></li><li><a href="global.html#math_SQRT1_2">math_SQRT1_2</a></li><li><a href="global.html#math_SQRT2">math_SQRT2</a></li><li><a href="global.html#math_tan">math_tan</a></li><li><a href="global.html#math_tanh">math_tanh</a></li><li><a href="global.html#math_trunc">math_trunc</a></li><li><a href="global.html#NaN">NaN</a></li><li><a href="global.html#parse_int">parse_int</a></li><li><a href="global.html#prompt">prompt</a></li><li><a href="global.html#runtime">runtime</a></li><li><a href="global.html#stringify">stringify</a></li><li><a href="global.html#undefined">undefined</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+  generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.5.5</a> from
+  <a href="https://github.com/source-academy/js-slang">Github repository js-slang</a>
+  on Fri Mar 06 2020 09:25:48 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

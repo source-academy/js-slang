@@ -375,7 +375,7 @@ function show_heap_value(address: number) {
 // the subroutines could become machine language macros,
 // and the compiler could generate real machine code.
 
-const M: Array<() => void> = []
+const M: (() => void)[] = []
 
 M[OpCodes.START] = () => {
   A = 1 // first OS only needs to hold one closure

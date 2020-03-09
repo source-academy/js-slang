@@ -30,6 +30,13 @@ To try out *Source* in a REPL, run
 
   $ node dist/repl/repl.js [chapter] # default: 1
 
+If you wish, you can pass in a file path instead, to evaluate some *Source* before initialising the REPL
+It will be run in *Source* chapter 4.
+
+.. code-block::
+
+  $ node dist/repl/repl.js [path/to/file]
+
 or alternatively, install js-slang and run
 
 .. code-block::
@@ -49,8 +56,31 @@ To build the documentation, run
   $ git clone https://github.com/source-academy/js-slang.git
   $ cd js-slang
   $ npm install # If additional permissions are required, run sudo npm install
-  $ make           # to make the PDF documents using LaTeX
-  $ yarn run jsdoc # to make the web pages in js-slang/doc/source
+  $ yarn jsdoc  # to make the web pages in js-slang/doc/source
+  $ cd doc
+  $ make        # to make the PDF documents using LaTeX
+
+Documentation on the Source libraries are generated from inline documentation
+in the library sources. The libraries are in repository ``cadet-frontend``, which
+is assumed to be located in ``../cadet-frontend``, from the root of this repo.
+The command
+``yarn jsdoc``
+makes the documentation available in folder
+``doc/jsdoc/libraries/``.
+The script `jsdoc` provides an installation command to deploy the documentation via `scp` on a server:
+``yarn jsdoc install``
+
+Testing
+-------
+
+js-slang comes with an extensive test suite. To run the tests after you made your modifications, run
+``yarn test``. Regression tests are run automatically when you want to push changes to this repository. The regression tests are generated using `jest` and stored as snapshots in ``src/__tests__``.
+
+After modifying js-slang, carefully inspect any failing regression tests reported in red in the command line. If you are convinced that the regression tests and not your changes are at fault, you can update the regression tests as follows:
+
+.. code-block::
+
+  $ yarn test -- --updateSnapshot
 
 Error messages
 --------------
@@ -67,27 +97,6 @@ including specifics and correction guides, should be left to elaborate().
 
 Please remember to write test cases to reflect your added functionalities. The god of this repository is self-professed
 to be very particular about test cases.
-
-Documentation
--------------
-
-Documentation on Source §x is generated from LaTeX sources in folder ``doc``.
-Currently the documents are generated as follows:
-``
-cd doc; make 
-``
-
-Documentation on the Source libraries are generated from inline documentation
-in the library sources. The libraries are in repository ``cadet-frontend``, which
-is assumed to be located in ``../cadet-frontend``, from the root of this repo.
-The documentation is generated as follows:
-``
-yarn run jsdoc
-``
-This command makes the documentation available in folder
-``
-doc/jsdoc/libraries/
-``
 
 Using your js-slang in local Source Academy
 -------------------------------------------
