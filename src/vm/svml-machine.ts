@@ -664,13 +664,28 @@ M[OpCodes.GEG] = () => {
   PC = PC + 1
 }
 
-// check here as undefined and null need to be differentiated
-// TODO
+// check type here as undefined and null need to be differentiated by nodes
+// unless if we add one more slot to undefined and null
 M[OpCodes.EQG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  C = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] === A
+  D = RES
+  A = C === D // same reference (for arrays and functions)
+  B = HEAP[C + TAG_SLOT] === HEAP[D + TAG_SLOT] // check same type
+  E = HEAP[C + TAG_SLOT] === UNDEFINED_TAG
+  A = A || (B && E) // check undefined
+  E = HEAP[C + TAG_SLOT] === NULL_TAG
+  A = A || (B && E) // check null
+
+  E = HEAP[C + TAG_SLOT] === NUMBER_TAG
+  E = E || HEAP[C + TAG_SLOT] === STRING_TAG
+  E = E || HEAP[C + TAG_SLOT] === BOOL_TAG
+  E = E && B // check same type and has boxed value
+  C = HEAP[C + BOXED_VALUE_SLOT]
+  D = HEAP[D + BOXED_VALUE_SLOT]
+  E = E && C === D
+  A = A || E
   NEW_BOOL()
   A = RES
   PUSH_OS()
