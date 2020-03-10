@@ -281,7 +281,7 @@ transformers = new Map([
         node.property.type === 'Identifier'
           ? vector_to_list(['property', node.property.name])
           : transform(node.property)
-      return vector_to_list(['array_access', transform(node.object), key])
+      return vector_to_list(['object_access', transform(node.object), key])
     }
   ],
 
@@ -393,6 +393,12 @@ transformers = new Map([
           : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
         node.handler === null || node.handler === undefined ? null : transform(node.handler.body)
       ])
+    }
+  ],
+  [
+    'ThrowStatement',
+    (node: es.ThrowStatement) => {
+      return vector_to_list(['throw_statement', transform(node.argument)])
     }
   ]
 ])
