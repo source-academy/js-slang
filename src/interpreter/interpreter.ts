@@ -9,6 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import { loadModuleByName } from '../modules/moduleLoader'
 
 class BreakValue {}
 
@@ -564,6 +565,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     result = yield* evaluateBlockSatement(context, node)
     popEnvironment(context)
     return result
+  },
+
+  ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
+    const moduleName = node.source.value as string
+    const neededSymbols = node.specifiers.map(spec => spec.local.name)
+    for (const symbol of neededSymbols) {
+      context.externalSymbols.push(symbol)
+    }
+    yield loadModuleByName(moduleName, neededSymbols)
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
