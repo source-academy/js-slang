@@ -175,7 +175,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
     // VM library
     defineBuiltin(context, 'compile(program_string)', (str: string) =>
-      parse_and_compile(str, createContext(context.chapter))
+      parse_and_compile(str, context, false)
+    )
+    defineBuiltin(context, 'prelude_compile(program_string)', (str: string) =>
+      parse_and_compile(str, context, true)
     )
     defineBuiltin(context, 'pretty_print_compiled(machine_code)', (code: Program) =>
       display('', stringify_compiled(code))

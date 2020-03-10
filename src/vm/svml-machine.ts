@@ -1,11 +1,4 @@
-import {
-  OpCodes,
-  PRIMITIVE_FUNCTION_NAMES,
-  Program,
-  Instruction,
-  SVMFunction,
-  Address
-} from './svml-compiler'
+import { OpCodes, Program, Instruction, SVMFunction, Address } from './svml-compiler'
 import { getName } from './util'
 
 const LDCI_VALUE_OFFSET = 1
@@ -20,6 +13,8 @@ const BR_OFFSET = 1
 const LD_ST_INDEX_OFFSET = 1
 const LD_ST_ENV_OFFSET = 2
 const CALL_NUM_ARGS_OFFSET = 1
+const CALLP_ID_OFFSET = 1
+const CALLP_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
@@ -36,6 +31,7 @@ let PROG: Program
 let ENTRY: Instruction[] // use array reference to keep track of entry function
 let FUNC: SVMFunction[]
 let P: Instruction[]
+let GLOBAL_ENV = -1
 // PC is program counter: index of the next instruction
 let PC = 0
 // HEAP is array containing all dynamically allocated data structures
@@ -43,7 +39,7 @@ let HEAP: any[] = []
 // next free slot in heap
 let FREE = 0
 // OS is address of current environment in HEAP; initially a dummy value
-let ENV = -Infinity
+let ENV = -1
 // OS is address of current operand stack in HEAP; initially a dummy value
 let OS = -Infinity
 // temporary value, used by PUSH and POP; initially a dummy value
@@ -128,6 +124,7 @@ const NUMBER_TAG = -100
 const NUMBER_SIZE = 5
 const NUMBER_VALUE_SLOT = 4
 
+// changes A, B, C, expects number in A
 function NEW_NUMBER() {
   C = A
   A = NUMBER_TAG
@@ -150,6 +147,7 @@ const BOOL_TAG = -101
 const BOOL_SIZE = 5
 const BOOL_VALUE_SLOT = 4
 
+// changes A, B, C, expects boolean value in A
 function NEW_BOOL() {
   C = A
   A = BOOL_TAG
@@ -172,6 +170,7 @@ const STRING_TAG = -107
 const STRING_SIZE = 5
 const STRING_VALUE_SLOT = 4
 
+// changes A, B, C, expects string literal in A
 function NEW_STRING() {
   C = A
   A = STRING_TAG
@@ -194,6 +193,7 @@ const ARRAY_TAG = -108
 const ARRAY_SIZE = 5
 const ARRAY_VALUE_SLOT = 4
 
+// changes A, B
 function NEW_ARRAY() {
   A = ARRAY_TAG
   B = ARRAY_SIZE
@@ -231,6 +231,7 @@ function NEW_UNDEFINED() {
 const NULL_TAG = -109
 const NULL_SIZE = 4
 
+// changes A, B.
 function NEW_NULL() {
   A = NULL_TAG
   B = NULL_SIZE
@@ -251,7 +252,7 @@ function NEW_NULL() {
 
 const OS_TAG = -105
 
-// expects max size in A
+// changes A, B, C, expects max size in A
 function NEW_OS() {
   C = A
   A = OS_TAG
@@ -265,6 +266,7 @@ function NEW_OS() {
 // PUSH and POP are convenient subroutines that operate on
 // the operand stack OS
 // PUSH expects its argument in A
+// changes B
 function PUSH_OS() {
   B = HEAP[OS + LAST_CHILD_SLOT] // address of current top of OS
   B = B + 1
@@ -273,7 +275,7 @@ function PUSH_OS() {
 }
 
 // POP puts the top-most value into RES
-// uses B
+// changes B
 function POP_OS() {
   B = HEAP[OS + LAST_CHILD_SLOT] // address of current top of OS
   HEAP[OS + LAST_CHILD_SLOT] = B - 1 // update address of current top of OS
@@ -294,7 +296,7 @@ const CLOSURE_SIZE = 6
 const CLOSURE_FUNC_INDEX_SLOT = 4
 const CLOSURE_ENV_SLOT = 5
 
-// expects index of function in program function array in A
+// changes A, B, E, expects index of function in program function array in A
 export function NEW_CLOSURE() {
   E = A
   A = CLOSURE_TAG
@@ -329,7 +331,7 @@ const RTS_FRAME_ENV_SLOT = 5
 const RTS_FRAME_OS_SLOT = 6
 const RTS_FRAME_FUNC_INS_SLOT = 7
 
-// expects current PC, ENV, OS in their registers
+// changes A, B, expects current PC, ENV, OS in their registers
 function NEW_RTS_FRAME() {
   A = RTS_FRAME_TAG
   B = RTS_FRAME_SIZE
@@ -371,9 +373,10 @@ function POP_RTS() {
 const ENV_TAG = -102
 // Indicates previous environment
 const PREVIOUS_ENV_SLOT = 4
+const NIL = -1
 
 // expects number of env entries in A, previous env in D
-// changes B, C
+// changes A, B, C
 function NEW_ENVIRONMENT() {
   C = A
   A = ENV_TAG
@@ -745,18 +748,21 @@ M[OpCodes.LDAG] = () => {
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
   A = HEAP[RES + ARRAY_VALUE_SLOT][A]
-  // TODO: if undefined, push undefined node instead
+  if (A === undefined) {
+    NEW_UNDEFINED()
+    A = RES
+  }
   PUSH_OS()
   PC = PC + 1
 }
 
 M[OpCodes.STAG] = () => {
   POP_OS()
-  B = RES
+  D = RES
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
-  HEAP[RES + ARRAY_VALUE_SLOT][A] = B
+  HEAP[RES + ARRAY_VALUE_SLOT][A] = D
   PC = PC + 1
 }
 
@@ -818,9 +824,34 @@ M[OpCodes.CALL] = () => {
 }
 
 M[OpCodes.CALLP] = () => {
-  F = PRIMITIVE_FUNCTION_NAMES[P[PC][1] as number] // lets keep primitiveCall string in F
-  G = P[PC][2] // lets keep number of arguments in G
-  // TODO
+  G = P[PC][CALLP_NUM_ARGS_OFFSET] // lets keep number of arguments in G
+  F = P[PC][CALLP_ID_OFFSET] // lets keep primitiveCall Id in F
+  F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
+  // prep for EXTEND
+  A = HEAP[F + CLOSURE_ENV_SLOT]
+  // A is now env to be extended
+  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
+  H = FUNC[H]
+  // H is now the function header of the function to call
+  B = H[FUNC_ENV_SIZE_OFFSET]
+  // B is now the environment extension count
+  EXTEND() // after this, RES is new env
+  E = RES
+  D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
+  // D is now address where last argument goes in new env
+  for (C = D; C > D - G; C = C - 1) {
+    POP_OS() // now RES has the address of the next arg
+    HEAP[C] = RES // copy argument into new env
+  }
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+  A = RES
+  PUSH_RTS()
+  PC = 0
+  P = H[FUNC_CODE_OFFSET]
+  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
+  NEW_OS()
+  OS = RES
+  ENV = E
 }
 
 M[OpCodes.RETG] = () => {
@@ -869,8 +900,10 @@ function run(): any {
     NEW_OS()
     OS = RES
     A = D[FUNC_ENV_SIZE_OFFSET]
+    D = NIL
     NEW_ENVIRONMENT()
     ENV = RES
+    GLOBAL_ENV = ENV
     P = ENTRY
     PC = 0
   }
@@ -902,6 +935,7 @@ function run(): any {
   }
 }
 
+// if program has primitive calls, prelude must be included.
 export function runWithP(p: Program): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
@@ -909,7 +943,8 @@ export function runWithP(p: Program): any {
   PC = -1
   HEAP = []
   FREE = 0
-  ENV = -Infinity
+  GLOBAL_ENV = NIL
+  ENV = NIL
   OS = -Infinity
   RES = -Infinity
   RTS = []

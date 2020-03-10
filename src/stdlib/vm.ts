@@ -6,9 +6,24 @@ import { ParseError } from './parser'
 import { parse } from '../parser/parser'
 import { validateAndAnnotate } from '../validator/validator'
 import { Program } from 'estree'
+import { vmPrelude } from './vm.prelude'
 
-export function parse_and_compile(x: string, context: Context): Value {
+export function parse_and_compile(x: string, context: Context, includePrelude: boolean): Value {
   let program
+  let prelude
+
+  if (includePrelude) {
+    // wrap in a function
+    // add prelude
+    const preludeProg = parse(vmPrelude, context)
+    if (preludeProg !== undefined) {
+      prelude = compileToIns(preludeProg)
+    } else {
+      throw new ParseError('Unreachable')
+    }
+    // TODO: manually replace remaining nodes with custom opcodes
+    // note: program needs to replace index 92 in compiler (GE + 90 primitives)
+  }
 
   program = parse(x, context)
   if (context.errors.length > 0) {
@@ -20,7 +35,7 @@ export function parse_and_compile(x: string, context: Context): Value {
   }
 
   if (program !== undefined) {
-    return compileToIns(program)
+    return compileToIns(program, prelude)
   } else {
     throw new ParseError('Unreachable')
   }

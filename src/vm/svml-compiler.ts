@@ -945,16 +945,18 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
         expr.type === 'ArrayExpression' ||
         expr.type === 'LogicalExpression' ||
         expr.type === 'MemberExpression' ||
-        expr.type === 'AssignmentExpression')
+        expr.type === 'AssignmentExpression' ||
+        expr.type === 'VariableDeclaration')
     ) {
       // Conditional expressions are already handled
       addNullaryInstruction(OpCodes.RETG)
     } else if (
       expr.type === 'Program' ||
       expr.type === 'ExpressionStatement' ||
-      expr.type === 'BlockStatement'
+      expr.type === 'BlockStatement' ||
+      expr.type === 'FunctionDeclaration'
     ) {
-      // do nothing
+      // do nothing for wrapper nodes
     } else {
       maxStackSize += 1
       addNullaryInstruction(OpCodes.LGCU)
@@ -965,7 +967,7 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
   return { maxStackSize, insertFlag: newInsertFlag }
 }
 
-export function compileToIns(program: es.Program): Program {
+export function compileToIns(program: es.Program, prelude?: Program): Program {
   // reset variables
   SVMFunctions = []
   functionCode = []
@@ -975,13 +977,20 @@ export function compileToIns(program: es.Program): Program {
   transformForLoopsToWhileLoops(program)
   const locals = localNames(program, new Map<string, EnvEntry>())
   const topFunction: SVMFunction = [NaN, locals.size, 0, []]
-  const topFunctionIndex = SVMFunctions.length
-  SVMFunctions.push(topFunction)
+  if (prelude) {
+    SVMFunctions.push(...prelude[1])
+  }
+  const topFunctionIndex = prelude ? 92 : 0 // GE + # primitive func
+  if (prelude) {
+    SVMFunctions[92] = topFunction
+  } else {
+    SVMFunctions.push(topFunction)
+  }
 
   const extendedTable = extendIndexTable(makeIndexTableWithPrimitives(), locals)
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
-  return [topFunctionIndex, SVMFunctions]
+  return [0, SVMFunctions]
 }
 
 // transform according to Source 3 spec. Refer to spec for the way of transformation
