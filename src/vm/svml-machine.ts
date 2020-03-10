@@ -10,13 +10,15 @@ import { getName } from './util'
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
-const NEWA_VALUE_OFFSET = 1
 const FUNC_MAX_STACK_SIZE_OFFSET = 0
 const FUNC_ENV_SIZE_OFFSET = 1
-// const FUNC_NUM_ARGS_OFFSET = 2
+const FUNC_NUM_ARGS_OFFSET = 2
 const FUNC_CODE_OFFSET = 3
 const INS_OPCODE_OFFSET = 0
 const BR_OFFSET = 1
+const LD_ST_INDEX_OFFSET = 1
+const LD_ST_ENV_OFFSET = 2
+const CALL_NUM_ARGS_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -39,7 +41,6 @@ let HEAP: any[] = []
 let FREE = 0
 // OS is address of current environment in HEAP; initially a dummy value
 let ENV = -Infinity
-let PARENT_ENV = -Infinity
 // OS is address of current operand stack in HEAP; initially a dummy value
 let OS = -Infinity
 // temporary value, used by PUSH and POP; initially a dummy value
@@ -89,6 +90,7 @@ let RUNNING = true
 
 const NORMAL = 0
 const DIV_ERROR = 1
+const TYPE_ERROR = 2
 // TODO unused
 // const OUT_OF_MEMORY_ERROR = 2; // not used yet: memory currently unbounded
 
@@ -183,20 +185,19 @@ function NEW_STRING() {
 // 1: size = 5
 // 2: offset of first child from the tag: 6 (no children)
 // 3: offset of last child from the tag: 5 (must be less than first)
-// 4: value
+// 4: value (JS array, each element is the address of the element's node in the heap)
 
 const ARRAY_TAG = -108
 const ARRAY_SIZE = 5
 const ARRAY_VALUE_SLOT = 4
 
 function NEW_ARRAY() {
-  C = A
   A = ARRAY_TAG
   B = ARRAY_SIZE
   NEW()
   HEAP[RES + FIRST_CHILD_SLOT] = 6
   HEAP[RES + LAST_CHILD_SLOT] = 5 // no children
-  HEAP[RES + ARRAY_VALUE_SLOT] = C
+  HEAP[RES + ARRAY_VALUE_SLOT] = []
 }
 
 // undefined nodes layout
@@ -371,7 +372,7 @@ function POP_RTS() {
 // ...
 
 const ENV_TAG = -102
-// Indicates no previous environment
+// Indicates previous environment
 const PREVIOUS_ENV_SLOT = 4
 
 // expects number of env entries in A, previous env in D
@@ -525,15 +526,36 @@ M[OpCodes.POPG] = () => {
   PC = PC + 1
 }
 
+// type check here as we need to know whether number or string
 M[OpCodes.ADDG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] + A
-  NEW_NUMBER()
+  B = RES
+  C = HEAP[A + TAG_SLOT] === HEAP[B + TAG_SLOT]
+  D = HEAP[A + TAG_SLOT] === NUMBER_TAG
+  F = C && D
+  if (F) {
+    A = HEAP[A + NUMBER_VALUE_SLOT]
+    A = A + HEAP[B + NUMBER_VALUE_SLOT]
+    NEW_NUMBER()
+  }
+  E = HEAP[A + TAG_SLOT] === STRING_TAG
+  F = C && E
+  if (F) {
+    A = HEAP[A + STRING_VALUE_SLOT]
+    A = A + HEAP[B + STRING_VALUE_SLOT]
+    NEW_STRING()
+  }
   A = RES
   PUSH_OS()
   PC = PC + 1
+  G = D || E
+  G = !(G && C)
+  if (G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.SUBG] = () => {
@@ -597,11 +619,12 @@ M[OpCodes.NOTG] = () => {
   PC = PC + 1
 }
 
+// for comparisons, assume both string or both nums
 M[OpCodes.LTG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOXED_VALUE_SLOT]
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] < A
+  A = HEAP[RES + BOXED_VALUE_SLOT] < A
   NEW_BOOL()
   A = RES
   PUSH_OS()
@@ -610,9 +633,9 @@ M[OpCodes.LTG] = () => {
 
 M[OpCodes.GTG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOXED_VALUE_SLOT]
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] > A
+  A = HEAP[RES + BOXED_VALUE_SLOT] > A
   NEW_BOOL()
   A = RES
   PUSH_OS()
@@ -621,9 +644,9 @@ M[OpCodes.GTG] = () => {
 
 M[OpCodes.LEG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOXED_VALUE_SLOT]
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] <= A
+  A = HEAP[RES + BOXED_VALUE_SLOT] <= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
@@ -632,28 +655,34 @@ M[OpCodes.LEG] = () => {
 
 M[OpCodes.GEG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOXED_VALUE_SLOT]
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] >= A
+  A = HEAP[RES + BOXED_VALUE_SLOT] >= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
 }
 
+// check here as undefined and null need to be differentiated
+// TODO
 M[OpCodes.EQG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOXED_VALUE_SLOT]
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] === A
+  A = HEAP[RES + BOXED_VALUE_SLOT] === A
   NEW_BOOL()
   A = RES
   PUSH_OS()
+  PC = PC + 1
+}
+
+// TODO
+M[OpCodes.NEWC] = () => {
   PC = PC + 1
 }
 
 M[OpCodes.NEWA] = () => {
-  A = P[PC][NEWA_VALUE_OFFSET]
   NEW_ARRAY()
   A = RES
   PUSH_OS()
@@ -662,38 +691,37 @@ M[OpCodes.NEWA] = () => {
 
 M[OpCodes.LDLG] = () => {
   C = ENV
-  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]]
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][LD_ST_INDEX_OFFSET]]
   PUSH_OS()
   PC = PC + 1
 }
 
 M[OpCodes.STLG] = () => {
   POP_OS()
-  B = P[PC][2] // index of env to lookup
   C = ENV
-  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]] = RES
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][LD_ST_INDEX_OFFSET]] = RES
   PC = PC + 1
 }
 
 M[OpCodes.LDPG] = () => {
-  B = P[PC][2] // index of env to lookup
+  B = P[PC][LD_ST_ENV_OFFSET] // index of env to lookup
   C = ENV
   for (; B > 0; B = B - 1) {
     C = HEAP[C + PREVIOUS_ENV_SLOT]
   }
-  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]]
+  A = HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][LD_ST_INDEX_OFFSET]]
   PUSH_OS()
   PC = PC + 1
 }
 
 M[OpCodes.STPG] = () => {
   POP_OS()
-  B = P[PC][2] // index of env to lookup
+  B = P[PC][LD_ST_ENV_OFFSET] // index of env to lookup
   C = ENV
   for (; B > 0; B = B - 1) {
     C = HEAP[C + PREVIOUS_ENV_SLOT]
   }
-  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][1]] = RES
+  HEAP[C + HEAP[C + FIRST_CHILD_SLOT] + P[PC][LD_ST_INDEX_OFFSET]] = RES
   PC = PC + 1
 }
 
@@ -702,13 +730,14 @@ M[OpCodes.LDAG] = () => {
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
   A = HEAP[RES + ARRAY_VALUE_SLOT][A]
+  // TODO: if undefined, push undefined node instead
   PUSH_OS()
   PC = PC + 1
 }
 
 M[OpCodes.STAG] = () => {
   POP_OS()
-  B = HEAP[RES + BOXED_VALUE_SLOT]
+  B = RES
   POP_OS()
   A = HEAP[RES + NUMBER_VALUE_SLOT]
   POP_OS()
@@ -718,7 +747,7 @@ M[OpCodes.STAG] = () => {
 
 M[OpCodes.BRT] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOOL_VALUE_SLOT]
   if (A) {
     PC = PC + (P[PC][BR_OFFSET] as number)
   } else {
@@ -728,7 +757,7 @@ M[OpCodes.BRT] = () => {
 
 M[OpCodes.BRF] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + BOOL_VALUE_SLOT]
   if (!A) {
     PC = PC + (P[PC][BR_OFFSET] as number)
   } else {
@@ -740,12 +769,9 @@ M[OpCodes.BR] = () => {
   PC = PC + (P[PC][BR_OFFSET] as number)
 }
 
-M[OpCodes.JMP] = () => {
-  PC = P[PC][1] as number
-}
-
+// TODO
 M[OpCodes.CALL] = () => {
-  G = P[PC][1] // lets keep number of arguments in G
+  G = P[PC][CALL_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
   // prep for EXTEND
@@ -804,6 +830,7 @@ M[OpCodes.DUP] = () => {
   PC = PC + 1
 }
 
+// TODO
 M[OpCodes.NEWENV] = () => {
   G = P[PC][1] // lets keep number of arguments in G
   // we peek down OS to get the closure
@@ -824,12 +851,13 @@ M[OpCodes.NEWENV] = () => {
     HEAP[C] = RES // copy argument into new env
   }
   POP_OS() // closure is on top of OS; pop it as not needed
-  PARENT_ENV = ENV // store pointer to current env
   ENV = E
+  PC = PC + 1
 }
 
 M[OpCodes.POPENV] = () => {
-  ENV = PARENT_ENV // restore to parent env
+  ENV = HEAP[ENV + PREVIOUS_ENV_SLOT] // restore to parent env
+  PC = PC + 1
 }
 
 function run(): any {
@@ -856,12 +884,14 @@ function run(): any {
       M[P[PC][INS_OPCODE_OFFSET]]()
     }
   }
-  if (STATE === DIV_ERROR) {
+  if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
     POP_OS()
     throw Error('execution aborted: ' + RES)
   } else {
     POP_OS()
     show_heap_value(RES)
+    // TODO: Put this logic into a function
+    // Needs to convert undefined, null and arrays into JS values
     if (node_kind(HEAP[RES + TAG_SLOT]) === 'undefined') {
       return undefined
     } else if (node_kind(HEAP[RES + TAG_SLOT]) === 'null') {
