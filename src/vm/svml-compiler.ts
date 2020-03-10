@@ -193,7 +193,7 @@ const VALID_BINARY_OPERATORS = new Map([
 ])
 
 type Offset = number // instructions to skip
-type Address = [
+export type Address = [
   number, // function index
   number? // instruction index within function; optional
 ]
@@ -748,7 +748,7 @@ const compilers = {
   Identifier(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Identifier
 
-    // undefined
+    // undefined TODO: only use LGCU if lookup in environment fails
     if (node.name === 'undefined') {
       addNullaryInstruction(OpCodes.LGCU)
     } else {
@@ -878,21 +878,22 @@ const compilers = {
     for (const c of continues) {
       functionCode[c][1] = condIndex - c
     }
+    addNullaryInstruction(OpCodes.LGCU)
     return { maxStackSize: Math.max(m1, m2), insertFlag }
   },
 
   BreakStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of break instruction
-    breakTracker[breakTracker.length - 1].push(functionCode.length)
     addNullaryInstruction(OpCodes.POPENV)
+    breakTracker[breakTracker.length - 1].push(functionCode.length)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
 
   ContinueStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of continue instruction
-    continueTracker[continueTracker.length - 1].push(functionCode.length)
     addNullaryInstruction(OpCodes.POPENV)
+    continueTracker[continueTracker.length - 1].push(functionCode.length)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
