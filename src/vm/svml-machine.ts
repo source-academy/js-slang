@@ -3,7 +3,8 @@ import {
   PRIMITIVE_FUNCTION_NAMES,
   Program,
   Instruction,
-  SVMFunction
+  SVMFunction,
+  Address
 } from './svml-compiler'
 import { getName } from './util'
 
@@ -12,13 +13,16 @@ const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
 const FUNC_MAX_STACK_SIZE_OFFSET = 0
 const FUNC_ENV_SIZE_OFFSET = 1
-const FUNC_NUM_ARGS_OFFSET = 2
+// const FUNC_NUM_ARGS_OFFSET = 2
 const FUNC_CODE_OFFSET = 3
 const INS_OPCODE_OFFSET = 0
 const BR_OFFSET = 1
 const LD_ST_INDEX_OFFSET = 1
 const LD_ST_ENV_OFFSET = 2
 const CALL_NUM_ARGS_OFFSET = 1
+const NEWC_ADDR_OFFSET = 1
+const ADDR_FUNC_INDEX_OFFSET = 0
+const NEWENV_NUM_ARGS_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -29,9 +33,8 @@ const CALL_NUM_ARGS_OFFSET = 1
 // P is an array that contains an SVML machine program:
 // the op-codes of instructions and their arguments
 let PROG: Program
-let ENTRY = -1
+let ENTRY: Instruction[] // use array reference to keep track of entry function
 let FUNC: SVMFunction[]
-let CURFUN = -1
 let P: Instruction[]
 // PC is program counter: index of the next instruction
 let PC = 0
@@ -283,33 +286,24 @@ function POP_OS() {
 // 1: size = 8
 // 2: offset of first child from the tag: 6 (only environment)
 // 3: offset of last child from the tag: 6
-// 4: stack size = max stack size needed for executing function body
-// 5: address = address of function
-// 6: environment
-// 7: extension count = number of entries by which to extend env
+// 4: index = index of function in program function array
+// 5: environment
 
 const CLOSURE_TAG = -103
-const CLOSURE_SIZE = 8
-const CLOSURE_OS_SIZE_SLOT = 4
-const CLOSURE_ADDRESS_SLOT = 5
-const CLOSURE_ENV_SLOT = 6
-const CLOSURE_ENV_EXTENSION_COUNT_SLOT = 7
+const CLOSURE_SIZE = 6
+const CLOSURE_FUNC_INDEX_SLOT = 4
+const CLOSURE_ENV_SLOT = 5
 
-// expects stack size in A, address in B, environment extension count in C
+// expects index of function in program function array in A
 export function NEW_CLOSURE() {
   E = A
-  F = B
   A = CLOSURE_TAG
   B = CLOSURE_SIZE
   NEW()
-  A = E
-  B = F
   HEAP[RES + FIRST_CHILD_SLOT] = CLOSURE_ENV_SLOT
   HEAP[RES + LAST_CHILD_SLOT] = CLOSURE_ENV_SLOT
-  HEAP[RES + CLOSURE_OS_SIZE_SLOT] = A
-  HEAP[RES + CLOSURE_ADDRESS_SLOT] = B
+  HEAP[RES + CLOSURE_FUNC_INDEX_SLOT] = E
   HEAP[RES + CLOSURE_ENV_SLOT] = ENV
-  HEAP[RES + CLOSURE_ENV_EXTENSION_COUNT_SLOT] = C
 }
 
 // expects closure in A, environment in B
@@ -326,12 +320,14 @@ export function SET_CLOSURE_ENV() {
 // 4: program counter = return address
 // 5: environment
 // 6: operand stack
+// 7: current function code array
 
 const RTS_FRAME_TAG = -104
-const RTS_FRAME_SIZE = 7
+const RTS_FRAME_SIZE = 8
 const RTS_FRAME_PC_SLOT = 4
 const RTS_FRAME_ENV_SLOT = 5
 const RTS_FRAME_OS_SLOT = 6
+const RTS_FRAME_FUNC_INS_SLOT = 7
 
 // expects current PC, ENV, OS in their registers
 function NEW_RTS_FRAME() {
@@ -343,6 +339,7 @@ function NEW_RTS_FRAME() {
   HEAP[RES + RTS_FRAME_PC_SLOT] = PC + 1 // next instruction!
   HEAP[RES + RTS_FRAME_ENV_SLOT] = ENV
   HEAP[RES + RTS_FRAME_OS_SLOT] = OS
+  HEAP[RES + RTS_FRAME_FUNC_INS_SLOT] = P
 }
 
 let RTS: any[] = []
@@ -692,8 +689,11 @@ M[OpCodes.EQG] = () => {
   PC = PC + 1
 }
 
-// TODO
 M[OpCodes.NEWC] = () => {
+  A = (P[PC][NEWC_ADDR_OFFSET] as Address)[ADDR_FUNC_INDEX_OFFSET]
+  NEW_CLOSURE()
+  A = RES
+  PUSH_OS()
   PC = PC + 1
 }
 
@@ -784,7 +784,7 @@ M[OpCodes.BR] = () => {
   PC = PC + (P[PC][BR_OFFSET] as number)
 }
 
-// TODO
+// currently does not check number of arguments
 M[OpCodes.CALL] = () => {
   G = P[PC][CALL_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   // we peek down OS to get the closure
@@ -792,25 +792,27 @@ M[OpCodes.CALL] = () => {
   // prep for EXTEND
   A = HEAP[F + CLOSURE_ENV_SLOT]
   // A is now env to be extended
-  H = HEAP[A + LAST_CHILD_SLOT]
-  // H is now offset of last child slot
-  B = HEAP[F + CLOSURE_ENV_EXTENSION_COUNT_SLOT]
+  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
+  H = FUNC[H]
+  // H is now the function header of the function to call
+  B = H[FUNC_ENV_SIZE_OFFSET]
   // B is now the environment extension count
   EXTEND() // after this, RES is new env
   E = RES
-  H = E + H + G
-  // H is now address where last argument goes in new env
-  for (C = H; C > H - G; C = C - 1) {
+  D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
+  // D is now address where last argument goes in new env
+  for (C = D; C > D - G; C = C - 1) {
     POP_OS() // now RES has the address of the next arg
     HEAP[C] = RES // copy argument into new env
   }
   POP_OS() // closure is on top of OS; pop it as not needed
-  NEW_RTS_FRAME() // saves PC+2, ENV, OS
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
   A = RES
   PUSH_RTS()
-  PC = HEAP[F + CLOSURE_ADDRESS_SLOT]
-  A = HEAP[F + CLOSURE_OS_SIZE_SLOT] // closure stack size
-  NEW_OS() // uses B and C
+  PC = 0
+  P = H[FUNC_CODE_OFFSET]
+  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
+  NEW_OS()
   OS = RES
   ENV = E
 }
@@ -822,7 +824,7 @@ M[OpCodes.CALLP] = () => {
 }
 
 M[OpCodes.RETG] = () => {
-  if (ENTRY === CURFUN) {
+  if (ENTRY === P) {
     // if entry point, then intercept return
     RUNNING = false
   } else {
@@ -830,6 +832,7 @@ M[OpCodes.RETG] = () => {
     H = RES
     PC = HEAP[H + RTS_FRAME_PC_SLOT]
     ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+    P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
     POP_OS()
     A = RES
     OS = HEAP[H + RTS_FRAME_OS_SLOT]
@@ -845,28 +848,11 @@ M[OpCodes.DUP] = () => {
   PC = PC + 1
 }
 
-// TODO
 M[OpCodes.NEWENV] = () => {
-  G = P[PC][1] // lets keep number of arguments in G
-  // we peek down OS to get the closure
-  F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
-  // prep for EXTEND
-  A = HEAP[F + CLOSURE_ENV_SLOT]
-  // A is now env to be extended
-  H = HEAP[A + LAST_CHILD_SLOT]
-  // H is now offset of last child slot
-  B = HEAP[F + CLOSURE_ENV_EXTENSION_COUNT_SLOT]
-  // B is now the environment extension count
+  A = ENV
+  B = P[PC][NEWENV_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   EXTEND() // after this, RES is new env
-  E = RES
-  H = E + H + G
-  // H is now address where last argument goes in new env
-  for (C = H; C > H - G; C = C - 1) {
-    POP_OS() // now RES has the address of the next arg
-    HEAP[C] = RES // copy argument into new env
-  }
-  POP_OS() // closure is on top of OS; pop it as not needed
-  ENV = E
+  ENV = RES
   PC = PC + 1
 }
 
@@ -878,21 +864,21 @@ M[OpCodes.POPENV] = () => {
 function run(): any {
   // startup
   if (PC === -1) {
-    D = FUNC[ENTRY] // put function header in D
+    D = FUNC[PROG[0]] // put function header in D
     A = D[FUNC_MAX_STACK_SIZE_OFFSET]
     NEW_OS()
     OS = RES
     A = D[FUNC_ENV_SIZE_OFFSET]
     NEW_ENVIRONMENT()
     ENV = RES
-    P = D[FUNC_CODE_OFFSET]
+    P = ENTRY
     PC = 0
-    CURFUN = ENTRY
   }
 
   while (RUNNING) {
     // show_registers("run loop");
     // show_heap("run loop");
+    // show_executing('')
     if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
       throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
     } else {
@@ -918,8 +904,8 @@ function run(): any {
 
 export function runWithP(p: Program): any {
   PROG = p
-  ENTRY = PROG[0]
   FUNC = PROG[1] // list of SVMFunctions
+  ENTRY = FUNC[PROG[0]][FUNC_CODE_OFFSET]
   PC = -1
   HEAP = []
   FREE = 0
