@@ -1,3 +1,4 @@
+/* tslint:disable:object-literal-key-quotes no-string-literal */
 // import { typeCheck } from '../typeChecker'
 import { createContext } from '../index'
 import { parse as __parse } from '../parser'
@@ -9,6 +10,75 @@ function parse(code: any) {
   expect(program).not.toBeUndefined()
   return program
 }
+
+describe('generated AST with annotated types', () => {
+  it('returns a valid AST for simple primitive operations', () => {
+    const code = 'const a = 5; const b = 4; const c = a + b; const d = c > 5;'
+    const program = parse(code)
+    const ast = typeCheck(program)
+
+    expect(ast).toHaveLength(4)
+    expect(ast[0]['init']['inferredType']).toEqual({ name: 'integer', kind: 'primitive' })
+    expect(ast[1]['init']['inferredType']).toEqual({ name: 'integer', kind: 'primitive' })
+    expect(ast[2]['init']['inferredType']).toEqual({ name: 'integer', kind: 'primitive' })
+    expect(ast[3]['init']['inferredType']).toEqual({ name: 'boolean', kind: 'primitive' })
+  })
+
+  it('returns valid AST for function declaration and application', () => {
+    const code = 'function foo(x) {return x + 5;} const y = foo(5);'
+    const program = parse(code)
+    const ast = typeCheck(program)
+    expect(ast).toHaveLength(2)
+    // the first node is not saving the function spec
+    expect(ast[0]['id']['inferredType']).toEqual({
+      kind: 'function',
+      argumentTypes: [{ name: 'integer', kind: 'primitive' }],
+      resultType: { name: 'integer', kind: 'primitive' }
+    })
+    expect(ast[1]['init']['type']).toEqual('CallExpression')
+    expect(ast[1]['init']['inferredType']).toEqual({ name: 'integer', kind: 'primitive' })
+  })
+
+  it('returns a valid AST for simple program', () => {
+    const program = parse('1 + 1;')
+    const expectedAST = [
+      {
+        expression: {
+          type: 'BinaryExpression',
+          inferredType: { kind: 'primitive', name: 'integer' },
+          start: 0,
+          end: 5,
+          left: {
+            type: 'Literal',
+            inferredType: { kind: 'primitive', name: 'integer' },
+            start: 0,
+            end: 1,
+            value: 1,
+            raw: '1'
+          },
+          operator: '+',
+          right: {
+            type: 'Literal',
+            inferredType: { kind: 'primitive', name: 'integer' },
+            start: 4,
+            end: 5,
+            value: 1,
+            raw: '1'
+          }
+        },
+        start: 0,
+        end: 6,
+        inferredType: {
+          name: 'undefined',
+          kind: 'primitive'
+        },
+        type: 'ExpressionStatement'
+      }
+    ]
+    const ast = typeCheck(program)
+    expect(ast).toEqual(expectedAST)
+  })
+})
 
 describe('type checking builtin functions', () => {
   it('no errors for well defined use of builtin functions', () => {
@@ -23,12 +93,12 @@ describe('type checking builtin functions', () => {
      */
     const code = `
     const a = is_boolean(true);
-    const b = math_abs(4 - 5);
-    const c = parse_int("42");
+    const b = math_abs(4.1 - 5.3);
+    const c = parse_int("42", 10);
 
     const d = is_boolean(is_number(45));
 
-    const e = math_sqrt(runtime());
+    const e = runtime();
     `
     const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
@@ -166,8 +236,14 @@ describe('binary expressions', () => {
     expect(() => typeCheck(program)).toThrowError()
   })
 
-  it.skip('no errors when comparing string with string', () => {
+  it('no errors when comparing string with string', () => {
     const code = "const x = 'test'; const y = 'foo'; const z = x === y;"
+    const program = parse(code)
+    expect(() => typeCheck(program)).not.toThrowError()
+  })
+
+  it.skip('no errors when adding int with number', () => {
+    const code = 'const x = 1.5; const y = 1; const z = x + y;'
     const program = parse(code)
     expect(() => typeCheck(program)).not.toThrowError()
   })
