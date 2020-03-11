@@ -6,7 +6,7 @@ const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
 const FUNC_MAX_STACK_SIZE_OFFSET = 0
 const FUNC_ENV_SIZE_OFFSET = 1
-// const FUNC_NUM_ARGS_OFFSET = 2
+const FUNC_NUM_ARGS_OFFSET = 2
 const FUNC_CODE_OFFSET = 3
 const INS_OPCODE_OFFSET = 0
 const BR_OFFSET = 1
@@ -54,6 +54,7 @@ let E: any = 0
 let F: any = 0
 let G: any = 0
 let H: any = 0
+let I: any = 0
 
 function show_executing(s: string) {
   let str = ''
@@ -188,10 +189,12 @@ function NEW_STRING() {
 // 2: offset of first child from the tag: 6 (no children)
 // 3: offset of last child from the tag: 5 (must be less than first)
 // 4: value (JS array, each element is the address of the element's node in the heap)
+// 5: current size of array (largest index assigned)
 
 const ARRAY_TAG = -108
-const ARRAY_SIZE = 5
+const ARRAY_SIZE = 6
 const ARRAY_VALUE_SLOT = 4
+const ARRAY_SIZE_SLOT = 5
 
 // changes A, B
 function NEW_ARRAY() {
@@ -201,6 +204,7 @@ function NEW_ARRAY() {
   HEAP[RES + FIRST_CHILD_SLOT] = 6
   HEAP[RES + LAST_CHILD_SLOT] = 5 // no children
   HEAP[RES + ARRAY_VALUE_SLOT] = []
+  HEAP[RES + ARRAY_SIZE_SLOT] = 0
 }
 
 // undefined nodes layout
@@ -416,6 +420,10 @@ function node_kind(x: number) {
     ? 'undefined'
     : x === NULL_TAG
     ? 'null'
+    : x === STRING_TAG
+    ? 'string'
+    : x === ARRAY_TAG
+    ? 'array'
     : ' (unknown node kind)'
 }
 export function show_heap(s: string) {
@@ -760,9 +768,16 @@ M[OpCodes.STAG] = () => {
   POP_OS()
   D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  A = HEAP[RES + NUMBER_VALUE_SLOT] // index
   POP_OS()
   HEAP[RES + ARRAY_VALUE_SLOT][A] = D
+
+  // update array size
+  D = HEAP[RES + ARRAY_SIZE_SLOT]
+  if (D < A) {
+    D = A
+  }
+  HEAP[RES + ARRAY_SIZE_SLOT] = D
   PC = PC + 1
 }
 
@@ -790,7 +805,8 @@ M[OpCodes.BR] = () => {
   PC = PC + (P[PC][BR_OFFSET] as number)
 }
 
-// currently does not check number of arguments
+// currently does not properly check number of arguments
+// only checks to account for vardic
 M[OpCodes.CALL] = () => {
   G = P[PC][CALL_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   // we peek down OS to get the closure
@@ -823,25 +839,43 @@ M[OpCodes.CALL] = () => {
   ENV = E
 }
 
+// currently does not properly check number of arguments
+// only checks to account for vardic
 M[OpCodes.CALLP] = () => {
   G = P[PC][CALLP_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   F = P[PC][CALLP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
+
   // prep for EXTEND
   A = HEAP[F + CLOSURE_ENV_SLOT]
   // A is now env to be extended
   H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
   H = FUNC[H]
   // H is now the function header of the function to call
+  I = H[FUNC_NUM_ARGS_OFFSET]
   B = H[FUNC_ENV_SIZE_OFFSET]
   // B is now the environment extension count
   EXTEND() // after this, RES is new env
   E = RES
-  D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
-  // D is now address where last argument goes in new env
-  for (C = D; C > D - G; C = C - 1) {
-    POP_OS() // now RES has the address of the next arg
-    HEAP[C] = RES // copy argument into new env
+
+  // for varargs (-1), put all elements into an array. hacky implementation
+  if (I === -1) {
+    NEW_ARRAY()
+    I = RES
+    for (C = G - 1; C >= 0; C = C - 1) {
+      POP_OS()
+      HEAP[I + ARRAY_VALUE_SLOT][C] = RES
+    }
+    HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
+    D = E + HEAP[E + FIRST_CHILD_SLOT]
+    HEAP[D] = I
+  } else {
+    D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
+    // D is now address where last argument goes in new env
+    for (C = D; C > D - G; C = C - 1) {
+      POP_OS() // now RES has the address of the next arg
+      HEAP[C] = RES // copy argument into new env
+    }
   }
   NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
   A = RES
@@ -892,9 +926,19 @@ M[OpCodes.POPENV] = () => {
   PC = PC + 1
 }
 
+// all opcodes from here onwards are custom to this implementation (3.4)
+M[OpCodes.ARRAY_LEN] = () => {
+  POP_OS()
+  A = HEAP[RES + ARRAY_SIZE_SLOT]
+  NEW_NUMBER()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
 function run(): any {
   // startup
-  if (PC === -1) {
+  if (PC < 0) {
     D = FUNC[PROG[0]] // put function header in D
     A = D[FUNC_MAX_STACK_SIZE_OFFSET]
     NEW_OS()
@@ -924,18 +968,35 @@ function run(): any {
   } else {
     POP_OS()
     show_heap_value(RES)
-    // TODO: Put this logic into a function
-    // Needs to convert undefined, null and arrays into JS values
-    if (node_kind(HEAP[RES + TAG_SLOT]) === 'undefined') {
-      return undefined
-    } else if (node_kind(HEAP[RES + TAG_SLOT]) === 'null') {
-      return null
+    return convertToJsFormat(RES)
+  }
+}
+
+function convertToJsFormat(node: number): any {
+  const kind = node_kind(HEAP[node + TAG_SLOT])
+  if (kind === 'undefined' || kind === 'closure') {
+    return undefined
+  }
+  if (kind === 'null') {
+    return null
+  }
+  if (kind === 'number' || kind === 'string' || kind === 'bool') {
+    return HEAP[node + BOXED_VALUE_SLOT]
+  }
+  if (kind === 'array') {
+    const arr: number[] = HEAP[node + BOXED_VALUE_SLOT]
+    const res = []
+    for (let i = 0; i < arr.length; i++) {
+      res[i] = convertToJsFormat(arr[i])
     }
-    return HEAP[RES + BOXED_VALUE_SLOT]
+    return res
   }
 }
 
 // if program has primitive calls, prelude must be included.
+// this implementation also assumes a correct program, and does not
+// currently check for type correctness
+// an incorrect program will have undefined behaviors
 export function runWithP(p: Program): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
@@ -960,6 +1021,7 @@ export function runWithP(p: Program): any {
   F = 0
   G = 0
   H = 0
+  I = 0
 
   return run()
 }

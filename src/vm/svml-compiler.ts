@@ -81,7 +81,59 @@ export enum OpCodes {
   RETN = 74,
   DUP = 75,
   NEWENV = 76, // number of locals in new environment
-  POPENV = 77
+  POPENV = 77,
+
+  // custom opcodes
+  ARRAY_LEN = 78,
+  DISPLAY = 79,
+  DRAW_DATA = 80,
+  ERROR = 81,
+  IS_ARRAY = 82,
+  IS_BOOL = 83,
+  IS_FUNC = 84,
+  IS_NULL = 85,
+  IS_NUMBER = 86,
+  IS_STRING = 87,
+  IS_UNDEFINED = 88,
+  MATH_ABS = 89,
+  MATH_ACOS = 90,
+  MATH_ACOSH = 91,
+  MATH_ASIN = 92,
+  MATH_ASINH = 93,
+  MATH_ATAN = 94,
+  MATH_ATAN2 = 95,
+  MATH_ATANH = 96,
+  MATH_CBRT = 97,
+  MATH_CEIL = 98,
+  MATH_CLZ32 = 99,
+  MATH_COS = 100,
+  MATH_COSH = 101,
+  MATH_EXP = 102,
+  MATH_EXPM1 = 103,
+  MATH_FLOOR = 104,
+  MATH_FROUND = 105,
+  MATH_HYPOT = 106,
+  MATH_IMUL = 107,
+  MATH_LOG = 108,
+  MATH_LOG1P = 109,
+  MATH_LOG2 = 110,
+  MATH_LOG10 = 111,
+  MATH_MAX = 112,
+  MATH_MIN = 113,
+  MATH_POW = 114,
+  MATH_RANDOM = 115,
+  MATH_ROUND = 116,
+  MATH_SIGN = 117,
+  MATH_SIN = 118,
+  MATH_SINH = 119,
+  MATH_SQRT = 120,
+  MATH_TAN = 121,
+  MATH_TANH = 122,
+  MATH_TRUNC = 123,
+  PARSE_INT = 124,
+  RUNTIME = 125,
+  STREAM = 126,
+  STRINGIFY = 127
 }
 
 export const PRIMITIVE_FUNCTION_NAMES = [
@@ -980,9 +1032,9 @@ export function compileToIns(program: es.Program, prelude?: Program): Program {
   if (prelude) {
     SVMFunctions.push(...prelude[1])
   }
-  const topFunctionIndex = prelude ? 92 : 0 // GE + # primitive func
+  const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0 // GE + # primitive func
   if (prelude) {
-    SVMFunctions[92] = topFunction
+    SVMFunctions[PRIMITIVE_FUNCTION_NAMES.length + 1] = topFunction
   } else {
     SVMFunctions.push(topFunction)
   }

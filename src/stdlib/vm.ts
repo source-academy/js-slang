@@ -6,11 +6,11 @@ import { ParseError } from './parser'
 import { parse } from '../parser/parser'
 import { validateAndAnnotate } from '../validator/validator'
 import { Program } from 'estree'
-import { vmPrelude } from './vm.prelude'
+import { vmPrelude, generatePrimitiveFunctionCode } from './vm.prelude'
 
 export function parse_and_compile(x: string, context: Context, includePrelude: boolean): Value {
   let program
-  let prelude
+  let prelude: machineProgram | undefined
 
   if (includePrelude) {
     // wrap in a function
@@ -21,7 +21,11 @@ export function parse_and_compile(x: string, context: Context, includePrelude: b
     } else {
       throw new ParseError('Unreachable')
     }
-    // TODO: manually replace remaining nodes with custom opcodes
+
+    const primitives = generatePrimitiveFunctionCode()
+    primitives.forEach(func => {
+      prelude![1][func[0] + 1] = func[1] // + 1 due to global env
+    })
     // note: program needs to replace index 92 in compiler (GE + 90 primitives)
   }
 

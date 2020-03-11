@@ -1,5 +1,8 @@
+import { SVMFunction, OpCodes } from '../vm/svml-compiler'
+
 export const vmPrelude = `
 // functions should be sorted by alphabetical order. Refer to SVML spec on wiki
+// placeholders should be manually replaced with the correct machine code
 
 // 0
 function accumulate(f, initial, xs) {
@@ -137,9 +140,9 @@ function is_number(x) {
   return 1;
 }
 
-// 22 placeholder
+// 22 
 function is_pair(x) {
-  return 1;
+  return is_array(x) && array_length(x) === 2;
 }
 
 // 23
@@ -543,3 +546,263 @@ function stringify(x) {
 // hack to make the call to Program easier, just replace the index 92
 (() => 0)();
 `
+
+// list of primitive functions in alphabetical order
+export const PRIMITIVE_FUNCTION_NAMES = [
+  'accumulate',
+  'append',
+  'array_length',
+  'build_list',
+  'build_stream',
+  'display',
+  'draw_data',
+  'enum_list',
+  'enum_stream',
+  'equal',
+  'error',
+  'eval_stream',
+  'filter',
+  'for_each',
+  'head',
+  'integers_from',
+  'is_array',
+  'is_boolean',
+  'is_function',
+  'is_list',
+  'is_null',
+  'is_number',
+  'is_pair',
+  'is_stream',
+  'is_string',
+  'is_undefined',
+  'length',
+  'list',
+  'list_ref',
+  'list_to_stream',
+  'list_to_string',
+  'map',
+  'math_abs',
+  'math_acos',
+  'math_acosh',
+  'math_asin',
+  'math_asinh',
+  'math_atan',
+  'math_atan2',
+  'math_atanh',
+  'math_cbrt',
+  'math_ceil',
+  'math_clz32',
+  'math_cos',
+  'math_cosh',
+  'math_exp',
+  'math_expm1',
+  'math_floor',
+  'math_fround',
+  'math_hypot',
+  'math_imul',
+  'math_log',
+  'math_log1p',
+  'math_log2',
+  'math_log10',
+  'math_max',
+  'math_min',
+  'math_pow',
+  'math_random',
+  'math_round',
+  'math_sign',
+  'math_sin',
+  'math_sinh',
+  'math_sqrt',
+  'math_tan',
+  'math_tanh',
+  'math_trunc',
+  'member',
+  'pair',
+  'parse_int',
+  'remove',
+  'remove_all',
+  'reverse',
+  'runtime',
+  'set_head',
+  'set_tail',
+  'stream',
+  'stream_append',
+  'stream_filter',
+  'stream_for_each',
+  'stream_length',
+  'stream_map',
+  'stream_member',
+  'stream_ref',
+  'stream_remove',
+  'stream_remove_all',
+  'stream_reverse',
+  'stream_tail',
+  'stream_to_list',
+  'tail',
+  'stringify'
+]
+
+// array of [index, SVMFunction] to manually map over
+export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
+  // display
+  ['display', [0, 0, -1, []]],
+
+  // draw_data TODO
+  ['draw_data', [0, 0, 0, []]],
+
+  // error TODO
+  ['error', [0, 0, 0, []]],
+  // list
+  /* code:
+    function f(args) {
+      let i = array_length(args) - 1;
+      let p = null;
+      while (i >= 0) {
+        p = pair(args[i], p);
+        i = i - 1;
+      }
+      return p;
+    }
+  */
+  [
+    'list',
+    [
+      3,
+      3,
+      -1, // use -1 to indicate varargs
+      [
+        [42, 0],
+        [66, 2, 1],
+        [2, 1],
+        [19],
+        [45, 1],
+        [11],
+        [14],
+        [12],
+        [45, 2],
+        [11],
+        [14],
+        [42, 1],
+        [2, 0],
+        [35],
+        [61, 18],
+        [76, 0],
+        [48, 0, 1],
+        [48, 1, 1],
+        [54],
+        [48, 2, 1],
+        [66, 68, 2],
+        [51, 2, 1],
+        [11],
+        [14],
+        [48, 1, 1],
+        [2, 1],
+        [19],
+        [51, 1, 1],
+        [11],
+        [14],
+        [77],
+        [62, -20],
+        [11],
+        [14],
+        [42, 2],
+        [70]
+      ]
+    ]
+  ],
+  // math_hypot varargs TODO
+  ['math_hypot', [0, 0, -1, []]],
+
+  // math_max varargs TODO
+  ['math_max', [0, 0, -1, []]],
+
+  // math_min varargs TODO
+  ['math_min', [0, 0, -1, []]],
+
+  // stream TODO
+  ['stream', [0, 0, -1, []]]
+]
+
+export const NULLARY_PRIMITIVES: [string, number][] = [
+  ['math_random', OpCodes.MATH_RANDOM],
+  ['runtime', OpCodes.RUNTIME]
+]
+
+export const UNARY_PRIMITIVES: [string, number][] = [
+  ['array_length', OpCodes.ARRAY_LEN],
+  ['is_array', OpCodes.IS_ARRAY],
+  ['is_boolean', OpCodes.IS_BOOL],
+  ['is_function', OpCodes.IS_FUNC],
+  ['is_null', OpCodes.IS_NULL],
+  ['is_number', OpCodes.IS_NUMBER],
+  ['is_string', OpCodes.IS_STRING],
+  ['is_undefined', OpCodes.IS_UNDEFINED],
+  ['math_abs', OpCodes.MATH_ABS],
+  ['math_acos', OpCodes.MATH_ACOS],
+  ['math_acosh', OpCodes.MATH_ACOSH],
+  ['math_asin', OpCodes.MATH_ASIN],
+  ['math_asinh', OpCodes.MATH_ASINH],
+  ['math_atan', OpCodes.MATH_ATAN],
+  ['math_atan2', OpCodes.MATH_ATAN2],
+  ['math_atanh', OpCodes.MATH_ATANH],
+  ['math_cbrt', OpCodes.MATH_CBRT],
+  ['math_ceil', OpCodes.MATH_CEIL],
+  ['math_clz32', OpCodes.MATH_CLZ32],
+  ['math_cos', OpCodes.MATH_COS],
+  ['math_cosh', OpCodes.MATH_COSH],
+  ['math_exp', OpCodes.MATH_EXP],
+  ['math_expm1', OpCodes.MATH_EXPM1],
+  ['math_floor', OpCodes.MATH_FLOOR],
+  ['math_fround', OpCodes.MATH_FROUND],
+  ['math_log', OpCodes.MATH_LOG],
+  ['math_log1p', OpCodes.MATH_LOG1P],
+  ['math_log2', OpCodes.MATH_LOG2],
+  ['math_log10', OpCodes.MATH_LOG10],
+  ['math_round', OpCodes.MATH_ROUND],
+  ['math_sign', OpCodes.MATH_SIGN],
+  ['math_sin', OpCodes.MATH_SIN],
+  ['math_sinh', OpCodes.MATH_SINH],
+  ['math_sqrt', OpCodes.MATH_SQRT],
+  ['math_tan', OpCodes.MATH_TAN],
+  ['math_tanh', OpCodes.MATH_TANH],
+  ['math_trunc', OpCodes.MATH_TRUNC],
+  ['stringify', OpCodes.STRINGIFY]
+]
+
+export const BINARY_PRIMITIVES: [string, number][] = [
+  ['math_imul', OpCodes.MATH_IMUL],
+  ['math_pow', OpCodes.MATH_POW],
+  ['parse_int', OpCodes.PARSE_INT]
+]
+
+// helper functions to generate machine code
+function generateNullaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
+  return [index, [1, 0, 0, [[opcode], [OpCodes.RETG]]]]
+}
+
+function generateUnaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
+  return [index, [1, 1, 1, [[OpCodes.LDLG, 0], [opcode], [OpCodes.RETG]]]]
+}
+
+function generateBinaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
+  return [index, [2, 2, 2, [[OpCodes.LDLG, 0], [OpCodes.LDLG, 1], [opcode], [OpCodes.RETG]]]]
+}
+
+export function generatePrimitiveFunctionCode() {
+  const functions: [number, SVMFunction][] = []
+  const nameToIndexMap = new Map<string, number>()
+  PRIMITIVE_FUNCTION_NAMES.forEach((name, index) => {
+    nameToIndexMap.set(name, index)
+  })
+  CUSTOM_PRIMITIVES.forEach(f => functions.push([nameToIndexMap.get(f[0])!, f[1]]))
+  NULLARY_PRIMITIVES.forEach(f =>
+    functions.push(generateNullaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+  )
+  UNARY_PRIMITIVES.forEach(f =>
+    functions.push(generateUnaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+  )
+  BINARY_PRIMITIVES.forEach(f =>
+    functions.push(generateBinaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+  )
+  return functions
+}
