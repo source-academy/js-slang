@@ -1,4 +1,6 @@
-import { OpCodes, Program } from './svml-compiler'
+import { Program } from './svml-compiler'
+import { OpCodes } from './opcodes'
+
 const OPCODES_STR = {
   [OpCodes.NOP]: 'NOP   ',
   [OpCodes.LDCI]: 'LDCI  ',

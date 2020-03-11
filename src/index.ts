@@ -28,6 +28,8 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { compileToIns, compilePrelude } from './vm/svml-compiler'
+import { runWithP } from './vm/svml-machine'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -170,6 +172,13 @@ export async function runInContext(
   validateAndAnnotate(program as Program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
+  }
+  if (context.chapter === 3.4) {
+    const prelude = compilePrelude(context)
+    return Promise.resolve({
+      status: 'finished',
+      value: runWithP(compileToIns(program, prelude))
+    } as Result)
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)

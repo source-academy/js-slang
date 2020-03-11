@@ -2,233 +2,14 @@ import { recursive, simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import * as create from '../utils/astCreator'
 import { UndefinedVariable, ConstAssignment } from '../errors/errors'
-
-export enum OpCodes {
-  NOP = 0,
-  LDCI = 1, // integer
-  LGCI = 2, // integer
-  LDCF32 = 3, // 32-bit float
-  LGCF32 = 4, // 32-bit float
-  LDCF64 = 5, // 64-bit float
-  LGCF64 = 6, // 64-bit float
-  LDCB0 = 7,
-  LDCB1 = 8,
-  LGCB0 = 9,
-  LGCB1 = 10,
-  LGCU = 11,
-  LGCN = 12,
-  LGCS = 13, // string
-  POPG = 14,
-  POPB = 15,
-  POPF = 16,
-  ADDG = 17,
-  ADDF = 18,
-  SUBG = 19,
-  SUBF = 20,
-  MULG = 21,
-  MULF = 22,
-  DIVG = 23,
-  DIVF = 24,
-  MODG = 25,
-  MODF = 26,
-  NOTG = 27,
-  NOTB = 28,
-  LTG = 29,
-  LTF = 30,
-  GTG = 31,
-  GTF = 32,
-  LEG = 33,
-  LEF = 34,
-  GEG = 35,
-  GEF = 36,
-  EQG = 37,
-  EQF = 38,
-  EQB = 39,
-  NEWC = 40, // Address of function
-  NEWA = 41,
-  LDLG = 42, // index in current env
-  LDLF = 43, // index in current env
-  LDLB = 44, // index in current env
-  STLG = 45, // index in current env
-  STLB = 46, // index in current env
-  STLF = 47, // index in current env
-  LDPG = 48, // index in env, index of parent relative to current env
-  LDPF = 49, // index in env, index of parent relative to current env
-  LDPB = 50, // index in env, index of parent relative to current env
-  STPG = 51, // index in env, index of parent relative to current env
-  STPB = 52, // index in env, index of parent relative to current env
-  STPF = 53, // index in env, index of parent relative to current env
-  LDAG = 54,
-  LDAB = 55,
-  LDAF = 56,
-  STAG = 57,
-  STAB = 58,
-  STAF = 59,
-  BRT = 60, // Offset
-  BRF = 61, // Offset
-  BR = 62, // Offset
-  JMP = 63, // Address
-  CALL = 64, // number of arguments
-  CALLT = 65, // number of arguments
-  CALLP = 66, // id of primitive function, number of arguments
-  CALLTP = 67, // id of primitive function, number of arguments
-  CALLV = 68, // id of vm-internal function, number of arguments
-  CALLTV = 69, // id of vm-internal function, number of arguments
-  RETG = 70,
-  RETF = 71,
-  RETB = 72,
-  RETU = 73,
-  RETN = 74,
-  DUP = 75,
-  NEWENV = 76, // number of locals in new environment
-  POPENV = 77,
-
-  // custom opcodes
-  ARRAY_LEN = 78,
-  DISPLAY = 79,
-  DRAW_DATA = 80,
-  ERROR = 81,
-  IS_ARRAY = 82,
-  IS_BOOL = 83,
-  IS_FUNC = 84,
-  IS_NULL = 85,
-  IS_NUMBER = 86,
-  IS_STRING = 87,
-  IS_UNDEFINED = 88,
-  MATH_ABS = 89,
-  MATH_ACOS = 90,
-  MATH_ACOSH = 91,
-  MATH_ASIN = 92,
-  MATH_ASINH = 93,
-  MATH_ATAN = 94,
-  MATH_ATAN2 = 95,
-  MATH_ATANH = 96,
-  MATH_CBRT = 97,
-  MATH_CEIL = 98,
-  MATH_CLZ32 = 99,
-  MATH_COS = 100,
-  MATH_COSH = 101,
-  MATH_EXP = 102,
-  MATH_EXPM1 = 103,
-  MATH_FLOOR = 104,
-  MATH_FROUND = 105,
-  MATH_HYPOT = 106,
-  MATH_IMUL = 107,
-  MATH_LOG = 108,
-  MATH_LOG1P = 109,
-  MATH_LOG2 = 110,
-  MATH_LOG10 = 111,
-  MATH_MAX = 112,
-  MATH_MIN = 113,
-  MATH_POW = 114,
-  MATH_RANDOM = 115,
-  MATH_ROUND = 116,
-  MATH_SIGN = 117,
-  MATH_SIN = 118,
-  MATH_SINH = 119,
-  MATH_SQRT = 120,
-  MATH_TAN = 121,
-  MATH_TANH = 122,
-  MATH_TRUNC = 123,
-  PARSE_INT = 124,
-  RUNTIME = 125,
-  STREAM = 126,
-  STRINGIFY = 127
-}
-
-export const PRIMITIVE_FUNCTION_NAMES = [
-  'accumulate',
-  'append',
-  'array_length',
-  'build_list',
-  'build_stream',
-  'display',
-  'draw_data',
-  'enum_list',
-  'enum_stream',
-  'equal',
-  'error',
-  'eval_stream',
-  'filter',
-  'for_each',
-  'head',
-  'integers_from',
-  'is_array',
-  'is_boolean',
-  'is_function',
-  'is_list',
-  'is_null',
-  'is_number',
-  'is_pair',
-  'is_stream',
-  'is_string',
-  'is_undefined',
-  'length',
-  'list',
-  'list_ref',
-  'list_to_stream',
-  'list_to_string',
-  'map',
-  'math_abs',
-  'math_acos',
-  'math_acosh',
-  'math_asin',
-  'math_asinh',
-  'math_atan',
-  'math_atan2',
-  'math_atanh',
-  'math_cbrt',
-  'math_ceil',
-  'math_clz32',
-  'math_cos',
-  'math_cosh',
-  'math_exp',
-  'math_expm1',
-  'math_floor',
-  'math_fround',
-  'math_hypot',
-  'math_imul',
-  'math_log',
-  'math_log1p',
-  'math_log2',
-  'math_log10',
-  'math_max',
-  'math_min',
-  'math_pow',
-  'math_random',
-  'math_round',
-  'math_sign',
-  'math_sin',
-  'math_sinh',
-  'math_sqrt',
-  'math_tan',
-  'math_tanh',
-  'math_trunc',
-  'member',
-  'pair',
-  'parse_int',
-  'remove',
-  'remove_all',
-  'reverse',
-  'runtime',
-  'set_head',
-  'set_tail',
-  'stream',
-  'stream_append',
-  'stream_filter',
-  'stream_for_each',
-  'stream_length',
-  'stream_map',
-  'stream_member',
-  'stream_ref',
-  'stream_remove',
-  'stream_remove_all',
-  'stream_reverse',
-  'stream_tail',
-  'stream_to_list',
-  'tail',
-  'stringify'
-]
+import {
+  vmPrelude,
+  generatePrimitiveFunctionCode,
+  PRIMITIVE_FUNCTION_NAMES
+} from '../stdlib/vm.prelude'
+import { Context } from '../types'
+import { parse } from '../parser/parser'
+import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS = new Map([['!', OpCodes.NOTG]])
 const VALID_BINARY_OPERATORS = new Map([
@@ -370,7 +151,8 @@ function continueToCompile() {
     const nextToCompile = popToCompile()
     const functionAddress = toCompileTaskFunctionAddress(nextToCompile)
     const indexTable = toCompileTaskIndexTable(nextToCompile)
-    const body = toCompileTaskBody(nextToCompile)
+    const body = toCompileTaskBody(nextToCompile) as taggedBlockStatement
+    body.isFunctionBlock = true
     const { maxStackSize } = compile(body, indexTable, true)
 
     const functionIndex = functionAddress[0]
@@ -447,6 +229,7 @@ function renameVariables(
   baseNode: es.BlockStatement | es.Program,
   namesToRename: Map<string, string>
 ) {
+  if (namesToRename.size === 0) return
   let baseScope = true
 
   function recurseBlock(
@@ -576,7 +359,12 @@ function compileArguments(exprs: es.Node[], indexTable: Map<string, EnvEntry>[])
 // for loop blocks, need to ensure the last statement is also popped to prevent
 // stack overflow. also note that compileStatements for loop blocks will always
 // have insertFlag: false
-type taggedBlockStatement = (es.Program | es.BlockStatement) & { isLoopBlock?: boolean }
+// need to detect function blocks due to compilation issues with empty blocks.
+// compiler does not know when to return
+type taggedBlockStatement = (es.Program | es.BlockStatement) & {
+  isLoopBlock?: boolean
+  isFunctionBlock?: boolean
+}
 
 function compileStatements(
   node: taggedBlockStatement,
@@ -595,6 +383,10 @@ function compileStatements(
       addNullaryInstruction(OpCodes.POPG)
     }
     maxStackSize = Math.max(maxStackSize, curExprSize)
+  }
+  if (statements.length === 0 && node.isFunctionBlock) {
+    addNullaryInstruction(OpCodes.LGCU)
+    addNullaryInstruction(OpCodes.RETG)
   }
   return { maxStackSize, insertFlag: false }
 }
@@ -1017,6 +809,16 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
   }
 
   return { maxStackSize, insertFlag: newInsertFlag }
+}
+
+export function compilePrelude(context: Context) {
+  const prelude = compileToIns(parse(vmPrelude, context)!)
+  const primitives = generatePrimitiveFunctionCode()
+
+  primitives.forEach(func => {
+    prelude![1][func[0] + 1] = func[1] // + 1 due to global env
+  })
+  return prelude
 }
 
 export function compileToIns(program: es.Program, prelude?: Program): Program {

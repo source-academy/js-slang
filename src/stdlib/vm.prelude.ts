@@ -1,4 +1,5 @@
-import { SVMFunction, OpCodes } from '../vm/svml-compiler'
+import { SVMFunction } from '../vm/svml-compiler'
+import OpCodes from '../vm/opcodes'
 
 export const vmPrelude = `
 // functions should be sorted by alphabetical order. Refer to SVML spec on wiki
@@ -140,7 +141,7 @@ function is_number(x) {
   return 1;
 }
 
-// 22 
+// 22
 function is_pair(x) {
   return is_array(x) && array_length(x) === 2;
 }
@@ -723,12 +724,12 @@ export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
   ['stream', [0, 0, -1, []]]
 ]
 
-export const NULLARY_PRIMITIVES: [string, number][] = [
+const NULLARY_PRIMITIVES: [string, number][] = [
   ['math_random', OpCodes.MATH_RANDOM],
   ['runtime', OpCodes.RUNTIME]
 ]
 
-export const UNARY_PRIMITIVES: [string, number][] = [
+const UNARY_PRIMITIVES: [string, number][] = [
   ['array_length', OpCodes.ARRAY_LEN],
   ['is_array', OpCodes.IS_ARRAY],
   ['is_boolean', OpCodes.IS_BOOL],
@@ -769,7 +770,7 @@ export const UNARY_PRIMITIVES: [string, number][] = [
   ['stringify', OpCodes.STRINGIFY]
 ]
 
-export const BINARY_PRIMITIVES: [string, number][] = [
+const BINARY_PRIMITIVES: [string, number][] = [
   ['math_imul', OpCodes.MATH_IMUL],
   ['math_pow', OpCodes.MATH_POW],
   ['parse_int', OpCodes.PARSE_INT]

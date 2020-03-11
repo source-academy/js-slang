@@ -1,5 +1,6 @@
-import { OpCodes, Program, Instruction, SVMFunction, Address } from './svml-compiler'
+import { Program, Instruction, SVMFunction, Address } from './svml-compiler'
 import { getName } from './util'
+import OpCodes from './opcodes'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
