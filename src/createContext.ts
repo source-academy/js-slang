@@ -183,7 +183,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'pretty_print_compiled(machine_code)', (code: Program) =>
       display('', stringify_compiled(code))
     )
-    defineBuiltin(context, 'run_vm(machine_code)', run_vm)
+    defineBuiltin(context, 'run_vm(machine_code)', (code: Program) => run_vm(code, context))
   }
 
   if (context.chapter >= 4) {

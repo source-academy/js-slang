@@ -49,6 +49,6 @@ export function stringify_compiled(code: machineProgram) {
   return stringifyProgram(code)
 }
 
-export function run_vm(code: machineProgram): any {
-  return runWithP(code)
+export function run_vm(code: machineProgram, context: Context): any {
+  return runWithP(code, context)
 }

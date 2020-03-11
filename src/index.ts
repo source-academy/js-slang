@@ -177,7 +177,7 @@ export async function runInContext(
     const prelude = compilePrelude(context)
     return Promise.resolve({
       status: 'finished',
-      value: runWithP(compileToIns(program, prelude))
+      value: runWithP(compileToIns(program, prelude), context)
     } as Result)
   }
   if (options.useSubst) {

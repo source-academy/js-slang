@@ -1,5 +1,6 @@
 import { SVMFunction } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
+import { runtime } from './misc'
 
 export const vmPrelude = `
 // functions should be sorted by alphabetical order. Refer to SVML spec on wiki
@@ -644,17 +645,40 @@ export const PRIMITIVE_FUNCTION_NAMES = [
 ]
 
 // array of [index, SVMFunction] to manually map over
+// elements with pseudocode are generated with the compiler. comments are added
+// to indicate changes to generated code
 export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
   // display
-  ['display', [0, 0, -1, []]],
+  /*
+    function f(args) {
+      // display(args[0], args[1]);
+      // compile this instead for easier replacing
+      args[0] + args[1]
+    }
+    // replace ADDG opcode (17) with display opcode
+    // change number of arguments to varargs (-1)
+  */
+  [
+    'display',
+    [4, 1, -1, [[42, 0], [2, 0], [54], [42, 0], [2, 1], [54], [OpCodes.DISPLAY], [11], [70]]]
+  ],
 
-  // draw_data TODO
-  ['draw_data', [0, 0, 0, []]],
-
-  // error TODO
-  ['error', [0, 0, 0, []]],
+  // error
+  /* 
+    function f(args) {
+      // error(args[0], args[1]);
+      // compile this instead for easier replacing
+      args[0] + args[1];
+    }
+    // replace ADDG opcode (17) with error opcode
+    // change number of arguments to varargs (-1)
+  */
+  [
+    'error',
+    [4, 1, -1, [[42, 0], [2, 0], [54], [42, 0], [2, 1], [54], [OpCodes.ERROR], [11], [70]]]
+  ],
   // list
-  /* code:
+  /*
     function f(args) {
       let i = array_length(args) - 1;
       let p = null;
@@ -664,13 +688,14 @@ export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
       }
       return p;
     }
+    // change number of arguments to varargs (-1)
   */
   [
     'list',
     [
       3,
       3,
-      -1, // use -1 to indicate varargs
+      -1, // varargs
       [
         [42, 0],
         [66, 2, 1],
@@ -711,8 +736,13 @@ export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
       ]
     ]
   ],
-  // math_hypot varargs TODO
-  ['math_hypot', [0, 0, -1, []]],
+  // math_hypot
+  /*
+    Can't think of a way to deal with this well without repeated
+    calls to many other primitive functions
+    So just leaving the implementation to javascript
+  */
+  ['math_hypot', [1, 1, -1, [[OpCodes.LDLG, 0], [OpCodes.MATH_HYPOT], [OpCodes.RETG]]]],
 
   // math_max varargs TODO
   ['math_max', [0, 0, -1, []]],
@@ -720,17 +750,77 @@ export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
   // math_min varargs TODO
   ['math_min', [0, 0, -1, []]],
 
-  // stream TODO
-  ['stream', [0, 0, -1, []]]
+  // stream
+  /*
+    function f(args) {
+      let i = array_length(args) - 1;
+      let p = null;
+      while (i >= 0) {
+        p = pair(args[i], p);
+        i = i - 1;
+      }
+      return list_to_stream(p);
+    }
+    // change number of arguments to varargs (-1)
+  */
+  [
+    'stream',
+    [
+      3,
+      3,
+      -1, // varargs
+      [
+        [42, 0],
+        [66, 2, 1],
+        [2, 1],
+        [19],
+        [45, 1],
+        [11],
+        [14],
+        [12],
+        [45, 2],
+        [11],
+        [14],
+        [42, 1],
+        [2, 0],
+        [35],
+        [61, 18],
+        [76, 0],
+        [48, 0, 1],
+        [48, 1, 1],
+        [54],
+        [48, 2, 1],
+        [66, 68, 2],
+        [51, 2, 1],
+        [11],
+        [14],
+        [48, 1, 1],
+        [2, 1],
+        [19],
+        [51, 1, 1],
+        [11],
+        [14],
+        [77],
+        [62, -20],
+        [11],
+        [14],
+        [42, 2],
+        [66, 29, 1],
+        [70]
+      ]
+    ]
+  ]
 ]
 
-const NULLARY_PRIMITIVES: [string, number][] = [
-  ['math_random', OpCodes.MATH_RANDOM],
-  ['runtime', OpCodes.RUNTIME]
+// primitives without a function should be manually implemented
+export const NULLARY_PRIMITIVES: [string, number, any?][] = [
+  ['math_random', OpCodes.MATH_RANDOM, Math.random],
+  ['runtime', OpCodes.RUNTIME, runtime]
 ]
 
-const UNARY_PRIMITIVES: [string, number][] = [
+export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['array_length', OpCodes.ARRAY_LEN],
+  ['draw_data', OpCodes.DRAW_DATA],
   ['is_array', OpCodes.IS_ARRAY],
   ['is_boolean', OpCodes.IS_BOOL],
   ['is_function', OpCodes.IS_FUNC],
@@ -738,42 +828,48 @@ const UNARY_PRIMITIVES: [string, number][] = [
   ['is_number', OpCodes.IS_NUMBER],
   ['is_string', OpCodes.IS_STRING],
   ['is_undefined', OpCodes.IS_UNDEFINED],
-  ['math_abs', OpCodes.MATH_ABS],
-  ['math_acos', OpCodes.MATH_ACOS],
-  ['math_acosh', OpCodes.MATH_ACOSH],
-  ['math_asin', OpCodes.MATH_ASIN],
-  ['math_asinh', OpCodes.MATH_ASINH],
-  ['math_atan', OpCodes.MATH_ATAN],
-  ['math_atan2', OpCodes.MATH_ATAN2],
-  ['math_atanh', OpCodes.MATH_ATANH],
-  ['math_cbrt', OpCodes.MATH_CBRT],
-  ['math_ceil', OpCodes.MATH_CEIL],
-  ['math_clz32', OpCodes.MATH_CLZ32],
-  ['math_cos', OpCodes.MATH_COS],
-  ['math_cosh', OpCodes.MATH_COSH],
-  ['math_exp', OpCodes.MATH_EXP],
-  ['math_expm1', OpCodes.MATH_EXPM1],
-  ['math_floor', OpCodes.MATH_FLOOR],
-  ['math_fround', OpCodes.MATH_FROUND],
-  ['math_log', OpCodes.MATH_LOG],
-  ['math_log1p', OpCodes.MATH_LOG1P],
-  ['math_log2', OpCodes.MATH_LOG2],
-  ['math_log10', OpCodes.MATH_LOG10],
-  ['math_round', OpCodes.MATH_ROUND],
-  ['math_sign', OpCodes.MATH_SIGN],
-  ['math_sin', OpCodes.MATH_SIN],
-  ['math_sinh', OpCodes.MATH_SINH],
-  ['math_sqrt', OpCodes.MATH_SQRT],
-  ['math_tan', OpCodes.MATH_TAN],
-  ['math_tanh', OpCodes.MATH_TANH],
-  ['math_trunc', OpCodes.MATH_TRUNC],
+  ['math_abs', OpCodes.MATH_ABS, Math.abs],
+  ['math_acos', OpCodes.MATH_ACOS, Math.acos],
+  ['math_acosh', OpCodes.MATH_ACOSH, Math.acosh],
+  ['math_asin', OpCodes.MATH_ASIN, Math.asin],
+  ['math_asinh', OpCodes.MATH_ASINH, Math.asinh],
+  ['math_atan', OpCodes.MATH_ATAN, Math.atan],
+  ['math_atanh', OpCodes.MATH_ATANH, Math.atanh],
+  ['math_cbrt', OpCodes.MATH_CBRT, Math.cbrt],
+  ['math_ceil', OpCodes.MATH_CEIL, Math.ceil],
+  ['math_clz32', OpCodes.MATH_CLZ32, Math.clz32],
+  ['math_cos', OpCodes.MATH_COS, Math.cos],
+  ['math_cosh', OpCodes.MATH_COSH, Math.cosh],
+  ['math_exp', OpCodes.MATH_EXP, Math.exp],
+  ['math_expm1', OpCodes.MATH_EXPM1, Math.expm1],
+  ['math_floor', OpCodes.MATH_FLOOR, Math.floor],
+  ['math_fround', OpCodes.MATH_FROUND, Math.fround],
+  ['math_log', OpCodes.MATH_LOG, Math.log],
+  ['math_log1p', OpCodes.MATH_LOG1P, Math.log1p],
+  ['math_log2', OpCodes.MATH_LOG2, Math.log2],
+  ['math_log10', OpCodes.MATH_LOG10, Math.log10],
+  ['math_round', OpCodes.MATH_ROUND, Math.round],
+  ['math_sign', OpCodes.MATH_SIGN, Math.sign],
+  ['math_sin', OpCodes.MATH_SIN, Math.sin],
+  ['math_sinh', OpCodes.MATH_SINH, Math.sinh],
+  ['math_sqrt', OpCodes.MATH_SQRT, Math.sqrt],
+  ['math_tan', OpCodes.MATH_TAN, Math.tan],
+  ['math_tanh', OpCodes.MATH_TANH, Math.tanh],
+  ['math_trunc', OpCodes.MATH_TRUNC, Math.trunc],
   ['stringify', OpCodes.STRINGIFY]
 ]
 
-const BINARY_PRIMITIVES: [string, number][] = [
-  ['math_imul', OpCodes.MATH_IMUL],
-  ['math_pow', OpCodes.MATH_POW],
-  ['parse_int', OpCodes.PARSE_INT]
+export const BINARY_PRIMITIVES: [string, number, any?][] = [
+  ['math_atan2', OpCodes.MATH_ATAN2, Math.atan2],
+  ['math_imul', OpCodes.MATH_IMUL, Math.imul],
+  ['math_pow', OpCodes.MATH_POW, Math.pow],
+  ['parse_int', OpCodes.PARSE_INT, parseInt]
+]
+
+export const EXTERNAL_PRIMITIVES: [string, number][] = [
+  ['display', OpCodes.DISPLAY],
+  ['draw_data', OpCodes.DRAW_DATA],
+  ['error', OpCodes.ERROR]
 ]
 
 // helper functions to generate machine code

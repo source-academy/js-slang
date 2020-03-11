@@ -1,6 +1,14 @@
 import { Program, Instruction, SVMFunction, Address } from './svml-compiler'
 import { getName } from './util'
 import OpCodes from './opcodes'
+import {
+  NULLARY_PRIMITIVES,
+  UNARY_PRIMITIVES,
+  BINARY_PRIMITIVES,
+  EXTERNAL_PRIMITIVES
+} from '../stdlib/vm.prelude'
+import { Context } from '../types'
+import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL } from '../constants'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
@@ -19,6 +27,7 @@ const CALLP_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
+const VARARGS_NUM_ARGS = -1
 
 // VIRTUAL MACHINE
 
@@ -860,7 +869,7 @@ M[OpCodes.CALLP] = () => {
   E = RES
 
   // for varargs (-1), put all elements into an array. hacky implementation
-  if (I === -1) {
+  if (I === VARARGS_NUM_ARGS) {
     NEW_ARRAY()
     I = RES
     for (C = G - 1; C >= 0; C = C - 1) {
@@ -937,6 +946,114 @@ M[OpCodes.ARRAY_LEN] = () => {
   PC = PC + 1
 }
 
+M[OpCodes.DISPLAY] = () => {
+  POP_OS()
+  C = RES
+  POP_OS()
+  D = RES
+  externalFunctions.get(OpCodes.DISPLAY)(convertToJsFormat(D), convertToJsFormat(C))
+  NEW_UNDEFINED()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+// only works with lists and numbers
+M[OpCodes.DRAW_DATA] = () => {
+  POP_OS()
+  externalFunctions.get(OpCodes.DRAW_DATA)(convertToJsFormat(RES))
+  NEW_UNDEFINED()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.ERROR] = () => {
+  POP_OS()
+  C = RES
+  POP_OS()
+  D = RES
+  externalFunctions.get(OpCodes.ERROR)(convertToJsFormat(D), convertToJsFormat(C))
+  NEW_UNDEFINED()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_ARRAY] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === ARRAY_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_BOOL] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === BOOL_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_FUNC] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === CLOSURE_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_NULL] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === NULL_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_NUMBER] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === NUMBER_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_STRING] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === STRING_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.IS_UNDEFINED] = () => {
+  POP_OS()
+  A = HEAP[RES + TAG_SLOT] === UNDEFINED_TAG
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.MATH_HYPOT] = () => {
+  POP_OS()
+  A = Math.hypot(...convertToJsFormat(RES))
+  NEW_NUMBER()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+addPrimitiveOpCodeHandlers()
+
 function run(): any {
   // startup
   if (PC < 0) {
@@ -998,7 +1115,7 @@ function convertToJsFormat(node: number): any {
 // this implementation also assumes a correct program, and does not
 // currently check for type correctness
 // an incorrect program will have undefined behaviors
-export function runWithP(p: Program): any {
+export function runWithP(p: Program, context: Context): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
   ENTRY = FUNC[PROG[0]][FUNC_CODE_OFFSET]
@@ -1024,5 +1141,67 @@ export function runWithP(p: Program): any {
   H = 0
   I = 0
 
+  // setup externalBuiltins
+  // certain functions are imported from cadet-frontend
+  // so import them first every time
+  const externals = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables
+  EXTERNAL_PRIMITIVES.forEach(func => extractExternalBuiltin(func, externals))
+
   return run()
+}
+
+function addPrimitiveOpCodeHandlers() {
+  function addNullaryHandler(opcode: number, f: () => number) {
+    M[opcode] = () => {
+      A = f()
+      NEW_NUMBER()
+      A = RES
+      PUSH_OS()
+      PC = PC + 1
+    }
+  }
+  function addUnaryHandler(opcode: number, f: (x: number) => number) {
+    M[opcode] = () => {
+      POP_OS()
+      A = HEAP[RES + NUMBER_VALUE_SLOT]
+      A = f(A)
+      NEW_NUMBER()
+      A = RES
+      PUSH_OS()
+      PC = PC + 1
+    }
+  }
+  // string as well due to parseInt. Only works due to current
+  // representation of strings. Must change if the machine changes
+  // to a more authentic representation of strings
+  function addBinaryHandler(opcode: number, f: (x: number | string, y: number) => number) {
+    M[opcode] = () => {
+      POP_OS()
+      C = HEAP[RES + NUMBER_VALUE_SLOT]
+      POP_OS()
+      D = HEAP[RES + BOXED_VALUE_SLOT]
+      A = f(D, C)
+      NEW_NUMBER()
+      A = RES
+      PUSH_OS()
+      PC = PC + 1
+    }
+  }
+
+  NULLARY_PRIMITIVES.forEach(func => {
+    if (func[2]) addNullaryHandler(func[1], func[2])
+  })
+  UNARY_PRIMITIVES.forEach(func => {
+    if (func[2]) addUnaryHandler(func[1], func[2])
+  })
+  BINARY_PRIMITIVES.forEach(func => {
+    if (func[2]) addBinaryHandler(func[1], func[2])
+  })
+}
+
+const externalFunctions = new Map<number, any>()
+function extractExternalBuiltin(func: [string, number], externals: Map<string, any>) {
+  const name = func[0]
+  const opcode = func[1]
+  externalFunctions.set(opcode, externals.get(name).getValue())
 }
