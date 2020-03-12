@@ -5,7 +5,8 @@ import { UndefinedVariable, ConstAssignment } from '../errors/errors'
 import {
   vmPrelude,
   generatePrimitiveFunctionCode,
-  PRIMITIVE_FUNCTION_NAMES
+  PRIMITIVE_FUNCTION_NAMES,
+  CONSTANT_PRIMITIVES
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { parse } from '../parser/parser'
@@ -470,7 +471,6 @@ const compilers = {
     return { maxStackSize, insertFlag: true }
   },
 
-  // TODO: differentiate primitive functions
   CallExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.CallExpression
     let maxStackOperator = 0
@@ -506,6 +506,13 @@ const compilers = {
       const opCode = VALID_UNARY_OPERATORS.get(node.operator) as number
       const { maxStackSize } = compile(node.argument, indexTable, false)
       addNullaryInstruction(opCode)
+      return { maxStackSize, insertFlag }
+    }
+    if (node.operator === '-') {
+      // special case as no direct opcode
+      const { maxStackSize } = compile(node.argument, indexTable, false)
+      addUnaryInstruction(OpCodes.LGCI, -1)
+      addNullaryInstruction(OpCodes.MULG)
       return { maxStackSize, insertFlag }
     }
     throw Error('Unsupported operation')
@@ -593,14 +600,26 @@ const compilers = {
     node = node as es.Identifier
 
     // undefined TODO: only use LGCU if lookup in environment fails
-    if (node.name === 'undefined') {
-      addNullaryInstruction(OpCodes.LGCU)
-    } else {
-      const { envLevel, index } = indexOf(indexTable, node)
+    let envLevel
+    let index
+    try {
+      ;({ envLevel, index } = indexOf(indexTable, node))
       if (envLevel === 0) {
         addUnaryInstruction(OpCodes.LDLG, index)
       } else {
         addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+      }
+    } catch (error) {
+      const matches = CONSTANT_PRIMITIVES.filter(f => f[0] === error.name)
+      if (matches.length === 0) {
+        throw error
+      }
+      if (typeof matches[0][1] === 'number') {
+        addUnaryInstruction(OpCodes.LGCI, matches[0][1])
+      } else if (matches[0][1] === undefined) {
+        addNullaryInstruction(OpCodes.LGCU)
+      } else {
+        throw new Error('Unknown primitive constant')
       }
     }
     return { maxStackSize: 1, insertFlag }
