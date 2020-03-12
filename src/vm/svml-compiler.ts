@@ -838,14 +838,12 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
   return { maxStackSize, insertFlag: newInsertFlag }
 }
 
-export function compilePrelude(context: Context) {
+export function compileWithPrelude(program: es.Program, context: Context) {
+  // assume vmPrelude is always a correct program
   const prelude = compileToIns(parse(vmPrelude, context)!)
-  const primitives = generatePrimitiveFunctionCode(prelude)
+  generatePrimitiveFunctionCode(prelude)
 
-  primitives.forEach(func => {
-    prelude![1][func[0] + 1] = func[1] // + 1 due to global env
-  })
-  return prelude
+  return compileToIns(program, prelude)
 }
 
 export function compileToIns(program: es.Program, prelude?: Program): Program {

@@ -693,7 +693,7 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stringify'
 ]
 
-const VARARGS_NUM_ARGS = -1
+export const VARARGS_NUM_ARGS = -1
 
 // indicates
 const VARARG_PRIMITIVES: [string, number?, number?][] = [
@@ -785,6 +785,7 @@ function generateBinaryPrimitive(index: number, opcode: number): [number, SVMFun
   return [index, [2, 2, 2, [[OpCodes.LDLG, 0], [OpCodes.LDLG, 1], [opcode], [OpCodes.RETG]]]]
 }
 
+// replaces prelude SVMFunction array with generated instructions
 export function generatePrimitiveFunctionCode(prelude: Program) {
   const preludeFunctions = prelude[1]
   const functions: [number, SVMFunction][] = []
@@ -825,5 +826,4 @@ export function generatePrimitiveFunctionCode(prelude: Program) {
     preludeFunctions[indexToReplace] = newFunc
   })
   convertPrimitiveVarArgs()
-  return functions
 }

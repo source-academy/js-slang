@@ -28,7 +28,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
-import { compileToIns, compilePrelude } from './vm/svml-compiler'
+import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithP } from './vm/svml-machine'
 
 export interface IOptions {
@@ -175,10 +175,9 @@ export async function runInContext(
   }
   if (context.chapter === 3.4) {
     try {
-      const prelude = compilePrelude(context)
       return Promise.resolve({
         status: 'finished',
-        value: runWithP(compileToIns(program, prelude), context)
+        value: runWithP(compileWithPrelude(program, context), context)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {

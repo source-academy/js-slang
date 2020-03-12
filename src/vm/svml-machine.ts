@@ -5,7 +5,8 @@ import {
   NULLARY_PRIMITIVES,
   UNARY_PRIMITIVES,
   BINARY_PRIMITIVES,
-  EXTERNAL_PRIMITIVES
+  EXTERNAL_PRIMITIVES,
+  VARARGS_NUM_ARGS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL } from '../constants'
@@ -27,7 +28,6 @@ const CALLP_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
-const VARARGS_NUM_ARGS = -1
 
 // VIRTUAL MACHINE
 
