@@ -527,6 +527,14 @@ const compilers = {
       addNullaryInstruction(opCode)
       return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
     }
+    if (node.operator === '!==') {
+      // special case as no direct opcode
+      const { maxStackSize: m1 } = compile(node.left, indexTable, false)
+      const { maxStackSize: m2 } = compile(node.right, indexTable, false)
+      addNullaryInstruction(OpCodes.EQG)
+      addNullaryInstruction(OpCodes.NOTG)
+      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
+    }
     throw Error('Unsupported operation')
   },
 
