@@ -174,11 +174,20 @@ export async function runInContext(
     return resolvedErrorPromise
   }
   if (context.chapter === 3.4) {
-    const prelude = compilePrelude(context)
-    return Promise.resolve({
-      status: 'finished',
-      value: runWithP(compileToIns(program, prelude), context)
-    } as Result)
+    try {
+      const prelude = compilePrelude(context)
+      return Promise.resolve({
+        status: 'finished',
+        value: runWithP(compileToIns(program, prelude), context)
+      } as Result)
+    } catch (error) {
+      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+        context.errors.push(error) // use ExceptionErrors for non Source Errors
+        return resolvedErrorPromise
+      }
+      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+      return resolvedErrorPromise
+    }
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
