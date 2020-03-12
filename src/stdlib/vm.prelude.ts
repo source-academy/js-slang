@@ -772,6 +772,12 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['NaN', NaN]
 ]
 
+// name, opcode, number of args
+export const CONCURRENCY_PRIMITIVES: [string, number, number][] = [
+  ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS],
+  ['test_and_set', OpCodes.TEST_AND_SET, 0]
+]
+
 // helper functions to generate machine code
 function generateNullaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
   return [index, [1, 0, 0, [[opcode], [OpCodes.RETG]]]]

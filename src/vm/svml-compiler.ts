@@ -6,7 +6,8 @@ import {
   vmPrelude,
   generatePrimitiveFunctionCode,
   PRIMITIVE_FUNCTION_NAMES,
-  CONSTANT_PRIMITIVES
+  CONSTANT_PRIMITIVES,
+  CONCURRENCY_PRIMITIVES
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { parse } from '../parser/parser'
@@ -47,6 +48,8 @@ export type Program = [
   number, // index of entry point function
   SVMFunction[]
 ]
+
+let chapter = 3
 
 let SVMFunctions: SVMFunction[] = []
 function updateFunction(index: number, stackSize: number, ins: Instruction[]) {
@@ -474,27 +477,46 @@ const compilers = {
   CallExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.CallExpression
     let maxStackOperator = 0
-    let primitiveCall = false
-    let primitiveCallId = NaN
+    let callType: 'normal' | 'primitive' | 'concurrent' = 'normal'
+    let callValue: any = NaN
     if (node.callee.type === 'Identifier') {
       const callee = node.callee as es.Identifier
-      const { envLevel, index, isPrimitive } = indexOf(indexTable, callee)
-      if (isPrimitive) {
-        primitiveCall = true
-        primitiveCallId = index
-      } else if (envLevel === 0) {
-        addUnaryInstruction(OpCodes.LDLG, index)
-      } else {
-        addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+      try {
+        const { envLevel, index, isPrimitive } = indexOf(indexTable, callee)
+        if (isPrimitive) {
+          callType = 'primitive'
+          callValue = index
+        } else if (envLevel === 0) {
+          addUnaryInstruction(OpCodes.LDLG, index)
+        } else {
+          addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+        }
+      } catch (error) {
+        // to accomodate concurrency operators
+        const matches = CONCURRENCY_PRIMITIVES.filter(func => func[0] === error.name)
+        if (matches.length === 0 || chapter !== 3.4) {
+          throw error
+        }
+        callType = 'concurrent'
+        callValue = [matches[0][1], matches[0][2]] // array of [opcode, numargs]
       }
     } else {
-      const { maxStackSize: m1 } = compile(node.callee, indexTable, false)
-      maxStackOperator = m1
+      ;({ maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false))
     }
+
     const maxStackOperands = compileArguments(node.arguments, indexTable)
-    if (primitiveCall) {
-      addBinaryInstruction(OpCodes.CALLP, primitiveCallId, node.arguments.length)
+
+    if (callType === 'primitive') {
+      addBinaryInstruction(OpCodes.CALLP, callValue, node.arguments.length)
+    } else if (callType === 'concurrent') {
+      if (callValue[1] === 0) {
+        addNullaryInstruction(callValue[0])
+      } else {
+        // variadic
+        addUnaryInstruction(callValue[0], node.arguments.length)
+      }
     } else {
+      // normal call
       addUnaryInstruction(OpCodes.CALL, node.arguments.length)
     }
     return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
@@ -618,6 +640,7 @@ const compilers = {
         addBinaryInstruction(OpCodes.LDPG, index, envLevel)
       }
     } catch (error) {
+      // only possible to have UndefinedVariable error
       const matches = CONSTANT_PRIMITIVES.filter(f => f[0] === error.name)
       if (matches.length === 0) {
         throw error
@@ -843,15 +866,20 @@ export function compileWithPrelude(program: es.Program, context: Context) {
   const prelude = compileToIns(parse(vmPrelude, context)!)
   generatePrimitiveFunctionCode(prelude)
 
-  return compileToIns(program, prelude)
+  return compileToIns(program, prelude, 3.4)
 }
 
-export function compileToIns(program: es.Program, prelude?: Program): Program {
+export function compileToIns(
+  program: es.Program,
+  prelude?: Program,
+  runChapter: number = 3
+): Program {
   // reset variables
   SVMFunctions = []
   functionCode = []
   toCompile = []
   toplevel = true
+  chapter = runChapter
 
   transformForLoopsToWhileLoops(program)
   const locals = localNames(program, new Map<string, EnvEntry>())

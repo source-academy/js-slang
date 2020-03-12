@@ -128,7 +128,11 @@ export enum OpCodes {
   PARSE_INT = 124,
   RUNTIME = 125,
   STREAM = 126,
-  STRINGIFY = 127
+  STRINGIFY = 127,
+
+  // Source 3.4 Concurrency Opcodes
+  EXECUTE = 128,
+  TEST_AND_SET = 129
 }
 
 export default OpCodes
