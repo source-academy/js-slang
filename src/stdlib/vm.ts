@@ -22,7 +22,7 @@ export function parse_and_compile(x: string, context: Context, includePrelude: b
       throw new ParseError('Unreachable')
     }
 
-    const primitives = generatePrimitiveFunctionCode()
+    const primitives = generatePrimitiveFunctionCode(prelude)
     primitives.forEach(func => {
       prelude![1][func[0] + 1] = func[1] // + 1 due to global env
     })

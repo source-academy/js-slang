@@ -840,7 +840,7 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
 
 export function compilePrelude(context: Context) {
   const prelude = compileToIns(parse(vmPrelude, context)!)
-  const primitives = generatePrimitiveFunctionCode()
+  const primitives = generatePrimitiveFunctionCode(prelude)
 
   primitives.forEach(func => {
     prelude![1][func[0] + 1] = func[1] // + 1 due to global env

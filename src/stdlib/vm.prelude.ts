@@ -1,10 +1,11 @@
-import { SVMFunction } from '../vm/svml-compiler'
+import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
 import { runtime } from './misc'
 
 export const vmPrelude = `
 // functions should be sorted by alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code
+// customs require slight modification to the generated code
 
 // 0
 function accumulate(f, initial, xs) {
@@ -40,9 +41,13 @@ function build_stream(n, fun) {
   return build(0);
 }
 
-// 5 placeholder
-function display(v) {
-  return 1;
+// 5 custom
+// replace MODG opcode (25) with display opcode
+// change number of arguments to varargs (-1)
+function display(args) {
+  // display(args[0], args[1]);
+  // compile this instead for easier replacing
+  args[0] % args[1];
 }
 
 // 6 placeholder
@@ -68,9 +73,13 @@ function equal(x, y) {
   return is_pair(x) && is_pair(y) ? equal(head(x), head(y)) && equal(tail(x), tail(y)) : x === y;
 }
 
-// 10 placeholder
-function error(v) {
-  return 1;
+// 10 custom
+// replace MODG opcode (25) with error opcode
+// change number of arguments to varargs (-1)
+function error(args) {
+  // error(args[0], args[1]);
+  // compile this instead for easier replacing
+  args[0] % args[1];
 }
 
 // 11
@@ -167,9 +176,16 @@ function length(xs) {
   return is_null(xs) ? 0 : 1 + length(tail(xs));
 }
 
-// 27 placeholder
-function list(xs) {
-  return 1;
+// 27 custom
+// change number of arguments to varargs (-1)
+function list(args) {
+  let i = array_length(args) - 1;
+  let p = null;
+  while (i >= 0) {
+    p = pair(args[i], p);
+    i = i - 1;
+  }
+  return p;
 }
 
 // 28
@@ -285,9 +301,15 @@ function math_fround(xs) {
   return 1;
 }
 
-// 49 placeholder
-function math_hypot(xs) {
-  return 1;
+// 49 custom
+// can't think of a way to deal with math_hypot
+// without incurring a lot of redundant function calls
+// so just using the ... operator instead on the machine
+// change number of arguments to varargs (-1)
+// replace NOTG opcode with MATH_HYPOT opcode
+function math_hypot(args) {
+  // compile this instead for easier replacing
+  return !args;
 }
 
 // 50 placeholder
@@ -315,14 +337,34 @@ function math_log10(xs) {
   return 1;
 }
 
-// 55 placeholder
-function math_max(xs) {
-  return 1;
+// 55 custom
+// replace MODG opcode (25) with math_max opcode
+// change number of arguments to varargs (-1)
+function math_max(args) {
+  let i = array_length(args) - 1;
+  let x = -Infinity;
+  while (i >= 0) {
+    // x = math_max(args[i],x)
+    // compile this instead for easier replacing
+    x = args[i] % x;
+    i = i - 1;
+  }
+  return x;
 }
 
-// 56 placeholder
-function math_min(xs) {
-  return 1;
+// 56 custom
+// replace MODG opcode (25) with math_max opcode
+// change number of arguments to varargs (-1)
+function math_min(args) {
+  let i = array_length(args) - 1;
+  let x = Infinity;
+  while (i >= 0) {
+    // x = math_min(args[i],x)
+    // compile this instead for easier replacing
+    x = args[i] % x;
+    i = i - 1;
+  }
+  return x;
 }
 
 // 57 placeholder
@@ -429,9 +471,16 @@ function set_tail(xs, x) {
   return undefined;
 }
 
-// 76 placeholder
-function stream(x,y) {
-  return 1;
+// 76 custom
+// change number of arguments to varargs (-1)
+function f(args) {
+  let i = array_length(args) - 1;
+  let p = null;
+  while (i >= 0) {
+    p = pair(args[i], p);
+    i = i - 1;
+  }
+  return list_to_stream(p);
 }
 
 // 77
@@ -525,7 +574,7 @@ function stream_reverse(xs) {
 
 // 87 unlike Source version, does not fail gracefully
 function stream_tail(xs) {
-    return xs();
+    return xs[1]();
 }
 
 // 88
@@ -549,7 +598,7 @@ function stringify(x) {
 (() => 0)();
 `
 
-// list of primitive functions in alphabetical order
+// list of all primitive functions in alphabetical order
 export const PRIMITIVE_FUNCTION_NAMES = [
   'accumulate',
   'append',
@@ -644,172 +693,17 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stringify'
 ]
 
-// array of [index, SVMFunction] to manually map over
-// elements with pseudocode are generated with the compiler. comments are added
-// to indicate changes to generated code
-export const CUSTOM_PRIMITIVES: [string, SVMFunction][] = [
-  // display
-  /*
-    function f(args) {
-      // display(args[0], args[1]);
-      // compile this instead for easier replacing
-      args[0] + args[1]
-    }
-    // replace ADDG opcode (17) with display opcode
-    // change number of arguments to varargs (-1)
-  */
-  [
-    'display',
-    [4, 1, -1, [[42, 0], [2, 0], [54], [42, 0], [2, 1], [54], [OpCodes.DISPLAY], [11], [70]]]
-  ],
+const VARARGS_NUM_ARGS = -1
 
-  // error
-  /* 
-    function f(args) {
-      // error(args[0], args[1]);
-      // compile this instead for easier replacing
-      args[0] + args[1];
-    }
-    // replace ADDG opcode (17) with error opcode
-    // change number of arguments to varargs (-1)
-  */
-  [
-    'error',
-    [4, 1, -1, [[42, 0], [2, 0], [54], [42, 0], [2, 1], [54], [OpCodes.ERROR], [11], [70]]]
-  ],
-  // list
-  /*
-    function f(args) {
-      let i = array_length(args) - 1;
-      let p = null;
-      while (i >= 0) {
-        p = pair(args[i], p);
-        i = i - 1;
-      }
-      return p;
-    }
-    // change number of arguments to varargs (-1)
-  */
-  [
-    'list',
-    [
-      3,
-      3,
-      -1, // varargs
-      [
-        [42, 0],
-        [66, 2, 1],
-        [2, 1],
-        [19],
-        [45, 1],
-        [11],
-        [14],
-        [12],
-        [45, 2],
-        [11],
-        [14],
-        [42, 1],
-        [2, 0],
-        [35],
-        [61, 18],
-        [76, 0],
-        [48, 0, 1],
-        [48, 1, 1],
-        [54],
-        [48, 2, 1],
-        [66, 68, 2],
-        [51, 2, 1],
-        [11],
-        [14],
-        [48, 1, 1],
-        [2, 1],
-        [19],
-        [51, 1, 1],
-        [11],
-        [14],
-        [77],
-        [62, -20],
-        [11],
-        [14],
-        [42, 2],
-        [70]
-      ]
-    ]
-  ],
-  // math_hypot
-  /*
-    Can't think of a way to deal with this well without repeated
-    calls to many other primitive functions
-    So just leaving the implementation to javascript
-  */
-  ['math_hypot', [1, 1, -1, [[OpCodes.LDLG, 0], [OpCodes.MATH_HYPOT], [OpCodes.RETG]]]],
-
-  // math_max varargs TODO
-  ['math_max', [0, 0, -1, []]],
-
-  // math_min varargs TODO
-  ['math_min', [0, 0, -1, []]],
-
-  // stream
-  /*
-    function f(args) {
-      let i = array_length(args) - 1;
-      let p = null;
-      while (i >= 0) {
-        p = pair(args[i], p);
-        i = i - 1;
-      }
-      return list_to_stream(p);
-    }
-    // change number of arguments to varargs (-1)
-  */
-  [
-    'stream',
-    [
-      3,
-      3,
-      -1, // varargs
-      [
-        [42, 0],
-        [66, 2, 1],
-        [2, 1],
-        [19],
-        [45, 1],
-        [11],
-        [14],
-        [12],
-        [45, 2],
-        [11],
-        [14],
-        [42, 1],
-        [2, 0],
-        [35],
-        [61, 18],
-        [76, 0],
-        [48, 0, 1],
-        [48, 1, 1],
-        [54],
-        [48, 2, 1],
-        [66, 68, 2],
-        [51, 2, 1],
-        [11],
-        [14],
-        [48, 1, 1],
-        [2, 1],
-        [19],
-        [51, 1, 1],
-        [11],
-        [14],
-        [77],
-        [62, -20],
-        [11],
-        [14],
-        [42, 2],
-        [66, 29, 1],
-        [70]
-      ]
-    ]
-  ]
+// indicates
+const VARARG_PRIMITIVES: [string, number?, number?][] = [
+  ['display', OpCodes.MODG, OpCodes.DISPLAY],
+  ['error', OpCodes.MODG, OpCodes.ERROR],
+  ['math_max', OpCodes.MODG, OpCodes.MATH_MAX],
+  ['math_min', OpCodes.MODG, OpCodes.MATH_MIN],
+  ['math_hypot', OpCodes.NOTG, OpCodes.MATH_HYPOT],
+  ['list'],
+  ['stream']
 ]
 
 // primitives without a function should be manually implemented
@@ -872,6 +766,12 @@ export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['error', OpCodes.ERROR]
 ]
 
+export const CONSTANT_PRIMITIVES: [string, any][] = [
+  ['undefined', undefined],
+  ['Infinity', Infinity],
+  ['NaN', NaN]
+]
+
 // helper functions to generate machine code
 function generateNullaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
   return [index, [1, 0, 0, [[opcode], [OpCodes.RETG]]]]
@@ -885,13 +785,30 @@ function generateBinaryPrimitive(index: number, opcode: number): [number, SVMFun
   return [index, [2, 2, 2, [[OpCodes.LDLG, 0], [OpCodes.LDLG, 1], [opcode], [OpCodes.RETG]]]]
 }
 
-export function generatePrimitiveFunctionCode() {
+export function generatePrimitiveFunctionCode(prelude: Program) {
+  const preludeFunctions = prelude[1]
   const functions: [number, SVMFunction][] = []
   const nameToIndexMap = new Map<string, number>()
+  function convertPrimitiveVarArgs() {
+    VARARG_PRIMITIVES.forEach(f => {
+      const index = nameToIndexMap.get(f[0])!
+      const opcodeToReplace = f[1]
+      const opcodeToUse = f[2]
+      // replace function's numargs to VARARGS_NUM_ARGS as indicator
+      preludeFunctions[index + 1][2] = VARARGS_NUM_ARGS
+      // replace opcode with corresponding opcode
+      if (opcodeToReplace !== undefined && opcodeToUse !== undefined) {
+        const instructions = preludeFunctions[index + 1][3]
+        instructions.forEach(ins => {
+          if (ins[0] === opcodeToReplace) ins[0] = opcodeToUse
+        })
+      }
+    })
+  }
+
   PRIMITIVE_FUNCTION_NAMES.forEach((name, index) => {
     nameToIndexMap.set(name, index)
   })
-  CUSTOM_PRIMITIVES.forEach(f => functions.push([nameToIndexMap.get(f[0])!, f[1]]))
   NULLARY_PRIMITIVES.forEach(f =>
     functions.push(generateNullaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
   )
@@ -901,5 +818,12 @@ export function generatePrimitiveFunctionCode() {
   BINARY_PRIMITIVES.forEach(f =>
     functions.push(generateBinaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
   )
+
+  functions.forEach(func => {
+    const newFunc = func[1]
+    const indexToReplace = func[0] + 1 // + 1 due to global env
+    preludeFunctions[indexToReplace] = newFunc
+  })
+  convertPrimitiveVarArgs()
   return functions
 }

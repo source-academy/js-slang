@@ -1194,7 +1194,10 @@ function addPrimitiveOpCodeHandlers() {
   UNARY_PRIMITIVES.forEach(func => {
     if (func[2]) addUnaryHandler(func[1], func[2])
   })
-  BINARY_PRIMITIVES.forEach(func => {
+  BINARY_PRIMITIVES.concat([
+    ['', OpCodes.MATH_MAX, Math.max], // only want the handler
+    ['', OpCodes.MATH_MIN, Math.min]
+  ]).forEach(func => {
     if (func[2]) addBinaryHandler(func[1], func[2])
   })
 }
