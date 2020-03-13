@@ -14,16 +14,16 @@ Notes
 
 - for simplicity, heap is not represented in the rules
 - ``v1`` and ``v2`` are function values, hereafter known as (concurrent) threads, and may be represented as ``(<>, pc1, e1, prs1)`` and ``(<>, pc2, e2, prs2)`` respectively
-- ``execute(...)`` cannot appear in either of ``v1`` or ``v2``
+- ``concurrent_execute(...)`` cannot appear in either of ``v1`` or ``v2``
 
 Compiling
 ---------
 
 .. code-block::
 
-   E1 -> s1 /\ E2 -> s2
+   E1 -> s1 ... En -> sn
    ---------
-   execute(E1,E2) -> s1.s2.CALLP (EXECUTE.RTN) 2
+   concurrent_execute(E1, ... ,En) -> s1. ... .sn.EXECUTE n
 
 Running
 -------
