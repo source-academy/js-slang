@@ -132,7 +132,8 @@ export enum OpCodes {
 
   // Source 3.4 Concurrency Opcodes
   EXECUTE = 128,
-  TEST_AND_SET = 129
+  TEST_AND_SET = 129,
+  CLEAR = 130
 }
 
 export default OpCodes

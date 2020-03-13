@@ -775,7 +775,8 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
 // name, opcode, number of args
 export const CONCURRENCY_PRIMITIVES: [string, number, number][] = [
   ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS],
-  ['test_and_set', OpCodes.TEST_AND_SET, 0]
+  ['test_and_set', OpCodes.TEST_AND_SET, 0],
+  ['clear', OpCodes.CLEAR, 0]
 ]
 
 // helper functions to generate machine code
