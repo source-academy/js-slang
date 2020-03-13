@@ -1,11 +1,6 @@
 VM
 ==
 
-General Notes
-^^^^^^^^^^^^^
-
-- Since ``CALLP`` is not yet finalized as of this writing, we refer to the primitive function with ``id`` as ``(OP.RTN)``, where ``OP`` is the opcode of the primitive function.
-
 Execute Rules
 ^^^^^^^^^^^^^
 
@@ -132,20 +127,17 @@ Compiling
 .. code-block::
 
    ---------
-   mutex() -> CALLP (MUTEX.RTN) 0
-where (MUTEX.RTN) is the instructions of the mutex allocation function.
+   mutex() -> MUTEX 0
 
 .. code-block::
 
    ---------
-   wait(Id) -> LGCS Id.CALLP (WAIT.RTN) 1
-where (WAIT.RTN) is the instructions of the wait function.
+   wait(Id) -> LGCS Id.WAIT 1
 
 .. code-block::
 
    ---------
-   signal(Id) -> LGCS Id.CALLP (SIGNAL.RTN) 1
-where (SIGNAL.RTN) is the instructions of the signal function.
+   signal(Id) -> LGCS Id.SIGNAL 1
 
 Running
 -------
