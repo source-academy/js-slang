@@ -333,22 +333,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
 
-    const error = rttc.checkUnaryExpression(node, node.operator, value)
-    if (typeof error !== 'string') {
-      return handleRuntimeError(context, error)
+    const checkType = rttc.checkUnaryExpression(node, node.operator, value)
+    if (typeof checkType !== 'string') {
+      return handleRuntimeError(context, checkType)
     }
-    return evaluateUnaryExpression(node.operator, value)
+    return evaluateUnaryExpression(node.operator, value, checkType)
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    const error = rttc.checkBinaryExpression(node, node.operator, left, right)
-    if (typeof error !== 'string') {
-      return handleRuntimeError(context, error as rttc.TypeError)
+    const checkType = rttc.checkBinaryExpression(node, node.operator, left, right)
+    if (typeof checkType !== 'string') {
+      return handleRuntimeError(context, checkType as rttc.TypeError)
     }
-    return evaluateBinaryExpression(node.operator, left, right)
+    return evaluateBinaryExpression(node.operator, left, right, checkType)
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
