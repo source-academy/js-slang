@@ -38,9 +38,9 @@ Starting ``EXECUTE``, loading thread frames into register ``p``:
 
 .. code-block::
 
-   s(pc) = EXECUTE
+   s(pc) = EXECUTE n
    ---------
-   ((<>, pc1, e1).(<>, pc2, e2).os, pc, e, rs, p, 0, <>) -> (<>, <>, <>, <>, ((<>, pc1, e1).prs1).((<>, pc2, e2).prs2).p, 0, (os, pc+2, e).rs)
+   ((<>, pc1, e1).(<>, pc2, e2).os, pc, e, rs, p, 0, <>) -> (<>, <>, <>, <>, ((<>, pc1, e1).prs1).((<>, pc2, e2).prs2).p, 0, (os, pc+1, e).rs)
 
 Beginning thread execution:
 
@@ -121,10 +121,10 @@ Running
 
    s(pc) = TEST_AND_SET /\ b = false
    ---------
-   ([b, ...].os, pc) -> ([true, ...].os, pc)
+   ([b, ...].os, pc) -> ([true, ...].os, pc+1)
 
 .. code-block::
 
    s(pc) = CLEAR
    ---------
-   ([b, ...].os, pc) -> ([false, ...].os, pc)
+   ([b, ...].os, pc) -> ([false, ...].os, pc+1)
