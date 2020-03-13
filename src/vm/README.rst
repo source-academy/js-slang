@@ -82,95 +82,36 @@ Ending ``EXECUTE``:
    ---------
    (<>, <>, <>, <>, <>, 0, (os, pc, e).rs) -> (os, pc, e, rs, <>, 0, <>)
 
-Mutex Semantic Domain
-^^^^^^^^^^^^^^^^^^^^^
-
-To prevent mutexes from being mutated outside of the current scope, we need to do something like
-
-.. code-block::
-
-   const x = mutex();
-To do this, we need to define a new semantic domain. Let us call this domain **Mut**, with definition **Bool**.
-
-Semantic Function
------------------
-
-Where ``m`` is a value in domain **Mut**,
-
-.. code-block::
-
-   ---------
-   mutex() -> *true*
-
-.. code-block::
-
-   ---------
-   wait(m) -> *false*
-
-.. code-block::
-
-   ---------
-   signal(m) -> *true*
-
-Mutex Rules
+Test_and_set Rules
 ^^^^^^^^^^^
 
 Notes
 -----
 
-- for simplicity, ``p``, ``n`` and ``seq`` registers are not represented in the rules
-- ``Id`` is the name of a variable
+- for simplicity, ``e``, ``rs``, ``p``, ``n`` and ``seq`` registers, and heap are not represented in the rules
+- ``test_and_set`` is an atomic operation
 
 Compiling
 ---------
 
 .. code-block::
 
+   E -> s
    ---------
-   mutex() -> MUTEX 0
-
-.. code-block::
-
-   ---------
-   wait(Id) -> LGCS Id.WAIT 1
-
-.. code-block::
-
-   ---------
-   signal(Id) -> LGCS Id.SIGNAL 1
+   test_and_set(E) -> s.TEST_AND_SET
+where E is a list, whose head is a boolean.
 
 Running
 -------
 
 .. code-block::
 
-   s(pc) = MUTEX
+   s(pc) = TEST_AND_SET /\ b = true
    ---------
-   (os, pc, e, rs, h) -> (m.os, pc, e, rs, h')
-where
-``h' = update(m, v, 1, h'')``,
-``(m, h'') = newnode(h)``
+   ([b, ...].os, pc) -> ([b, ...]os, pc+1)
 
 .. code-block::
 
-   s(pc) = WAIT /\ deref(Id, v, h) = 1
+   s(pc) = TEST_AND_SET /\ b = false
    ---------
-   (m.os, pc, e, rs, h) -> (os, pc+1, e, rs, h')
-where
-``h' = update(m, v, 0, h)``
-
-.. code-block::
-
-   s(pc) = WAIT /\ deref(Id, v, h) = 0
-   ---------
-   (m.os, pc, e, rs, h) -> (m.os, pc, e, rs, h')
-where
-``h' = update(m, v, 0, h)``
-
-.. code-block::
-
-   s(pc) = SIGNAL
-   ---------
-   (m.os, pc, e, rs, h) -> (os, pc, e, rs, h')
-where
-``h' = update(m, v, 1, h)``
+   ([b, ...].os, pc) -> ([true, ...].os, pc)
