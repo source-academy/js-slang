@@ -6,7 +6,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
-import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
+import { evaluateBinaryExpression, evaluateUnaryExpression, logicalOp } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
@@ -356,7 +356,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
+    const left = yield* evaluate(node.left, context)
+    const right = yield* evaluate(node.right, context)
+
+    try {
+      return logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
+    } catch (e) {
+      return handleRuntimeError(context, e as rttc.TypeError);
+    }
   },
 
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
