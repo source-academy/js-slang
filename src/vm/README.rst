@@ -115,13 +115,13 @@ Running
 
    s(pc) = TEST_AND_SET /\ b = true
    ---------
-   ([b, ...].os, pc) -> ([b, ...]os, pc+1)
+   ([b, ...].os, pc) -> (b.os, pc+1)
 
 .. code-block::
 
    s(pc) = TEST_AND_SET /\ b = false
    ---------
-   ([b, ...].os, pc) -> ([true, ...].os, pc+1)
+   ([b, ...].os, pc) -> (true.os, pc+1)
 
 .. code-block::
 
