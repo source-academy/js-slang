@@ -58,7 +58,7 @@ Running thread:
 
    s(pc) /= RET /\ to > 0
    ---------
-   (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs, tq, to-1, seq)
+   (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs', tq, to-1, seq)
 where the primed values are just like normal VM code execution.
 
 Thread timeout:
