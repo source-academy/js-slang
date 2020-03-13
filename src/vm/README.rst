@@ -46,7 +46,6 @@ Beginning thread execution:
 
 .. code-block::
 
-   pc = <>
    ---------
    (<>, <>, <>, <>, ((os, pc, e).prs).p, 0, seq) -> (os, pc, e, prs, p, c, seq)
 where ``c`` is a constant timeout value.
