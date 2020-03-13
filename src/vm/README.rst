@@ -41,7 +41,7 @@ Starting ``EXECUTE``, loading thread frames into register ``t``:
    s(pc) = EXECUTE n
    ---------
    ((<>, pc1, e1). ... .(<>, pcn, en).os, pc, e, rs, <>, 0, <>) -> (<>, <>, <>, <>, (<>, pc1, e1). ... .(<>, pcn, en), 0, (os, pc+1, e).rs)
-Threads initially don't have runtime stacks.
+Threads initially don't have runtime stacks. Note the empty ``os``, ``pc``, ``e``, and ``rs`` registers: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
 
 Beginning thread execution:
 
@@ -66,6 +66,7 @@ Thread timeout:
 
    ---------
    (os, pc, e, trs, t, 0, seq) -> (<>, <>, <>, <>, t.((os, pc, e).trs), 0, seq)
+When a thread times out and has not finished execution (has not executed the ``RET`` statement), then it is queued on the thread queue.
 
 Returning from thread:
 
@@ -74,6 +75,7 @@ Returning from thread:
    s(pc) = RET /\ n > 0
    ---------
    (os, pc, e, trs, t, n, seq) -> (<>, <>, <>, <>, t, 0, seq)
+When a thread executes the ``RET`` statement, it is not added back to the thread queue,
 
 Ending ``EXECUTE``:
 
@@ -81,6 +83,7 @@ Ending ``EXECUTE``:
 
    ---------
    (<>, <>, <>, <>, <>, 0, (os, pc, e).rs) -> (os, pc, e, rs, <>, 0, <>)
+When the thread queue is empty, we restore normal sequential execution.
 
 Test_and_set Rules
 ^^^^^^^^^^^
