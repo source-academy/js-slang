@@ -40,7 +40,8 @@ Starting ``EXECUTE``, loading thread frames into register ``t``:
 
    s(pc) = EXECUTE n
    ---------
-   ((<>, pc1, e1).(<>, pc2, e2).os, pc, e, rs, t, 0, <>) -> (<>, <>, <>, <>, ((<>, pc1, e1).trs1).((<>, pc2, e2).trs2).t, 0, (os, pc+1, e).rs)
+   ((<>, pc1, e1). ... .(<>, pcn, en).os, pc, e, rs, <>, 0, <>) -> (<>, <>, <>, <>, (<>, pc1, e1). ... .(<>, pcn, en), 0, (os, pc+1, e).rs)
+Threads initially don't have runtime stacks.
 
 Beginning thread execution:
 
