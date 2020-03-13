@@ -25,17 +25,17 @@ Running
 -------
 
 There are additional structures in our VM:
-- ``t``, a register which is a list of thread suspensions
-- ``n``, a register initialized with ``0``, that indicates how many instructions are left for a thread to run
+- ``tq``, a register which is a queue of thread suspensions
+- ``to``, a register initialized with ``0``, that indicates how many instructions are left for a thread to run
 -  Where ``the registers`` are ``os``, ``pc``, ``e``, and ``rs``, there is the structure ``seq``, a register initialized with ``<>``, that stores the registers when ``EXECUTE`` starts, and from which the registers are restored when ``EXECUTE`` ends. The register ``seq`` is named after the fact that the registers are only used in the sequential context.
 
 The tuple representing our VM will have three more corresponding structures:
 
 .. code-block::
 
-   (os, pc, e, rs, t, n, seq)
+   (os, pc, e, rs, tq, to, seq)
 
-Starting ``EXECUTE``, loading thread frames into register ``t``:
+Starting ``EXECUTE``, loading thread frames into register ``tq``:
 
 .. code-block::
 
@@ -49,16 +49,16 @@ Beginning thread execution:
 .. code-block::
 
    ---------
-   (g, g, g, g, ((os, pc, e).trs).t, 0, seq) -> (os, pc, e, trs, t, c, seq)
+   (g, g, g, g, ((os, pc, e).trs).tq, 0, seq) -> (os, pc, e, trs, tq, c, seq)
 where ``c`` is a constant timeout value.
 
 Running thread:
 
 .. code-block::
 
-   s(pc) /= RET /\ n > 0
+   s(pc) /= RET /\ to > 0
    ---------
-   (os, pc, e, trs, t, n, seq) -> (os', pc', e', trs, t, n-1, seq)
+   (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs, tq, to-1, seq)
 where the primed values are just like normal VM code execution.
 
 Thread timeout:
@@ -66,16 +66,16 @@ Thread timeout:
 .. code-block::
 
    ---------
-   (os, pc, e, trs, t, 0, seq) -> (g, g, g, g, t.((os, pc, e).trs), 0, seq)
+   (os, pc, e, trs, tq, 0, seq) -> (g, g, g, g, tq.((os, pc, e).trs), 0, seq)
 When a thread times out and has not finished execution (has not executed the ``RET`` statement), then it is queued on the thread queue.
 
 Returning from thread:
 
 .. code-block::
 
-   s(pc) = RET /\ n > 0
+   s(pc) = RET /\ to > 0
    ---------
-   (os, pc, e, trs, t, n, seq) -> (g, g, g, g, t, 0, seq)
+   (os, pc, e, trs, tq, to, seq) -> (g, g, g, g, tq, 0, seq)
 When a thread executes the ``RET`` statement, it is not added back to the thread queue,
 
 Ending ``EXECUTE``:
