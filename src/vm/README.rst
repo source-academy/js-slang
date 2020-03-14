@@ -65,7 +65,7 @@ Running thread, returning from function:
 
 .. code-block::
 
-   s(pc) = RET /\ to > 0 /\ tq /= <>
+   s(pc) = RET /\ to > 0 /\ trs /= <>
    ---------
    (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs', tq, to-1, seq)
 where the primed values are just like normal VM code execution. Note: the thread may execute the ``RET`` statement inside a function, and the thread does the normal thing of popping ``trs`` and so on.
@@ -82,7 +82,7 @@ Returning from thread:
 
 .. code-block::
 
-   s(pc) = RET /\ to > 0 /\ tq = <>
+   s(pc) = RET /\ to > 0 /\ trs = <>
    ---------
    (os, pc, e, trs, tq, to, seq) -> (g, <>, g, g, tq, 0, seq)
 When a thread executes the ``RET`` statement, and there are no more thread runtime stacks, the thread is not added back to the thread queue,
