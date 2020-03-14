@@ -61,6 +61,15 @@ Running thread:
    (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs', tq, to-1, seq)
 where the primed values are just like normal VM code execution.
 
+Running thread, returning from function:
+
+.. code-block::
+
+   s(pc) = RET /\ to > 0 /\ tq /= <>
+   ---------
+   (os, pc, e, trs, tq, to, seq) -> (os', pc', e', trs', tq, to-1, seq)
+where the primed values are just like normal VM code execution. Note: the thread may execute the ``RET`` statement inside a function, and the thread does the normal thing of popping ``trs`` and so on.
+
 Thread timeout:
 
 .. code-block::
@@ -75,8 +84,8 @@ Returning from thread:
 
    s(pc) = RET /\ to > 0
    ---------
-   (os, pc, e, trs, tq, to, seq) -> (<>, <>, <>, <>, tq, 0, seq)
-When a thread executes the ``RET`` statement, it is not added back to the thread queue,
+   (os, pc, e, trs, <>, to, seq) -> (<>, <>, <>, <>, <>, 0, seq)
+When a thread executes the ``RET`` statement, and there are no more thread runtime stacks, the thread is not added back to the thread queue,
 
 Ending ``EXECUTE``:
 
