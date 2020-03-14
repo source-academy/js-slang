@@ -41,8 +41,8 @@ Starting ``EXECUTE``, loading thread frames into register ``tq``:
 
    s(pc) = EXECUTE n
    ---------
-   ((<>, pc1, e1). ... .(<>, pcn, en).os, pc, e, rs, <>, 0, <>) -> (g, <>, g, g, (<>, pc1, e1). ... .(<>, pcn, en), 0, (os, pc+1, e).rs)
-Threads initially don't have runtime stacks. Note the transition from empty ``seq`` to nonempty ``seq``: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
+   (((<>, pc1, e1).<>). ... .((<>, pcn, en).<>).os, pc, e, rs, <>, 0, <>) -> (g, <>, g, g, ((<>, pc1, e1).<>). ... .((<>, pcn, en).<>), 0, (os, pc+1, e).rs)
+Each thread is a four-tuple of ``os``, ``pc``, ``e``, and ``rs``. Initially, threads have empty ``os`` and empty ``rs``. Note the transition from empty ``seq`` to nonempty ``seq``: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
 
 Beginning thread execution:
 
