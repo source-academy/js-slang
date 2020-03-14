@@ -126,17 +126,10 @@ Running
 
 .. code-block::
 
-   s(pc) = TEST_AND_SET /\ b = true
+   s(pc) = TEST_AND_SET
    ---------
    (p.os, pc) -> (b.os, pc+1)
-where ``p`` is the address of a list stored on the heap. The head of this list is ``b`` and ``b`` is a boolean.
-
-.. code-block::
-
-   s(pc) = TEST_AND_SET /\ b = false
-   ---------
-   (p.os, pc) -> (false.os, pc+1)
-where ``p`` is the address of a list stored on the heap. The head of this list is ``b`` and ``b`` is a boolean.
+where ``p`` is the address of a list stored on the heap. The head of this list is initially ``b``, where ``b`` is a boolean. After this rule executes, the head of this list is set to ``true``.
 
 .. code-block::
 
