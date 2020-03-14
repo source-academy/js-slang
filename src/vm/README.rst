@@ -82,9 +82,9 @@ Returning from thread:
 
 .. code-block::
 
-   s(pc) = RET /\ to > 0
+   s(pc) = RET /\ to > 0 /\ tq = <>
    ---------
-   (os, pc, e, trs, <>, to, seq) -> (<>, <>, <>, <>, <>, 0, seq)
+   (os, pc, e, trs, tq, to, seq) -> (<>, <>, <>, <>, tq, 0, seq)
 When a thread executes the ``RET`` statement, and there are no more thread runtime stacks, the thread is not added back to the thread queue,
 
 Ending ``EXECUTE``:
