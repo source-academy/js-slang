@@ -112,14 +112,14 @@ Compiling
    E -> s
    ---------
    test_and_set(E) -> s.TEST_AND_SET
-where E is a list, whose head is a boolean.
+where ``E`` is a list, whose head is a boolean.
 
 .. code-block::
 
    E -> s
    ---------
    clear(E) -> s.CLEAR
-where E is a list, whose head is a boolean.
+where ``E`` is a list, whose head is a boolean.
 
 Running
 -------
@@ -128,16 +128,19 @@ Running
 
    s(pc) = TEST_AND_SET /\ b = true
    ---------
-   ([b, ...].os, pc) -> (b.os, pc+1)
+   (p.os, pc) -> (b.os, pc+1)
+where ``p`` is the address of a list stored on the heap. The head of this list is ``b`` and ``b`` is a boolean.
 
 .. code-block::
 
    s(pc) = TEST_AND_SET /\ b = false
    ---------
-   ([b, ...].os, pc) -> (true.os, pc+1)
+   (p.os, pc) -> (false.os, pc+1)
+where ``p`` is the address of a list stored on the heap. The head of this list is ``b`` and ``b`` is a boolean.
 
 .. code-block::
 
    s(pc) = CLEAR
    ---------
-   ([b, ...].os, pc) -> ([false, ...].os, pc+1)
+   (p.os, pc) -> (os, pc+1)
+where ``p`` is the address of a list stored on the heap. The head of this list is updated to ``false``.
