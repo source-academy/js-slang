@@ -345,7 +345,7 @@ const RTS_FRAME_ENV_SLOT = 5
 const RTS_FRAME_OS_SLOT = 6
 const RTS_FRAME_FUNC_INS_SLOT = 7
 
-// changes A, B, expects current PC, ENV, OS in their registers
+// changes A, B, expects current PC, ENV, OS, P in their registers
 function NEW_RTS_FRAME() {
   A = RTS_FRAME_TAG
   B = RTS_FRAME_SIZE
