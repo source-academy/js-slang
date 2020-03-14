@@ -27,7 +27,7 @@ Running
 There are additional structures in our VM:
 - ``tq``, a register which is a queue of thread suspensions
 - ``to``, a register initialized with ``0``, that indicates how many instructions are left for a thread to run
--  Where ``the registers`` are ``os``, ``pc``, ``e``, and ``rs``, there is the structure ``seq``, a register initialized with ``<>``, that stores the registers when ``EXECUTE`` starts, and from which the registers are restored when ``EXECUTE`` ends. The register ``seq`` is named after the fact that the registers are only used in the sequential context.
+- ``seq``, a register initialized with ``<>``, that represents an empty sequential runtime stack. When entering the concurrent context, ``os``, ``pc``, ``e``, and ``rs`` are copied onto ``seq``, and when exiting the concurrent context, they are popped from ``seq``.
 
 The tuple representing our VM will have three more corresponding structures:
 
