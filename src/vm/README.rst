@@ -41,7 +41,7 @@ Starting ``EXECUTE``, loading thread frames into register ``tq``:
 
    s(pc) = EXECUTE n
    ---------
-   ((<>, pc1, e1). ... .(<>, pcn, en).os, pc, e, rs, <>, 0, <>) -> (g, g, g, g, (<>, pc1, e1). ... .(<>, pcn, en), 0, (os, pc+1, e).rs)
+   ((<>, pc1, e1). ... .(<>, pcn, en).os, pc, e, rs, <>, 0, <>) -> (g, <>, g, g, (<>, pc1, e1). ... .(<>, pcn, en), 0, (os, pc+1, e).rs)
 Threads initially don't have runtime stacks. Note the transition from empty ``seq`` to nonempty ``seq``: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
 
 Beginning thread execution:
@@ -49,8 +49,8 @@ Beginning thread execution:
 .. code-block::
 
    ---------
-   (g, g, g, g, ((os, pc, e).trs).tq, 0, seq) -> (os, pc, e, trs, tq, c, seq)
-where ``c`` is a constant timeout value.
+   (g, <>, g, g, ((os, pc, e).trs).tq, 0, seq) -> (os, pc, e, trs, tq, c, seq)
+where ``c`` is a constant timeout value. Note: ``pc`` is ``<>`` to disambiguate this rule from the thread timeout rule.
 
 Running thread:
 
@@ -75,7 +75,7 @@ Thread timeout:
 .. code-block::
 
    ---------
-   (os, pc, e, trs, tq, 0, seq) -> (g, g, g, g, tq.((os, pc, e).trs), 0, seq)
+   (os, pc, e, trs, tq, 0, seq) -> (g, <>, g, g, tq.((os, pc, e).trs), 0, seq)
 When a thread times out and has not finished execution (has not executed the ``RET`` statement), then it is queued on the thread queue.
 
 Returning from thread:
@@ -84,7 +84,7 @@ Returning from thread:
 
    s(pc) = RET /\ to > 0 /\ tq = <>
    ---------
-   (os, pc, e, trs, tq, to, seq) -> (g, g, g, g, tq, 0, seq)
+   (os, pc, e, trs, tq, to, seq) -> (g, <>, g, g, tq, 0, seq)
 When a thread executes the ``RET`` statement, and there are no more thread runtime stacks, the thread is not added back to the thread queue,
 
 Ending ``EXECUTE``:
@@ -92,7 +92,7 @@ Ending ``EXECUTE``:
 .. code-block::
 
    ---------
-   (g, g, g, g, <>, 0, (os, pc, e).rs) -> (os, pc, e, rs, <>, 0, <>)
+   (g, <>, g, g, <>, 0, (os, pc, e).rs) -> (os, pc, e, rs, <>, 0, <>)
 When the thread queue is empty, we restore normal sequential execution.
 
 Test_and_set Rules
