@@ -9,6 +9,11 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import {
+  infiniteLoopStaticAnalysis,
+  cycleDetection,
+  makeFunctionState
+} from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
 
@@ -302,6 +307,32 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
     }
+    if(node.callee.type === 'Identifier') {
+      const name = node.callee.name
+      const relevantVars = context.infiniteLoopDetection.relevantVars[node.callee.name]
+      if(relevantVars){ // temp: fix for functions that have not been analysed
+        if(context.runtime.environments.length > context.infiniteLoopDetection.stackThreshold) {
+          const stacks:es.CallExpression[] = []
+          for (const env of context.runtime.environments) {
+            if (env.callExpression) {
+              stacks.push(env.callExpression)
+            }
+          }
+          const states = stacks.map(x=>makeFunctionState(name, x.arguments, relevantVars))
+          if(cycleDetection(states)){
+            handleRuntimeError(context, new errors.InfiniteLoopError1(node))
+          } else {
+            context.infiniteLoopDetection.stackThreshold *= 2
+          }
+          for(const checker of context.infiniteLoopDetection.checkers) {
+            if(checker(name, args)) {
+              handleRuntimeError(context, new errors.InfiniteLoopError2(node))
+            }
+          }
+        }
+      }
+    }
+
     const result = yield* apply(context, callee, args, node, thisContext)
     return result
   },
@@ -487,6 +518,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
+    infiniteLoopStaticAnalysis(node, context);
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined

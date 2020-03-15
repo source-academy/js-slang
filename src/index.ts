@@ -40,7 +40,7 @@ export interface IOptions {
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  executionMethod: 'auto',
+  executionMethod: 'interpreter',
   originalMaxExecTime: 1000,
   useSubst: false
 }

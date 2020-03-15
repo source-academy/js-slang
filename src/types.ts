@@ -90,6 +90,13 @@ export interface Context<T = any> {
       scheduler: Scheduler
     }
   }
+  /** infinite loop detection */
+  infiniteLoopDetection: {
+    status: boolean
+    relevantVars: Map<string, number[]>
+    stackThreshold: number
+    checkers: ((name: string, args: any[]) => boolean)[]
+  }
 
   /**
    * Used for storing external properties.

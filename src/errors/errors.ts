@@ -233,3 +233,31 @@ export class SetPropertyError extends RuntimeSourceError {
     return 'TODO'
   }
 }
+
+export class InfiniteLoopError1 extends RuntimeSourceError {
+  constructor(node: es.Node) {
+    super(node)
+  }
+
+  public explain() {
+    return `Infinite loop detected. Check your recursive function calls. Did you forget the base case?`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}
+
+export class InfiniteLoopError2 extends RuntimeSourceError {
+  constructor(node: es.Node) {
+    super(node)
+  }
+
+  public explain() {
+    return `Infinite loop detected. Check your function calls and their if statements.`
+  }
+
+  public elaborate() {
+    return 'TODO'
+  }
+}

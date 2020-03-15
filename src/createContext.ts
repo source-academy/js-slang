@@ -39,6 +39,13 @@ const createGlobalEnvironment = () => ({
   head: {}
 })
 
+const createEmptyInfiniteLoopDetection = () => ({
+  status: true,
+  relevantVars: new Map(),
+  stackThreshold: 100,
+  checkers: []
+})
+
 export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
@@ -60,6 +67,7 @@ export const createEmptyContext = <T>(
     numberOfOuterEnvironments: 1,
     prelude: null,
     debugger: createEmptyDebugger(),
+    infiniteLoopDetection: createEmptyInfiniteLoopDetection(),
     contextId: length - 1,
     executionMethod: 'auto'
   }
