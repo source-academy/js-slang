@@ -10,6 +10,7 @@ import {
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL } from '../constants'
+import { stringify } from '../utils/stringify'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
@@ -75,9 +76,9 @@ function show_executing(s: string) {
 }
 
 // for debugging: show all registers
-export function show_registers(s: string, is_show_executing=true) {
+export function show_registers(s: string, isShowExecuting = true) {
   let str = ''
-  if (is_show_executing) {
+  if (isShowExecuting) {
     str = show_executing(s) + '\n'
   }
   str += '--- REGISTERS ---' + s + '\n'
@@ -1049,6 +1050,15 @@ M[OpCodes.MATH_HYPOT] = () => {
   POP_OS()
   A = Math.hypot(...convertToJsFormat(RES))
   NEW_NUMBER()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.STRINGIFY] = () => {
+  POP_OS()
+  A = stringify(convertToJsFormat(RES))
+  NEW_STRING()
   A = RES
   PUSH_OS()
   PC = PC + 1

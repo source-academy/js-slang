@@ -512,8 +512,9 @@ const compilers = {
       if (callValue[1] === 0) {
         addNullaryInstruction(callValue[0])
       } else {
-        // variadic
+        // variadic, for EXECUTE
         addUnaryInstruction(callValue[0], node.arguments.length)
+        addNullaryInstruction(OpCodes.LGCU)
       }
     } else {
       // normal call
@@ -888,11 +889,7 @@ export function compileToIns(
     SVMFunctions.push(...prelude[1])
   }
   const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0 // GE + # primitive func
-  if (prelude) {
-    SVMFunctions[PRIMITIVE_FUNCTION_NAMES.length + 1] = topFunction
-  } else {
-    SVMFunctions.push(topFunction)
-  }
+  SVMFunctions[topFunctionIndex] = topFunction
 
   const extendedTable = extendIndexTable(makeIndexTableWithPrimitives(), locals)
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
