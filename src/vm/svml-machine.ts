@@ -75,10 +75,12 @@ function show_executing(s: string) {
 }
 
 // for debugging: show all registers
-export function show_registers(s: string) {
+export function show_registers(s: string, is_show_executing=true) {
   let str = ''
-  str = show_executing(s) + '\n'
-  str += '--- REGISTERS ---' + '\n'
+  if (is_show_executing) {
+    str = show_executing(s) + '\n'
+  }
+  str += '--- REGISTERS ---' + s + '\n'
   str += 'RES:' + RES.toString() + '\n'
   str += 'A  :' + A.toString() + '\n'
   str += 'B  :' + B.toString() + '\n'
