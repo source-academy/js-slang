@@ -29,6 +29,7 @@ const CALLP_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
+const EXECUTE_NUM_ARGS_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -55,6 +56,18 @@ let ENV = -1
 let OS = -Infinity
 // temporary value, used by PUSH and POP; initially a dummy value
 let RES = -Infinity
+
+/**
+ * when executing concurrent code
+ */
+// TQ is array of threads, each thread is a pair of (runtime stack, index to top of runtime stack)
+let TQ: any[] = []
+// TO is timeout counter: how many instructions are left for a thread to run
+let TO = 0
+// TO_DEFAULT is default amount to timeout by
+const TO_DEFAULT = 100
+// SEQ is array for OS, PC, ENV, RTS, TOP_RTS when executing concurrent code
+let SEQ: any[] = []
 
 // some general-purpose registers
 let A: any = 0
@@ -94,7 +107,10 @@ export function show_registers(s: string, isShowExecuting = true) {
   str += 'OS :' + OS.toString() + '\n'
   str += 'ENV:' + ENV.toString() + '\n'
   str += 'RTS:' + RTS.toString() + '\n'
-  str += 'TOP_RTS:' + TOP_RTS.toString()
+  str += 'TOP_RTS:' + TOP_RTS.toString() + '\n'
+  str += 'TQ:' + TQ.toString() + '\n'
+  str += 'TO:' + TO.toString() + '\n'
+  str += 'SEQ:' + SEQ.toString()
   return str
 }
 
@@ -348,7 +364,7 @@ const RTS_FRAME_ENV_SLOT = 5
 const RTS_FRAME_OS_SLOT = 6
 const RTS_FRAME_FUNC_INS_SLOT = 7
 
-// changes A, B, expects current PC, ENV, OS, P in their registers
+// changes A, B, expects current PC, ENV, OS, P, TOP_RTS in their registers
 function NEW_RTS_FRAME() {
   A = RTS_FRAME_TAG
   B = RTS_FRAME_SIZE
@@ -1066,6 +1082,70 @@ M[OpCodes.STRINGIFY] = () => {
 
 addPrimitiveOpCodeHandlers()
 
+M[OpCodes.EXECUTE] = () => {
+  // Save current context and old RTS
+  E = ENV // Point to previous env when calling NEW_ENVIRONMENT
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P, TOP_RTS
+  A = RES
+  PUSH_RTS() // RTS.length !== 0, TOP_RTS++
+  SEQ = [RTS, TOP_RTS] // SEQ.length !== 0
+  // Now OS, PC, ENV, P are saved, and RTS and TOP_RTS are copied
+  // All these registers can be used for anything
+  G = P[PC][EXECUTE_NUM_ARGS_OFFSET]
+  for (I = 0; I < G; I = I + 1) {
+    EXECUTE_NULLIFY_REGISTERS() // RTS = []
+    POP_OS()
+    H = RES
+    H = HEAP[H + CLOSURE_FUNC_INDEX_SLOT]
+    F = FUNC[H]
+    A = F[FUNC_MAX_STACK_SIZE_OFFSET]
+    NEW_OS()
+    OS = RES
+    A = F[FUNC_ENV_SIZE_OFFSET]
+    D = E
+    NEW_ENVIRONMENT()
+    ENV = RES
+    PC = -1 // will be saved as PC = 0
+    TOP_RTS = -1 // will be saved as TOP_RTS = 0
+    P = F[FUNC_CODE_OFFSET]
+    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+    A = RES
+    PUSH_RTS() // TOP_RTS++
+    TQ.push([RTS, TOP_RTS])
+    console.log(show_registers('thread:'+I.toString()+'/'+G.toString(), false));
+  }
+  EXECUTE_NULLIFY_REGISTERS() // PC = NIL
+}
+
+function EXECUTE_NULLIFY_REGISTERS() {
+  OS = NIL
+  PC = NIL
+  ENV = NIL
+  RTS = []
+  TO = 0
+}
+
+M[OpCodes.TEST_AND_SET] = () => {
+  POP_OS()
+  A = HEAP[RES + ARRAY_VALUE_SLOT]
+  if (A[0]) {
+    A = true
+  } else {
+    A[0] = true
+    A = false
+  }
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.CLEAR] = () => {
+  POP_OS()
+  A = HEAP[RES + ARRAY_VALUE_SLOT]
+  A[0] = false
+  PUSH_OS()
+  PC = PC + 1
+}
+
 function run(): any {
   // startup
   if (PC < 0) {
@@ -1083,13 +1163,73 @@ function run(): any {
   }
 
   while (RUNNING) {
-    // show_registers("run loop");
-    // show_heap("run loop");
-    // show_executing('')
-    if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
-      throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
-    } else {
+    if (SEQ.length === 0) { // sequential context
+      // show_registers("run loop");
+      // show_heap("run loop");
+      // show_executing('')
+      if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
+        throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
+      }
       M[P[PC][INS_OPCODE_OFFSET]]()
+    } else { // concurrent context
+      if (TO > 0) {
+        if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) { // execute normally
+          M[P[PC][INS_OPCODE_OFFSET]]()
+          TO = TO - 1
+	  console.log('execute normally');
+	  console.log(show_registers('execute normally', false));
+        } else {
+          // Intercept RETG
+          // Here, RTS is thread runtime stack
+          if (RTS.length !== 0) { // return from function
+            M[P[PC][INS_OPCODE_OFFSET]]()
+            TO = TO - 1
+	    console.log('return from function');
+	    console.log(show_registers('return from function', false));
+          } else { // return from thread
+            EXECUTE_NULLIFY_REGISTERS() // PC = NIL, TO = 0
+	    console.log('return from thread');
+	    console.log(show_registers('return from thread', false));
+          }
+        }
+      } else if (TO === 0) {
+        if (TQ.length === 0) { // end concurrent_execute
+          [RTS, TOP_RTS] = SEQ
+          POP_RTS() // TOP_RTS--
+          H = RES
+          PC = HEAP[H + RTS_FRAME_PC_SLOT]
+          ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+          P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
+          OS = HEAP[H + RTS_FRAME_OS_SLOT]
+          SEQ = []
+	  console.log('end concurrent');
+	  console.log(show_registers('end concurrent', false));
+	} else {
+          if (PC === NIL) { // begin thread
+            [RTS, TOP_RTS] = TQ.shift()
+            POP_RTS() // TOP_RTS--
+            H = RES
+            PC = HEAP[H + RTS_FRAME_PC_SLOT]
+            ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+            P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
+            OS = HEAP[H + RTS_FRAME_OS_SLOT]
+            TO = TO_DEFAULT
+	    console.log('begin thread');
+	    console.log(show_registers('begin thread', false));
+          } else { // timeout thread
+            NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+            A = RES
+            PUSH_RTS() // TOP_RTS++
+            TQ.push([RTS, TOP_RTS])
+            EXECUTE_NULLIFY_REGISTERS() // PC = NIL
+	    console.log('timeout thread');
+	    console.log(show_registers('timeout thread', false));
+          }
+        }
+      } else {
+        throw Error('TO cannot be negative')
+      }
+      console.log('PC:'+PC.toString()+' P.l:'+P.length.toString()+'\nP:\n'+P.map(y=>y.map(x=>getName(x as number)+y.slice(1).toString())).join('\n'));
     }
   }
   if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
@@ -1139,6 +1279,9 @@ export function runWithP(p: Program, context: Context): any {
   OS = -Infinity
   RES = -Infinity
   RTS = []
+  TQ = []
+  TO = 0
+  SEQ = []
   TOP_RTS = -1
   STATE = NORMAL
   RUNNING = true
