@@ -2,28 +2,28 @@ import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
 import { runtime } from './misc'
 
+// functions should be sorted in alphabetical order. Refer to SVML spec on wiki
+// placeholders should be manually replaced with the correct machine code.
+// customs require slight modification to the generated code, which is automated
+// in the function calls below.
+// added _ in front of every function name so that function calls
+// use CALLP instead of CALL when compiled.
 export const vmPrelude = `
-// functions should be sorted by alphabetical order. Refer to SVML spec on wiki
-// placeholders should be manually replaced with the correct machine code
-// customs require slight modification to the generated code
-
 // 0
-function accumulate(f, initial, xs) {
+function _accumulate(f, initial, xs) {
   return is_null(xs) ? initial : f(head(xs), accumulate(f, initial, tail(xs)));
 }
 
 // 1
-function append(xs, ys) {
+function _append(xs, ys) {
   return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
 }
 
 // 2 placeholder
-function array_length(arr) {
-    return 0;
-}
+function _array_length(arr) {}
 
 // 3
-function build_list(n, fun) {
+function _build_list(n, fun) {
   function build(i, fun, already_built) {
     return i < 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));
   }
@@ -31,7 +31,7 @@ function build_list(n, fun) {
 }
 
 // 4
-function build_stream(n, fun) {
+function _build_stream(n, fun) {
   function build(i) {
     return i >= n
       ? null
@@ -44,24 +44,22 @@ function build_stream(n, fun) {
 // 5 custom
 // replace MODG opcode (25) with display opcode
 // change number of arguments to varargs (-1)
-function display(args) {
+function _display(args) {
   // display(args[0], args[1]);
   // compile this instead for easier replacing
   args[0] % args[1];
 }
 
 // 6 placeholder
-function draw_data(v) {
-  return 1;
-}
+function _draw_data(v) {}
 
 // 7
-function enum_list(start, end) {
+function _enum_list(start, end) {
   return start > end ? null : pair(start, enum_list(start + 1, end));
 }
 
 // 8
-function enum_stream(start, end) {
+function _enum_stream(start, end) {
   return start > end
     ? null
     : pair(start,
@@ -69,21 +67,21 @@ function enum_stream(start, end) {
 }
 
 // 9
-function equal(x, y) {
+function _equal(x, y) {
   return is_pair(x) && is_pair(y) ? equal(head(x), head(y)) && equal(tail(x), tail(y)) : x === y;
 }
 
 // 10 custom
 // replace MODG opcode (25) with error opcode
 // change number of arguments to varargs (-1)
-function error(args) {
+function _error(args) {
   // error(args[0], args[1]);
   // compile this instead for easier replacing
   args[0] % args[1];
 }
 
 // 11
-function eval_stream(s, n) {
+function _eval_stream(s, n) {
   return n === 0
     ? null
     : pair(head(s),
@@ -92,7 +90,7 @@ function eval_stream(s, n) {
 }
 
 // 12
-function filter(pred, xs) {
+function _filter(pred, xs) {
   return is_null(xs)
     ? xs
     : pred(head(xs))
@@ -101,7 +99,7 @@ function filter(pred, xs) {
 }
 
 // 13
-function for_each(fun, xs) {
+function _for_each(fun, xs) {
   if (is_null(xs)) {
     return true;
   } else {
@@ -111,74 +109,60 @@ function for_each(fun, xs) {
 }
 
 // 14 unlike Source version, does not fail gracefully
-function head(xs) {
+function _head(xs) {
   return xs[0];
 }
 
 // 15
-function integers_from(n) {
+function _integers_from(n) {
   return pair(n,
     () => integers_from(n + 1));
 }
 
 // 16 placeholder
-function is_array(x) {
-  return 1;
-}
+function _is_array(x) {}
 
 // 17 placeholder
-function is_boolean(x) {
-  return 1;
-}
+function _is_boolean(x) {}
 
 // 18 placeholder
-function is_function(x) {
-  return 1;
-}
+function _is_function(x) {}
 
 // 19
-function is_list(xs) {
+function _is_list(xs) {
   return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
 }
 
 // 20 placeholder
-function is_null(x) {
-  return 1;
-}
+function _is_null(x) {}
 
 // 21 placeholder
-function is_number(x) {
-  return 1;
-}
+function _is_number(x) {}
 
 // 22
-function is_pair(x) {
+function _is_pair(x) {
   return is_array(x) && array_length(x) === 2;
 }
 
 // 23
-function is_stream(xs) {
+function _is_stream(xs) {
   return is_null(xs) || (is_pair(xs) && is_stream(stream_tail(xs)));
 }
 
 // 24 placeholder
-function is_string(x) {
-  return 1;
-}
+function _is_string(x) {}
 
 // 25 placeholder
-function is_undefined(x) {
-  return 1;
-}
+function _is_undefined(x) {}
 
 // 26
-function length(xs) {
+function _length(xs) {
   return is_null(xs) ? 0 : 1 + length(tail(xs));
 }
 
 // 27 custom
 // change number of arguments to varargs (-1)
-function list(args) {
+function _list(args) {
   let i = array_length(args) - 1;
   let p = null;
   while (i >= 0) {
@@ -189,12 +173,12 @@ function list(args) {
 }
 
 // 28
-function list_ref(xs, n) {
+function _list_ref(xs, n) {
   return n === 0 ? head(xs) : list_ref(tail(xs), n - 1);
 }
 
 // 29
-function list_to_stream(xs) {
+function _list_to_stream(xs) {
   return is_null(xs)
     ? null
     : pair(head(xs),
@@ -202,7 +186,7 @@ function list_to_stream(xs) {
 }
 
 // 30
-function list_to_string(xs) {
+function _list_to_string(xs) {
     return is_null(xs)
         ? "null"
         : is_pair(xs)
@@ -212,94 +196,60 @@ function list_to_string(xs) {
 }
 
 // 31
-function map(f, xs) {
+function _map(f, xs) {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
 }
 
 // 32 placeholder
-function math_abs(xs) {
-  return 1;
-}
+function _math_abs(xs) {}
 
 // 33 placeholder
-function math_acos(xs) {
-  return 1;
-}
+function _math_acos(xs) {}
 
 // 34 placeholder
-function math_acosh(xs) {
-  return 1;
-}
+function _math_acosh(xs) {}
 
 // 35 placeholder
-function math_asin(xs) {
-  return 1;
-}
+function _math_asin(xs) {}
 
 // 36 placeholder
-function math_asinh(xs) {
-  return 1;
-}
+function _math_asinh(xs) {}
 
 // 37 placeholder
-function math_atan(xs) {
-  return 1;
-}
+function _math_atan(xs) {}
 
 // 38 placeholder
-function math_atan2(xs) {
-  return 1;
-}
+function _math_atan2(xs) {}
 
 // 39 placeholder
-function math_atanh(xs) {
-  return 1;
-}
+function _math_atanh(xs) {}
 
 // 40 placeholder
-function math_cbrt(xs) {
-  return 1;
-}
+function _math_cbrt(xs) {}
 
 // 41 placeholder
-function math_ceil(xs) {
-  return 1;
-}
+function _math_ceil(xs) {}
 
 // 42 placeholder
-function math_clz32(xs) {
-  return 1;
-}
+function _math_clz32(xs) {}
 
 // 43 placeholder
-function math_cos(xs) {
-  return 1;
-}
+function _math_cos(xs) {}
 
 // 44 placeholder
-function math_cosh(xs) {
-  return 1;
-}
+function _math_cosh(xs) {}
 
 // 45 placeholder
-function math_exp(xs) {
-  return 1;
-}
+function _math_exp(xs) {}
 
 // 46 placeholder
-function math_expm1(xs) {
-  return 1;
-}
+function _math_expm1(xs) {}
 
 // 47 placeholder
-function math_floor(xs) {
-  return 1;
-}
+function _math_floor(xs) {}
 
 // 48 placeholder
-function math_fround(xs) {
-  return 1;
-}
+function _math_fround(xs) {}
 
 // 49 custom
 // can't think of a way to deal with math_hypot
@@ -307,40 +257,30 @@ function math_fround(xs) {
 // so just using the ... operator instead on the machine
 // change number of arguments to varargs (-1)
 // replace NOTG opcode with MATH_HYPOT opcode
-function math_hypot(args) {
+function _math_hypot(args) {
   // compile this instead for easier replacing
   return !args;
 }
 
 // 50 placeholder
-function math_imul(xs) {
-  return 1;
-}
+function _math_imul(xs) {}
 
 // 51 placeholder
-function math_log(xs) {
-  return 1;
-}
+function _math_log(xs) {}
 
 // 52 placeholder
-function math_log1p(xs) {
-  return 1;
-}
+function _math_log1p(xs) {}
 
 // 53 placeholder
-function math_log2(xs) {
-  return 1;
-}
+function _math_log2(xs) {}
 
 // 54 placeholder
-function math_log10(xs) {
-  return 1;
-}
+function _math_log10(xs) {}
 
 // 55 custom
 // replace MODG opcode (25) with math_max opcode
 // change number of arguments to varargs (-1)
-function math_max(args) {
+function _math_max(args) {
   let i = array_length(args) - 1;
   let x = -Infinity;
   while (i >= 0) {
@@ -355,7 +295,7 @@ function math_max(args) {
 // 56 custom
 // replace MODG opcode (25) with math_max opcode
 // change number of arguments to varargs (-1)
-function math_min(args) {
+function _math_min(args) {
   let i = array_length(args) - 1;
   let x = Infinity;
   while (i >= 0) {
@@ -368,77 +308,55 @@ function math_min(args) {
 }
 
 // 57 placeholder
-function math_pow(xs) {
-  return 1;
-}
+function _math_pow(xs) {}
 
 // 58 placeholder
-function math_random(xs) {
-  return 1;
-}
+function _math_random(xs) {}
 
 // 59 placeholder
-function math_round(xs) {
-  return 1;
-}
+function _math_round(xs) {}
 
 // 60 placeholder
-function math_sign(xs) {
-  return 1;
-}
+function _math_sign(xs) {}
 
 // 61 placeholder
-function math_sin(xs) {
-  return 1;
-}
+function _math_sin(xs) {}
 
 // 62 placeholder
-function math_sinh(xs) {
-  return 1;
-}
+function _math_sinh(xs) {}
 
 // 63 placeholder
-function math_sqrt(xs) {
-  return 1;
-}
+function _math_sqrt(xs) {}
 
 // 64 placeholder
-function math_tan(xs) {
-  return 1;
-}
+function _math_tan(xs) {}
 
 // 65 placeholder
-function math_tanh(xs) {
-  return 1;
-}
+function _math_tanh(xs) {}
 
 // 66 placeholder
-function math_trunc(xs) {
-  return 1;
-}
+function _math_trunc(xs) {}
 
 // 67
-function member(v, xs) {
+function _member(v, xs) {
   return is_null(xs) ? null : v === head(xs) ? xs : member(v, tail(xs));
 }
 
 // 68
-function pair(x, y) {
+function _pair(x, y) {
   return [x, y];
 }
 
 // 69 placeholder
-function parse_int(x,y) {
-  return 1;
-}
+function _parse_int(x,y) {}
 
 // 70
-function remove(v, xs) {
+function _remove(v, xs) {
   return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
 }
 
 // 71
-function remove_all(v, xs) {
+function _remove_all(v, xs) {
   return is_null(xs)
     ? null
     : v === head(xs)
@@ -447,7 +365,7 @@ function remove_all(v, xs) {
 }
 
 // 72
-function reverse(xs) {
+function _reverse(xs) {
   function rev(original, reversed) {
     return is_null(original) ? reversed : rev(tail(original), pair(head(original), reversed));
   }
@@ -455,25 +373,21 @@ function reverse(xs) {
 }
 
 // 73 placeholder
-function runtime(x) {
-  return 1;
-}
+function _runtime(x) {}
 
 // 74 unlike Source version, does not fail gracefully
-function set_head(xs,x) {
+function _set_head(xs,x) {
   xs[0] = x;
-  return undefined;
 }
 
 // 75 unlike Source version, does not fail gracefully
-function set_tail(xs, x) {
+function _set_tail(xs, x) {
   xs[1] = x;
-  return undefined;
 }
 
 // 76 custom
 // change number of arguments to varargs (-1)
-function f(args) {
+function _stream(args) {
   let i = array_length(args) - 1;
   let p = null;
   while (i >= 0) {
@@ -484,7 +398,7 @@ function f(args) {
 }
 
 // 77
-function stream_append(xs, ys) {
+function _stream_append(xs, ys) {
   return is_null(xs)
     ? ys
     : pair(head(xs),
@@ -492,7 +406,7 @@ function stream_append(xs, ys) {
 }
 
 // 78
-function stream_filter(p, s) {
+function _stream_filter(p, s) {
   return is_null(s)
     ? null
     : p(head(s))
@@ -502,7 +416,7 @@ function stream_filter(p, s) {
 }
 
 // 79
-function stream_for_each(fun, xs) {
+function _stream_for_each(fun, xs) {
     if (is_null(xs)) {
       return true;
     } else {
@@ -512,14 +426,14 @@ function stream_for_each(fun, xs) {
 }
 
 // 80
-function stream_length(xs) {
+function _stream_length(xs) {
   return is_null(xs)
     ? 0
     : 1 + stream_length(stream_tail(xs));
 }
 
 // 81
-function stream_map(f, s) {
+function _stream_map(f, s) {
   return is_null(s)
     ? null
     : pair(f(head(s)),
@@ -527,7 +441,7 @@ function stream_map(f, s) {
 }
 
 // 82
-function stream_member(x, s) {
+function _stream_member(x, s) {
   return is_null(s)
     ? null
     : head(s) === x
@@ -536,14 +450,14 @@ function stream_member(x, s) {
 }
 
 // 83
-function stream_ref(s, n) {
+function _stream_ref(s, n) {
   return n === 0
     ? head(s)
     : stream_ref(stream_tail(s), n - 1);
 }
 
 // 84
-function stream_remove(v, xs) {
+function _stream_remove(v, xs) {
   return is_null(xs)
     ? null
     : v === head(xs)
@@ -553,7 +467,7 @@ function stream_remove(v, xs) {
 }
 
 // 85
-function stream_remove_all(v, xs) {
+function _stream_remove_all(v, xs) {
   return is_null(xs)
     ? null
     : v === head(xs)
@@ -562,7 +476,7 @@ function stream_remove_all(v, xs) {
 }
 
 // 86
-function stream_reverse(xs) {
+function _stream_reverse(xs) {
   function rev(original, reversed) {
     return is_null(original)
       ? reversed
@@ -573,26 +487,24 @@ function stream_reverse(xs) {
 }
 
 // 87 unlike Source version, does not fail gracefully
-function stream_tail(xs) {
+function _stream_tail(xs) {
     return xs[1]();
 }
 
 // 88
-function stream_to_list(xs) {
+function _stream_to_list(xs) {
   return is_null(xs)
     ? null
     : pair(head(xs), stream_to_list(stream_tail(xs)));
 }
 
 // 89 unlike Source version, does not fail gracefully
-function tail(xs) {
+function _tail(xs) {
   return xs[1];
 }
 
 // 90 placeholder
-function stringify(x) {
-  return 1;
-}
+function _stringify(x) {}
 
 // hack to make the call to Program easier, just replace the index 92
 (() => 0)();
