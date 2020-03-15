@@ -83,7 +83,7 @@ let I: any = 0
 function show_executing(s: string) {
   let str = ''
   str += '--- RUN ---' + s + '\n'
-  str += 'PC :' + PC.toString() + '\n'
+  str += 'PC :' + PC + '\n'
   str += 'instr:' + getName(P[PC][INS_OPCODE_OFFSET])
   return str
 }
@@ -95,22 +95,22 @@ export function show_registers(s: string, isShowExecuting = true) {
     str = show_executing(s) + '\n'
   }
   str += '--- REGISTERS ---' + s + '\n'
-  str += 'RES:' + RES.toString() + '\n'
-  str += 'A  :' + A.toString() + '\n'
-  str += 'B  :' + B.toString() + '\n'
-  str += 'C  :' + C.toString() + '\n'
-  str += 'D  :' + D.toString() + '\n'
-  str += 'E  :' + E.toString() + '\n'
-  str += 'F  :' + F.toString() + '\n'
-  str += 'G  :' + G.toString() + '\n'
-  str += 'H  :' + H.toString() + '\n'
-  str += 'OS :' + OS.toString() + '\n'
-  str += 'ENV:' + ENV.toString() + '\n'
-  str += 'RTS:' + RTS.toString() + '\n'
-  str += 'TOP_RTS:' + TOP_RTS.toString() + '\n'
-  str += 'TQ:' + TQ.toString() + '\n'
-  str += 'TO:' + TO.toString() + '\n'
-  str += 'SEQ:' + SEQ.toString()
+  str += 'RES:' + RES + '\n'
+  str += 'A  :' + A + '\n'
+  str += 'B  :' + B + '\n'
+  str += 'C  :' + C + '\n'
+  str += 'D  :' + D + '\n'
+  str += 'E  :' + E + '\n'
+  str += 'F  :' + F + '\n'
+  str += 'G  :' + G + '\n'
+  str += 'H  :' + H + '\n'
+  str += 'OS :' + OS + '\n'
+  str += 'ENV:' + ENV + '\n'
+  str += 'RTS:' + RTS + '\n'
+  str += 'TOP_RTS:' + TOP_RTS + '\n'
+  str += 'TQ:' + TQ + '\n'
+  str += 'TO:' + TO + '\n'
+  str += 'SEQ:' + SEQ
   return str
 }
 
@@ -462,9 +462,9 @@ export function show_heap(s: string) {
   str += '--- HEAP --- ' + s
   while (i < len) {
     str +=
-      i.toString() +
+      i +
       ': ' +
-      HEAP[i].toString() + // TODO is_number(HEAP[i]) &&
+      HEAP[i] + // TODO is_number(HEAP[i]) &&
       (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
     i = i + 1
   }
@@ -1084,35 +1084,34 @@ addPrimitiveOpCodeHandlers()
 
 M[OpCodes.EXECUTE] = () => {
   // Save current context and old RTS
-  E = ENV // Point to previous env when calling NEW_ENVIRONMENT
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P, TOP_RTS
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
   A = RES
   PUSH_RTS() // RTS.length !== 0, TOP_RTS++
   SEQ = [RTS, TOP_RTS] // SEQ.length !== 0
   // Now OS, PC, ENV, P are saved, and RTS and TOP_RTS are copied
   // All these registers can be used for anything
   G = P[PC][EXECUTE_NUM_ARGS_OFFSET]
+  E = OS // we need the values in OS, so store in E first
   for (I = 0; I < G; I = I + 1) {
     EXECUTE_NULLIFY_REGISTERS() // RTS = []
+    OS = E
     POP_OS()
-    H = RES
-    H = HEAP[H + CLOSURE_FUNC_INDEX_SLOT]
-    F = FUNC[H]
+    H = RES // store closure in H
+    F = HEAP[H + CLOSURE_FUNC_INDEX_SLOT]
+    F = FUNC[F] // store function header in F
     A = F[FUNC_MAX_STACK_SIZE_OFFSET]
     NEW_OS()
     OS = RES
     A = F[FUNC_ENV_SIZE_OFFSET]
-    D = E
+    D = HEAP[H + CLOSURE_ENV_SLOT]
     NEW_ENVIRONMENT()
     ENV = RES
     PC = -1 // will be saved as PC = 0
-    TOP_RTS = -1 // will be saved as TOP_RTS = 0
     P = F[FUNC_CODE_OFFSET]
     NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
     A = RES
     PUSH_RTS() // TOP_RTS++
     TQ.push([RTS, TOP_RTS])
-    console.log(show_registers('thread:'+I.toString()+'/'+G.toString(), false));
   }
   EXECUTE_NULLIFY_REGISTERS() // PC = NIL
 }
@@ -1123,26 +1122,31 @@ function EXECUTE_NULLIFY_REGISTERS() {
   ENV = NIL
   RTS = []
   TO = 0
+  TOP_RTS = -1
+  // might want to reset P as well for consistency
 }
 
 M[OpCodes.TEST_AND_SET] = () => {
   POP_OS()
-  A = HEAP[RES + ARRAY_VALUE_SLOT]
-  if (A[0]) {
-    A = true
-  } else {
-    A[0] = true
-    A = false
-  }
-  PUSH_OS()
+  C = RES // list
+  B = HEAP[C + ARRAY_VALUE_SLOT][0] // get old boolean value
+  A = true
+  NEW_BOOL()
+  HEAP[C + ARRAY_VALUE_SLOT][0] = RES // store true in head
+  A = B
+  PUSH_OS() // push old value to os
   PC = PC + 1
 }
 
 M[OpCodes.CLEAR] = () => {
   POP_OS()
-  A = HEAP[RES + ARRAY_VALUE_SLOT]
-  A[0] = false
-  PUSH_OS()
+  C = RES // list
+  B = HEAP[C + ARRAY_VALUE_SLOT][0]
+  A = false
+  NEW_BOOL()
+  HEAP[C + ARRAY_VALUE_SLOT][0] = RES
+  A = B
+  PUSH_OS() // push old value to os (this shouldn't happen though, clear shouldn't return anything)
   PC = PC + 1
 }
 
@@ -1163,7 +1167,8 @@ function run(): any {
   }
 
   while (RUNNING) {
-    if (SEQ.length === 0) { // sequential context
+    if (SEQ.length === 0) {
+      // sequential context
       // show_registers("run loop");
       // show_heap("run loop");
       // show_executing('')
@@ -1171,30 +1176,35 @@ function run(): any {
         throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
       }
       M[P[PC][INS_OPCODE_OFFSET]]()
-    } else { // concurrent context
+    } else {
+      // concurrent context
       if (TO > 0) {
-        if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) { // execute normally
+        if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
+          // execute normally
           M[P[PC][INS_OPCODE_OFFSET]]()
           TO = TO - 1
-	  console.log('execute normally');
-	  console.log(show_registers('execute normally', false));
+          console.log('execute normally')
+          console.log(show_registers('execute normally'))
         } else {
           // Intercept RETG
           // Here, RTS is thread runtime stack
-          if (RTS.length !== 0) { // return from function
+          if (TOP_RTS > -1) {
+            // return from function
             M[P[PC][INS_OPCODE_OFFSET]]()
             TO = TO - 1
-	    console.log('return from function');
-	    console.log(show_registers('return from function', false));
-          } else { // return from thread
+            console.log('return from function')
+            console.log(show_registers('return from function', false))
+          } else {
+            // return from thread
             EXECUTE_NULLIFY_REGISTERS() // PC = NIL, TO = 0
-	    console.log('return from thread');
-	    console.log(show_registers('return from thread', false));
+            console.log('return from thread')
+            console.log(show_registers('return from thread', false))
           }
         }
       } else if (TO === 0) {
-        if (TQ.length === 0) { // end concurrent_execute
-          [RTS, TOP_RTS] = SEQ
+        if (TQ.length === 0) {
+          // end concurrent_execute
+          ;[RTS, TOP_RTS] = SEQ
           POP_RTS() // TOP_RTS--
           H = RES
           PC = HEAP[H + RTS_FRAME_PC_SLOT]
@@ -1202,11 +1212,12 @@ function run(): any {
           P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
           OS = HEAP[H + RTS_FRAME_OS_SLOT]
           SEQ = []
-	  console.log('end concurrent');
-	  console.log(show_registers('end concurrent', false));
-	} else {
-          if (PC === NIL) { // begin thread
-            [RTS, TOP_RTS] = TQ.shift()
+          console.log('end concurrent')
+          console.log(show_registers('end concurrent', false))
+        } else {
+          if (PC === NIL) {
+            // begin thread
+            ;[RTS, TOP_RTS] = TQ.shift()
             POP_RTS() // TOP_RTS--
             H = RES
             PC = HEAP[H + RTS_FRAME_PC_SLOT]
@@ -1214,22 +1225,32 @@ function run(): any {
             P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
             OS = HEAP[H + RTS_FRAME_OS_SLOT]
             TO = TO_DEFAULT
-	    console.log('begin thread');
-	    console.log(show_registers('begin thread', false));
-          } else { // timeout thread
+            console.log('begin thread')
+            console.log(show_registers('begin thread', false))
+          } else {
+            // timeout thread
+            // timeout at current ins so need to step back.
+            PC = PC - 1
             NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
             A = RES
             PUSH_RTS() // TOP_RTS++
             TQ.push([RTS, TOP_RTS])
             EXECUTE_NULLIFY_REGISTERS() // PC = NIL
-	    console.log('timeout thread');
-	    console.log(show_registers('timeout thread', false));
+            console.log('timeout thread')
+            console.log(show_registers('timeout thread', false))
           }
         }
       } else {
         throw Error('TO cannot be negative')
       }
-      console.log('PC:'+PC.toString()+' P.l:'+P.length.toString()+'\nP:\n'+P.map(y=>y.map(x=>getName(x as number)+y.slice(1).toString())).join('\n'));
+      console.log(
+        'PC:' +
+          PC +
+          ' P.l:' +
+          P.length +
+          '\nP:\n' +
+          P.map(y => y.map(x => getName(x as number) + y.slice(1))).join('\n')
+      )
     }
   }
   if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
