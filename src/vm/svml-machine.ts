@@ -1145,7 +1145,9 @@ export function runWithP(p: Program, context: Context): any {
   // certain functions are imported from cadet-frontend
   // so import them first every time
   const externals = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables
-  EXTERNAL_PRIMITIVES.forEach(func => extractExternalBuiltin(func, externals))
+  if (externals.size > 0) {
+    EXTERNAL_PRIMITIVES.forEach(func => extractExternalBuiltin(func, externals))
+  }
 
   return run()
 }
