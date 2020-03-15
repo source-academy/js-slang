@@ -135,12 +135,13 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
         })
         isNativeRunnable = !hasDeuggerStatement
       }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter_strict'
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }
   } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
+    isNativeRunnable = theOptions.executionMethod === 'native';
+    context.executionMethod = theOptions.executionMethod;
   }
   return isNativeRunnable
 }

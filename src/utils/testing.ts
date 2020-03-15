@@ -89,7 +89,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: 'interpreter'
+      executionMethod: 'interpreter_strict'
     })
   )
   if (options.native) {

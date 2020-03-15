@@ -22,6 +22,42 @@ class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
 
+class Thunk {
+  public value : Value;
+  public isMemoized : boolean;
+  constructor(public exp: es.Node, public env: Environment) {
+    this.isMemoized = false;
+    this.value = null;
+  }
+}
+
+const delayIt = (
+  exp: es.Node,
+  env: Environment
+): Thunk => new Thunk(exp, env);
+
+function* forceIt(val: any, context: Context): Value {
+  if(val instanceof Thunk) {
+
+    if(val.isMemoized) return val.value;
+
+    pushEnvironment(context, val.env);
+    const evalRes = yield* actualValue(val.exp, context);
+    popEnvironment(context);
+    val.value = evalRes;
+    val.isMemoized = true;
+    return evalRes;
+
+  } else return val;
+
+}
+
+export function* actualValue(exp: es.Node, context: Context): Value {
+  const evalResult = yield* evaluate(exp, context);
+  const forced = yield* forceIt(evalResult, context);
+  return forced;
+}
+
 const createEnvironment = (
   closure: Closure,
   args: Value[],
@@ -202,7 +238,11 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    args.push(yield* evaluate(arg, context))
+    if(context.executionMethod !== "interpreter_lazy") {
+      args.push(yield* actualValue(arg, context));
+    } else {
+      args.push(delayIt(arg, currentEnvironment(context)));
+    }
   }
   return args
 }
@@ -219,7 +259,7 @@ function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
 ): IterableIterator<es.Node> {
-  const test = yield* evaluate(node.test, context)
+  const test = yield* actualValue(node.test, context)
 
   const error = rttc.checkIfStatement(node, test)
   if (error) {
@@ -296,11 +336,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
-    const callee = yield* evaluate(node.callee, context)
+    const callee = yield* actualValue(node.callee, context)
     const args = yield* getArgs(context, node)
     let thisContext
     if (node.callee.type === 'MemberExpression') {
-      thisContext = yield* evaluate(node.callee.object, context)
+      thisContext = yield* actualValue(node.callee.object, context)
     }
     const result = yield* apply(context, callee, args, node, thisContext)
     return result
@@ -334,8 +374,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    const right = yield* evaluate(node.right, context)
+    const left = yield* actualValue(node.left, context)
+    const right = yield* actualValue(node.right, context)
 
     const error = rttc.checkBinaryExpression(node, node.operator, left, right)
     if (error) {
@@ -380,10 +420,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (initNode.type === 'VariableDeclaration') {
       hoistVariableDeclarations(context, initNode)
     }
-    yield* evaluate(initNode, context)
+    yield* actualValue(initNode, context)
 
     let value
-    while (yield* evaluate(testNode, context)) {
+    while (yield* actualValue(testNode, context)) {
       // create block context and shallow copy loop environment head
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -398,7 +438,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         }
       }
 
-      value = yield* evaluate(node.body, context)
+      value = yield* actualValue(node.body, context)
 
       // Remove block context
       popEnvironment(context)
@@ -413,7 +453,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
 
-      yield* evaluate(updateNode, context)
+      yield* actualValue(updateNode, context)
     }
 
     popEnvironment(context)
@@ -422,13 +462,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
-    let obj = yield* evaluate(node.object, context)
+    let obj = yield* actualValue(node.object, context)
     if (obj instanceof Closure) {
       obj = obj.fun
     }
     let prop
     if (node.computed) {
-      prop = yield* evaluate(node.property, context)
+      prop = yield* actualValue(node.property, context)
     } else {
       prop = (node.property as es.Identifier).name
     }
@@ -456,10 +496,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
     if (node.left.type === 'MemberExpression') {
       const left = node.left
-      const obj = yield* evaluate(left.object, context)
+      const obj = yield* actualValue(left.object, context)
       let prop
       if (left.computed) {
-        prop = yield* evaluate(left.property, context)
+        prop = yield* actualValue(left.property, context)
       } else {
         prop = (left.property as es.Identifier).name
       }
@@ -515,8 +555,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression') {
-      const callee = yield* evaluate(returnExpression.callee, context)
+    if (returnExpression.type === 'CallExpression' && context.executionMethod === "interpreter_strict") {
+      const callee = yield* actualValue(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
     } else {
@@ -528,12 +568,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
-      (yield* evaluate(node.test, context)) &&
+      (yield* actualValue(node.test, context)) &&
       !(value instanceof ReturnValue) &&
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
-      value = yield* evaluate(node.body, context)
+      value = yield* actualValue(node.body, context)
     }
     if (value instanceof BreakValue) {
       return undefined
@@ -570,7 +610,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-    return yield* evaluateBlockSatement(context, node)
+    const result = yield *forceIt(yield* evaluateBlockSatement(context, node), context);
+    return result;
   }
 }
 // tslint:enable:object-literal-shorthand
@@ -585,7 +626,7 @@ export function* evaluate(node: es.Node, context: Context) {
 export function* apply(
   context: Context,
   fun: Closure | Value,
-  args: Value[],
+  args: (Thunk | Value)[],
   node: es.CallExpression,
   thisContext?: Value
 ) {
@@ -614,7 +655,13 @@ export function* apply(
       }
     } else if (typeof fun === 'function') {
       try {
-        result = fun.apply(thisContext, args)
+        const forcedArgs = [];
+
+        for(const arg of args) {
+          forcedArgs.push(yield* forceIt(arg, context));
+        }
+
+        result = fun.apply(thisContext, forcedArgs);
         break
       } catch (e) {
         // Recover from exception
