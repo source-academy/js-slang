@@ -49,7 +49,7 @@ export const createEmptyContext = <T>(
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
-  const operatorsToUse = chapter === 1 ? lazyOperators : operators
+  const operatorsToUse = chapter === -1 ? lazyOperators : operators
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     globals: { variables: new Map(), previousScope: null },
     operators: new Map(Object.entries(operatorsToUse))

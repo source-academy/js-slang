@@ -609,19 +609,21 @@ function transformValuesToThunks(program: es.Program) {
  * @param program The program to transform.
  */
 function transformLogicalOperationsToFunctionCalls(program: es.Program) {
-  simple(program, {
-    LogicalExpression(node: es.LogicalExpression) {
-      const { line, column } = node.loc!.start
-      const { operator, left, right } = node
-      create.mutateToCallExpression(node, globalIds.logicalOp, [
-        create.literal(operator),
-        left,
-        right,
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+  if (globalIds.logicalOp) {
+    simple(program, {
+      LogicalExpression(node: es.LogicalExpression) {
+        const { line, column } = node.loc!.start
+        const { operator, left, right } = node
+        create.mutateToCallExpression(node, globalIds.logicalOp, [
+          create.literal(operator),
+          left,
+          right,
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
+    })
+  }
 }
 
 /**
@@ -664,19 +666,21 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
  * @param program The program to transform.
  */
 function transformConditionalsToFunctionCalls(program: es.Program) {
-  simple(program, {
-    ConditionalExpression(node: es.ConditionalExpression) {
-      const { line, column } = node.loc!.start
-      const { test, consequent, alternate } = node
-      create.mutateToCallExpression(node, globalIds.conditionalOp, [
-        test,
-        consequent,
-        alternate,
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+  if (globalIds.conditionalOp) {
+    simple(program, {
+      ConditionalExpression(node: es.ConditionalExpression) {
+        const { line, column } = node.loc!.start
+        const { test, consequent, alternate } = node
+        create.mutateToCallExpression(node, globalIds.conditionalOp, [
+          test,
+          consequent,
+          alternate,
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
+    })
+  }
 }
 
 function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
@@ -756,6 +760,11 @@ export function transpile(
   skipUndefinedVariableErrors = false,
   lazyEvaluation = false
 ) {
+  if (!lazyEvaluation) {
+    // remove unnecessary global ids
+    delete globalIds.logicalOp;
+    delete globalIds.conditionalOp;
+  }
   contextId = id
   refreshLatestIdentifiers(program)
   NATIVE_STORAGE[contextId].globals = {

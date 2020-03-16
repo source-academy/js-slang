@@ -700,5 +700,5 @@ export function* apply(
  *     evaluate eagerly.
  */
 function lazyEvaluate(context: Context) {
-  return context.chapter === 1
+  return context.chapter === -1
 }
