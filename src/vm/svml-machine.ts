@@ -64,8 +64,8 @@ let RES = -Infinity
 let TQ: any[] = []
 // TO is timeout counter: how many instructions are left for a thread to run
 let TO = 0
-// TO_DEFAULT is default amount to timeout by
-const TO_DEFAULT = 100
+// TO_MAX is maximum amount to timeout by
+const TO_MAX = 50
 // SEQ is array for OS, PC, ENV, RTS, TOP_RTS when executing concurrent code
 let SEQ: any[] = []
 
@@ -426,6 +426,10 @@ function EXTEND() {
   D = A
   A = B
   NEW_ENVIRONMENT()
+}
+
+function SET_TO() {
+  TO = Math.floor(Math.random() * TO_MAX)
 }
 
 // debugging: show current heap
@@ -1226,7 +1230,7 @@ function run(): any {
             ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
             P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
             OS = HEAP[H + RTS_FRAME_OS_SLOT]
-            TO = TO_DEFAULT
+            SET_TO()
             console.log('begin thread')
             console.log(show_registers('begin thread', false))
           } else {
