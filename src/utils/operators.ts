@@ -1,4 +1,4 @@
-import { BinaryOperator, UnaryOperator, LogicalOperator } from 'estree'
+import { BinaryOperator, UnaryOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
@@ -11,13 +11,6 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import {
-  makeThunk,
-  makeThunkWithPrimitiveBinary,
-  Thunk,
-  makeThunkWithPrimitiveUnary,
-  makeConditionalThunk
-} from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -63,216 +56,84 @@ export function callIfFuncAndRightArgs(
   }
 }
 
-export function boolOrErr(candidate: Thunk<any>, line: number, column: number) {
-  const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
+export function boolOrErr(candidate: any, line: number, column: number) {
+  const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
-    return candidate.toString()
+    return candidate
   } else {
-    return error
+    throw error
   }
 }
 
-export function unaryOp(
-  operator: UnaryOperator,
-  argument: Thunk<any>,
-  line: number,
-  column: number
-) {
-  const resultType = rttc.checkUnaryExpression(
+export function unaryOp(operator: UnaryOperator, argument: any, line: number, column: number) {
+  const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column),
     operator,
     argument
   )
-  if (typeof resultType === 'string') {
-    return evaluateUnaryExpression(operator, argument, resultType)
+  if (error === undefined) {
+    return evaluateUnaryExpression(operator, argument)
   } else {
-    throw resultType
+    throw error
   }
 }
 
-/**
- * Delays evaluation of an unary expression
- * in Lazy Source, returning a Thunk.
- *
- * @param operator String representing the operator
- *     to be executed.
- * @param value The argument of this operator.
- * @param returnType The return type of the evaluated
- *     expression.
- */
-export function evaluateUnaryExpression(
-  operator: UnaryOperator,
-  value: Thunk<any>,
-  // default value '' to prevent problems with substitutor, intepreter
-  returnType: string = ''
-) {
+export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
   if (operator === '!') {
-    return makeThunkWithPrimitiveUnary(value, x => !x, returnType, operator)
+    return !value
   } else if (operator === '-') {
-    return makeThunkWithPrimitiveUnary(value, x => -x, returnType, operator)
-  } else if (operator === '+') {
-    return makeThunkWithPrimitiveUnary(value, x => +x, returnType, operator)
+    return -value
   } else {
-    return makeThunk(undefined)
+    return +value
   }
 }
 
 export function binaryOp(
   operator: BinaryOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
+  left: any,
+  right: any,
   line: number,
   column: number
 ) {
-  const resultType = rttc.checkBinaryExpression(
+  const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column),
     operator,
     left,
     right
   )
-  if (typeof resultType === 'string') {
-    return evaluateBinaryExpression(operator, left, right, resultType)
+  if (error === undefined) {
+    return evaluateBinaryExpression(operator, left, right)
   } else {
-    throw resultType
+    throw error
   }
 }
 
-/**
- * Delays evaluation of a binary expression in
- * Lazy Source, returning a Thunk.
- *
- * @param operator String representing the operator
- *     to be executed.
- * @param left The first argument, or the left, of
- *     this operator.
- * @param right The second argument, or the right, of
- *     this operator.
- * @param returnType The return type of the evaluated
- *     expression.
- */
-export function evaluateBinaryExpression(
-  operator: BinaryOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
-  // default value '' to prevent problems with substitutor, intepreter
-  returnType: string = ''
-): Thunk<any> {
+export function evaluateBinaryExpression(operator: BinaryOperator, left: any, right: any) {
   switch (operator) {
     case '+':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x + y, returnType, operator)
+      return left + right
     case '-':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x - y, returnType, operator)
+      return left - right
     case '*':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x * y, returnType, operator)
+      return left * right
     case '/':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x / y, returnType, operator)
+      return left / right
     case '%':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x % y, returnType, operator)
+      return left % right
     case '===':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x === y, returnType, operator)
+      return left === right
     case '!==':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x !== y, returnType, operator)
+      return left !== right
     case '<=':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x <= y, returnType, operator)
+      return left <= right
     case '<':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x < y, returnType, operator)
+      return left < right
     case '>':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x > y, returnType, operator)
+      return left > right
     case '>=':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x >= y, returnType, operator)
+      return left >= right
     default:
-      return makeThunk(undefined)
-  }
-}
-
-/**
- * This function will be called in place of logical
- * operations like && (and) or || (or), in order to
- * check whether the Thunks on left and right are of
- * type boolean, and to execute it lazily
- * @param operator String representing the operator
- *     to be executed.
- * @param left The (boolean) expression on the left
- *     of the operator (Thunk)
- * @param right The (boolean) expression on the right
- *     of the operator (Thunk)
- * @param line Line number of the expression in
- *     the program
- * @param column Column number of the expression
- *     in the program
- */
-export function logicalOp(
-  operator: LogicalOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
-  line: number,
-  column: number
-) {
-  const leftType = boolOrErr(left, line, column)
-  const rightType = boolOrErr(right, line, column)
-  if (typeof leftType === 'string' && typeof rightType === 'string') {
-    return evaluateLogicalExpression(operator, left, right)
-  } else if (typeof leftType === 'string') {
-    throw rightType
-  } else {
-    throw leftType
-  }
-}
-
-/**
- * Delays evaluation of a logical expression && (and)
- * and || (or) in Lazy Source, returning a Thunk.
- *
- * @param operator String representing the operator
- *     to be executed.
- * @param left The first argument, or the left, of
- *     this operator.
- * @param right The second argument, or the right, of
- *     this operator.
- */
-export function evaluateLogicalExpression(
-  operator: LogicalOperator,
-  left: Thunk<any>,
-  right: Thunk<any>
-): Thunk<any> {
-  // string representation of resultant thunk
-  const stringRep = left.toString() + ' ' + operator + ' ' + right.toString()
-  switch (operator) {
-    case '&&':
-      return makeConditionalThunk(left, right, makeThunk(false), stringRep)
-    case '||':
-      return makeConditionalThunk(left, makeThunk(true), right, stringRep)
-    default:
-      return makeThunk(undefined)
-  }
-}
-
-/**
- * This function will be called in place of conditional
- * expressions, in order to check whether the predicate
- * thunk is of type boolean, and to execute it lazily
- * @param predicate Predicate expression to be evaluated.
- * @param consequent Consequent to be evaluated, if
- *     predicate evaluates to true.
- * @param alternate Alternate to be evaluated, if
- *     predicate evaluates to false.
- * @param line Line number of the expression in
- *     the program
- * @param column Column number of the expression
- *     in the program
- */
-export function conditionalOp(
-  predicate: Thunk<any>,
-  consequent: Thunk<any>,
-  alternate: Thunk<any>,
-  line: number,
-  column: number
-): Thunk<any> {
-  const predicateType = boolOrErr(predicate, line, column)
-  if (typeof predicateType === 'string') {
-    return makeConditionalThunk(predicate, consequent, alternate)
-  } else {
-    throw predicateType
+      return undefined
   }
 }
 

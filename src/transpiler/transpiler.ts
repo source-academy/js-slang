@@ -453,7 +453,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
 }
 
 /**
- * Transforms if/conditional/for/while statements to check
+ * Transforms if/for/while statements to check
  * whether the condition is a boolean type
  * @param program The program to be transformed
  */
@@ -470,6 +470,38 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
 
   simple(program, {
     IfStatement: transform,
+    ForStatement: transform,
+    WhileStatement: transform
+  })
+}
+
+/**
+ * Transforms if/conditional/logical/for/while statements
+ * to check whether the condition is a boolean type
+ * @param program The program to be transformed
+ */
+function transformMostExpressionsToCheckIfBoolean(program: es.Program) {
+  function transform(
+    node:
+      | es.IfStatement
+      | es.ConditionalExpression
+      | es.LogicalExpression
+      | es.ForStatement
+      | es.WhileStatement
+  ) {
+    const { line, column } = node.loc!.start
+    const test = node.type === 'LogicalExpression' ? 'left' : 'test'
+    node[test] = create.callExpression(globalIds.boolOrErr, [
+      node[test],
+      create.literal(line),
+      create.literal(column)
+    ])
+  }
+
+  simple(program, {
+    IfStatement: transform,
+    ConditionalExpression: transform,
+    LogicalExpression: transform,
     ForStatement: transform,
     WhileStatement: transform
   })
@@ -595,7 +627,8 @@ function transformLogicalOperationsToFunctionCalls(program: es.Program) {
 /**
  * Converts unary and binary operators like +, -, *, /
  * and ! to function calls, such that they will be
- * lazily evaluated using binaryOp in operators.ts
+ * lazily evaluated using binaryOp in lazyOperators.ts
+ * (or eagerly using binaryOp in operators.ts)
  * @param program The program to transform.
  */
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
@@ -717,7 +750,12 @@ function addInfiniteLoopProtection(program: es.Program) {
   })
 }
 
-export function transpile(program: es.Program, id: number, skipUndefinedVariableErrors = false) {
+export function transpile(
+  program: es.Program,
+  id: number,
+  skipUndefinedVariableErrors = false,
+  lazyEvaluation = false
+) {
   contextId = id
   refreshLatestIdentifiers(program)
   NATIVE_STORAGE[contextId].globals = {
@@ -727,16 +765,22 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
-  // make literals into Thunks for lazy evaluation
-  transformValuesToThunks(program)
+  if (lazyEvaluation) {
+    // make literals into Thunks for lazy evaluation
+    transformValuesToThunks(program)
+  }
   // console.log(JSON.stringify(program));
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
-  transformLogicalOperationsToFunctionCalls(program)
-  transformConditionalsToFunctionCalls(program)
-  transformSomeExpressionsToCheckIfBoolean(program)
+  if (lazyEvaluation) {
+    transformLogicalOperationsToFunctionCalls(program)
+    transformConditionalsToFunctionCalls(program)
+    transformSomeExpressionsToCheckIfBoolean(program)
+  } else {
+    transformMostExpressionsToCheckIfBoolean(program)
+  }
   transformPropertyAssignment(program)
   transformPropertyAccess(program)
   checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(

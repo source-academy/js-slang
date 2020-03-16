@@ -11,6 +11,7 @@ import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
+import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
@@ -48,9 +49,12 @@ export const createEmptyContext = <T>(
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
+  const operatorsToUse = chapter === 1
+    ? lazyOperators
+    : operators;
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     globals: { variables: new Map(), previousScope: null },
-    operators: new Map(Object.entries(operators))
+    operators: new Map(Object.entries(operatorsToUse))
   })
   return {
     chapter,

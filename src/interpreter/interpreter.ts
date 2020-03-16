@@ -6,7 +6,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
-import { evaluateBinaryExpression, evaluateUnaryExpression, logicalOp } from '../utils/operators'
+import { evaluateBinaryExpression, evaluateUnaryExpression, logicalOp } from '../utils/lazyOperators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
@@ -270,7 +270,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
    * @param context Context of the execution
    */
   Literal: function*(node: es.Literal, context: Context) {
-    return makeThunk(node.value)
+    if (lazyEvaluate(context)) {
+      return makeThunk(node.value)
+    } else {
+      return node.value
+    }
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
@@ -333,22 +337,38 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
 
-    const checkType = rttc.checkUnaryExpression(node, node.operator, value)
-    if (typeof checkType !== 'string') {
-      return handleRuntimeError(context, checkType)
+    if (lazyEvaluate(context)) {
+      const checkType = rttc.checkUnaryExpressionT(node, node.operator, value)
+      if (typeof checkType !== 'string') {
+        return handleRuntimeError(context, checkType as rttc.TypeError)
+      }
+      return evaluateUnaryExpression(node.operator, value, checkType)
+    } else {
+      const error = rttc.checkUnaryExpression(node, node.operator, value)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
+      return evaluateUnaryExpression(node.operator, value)
     }
-    return evaluateUnaryExpression(node.operator, value, checkType)
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    const checkType = rttc.checkBinaryExpression(node, node.operator, left, right)
-    if (typeof checkType !== 'string') {
-      return handleRuntimeError(context, checkType as rttc.TypeError)
+    if (lazyEvaluate(context)) {
+      const checkType = rttc.checkBinaryExpressionT(node, node.operator, left, right)
+      if (typeof checkType !== 'string') {
+        return handleRuntimeError(context, checkType as rttc.TypeError)
+      }
+      return evaluateBinaryExpression(node.operator, left, right, checkType)
+    } else {
+      const error = rttc.checkBinaryExpression(node, node.operator, left, right)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
+      return evaluateBinaryExpression(node.operator, left, right)
     }
-    return evaluateBinaryExpression(node.operator, left, right, checkType)
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
@@ -356,13 +376,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    const right = yield* evaluate(node.right, context)
+    if (lazyEvaluate(context)) {
+      const left = yield* evaluate(node.left, context)
+      const right = yield* evaluate(node.right, context)
 
-    try {
-      return logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
-    } catch (e) {
-      return handleRuntimeError(context, e as rttc.TypeError);
+      try {
+        return logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
+      } catch (e) {
+        return handleRuntimeError(context, e as rttc.TypeError);
+      }
+    } else {
+      return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
     }
   },
 
@@ -658,4 +682,19 @@ export function* apply(
     popEnvironment(context)
   }
   return result
+}
+
+/**
+ * Checks whether the interpreter should evaluate
+ * the expression lazily in this context. Currently,
+ * lazy evaluation is only implemented for Source
+ * chapters 1 and 2, so lazyEvaluate will return true
+ * only when the chapter is 1 or 2.
+ * @param context The context to be checked.
+ * @returns True, if the interpreter is to evaluate
+ *     lazily. False, if the interpreter should
+ *     evaluate eagerly.
+ */
+function lazyEvaluate(context: Context) {
+  return context.chapter === 1;
 }
