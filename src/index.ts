@@ -14,7 +14,7 @@ import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './stepper/stepper'
+import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -175,7 +175,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
       status: 'finished',
-      value: steps.map(codify)
+      value: steps
     } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
