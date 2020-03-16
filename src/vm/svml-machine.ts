@@ -1202,7 +1202,7 @@ function run(): any {
           }
         }
       } else if (TO === 0) {
-        if (TQ.length === 0) {
+        if (TQ.length === 0 && PC === NIL) {
           // end concurrent_execute
           ;[RTS, TOP_RTS] = SEQ
           POP_RTS() // TOP_RTS--
