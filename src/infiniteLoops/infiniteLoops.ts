@@ -119,7 +119,7 @@ export function infiniteLoopStaticAnalysis(
 ) {
   const functionId = node.id as es.Identifier
   infiniteLoopDetection.relevantVars[functionId.name] = getRelevantVars(node)
-  infiniteLoopDetection.checkers = sym.toName(node)
+  infiniteLoopDetection.checkers = infiniteLoopDetection.checkers.concat(sym.toName(node))
   // return context;
 }
 
@@ -143,7 +143,6 @@ export function testFunction(env: Environment, name: string, args: any[]) {
   while (environment) {
     const checkers = environment.infiniteLoopDetection.checkers
     for (const checker of checkers) {
-      // TODO fix this somehow
       if (checker(name, args)) {
         return true
       }
