@@ -95,8 +95,8 @@ function getRelevantVars(node: es.FunctionDeclaration) {
 
 export function cycleDetection(states: string[]) {
   if (states.length < 1) return false
-  let slow = 1
-  let fast = 2
+  let slow = 0
+  let fast = 1
   while (states[fast] !== undefined && states[slow] !== states[fast]) {
     slow += 1
     fast += 2

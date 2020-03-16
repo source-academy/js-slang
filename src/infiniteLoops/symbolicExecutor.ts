@@ -11,6 +11,7 @@ type SSymbol =
   | SkipSymbol
   | TerminateSymbol
   | BooleanSymbol
+  | LiteralValueSymbol
 
 type BooleanSymbol = BooleanValueSymbol | InequalitySymbol | LogicalSymbol
 
@@ -18,10 +19,25 @@ interface NumberSymbol {
   type: 'NumberSymbol'
   name: string
   constant: number
+  isPositive: boolean
 }
 
-function makeNumberSymbol(name: string, constant: number) {
-  return { type: 'NumberSymbol', name, constant } as NumberSymbol
+function makeNumberSymbol(name: string, constant: number, isPositive?: boolean) {
+  return {
+    type: 'NumberSymbol',
+    name,
+    constant,
+    isPositive: isPositive === undefined ? true : isPositive
+  } as NumberSymbol
+}
+
+interface LiteralValueSymbol {
+  type: 'LiteralValueSymbol'
+  value: number | boolean
+}
+
+function makeLiteralValueSymbol(value: number | boolean) {
+  return { type: 'LiteralValueSymbol', value } as LiteralValueSymbol
 }
 
 interface BooleanValueSymbol {
@@ -35,6 +51,7 @@ function makeBooleanValueSymbol (name:string, value:boolean) {
 }
 */
 
+// here for convenience
 interface LogicalSymbol {
   type: 'LogicalSymbol'
   left: BooleanSymbol
@@ -112,10 +129,10 @@ function isSymbol(node: SymbolicExecutable): node is SSymbol {
   return node.type.slice(-6) === 'Symbol'
 }
 
-function negateSymbol(sym: BooleanSymbol): BooleanSymbol {
+function negateBooleanSymbol(sym: BooleanSymbol): BooleanSymbol {
   if (sym.type === 'LogicalSymbol') {
-    const newLhs = negateSymbol(sym.left)
-    const newRhs = negateSymbol(sym.right)
+    const newLhs = negateBooleanSymbol(sym.left)
+    const newRhs = negateBooleanSymbol(sym.right)
     return makeLogicalSymbol(newLhs, newRhs, !sym.conjunction) // de morgans
   } else if (sym.type === 'InequalitySymbol') {
     if (sym.direction === 0) {
@@ -137,6 +154,10 @@ function isBooleanSymbol(node: SymbolicExecutable): node is BooleanSymbol {
   )
 }
 
+function negateNumberSymbol(sym: NumberSymbol): NumberSymbol {
+  return { ...sym, constant: -sym.constant, isPositive: true }
+}
+
 function execBinarySymbol(
   node1: SymbolicExecutable,
   node2: SymbolicExecutable,
@@ -145,14 +166,13 @@ function execBinarySymbol(
 ): SSymbol {
   type opFunction = (value: number, sym: NumberSymbol, flipped: boolean) => SSymbol
   // TODO big todo: check the math of below (esp flipped, >= after flip etc)
-  // TODO check if 1-x makes sense here
   const operators: { [nodeType: string]: opFunction } = {
     '+'(value: number, sym: NumberSymbol, flip: boolean) {
       return { ...sym, constant: sym.constant + value }
     },
     '-'(value: number, sym: NumberSymbol, flip: boolean) {
       if (flip) {
-        return { ...sym, constant: value - sym.constant }
+        return { ...sym, constant: value - sym.constant, isPositive: true }
       } else {
         return { ...sym, constant: sym.constant - value }
       }
@@ -161,10 +181,15 @@ function execBinarySymbol(
       return makeInequalitySymbol(sym.name, value - sym.constant, 0)
     },
     '<'(value: number, sym: NumberSymbol, flip: boolean) {
-      if (flip) {
-        return makeInequalitySymbol(sym.name, value - sym.constant, 1)
+      if (sym.isPositive) {
+        if (flip) {
+          return makeInequalitySymbol(sym.name, value - sym.constant, 1)
+        } else {
+          return makeInequalitySymbol(sym.name, value - sym.constant, -1)
+        }
       } else {
-        return makeInequalitySymbol(sym.name, value - sym.constant, -1)
+        const negated = negateNumberSymbol(sym)
+        return operators['>'](value, negated, flip)
       }
     },
     '>'(value: number, sym: NumberSymbol, flip: boolean) {
@@ -178,12 +203,12 @@ function execBinarySymbol(
     },
     '!=='(value: number, sym: NumberSymbol, flip: boolean) {
       // TODO check this (inside branch test?) *change seq to boolean sym
-      return negateSymbol(operators['==='](value, sym, false) as InequalitySymbol)
+      return negateBooleanSymbol(operators['==='](value, sym, false) as InequalitySymbol)
     }
   }
-  if (node1.type === 'Literal' && node2.type === 'NumberSymbol') {
+  if (node1.type === 'LiteralValueSymbol' && node2.type === 'NumberSymbol') {
     return execBinarySymbol(node2, node1, op, true)
-  } else if (node2.type === 'Literal' && node1.type === 'NumberSymbol') {
+  } else if (node2.type === 'LiteralValueSymbol' && node1.type === 'NumberSymbol') {
     const val = node2.value
     if (typeof val === 'number' && Number.isInteger(val)) {
       const toRun = operators[op]
@@ -209,20 +234,20 @@ function execLogicalSymbol(
   node2: SymbolicExecutable,
   op: string
 ): SSymbol {
-  if (node1.type === 'Literal') {
-    if (node2.type === 'Literal') {
+  if (node1.type === 'LiteralValueSymbol') {
+    if (node2.type === 'LiteralValueSymbol') {
       return skipSymbol
     } else {
       return execLogicalSymbol(node2, node1, op)
     }
   } else if (isBooleanSymbol(node1)) {
-    if(node2.type === 'Literal' && typeof node2.value === 'boolean') {
+    if (node2.type === 'LiteralValueSymbol' && typeof node2.value === 'boolean') {
       const val = node2.value
-      if((val && op === '&&') || op === '||') {
+      if ((val && op === '&&') || op === '||') {
         return node1
       }
     } else if (isBooleanSymbol(node2)) {
-      return makeLogicalSymbol(node1, node2, op==='&&')
+      return makeLogicalSymbol(node1, node2, op === '&&')
     }
   } else if (node1.type === 'FunctionSymbol') {
     if (node2.type === 'FunctionSymbol') {
@@ -234,10 +259,6 @@ function execLogicalSymbol(
     return node2
   }
   return skipSymbol
-}
-
-function irreducible(node: SymbolicExecutable) {
-  return isSymbol(node) || node.type === 'Literal'
 }
 
 function getFromEnv(name: string, context: Map<string, SSymbol>[]) {
@@ -263,6 +284,10 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
   // TODO maybe switch to switch instead of if
   if (isSymbol(node)) {
     return node as SSymbol // ???
+  } else if (node.type === 'Literal') {
+    if (typeof node.value === 'number' || typeof node.value === 'boolean') {
+      return makeLiteralValueSymbol(node.value)
+    }
   } else if (node.type === 'Identifier') {
     const checkEnv = getFromEnv(node.name, context)
     if (checkEnv) {
@@ -295,15 +320,28 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
     const newContext = [new Map()].concat(context)
     return makeSequenceSymbol(node.body.map(x => symbolicExecute(x, newContext)))
   } else if (node.type === 'BinaryExpression') {
-    const lhs = irreducible(node.left) ? node.left : symbolicExecute(node.left, context)
-    const rhs = irreducible(node.right) ? node.right : symbolicExecute(node.right, context)
+    const lhs = symbolicExecute(node.left, context)
+    const rhs = symbolicExecute(node.right, context)
     return execBinarySymbol(lhs, rhs, node.operator, false)
   } else if (node.type === 'UnaryExpression') {
-    // TODO
+    const arg = symbolicExecute(node.argument, context)
+    if (node.operator === '!') {
+      if (isBooleanSymbol(arg)) {
+        return negateBooleanSymbol(arg)
+      } else if (arg.type === 'LiteralValueSymbol') {
+        return { ...arg, value: !arg.value }
+      }
+    } else if (node.operator === '-') {
+      if (arg.type === 'NumberSymbol') {
+        return negateNumberSymbol(arg)
+      } else if (arg.type === 'LiteralValueSymbol') {
+        return { ...arg, value: -arg.value }
+      }
+    }
     return skipSymbol
   } else if (node.type === 'LogicalExpression') {
-    const lhs = irreducible(node.left) ? node.left : symbolicExecute(node.left, context)
-    const rhs = irreducible(node.right) ? node.right : symbolicExecute(node.right, context)
+    const lhs = symbolicExecute(node.left, context)
+    const rhs = symbolicExecute(node.right, context)
     return execLogicalSymbol(lhs, rhs, node.operator)
   } else if (node.type === 'CallExpression') {
     if (node.callee.type === 'Identifier') {
@@ -326,19 +364,23 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
 
 function collapseConjunction(node: BooleanSymbol): BooleanSymbol {
   if (node.type === 'LogicalSymbol' && node.conjunction) {
-    let left = node.left
-    let right = node.right
-    if(left.type === 'InequalitySymbol' && right.type === 'InequalitySymbol' &&
-       left.direction === right.direction && left.name === right.name) {
+    const left = node.left
+    const right = node.right
+    if (
+      left.type === 'InequalitySymbol' &&
+      right.type === 'InequalitySymbol' &&
+      left.direction === right.direction &&
+      left.name === right.name
+    ) {
       const direction = left.direction
       const name = left.name
-      if(left.direction < 0) {
-        return makeInequalitySymbol(name, Math.min(left.constant,right.constant), direction)
-      } else if(left.direction > 0) {
-        return makeInequalitySymbol(name, Math.max(left.constant,right.constant), direction)
+      if (left.direction < 0) {
+        return makeInequalitySymbol(name, Math.min(left.constant, right.constant), direction)
+      } else if (left.direction > 0) {
+        return makeInequalitySymbol(name, Math.max(left.constant, right.constant), direction)
       }
     } else {
-      return {...node, left:collapseConjunction(left), right:collapseConjunction(right)}
+      return { ...node, left: collapseConjunction(left), right: collapseConjunction(right) }
     }
   }
   return node
@@ -349,10 +391,10 @@ function seperateDisjunctions(node: BooleanSymbol): BooleanSymbol[] {
   if (node.type === 'LogicalSymbol') {
     const splitLeft = seperateDisjunctions(node.left)
     const splitRight = seperateDisjunctions(node.right)
-    if(node.conjunction) {
-      let res = []
-      for (let left of splitLeft) {
-        for (let right of splitRight) {
+    if (node.conjunction) {
+      const res = []
+      for (const left of splitLeft) {
+        for (const right of splitRight) {
           res.push(makeLogicalSymbol(left, right, true))
         }
       }
@@ -386,7 +428,7 @@ function serialize(node: SSymbol): SSymbol[][] {
       result = result.concat(consTail.map(x => [sym as SSymbol].concat(x)))
     }
 
-    for (const sym of processLogical(negateSymbol(node.test))) {
+    for (const sym of processLogical(negateBooleanSymbol(node.test))) {
       result = result.concat(altTail.map(x => [sym as SSymbol].concat(x)))
     }
     return result
