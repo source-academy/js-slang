@@ -9,10 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import {
-  infiniteLoopStaticAnalysis,
-  checkInfiniteLoop
-} from '../infiniteLoops/infiniteLoops'
+import { infiniteLoopStaticAnalysis, checkInfiniteLoop, pushTailCallStack } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
 
@@ -634,6 +631,13 @@ export function* apply(
         node = result.node
         args = result.args
         // check inf loop etc
+        if(node.callee.type === 'Identifier') {
+          pushTailCallStack(environment, node.callee.name, args)
+          const infiniteLoopError = checkInfiniteLoop(node, args, context.runtime.environments)
+          if(infiniteLoopError){
+            handleRuntimeError(context, infiniteLoopError)
+          }
+        }
       } else if (!(result instanceof ReturnValue)) {
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
@@ -666,6 +670,8 @@ export function* apply(
   if (result instanceof ReturnValue) {
     result = result.value
   }
+  // reset tail call stack
+  currentEnvironment(context).infiniteLoopDetection.tailCallStack = []
   for (let i = 1; i <= total; i++) {
     popEnvironment(context)
   }

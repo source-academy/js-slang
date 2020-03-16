@@ -113,15 +113,18 @@ export function makeFunctionState(name: string, args: any[], relevantVars: numbe
   return state + ')'
 }
 
-export function infiniteLoopStaticAnalysis(node: es.FunctionDeclaration, infiniteLoopDetection: InfiniteLoopData) {
+export function infiniteLoopStaticAnalysis(
+  node: es.FunctionDeclaration,
+  infiniteLoopDetection: InfiniteLoopData
+) {
   const functionId = node.id as es.Identifier
   infiniteLoopDetection.relevantVars[functionId.name] = getRelevantVars(node)
   infiniteLoopDetection.checkers = sym.toName(node)
   // return context;
 }
 
-
-function getInfiniteLoopData(env: Environment, name: string) { //TODO rename
+function getInfiniteLoopData(env: Environment, name: string) {
+  // TODO rename
   let environment: Environment | null = env
   while (environment) {
     const relevantVars = environment.infiniteLoopDetection.relevantVars
@@ -134,12 +137,14 @@ function getInfiniteLoopData(env: Environment, name: string) { //TODO rename
   return undefined
 }
 
-function testFunction(env: Environment, name: string, args: any[]){ //TODO rename
+export function testFunction(env: Environment, name: string, args: any[]) {
+  // TODO rename
   let environment: Environment | null = env
   while (environment) {
     const checkers = environment.infiniteLoopDetection.checkers
-    for(const checker of checkers) { // TODO fix this somehow
-      if(checker(name, args)) {
+    for (const checker of checkers) {
+      // TODO fix this somehow
+      if (checker(name, args)) {
         return true
       }
     }
@@ -148,20 +153,34 @@ function testFunction(env: Environment, name: string, args: any[]){ //TODO renam
   return false
 }
 
-//TODO big refactoring
+export function pushTailCallStack(environment: Environment, name: string, args: any[]) {
+  const infiniteLoopDetection = environment.infiniteLoopDetection
+  const relevantVars = getInfiniteLoopData(environment, name)
+  const tailCallStack = infiniteLoopDetection.tailCallStack
+  if (relevantVars) {
+    tailCallStack.push(makeFunctionState(name, args, relevantVars))
+  }
+}
+
+// TODO big refactoring
 export function checkInfiniteLoop(node: es.CallExpression, args: any[], envs: Environment[]) {
-  if(node.callee.type === 'Identifier') {
+  if (node.callee.type === 'Identifier') {
     const name = node.callee.name
     const relevantVars = getInfiniteLoopData(envs[0], name)
-    if(relevantVars){ // temp: fix for functions that have not been analysed
-      const stacks:es.CallExpression[] = []
-      for (const env of envs) {
-        if (env.callExpression) {
-          stacks.push(env.callExpression)
+    if (relevantVars) {
+      // temp: fix for functions that have not been analysed
+
+      let states : string[] = envs[0].infiniteLoopDetection.tailCallStack
+      if(states.length === 0) {
+        const stacks: es.CallExpression[] = []
+        for (const env of envs) {
+          if (env.callExpression) {
+            stacks.push(env.callExpression)
+          }
         }
+        states = stacks.map(x => makeFunctionState(name, x.arguments, relevantVars))
       }
-      const states = stacks.map(x=>makeFunctionState(name, x.arguments, relevantVars))
-      if(cycleDetection(states)){
+      if (cycleDetection(states)) {
         return new errors.InfiniteLoopError1(node)
       } else {
         envs[0].infiniteLoopDetection.stackThreshold *= 2
