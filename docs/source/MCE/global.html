@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Predeclared in MCE</title>
+    <link rel="shortcut icon"
+	  type="image/x-icon"
+	  href="/Source/images/favicon.ico" />
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Predeclared in <a href=".">MCE</a></h1>
+
+    <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Functions</h3>  <!-- changed by MH on 1/7/2019, was Methods -->
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="apply_in_underlying_javascript"><span class="type-signature"></span>apply_in_underlying_javascript<span class="signature">(f, xs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    calls the function <CODE>f</CODE>
+with arguments given in list <CODE>xs</CODE>. For example: <PRE><CODE>function times(x, y) {
+return x * y;
+}
+apply_in_underlying_javascript(times, list(2, 3)); // returns 6</CODE></PRE>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">function to be applied</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">list</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">arguments given in list</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    whatever <CODE>f</CODE> returns
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="parse"><span class="type-signature"></span>parse<span class="signature">(x)</span><span class="type-signature"> &rarr; {value}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns the parse tree that results from parsing
+the string <CODE>str</CODE> as a Source program. The format
+of the parse tree is described in chapter 4 of 
+the textbook 
+in <a href="https://sicp.comp.nus.edu.sg/">Structure and
+Interpretation of Computer Programs, JavaScript Adaptation</a> (SICP).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given program as a string</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    parse tree
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">value</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h3>Predeclared names</h3><ul><li><a href="global.html#apply_in_underlying_javascript">apply_in_underlying_javascript</a></li><li><a href="global.html#parse">parse</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+  generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.5.5</a> from
+  <a href="https://github.com/source-academy/js-slang">Github repository js-slang</a>
+  on Fri Mar 06 2020 09:25:51 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

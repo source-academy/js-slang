@@ -1,7 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -10,9 +9,11 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { parse_and_compile, print_compiled_program, run_vm } from './stdlib/vm'
+import { parse_and_compile, run_vm, stringify_compiled } from './stdlib/vm'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
+import { Program } from './vm/svml-compiler'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -173,13 +174,16 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
 
     // VM library
-    defineBuiltin(context, 'parse_and_compile(program_string)', (str: string) =>
-      parse_and_compile(str, createContext(context.chapter))
+    defineBuiltin(context, 'compile(program_string)', (str: string) =>
+      parse_and_compile(str, context, false)
     )
-    defineBuiltin(context, 'print_compiled_program(machine_code)', (code: number[]) =>
-      print_compiled_program(code)
+    defineBuiltin(context, 'prelude_compile(program_string)', (str: string) =>
+      parse_and_compile(str, context, true)
     )
-    defineBuiltin(context, 'run_vm(machine_code)', run_vm)
+    defineBuiltin(context, 'pretty_print_compiled(machine_code)', (code: Program) =>
+      display('', stringify_compiled(code))
+    )
+    defineBuiltin(context, 'run_vm(machine_code)', (code: Program) => run_vm(code, context))
   }
 
   if (context.chapter >= 4) {

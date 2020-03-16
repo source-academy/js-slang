@@ -1,0 +1,4567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Predeclared in CURVES</title>
+    <link rel="shortcut icon"
+	  type="image/x-icon"
+	  href="/Source/images/favicon.ico" />
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Predeclared in <a href=".">CURVES</a></h1>
+
+    <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Functions</h3>  <!-- changed by MH on 1/7/2019, was Methods -->
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="arc"><span class="type-signature"></span>arc<span class="signature">(t)</span><span class="type-signature"> &rarr; {Point}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a curve: a function from a
+fraction t to a point. The points lie on the
+right half of the unit circle. They start at Point (0,1) when
+t is 0. When t is 0.5, they reach Point (1,0),
+when t is 1, they reach Point (0, -1).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">fraction between 0 and 1</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Point in the line at t
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Point</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="connect_ends"><span class="type-signature"></span>connect_ends<span class="signature">(curve1, curve2)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a binary Curve operator: It
+takes two Curves as arguments and returns
+a new Curve. The two Curves are combined
+by using the full first Curve for the first portion
+of the result and by using the full second Curve for the second
+portion of the result.
+The second Curve is translated such that its point
+at fraction 0 is the same as the Point of the first
+Curve at fraction 1.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curve1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">first Curve</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>curve2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">second Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="connect_rigidly"><span class="type-signature"></span>connect_rigidly<span class="signature">(curve1, curve2)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a binary Curve operator: It
+takes two Curves as arguments and returns
+a new Curve. The two Curves are combined
+by using the full first Curve for the first portion
+of the result and by using the full second Curve for the 
+second portion of the result.
+The second Curve is not changed, and therefore
+there might be a big jump in the middle of the
+result Curve.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curve1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">first Curve</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>curve2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">second Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_connected"><span class="type-signature"></span>draw_connected<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points 
+and connecting each pair with a line. 
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The parts between (0,0) and (1,1) of the resulting Drawing 
+are shown in the window.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_connected_full_view"><span class="type-signature"></span>draw_connected_full_view<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points 
+and connecting each pair with a line. 
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The Drawing is stretched or shrunk
+to show the full curve
+and maximize its width and height, with some padding.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_connected_full_view_proportional"><span class="type-signature"></span>draw_connected_full_view_proportional<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points 
+and connecting each pair with a line. 
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The Drawing is scaled proportionally to show the full curve
+and maximize its size, with some padding.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_connected_squeezed_to_window"><span class="type-signature"></span>draw_connected_squeezed_to_window<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points 
+and connecting each pair with a line. 
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The Drawing is resized proportionally such that it 
+is shown as big as possible, and still fits entirely 
+inside the window.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_points_on"><span class="type-signature"></span>draw_points_on<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points.
+The Drawing consists of isolated points, and does not connect them.
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The parts between (0,0) and (1,1) of the resulting Drawing 
+are shown in the window.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw_points_squeezed_to_window"><span class="type-signature"></span>draw_points_squeezed_to_window<span class="signature">(num)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a function that turns a given Curve into a Drawing, 
+by sampling the Curve at <CODE>num</CODE> sample points.
+The Drawing consists of isolated points, and does not connect them.
+When a program evaluates to a Drawing, the Source system
+displays it graphically, in a window, instead of textually.
+The Drawing is squeezed such that all its parts are shown in the
+window.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines the number of points to be 
+sampled. Including 0 and 1,
+there are <CODE>num + 1</CODE> evenly spaced sample points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function of type Curve → Drawing
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="gosper_curve"><span class="type-signature"></span>gosper_curve<span class="signature">(level)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a gosper Curve, that results from
+apply gosperize as many times to the unit line
+as given by the parameter <CODE>level</CODE> of
+the function <CODE>gosper_curve</CODE>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">number of repeated applications</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="gosperize"><span class="type-signature"></span>gosperize<span class="signature">(curve)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a unary Curve operator: It
+takes a Curve as argument and returns
+a new Curve, according to the Gosper operation.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curve</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="invert"><span class="type-signature"></span>invert<span class="signature">(original)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a unary Curve operator: a function from a
+Curve to a Curve. The points of the result Curve are
+the same points as the points of the original Curve, but
+in reverse: The result Curve applied to 0 is the original Curve
+applied to 1 and vice versa.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>original</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">original Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="make_point"><span class="type-signature"></span>make_point<span class="signature">(x, y)</span><span class="type-signature"> &rarr; {Point}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    makes a Point with given x and y coordinates
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">x-coordinate of new point</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">y-coordinate of new point</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    with x and y as coordinates
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Point</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="param_gosper"><span class="type-signature"></span>param_gosper<span class="signature">(level, angle_at)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    returns a Curve that results from gosperizing the unit line
+as often as given by the level parameter, each time
+applying an angle given by the given angle-producing function
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">number of repeated applications of gosperize to the curve</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>angle_at</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">function that determines the angle at each level</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="param_gosperize"><span class="type-signature"></span>param_gosperize<span class="signature">(curve)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function takes an angle theta and returns a unary Curve operator:
+A function that takes a Curve as argument and returns
+a new Curve, according to the Gosper operation, modified
+with the given angle theta
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curve</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="put_in_standard_position"><span class="type-signature"></span>put_in_standard_position<span class="signature">(curve)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a unary Curve operator: It
+takes a Curve as argument and returns
+a new Curve, as follows.
+A Curve is in <EM>standard position</EM> if it starts at (0,0) ends at (1,0).
+This function puts the given Curve in standard position by 
+rigidly translating it so its
+start Point is at the origin (0,0), then rotating it about the origin to put
+its endpoint on the x axis, then scaling it to put the endpoint at (1,0).
+Behavior is unspecified on closed Curves where start-point equal end-point.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curve</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="rotate_around_origin"><span class="type-signature"></span>rotate_around_origin<span class="signature">(theta)</span><span class="type-signature"> &rarr; {unary_Curve_operator}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function 
+takes an angle theta as parameter and returns a unary Curve operator:
+a function that takes
+a Curve a argument and returns
+a new Curve, which is the original Curve rotated by the given angle
+around the origin, in counter-clockwise direction.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>theta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given angle</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function that takes a Curve and returns a Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">unary_Curve_operator</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="rotate_pi_over_2"><span class="type-signature"></span>rotate_pi_over_2<span class="signature">(original)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a unary Curve operator: a function from a
+Curve to a Curve. The result Curve is the original Curve
+rotated by 90 degrees in counterclockwise direction around
+the origin.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>original</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Curve</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">original Curve</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="signature">(s)</span><span class="type-signature"> &rarr; {unary_Curve_operator}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function takes a scaling factor s argument and returns a
+unary Curve operator that
+scales a given Curve by s in x and y direction.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">scaling factor</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function that takes a Curve and returns a Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">unary_Curve_operator</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="scale_x_y"><span class="type-signature"></span>scale_x_y<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {unary_Curve_operator}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function takes scaling factors <CODE>a</CODE> and <CODE>b</CODE> as arguments 
+and returns a unary Curve operator that
+scales a given Curve by <CODE>a</CODE> in x-direction and by <CODE>b</CODE> 
+in y-direction.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">scaling factor in x-direction</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">scaling factor in y-direction</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    function that takes a Curve and returns a Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">unary_Curve_operator</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="show_connected_gosper"><span class="type-signature"></span>show_connected_gosper<span class="signature">(level)</span><span class="type-signature"> &rarr; {Drawing}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    shows a gosper Curve of given level, by drawing it
+with suitable parameters
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">number of repeated applications of gosperize to the unit line</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Drawing</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="translate"><span class="type-signature"></span>translate<span class="signature">(x0, y0)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function returns a unary Curve operator: 
+It takes an x-value x0 and a y-value y0 as arguments and returns a
+unary Curve operator that
+takes a Curve as argument and returns
+a new Curve, by translating the original by x0 in x-direction
+and by y0 in y-direction.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">x-value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">y-value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    unary Curve operator
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="unit_circle"><span class="type-signature"></span>unit_circle<span class="signature">(t)</span><span class="type-signature"> &rarr; {Point}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a curve: a function from a
+fraction t to a point. The points lie on the
+unit circle. They start at Point (1,0) when
+t is 0. When t is 0.25, they reach Point (0,1),
+when t is 0.5, they reach Point (-1, 0), etc.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">fraction between 0 and 1</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Point in the line at t
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Point</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="unit_line"><span class="type-signature"></span>unit_line<span class="signature">(t)</span><span class="type-signature"> &rarr; {Point}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a curve: a function from a
+fraction t to a point. The x-coordinate at
+franction t is t, and the y-coordinate is 0.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">fraction between 0 and 1</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Point in the line at t
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Point</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="unit_line_at"><span class="type-signature"></span>unit_line_at<span class="signature">(t)</span><span class="type-signature"> &rarr; {Curve}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function is a Curve generator: it takes
+a number and returns a horizontal curve. The number
+is a y-coordinate, and the Curve generates
+only points with the given y-coordinate.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">fraction between 0 and 1</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    horizontal Curve
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Curve</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="x_of"><span class="type-signature"></span>x_of<span class="signature">(p)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    retrieves the x-coordinate a given Point
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>p</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Point</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given point</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    x-coordinate of the Point
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="y_of"><span class="type-signature"></span>y_of<span class="signature">(p)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    retrieves the y-coordinate a given Point
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>p</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Point</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">given point</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    y-coordinate of the Point
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h3>Predeclared names</h3><ul><li><a href="global.html#arc">arc</a></li><li><a href="global.html#connect_ends">connect_ends</a></li><li><a href="global.html#connect_rigidly">connect_rigidly</a></li><li><a href="global.html#draw_connected">draw_connected</a></li><li><a href="global.html#draw_connected_full_view">draw_connected_full_view</a></li><li><a href="global.html#draw_connected_full_view_proportional">draw_connected_full_view_proportional</a></li><li><a href="global.html#draw_connected_squeezed_to_window">draw_connected_squeezed_to_window</a></li><li><a href="global.html#draw_points_on">draw_points_on</a></li><li><a href="global.html#draw_points_squeezed_to_window">draw_points_squeezed_to_window</a></li><li><a href="global.html#gosper_curve">gosper_curve</a></li><li><a href="global.html#gosperize">gosperize</a></li><li><a href="global.html#invert">invert</a></li><li><a href="global.html#make_point">make_point</a></li><li><a href="global.html#param_gosper">param_gosper</a></li><li><a href="global.html#param_gosperize">param_gosperize</a></li><li><a href="global.html#put_in_standard_position">put_in_standard_position</a></li><li><a href="global.html#rotate_around_origin">rotate_around_origin</a></li><li><a href="global.html#rotate_pi_over_2">rotate_pi_over_2</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scale_x_y">scale_x_y</a></li><li><a href="global.html#show_connected_gosper">show_connected_gosper</a></li><li><a href="global.html#translate">translate</a></li><li><a href="global.html#unit_circle">unit_circle</a></li><li><a href="global.html#unit_line">unit_line</a></li><li><a href="global.html#unit_line_at">unit_line_at</a></li><li><a href="global.html#x_of">x_of</a></li><li><a href="global.html#y_of">y_of</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+  generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.5.5</a> from
+  <a href="https://github.com/source-academy/js-slang">Github repository js-slang</a>
+  on Fri Mar 06 2020 09:25:52 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

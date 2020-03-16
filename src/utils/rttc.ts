@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { RuntimeSourceError } from '../interpreter-errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
