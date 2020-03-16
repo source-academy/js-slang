@@ -17,9 +17,3 @@ all: $(PDFSPECS)
 
 clean:
 	rm -f *~ *.dvi *.aux *.log *.ps *.out *.pdf
-
-install: $(PDFSPECS)
-	scp $(PDFSPECS) sicp@web1.comp.nus.edu.sg:public_html/source/.
-
-installinternal: $(PDFSPECS)
-	scp *.pdf sicp@web1.comp.nus.edu.sg:public_html/source_1920/.
