@@ -132,7 +132,7 @@ function negateSymbol(sym: BooleanSymbol): BooleanSymbol {
 function isBooleanSymbol(node: SymbolicExecutable): node is BooleanSymbol {
   return (
     node.type === 'BooleanValueSymbol' ||
-    node.type === 'LogicalExpression' ||
+    node.type === 'LogicalSymbol' ||
     node.type === 'InequalitySymbol'
   )
 }
@@ -190,6 +190,39 @@ function execBinarySymbol(
       if (toRun !== undefined) {
         return toRun(val, node1 as NumberSymbol, flipped)
       }
+    }
+  } else if (node1.type === 'FunctionSymbol') {
+    if (node2.type === 'FunctionSymbol') {
+      return makeSequenceSymbol([node1, node2])
+    } else {
+      return node1
+    }
+  } else if (node2.type === 'FunctionSymbol') {
+    return node2
+  }
+  return skipSymbol
+}
+
+// TODO big refactor
+function execLogicalSymbol(
+  node1: SymbolicExecutable,
+  node2: SymbolicExecutable,
+  op: string
+): SSymbol {
+  if (node1.type === 'Literal') {
+    if (node2.type === 'Literal') {
+      return skipSymbol
+    } else {
+      return execLogicalSymbol(node2, node1, op)
+    }
+  } else if (isBooleanSymbol(node1)) {
+    if(node2.type === 'Literal' && typeof node2.value === 'boolean') {
+      const val = node2.value
+      if((val && op === '&&') || op === '||') {
+        return node1
+      }
+    } else if (isBooleanSymbol(node2)) {
+      return makeLogicalSymbol(node1, node2, op==='&&')
     }
   } else if (node1.type === 'FunctionSymbol') {
     if (node2.type === 'FunctionSymbol') {
@@ -269,8 +302,9 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
     // TODO
     return skipSymbol
   } else if (node.type === 'LogicalExpression') {
-    // not yet
-    return skipSymbol
+    const lhs = irreducible(node.left) ? node.left : symbolicExecute(node.left, context)
+    const rhs = irreducible(node.right) ? node.right : symbolicExecute(node.right, context)
+    return execLogicalSymbol(lhs, rhs, node.operator)
   } else if (node.type === 'CallExpression') {
     if (node.callee.type === 'Identifier') {
       return makeFunctionSymbol(
@@ -280,7 +314,7 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
     }
   } else if (node.type === 'ReturnStatement') {
     const arg = node.argument
-    if (arg === undefined || arg === null || arg.type === 'Identifier') {
+    if (arg === undefined || arg === null || arg.type === 'Identifier' || arg.type === 'Literal') {
       return terminateSymbol
     } else {
       const value = symbolicExecute(arg, context)
@@ -290,12 +324,48 @@ function symbolicExecute(node: SymbolicExecutable, context: Map<string, SSymbol>
   return skipSymbol
 }
 
+function collapseConjunction(node: BooleanSymbol): BooleanSymbol {
+  if (node.type === 'LogicalSymbol' && node.conjunction) {
+    let left = node.left
+    let right = node.right
+    if(left.type === 'InequalitySymbol' && right.type === 'InequalitySymbol' &&
+       left.direction === right.direction && left.name === right.name) {
+      const direction = left.direction
+      const name = left.name
+      if(left.direction < 0) {
+        return makeInequalitySymbol(name, Math.min(left.constant,right.constant), direction)
+      } else if(left.direction > 0) {
+        return makeInequalitySymbol(name, Math.max(left.constant,right.constant), direction)
+      }
+    } else {
+      return {...node, left:collapseConjunction(left), right:collapseConjunction(right)}
+    }
+  }
+  return node
+}
+
 function seperateDisjunctions(node: BooleanSymbol): BooleanSymbol[] {
   // TODO also check the math
-  if (node.type === 'LogicalSymbol' && !node.conjunction) {
-    return seperateDisjunctions(node.left).concat(seperateDisjunctions(node.right))
+  if (node.type === 'LogicalSymbol') {
+    const splitLeft = seperateDisjunctions(node.left)
+    const splitRight = seperateDisjunctions(node.right)
+    if(node.conjunction) {
+      let res = []
+      for (let left of splitLeft) {
+        for (let right of splitRight) {
+          res.push(makeLogicalSymbol(left, right, true))
+        }
+      }
+      return res
+    } else {
+      return splitLeft.concat(splitRight)
+    }
   }
   return [node]
+}
+
+function processLogical(node: BooleanSymbol) {
+  return seperateDisjunctions(node).map(collapseConjunction)
 }
 
 function serialize(node: SSymbol): SSymbol[][] {
@@ -312,11 +382,11 @@ function serialize(node: SSymbol): SSymbol[][] {
     const consTail = serialize(node.consequent)
     const altTail = serialize(node.alternate)
     let result: SSymbol[][] = []
-    for (const sym of seperateDisjunctions(node.test)) {
+    for (const sym of processLogical(node.test)) {
       result = result.concat(consTail.map(x => [sym as SSymbol].concat(x)))
     }
 
-    for (const sym of seperateDisjunctions(negateSymbol(node.test))) {
+    for (const sym of processLogical(negateSymbol(node.test))) {
       result = result.concat(altTail.map(x => [sym as SSymbol].concat(x)))
     }
     return result
@@ -377,5 +447,6 @@ export function toName(node: es.FunctionDeclaration) {
   const firstCall = getFirstCall(node)
   const symTree = symbolicExecute(node.body, [new Map()])
   const symLists = serialize(symTree).map(x => [firstCall].concat(x))
+
   return symLists.map(simpleCheck).filter(x => x !== undefined) as infiniteLoopChecker[]
 }

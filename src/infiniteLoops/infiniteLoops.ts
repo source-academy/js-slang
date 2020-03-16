@@ -170,8 +170,8 @@ export function checkInfiniteLoop(node: es.CallExpression, args: any[], envs: En
     if (relevantVars) {
       // temp: fix for functions that have not been analysed
 
-      let states : string[] = envs[0].infiniteLoopDetection.tailCallStack
-      if(states.length === 0) {
+      let states: string[] = envs[0].infiniteLoopDetection.tailCallStack
+      if (states.length === 0) {
         const stacks: es.CallExpression[] = []
         for (const env of envs) {
           if (env.callExpression) {
