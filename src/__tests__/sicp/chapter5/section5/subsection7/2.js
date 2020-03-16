@@ -1,0 +1,13 @@
+"apply_dispatch",
+    test(op("primitive_procedure"), reg("proc")),
+    branch(label("primitive_apply")),
+    test(op("compound_procedure"), reg("proc")),
+    branch(label("compound_apply")),
+    test(op("compiled_procedure"), reg("proc")),
+    branch(label("compiled_apply")),
+    go_to(label("unknown_procedure_type")),
+
+"compiled_apply",
+    restore("continue"),
+    assign("val", list(op("compiled_procedure_entry"), reg("proc"))),
+    go_to(reg("val")),
