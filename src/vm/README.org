@@ -54,8 +54,6 @@ display(y);
 *** Notes
 - for simplicity, heap is not represented in the rules
 - =g= represents garbage value: its value is not important to the rule
-- =v1= and =v2= are function values, hereafter known as (concurrent) threads, and may be represented as =(<>, pc1, e1, trs1)= and =(<>, pc2, e2, trs2)= respectively
-- =concurrent_execute(...)= cannot appear in either of =v1= or =v2=
 
 *** Compiling
 #+BEGIN_SRC
@@ -63,6 +61,7 @@ E1 -> s1 ... En -> sn
 ---------
 concurrent_execute(E1, ... ,En) -> s1. ... .sn.EXECUTE n
 #+END_SRC
+Each of =s1. ... .sn= is a string of VM instruction that loads a closure onto the operand stack.
 
 *** Running
 There are additional structures in our VM:
