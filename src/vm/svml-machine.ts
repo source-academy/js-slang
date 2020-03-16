@@ -459,13 +459,14 @@ export function show_heap(s: string) {
   const len = HEAP.length
   let i = 0
   let str = ''
-  str += '--- HEAP --- ' + s
+  str += '--- HEAP --- ' + s + '\n'
   while (i < len) {
     str +=
       i +
       ': ' +
       HEAP[i] + // TODO is_number(HEAP[i]) &&
-      (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '')
+      (is_node_tag(HEAP[i]) ? ' (' + node_kind(HEAP[i]) + ')' : '') +
+      '\n'
     i = i + 1
   }
   return str
