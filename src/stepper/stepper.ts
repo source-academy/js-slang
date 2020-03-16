@@ -1048,7 +1048,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     // and predefined fns.
     reduced = substPredefinedFns(reduced, context)[0]
     while ((reduced as es.Program).body.length > 0) {
-      if (steps.length === 19999) {
+      if (steps.length === 999) {
         steps.push(
           ast.program([ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))])
         )
