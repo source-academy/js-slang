@@ -328,20 +328,20 @@ function serialize(node: SSymbol): SSymbol[][] {
 export type infiniteLoopChecker = (name: string, args: any[]) => boolean
 
 function makeUnaryChecker(name1: string, constant: number, direction: number): infiniteLoopChecker {
-  // need to check length?
-  function checker(name2: string, args: any[]): boolean {
-    if (direction < 0) {
-      // console.log(`${name1}(${args[0]}), ${args[0]} < ${constant}`)
-      return name1 === name2 && args[0] < constant && args.length === 1
-    } else if (direction > 0) {
-      // console.log(`${name1}(${args[0]}), ${args[0]} > ${constant}`)
-      return name1 === name2 && args[0] > constant && args.length === 1
+  const test: { [num: string]: infiniteLoopChecker } = {
+    '-1'(name2: string, args: any[]): boolean {
+      return name1 === name2 && args.length === 1 && args[0] < constant
+    },
+    '1'(name2: string, args: any[]): boolean {
+      return name1 === name2 && args.length === 1 && args[0] > constant
+    },
+    '0'(name2: string, args: any[]): boolean {
+      return name1 === name2 && args.length === 1 && args[0] === constant
     }
-    // console.log(`${name1}(${args[0]}), ${args[0]} === ${constant}`)
-    return name1 === name2 && args[0] === constant && args.length === 1
   }
-  return checker
+  return test[direction.toString()]
 }
+
 function simpleCheck(symLists: SSymbol[]): infiniteLoopChecker | undefined {
   if (
     symLists.length === 3 &&
