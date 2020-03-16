@@ -1145,8 +1145,6 @@ M[OpCodes.CLEAR] = () => {
   A = false
   NEW_BOOL()
   HEAP[C + ARRAY_VALUE_SLOT][0] = RES
-  A = B
-  PUSH_OS() // push old value to os (this shouldn't happen though, clear shouldn't return anything)
   PC = PC + 1
 }
 
