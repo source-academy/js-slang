@@ -90,13 +90,6 @@ export interface Context<T = any> {
       scheduler: Scheduler
     }
   }
-  /** infinite loop detection */
-  infiniteLoopDetection: {
-    status: boolean
-    relevantVars: Map<string, number[]>
-    stackThreshold: number
-    checkers: ((name: string, args: any[]) => boolean)[]
-  }
 
   /**
    * Used for storing external properties.
@@ -122,12 +115,21 @@ export type Value = any
 
 export type AllowedDeclarations = 'const' | 'let'
 
+export interface InfiniteLoopData {
+  status: boolean
+  relevantVars: Map<string, number[]>
+  stackThreshold: number
+  checkers: ((name: string, args: any[]) => boolean)[]
+  tailCallStack: string[]
+}
+
 export interface Environment {
   name: string
   tail: Environment | null
   callExpression?: es.CallExpression
   head: Frame
   thisContext?: Value
+  infiniteLoopDetection: InfiniteLoopData
 }
 
 export interface Error {

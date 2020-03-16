@@ -33,17 +33,19 @@ const createEmptyDebugger = () => ({
   }
 })
 
-const createGlobalEnvironment = () => ({
-  tail: null,
-  name: 'global',
-  head: {}
-})
-
 const createEmptyInfiniteLoopDetection = () => ({
   status: true,
   relevantVars: new Map(),
   stackThreshold: 100,
-  checkers: []
+  checkers: [],
+  tailCallStack: []
+})
+
+const createGlobalEnvironment = () => ({
+  tail: null,
+  name: 'global',
+  head: {},
+  infiniteLoopDetection: createEmptyInfiniteLoopDetection()
 })
 
 export const createEmptyContext = <T>(
@@ -67,7 +69,6 @@ export const createEmptyContext = <T>(
     numberOfOuterEnvironments: 1,
     prelude: null,
     debugger: createEmptyDebugger(),
-    infiniteLoopDetection: createEmptyInfiniteLoopDetection(),
     contextId: length - 1,
     executionMethod: 'auto'
   }

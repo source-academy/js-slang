@@ -11,8 +11,7 @@ import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import {
   infiniteLoopStaticAnalysis,
-  cycleDetection,
-  makeFunctionState
+  checkInfiniteLoop
 } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
@@ -27,6 +26,14 @@ class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
 
+const createEmptyInfiniteLoopDetection = () => ({
+  status: true,
+  relevantVars: new Map(),
+  stackThreshold: 100,
+  checkers: [],
+  tailCallStack: []
+})
+
 const createEnvironment = (
   closure: Closure,
   args: Value[],
@@ -35,7 +42,8 @@ const createEnvironment = (
   const environment: Environment = {
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
-    head: {}
+    head: {},
+    infiniteLoopDetection: createEmptyInfiniteLoopDetection()
   }
   if (callExpression) {
     environment.callExpression = {
@@ -59,6 +67,7 @@ const createBlockEnvironment = (
     name,
     tail: currentEnvironment(context),
     head,
+    infiniteLoopDetection: createEmptyInfiniteLoopDetection(),
     thisContext: context
   }
 }
@@ -307,29 +316,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
     }
-    if(node.callee.type === 'Identifier') {
-      const name = node.callee.name
-      const relevantVars = context.infiniteLoopDetection.relevantVars[node.callee.name]
-      if(relevantVars){ // temp: fix for functions that have not been analysed
-        if(context.runtime.environments.length > context.infiniteLoopDetection.stackThreshold) {
-          const stacks:es.CallExpression[] = []
-          for (const env of context.runtime.environments) {
-            if (env.callExpression) {
-              stacks.push(env.callExpression)
-            }
-          }
-          const states = stacks.map(x=>makeFunctionState(name, x.arguments, relevantVars))
-          if(cycleDetection(states)){
-            handleRuntimeError(context, new errors.InfiniteLoopError1(node))
-          } else {
-            context.infiniteLoopDetection.stackThreshold *= 2
-          }
-          for(const checker of context.infiniteLoopDetection.checkers) {
-            if(checker(name, args)) {
-              handleRuntimeError(context, new errors.InfiniteLoopError2(node))
-            }
-          }
-        }
+
+    const envs = context.runtime.environments
+    const threshold = currentEnvironment(context).infiniteLoopDetection.stackThreshold
+    if(context.runtime.environments.length > threshold) {
+      const error = checkInfiniteLoop(node, args, envs)
+      if(error) {
+        handleRuntimeError(context, error)
       }
     }
 
@@ -518,7 +511,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    infiniteLoopStaticAnalysis(node, context);
+    infiniteLoopStaticAnalysis(node, currentEnvironment(context).infiniteLoopDetection);
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
@@ -640,6 +633,7 @@ export function* apply(
         fun = result.callee
         node = result.node
         args = result.args
+        // check inf loop etc
       } else if (!(result instanceof ReturnValue)) {
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)

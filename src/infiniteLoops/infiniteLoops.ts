@@ -1,6 +1,7 @@
 import * as es from 'estree'
-import { Context } from '../types'
+import { InfiniteLoopData, Environment } from '../types'
 import * as sym from './symbolicExecutor'
+import * as errors from '../errors/errors'
 
 function getVars(node: es.Node): string[] {
   // TODO handle more expr types?
@@ -112,9 +113,63 @@ export function makeFunctionState(name: string, args: any[], relevantVars: numbe
   return state + ')'
 }
 
-export function infiniteLoopStaticAnalysis(node: es.FunctionDeclaration, context: Context) {
+export function infiniteLoopStaticAnalysis(node: es.FunctionDeclaration, infiniteLoopDetection: InfiniteLoopData) {
   const functionId = node.id as es.Identifier
-  context.infiniteLoopDetection.relevantVars[functionId.name] = getRelevantVars(node)
-  context.infiniteLoopDetection.checkers = sym.toName(node)
+  infiniteLoopDetection.relevantVars[functionId.name] = getRelevantVars(node)
+  infiniteLoopDetection.checkers = sym.toName(node)
   // return context;
+}
+
+
+function getInfiniteLoopData(env: Environment, name: string) { //TODO rename
+  let environment: Environment | null = env
+  while (environment) {
+    const relevantVars = environment.infiniteLoopDetection.relevantVars
+    if (relevantVars[name]) {
+      return relevantVars[name]
+    } else {
+      environment = environment.tail
+    }
+  }
+  return undefined
+}
+
+function testFunction(env: Environment, name: string, args: any[]){ //TODO rename
+  let environment: Environment | null = env
+  while (environment) {
+    const checkers = environment.infiniteLoopDetection.checkers
+    for(const checker of checkers) { // TODO fix this somehow
+      if(checker(name, args)) {
+        return true
+      }
+    }
+    environment = environment.tail
+  }
+  return false
+}
+
+//TODO big refactoring
+export function checkInfiniteLoop(node: es.CallExpression, args: any[], envs: Environment[]) {
+  if(node.callee.type === 'Identifier') {
+    const name = node.callee.name
+    const relevantVars = getInfiniteLoopData(envs[0], name)
+    if(relevantVars){ // temp: fix for functions that have not been analysed
+      const stacks:es.CallExpression[] = []
+      for (const env of envs) {
+        if (env.callExpression) {
+          stacks.push(env.callExpression)
+        }
+      }
+      const states = stacks.map(x=>makeFunctionState(name, x.arguments, relevantVars))
+      if(cycleDetection(states)){
+        return new errors.InfiniteLoopError1(node)
+      } else {
+        envs[0].infiniteLoopDetection.stackThreshold *= 2
+      }
+      if (testFunction(envs[0], name, args)) {
+        return new errors.InfiniteLoopError2(node)
+      }
+    }
+  }
+  return undefined
 }
