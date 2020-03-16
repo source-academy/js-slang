@@ -1,4 +1,53 @@
-* VM
+** Overview
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads.
+
+The design of this system is inspired by [[https://doi.org/10.1007/978-1-4757-3472-0_2][Dijkstra's =cobegin= / =coend= constructs]], of which a good overview and comparison with =fork= / =join= can be found in section 7.2.2 of [[https://doi.org/10.1145/359576.359585][Hoare's Communicating Sequential Processes]].
+
+However, this design departs from Dijkstra's constructs, as the system does not execute parallel threads. Instead, it executes concurrent threads.
+
+** Usage
+This concurrent system provides three primitive functions:
+0. =concurrent_execute(f_1, ... ,f_n)=, where =f_1, ... ,f_n= are nullary functions.
+0. =test_and_set(l)=, where =l= is a list, whose head is a boolean.
+0. =clear(l)=, where =l= is a list, whose head is a boolean.
+
+An example using these three functions is:
+#+BEGIN_SRC
+let x = 0;
+let y = 0;
+function make_mutex() {
+    const cell = list(false);
+    function the_mutex(m) {
+        return m === "acquire"
+               ? (test_and_set(cell)
+                 ? the_mutex("acquire")
+                 : true )
+               : m === "release"
+                 ? clear(cell)
+                 : error("Unknown request in mutex", m); }
+    return the_mutex;
+}
+const m = make_mutex();
+
+function f() {
+    for (let i = 0; i < 100; i = i + 1) {
+        m("acquire");
+        x = x + 1;
+        m("release");
+    }
+}
+
+function g() {
+    for (let i = 0; i < 100; i = i + 1) {
+        y = y + 1;
+    }
+}
+
+concurrent_execute(f, f, f);
+concurrent_execute(g, g, g);
+display(x);
+display(y);
+#+END_SRC
 
 ** =EXECUTE= Rules
 
