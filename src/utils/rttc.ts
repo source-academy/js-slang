@@ -120,7 +120,6 @@ const isStringT = (v: Thunk<Value>) => v.type === 'string'
  */
 const isBoolT = (v: Thunk<Value>) => v.type === 'boolean'
 
-
 /**
  * Checks that an unary expression has a correctly
  * typed Thunk as its argument, and returns the
@@ -152,7 +151,6 @@ export const checkUnaryExpressionT = (
       return ''
   }
 }
-
 
 /**
  * Checks that a binary expression has correctly

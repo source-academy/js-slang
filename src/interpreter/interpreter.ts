@@ -6,7 +6,11 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
-import { evaluateBinaryExpression, evaluateUnaryExpression, logicalOp } from '../utils/lazyOperators'
+import {
+  evaluateBinaryExpression,
+  evaluateUnaryExpression,
+  logicalOp
+} from '../utils/lazyOperators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
@@ -696,5 +700,5 @@ export function* apply(
  *     evaluate eagerly.
  */
 function lazyEvaluate(context: Context) {
-  return context.chapter === 1;
+  return context.chapter === 1
 }
