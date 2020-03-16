@@ -1129,23 +1129,26 @@ function EXECUTE_NULLIFY_REGISTERS() {
 
 M[OpCodes.TEST_AND_SET] = () => {
   POP_OS()
-  C = RES // list
-  B = HEAP[C + ARRAY_VALUE_SLOT][0] // get old boolean value
+  D = RES // array
+  E = HEAP[D + ARRAY_VALUE_SLOT][0] // get old boolean value
   A = true
   NEW_BOOL()
-  HEAP[C + ARRAY_VALUE_SLOT][0] = RES // store true in head
-  A = B
+  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+  A = E
   PUSH_OS() // push old value to os
   PC = PC + 1
 }
 
 M[OpCodes.CLEAR] = () => {
   POP_OS()
-  C = RES // list
-  B = HEAP[C + ARRAY_VALUE_SLOT][0]
+  D = RES // array
   A = false
   NEW_BOOL()
-  HEAP[C + ARRAY_VALUE_SLOT][0] = RES
+  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+  // return undefined
+  NEW_UNDEFINED()
+  A = RES
+  PUSH_OS()
   PC = PC + 1
 }
 
