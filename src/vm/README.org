@@ -69,14 +69,14 @@ Each of $s_1. \cdots .s_n$ is a string of VM instruction that loads a closure on
 
 *** Running
 There are additional structures in our VM:
-0. $\textit{tq}$, a register which is a queue of thread suspensions
-0. $\textit{to}$, a register initialized with $0$, that indicates how many instructions are left for a thread to run
+0. $\textit{tq}$, a register which is a queue of thread suspensions.
+0. $\textit{to}$, a register initialized with $0$, that indicates how many instructions are left for a thread to run.
 0. $\textit{seq}$, a register initialized with $\langle \rangle$, that represents an empty sequential runtime stack. When entering the concurrent context, $\textit{os}$, $\textit{pc}$, $\textit{e}$, and $\textit{rs}$ are copied onto $\textit{seq}$, and when exiting the concurrent context, they are popped from $\textit{seq}$.
 The tuple representing our VM will have three more corresponding structures:
 $(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}, \textit{seq})\\$
 
 **** Starting $\texttt{EXECUTE}$, loading thread frames into register $\textit{tq}$
-$\Rule{s(\textit{pc}) = \texttt{EXECUTE} n}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0, \langle \rangle) \transition (g, \langle \rangle, g, g, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0, (\textit{os}, \textit{pc}, \textit{e}).\textit{rs})}\\$
+$\Rule{s(\textit{pc}) = \texttt{EXECUTE n}}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0, \langle \rangle) \transition (g, \langle \rangle, g, g, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0, (\textit{os}, \textit{pc}, \textit{e}).\textit{rs})}\\$
 Each thread is a four-tuple of $\textit{os}$, $\textit{pc}$, $\textit{e}$, and $\textit{rs}$. Initially, threads have empty $\textit{os}$ and empty $\textit{rs}$. Note the transition from empty $\textit{seq}$ to nonempty $\textit{seq}$: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
 
 **** Beginning thread execution
