@@ -1,19 +1,6 @@
 % Created 2020-03-17 Tue 16:07
 % Intended LaTeX compiler: pdflatex
-\documentclass[11pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{graphicx}
-\usepackage{grffile}
-\usepackage{longtable}
-\usepackage{wrapfig}
-\usepackage{rotating}
-\usepackage[normalem]{ulem}
-\usepackage{amsmath}
-\usepackage{textcomp}
-\usepackage{amssymb}
-\usepackage{capt-of}
-\usepackage{hyperref}
+\input source_header.tex
 \newcommand{\qed}{$\Box$}
 \newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
 \newcommand{\Rulee}[3]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}[#3]}
@@ -30,8 +17,13 @@
  pdfsubject={},
  pdfcreator={Emacs 26.3 (Org mode 9.2.6)},
  pdflang={English}}
-\begin{document}
 
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{1920}{Source}{\S 3}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input source_intro.tex
 
 \section{Specification of Concurrent Virtual Machine}
 \label{sec:orgc6ebafc}
