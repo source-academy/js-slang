@@ -1,5 +1,5 @@
-import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal, Program } from 'estree'
+import { findNodeAt, simple } from 'acorn-walk/dist/walk'
+import { DebuggerStatement, Literal, Node, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -143,6 +143,35 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
     isNativeRunnable = theOptions.executionMethod === 'native'
   }
   return isNativeRunnable
+}
+
+export function findIdentifier(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): any {
+  const program = parse(code, context)
+  if (!program) {
+    return null
+  }
+
+  // TODO: Delete later
+  console.log("Program:", program);
+  console.log("Find node at:", loc);
+
+  function findByLocation(type: string, node: Node) {
+    const location = node.loc;
+    if (type && location) {
+      return type === "Identifier"
+        && location.start.line === loc.line
+        && location.start.column <= loc.column
+        && location.end.column >= loc.column;
+    }
+
+    return false;
+  }
+
+  return findNodeAt(program, undefined, undefined, findByLocation);
 }
 
 export async function runInContext(
