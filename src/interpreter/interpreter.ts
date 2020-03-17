@@ -374,7 +374,20 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
-    return yield* this.IfStatement(node, context)
+    if (lazyEvaluate(context)) {
+      const { line, column } = node.loc!.start
+      const test = yield* evaluate(node.test, context)
+      const consequent = yield* evaluate(node.consequent, context)
+      const alternate = yield* evaluate(node.alternate, context)
+
+      try {
+        return lazyOperators.conditionalOp(test, consequent, alternate, line, column);
+      } catch (e) {
+        return handleRuntimeError(context, e as rttc.TypeError);
+      }
+    } else {
+      return yield* this.IfStatement(node, context)
+    }
   },
 
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
