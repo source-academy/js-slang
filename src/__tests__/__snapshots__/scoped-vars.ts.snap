@@ -1,0 +1,372 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Going to definitions of ordinary variable definitions 1`] = `
+Array [
+  Object {
+    "isDeclaration": true,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 4,
+      },
+      "start": Position {
+        "column": 8,
+        "line": 4,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+  Object {
+    "isDeclaration": false,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 6,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 2,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+  undefined,
+]
+`;
+
+exports[`Going to definitions of with conditionals and loops 1`] = `
+Array [
+  Object {
+    "isDeclaration": false,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 5,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+]
+`;
+
+exports[`Going to definitions of with function scopes 1`] = `
+Array [
+  Object {
+    "isDeclaration": true,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 20,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 14,
+        "line": 3,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+  Object {
+    "isDeclaration": true,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 20,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 14,
+        "line": 3,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+]
+`;
+
+exports[`Going to definitions with arrow function scopes 1`] = `
+Array [
+  Object {
+    "isDeclaration": true,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 24,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 18,
+        "line": 3,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+  Object {
+    "isDeclaration": true,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 38,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 32,
+        "line": 5,
+      },
+    },
+    "name": "target",
+    "type": "DefinitionNode",
+  },
+]
+`;
+
+exports[`Scoped based refactoring of ordinary variable definitions 1`] = `
+Array [
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 14,
+        "line": 4,
+      },
+      "start": Position {
+        "column": 8,
+        "line": 4,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 5,
+      },
+    },
+  ],
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 10,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 1,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 6,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 2,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 6,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 3,
+      },
+    },
+  ],
+  Array [],
+]
+`;
+
+exports[`Scoped based refactoring with arrow function scopes 1`] = `
+Array [
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 24,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 18,
+        "line": 3,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 34,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 28,
+        "line": 3,
+      },
+    },
+  ],
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 38,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 32,
+        "line": 5,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 53,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 47,
+        "line": 5,
+      },
+    },
+  ],
+]
+`;
+
+exports[`Scoped based refactoring with conditionals and loops 1`] = `
+Array [
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 10,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 1,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 10,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 2,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 17,
+        "line": 4,
+      },
+      "start": Position {
+        "column": 11,
+        "line": 4,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 3,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 5,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 7,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 7,
+      },
+    },
+  ],
+]
+`;
+
+exports[`Scoped based refactoring with function scopes 1`] = `
+Array [
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 20,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 14,
+        "line": 3,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 5,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 10,
+        "line": 7,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 7,
+      },
+    },
+  ],
+  Array [
+    SourceLocation {
+      "end": Position {
+        "column": 20,
+        "line": 3,
+      },
+      "start": Position {
+        "column": 14,
+        "line": 3,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 8,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 5,
+      },
+    },
+    SourceLocation {
+      "end": Position {
+        "column": 10,
+        "line": 7,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 7,
+      },
+    },
+  ],
+]
+`;
