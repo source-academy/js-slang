@@ -1,4 +1,4 @@
-import { Context } from "./types";
+import { Context } from './types'
 
 /**
  * Checks whether the interpreter should evaluate
@@ -12,7 +12,7 @@ import { Context } from "./types";
  *     evaluate eagerly.
  */
 export default function lazyEvaluate(context: Context) {
-  return lazyEvaluateInChapter(context.chapter);
+  return lazyEvaluateInChapter(context.chapter)
 }
 
 /**
@@ -24,5 +24,5 @@ export default function lazyEvaluate(context: Context) {
  *     evaluate eagerly.
  */
 export function lazyEvaluateInChapter(chapter: number) {
-  return chapter === -1;
+  return chapter === -1
 }

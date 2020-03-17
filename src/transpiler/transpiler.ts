@@ -762,8 +762,8 @@ export function transpile(
 ) {
   if (!lazyEvaluation) {
     // remove unnecessary global ids
-    delete globalIds.logicalOp;
-    delete globalIds.conditionalOp;
+    delete globalIds.logicalOp
+    delete globalIds.conditionalOp
   }
   contextId = id
   refreshLatestIdentifiers(program)
