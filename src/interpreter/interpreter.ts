@@ -6,14 +6,12 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
-import {
-  evaluateBinaryExpression,
-  evaluateUnaryExpression,
-  logicalOp
-} from '../utils/lazyOperators'
+import * as lazyOperators from '../utils/lazyOperators'
+import * as operators from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
+import lazyEvaluate from '../lazyContext'
 
 class BreakValue {}
 
@@ -346,13 +344,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (typeof checkType !== 'string') {
         return handleRuntimeError(context, checkType as rttc.TypeError)
       }
-      return evaluateUnaryExpression(node.operator, value, checkType)
+      return lazyOperators.evaluateUnaryExpression(node.operator, value, checkType)
     } else {
       const error = rttc.checkUnaryExpression(node, node.operator, value)
       if (error) {
         return handleRuntimeError(context, error)
       }
-      return evaluateUnaryExpression(node.operator, value)
+      return operators.evaluateUnaryExpression(node.operator, value)
     }
   },
 
@@ -365,13 +363,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (typeof checkType !== 'string') {
         return handleRuntimeError(context, checkType as rttc.TypeError)
       }
-      return evaluateBinaryExpression(node.operator, left, right, checkType)
+      return lazyOperators.evaluateBinaryExpression(node.operator, left, right, checkType)
     } else {
       const error = rttc.checkBinaryExpression(node, node.operator, left, right)
       if (error) {
         return handleRuntimeError(context, error)
       }
-      return evaluateBinaryExpression(node.operator, left, right)
+      return operators.evaluateBinaryExpression(node.operator, left, right)
     }
   },
 
@@ -385,7 +383,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const right = yield* evaluate(node.right, context)
 
       try {
-        return logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
+        return lazyOperators.logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
       } catch (e) {
         return handleRuntimeError(context, e as rttc.TypeError);
       }
@@ -686,19 +684,4 @@ export function* apply(
     popEnvironment(context)
   }
   return result
-}
-
-/**
- * Checks whether the interpreter should evaluate
- * the expression lazily in this context. Currently,
- * lazy evaluation is only implemented for Source
- * chapters 1 and 2, so lazyEvaluate will return true
- * only when the chapter is 1 or 2.
- * @param context The context to be checked.
- * @returns True, if the interpreter is to evaluate
- *     lazily. False, if the interpreter should
- *     evaluate eagerly.
- */
-function lazyEvaluate(context: Context) {
-  return context.chapter === -1
 }

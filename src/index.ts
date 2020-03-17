@@ -29,6 +29,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import lazyEvaluate from './lazyContext'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -200,7 +201,7 @@ export async function runInContext(
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
       writeFileSync('./programTree.json', JSON.stringify(program))
-      const temp = transpile(program, context.contextId)
+      const temp = transpile(program, context.contextId, lazyEvaluate(context))
       // some issues with formatting and semicolons and tslint so no destructure
       writeFileSync('./output.js', temp.transpiled)
       transpiled = temp.transpiled

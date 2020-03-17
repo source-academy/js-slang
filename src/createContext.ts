@@ -14,6 +14,7 @@ import { Context, CustomBuiltIns, Value } from './types'
 import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -49,7 +50,7 @@ export const createEmptyContext = <T>(
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
-  const operatorsToUse = chapter === -1 ? lazyOperators : operators
+  const operatorsToUse = lazyEvaluateInChapter(chapter) ? lazyOperators : operators
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     globals: { variables: new Map(), previousScope: null },
     operators: new Map(Object.entries(operatorsToUse))
@@ -142,7 +143,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
     defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
     defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
-    defineBuiltin(context, 'force(expression)', lazy.force)
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
@@ -197,6 +197,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
+  }
+
+  if (lazyEvaluate(context)) {
+    defineBuiltin(context, 'force(expression)', lazy.force)
   }
 }
 
