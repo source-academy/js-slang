@@ -1,5 +1,5 @@
 ** Overview
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads.
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a nullary function, so the concurrent system executes each thread by running the code in the body of the nullary function.
 
 The design of this system is inspired by [[https://doi.org/10.1007/978-1-4757-3472-0_2][Dijkstra's =cobegin= / =coend= constructs]], of which a good overview and comparison with =fork= / =join= can be found in section 7.2.2 of [[https://doi.org/10.1145/359576.359585][Hoare's Communicating Sequential Processes]].
 
