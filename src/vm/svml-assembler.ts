@@ -117,7 +117,7 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.BRF:
       case OpCodes.BRT:
       case OpCodes.BR:
-        const offset = instrOffsets[index + (instr[1] as number)] - instrOffsets[index]
+        const offset = instrOffsets[index + (instr[1] as number)] - instrOffsets[index + 1]
         b.putI(32, offset)
         break
       case OpCodes.JMP:
