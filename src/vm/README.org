@@ -6,6 +6,11 @@
 #+LATEX_HEADER: \newcommand{\translate}{\twoheadrightarrow}
 #+LATEX_HEADER: \newcommand{\translateaux}{\hookrightarrow}
 
+* Specification of Concurrent Virtual Machine
+Compared to Source $\S 3$, this concurrent system has the following changes:
+- The addition of three primitive concurrent functions.
+For details, see Section ``Concurrency Support'' below.
+
 ** Overview
 This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a nullary function, so the concurrent system executes each thread by running the code in the body of the nullary function.
 
@@ -13,55 +18,17 @@ The design of this system is inspired by [[https://doi.org/10.1007/978-1-4757-34
 
 However, this design departs from Dijkstra's constructs, as the system does not execute parallel threads. Instead, it executes concurrent threads.
 
-** Usage
-This concurrent system provides three primitive functions:
-0. $\texttt{concurrent\_execute}(f_1, \cdots ,f_n)$, where $f_1, \cdots ,f_n$ are nullary functions.
-0. $\texttt{test\_and\_set}(l)$, where $l$ is a list, whose head is a boolean.
-0. $\texttt{clear}(l)$, where $l$ is a list, whose head is a boolean.
-
-An example using these three functions is:
-#+BEGIN_SRC
-let x = 0;
-let y = 0;
-function make_mutex() {
-    const cell = list(false);
-    function the_mutex(m) {
-        return m === "acquire"
-               ? (test_and_set(cell)
-                 ? the_mutex("acquire")
-                 : true )
-               : m === "release"
-                 ? clear(cell)
-                 : error("Unknown request in mutex", m); }
-    return the_mutex;
-}
-const m = make_mutex();
-
-function f() {
-    for (let i = 0; i < 100; i = i + 1) {
-        m("acquire");
-        x = x + 1;
-        m("release");
-    }
-}
-
-function g() {
-    for (let i = 0; i < 100; i = i + 1) {
-        y = y + 1;
-    }
-}
-
-concurrent_execute(f, f, f);
-concurrent_execute(g, g, g);
-display(x);
-display(y);
-#+END_SRC
+** Concurrency Support
+The following concurrent functions are supported:
+- $\texttt{concurrent\_execute}(f_1, \cdots ,f_n)$: \textit{primitive}, executes multiple threads concurrently. Each $f_1, \cdots ,f_n$ is a nullary function, and each thread is executed by running the code in the body of the nullary function. Returns $\texttt{undefined}$.
+- $\texttt{test\_and\_set}(a)$: \textit{primitive}, assumes the head of array $a$ is a boolean $b$. Sets the head of $a$ to $\texttt{true}$. Returns $b$.
+- $\texttt{clear}(a)$: \textit{primitive}, sets the head of array $a$ to $\texttt{false}$. Returns $\texttt{undefined}$.
 
 ** $\texttt{EXECUTE}$ Rules
 
 *** Notes
-0. for simplicity, heap is not represented in the rules
-0. $g$ represents garbage value: its value is not important to the rule
+- For simplicity, heap is not represented in the rules.
+- $g$ represents garbage value: its value is not important to the rule.
 
 *** Compiling
 $\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent\_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}\\$
@@ -106,19 +73,19 @@ When the thread queue is empty, we restore normal sequential execution.
 ** $\texttt{TEST\_AND\_SET}$ and $\texttt{CLEAR}$ Rules
 
 *** Notes
-0. for simplicity, $\textit{e}$, $\textit{rs}$, $\textit{p}$, $\textit{n}$ and $\textit{seq}$ registers, and heap are not represented in the rules
-0. $\textit{test\_and\_set}$ is an atomic operation
+- For simplicity, all registers and heap are not represented in the rules, except $\textit{os} and \textit{pc}$.
+- $\textit{test\_and\_set}$ is an atomic operation.
 
 *** Compiling
 $\Rule{E \translateaux s}{\texttt{test\_and\_set}(E) \translateaux s.\texttt{TEST\_AND\_SET}}\\$
-where $E$ is a list, whose head is a boolean.
+where $E$ is an array, whose head is a boolean.
 
 $\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CLEAR}}\\$
-where $E$ is a list, whose head is a boolean.
+where $E$ is an array.
 
 *** Running
-$\Rule{s(\textit{pc}) = \texttt{TEST\_AND\_SET}}{(p.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}\\$
-where $p$ is the address of a list stored on the heap. The head of this list is initially $b$, where $b$ is a boolean. After this rule executes, the head of this list is set to $\textit{true}$.
+$\Rule{s(\textit{pc}) = \texttt{TEST\_AND\_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}\\$
+where $a$ is the address of an array stored on the heap. The head of this list is initially $b$, where $b$ is a boolean. After this rule executes, the head of this list is set to $\textit{true}$.
 
-$\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(p.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}\\$
-where $p$ is the address of a list stored on the heap. The head of this list is updated to $\textit{false}$.
+$\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}\\$
+where $a$ is the address of an array stored on the heap. The head of this list is updated to $\textit{false}$.
