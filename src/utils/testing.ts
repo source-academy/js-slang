@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, ExecutionMethod, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -33,6 +33,7 @@ interface TestOptions {
   chapter?: number
   testBuiltins?: TestBuiltins
   native?: boolean
+  executionMethod?: ExecutionMethod
 }
 
 export function createTestContext({
@@ -89,7 +90,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: 'interpreter_strict'
+      executionMethod: options.executionMethod === undefined ? "interpreter_strict" : options.executionMethod
     })
   )
   if (options.native) {

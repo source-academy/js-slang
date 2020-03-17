@@ -140,8 +140,8 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
       isNativeRunnable = context.executionMethod === 'native'
     }
   } else {
-    isNativeRunnable = theOptions.executionMethod === 'native';
-    context.executionMethod = theOptions.executionMethod;
+    isNativeRunnable = theOptions.executionMethod === 'native'
+    context.executionMethod = theOptions.executionMethod
   }
   return isNativeRunnable
 }

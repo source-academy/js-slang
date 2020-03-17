@@ -23,39 +23,33 @@ class TailCallReturnValue {
 }
 
 class Thunk {
-  public value : Value;
-  public isMemoized : boolean;
+  public value: Value
+  public isMemoized: boolean
   constructor(public exp: es.Node, public env: Environment) {
-    this.isMemoized = false;
-    this.value = null;
+    this.isMemoized = false
+    this.value = null
   }
 }
 
-const delayIt = (
-  exp: es.Node,
-  env: Environment
-): Thunk => new Thunk(exp, env);
+const delayIt = (exp: es.Node, env: Environment): Thunk => new Thunk(exp, env)
 
 function* forceIt(val: any, context: Context): Value {
-  if(val instanceof Thunk) {
+  if (val instanceof Thunk) {
+    if (val.isMemoized) return val.value
 
-    if(val.isMemoized) return val.value;
-
-    pushEnvironment(context, val.env);
-    const evalRes = yield* actualValue(val.exp, context);
-    popEnvironment(context);
-    val.value = evalRes;
-    val.isMemoized = true;
-    return evalRes;
-
-  } else return val;
-
+    pushEnvironment(context, val.env)
+    const evalRes = yield* actualValue(val.exp, context)
+    popEnvironment(context)
+    val.value = evalRes
+    val.isMemoized = true
+    return evalRes
+  } else return val
 }
 
 export function* actualValue(exp: es.Node, context: Context): Value {
-  const evalResult = yield* evaluate(exp, context);
-  const forced = yield* forceIt(evalResult, context);
-  return forced;
+  const evalResult = yield* evaluate(exp, context)
+  const forced = yield* forceIt(evalResult, context)
+  return forced
 }
 
 const createEnvironment = (
@@ -238,10 +232,10 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    if(context.executionMethod !== "interpreter_lazy") {
-      args.push(yield* actualValue(arg, context));
+    if (context.executionMethod !== 'interpreter_lazy') {
+      args.push(yield* actualValue(arg, context))
     } else {
-      args.push(delayIt(arg, currentEnvironment(context)));
+      args.push(delayIt(arg, currentEnvironment(context)))
     }
   }
   return args
@@ -364,7 +358,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
-    const value = yield* evaluate(node.argument, context)
+    const value = yield* actualValue(node.argument, context)
 
     const error = rttc.checkUnaryExpression(node, node.operator, value)
     if (error) {
@@ -655,13 +649,13 @@ export function* apply(
       }
     } else if (typeof fun === 'function') {
       try {
-        const forcedArgs = [];
+        const forcedArgs = []
 
-        for(const arg of args) {
-          forcedArgs.push(yield* forceIt(arg, context));
+        for (const arg of args) {
+          forcedArgs.push(yield* forceIt(arg, context))
         }
 
-        result = fun.apply(thisContext, forcedArgs);
+        result = fun.apply(thisContext, forcedArgs)
         break
       } catch (e) {
         // Recover from exception

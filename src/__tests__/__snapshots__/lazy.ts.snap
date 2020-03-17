@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Binary operations force arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(x, y) { return x + y; } add(((x) => x)(5), ((x) => x + 1)(9)); ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 15,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Conditionals force test: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+function f(a, b) {
+  return (a ? true : head(null)) && (!b ? true : head(null));
+}
+
+f(((b) => b)(true), ((b) => !b)(true));
+",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Thunks are memoized: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+let x = 1;
+
+function incX() {
+  x = x + 1;
+  return x;
+}
+
+function square(n) {
+  return n * n;
+}
+
+square(incX());",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Unary operations force argument: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function neg(b) { return !b; } neg(((x) => x)(false)); ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Unused arguments are not evaluated: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(a, b) { return a === 1 ? a : b; } test(1, head(null));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
