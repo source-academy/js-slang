@@ -651,7 +651,7 @@ const compilers = {
       } else if (matches[0][1] === undefined) {
         addNullaryInstruction(OpCodes.LGCU)
       } else {
-        throw new Error('Unknown primitive constant')
+        throw Error('Unknown primitive constant')
       }
     }
     return { maxStackSize: 1, insertFlag }

@@ -66,7 +66,7 @@ let TQ: any[] = []
 let TO = 0
 // TO_MAX is maximum amount to timeout by
 const TO_MAX = 50
-// SEQ is array for OS, PC, ENV, RTS, TOP_RTS when executing concurrent code
+// SEQ is array for RTS, TOP_RTS when executing concurrent code
 let SEQ: any[] = []
 
 // some general-purpose registers
@@ -120,8 +120,6 @@ let RUNNING = true
 const NORMAL = 0
 const DIV_ERROR = 1
 const TYPE_ERROR = 2
-// TODO unused
-// const OUT_OF_MEMORY_ERROR = 2; // not used yet: memory currently unbounded
 
 let STATE = NORMAL
 
@@ -432,6 +430,16 @@ function SET_TO() {
   TO = Math.floor(Math.random() * TO_MAX)
 }
 
+function NULLIFY_REGISTERS() {
+  OS = NIL
+  PC = NIL
+  ENV = NIL
+  RTS = []
+  TO = 0
+  TOP_RTS = -1
+  // might want to reset P as well for consistency
+}
+
 // debugging: show current heap
 function is_node_tag(x: number) {
   return x !== undefined && x <= -100 && x >= -110
@@ -476,7 +484,7 @@ export function show_heap(s: string) {
   return str
 }
 
-function show_heap_value(address: number) {
+export function show_heap_value(address: number) {
   return (
     'result: heap node of type = ' +
     node_kind(HEAP[address]) +
@@ -840,7 +848,6 @@ M[OpCodes.BR] = () => {
 }
 
 // currently does not properly check number of arguments
-// only checks to account for vardic
 M[OpCodes.CALL] = () => {
   G = P[PC][CALL_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   // we peek down OS to get the closure
@@ -1098,7 +1105,7 @@ M[OpCodes.EXECUTE] = () => {
   G = P[PC][EXECUTE_NUM_ARGS_OFFSET]
   E = OS // we need the values in OS, so store in E first
   for (I = 0; I < G; I = I + 1) {
-    EXECUTE_NULLIFY_REGISTERS() // RTS = []
+    NULLIFY_REGISTERS() // RTS = []
     OS = E
     POP_OS()
     H = RES // store closure in H
@@ -1118,17 +1125,7 @@ M[OpCodes.EXECUTE] = () => {
     PUSH_RTS() // TOP_RTS++
     TQ.push([RTS, TOP_RTS])
   }
-  EXECUTE_NULLIFY_REGISTERS() // PC = NIL
-}
-
-function EXECUTE_NULLIFY_REGISTERS() {
-  OS = NIL
-  PC = NIL
-  ENV = NIL
-  RTS = []
-  TO = 0
-  TOP_RTS = -1
-  // might want to reset P as well for consistency
+  NULLIFY_REGISTERS() // PC = NIL
 }
 
 M[OpCodes.TEST_AND_SET] = () => {
@@ -1156,137 +1153,156 @@ M[OpCodes.CLEAR] = () => {
   PC = PC + 1
 }
 
+// called whenever the machine is first run
+function INITIALIZE() {
+  D = FUNC[PROG[0]] // put function header in D
+  A = D[FUNC_MAX_STACK_SIZE_OFFSET]
+  NEW_OS()
+  OS = RES
+  A = D[FUNC_ENV_SIZE_OFFSET]
+  D = NIL
+  NEW_ENVIRONMENT()
+  ENV = RES
+  GLOBAL_ENV = ENV
+  P = ENTRY
+  PC = 0
+}
+
+// called during sequential execution
+function RUN_SEQUENTIAL() {
+  if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
+    throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
+  }
+  M[P[PC][INS_OPCODE_OFFSET]]()
+}
+
+// called during concurrent execution
+function RUN_CONCURRENT() {
+  if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
+    // execute normally
+    if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
+      throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
+    }
+    M[P[PC][INS_OPCODE_OFFSET]]()
+    TO = TO - 1
+  } else if (TOP_RTS > -1) {
+    // Intercept RETG
+    // return from function
+    M[P[PC][INS_OPCODE_OFFSET]]()
+    TO = TO - 1
+  } else {
+    // return from thread
+    NULLIFY_REGISTERS() // PC = NIL, TO = 0
+  }
+}
+
+// called when all functions in concurrent execution have returned
+function END_CONCURRENT() {
+  ;[RTS, TOP_RTS] = SEQ
+  POP_RTS() // TOP_RTS--
+  H = RES
+  PC = HEAP[H + RTS_FRAME_PC_SLOT]
+  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+  P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
+  OS = HEAP[H + RTS_FRAME_OS_SLOT]
+  SEQ = []
+}
+
+function TIMEOUT_THREAD() {
+  // timeout at current ins so need to step back.
+  PC = PC - 1
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+  A = RES
+  PUSH_RTS() // TOP_RTS++
+  TQ.push([RTS, TOP_RTS])
+  NULLIFY_REGISTERS() // PC = NIL
+}
+
+function SETUP_THREAD() {
+  ;[RTS, TOP_RTS] = TQ.shift()
+  POP_RTS() // TOP_RTS--
+  H = RES
+  PC = HEAP[H + RTS_FRAME_PC_SLOT]
+  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+  P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
+  OS = HEAP[H + RTS_FRAME_OS_SLOT]
+  SET_TO()
+}
+
 function run(): any {
   // startup
-  if (PC < 0) {
-    D = FUNC[PROG[0]] // put function header in D
-    A = D[FUNC_MAX_STACK_SIZE_OFFSET]
-    NEW_OS()
-    OS = RES
-    A = D[FUNC_ENV_SIZE_OFFSET]
-    D = NIL
-    NEW_ENVIRONMENT()
-    ENV = RES
-    GLOBAL_ENV = ENV
-    P = ENTRY
-    PC = 0
-  }
+  INITIALIZE()
 
   while (RUNNING) {
     if (SEQ.length === 0) {
-      // sequential context
       // show_registers("run loop");
       // show_heap("run loop");
       // show_executing('')
-      if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
-        throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
-      }
-      M[P[PC][INS_OPCODE_OFFSET]]()
-    } else {
-      // concurrent context
-      if (TO > 0) {
-        if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
-          // execute normally
-          M[P[PC][INS_OPCODE_OFFSET]]()
-          TO = TO - 1
-          console.log('execute normally')
-          console.log(show_registers('execute normally'))
-        } else {
-          // Intercept RETG
-          // Here, RTS is thread runtime stack
-          if (TOP_RTS > -1) {
-            // return from function
-            M[P[PC][INS_OPCODE_OFFSET]]()
-            TO = TO - 1
-            console.log('return from function')
-            console.log(show_registers('return from function', false))
-          } else {
-            // return from thread
-            EXECUTE_NULLIFY_REGISTERS() // PC = NIL, TO = 0
-            console.log('return from thread')
-            console.log(show_registers('return from thread', false))
-          }
-        }
-      } else if (TO === 0) {
-        if (TQ.length === 0 && PC === NIL) {
-          // end concurrent_execute
-          ;[RTS, TOP_RTS] = SEQ
-          POP_RTS() // TOP_RTS--
-          H = RES
-          PC = HEAP[H + RTS_FRAME_PC_SLOT]
-          ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-          P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
-          OS = HEAP[H + RTS_FRAME_OS_SLOT]
-          SEQ = []
-          console.log('end concurrent')
-          console.log(show_registers('end concurrent', false))
-        } else {
-          if (PC === NIL) {
-            // begin thread
-            ;[RTS, TOP_RTS] = TQ.shift()
-            POP_RTS() // TOP_RTS--
-            H = RES
-            PC = HEAP[H + RTS_FRAME_PC_SLOT]
-            ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-            P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
-            OS = HEAP[H + RTS_FRAME_OS_SLOT]
-            SET_TO()
-            console.log('begin thread')
-            console.log(show_registers('begin thread', false))
-          } else {
-            // timeout thread
-            // timeout at current ins so need to step back.
-            PC = PC - 1
-            NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-            A = RES
-            PUSH_RTS() // TOP_RTS++
-            TQ.push([RTS, TOP_RTS])
-            EXECUTE_NULLIFY_REGISTERS() // PC = NIL
-            console.log('timeout thread')
-            console.log(show_registers('timeout thread', false))
-          }
-        }
-      } else {
-        throw Error('TO cannot be negative')
-      }
-      console.log(
-        'PC:' +
-          PC +
-          ' P.l:' +
-          P.length +
-          '\nP:\n' +
-          P.map(y => y.map(x => getName(x as number) + y.slice(1))).join('\n')
-      )
+      RUN_SEQUENTIAL()
+    } else if (TO > 0) {
+      RUN_CONCURRENT()
+    } else if (TO < 0) {
+      throw Error('TO cannot be negative')
+    } else if (PC >= 0) {
+      // when exhausted time quanta
+      TIMEOUT_THREAD()
+    } else if (TQ.length === 0) {
+      // end concurrent_execute if no more threads and nullified
+      END_CONCURRENT()
+    } else if (TQ.length > 0) {
+      // begin thread if there are threads and nullified
+      SETUP_THREAD()
     }
   }
+
+  // handle errors
   if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
     POP_OS()
-    throw Error('execution aborted: ' + RES)
-  } else {
-    POP_OS()
-    show_heap_value(RES)
-    return convertToJsFormat(RES)
+    throw Error('execution aborted: ' + getErrorType())
+  }
+
+  POP_OS()
+  // show_heap_value(RES)
+  return convertToJsFormat(RES)
+}
+
+function getErrorType(): string {
+  switch (STATE) {
+    case DIV_ERROR:
+      return 'division by 0'
+    case TYPE_ERROR:
+      return 'types of operands do not match'
+    default:
+      throw Error('invalid error type')
   }
 }
 
 function convertToJsFormat(node: number): any {
   const kind = node_kind(HEAP[node + TAG_SLOT])
-  if (kind === 'undefined' || kind === 'closure') {
-    return undefined
-  }
-  if (kind === 'null') {
-    return null
-  }
-  if (kind === 'number' || kind === 'string' || kind === 'bool') {
-    return HEAP[node + BOXED_VALUE_SLOT]
-  }
-  if (kind === 'array') {
-    const arr: number[] = HEAP[node + BOXED_VALUE_SLOT]
-    const res = []
-    for (let i = 0; i < arr.length; i++) {
-      res[i] = convertToJsFormat(arr[i])
+  switch (kind) {
+    case 'undefined':
+      return undefined
+
+    case 'null':
+      return null
+
+    case 'number':
+    case 'string':
+    case 'bool':
+      return HEAP[node + BOXED_VALUE_SLOT]
+
+    case 'array': {
+      const arr: number[] = HEAP[node + BOXED_VALUE_SLOT]
+      const res = []
+      for (let i = 0; i < arr.length; i++) {
+        res[i] = convertToJsFormat(arr[i])
+      }
+      return res
     }
-    return res
+    case 'closure':
+      return '<Function>'
+    default:
+      return undefined
   }
 }
 
