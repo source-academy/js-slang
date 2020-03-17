@@ -156,22 +156,25 @@ export function findIdentifier(
   }
 
   // TODO: Delete later
-  console.log("Program:", program);
-  console.log("Find node at:", loc);
+  console.log('Program:', program)
+  console.log('Find node at:', loc)
 
   function findByLocation(type: string, node: Node) {
-    const location = node.loc;
+    const location = node.loc
     if (type && location) {
-      return type === "Identifier"
-        && location.start.line === loc.line
-        && location.start.column <= loc.column
-        && location.end.column >= loc.column;
+      return (
+        type === 'Identifier' &&
+        location.start.line === loc.line &&
+        location.start.column <= loc.column &&
+        location.end.column >= loc.column
+      )
     }
-
-    return false;
+    return false
   }
 
-  return findNodeAt(program, undefined, undefined, findByLocation);
+  const found = findNodeAt(program, undefined, undefined, findByLocation)
+  console.log('Found node:', found)
+  return found
 }
 
 export async function runInContext(
