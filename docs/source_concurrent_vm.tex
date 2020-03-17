@@ -18,9 +18,25 @@
  pdfcreator={Emacs 26.3 (Org mode 9.2.6)},
  pdflang={English}}
 
+\renewcommand{\docheader}[3]{%
+
+  \thispagestyle{empty}
+
+\markright{SICP, JavaScript Adaptation, #2 #3, #1}
+\begin{center}
+  {\Large {\bf Specification of #2 #3}---#1 edition}\\[10mm]
+
+  {\large Jonathan Chan Wai Hon and Zhengqun Koo}\\[5mm]
+
+  {\large National University of Singapore \\
+          School of Computing}\\[10mm]
+
+  {\large \today}\\[10mm]
+\end{center}
+}
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{1920}{Source}{\S 3}
+	\docheader{2021}{Source}{\S 3.4}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
