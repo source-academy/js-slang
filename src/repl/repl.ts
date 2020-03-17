@@ -2,6 +2,7 @@ import fs = require('fs')
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
 import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
+import { lazyEvaluateInChapter } from '../lazyContext'
 
 function startRepl(chap = 1, useSubst: boolean, prelude = '') {
   // for debugging the interpreter, use
@@ -17,7 +18,8 @@ function startRepl(chap = 1, useSubst: boolean, prelude = '') {
     // use interpreter if 999 is chapter
     executionMethod: chap === 999 ? 'interpreter' : 'native'
   }
-  console.log('Running in mode: ' + (chap === 999 ? 'INTERPRETER' : 'TRANSPILER'))
+  console.log('Running in mode: ' + (lazyEvaluateInChapter(chap) ? 'LAZY ' : 'EAGER ') +
+    (chap === 999 ? 'INTERPRETER' : 'TRANSPILER'))
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
       console.dir(preludeResult.value, { depth: null })

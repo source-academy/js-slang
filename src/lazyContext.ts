@@ -11,7 +11,7 @@ import { Context } from './types'
  *     lazily. False, if the interpreter should
  *     evaluate eagerly.
  */
-export default function lazyEvaluate(context: Context) {
+export default function lazyEvaluate(context: Context): boolean {
   return lazyEvaluateInChapter(context.chapter)
 }
 
@@ -23,6 +23,6 @@ export default function lazyEvaluate(context: Context) {
  *     lazily. False, if the interpreter should
  *     evaluate eagerly.
  */
-export function lazyEvaluateInChapter(chapter: number) {
+export function lazyEvaluateInChapter(chapter: number): boolean {
   return chapter === -1
 }
