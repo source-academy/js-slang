@@ -316,7 +316,7 @@ function POP_OS() {
 // closure nodes layout
 //
 // 0: tag  = -103
-// 1: size = 8
+// 1: size = 6
 // 2: offset of first child from the tag: 6 (only environment)
 // 3: offset of last child from the tag: 6
 // 4: index = index of function in program function array
@@ -579,29 +579,29 @@ M[OpCodes.POPG] = () => {
 // type check here as we need to know whether number or string
 M[OpCodes.ADDG] = () => {
   POP_OS()
-  A = RES
+  I = RES
   POP_OS()
-  B = RES
-  C = HEAP[A + TAG_SLOT] === HEAP[B + TAG_SLOT]
-  D = HEAP[A + TAG_SLOT] === NUMBER_TAG
-  F = C && D
+  G = RES
+  H = HEAP[I + TAG_SLOT] === HEAP[G + TAG_SLOT]
+  D = HEAP[I + TAG_SLOT] === NUMBER_TAG
+  F = H && D
   if (F) {
-    A = HEAP[A + NUMBER_VALUE_SLOT]
-    A = A + HEAP[B + NUMBER_VALUE_SLOT]
+    A = HEAP[I + NUMBER_VALUE_SLOT]
+    A = HEAP[G + NUMBER_VALUE_SLOT] + A
     NEW_NUMBER()
   }
-  E = HEAP[A + TAG_SLOT] === STRING_TAG
-  F = C && E
+  E = HEAP[I + TAG_SLOT] === STRING_TAG
+  F = H && E
   if (F) {
-    A = HEAP[A + STRING_VALUE_SLOT]
-    A = A + HEAP[B + STRING_VALUE_SLOT]
+    A = HEAP[I + STRING_VALUE_SLOT]
+    A = HEAP[G + STRING_VALUE_SLOT] + A
     NEW_STRING()
   }
   A = RES
   PUSH_OS()
   PC = PC + 1
   G = D || E
-  G = !(G && C)
+  G = !(G && H)
   if (G) {
     STATE = TYPE_ERROR
     RUNNING = false
@@ -1302,7 +1302,7 @@ function convertToJsFormat(node: number): any {
     case 'closure':
       return '<Function>'
     default:
-      return undefined
+      throw Error('Encountered unexpressible type: ' + kind)
   }
 }
 
