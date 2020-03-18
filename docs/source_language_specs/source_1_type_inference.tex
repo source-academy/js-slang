@@ -306,8 +306,8 @@ We \emph{apply} a type constraint $\Sigma$ in solved form to a type $t$ as follo
 $\Rule{\textrm{if }t_i = t_i'\textrm{ occurs in }\Sigma}{
   \Sigma(t_i) = \Sigma(t_i')}
 \qquad
-\Rule{t'' = \Sigma(t) \qquad t''' = \Sigma(t')}{
-  \Sigma(t \rightarrow t') = t'' \rightarrow t'''}
+\Rule{t' = \Sigma(t) \qquad t_1' = \Sigma(t_1) \qquad \cdots \qquad t_n' = \Sigma(t_n) }{
+  \Sigma((t_1, \ldots, t_n) \rightarrow t) = (t_1', \ldots, t_n') \rightarrow t'}
 $
 
 \noindent
@@ -328,7 +328,7 @@ in the given order:
 \item If $t$ is not a type variable and $t'$ is a type variable, then add $t' = t$ to $\Sigma$.
 \item If $t$ is $A_i$ and $t'$ is not a type variable and not $\texttt{float}$ or $\texttt{string}$,
   then stop with a type error.
-\item If $t$ is $M_i$ and $t'$ is not a type variable and not $\texttt{float}$,
+\item If $t$ is $N_i$ and $t'$ is not a type variable and not $\texttt{float}$,
   then stop with a type error.
 \item If $t$ is $(t_1,\ldots, t_n) \rightarrow t''$ and
   $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add
