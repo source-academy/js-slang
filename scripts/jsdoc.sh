@@ -190,18 +190,16 @@ run() {
 install() {
 
     cp -r docs/images ${DST} ; \
-    cd docs; cp ${PDFSPECS} source; cd ..; \
-    cd docs; scp -r source \
-		sicp@web1.comp.nus.edu.sg:public_html/.
+    cd docs/source_language_specs; make; cp ${PDFSPECS} ../source; cd ../..; \
+    cd docs; scp -r source sicp@web1.comp.nus.edu.sg:public_html/.
 
 }
 
 tocs1101s() {
 
     cp -r docs/images ${DST} ; \
-    cd docs; cp ${PDFSPECS} source; cd ..; \
-    cd docs; scp -r source \
-		cs1101s@sunfire.comp.nus.edu.sg:. ; \
+    cd docs/source_language_specs; make; cp ${PDFSPECS} ../source; cd ../..; \
+    cd docs; scp -r source cs1101s@sunfire.comp.nus.edu.sg:. ; \
     echo "now: ssh cs1101s@sunfire.comp.nus.edu.sg and: "; \
     echo "scp -r source sicp@web1.comp.nus.edu.sg:public_html"
 
