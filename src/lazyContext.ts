@@ -1,6 +1,6 @@
 import { Context } from './types'
 
-const LAZY_CHAPTER = 100;
+const LAZY_CHAPTER = 100
 
 /**
  * Checks whether the interpreter should evaluate
