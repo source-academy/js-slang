@@ -201,7 +201,6 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    console.log(arg)
     args.push(yield* evaluate(arg, context))
   }
   return args
@@ -210,7 +209,6 @@ function* getArgs(context: Context, call: es.CallExpression) {
 function getThunkedArgs(context: Context, call: es.CallExpression) {
   const args = []
   const env = currentEnvironment(context)
-  console.log('Getting args..')
   for (const arg of call.arguments) {
     args.push(createThunk(arg, env, context))
   }
@@ -253,7 +251,6 @@ function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
   hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
   let result
   for (const statement of node.body) {
-    // console.log('from evaluateBlockStatement(): ' + statement.type)
     result = yield* evaluate(statement, context)
     if (
       result instanceof ReturnValue ||
@@ -320,7 +317,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     console.log('Identifier')
     let result = getVariable(context, node.name)
     if (result.type === 'Thunk' && result.isEvaluated) {
-      console.log('Using memoized value: ' + result.actualValue)
       result = result.actualValue
     }
     return result
@@ -331,7 +327,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const callee = yield* evaluate(node.callee, context)
     // const args = yield* getArgs(context, node)
     const args = getThunkedArgs(context, node)
-    console.log(args)
     let thisContext
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
@@ -373,8 +368,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     console.log('BinaryExpression')
     let left = yield* evaluate(node.left, context)
     let right = yield* evaluate(node.right, context)
-    // console.log(node.left)
-    // console.log(node.right)
 
     // The operands may return a thunk after evaluating them as above.
     // Thunks will be handled to yield its actual value.
@@ -390,8 +383,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       return handleRuntimeError(context, error)
     }
 
-    // console.log(left)
-    // console.log(right)
     return evaluateBinaryExpression(node.operator, left, right)
   },
 
@@ -410,11 +401,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
-    // console.log('constant = ' + constant)
-    // console.log(node)
 
     let value
-
     // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly
     // Below is a list of types with lazy evaluation:
     // 1. Binary operations
@@ -422,12 +410,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (
       declaration.init!.type === 'BinaryExpression'
       ) {
-      // Capture the current environment
+      // Capture the current environment (Not useful since it's not deep-cloned)
       const currentEnv = currentEnvironment(context)
 
       // Construct Thunk object
       value = createThunk(declaration.init!, currentEnv, context)
-      // console.log(currentEnv)
     } else {
       value = yield* evaluate(declaration.init!, context)
     }
@@ -577,7 +564,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     console.log('IfStatement')
     let result = yield* reduceIf(node, context) as Value
     if (result.type === 'Thunk') {
-      console.log('evaluating the thunk!')
       result = yield* evaluateThunk(result, context)
     } else {
       result = yield* evaluate(result, context)
@@ -608,13 +594,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     // If we are now left with a CallExpression, then we use TCO
     if (returnExpression.type === 'CallExpression') {
-      console.log('i got callexpression')
       const callee = yield* evaluate(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
     } else {
-      console.log('i got something else')
-      console.log(returnExpression)
       let result
       if (returnExpression.type === 'Thunk') {
         result = yield* evaluateThunk(returnExpression, context)
@@ -686,7 +669,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
-  // console.log('from evaluate(): ' + node.type)
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   return result
@@ -732,7 +714,6 @@ function* evaluateThunk(thunk: Thunk, context: Context) {
     // tag this thunk as 'evaluated' and memoize its value
     thunk.isEvaluated = true
     thunk.actualValue = result
-    console.log('memoized: ' + result)
     return result
   }
 }
