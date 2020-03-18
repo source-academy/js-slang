@@ -201,7 +201,18 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
+    console.log(arg)
     args.push(yield* evaluate(arg, context))
+  }
+  return args
+}
+
+function getThunkedArgs(context: Context, call: es.CallExpression) {
+  const args = []
+  const env = currentEnvironment(context)
+  console.log('Getting args..')
+  for (const arg of call.arguments) {
+    args.push(createThunk(arg, env, context))
   }
   return args
 }
@@ -318,7 +329,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   CallExpression: function*(node: es.CallExpression, context: Context) {
     console.log('CallExpression')
     const callee = yield* evaluate(node.callee, context)
-    const args = yield* getArgs(context, node)
+    // const args = yield* getArgs(context, node)
+    const args = getThunkedArgs(context, node)
+    console.log(args)
     let thisContext
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
@@ -414,7 +427,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
       // Construct Thunk object
       value = createThunk(declaration.init!, currentEnv, context)
-      console.log(currentEnv)
+      // console.log(currentEnv)
     } else {
       value = yield* evaluate(declaration.init!, context)
     }
@@ -562,7 +575,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
     console.log('IfStatement')
-    return yield* evaluate(yield* reduceIf(node, context), context)
+    let result = yield* reduceIf(node, context) as Value
+    if (result.type === 'Thunk') {
+      console.log('evaluating the thunk!')
+      result = yield* evaluateThunk(result, context)
+    } else {
+      result = yield* evaluate(result, context)
+    }
+    return result
+    // return yield* evaluate(yield* reduceIf(node, context), context)
   },
 
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
@@ -572,7 +593,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
     console.log('ReturnStatement')
-    let returnExpression = node.argument!
+    let returnExpression = node.argument! as Value
 
     // If we have a conditional expression, reduce it until we get something else
     while (
@@ -587,11 +608,24 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     // If we are now left with a CallExpression, then we use TCO
     if (returnExpression.type === 'CallExpression') {
+      console.log('i got callexpression')
       const callee = yield* evaluate(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
     } else {
-      return new ReturnValue(yield* evaluate(returnExpression, context))
+      console.log('i got something else')
+      console.log(returnExpression)
+      let result
+      if (returnExpression.type === 'Thunk') {
+        result = yield* evaluateThunk(returnExpression, context)
+      } else {
+        result = yield* evaluate(returnExpression, context)
+      }
+      if (result.type === 'Thunk') {
+        result = yield* evaluateThunk(result, context)
+      }
+      return new ReturnValue(result)
+      // return new ReturnValue(yield* evaluate(returnExpression, context))
     }
   },
 
@@ -698,7 +732,7 @@ function* evaluateThunk(thunk: Thunk, context: Context) {
     // tag this thunk as 'evaluated' and memoize its value
     thunk.isEvaluated = true
     thunk.actualValue = result
-
+    console.log('memoized: ' + result)
     return result
   }
 }
