@@ -121,7 +121,7 @@ export function HighlightRulesSelector(id: number) {
 
           'storage.type': 'const|let|function',
 
-          'support.function': 'alert|' + ChapterFunctionNameSelector(),
+          'support.function': ChapterFunctionNameSelector(),
 
           'variable.language':
             'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
