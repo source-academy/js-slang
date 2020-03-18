@@ -1,5 +1,7 @@
 import { Context } from './types'
 
+const LAZY_CHAPTER = 100;
+
 /**
  * Checks whether the interpreter should evaluate
  * the expression lazily in this context. Currently,
@@ -24,5 +26,5 @@ export default function lazyEvaluate(context: Context): boolean {
  *     evaluate eagerly.
  */
 export function lazyEvaluateInChapter(chapter: number): boolean {
-  return chapter === 100
+  return chapter === LAZY_CHAPTER
 }

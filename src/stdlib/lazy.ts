@@ -18,11 +18,11 @@ export interface Thunk<T> {
   value: () => T
 }
 
-type PrimitiveEv = boolean | number | string | undefined | null;
+type PrimitiveEv = boolean | number | string | undefined | null
 // tslint:disable-next-line: ban-types
-type FunctionsEv = PrimitiveEv | Function;
+type FunctionsEv = PrimitiveEv | Function
 // Types of Expressible Values in Lazy Source 2
-type ExpressibleValues = FunctionsEv | Pair<any, any> | List;
+type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 
 // Tag for functions in Abstract Syntax Tree
 // of literal converted to Thunk.
@@ -36,12 +36,20 @@ export const astThunkNativeTag = 'Thunk-native-function'
  *     if the value is another kind of value.
  */
 function isThunk(v: any): boolean {
-  return v !== null && v !== undefined && typeof v === 'object' &&
+  return (
+    v !== null &&
+    v !== undefined &&
+    typeof v === 'object' &&
     Object.keys(v).length === 4 && // check for exactly 4 properties
-    v.evaluated !== undefined && typeof v.evaluated === 'boolean' &&
-    v.toString !== undefined && typeof v.toString === 'function' &&
-    v.type !== undefined && typeof v.type === 'string' &&
-    v.value !== undefined && typeof v.value === 'function';
+    v.evaluated !== undefined &&
+    typeof v.evaluated === 'boolean' &&
+    v.toString !== undefined &&
+    typeof v.toString === 'function' &&
+    v.type !== undefined &&
+    typeof v.type === 'string' &&
+    v.value !== undefined &&
+    typeof v.value === 'function'
+  )
 }
 
 /**
@@ -210,9 +218,9 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
  */
 export function evaluateLazyValue(value: any): ExpressibleValues {
   if (isThunk(value)) {
-    return evaluateLazyValue(evaluateThunk(value));
+    return evaluateLazyValue(evaluateThunk(value))
   } else {
-    return value;
+    return value
   }
 }
 
