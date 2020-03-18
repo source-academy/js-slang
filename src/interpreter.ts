@@ -4,7 +4,7 @@ import Closure from './closure'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
 import { checkEditorBreakpoints } from './stdlib/inspector'
-import { Context, Environment, Frame, Value, Thunk } from './types'
+import { Context, Environment, Frame, Thunk, Value } from './types'
 import { conditionalExpression, literal, primitive } from './utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
@@ -207,14 +207,14 @@ function* getArgs(context: Context, call: es.CallExpression) {
 }
 
 function createThunk(node: es.Node, environment: Environment, context: Context): Thunk {
-  return ({
+  return {
     type: 'Thunk',
     context,
     value: node,
     environment,
     isEvaluated: false,
     actualValue: undefined
-  })
+  }
 }
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
@@ -307,7 +307,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   Identifier: function*(node: es.Identifier, context: Context) {
     console.log('Identifier')
-    return getVariable(context, node.name)
+    let result = getVariable(context, node.name)
+    if (result.type === 'Thunk' && result.isEvaluated) {
+      console.log('Using memoized value: ' + result.actualValue)
+      result = result.actualValue
+    }
+    return result
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
@@ -392,8 +397,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
-    console.log('constant = ' + constant)
-    console.log(node)
+    // console.log('constant = ' + constant)
+    // console.log(node)
 
     let value
 
@@ -406,7 +411,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       ) {
       // Capture the current environment
       const currentEnv = currentEnvironment(context)
-      
+
       // Construct Thunk object
       value = createThunk(declaration.init!, currentEnv, context)
       console.log(currentEnv)
@@ -656,14 +661,15 @@ export function* evaluate(node: es.Node, context: Context) {
 // Evaluates thunk and memoize
 function* evaluateThunk(thunk: Thunk, context: Context) {
   if (thunk.isEvaluated) {
-    // console.log('already memoized! returning thunks actual value')
+    // Program should never enter this 'if' block.
+    // Memoized thunks should return the actual value by evaluating an Identifier node type.
     return thunk.actualValue
   } else {
     // Keep count of the environments stacked on top of each other.
     let total = 0
 
     // Use the thunk's environment (on creation) to evaluate it.
-    let thunkEnv: Environment = thunk.environment as Environment
+    const thunkEnv: Environment = thunk.environment as Environment
 
     pushEnvironment(context, thunkEnv)
     total++

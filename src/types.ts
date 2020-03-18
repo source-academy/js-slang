@@ -113,7 +113,7 @@ export interface Frame {
 export type Value = any
 // tslint:enable:no-any
 
-export type Thunk = {
+export interface Thunk {
   type: 'Thunk'
   context: Context
   value: es.Node
