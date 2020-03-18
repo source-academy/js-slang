@@ -4,7 +4,7 @@ import Closure from './closure'
 import * as constants from './constants'
 import * as errors from './interpreter-errors'
 import { checkEditorBreakpoints } from './stdlib/inspector'
-import { Context, Environment, Frame, Value } from './types'
+import { Context, Environment, Frame, Value, Thunk } from './types'
 import { conditionalExpression, literal, primitive } from './utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from './utils/operators'
 import * as rttc from './utils/rttc'
@@ -206,6 +206,17 @@ function* getArgs(context: Context, call: es.CallExpression) {
   return args
 }
 
+function createThunk(node: es.Node, environment: Environment, context: Context): Thunk {
+  return ({
+    type: 'Thunk',
+    context,
+    value: node,
+    environment,
+    isEvaluated: false,
+    actualValue: undefined
+  })
+}
+
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
     return conditionalExpression(node.left, node.right, literal(false), node.loc!)
@@ -342,13 +353,27 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
     console.log('BinaryExpression')
-    const left = yield* evaluate(node.left, context)
-    const right = yield* evaluate(node.right, context)
+    let left = yield* evaluate(node.left, context)
+    let right = yield* evaluate(node.right, context)
+    // console.log(node.left)
+    // console.log(node.right)
+
+    // The operands may return a thunk after evaluating them as above.
+    // Thunks will be handled to yield its actual value.
+    if (left.type === 'Thunk') {
+      left = yield* evaluateThunk(left, context)
+    }
+    if (right.type === 'Thunk') {
+      right = yield* evaluateThunk(right, context)
+    }
 
     const error = rttc.checkBinaryExpression(node, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
     }
+
+    // console.log(left)
+    // console.log(right)
     return evaluateBinaryExpression(node.operator, left, right)
   },
 
@@ -367,7 +392,28 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
-    const value = yield* evaluate(declaration.init!, context)
+    console.log('constant = ' + constant)
+    console.log(node)
+
+    let value
+
+    // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly
+    // Below is a list of types with lazy evaluation:
+    // 1. Binary operations
+    // 2. (TBD)
+    if (
+      declaration.init!.type === 'BinaryExpression'
+      ) {
+      // Capture the current environment
+      const currentEnv = currentEnvironment(context)
+      
+      // Construct Thunk object
+      value = createThunk(declaration.init!, currentEnv, context)
+      console.log(currentEnv)
+    } else {
+      value = yield* evaluate(declaration.init!, context)
+    }
+    // const value = yield* evaluate(declaration.init!, context)
     defineVariable(context, id.name, value, constant)
     return undefined
   },
@@ -605,6 +651,50 @@ export function* evaluate(node: es.Node, context: Context) {
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   return result
+}
+
+// Evaluates thunk and memoize
+function* evaluateThunk(thunk: Thunk, context: Context) {
+  if (thunk.isEvaluated) {
+    // console.log('already memoized! returning thunks actual value')
+    return thunk.actualValue
+  } else {
+    // Keep count of the environments stacked on top of each other.
+    let total = 0
+
+    // Use the thunk's environment (on creation) to evaluate it.
+    let thunkEnv: Environment = thunk.environment as Environment
+
+    pushEnvironment(context, thunkEnv)
+    total++
+
+    let result: Value = yield* evaluate(thunk.value, context)
+
+    // Evaluation of a thunk may return another thunk.
+    // Keep evaluating until the final value is obtained.
+    let tempEnv: Environment
+    while (result.type === 'Thunk') {
+      // Use the thunk's environment (on creation) to evaluate it.
+      tempEnv = result.environment as Environment
+      pushEnvironment(context, tempEnv)
+      total++
+
+      result = yield* evaluate(result.value, context)
+    }
+
+    if (result instanceof ReturnValue) {
+      result = result.value
+    }
+    for (let i = 0; i < total; i++) {
+      popEnvironment(context)
+    }
+
+    // tag this thunk as 'evaluated' and memoize its value
+    thunk.isEvaluated = true
+    thunk.actualValue = result
+
+    return result
+  }
 }
 
 export function* apply(

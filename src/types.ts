@@ -113,6 +113,15 @@ export interface Frame {
 export type Value = any
 // tslint:enable:no-any
 
+export type Thunk = {
+  type: 'Thunk'
+  context: Context
+  value: es.Node
+  environment: Environment | null
+  isEvaluated: boolean
+  actualValue: Value
+}
+
 export type AllowedDeclarations = 'const' | 'let'
 
 export interface Environment {
