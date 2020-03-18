@@ -1,6 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
 import { Value } from '../types'
+import { isThunk } from '../stdlib/lazy'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -112,12 +113,10 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     } else if (typeof v === 'string') {
       return JSON.stringify(v)
     } else if (
+      // use toString method for functions
       typeof v !== 'object' ||
-      // check if v is a Thunk, if it is, use toString() method
-      (typeof v === 'object' &&
-        v.hasOwnProperty('type') &&
-        v.hasOwnProperty('toString') &&
-        v.hasOwnProperty('value'))
+      // use toString method for thunks
+      isThunk(v)
     ) {
       return v.toString()
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {

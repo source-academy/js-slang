@@ -189,6 +189,25 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
   return newNode
 }
 
+/**
+ * Given an expression that is evaluated lazily, change
+ * it into an eagerly evaluated expression by wrapping the
+ * expression in the pre-defined "force" function from the
+ * lazy library which will cause the expression to be
+ * evaluated at that point to give an actual value.
+ *
+ * Currently used to handle "if" conditions in Lazy Source.
+ *
+ * @param thunk The lazy expression (thunk) to be
+ *              evaluated at that instant.
+ */
+export const forceEagerEvaluationOfLazyExpression = (thunk: es.Expression): es.Expression =>
+  callExpression(
+    // reference the pre-defined "force" function
+    identifier('force'),
+    [thunk]
+  )
+
 export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({
   type: 'Literal',
   value,

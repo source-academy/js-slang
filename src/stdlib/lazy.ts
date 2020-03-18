@@ -35,7 +35,7 @@ export const astThunkNativeTag = 'Thunk-native-function'
  * @returns True, if the value is a Thunk. False,
  *     if the value is another kind of value.
  */
-function isThunk(v: any): boolean {
+export function isThunk(v: any): boolean {
   return (
     v !== null &&
     v !== undefined &&
@@ -197,6 +197,7 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
   } else {
     // calculate the desired value
     const finalValue = thunk.value()
+    // eagerly create the string representation of the thunk
     const finalString = finalValue + ''
     // memoize the calculated value
     thunk.value = () => finalValue

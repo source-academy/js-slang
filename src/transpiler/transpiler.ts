@@ -454,17 +454,20 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
 
 /**
  * Transforms if/for/while statements to check
- * whether the condition is a boolean type
+ * whether the condition is a boolean type, and then
+ * force the execution of the condition.
  * @param program The program to be transformed
  */
-function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
+function transformSomeExpressionsToCheckIfBooleanAndForce(program: es.Program) {
   function transform(node: es.IfStatement | es.ForStatement | es.WhileStatement) {
     const { line, column } = node.loc!.start
-    node.test = create.callExpression(
-      globalIds.boolOrErr,
-      node.test
-        ? [node.test, create.literal(line), create.literal(column)]
-        : [create.literal(line), create.literal(column)]
+    node.test = create.forceEagerEvaluationOfLazyExpression(
+      create.callExpression(
+        globalIds.boolOrErr,
+        node.test
+          ? [node.test, create.literal(line), create.literal(column)]
+          : [create.literal(line), create.literal(column)]
+      )
     )
   }
 
@@ -786,7 +789,7 @@ export function transpile(
   if (lazyEvaluation) {
     transformLogicalOperationsToFunctionCalls(program)
     transformConditionalsToFunctionCalls(program)
-    transformSomeExpressionsToCheckIfBoolean(program)
+    transformSomeExpressionsToCheckIfBooleanAndForce(program)
   } else {
     transformMostExpressionsToCheckIfBoolean(program)
   }
