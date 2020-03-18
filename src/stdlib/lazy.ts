@@ -1,4 +1,5 @@
 import { typeOf } from '../utils/typeOf'
+import { List, Pair } from './list'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -17,13 +18,11 @@ export interface Thunk<T> {
   value: () => T
 }
 
-export type LazyNullary<R> = () => Thunk<R>
-
-export type LazyUnary<T, R> = (x: Thunk<T>) => Thunk<R>
-
-export type LazyBinary<T, U, R> = (x: Thunk<T>, y: Thunk<U>) => Thunk<R>
-
-export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) => Thunk<R>
+type PrimitiveEv = boolean | number | string | undefined | null;
+// tslint:disable-next-line: ban-types
+type FunctionsEv = PrimitiveEv | Function;
+// Types of Expressible Values in Lazy Source 2
+type ExpressibleValues = FunctionsEv | Pair<any, any> | List;
 
 // Tag for functions in Abstract Syntax Tree
 // of literal converted to Thunk.
@@ -31,13 +30,28 @@ export type LazyTertiary<T, U, V, R> = (x: Thunk<T>, y: Thunk<U>, z: Thunk<V>) =
 export const astThunkNativeTag = 'Thunk-native-function'
 
 /**
+ * Given any value, check if that value is a Thunk.
+ * @param v The value to be checked.
+ * @returns True, if the value is a Thunk. False,
+ *     if the value is another kind of value.
+ */
+function isThunk(v: any): boolean {
+  return v !== null && v !== undefined && typeof v === 'object' &&
+    Object.keys(v).length === 4 && // check for exactly 4 properties
+    v.evaluated !== undefined && typeof v.evaluated === 'boolean' &&
+    v.toString !== undefined && typeof v.toString === 'function' &&
+    v.type !== undefined && typeof v.type === 'string' &&
+    v.value !== undefined && typeof v.value === 'function';
+}
+
+/**
  * Primitive function in Lazy Source.
  * Forces an expression to be evaluated until
  * a result is obtained.
  * @param expression The expression to be evaluated.
  */
-export function force<T>(expression: Thunk<T>) {
-  return evaluateThunk(expression)
+export function force(expression: any) {
+  return evaluateLazyValue(expression)
 }
 
 /**
@@ -183,6 +197,22 @@ export function evaluateThunk<T>(thunk: Thunk<T>): T {
     // set the evaluated property to true
     thunk.evaluated = true
     return finalValue
+  }
+}
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Evaluates any value (inclusive of Thunk expressions)
+ * recursively, only stopping when a primitive value type
+ * that can be the result of evaluation of the program
+ * (i.e. an expressible value) is obtained.
+ * @param value The value to be evaluated.
+ */
+export function evaluateLazyValue(value: any): ExpressibleValues {
+  if (isThunk(value)) {
+    return evaluateLazyValue(evaluateThunk(value));
+  } else {
+    return value;
   }
 }
 

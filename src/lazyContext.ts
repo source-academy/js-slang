@@ -24,5 +24,5 @@ export default function lazyEvaluate(context: Context): boolean {
  *     evaluate eagerly.
  */
 export function lazyEvaluateInChapter(chapter: number): boolean {
-  return chapter === -1
+  return chapter === 100
 }
