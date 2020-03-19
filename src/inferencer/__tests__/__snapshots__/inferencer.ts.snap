@@ -1,0 +1,213 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`other nodes other than int literals are NotYetTyped 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 5,
+      "expression": Node {
+        "end": 4,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "true",
+        "start": 0,
+        "type": "Literal",
+        "value": true,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 12,
+      "expression": Node {
+        "end": 11,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "raw": "false",
+        "start": 6,
+        "type": "Literal",
+        "value": false,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 6,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 18,
+      "expression": Node {
+        "end": 17,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 3,
+          },
+        },
+        "raw": "1.90",
+        "start": 13,
+        "type": "Literal",
+        "value": 1.9,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      "start": 13,
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 18,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 5,
+      "line": 3,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`values equal to integers are integers 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 4,
+      "expression": Node {
+        "end": 3,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "integer",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "1.0",
+        "start": 0,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 1,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 4,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 9,
+      "expression": Node {
+        "end": 8,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "integer",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "raw": "0.0",
+        "start": 5,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 0,
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 4,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 5,
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 9,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 2,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
