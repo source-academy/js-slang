@@ -1,4 +1,4 @@
-#+OPTIONS:  toc:nil H:4
+#+OPTIONS: toc:nil H:4
 #+LATEX_HEADER: \newcommand{\qed}{$\Box$}
 #+LATEX_HEADER: \newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
 #+LATEX_HEADER: \newcommand{\Rulee}[3]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}[#3]}
@@ -12,23 +12,22 @@ Compared to Source $\S 3$, this concurrent system has the following changes:
 For details, see Section ``Concurrency Support'' below.
 
 ** Overview
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a nullary function, so the concurrent system executes each thread by running the code in the body of the nullary function.
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a nullary function that returns =undefined=, and the concurrent system executes each thread by running the code in the body of the nullary function.
 
-The design of this system is inspired by [[https://doi.org/10.1007/978-1-4757-3472-0_2][Dijkstra's =cobegin= / =coend= constructs]], of which a good overview and comparison with =fork= / =join= can be found in section 7.2.2 of [[https://doi.org/10.1145/359576.359585][Hoare's Communicating Sequential Processes]].
+To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
 
-However, this design departs from Dijkstra's constructs, as the system does not execute parallel threads. Instead, it executes concurrent threads.
+However, this design departs from the textbook, as the system does not execute parallel threads. Instead, it executes concurrent threads.
 
 ** Concurrency Support
 The following concurrent functions are supported:
-- $\texttt{concurrent\_execute}(f_1, \cdots ,f_n)$: \textit{primitive}, executes multiple threads concurrently. Each $f_1, \cdots ,f_n$ is a nullary function, and each thread is executed by running the code in the body of the nullary function. Returns $\texttt{undefined}$.
-- $\texttt{test\_and\_set}(a)$: \textit{primitive}, assumes the head of array $a$ is a boolean $b$. Sets the head of $a$ to $\texttt{true}$. Returns $b$.
-- $\texttt{clear}(a)$: \textit{primitive}, sets the head of array $a$ to $\texttt{false}$. Returns $\texttt{undefined}$.
+- =concurrent_execute=: \textit{primitive}, executes multiple threads concurrently. Each $f_1, \cdots ,f_n$ is a nullary function that returns =undefined=, and each thread is executed by running the code in the body of the nullary function. Returns =undefined=.
+- =test_and_set=: \textit{primitive}, assumes the head of array $a$ is a boolean $b$. Sets the head of $a$ to =true=. Returns $b$.
+- =clear=: \textit{primitive}, sets the head of array $a$ to =false=. Returns =undefined=.
 
-** $\texttt{EXECUTE}$ Rules
+** =EXECUTE= Rules
 
 *** Notes
 - For simplicity, heap is not represented in the rules.
-- $g$ represents garbage value: its value is not important to the rule.
 
 *** Compiling
 $\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent\_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}\\$
@@ -36,45 +35,55 @@ Each of $s_1. \cdots .s_n$ is a string of VM instruction that loads a closure on
 
 *** Running
 There are additional structures in our VM:
-0. $\textit{tq}$, a register which is a queue of thread suspensions.
+0. $\textit{tq}$, a register which is a queue of threads.
 0. $\textit{to}$, a register initialized with $0$, that indicates how many instructions are left for a thread to run.
-0. $\textit{seq}$, a register initialized with $\langle \rangle$, that represents an empty sequential runtime stack. When entering the concurrent context, $\textit{os}$, $\textit{pc}$, $\textit{e}$, and $\textit{rs}$ are copied onto $\textit{seq}$, and when exiting the concurrent context, they are popped from $\textit{seq}$.
-The tuple representing our VM will have three more corresponding structures:
-$(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}, \textit{seq})\\$
+The state representing our VM will have two more corresponding structures:
+$(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to})\\$
+The initial state of our VM is a $\textit{pc}$, which has empty $\textit{os}$, $\textit{env}$, $\textit{rs}$, and $\textit{tq}$, and zero timeout:
+$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle, \langle \rangle, 0)\\$
 
-**** Starting $\texttt{EXECUTE}$, loading thread frames into register $\textit{tq}$
-$\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n}}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0, \langle \rangle) \transition (g, \langle \rangle, g, g, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0, (\textit{os}, \textit{pc}, \textit{e}).\textit{rs})}\\$
-Each thread is a four-tuple of $\textit{os}$, $\textit{pc}$, $\textit{e}$, and $\textit{rs}$. Initially, threads have empty $\textit{os}$ and empty $\textit{rs}$. Note the transition from empty $\textit{seq}$ to nonempty $\textit{seq}$: this disambiguates concurrent execution rules from sequential execution rules, so that we know we are executing in the concurrent context.
-
-**** Beginning thread execution
-$\\\Rule{}{(g, \langle \rangle, g, g, ((\textit{os}, \textit{pc}, \textit{e}).\textit{trs}).\textit{tq}, 0, \textit{seq}) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, c, \textit{seq})}\\$
-where $c$ is a constant timeout value. Note: $\textit{pc}$ is $\langle \rangle$ to disambiguate this rule from the thread timeout rule.
-
-**** Running thread
-$\\\Rule{s(\textit{pc}) \neq \texttt{RET} \qquad \textit{to} \ge 0}{(\textit{os}, \textit{pc}, \textit{e}, \textit{trs}, \textit{tq}, \textit{to}, \textit{seq}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{trs'}, \textit{tq}, \textit{to}-1, \textit{seq})}\\$
-where the primed values are just like normal VM code execution.
-
-**** Running thread, returning from function
-$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} \ge 0 \qquad \textit{trs} \neq \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{trs}, \textit{tq}, \textit{to}, \textit{seq}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{trs'}, \textit{tq}, \textit{to}-1, \textit{seq})}\\$
-where the primed values are just like normal VM code execution. Note: the thread may execute the =RET= statement inside a function, and the thread does the normal thing of popping =trs= and so on.
+Some notes on program execution:
+0. When the program calls =concurrent_execute=, it executes the rest of its code along with the concurrent threads, therefore the sequential program becomes a concurrent thread.
+0. Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
+0. As a result, all programs here are concurrent programs, even if they do not call =concurrent_execute=.
+0. None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
 
 **** Thread timeout
-$\\\Rule{}{(\textit{os}, \textit{pc}, \textit{e}, \textit{trs}, \textit{tq}, 0, \textit{seq}) \transition (g, \langle \rangle, g, g, \textit{tq}.((\textit{os}, \textit{pc}, \textit{e}).\textit{trs}), 0, \textit{seq})}\\$
-When a thread times out and has not finished execution (has not executed the =RET= statement), then it is queued on the thread queue.
+$\\\Rule{}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.((\textit{os}_1, \textit{pc}_1, \textit{e}_1).\textit{rs}_1), c)}\\$
+If a thread times out and has not finished execution (has not executed the =RET= statement), then it is enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a constant timeout value $c$.
+
+The above rule assumes there is least one thread in the thread queue. To cover all cases, here is the rule for zero threads in the thread queue:
+$\\\Rule{}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, c)}\\$
+
+**** Running thread
+$\\\Rule{s(\textit{pc}) \neq \texttt{RET} \qquad \textit{to} > 0}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{rs'}, \textit{tq}, \textit{to}-1)}\\$
+where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements.
+
+**** Running thread, returning from function
+$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} \neq \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{rs'}, \textit{tq}, \textit{to}-1)}\\$
+where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the =RET= statement inside a function, and the thread does the normal thing of popping =rs= and so on.
+
+**** Starting =EXECUTE=
+$\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n}}{(((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0)}\\$
+$\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0)\\$
+
+Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
 
 **** Returning from thread
-$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} \ge 0 \qquad \textit{trs} = \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0, \langle \rangle) \transition (g, \langle \rangle, g, g, \textit{tq}, 0, \textit{seq})}\\$
-When a thread executes the $\texttt{RET}$ statement, and there are no more thread runtime stacks, the thread is not added back to the thread queue,
+$\\\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}\\$
+If a thread executes the =RET= statement, and the runtime stack is empty, then the thread is not enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a constant timeout value $c$.
 
-**** Ending $\texttt{EXECUTE}$
-$\\\Rule{}{(g, \langle \rangle, g, g, \langle \rangle, 0, (\textit{os}, \textit{pc}, \textit{e}).\textit{rs}) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0, \langle \rangle)}\\$
-When the thread queue is empty, we restore normal sequential execution.
+The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
 
-** $\texttt{TEST\_AND\_SET}$ and $\texttt{CLEAR}$ Rules
+**** Ending our VM
+$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}\\$
+If a thread executes the =RET= statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, the thread executing the =RET= statement is not enqueued on the thread queue, and our VM stops and returns the top of $\textit{os}$, which is $v$.
+
+** =TEST_AND_SET= and =CLEAR= Rules
 
 *** Notes
-- For simplicity, all registers and heap are not represented in the rules, except $\textit{os} and \textit{pc}$.
-- $\textit{test\_and\_set}$ is an atomic operation.
+- For simplicity, all registers and heap are not represented in the rules, except $\textit{os}$ and $\textit{pc}$.
+- =test_and_set= is an atomic operation.
 
 *** Compiling
 $\Rule{E \translateaux s}{\texttt{test\_and\_set}(E) \translateaux s.\texttt{TEST\_AND\_SET}}\\$
@@ -85,7 +94,7 @@ where $E$ is an array.
 
 *** Running
 $\Rule{s(\textit{pc}) = \texttt{TEST\_AND\_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}\\$
-where $a$ is the address of an array stored on the heap. The head of this list is initially $b$, where $b$ is a boolean. After this rule executes, the head of this list is set to $\textit{true}$.
+where $a$ is the address of an array stored on the heap. The head of this array is initially $b$, where $b$ is a boolean. After this rule executes, the head of this array is set to $\textit{true}$.
 
 $\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}\\$
-where $a$ is the address of an array stored on the heap. The head of this list is updated to $\textit{false}$.
+where $a$ is the address of an array stored on the heap. The head of this array is updated to $\textit{false}$.
