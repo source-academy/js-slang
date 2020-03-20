@@ -1,4 +1,4 @@
-% Created 2020-03-19 Thu 11:31
+% Created 2020-03-20 Fri 10:54
 % Intended LaTeX compiler: pdflatex
 \input source_header.tex
 \newcommand{\qed}{$\Box$}
@@ -119,11 +119,10 @@ where the primed values are just like normal VM code execution, and the timeout 
 where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the \texttt{RET} statement inside a function, and the thread does the normal thing of popping \texttt{rs} and so on.
 
 \paragraph{Starting \texttt{EXECUTE}}
-\label{sec:org4147d00}
-\(\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n}}{(((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0)}\\\)
-\(\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0)\\\)
-
-Thread \(i\) is a four-tuple of each thread \(i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. Initially, thread \(i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
+\label{sec:org6246ae4}
+\(\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})}\\\)
+\(\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), \textit{to}-1)\\\)
+Closures representing threads \(i\) (two-tuples of \(\textit{pc}_i\) and \(\textit{e}_i\)) on the operand stack are converted into threads \(i\). Thread \(i\) is a four-tuple of each thread \(i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. Initially, thread \(i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
 
 \paragraph{Returning from thread}
 \label{sec:org3702574}
@@ -133,9 +132,9 @@ If a thread executes the \texttt{RET} statement, and the runtime stack is empty,
 The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
 
 \paragraph{Ending our VM}
-\label{sec:org348adbd}
-\(\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}\\\)
-If a thread executes the \texttt{RET} statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, the thread executing the \texttt{RET} statement is not enqueued on the thread queue, and our VM stops and returns the top of \(\textit{os}\), which is \(v\).
+\label{sec:org2dae0a8}
+\(\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}\\\)
+If a thread executes the \texttt{RET} statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, and our VM stops.
 
 \subsection{\texttt{TEST\_AND\_SET} and \texttt{CLEAR} Rules}
 \label{sec:org3306985}

@@ -64,10 +64,9 @@ $\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}
 where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the =RET= statement inside a function, and the thread does the normal thing of popping =rs= and so on.
 
 **** Starting =EXECUTE=
-$\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n}}{(((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0)}\\$
-$\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), 0)\\$
-
-Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
+$\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})}\\$
+$\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), \textit{to}-1)\\$
+Closures representing threads $i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $i$. Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
 
 **** Returning from thread
 $\\\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}\\$
@@ -76,8 +75,8 @@ If a thread executes the =RET= statement, and the runtime stack is empty, then t
 The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
 
 **** Ending our VM
-$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (v.\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}\\$
-If a thread executes the =RET= statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, the thread executing the =RET= statement is not enqueued on the thread queue, and our VM stops and returns the top of $\textit{os}$, which is $v$.
+$\\\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}\\$
+If a thread executes the =RET= statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, and our VM stops.
 
 ** =TEST_AND_SET= and =CLEAR= Rules
 
