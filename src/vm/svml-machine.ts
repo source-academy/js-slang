@@ -40,7 +40,6 @@ const EXECUTE_NUM_ARGS_OFFSET = 1
 // P is an array that contains an SVML machine program:
 // the op-codes of instructions and their arguments
 let PROG: Program
-let ENTRY: Instruction[] // use array reference to keep track of entry function
 let FUNC: SVMFunction[]
 let P: Instruction[]
 let GLOBAL_ENV = -1
@@ -428,16 +427,6 @@ function EXTEND() {
 
 function SET_TO() {
   TO = Math.floor(Math.random() * TO_MAX)
-}
-
-function NULLIFY_REGISTERS() {
-  OS = NIL
-  PC = NIL
-  ENV = NIL
-  RTS = []
-  TO = 0
-  TOP_RTS = -1
-  // might want to reset P as well for consistency
 }
 
 // debugging: show current heap
@@ -930,20 +919,15 @@ M[OpCodes.CALLP] = () => {
 }
 
 M[OpCodes.RETG] = () => {
-  if (ENTRY === P) {
-    // if entry point, then intercept return
-    RUNNING = false
-  } else {
-    POP_RTS()
-    H = RES
-    PC = HEAP[H + RTS_FRAME_PC_SLOT]
-    ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-    P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
-    POP_OS()
-    A = RES
-    OS = HEAP[H + RTS_FRAME_OS_SLOT]
-    PUSH_OS()
-  }
+  POP_RTS()
+  H = RES
+  PC = HEAP[H + RTS_FRAME_PC_SLOT]
+  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
+  P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
+  POP_OS()
+  A = RES
+  OS = HEAP[H + RTS_FRAME_OS_SLOT]
+  PUSH_OS()
 }
 
 M[OpCodes.DUP] = () => {
@@ -1095,17 +1079,13 @@ M[OpCodes.STRINGIFY] = () => {
 addPrimitiveOpCodeHandlers()
 
 M[OpCodes.EXECUTE] = () => {
-  // Save current context and old RTS
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS() // RTS.length !== 0, TOP_RTS++
-  SEQ = [RTS, TOP_RTS] // SEQ.length !== 0
-  // Now OS, PC, ENV, P are saved, and RTS and TOP_RTS are copied
-  // All these registers can be used for anything
-  G = P[PC][EXECUTE_NUM_ARGS_OFFSET]
+  I = P[PC][EXECUTE_NUM_ARGS_OFFSET]
   E = OS // we need the values in OS, so store in E first
-  for (I = 0; I < G; I = I + 1) {
-    NULLIFY_REGISTERS() // RTS = []
+  G = [OS, ENV, P, PC, TOP_RTS, RTS]
+  // Keep track of registers first to restore present state after saving threads
+  for (; I > 0; I = I - 1) {
+    RTS = []
+    TOP_RTS = -1
     OS = E
     POP_OS()
     H = RES // store closure in H
@@ -1125,7 +1105,9 @@ M[OpCodes.EXECUTE] = () => {
     PUSH_RTS() // TOP_RTS++
     TQ.push([RTS, TOP_RTS])
   }
-  NULLIFY_REGISTERS() // PC = NIL
+  // restore present state
+  ;[OS, ENV, P, PC, TOP_RTS, RTS] = G
+  PC = PC + 1
 }
 
 M[OpCodes.TEST_AND_SET] = () => {
@@ -1146,10 +1128,6 @@ M[OpCodes.CLEAR] = () => {
   A = false
   NEW_BOOL()
   HEAP[D + ARRAY_VALUE_SLOT][0] = RES
-  // return undefined
-  NEW_UNDEFINED()
-  A = RES
-  PUSH_OS()
   PC = PC + 1
 }
 
@@ -1157,6 +1135,7 @@ M[OpCodes.CLEAR] = () => {
 function INITIALIZE() {
   D = FUNC[PROG[0]] // put function header in D
   A = D[FUNC_MAX_STACK_SIZE_OFFSET]
+  P = D[FUNC_CODE_OFFSET]
   NEW_OS()
   OS = RES
   A = D[FUNC_ENV_SIZE_OFFSET]
@@ -1164,20 +1143,11 @@ function INITIALIZE() {
   NEW_ENVIRONMENT()
   ENV = RES
   GLOBAL_ENV = ENV
-  P = ENTRY
   PC = 0
 }
 
-// called during sequential execution
-function RUN_SEQUENTIAL() {
-  if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
-    throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
-  }
-  M[P[PC][INS_OPCODE_OFFSET]]()
-}
-
 // called during concurrent execution
-function RUN_CONCURRENT() {
+function RUN_INSTRUCTION() {
   if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
     // execute normally
     if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
@@ -1190,32 +1160,29 @@ function RUN_CONCURRENT() {
     // return from function
     M[P[PC][INS_OPCODE_OFFSET]]()
     TO = TO - 1
+  } else if (TQ.length === 0) {
+    // end if no more threads and end of current thread
+    RUNNING = false
   } else {
-    // return from thread
-    NULLIFY_REGISTERS() // PC = NIL, TO = 0
+    // setup next thread
+    SETUP_THREAD()
   }
 }
 
-// called when all functions in concurrent execution have returned
-function END_CONCURRENT() {
-  ;[RTS, TOP_RTS] = SEQ
-  POP_RTS() // TOP_RTS--
-  H = RES
-  PC = HEAP[H + RTS_FRAME_PC_SLOT]
-  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-  P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
-  OS = HEAP[H + RTS_FRAME_OS_SLOT]
-  SEQ = []
-}
-
 function TIMEOUT_THREAD() {
-  // timeout at current ins so need to step back.
-  PC = PC - 1
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS() // TOP_RTS++
-  TQ.push([RTS, TOP_RTS])
-  NULLIFY_REGISTERS() // PC = NIL
+  if (TQ.length === 0) {
+    // if no other threads, no need to timeout
+    SET_TO()
+  } else {
+    // timeout only if no other threads
+    // timeout at current ins so need to step back.
+    PC = PC - 1
+    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+    A = RES
+    PUSH_RTS() // TOP_RTS++
+    TQ.push([RTS, TOP_RTS])
+    SETUP_THREAD()
+  }
 }
 
 function SETUP_THREAD() {
@@ -1234,36 +1201,29 @@ function run(): any {
   INITIALIZE()
 
   while (RUNNING) {
-    if (SEQ.length === 0) {
+    if (TO > 0) {
       // show_registers("run loop");
       // show_heap("run loop");
       // show_executing('')
-      RUN_SEQUENTIAL()
-    } else if (TO > 0) {
-      RUN_CONCURRENT()
-    } else if (TO < 0) {
-      throw Error('TO cannot be negative')
-    } else if (PC >= 0) {
+      RUN_INSTRUCTION()
+    } else if (TO === 0) {
       // when exhausted time quanta
       TIMEOUT_THREAD()
-    } else if (TQ.length === 0) {
-      // end concurrent_execute if no more threads and nullified
-      END_CONCURRENT()
-    } else if (TQ.length > 0) {
-      // begin thread if there are threads and nullified
-      SETUP_THREAD()
+    } else {
+      throw Error('TO cannot be negative')
     }
   }
 
   // handle errors
   if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
-    POP_OS()
     throw Error('execution aborted: ' + getErrorType())
   }
 
   POP_OS()
   // show_heap_value(RES)
-  return convertToJsFormat(RES)
+  // return convertToJsFormat(RES)
+  // Source 3.4 programs do not return anything.
+  return undefined
 }
 
 function getErrorType(): string {
@@ -1313,7 +1273,6 @@ function convertToJsFormat(node: number): any {
 export function runWithP(p: Program, context: Context): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
-  ENTRY = FUNC[PROG[0]][FUNC_CODE_OFFSET]
   PC = -1
   HEAP = []
   FREE = 0

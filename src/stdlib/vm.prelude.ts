@@ -1,6 +1,6 @@
 import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
-import { runtime } from './misc'
+import { runtime, parse_int } from './misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.
@@ -669,7 +669,7 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_atan2', OpCodes.MATH_ATAN2, Math.atan2],
   ['math_imul', OpCodes.MATH_IMUL, Math.imul],
   ['math_pow', OpCodes.MATH_POW, Math.pow],
-  ['parse_int', OpCodes.PARSE_INT, parseInt]
+  ['parse_int', OpCodes.PARSE_INT, parse_int]
 ]
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
