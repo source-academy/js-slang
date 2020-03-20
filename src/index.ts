@@ -1,5 +1,5 @@
-import { findNodeAt, simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal, Node, Program } from 'estree'
+import { simple } from 'acorn-walk/dist/walk'
+import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -10,6 +10,7 @@ import {
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
@@ -145,7 +146,7 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
   return isNativeRunnable
 }
 
-export function findIdentifier(
+export function findDeclaration(
   code: string,
   context: Context,
   loc: { line: number; column: number }
@@ -154,27 +155,19 @@ export function findIdentifier(
   if (!program) {
     return null
   }
-
-  // TODO: Delete later
+  // tslint:disable-next-line:no-console
   console.log('Program:', program)
-  console.log('Find node at:', loc)
 
-  function findByLocation(type: string, node: Node) {
-    const location = node.loc
-    if (type && location) {
-      return (
-        type === 'Identifier' &&
-        location.start.line === loc.line &&
-        location.start.column <= loc.column &&
-        location.end.column >= loc.column
-      )
-    }
-    return false
-  }
+  const identifierNode = findIdentifierNode(program, context, loc);
+  console.log("Identifier Node:", identifierNode)
 
-  const found = findNodeAt(program, undefined, undefined, findByLocation)
-  console.log('Found node:', found)
-  return found
+  if (!identifierNode)
+    return null
+
+  const declarationNode = findDeclarationNode(program, identifierNode);
+  console.log("Declaration Node:", declarationNode)
+
+  return declarationNode
 }
 
 export async function runInContext(
