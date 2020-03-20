@@ -1,5 +1,11 @@
-import { ancestor, findNodeAt} from 'acorn-walk/dist/walk'
-import { ArrowFunctionExpression, FunctionDeclaration, Identifier, Node, VariableDeclarator } from 'estree'
+import { ancestor, findNodeAt, simple } from 'acorn-walk/dist/walk'
+import {
+  ArrowFunctionExpression,
+  FunctionDeclaration,
+  Identifier,
+  Node,
+  VariableDeclarator
+} from 'estree'
 import { Context } from './types'
 
 export function findIdentifierNode(
@@ -24,55 +30,52 @@ export function findIdentifierNode(
   return found?.node as Identifier
 }
 
-export function findDeclarationNode(
-  root: Node,
-  identifier: Identifier,
-): Node | undefined {
-  const ancestors = findAncestors(root, identifier)
-  console.log('Found Ancestors:', ancestors)
+export function findDeclarationNode(program: Node, identifier: Identifier): Node | undefined {
+  const ancestors = findAncestors(program, identifier)
+  if (!ancestors) return undefined
 
-  if (!ancestors)
-    return undefined
-
-  function findDeclarationPredicate(type: string, node: Node) {
-    if (type === "VariableDeclarator") {
-      return ((node as VariableDeclarator).id as Identifier).name  === identifier.name
-    } else if (type === "FunctionDeclaration") {
-      return (
-        ((node as FunctionDeclaration).id as Identifier).name  === identifier.name ||
-        (node as FunctionDeclaration).params.find(
-          n => (n as Identifier).name  === identifier.name
-        ) !== undefined
-      )
-    } else if (type === "ArrowFunctionExpression") {
-      return (node as ArrowFunctionExpression).params.find(
-        n => (n as Identifier).name  === identifier.name) !== undefined
-    }
-    return false
-  }
-
-  for (const anc of ancestors) {
-    const declaration = findNodeAt(anc, undefined, undefined, findDeclarationPredicate)
-    if (declaration) {
-      return declaration.node
+  const declarations: Node[] = []
+  for (const root of ancestors) {
+    simple(root, {
+      VariableDeclarator(node: VariableDeclarator) {
+        if ((node.id as Identifier).name === identifier.name) {
+          declarations.push(node)
+        }
+      },
+      FunctionDeclaration(node: FunctionDeclaration) {
+        if ((node.id as Identifier).name === identifier.name) {
+          declarations.push(node)
+        } else {
+          const param = node.params.find(n => (n as Identifier).name === identifier.name)
+          if (param) {
+            declarations.push(param)
+          }
+        }
+      },
+      ArrowFunctionExpression(node: ArrowFunctionExpression) {
+        const param = node.params.find(n => (n as Identifier).name === identifier.name)
+        if (param) {
+          declarations.push(param)
+        }
+      }
+    })
+    if (declarations.length > 0) {
+      return declarations.shift()
     }
   }
 
   return undefined
 }
 
-function findAncestors(
-   root: Node,
-   identifier: Identifier,
- ): Node[] | undefined {
+function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
   let foundAncestors: Node[] = []
-   ancestor(root, {
-     Identifier: (node: Identifier, ancestors: [Node]) => {
-       if (identifier.name === node.name && identifier.loc === node.loc){
-         foundAncestors = Object.assign([], ancestors).reverse()
-         foundAncestors.shift() // Remove the identifier node
-       }
-     }
-   })
-   return foundAncestors
- }
+  ancestor(root, {
+    Identifier: (node: Identifier, ancestors: [Node]) => {
+      if (identifier.name === node.name && identifier.loc === node.loc) {
+        foundAncestors = Object.assign([], ancestors).reverse()
+        foundAncestors.shift() // Remove the identifier node
+      }
+    }
+  })
+  return foundAncestors
+}

@@ -1,5 +1,5 @@
 import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal, Program } from 'estree'
+import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -150,24 +150,20 @@ export function findDeclaration(
   code: string,
   context: Context,
   loc: { line: number; column: number }
-): any {
+): SourceLocation | null | undefined {
   const program = parse(code, context)
   if (!program) {
     return null
   }
-  // tslint:disable-next-line:no-console
-  console.log('Program:', program)
-
-  const identifierNode = findIdentifierNode(program, context, loc);
-  console.log("Identifier Node:", identifierNode)
-
-  if (!identifierNode)
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
     return null
-
-  const declarationNode = findDeclarationNode(program, identifierNode);
-  console.log("Declaration Node:", declarationNode)
-
-  return declarationNode
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode) {
+    return null
+  }
+  return declarationNode.loc
 }
 
 export async function runInContext(
