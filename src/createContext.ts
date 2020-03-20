@@ -1,8 +1,9 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-import { stringify } from './interop'
+import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
 import { AsyncScheduler } from './schedulers'
+import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -11,7 +12,9 @@ import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
+import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -47,9 +50,10 @@ export const createEmptyContext = <T>(
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
+  const operatorsToUse = lazyEvaluateInChapter(chapter) ? lazyOperators : operators
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     globals: { variables: new Map(), previousScope: null },
-    operators: new Map(Object.entries(operators))
+    operators: new Map(Object.entries(operatorsToUse))
   })
   return {
     chapter,
@@ -193,6 +197,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
+  }
+
+  if (lazyEvaluate(context)) {
+    defineBuiltin(context, 'force(expression)', lazy.force)
   }
 }
 

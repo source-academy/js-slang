@@ -1,6 +1,8 @@
 import * as es from 'estree'
-import { RuntimeSourceError } from '../interpreter-errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { Thunk } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
+import { typeOf } from './typeOf'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -20,17 +22,6 @@ export class TypeError extends RuntimeSourceError {
 
   public elaborate() {
     return this.explain()
-  }
-}
-
-// We need to define our own typeof in order for null/array to display properly in error messages
-const typeOf = (v: Value) => {
-  if (v === null) {
-    return 'null'
-  } else if (Array.isArray(v)) {
-    return 'array'
-  } else {
-    return typeof v
   }
 }
 
@@ -107,4 +98,139 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
   } else {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
+}
+
+// ====================================================
+//  Runtime Type Checking for Lazy Evaluation (Thunks)
+// ====================================================
+
+/**
+ * Checks if a Thunk is a number
+ * @param v The Thunk to be checked
+ */
+const isNumberT = (v: Thunk<Value>) => v.type === 'number'
+/**
+ * Checks if a Thunk is a string
+ * @param v The Thunk to be checked
+ */
+const isStringT = (v: Thunk<Value>) => v.type === 'string'
+/**
+ * Checks if a Thunk is a boolean
+ * @param v The Thunk to be checked
+ */
+const isBoolT = (v: Thunk<Value>) => v.type === 'boolean'
+
+/**
+ * Checks that an unary expression has a correctly
+ * typed Thunk as its argument, and returns the
+ * type of the resultant Thunk (in string)
+ * @param node The node representing location of the value
+ * @param operator String representation of unary operator
+ * @param value The value to be checked (Thunk)
+ */
+export const checkUnaryExpressionT = (
+  node: es.Node,
+  operator: es.UnaryOperator,
+  value: Thunk<Value>
+) => {
+  switch (operator) {
+    case '+':
+    case '-':
+      if (!isNumberT(value)) {
+        return new TypeError(node, '', 'number', value.type)
+      } else {
+        return 'number'
+      }
+    case '!':
+      if (!isBoolT(value)) {
+        return new TypeError(node, '', 'boolean', value.type)
+      } else {
+        return 'boolean'
+      }
+    default:
+      return ''
+  }
+}
+
+/**
+ * Checks that a binary expression has correctly
+ * typed Thunks as arguments, and returns the
+ * type of the resultant Thunk (in string)
+ * @param node The node representing location of the value
+ * @param operator The string representation of the binary
+ *                 operator used
+ * @param left The left value to be checked (Thunk)
+ * @param right The right value to be checked (Thunk)
+ */
+export const checkBinaryExpressionT = (
+  node: es.Node,
+  operator: es.BinaryOperator,
+  left: Thunk<Value>,
+  right: Thunk<Value>
+) => {
+  switch (operator) {
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+      if (!isNumberT(left)) {
+        return new TypeError(node, LHS, 'number', left.type)
+      } else if (!isNumberT(right)) {
+        return new TypeError(node, RHS, 'number', right.type)
+      } else {
+        return 'number'
+      }
+    case '+':
+      if (isNumberT(left)) {
+        if (isNumberT(right)) {
+          return 'number'
+        } else {
+          return new TypeError(node, RHS, 'number', right.type)
+        }
+      } else if (isStringT(left)) {
+        if (isStringT(right)) {
+          return 'string'
+        } else {
+          return new TypeError(node, RHS, 'string', right.type)
+        }
+      } else {
+        return new TypeError(node, LHS, 'string or number', left.type)
+      }
+    case '<':
+    case '<=':
+    case '>':
+    case '>=':
+      if (isNumberT(left)) {
+        if (isNumberT(right)) {
+          return 'boolean'
+        } else {
+          return new TypeError(node, RHS, 'number', right.type)
+        }
+      } else if (isStringT(left)) {
+        if (isStringT(right)) {
+          return 'boolean'
+        } else {
+          return new TypeError(node, RHS, 'string', right.type)
+        }
+      } else {
+        return new TypeError(node, LHS, 'string or number', left.type)
+      }
+    case '!==':
+    case '===':
+      return 'boolean'
+    default:
+      // unknown type, may still be valid due to conditionals
+      return ''
+  }
+}
+
+/**
+ * Given a Thunk expression, checks whether this Thunk
+ * expression is of type boolean (and throws an
+ * TypeError if it is not)
+ * @param node The node representing location of the value
+ * @param test The value to be tested (Thunk)
+ */
+export const checkIfStatementT = (node: es.Node, test: Thunk<Value>) => {
+  return isBoolT(test) ? undefined : new TypeError(node, ' as condition', 'boolean', test.type)
 }

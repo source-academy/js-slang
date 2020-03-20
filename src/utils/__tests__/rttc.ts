@@ -14,7 +14,11 @@ const arr = [2]
 const mockValues: Value[] = [num, bool, str, func, builtin, obj, arr, undefined, null]
 
 describe('Unary type combinations:', () => {
-  const valid: Array<[UnaryOperator, Value]> = [['!', bool], ['+', num], ['-', num]]
+  const valid: Array<[UnaryOperator, Value]> = [
+    ['!', bool],
+    ['+', num],
+    ['-', num]
+  ]
   const operators: UnaryOperator[] = ['!', '+', '-']
   const invalid: Array<[UnaryOperator, Value]> = []
 
@@ -44,15 +48,18 @@ describe('Unary type combinations:', () => {
       expect({
         operator,
         value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
 })
 
 describe('Binary + type combinations:', () => {
-  const valid: Array<[BinaryOperator, Value, Value]> = [['+', num, num], ['+', str, str]]
+  const valid: Array<[BinaryOperator, Value, Value]> = [
+    ['+', num, num],
+    ['+', str, str]
+  ]
   const operators: BinaryOperator[] = ['+']
   const invalid: Array<[BinaryOperator, Value, Value]> = []
 
@@ -90,8 +97,8 @@ describe('Binary + type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -141,8 +148,8 @@ describe('Binary (-|*|/|%) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -181,8 +188,8 @@ describe('Binary (===|!==) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -236,8 +243,8 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
         operator,
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
@@ -270,15 +277,18 @@ describe('Ternary/if test expression type combinations:', () => {
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })
 })
 
 describe('Member expression type combinations:', () => {
-  const valid: Array<[Value, Value]> = [[obj, str], [arr, num]]
+  const valid: Array<[Value, Value]> = [
+    [obj, str],
+    [arr, num]
+  ]
   const invalid: Array<[Value, Value]> = []
 
   mockValues.forEach(left => {
@@ -315,8 +325,8 @@ describe('Member expression type combinations:', () => {
       expect({
         left,
         right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
+        explain: (error! as rttc.TypeError).explain(),
+        elaborate: (error! as rttc.TypeError).elaborate()
       }).toMatchSnapshot()
     })
   })

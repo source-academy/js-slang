@@ -1,21 +1,24 @@
 import { simple } from 'acorn-walk/dist/walk'
 import { DebuggerStatement, Literal, Program } from 'estree'
+import { writeFileSync } from 'fs'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
-import { evaluate } from './interpreter'
 import {
   ConstAssignment,
   ExceptionError,
   InterruptedError,
-  RuntimeSourceError,
   UndefinedVariable
-} from './interpreter-errors'
-import { parse, parseAt } from './parser'
+} from './errors/errors'
+import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { evaluate } from './interpreter/interpreter'
+import lazyEvaluate from './lazyContext'
+import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './substituter'
-import { transpile } from './transpiler'
+import { codify, getEvaluationSteps } from './stepper/stepper'
+import { sandboxedEval } from './transpiler/evalContainer'
+import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
@@ -26,7 +29,7 @@ import {
   SourceError
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
-import { sandboxedEval } from './utils/evalContainer'
+import { validateAndAnnotate } from './validator/validator'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -92,7 +95,9 @@ function convertNativeErrorToSourceError(
 
   const message = error.message
   if (name === null) {
-    name = 'UNKNOWN'
+    // make an unknown name more obvious, by making the text
+    // an invalid JavaScript variable name
+    name = '::???UNKNOWN???::'
   }
 
   function messageContains(possibleErrorMessages: string[]) {
@@ -166,6 +171,10 @@ export async function runInContext(
   if (!program) {
     return resolvedErrorPromise
   }
+  validateAndAnnotate(program as Program, context)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
@@ -191,14 +200,17 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId)
+      writeFileSync('./programTree.json', JSON.stringify(program))
+      const temp = transpile(program, context.contextId, undefined, lazyEvaluate(context))
       // some issues with formatting and semicolons and tslint so no destructure
+      writeFileSync('./output.js', temp.transpiled)
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
+      const result = sandboxedEval(transpiled)
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled)
+        value: result
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {
