@@ -993,9 +993,7 @@ Object {
   "parsedErrors": "",
   "result": "[\\"function_definition\\",
 [[[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\",
- [[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]]],
-null]]]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1032,9 +1030,7 @@ Object {
   "parsedErrors": "",
   "result": "[... \\"function_definition\\",
 [... [[\\"name\\", [\\"x\\", null]], null],
-[... [... \\"return_statement\\",
- ... [[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]] ...],
-null ...] ...] ...]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1071,9 +1067,7 @@ Object {
   "parsedErrors": "",
   "result": "[ \\"function_definition\\",
 [ [[\\"name\\", [\\"x\\", null]], null],
-[ [ \\"return_statement\\",
-  [[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]] ],
-null ] ] ]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1110,9 +1104,7 @@ Object {
   "parsedErrors": "",
   "result": "[.........\\"function_definition\\",
 [.........[[\\"name\\", [\\"x\\", null]], null],
-[.........[.........\\"return_statement\\",
-..........[[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]].........],
-null.........].........].........]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1149,9 +1141,7 @@ Object {
   "parsedErrors": "",
   "result": "[         \\"function_definition\\",
 [         [[\\"name\\", [\\"x\\", null]], null],
-[         [         \\"return_statement\\",
-          [[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]]         ],
-null         ]         ]         ]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1186,7 +1176,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[\\"function_definition\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], [[[1, [3, null]], [[1, [4, null]], null]], null]]], null]]]",
+  "result": "[\\"function_definition\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");

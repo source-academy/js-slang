@@ -1,10 +1,10 @@
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, Result, runInContext } from '../index'
-import { stringify } from '../interop'
 import { mockContext } from '../mocks/context'
-import { parse } from '../parser'
-import { transpile } from '../transpiler'
+import { parse } from '../parser/parser'
+import { transpile } from '../transpiler/transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { stringify } from './stringify'
 
 export interface TestContext extends Context {
   displayResult: string[]

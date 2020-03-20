@@ -44,7 +44,7 @@ export interface Rule<T extends es.Node> {
   name: string
   disableOn?: number
   checkers: {
-    [name: string]: (node: T, ancestors: [es.Node]) => SourceError[]
+    [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
   }
 }
 
@@ -175,3 +175,46 @@ export interface BlockExpression extends es.BaseExpression {
 }
 
 export type substituterNodes = es.Node | BlockExpression
+
+export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
+
+export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+
+export interface Untypable {
+  typability?: 'Untypable'
+  inferredType?: Type
+}
+
+export interface NotYetTyped {
+  typability?: 'NotYetTyped'
+  inferredType?: Type
+}
+
+export interface Typedd {
+  typability?: 'Typed'
+  inferredType?: Type
+}
+
+export type Type = Primitive | Variable | FunctionType | List
+
+export interface Primitive {
+  kind: 'primitive'
+  name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
+}
+
+export interface Variable {
+  kind: 'variable'
+  name: string
+}
+
+// cannot name Function, conflicts with TS
+export interface FunctionType {
+  kind: 'function'
+  parameterTypes: Type[]
+  returnType: Type
+}
+
+export interface List {
+  kind: 'list'
+  elementType: Type
+}

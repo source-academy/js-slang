@@ -1,7 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -12,6 +11,7 @@ import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
 
 const createEmptyRuntime = () => ({
   break: false,
