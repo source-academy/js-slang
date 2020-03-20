@@ -391,6 +391,7 @@ function compileStatements(
   if (statements.length === 0 && node.isFunctionBlock) {
     addNullaryInstruction(OpCodes.LGCU)
     addNullaryInstruction(OpCodes.RETG)
+    maxStackSize++
   }
   return { maxStackSize, insertFlag: false }
 }
@@ -533,10 +534,10 @@ const compilers = {
     }
     if (node.operator === '-') {
       // special case as no direct opcode
-      const { maxStackSize } = compile(node.argument, indexTable, false)
+      const { maxStackSize: m1 } = compile(node.argument, indexTable, false)
       addUnaryInstruction(OpCodes.LGCI, -1)
       addNullaryInstruction(OpCodes.MULG)
-      return { maxStackSize, insertFlag }
+      return { maxStackSize: m1 + 1, insertFlag }
     }
     throw Error('Unsupported operation')
   },
@@ -651,7 +652,7 @@ const compilers = {
       } else if (matches[0][1] === undefined) {
         addNullaryInstruction(OpCodes.LGCU)
       } else {
-        throw new Error('Unknown primitive constant')
+        throw Error('Unknown primitive constant')
       }
     }
     return { maxStackSize: 1, insertFlag }
