@@ -316,7 +316,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   Identifier: function*(node: es.Identifier, context: Context) {
     console.log('Identifier')
     let result = getVariable(context, node.name)
-    if (result.type === 'Thunk' && result.isEvaluated) {
+    if (result !== null && result.type === 'Thunk' && result.isEvaluated) {
       result = result.actualValue
     }
     return result
@@ -325,8 +325,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   CallExpression: function*(node: es.CallExpression, context: Context) {
     console.log('CallExpression')
     const callee = yield* evaluate(node.callee, context)
-    // const args = yield* getArgs(context, node)
-    const args = getThunkedArgs(context, node)
+    let args
+
+    if (callee instanceof Closure) {
+      // console.log('function has closure')
+      args = getThunkedArgs(context, node)
+    } else {
+      // console.log('function has no closure')
+      args = yield* getArgs(context, node)
+    }
+
+    // console.log(args)
     let thisContext
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
