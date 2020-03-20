@@ -194,7 +194,7 @@ For each non-overloaded primitive operator, we add a binding to our initial
 type environment $\Gamma_0$ as follows:
 
 \begin{eqnarray*}
-  \Gamma_{-1} & = &
+& &
        \emptyset[ - \leftarrow \forall((N, N) \rightarrow N)]\\
 && \hspace{2mm} [ * \leftarrow \forall((N, N) \rightarrow N)]\\
 && \hspace{2mm} [ / \leftarrow \forall((N, N) \rightarrow \Float)]\\
@@ -202,24 +202,82 @@ type environment $\Gamma_0$ as follows:
 && \hspace{2mm} [ \&\& \leftarrow \forall((\Bool, T) \rightarrow T)]\\
 && \hspace{2mm} [ || \leftarrow \forall((\Bool, T) \rightarrow T)]\\
 && \hspace{2mm} [ ! \leftarrow \Bool \rightarrow \Bool]\\
-&& \hspace{2mm} [ - \leftarrow \forall(N \rightarrow N)]\\
+&& \hspace{2mm} [ - \leftarrow \forall(N \rightarrow N)]\Gamma_{-2}
 \end{eqnarray*}
 
 The overloaded binary primitive are handled as follows:
 
 \begin{eqnarray*}
-\Gamma_{0} & = &
-\Gamma_{-1}
+ & &
+      \Gamma_{-2}
                  [ \texttt{+} \leftarrow \forall((A, A) \rightarrow A)] \\
 && \hspace{6mm}  [ \texttt{===} \leftarrow \forall((A, A) \rightarrow \Bool)] \\
 && \hspace{6mm}  [ \texttt{!==} \leftarrow \forall((A, A) \rightarrow \Bool)] \\
 && \hspace{6mm}  [ \texttt{>} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
 && \hspace{6mm}  [ \texttt{>=} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
 && \hspace{6mm}  [ \texttt{<} \leftarrow \forall((A, A) \rightarrow \Bool)] \\
-&& \hspace{6mm}  [ \texttt{<=} \leftarrow \forall((A, A) \rightarrow \Bool)]
+&& \hspace{6mm}  [ \texttt{<=} \leftarrow \forall((A, A) \rightarrow \Bool)]\Gamma_{-1}
 \end{eqnarray*}
 
-
+\begin{tabular}[fragile]{lllllllll}
+$\Gamma_{-1}$
+& $[$ & \texttt{display}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{error}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{Infinity}      & $\leftarrow$  & $\forall(N)$ & & & $]$ \\
+& $[$ & \texttt{is\_boolean}      & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_function} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_number} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_string} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_asin} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_asinh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_atan} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_atan2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_atanh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_cbrt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_ceil} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_clz32} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_cos} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_cosh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_exp} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_expm1} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_floor} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_fround} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_hypot} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_imul} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_max} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_min} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_PI} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_pow} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_random} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_round} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_sqrt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_SQRT1\_2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_SQRT2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_tan} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_tanh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{math\_trunc} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{NaN} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{parse\_int} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{prompt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{runtime} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{stringify} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
+& $[$ & \texttt{undefined} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ & $\Gamma_0$ \\
+& \end{tabular}
 
 \subsection{Preparing Programs for Type Inference}
 

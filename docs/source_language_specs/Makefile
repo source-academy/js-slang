@@ -1,4 +1,4 @@
-PDFLATEX = pdflatex
+PDFLATEX = latexmk
 
 SPECSNUMS = 1 2 3 4 styleguide 1_type_inference 
 
