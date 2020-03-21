@@ -114,7 +114,7 @@ export interface Frame {
 export type Value = any
 // tslint:enable:no-any
 
-export interface Thunk {
+export interface InterpreterThunk {
   type: typeof thunkStringType
   value: es.Node
   environment: Environment | null

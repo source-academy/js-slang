@@ -8,7 +8,7 @@ import {
   ReturnValue,
   popEnvironment
 } from './interpreter'
-import { Context, Thunk, Environment, Value } from '../types'
+import { Context, InterpreterThunk, Environment, Value } from '../types'
 
 export const thunkStringType = 'Thunk'
 
@@ -32,7 +32,7 @@ export function getThunkedArgs(context: Context, call: es.CallExpression) {
  * @param node The Node to be thunked
  * @param environment The environment to run the statement in
  */
-export function createThunk(node: es.Node, environment: Environment): Thunk {
+export function createThunk(node: es.Node, environment: Environment): InterpreterThunk {
   return {
     type: thunkStringType,
     value: node,
@@ -63,7 +63,7 @@ export function isThunk(v: any): boolean {
 }
 
 // Evaluates thunk and memoize
-export function* evaluateThunk(thunk: Thunk, context: Context) {
+export function* evaluateThunk(thunk: InterpreterThunk, context: Context) {
   if (thunk.isEvaluated) {
     // Program should never enter this 'if' block.
     // Memoized thunks should return the actual value by evaluating an Identifier node type.

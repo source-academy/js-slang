@@ -14,7 +14,7 @@ import {
 import {
   makeThunk,
   makeThunkWithPrimitiveBinary,
-  Thunk,
+  TranspilerThunk,
   makeThunkWithPrimitiveUnary,
   makeConditionalThunk
 } from '../stdlib/lazy'
@@ -63,7 +63,7 @@ export function callIfFuncAndRightArgs(
   }
 }
 
-export function boolOrErr(candidate: Thunk<any>, line: number, column: number) {
+export function boolOrErr(candidate: TranspilerThunk<any>, line: number, column: number) {
   const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate.toString()
@@ -74,7 +74,7 @@ export function boolOrErr(candidate: Thunk<any>, line: number, column: number) {
 
 export function unaryOp(
   operator: UnaryOperator,
-  argument: Thunk<any>,
+  argument: TranspilerThunk<any>,
   line: number,
   column: number
 ) {
@@ -102,7 +102,7 @@ export function unaryOp(
  */
 export function evaluateUnaryExpression(
   operator: UnaryOperator,
-  value: Thunk<any>,
+  value: TranspilerThunk<any>,
   // default value '' to prevent problems with substitutor, intepreter
   returnType: string = ''
 ) {
@@ -119,8 +119,8 @@ export function evaluateUnaryExpression(
 
 export function binaryOp(
   operator: BinaryOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
+  left: TranspilerThunk<any>,
+  right: TranspilerThunk<any>,
   line: number,
   column: number
 ) {
@@ -152,11 +152,11 @@ export function binaryOp(
  */
 export function evaluateBinaryExpression(
   operator: BinaryOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
+  left: TranspilerThunk<any>,
+  right: TranspilerThunk<any>,
   // default value '' to prevent problems with substitutor, intepreter
   returnType: string = ''
-): Thunk<any> {
+): TranspilerThunk<any> {
   switch (operator) {
     case '+':
       return makeThunkWithPrimitiveBinary(left, right, (x, y) => x + y, returnType, operator)
@@ -203,8 +203,8 @@ export function evaluateBinaryExpression(
  */
 export function logicalOp(
   operator: LogicalOperator,
-  left: Thunk<any>,
-  right: Thunk<any>,
+  left: TranspilerThunk<any>,
+  right: TranspilerThunk<any>,
   line: number,
   column: number
 ) {
@@ -232,9 +232,9 @@ export function logicalOp(
  */
 export function evaluateLogicalExpression(
   operator: LogicalOperator,
-  left: Thunk<any>,
-  right: Thunk<any>
-): Thunk<any> {
+  left: TranspilerThunk<any>,
+  right: TranspilerThunk<any>
+): TranspilerThunk<any> {
   // string representation of resultant thunk
   const stringRep = left.toString() + ' ' + operator + ' ' + right.toString()
   switch (operator) {
@@ -262,12 +262,12 @@ export function evaluateLogicalExpression(
  *     in the program
  */
 export function conditionalOp(
-  predicate: Thunk<any>,
-  consequent: Thunk<any>,
-  alternate: Thunk<any>,
+  predicate: TranspilerThunk<any>,
+  consequent: TranspilerThunk<any>,
+  alternate: TranspilerThunk<any>,
   line: number,
   column: number
-): Thunk<any> {
+): TranspilerThunk<any> {
   const predicateType = boolOrErr(predicate, line, column)
   if (typeof predicateType === 'string') {
     return makeConditionalThunk(predicate, consequent, alternate)

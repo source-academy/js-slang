@@ -4,7 +4,7 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Environment, Frame, Value, Thunk } from '../types'
+import { Context, Environment, Frame, Value, InterpreterThunk } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import * as operators from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -592,7 +592,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else if (lazyEvaluate(context)) {
       let result
       if (isThunk(returnExpression)) {
-        result = yield* evaluateThunk(returnExpression as unknown as Thunk, context)
+        result = yield* evaluateThunk(returnExpression as unknown as InterpreterThunk, context)
       } else {
         result = yield* evaluate(returnExpression, context)
       }

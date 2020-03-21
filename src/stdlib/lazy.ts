@@ -7,7 +7,7 @@ import { List, Pair } from './list'
  */
 
 // Primitive Thunk type
-export interface Thunk<T> {
+export interface TranspilerThunk<T> {
   // whether the Thunk has been previously evaluated
   evaluated: boolean
   // the string representation of this Thunk
@@ -73,7 +73,7 @@ export function force(expression: any) {
  * the inner value of the Thunk.
  * @param value The primitive value.
  */
-export function makeThunk<T>(value: T): Thunk<T> {
+export function makeThunk<T>(value: T): TranspilerThunk<T> {
   const stringRep = value + ''
   return {
     type: typeOf(value),
@@ -97,12 +97,12 @@ export function makeThunk<T>(value: T): Thunk<T> {
  *     representation of the result thunk)
  */
 export function makeThunkWithPrimitiveBinary<T, U, R>(
-  t: Thunk<T>,
-  u: Thunk<U>,
+  t: TranspilerThunk<T>,
+  u: TranspilerThunk<U>,
   binaryFunc: (t: T, u: U) => R,
   returnType: string,
   operator: string
-): Thunk<R> {
+): TranspilerThunk<R> {
   const stringRep = t.toString() + ' ' + operator + ' ' + u.toString()
   return {
     type: returnType,
@@ -126,11 +126,11 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
  *     representation of the result thunk)
  */
 export function makeThunkWithPrimitiveUnary<T, R>(
-  argument: Thunk<T>,
+  argument: TranspilerThunk<T>,
   unaryFunc: (t: T) => R,
   returnType: string,
   operator: string
-): Thunk<R> {
+): TranspilerThunk<R> {
   const stringRep = operator + argument.toString()
   return {
     type: returnType,
@@ -157,11 +157,11 @@ export function makeThunkWithPrimitiveUnary<T, R>(
  *     'predicate ? consequent : alternative'
  */
 export function makeConditionalThunk<T>(
-  predicate: Thunk<boolean>,
-  consequent: Thunk<T>,
-  alternative: Thunk<T>,
+  predicate: TranspilerThunk<boolean>,
+  consequent: TranspilerThunk<T>,
+  alternative: TranspilerThunk<T>,
   stringRepresentation?: string
-): Thunk<T> {
+): TranspilerThunk<T> {
   const stringRep =
     stringRepresentation ||
     predicate.toString() + ' ? ' + consequent.toString() + ' : ' + alternative.toString()
@@ -191,7 +191,7 @@ export function makeConditionalThunk<T>(
  * will not result in additional calculation.
  * @param value The thunk.
  */
-export function evaluateThunk<T>(thunk: Thunk<T>): T {
+export function evaluateThunk<T>(thunk: TranspilerThunk<T>): T {
   if (thunk.evaluated) {
     return thunk.value()
   } else {

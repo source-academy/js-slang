@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Thunk } from '../stdlib/lazy'
+import { TranspilerThunk } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'
 
@@ -108,17 +108,17 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
  * Checks if a Thunk is a number
  * @param v The Thunk to be checked
  */
-const isNumberT = (v: Thunk<Value>) => v.type === 'number'
+const isNumberT = (v: TranspilerThunk<Value>) => v.type === 'number'
 /**
  * Checks if a Thunk is a string
  * @param v The Thunk to be checked
  */
-const isStringT = (v: Thunk<Value>) => v.type === 'string'
+const isStringT = (v: TranspilerThunk<Value>) => v.type === 'string'
 /**
  * Checks if a Thunk is a boolean
  * @param v The Thunk to be checked
  */
-const isBoolT = (v: Thunk<Value>) => v.type === 'boolean'
+const isBoolT = (v: TranspilerThunk<Value>) => v.type === 'boolean'
 
 /**
  * Checks that an unary expression has a correctly
@@ -131,7 +131,7 @@ const isBoolT = (v: Thunk<Value>) => v.type === 'boolean'
 export const checkUnaryExpressionT = (
   node: es.Node,
   operator: es.UnaryOperator,
-  value: Thunk<Value>
+  value: TranspilerThunk<Value>
 ) => {
   switch (operator) {
     case '+':
@@ -165,8 +165,8 @@ export const checkUnaryExpressionT = (
 export const checkBinaryExpressionT = (
   node: es.Node,
   operator: es.BinaryOperator,
-  left: Thunk<Value>,
-  right: Thunk<Value>
+  left: TranspilerThunk<Value>,
+  right: TranspilerThunk<Value>
 ) => {
   switch (operator) {
     case '-':
@@ -231,6 +231,6 @@ export const checkBinaryExpressionT = (
  * @param node The node representing location of the value
  * @param test The value to be tested (Thunk)
  */
-export const checkIfStatementT = (node: es.Node, test: Thunk<Value>) => {
+export const checkIfStatementT = (node: es.Node, test: TranspilerThunk<Value>) => {
   return isBoolT(test) ? undefined : new TypeError(node, ' as condition', 'boolean', test.type)
 }
