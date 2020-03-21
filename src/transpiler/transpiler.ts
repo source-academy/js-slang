@@ -806,8 +806,10 @@ export function transpile(
     // make literals into Thunks for lazy evaluation
     transformValuesToThunks(program)
     transformIdentifiersToThunks(program)
+  } else {
+    // can't really execute proper tail calls on thunked expressions
+    transformReturnStatementsToAllowProperTailCalls(program)
   }
-  transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   if (lazyEvaluation) {
