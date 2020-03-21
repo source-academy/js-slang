@@ -63,7 +63,7 @@ export function isInterpreterThunk(v: any): boolean {
 }
 
 // Evaluates thunk and memoize
-export function* evaluateThunk(thunk: InterpreterThunk, context: Context) {
+export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
   if (thunk.isEvaluated) {
     // Program should never enter this 'if' block.
     // Memoized thunks should return the actual value by evaluating an Identifier node type.

@@ -798,12 +798,12 @@ export function transpile(
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
+  const functionsToStringMap = generateFunctionsToStringMap(program)
   if (lazyEvaluation) {
     // make literals into Thunks for lazy evaluation
     transformValuesToThunks(program)
     transformIdentifiersToThunks(program)
   }
-  const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
