@@ -1,7 +1,13 @@
 // functions used in the lazy evaluating interpreter
 
 import * as es from 'estree'
-import { currentEnvironment, pushEnvironment, evaluate, ReturnValue, popEnvironment } from './interpreter'
+import {
+  currentEnvironment,
+  pushEnvironment,
+  evaluate,
+  ReturnValue,
+  popEnvironment
+} from './interpreter'
 import { Context, Thunk, Environment, Value } from '../types'
 
 export const thunkStringType = 'Thunk'
@@ -42,7 +48,8 @@ export function createThunk(node: es.Node, environment: Environment): Thunk {
  * @returns True, if the value is a thunk.
  */
 export function isThunk(v: any): boolean {
-  return typeof v === 'object' &&
+  return (
+    typeof v === 'object' &&
     Object.keys(v).length === 5 &&
     v.type !== undefined &&
     v.type === thunkStringType &&
@@ -52,6 +59,7 @@ export function isThunk(v: any): boolean {
     typeof v.value === 'object' &&
     v.environment !== undefined &&
     typeof v.environment === 'object'
+  )
 }
 
 // Evaluates thunk and memoize
