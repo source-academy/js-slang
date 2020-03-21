@@ -1,5 +1,4 @@
 import { typeOf } from '../utils/typeOf'
-import { List, Pair } from './list'
 import { Expression } from 'estree'
 import { CallingNonFunctionValue, ExceptionError, InvalidNumberOfArguments } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -20,12 +19,6 @@ export interface TranspilerThunk<T> {
   // the lambda that holds the logic for evaluation
   value: () => T
 }
-
-type PrimitiveEv = boolean | number | string | undefined | null
-// tslint:disable-next-line: ban-types
-type FunctionsEv = PrimitiveEv | Function
-// Types of Expressible Values in Lazy Source 2
-type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 
 // Tag for functions in Abstract Syntax Tree
 // of literal converted to Thunk.
@@ -220,7 +213,7 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
   const stringRep = t.toString() + ' ' + operator + ' ' + u.toString()
   return {
     type: returnType,
-    value: () => binaryFunc(evaluateThunk(t), evaluateThunk(u)),
+    value: () => binaryFunc(evaluateLazyValue(t), evaluateLazyValue(u)),
     toString: () => stringRep,
     evaluated: false
   }
@@ -249,7 +242,7 @@ export function makeThunkWithPrimitiveUnary<T, R>(
   const stringRep = operator + argument.toString()
   return {
     type: returnType,
-    value: () => unaryFunc(evaluateThunk(argument)),
+    value: () => unaryFunc(evaluateLazyValue(argument)),
     toString: () => stringRep,
     evaluated: false
   }
@@ -335,7 +328,7 @@ export function evaluateThunk<T>(thunk: TranspilerThunk<T>): T {
  *
  * @param value The value to be evaluated.
  */
-export function evaluateLazyValue(value: any): ExpressibleValues {
+export function evaluateLazyValue(value: any): any {
   if (isTranspilerThunk(value)) {
     return evaluateLazyValue(evaluateThunk(value))
   } else {
