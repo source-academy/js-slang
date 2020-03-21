@@ -15,9 +15,10 @@ export function findIdentifierNode(
 ): Identifier | undefined {
   function findByLocationPredicate(type: string, node: Node) {
     const location = node.loc
-    if (type && location) {
+    const nodeType = node.type
+    if (nodeType && location) {
       return (
-        type === 'Identifier' &&
+        nodeType === 'Identifier' &&
         location.start.line === loc.line &&
         location.start.column <= loc.column &&
         location.end.column >= loc.column
@@ -74,6 +75,12 @@ function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
       if (identifier.name === node.name && identifier.loc === node.loc) {
         foundAncestors = Object.assign([], ancestors).reverse()
         foundAncestors.shift() // Remove the identifier node
+      }
+    },
+    VariablePattern: (node: any, ancestors: [Node]) => {
+      if (identifier.name === node.name && identifier.loc === node.loc) {
+        foundAncestors = Object.assign([], ancestors).reverse()
+        foundAncestors.shift()
       }
     }
   })
