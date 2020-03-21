@@ -1,7 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
-import { isThunk } from '../stdlib/lazy'
 import { Value } from '../types'
+import { isThunk } from '../stdlib/lazy'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {

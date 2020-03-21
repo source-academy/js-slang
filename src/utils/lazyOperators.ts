@@ -1,4 +1,4 @@
-import { BinaryOperator, LogicalOperator, UnaryOperator } from 'estree'
+import { BinaryOperator, UnaryOperator, LogicalOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
@@ -12,11 +12,11 @@ import {
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
 import {
-  makeConditionalThunk,
   makeThunk,
   makeThunkWithPrimitiveBinary,
+  Thunk,
   makeThunkWithPrimitiveUnary,
-  Thunk
+  makeConditionalThunk,
 } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'

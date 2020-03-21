@@ -3,10 +3,10 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
-import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { astThunkNativeTag } from '../stdlib/lazy'
 import { AllowedDeclarations, Value } from '../types'
 import * as create from '../utils/astCreator'
+import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { astThunkNativeTag } from '../stdlib/lazy'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
