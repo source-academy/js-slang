@@ -1,5 +1,8 @@
 import { typeOf } from '../utils/typeOf'
 import { List, Pair } from './list'
+import { Expression } from 'estree'
+import { CallingNonFunctionValue, ExceptionError, InvalidNumberOfArguments } from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -29,7 +32,14 @@ type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 // Used for methods value, toString.
 export const astThunkNativeTag = 'Thunk-native-function'
 
+// String type for thunked lookup of names
+export const identifierType = 'identifier';
+
+// String type for thunked application of function
+export const applicationType = 'application';
+
 /**
+ * (NOT a primitive function in Lazy Source)
  * Given any value, check if that value is a Thunk
  * that is used by the transpiler.
  *
@@ -55,6 +65,28 @@ export function isTranspilerThunk(v: any): boolean {
 }
 
 /**
+ * (NOT a primitive function in Lazy Source)
+ * Given a thunked expression, check if the expression
+ * represents the lookup of some variable name.
+ *
+ * @param v The thunk to be checked.
+ */
+export function isThunkedIdentifier(v: TranspilerThunk<any>): boolean {
+  return v.type === identifierType;
+}
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Given a thunked expression, check if the expression
+ * represents the application of a function.
+ *
+ * @param v The thunk to be checked.
+ */
+export function isThunkedApplication(v: TranspilerThunk<any>): boolean {
+  return v.type === applicationType;
+}
+
+/**
  * Primitive function in Lazy Source.
  * Forces an expression to be evaluated until
  * a result is obtained.
@@ -67,7 +99,7 @@ export function force(expression: any) {
 
 // name of the force function, as "force" is a special
 // function that needs to be recognised by the transpiler
-export const nameOfForceFunction = force.name;
+export const nameOfForceFunction = force.name
 
 /**
  * Primitive function in Lazy Source.
@@ -77,11 +109,23 @@ export const nameOfForceFunction = force.name;
  * @param expression The expression to be evaluated.
  */
 export function forceOnce(expression: any) {
-  return evaluateThunk(expression);
+  return evaluateThunk(expression)
 }
 
 // name of the forceOnce function
-export const nameOfForceOnceFunction = forceOnce.name;
+export const nameOfForceOnceFunction = forceOnce.name
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Given a function name reference, check if this name
+ * refers to an eagerly evaluated function in Lazy
+ * Source (e.g. the function force is eagerly evaluated).
+ *
+ * @param name The function name as a string.
+ */
+export function functionShouldBeEagerlyEvaluated(name: string) {
+  return name === nameOfForceFunction || name === nameOfForceOnceFunction;
+}
 
 /**
  * (NOT a primitive function in Lazy Source)
@@ -260,18 +304,57 @@ export function evaluateLazyValue(value: any): ExpressibleValues {
  * @param fun The function to be applied to the arguments.
  * @param args The array of thunked arguments to be evaluated
  *             by the function (if necessary).
+ * @param dummyNode The node containing line and column
+ *                  information of the expression, for throwing
+ *                  runtime errors.
  * @param funStringRep The string representation of the function.
  *                     If not provided, will default to
  *                     "function".
  */
 export function applyFunctionToThunks(
   // tslint:disable-next-line: ban-types
-  fun: Function, args: TranspilerThunk<any>[], funStringRep: string = 'function'
+  fun: TranspilerThunk<any>,
+  args: TranspilerThunk<any>[],
+  dummyNode: Expression,
+  funStringRep: string = 'function'
 ): TranspilerThunk<any> {
-  const stringRep = '';
+  const stringRep = funStringRep + '(' + (
+      args.length === 0
+        ? ''
+        : args.length === 1
+          ? args[0].toString()
+          : args.reduce((ta, tb) => ta.toString() + ', ' + tb.toString(), '')
+    ) + ')'
   return {
-    type: '',
-    value: () => null,
+    type: applicationType,
+    value: () => {
+      // evaluate possibly lazy value representing the function
+      const originalFunction = evaluateThunk(fun)
+      // originalFunction might not be a function!
+      // (didn't have chance to check this at transpile time)
+      if (typeof originalFunction === 'function') {
+        if (originalFunction.transformedFunction === undefined) {
+          try {
+            return originalFunction(...args)
+          } catch (error) {
+            if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+              throw new ExceptionError(error, dummyNode.loc!)
+            } else {
+              throw error
+            }
+          }
+        } else {
+          const expectedLength = originalFunction.transformedFunction.length
+          const receivedLength = args.length
+          if (expectedLength !== receivedLength) {
+            throw new InvalidNumberOfArguments(dummyNode, expectedLength, receivedLength)
+          }
+          return originalFunction(...args)
+        }
+      } else {
+        throw new CallingNonFunctionValue(originalFunction, dummyNode)
+      }
+    },
     toString: () => stringRep,
     evaluated: false
   }

@@ -16,7 +16,8 @@ import {
   makeThunkWithPrimitiveBinary,
   TranspilerThunk,
   makeThunkWithPrimitiveUnary,
-  makeConditionalThunk
+  makeConditionalThunk,
+  applyFunctionToThunks
 } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
@@ -28,35 +29,42 @@ export function throwIfTimeout(start: number, current: number, line: number, col
   }
 }
 
+/**
+ * Given a function and the correct arguments, checks if the
+ * function is really a function and the arguments length is
+ * correct, before returning a transpiler thunk that represents
+ * the result of calling the function with those arguments.
+ *
+ * @param candidate The function to be tested.
+ * @param line The line number of the expression.
+ * @param column The column number of the expression.
+ * @param args Array containing the arguments of the
+ *             expressions (as thunks).
+ */
 export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,
   column: number,
-  ...args: any[]
+  ...args: TranspilerThunk<any>[]
 ) {
-  const dummy = create.callExpression(create.locationDummyNode(line, column), args, {
+  const dummy = create.callExpression(create.locationDummyNode(line, column),
+    args.map(thunk => create.literal(thunk.toString())), {
     start: { line, column },
     end: { line, column }
   })
-  if (typeof candidate === 'function') {
-    if (candidate.transformedFunction === undefined) {
-      try {
-        return candidate(...args)
-      } catch (error) {
-        // if we already handled the error, simply pass it on
-        if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-          throw new ExceptionError(error, dummy.loc!)
-        } else {
-          throw error
-        }
-      }
-    } else {
-      const expectedLength = candidate.transformedFunction.length
-      const receivedLength = args.length
-      if (expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
-      }
+  if (rttc.isFunctionT(candidate)) {
+    return applyFunctionToThunks(candidate, args, dummy, candidate.toString())
+  } else if (typeof candidate === 'function') {
+    // functions like force are not thunked and instead evaluated eagerly
+    try {
       return candidate(...args)
+    } catch (error) {
+      // if we already handled the error, simply pass it on
+      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+        throw new ExceptionError(error, dummy.loc!)
+      } else {
+        throw error
+      }
     }
   } else {
     throw new CallingNonFunctionValue(candidate, dummy)

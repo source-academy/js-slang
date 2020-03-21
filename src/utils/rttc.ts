@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { TranspilerThunk } from '../stdlib/lazy'
+import { TranspilerThunk, isThunkedIdentifier, isThunkedApplication } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'
 
@@ -106,28 +106,38 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
 
 /**
  * Check if we are able to determine the Thunk's type
- * @param v The Thunk to be checked
+ * before the expression is run eagerly.
+ * @param v The Thunk to be checked.
  */
-const knownType = (v: TranspilerThunk<Value>) => v.type !== ''
+const isKnownThunkType = (v: TranspilerThunk<Value>) =>
+  !isThunkedIdentifier(v) && !isThunkedApplication(v)
 
 /**
  * Checks if a Thunk is a number, if the type is known.
- * If the type is unknown, assumes correct type.
+ * If the type is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isNumberT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'number' : true
+const isNumberT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'number' : true
 /**
  * Checks if a Thunk is a string, if the type is known.
- * If the type is unknown, assumes correct type.
+ * If the thunk is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isStringT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'string' : true
+const isStringT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'string' : true
+
 /**
  * Checks if a Thunk is a boolean, if the type is known.
- * If the type is unknown, assumes correct type.
+ * If the thunk is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isBoolT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'boolean' : true
+const isBoolT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'boolean' : true
+
+/**
+ * Checks if a Thunk is a function, if the type is known.
+ * If the thunk is unknown at this time, assumes correct type.
+ * @param v The Thunk to be checked
+ */
+export const isFunctionT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'function' : true
 
 /**
  * Checks that an unary expression has a correctly

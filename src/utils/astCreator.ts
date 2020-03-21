@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { astThunkNativeTag, nameOfForceFunction, nameOfForceOnceFunction } from '../stdlib/lazy'
+import { astThunkNativeTag, identifierType, functionShouldBeEagerlyEvaluated } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
 
@@ -198,10 +198,12 @@ export const mutateToLiteralThunk = (node: es.Literal): es.ObjectExpression => {
  *
  * @param node The Identifier to be transformed.
  */
-export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpression | es.Identifier => {
-  if (node.name === nameOfForceFunction || node.name === nameOfForceOnceFunction) {
+export const mutateToIdentifierThunk = (
+  node: es.Identifier
+): es.ObjectExpression | es.Identifier => {
+  if (functionShouldBeEagerlyEvaluated(node.name)) {
     // cannot thunk force functions as it will result in non-evaluation
-    return node;
+    return node
   } else {
     // creates a new copy of node.loc
     function copyLoc() {
@@ -235,7 +237,7 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
         loc: copyLoc(),
         name: 'type'
       },
-      // value of type is a string literal ''
+      // value of type is a string literal 'identifier'
       //
       // this is because we cannot know type of identifier
       // until it is accessed (at runtime, only when value is needed)
@@ -244,8 +246,8 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
         start: newNode.start,
         end: newNode.end,
         loc: copyLoc(),
-        value: '',
-        raw: '\'\''
+        value: identifierType,
+        raw: JSON.stringify(identifierType)
       },
       kind: 'init'
     }
