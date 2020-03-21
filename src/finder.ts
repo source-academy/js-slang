@@ -40,7 +40,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
     simple(root, {
       VariableDeclarator(node: VariableDeclarator) {
         if ((node.id as Identifier).name === identifier.name) {
-          declarations.push(node)
+          declarations.push(node.id)
         }
       },
       FunctionDeclaration(node: FunctionDeclaration) {

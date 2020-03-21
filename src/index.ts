@@ -160,7 +160,7 @@ export function findDeclaration(
     return null
   }
   const declarationNode = findDeclarationNode(program, identifierNode)
-  if (!declarationNode) {
+  if (!declarationNode || identifierNode === declarationNode) {
     return null
   }
   return declarationNode.loc
