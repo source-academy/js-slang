@@ -6,7 +6,11 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
 import { AllowedDeclarations, Value } from '../types'
 import * as create from '../utils/astCreator'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { astThunkNativeTag, callStatementShouldBeEagerlyEvaluated, astNoEagerTag } from '../stdlib/lazy'
+import {
+  astThunkNativeTag,
+  callStatementShouldBeEagerlyEvaluated,
+  astNoEagerTag
+} from '../stdlib/lazy'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -719,12 +723,13 @@ function transformConditionalsToFunctionCalls(program: es.Program) {
 function transformSideEffectStatementsToEvaluateEagerly(program: es.Program) {
   simple(program, {
     ExpressionStatement(node: es.ExpressionStatement) {
-      if (node.expression.type === 'CallExpression' &&
+      if (
+        node.expression.type === 'CallExpression' &&
         node.expression.callee.type === 'Identifier' &&
         callStatementShouldBeEagerlyEvaluated(node.expression.callee.name)
       ) {
         // give identifier a tag
-        (node.expression.callee as any).tag = astNoEagerTag
+        ;(node.expression.callee as any).tag = astNoEagerTag
       }
     }
   })
