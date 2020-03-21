@@ -117,27 +117,28 @@ const isKnownThunkType = (v: TranspilerThunk<Value>) =>
  * If the type is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isNumberT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'number' : true
+const isNumberT = (v: TranspilerThunk<Value>) => (isKnownThunkType(v) ? v.type === 'number' : true)
 /**
  * Checks if a Thunk is a string, if the type is known.
  * If the thunk is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isStringT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'string' : true
+const isStringT = (v: TranspilerThunk<Value>) => (isKnownThunkType(v) ? v.type === 'string' : true)
 
 /**
  * Checks if a Thunk is a boolean, if the type is known.
  * If the thunk is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isBoolT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'boolean' : true
+const isBoolT = (v: TranspilerThunk<Value>) => (isKnownThunkType(v) ? v.type === 'boolean' : true)
 
 /**
  * Checks if a Thunk is a function, if the type is known.
  * If the thunk is unknown at this time, assumes correct type.
  * @param v The Thunk to be checked
  */
-export const isFunctionT = (v: TranspilerThunk<Value>) => isKnownThunkType(v) ? v.type === 'function' : true
+export const isFunctionT = (v: TranspilerThunk<Value>) =>
+  isKnownThunkType(v) ? v.type === 'function' : true
 
 /**
  * Checks that an unary expression has a correctly

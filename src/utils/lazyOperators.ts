@@ -47,11 +47,14 @@ export function callIfFuncAndRightArgs(
   column: number,
   ...args: TranspilerThunk<any>[]
 ) {
-  const dummy = create.callExpression(create.locationDummyNode(line, column),
-    args.map(thunk => create.literal(thunk.toString())), {
-    start: { line, column },
-    end: { line, column }
-  })
+  const dummy = create.callExpression(
+    create.locationDummyNode(line, column),
+    args.map(thunk => create.literal(thunk.toString())),
+    {
+      start: { line, column },
+      end: { line, column }
+    }
+  )
   if (rttc.isFunctionT(candidate)) {
     return applyFunctionToThunks(candidate, args, dummy, candidate.toString())
   } else if (typeof candidate === 'function') {

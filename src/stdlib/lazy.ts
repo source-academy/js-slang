@@ -33,10 +33,10 @@ type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 export const astThunkNativeTag = 'Thunk-native-function'
 
 // String type for thunked lookup of names
-export const identifierType = 'identifier';
+export const identifierType = 'identifier'
 
 // String type for thunked application of function
-export const applicationType = 'application';
+export const applicationType = 'application'
 
 /**
  * (NOT a primitive function in Lazy Source)
@@ -72,7 +72,7 @@ export function isTranspilerThunk(v: any): boolean {
  * @param v The thunk to be checked.
  */
 export function isThunkedIdentifier(v: TranspilerThunk<any>): boolean {
-  return v.type === identifierType;
+  return v.type === identifierType
 }
 
 /**
@@ -83,7 +83,7 @@ export function isThunkedIdentifier(v: TranspilerThunk<any>): boolean {
  * @param v The thunk to be checked.
  */
 export function isThunkedApplication(v: TranspilerThunk<any>): boolean {
-  return v.type === applicationType;
+  return v.type === applicationType
 }
 
 /**
@@ -124,7 +124,7 @@ export const nameOfForceOnceFunction = forceOnce.name
  * @param name The function name as a string.
  */
 export function functionShouldBeEagerlyEvaluated(name: string) {
-  return name === nameOfForceFunction || name === nameOfForceOnceFunction;
+  return name === nameOfForceFunction || name === nameOfForceOnceFunction
 }
 
 /**
@@ -318,13 +318,15 @@ export function applyFunctionToThunks(
   dummyNode: Expression,
   funStringRep: string = 'function'
 ): TranspilerThunk<any> {
-  const stringRep = funStringRep + '(' + (
-      args.length === 0
-        ? ''
-        : args.length === 1
-          ? args[0].toString()
-          : args.reduce((ta, tb) => ta.toString() + ', ' + tb.toString(), '')
-    ) + ')'
+  const stringRep =
+    funStringRep +
+    '(' +
+    (args.length === 0
+      ? ''
+      : args.length === 1
+      ? args[0].toString()
+      : args.reduce((ta, tb) => ta.toString() + ', ' + tb.toString(), '')) +
+    ')'
   return {
     type: applicationType,
     value: () => {
