@@ -87,13 +87,35 @@ export function isThunkedApplication(v: TranspilerThunk<any>): boolean {
 }
 
 /**
+ * A class representing an error where force receives
+ * more arguments than expected.
+ */
+export class InvalidNumberOfArgumentsInForce {
+  public expected: number;
+  public got: number;
+  public functionName: string;
+
+  constructor(expected: number, got: number, functionName: string) {
+    this.expected = expected;
+    this.got = got;
+    this.functionName = functionName;
+  }
+}
+
+/**
  * Primitive function in Lazy Source.
  * Forces an expression to be evaluated until
  * a result is obtained.
  *
  * @param expression The expression to be evaluated.
  */
-export function force(expression: any) {
+export function force(expression: any): any {
+  // avoids multiple arguments given to force
+  if (arguments.length !== force.length) {
+    throw new InvalidNumberOfArgumentsInForce(
+      force.length, arguments.length, nameOfForceFunction);
+  }
+
   return evaluateLazyValue(expression)
 }
 
@@ -109,6 +131,12 @@ export const nameOfForceFunction = force.name
  * @param expression The expression to be evaluated.
  */
 export function force_once(expression: any) {
+  // avoids multiple arguments given to force_once
+  if (arguments.length !== force_once.length) {
+    throw new InvalidNumberOfArgumentsInForce(
+      force_once.length, arguments.length, nameOfForceOnceFunction);
+  }
+
   return evaluateThunk(expression)
 }
 

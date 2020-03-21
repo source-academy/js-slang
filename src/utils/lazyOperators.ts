@@ -17,7 +17,8 @@ import {
   TranspilerThunk,
   makeThunkWithPrimitiveUnary,
   makeConditionalThunk,
-  applyFunctionToThunks
+  applyFunctionToThunks,
+  InvalidNumberOfArgumentsInForce
 } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
@@ -63,7 +64,9 @@ export function callIfFuncAndRightArgs(
       return candidate(...args)
     } catch (error) {
       // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+      if (error instanceof InvalidNumberOfArgumentsInForce) {
+        throw new InvalidNumberOfArguments(dummy, error.expected, error.got)
+      } else if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
         throw new ExceptionError(error, dummy.loc!)
       } else {
         throw error

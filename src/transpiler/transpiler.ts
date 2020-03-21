@@ -211,7 +211,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       } else {
         // avoid assigning strings for functions that are not in the map
         // these functions are mostly the inner lambdas of thunks
-        const stringRep = functionsToStringMap.get(node) || 'function';
+        const stringRep = functionsToStringMap.get(node) || 'function'
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
           create.literal(stringRep)
