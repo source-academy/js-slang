@@ -12,10 +12,7 @@ import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
 import lazyEvaluate from '../lazyContext'
-import {
-  getThunkedArgs,
-  createThunk
-} from './lazyInterpreter'
+import { getThunkedArgs, createThunk } from './lazyInterpreter'
 
 class BreakValue {}
 
