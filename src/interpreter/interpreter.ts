@@ -10,7 +10,7 @@ import * as operators from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import lazyEvaluate from '../lazyContext'
-import { getThunkedArgs, createThunk, isThunk, evaluateThunk } from './lazyInterpreter'
+import { getThunkedArgs, createThunk, isInterpreterThunk, evaluateThunk } from './lazyInterpreter'
 
 class BreakValue {}
 
@@ -302,7 +302,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   Identifier: function*(node: es.Identifier, context: Context) {
     if (lazyEvaluate(context)) {
       let result = getVariable(context, node.name)
-      if (isThunk(result)) {
+      if (isInterpreterThunk(result)) {
         result = yield* evaluateThunk(result, context);
       }
       return result
@@ -356,7 +356,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const value = yield* evaluate(node.argument, context)
 
     if (lazyEvaluate(context)) {
-      const valueNoThunk = isThunk(value) ? yield* evaluateThunk(value, context) : value;
+      const valueNoThunk = isInterpreterThunk(value) ? yield* evaluateThunk(value, context) : value;
       return operators.evaluateUnaryExpression(node.operator, valueNoThunk);
     } else {
       const error = rttc.checkUnaryExpression(node, node.operator, value)
@@ -373,8 +373,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     // The operands may return a thunk after evaluating them as above.
     if (lazyEvaluate(context)) {
-      const leftNoThunk = isThunk(left) ? yield* evaluateThunk(left, context) : left;
-      const rightNoThunk = isThunk(right) ? yield* evaluateThunk(right, context) : right;
+      const leftNoThunk = isInterpreterThunk(left) ? yield* evaluateThunk(left, context) : left;
+      const rightNoThunk = isInterpreterThunk(right) ? yield* evaluateThunk(right, context) : right;
       return operators.evaluateBinaryExpression(node.operator, leftNoThunk, rightNoThunk)
     } else {
       // eager evaluation
@@ -555,7 +555,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (lazyEvaluate(context)) {
       let result = yield* reduceIf(node, context) as Value
       console.log(JSON.stringify(result));
-      if (isThunk(result.type)) {
+      if (isInterpreterThunk(result.type)) {
         result = yield* evaluateThunk(result, context)
       } else {
         result = yield* evaluate(result, context)
@@ -591,12 +591,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       return new TailCallReturnValue(callee, args, returnExpression)
     } else if (lazyEvaluate(context)) {
       let result
-      if (isThunk(returnExpression)) {
+      if (isInterpreterThunk(returnExpression)) {
         result = yield* evaluateThunk(returnExpression as unknown as InterpreterThunk, context)
       } else {
         result = yield* evaluate(returnExpression, context)
       }
-      if (isThunk(result.type)) {
+      if (isInterpreterThunk(result.type)) {
         result = yield* evaluateThunk(result, context)
       }
       return new ReturnValue(result)

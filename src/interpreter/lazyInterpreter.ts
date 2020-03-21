@@ -47,7 +47,7 @@ export function createThunk(node: es.Node, environment: Environment): Interprete
  * @param v The value to be checked
  * @returns True, if the value is a thunk.
  */
-export function isThunk(v: any): boolean {
+export function isInterpreterThunk(v: any): boolean {
   return (
     typeof v === 'object' &&
     Object.keys(v).length === 5 &&

@@ -30,12 +30,13 @@ type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 export const astThunkNativeTag = 'Thunk-native-function'
 
 /**
- * Given any value, check if that value is a Thunk.
+ * Given any value, check if that value is a Thunk
+ * that is used by the transpiler.
  * @param v The value to be checked.
  * @returns True, if the value is a Thunk. False,
  *     if the value is another kind of value.
  */
-export function isThunk(v: any): boolean {
+export function isTranspilerThunk(v: any): boolean {
   return (
     v !== null &&
     v !== undefined &&
@@ -218,7 +219,7 @@ export function evaluateThunk<T>(thunk: TranspilerThunk<T>): T {
  * @param value The value to be evaluated.
  */
 export function evaluateLazyValue(value: any): ExpressibleValues {
-  if (isThunk(value)) {
+  if (isTranspilerThunk(value)) {
     return evaluateLazyValue(evaluateThunk(value))
   } else {
     return value
