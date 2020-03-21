@@ -44,8 +44,8 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       FunctionDeclaration(node: FunctionDeclaration) {
-        if ((node.id as Identifier).name === identifier.name) {
-          declarations.push(node)
+        if (node.id && (node.id as Identifier).name === identifier.name) {
+          declarations.push(node.id)
         } else {
           const param = node.params.find(n => (n as Identifier).name === identifier.name)
           if (param) {
