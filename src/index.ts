@@ -151,7 +151,7 @@ export function findDeclaration(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation | null | undefined {
-  const program = parse(code, context)
+  const program = parse(code, context, true)
   if (!program) {
     return null
   }
