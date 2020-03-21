@@ -6,7 +6,7 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
 import { AllowedDeclarations, Value } from '../types'
 import * as create from '../utils/astCreator'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { astThunkNativeTag } from '../stdlib/lazy'
+import { astThunkNativeTag, callStatementShouldBeEagerlyEvaluated, astNoEagerTag } from '../stdlib/lazy'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -710,6 +710,26 @@ function transformConditionalsToFunctionCalls(program: es.Program) {
   }
 }
 
+/**
+ * Converts certain statements in the program to
+ * evaluate when that point is reached. Mainly functions
+ * that cause side-effects like display or error.
+ * @param program The program to transform.
+ */
+function transformSideEffectStatementsToEvaluateEagerly(program: es.Program) {
+  simple(program, {
+    ExpressionStatement(node: es.ExpressionStatement) {
+      if (node.expression.type === 'CallExpression' &&
+        node.expression.callee.type === 'Identifier' &&
+        callStatementShouldBeEagerlyEvaluated(node.expression.callee.name)
+      ) {
+        // give identifier a tag
+        (node.expression.callee as any).tag = astNoEagerTag
+      }
+    }
+  })
+}
+
 function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
   return computed ? property : create.literal((property as es.Identifier).name)
 }
@@ -805,6 +825,7 @@ export function transpile(
   if (lazyEvaluation) {
     // make literals into Thunks for lazy evaluation
     transformValuesToThunks(program)
+    transformSideEffectStatementsToEvaluateEagerly(program)
     transformIdentifiersToThunks(program)
   } else {
     // can't really execute proper tail calls on thunked expressions

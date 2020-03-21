@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { astThunkNativeTag, identifierType, functionShouldBeEagerlyEvaluated } from '../stdlib/lazy'
+import { astThunkNativeTag, identifierType, functionShouldBeEagerlyEvaluated, nameOfForceFunction, astNoEagerTag } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
 
@@ -199,9 +199,12 @@ export const mutateToLiteralThunk = (node: es.Literal): es.ObjectExpression => {
  * @param node The Identifier to be transformed.
  */
 export const mutateToIdentifierThunk = (
-  node: es.Identifier
+  node: es.Identifier | any
 ): es.ObjectExpression | es.Identifier => {
-  if (functionShouldBeEagerlyEvaluated(node.name)) {
+  if (functionShouldBeEagerlyEvaluated(node.name) ||
+    // check whether this identifier has the eager tag
+    (node.tag && node.tag === astNoEagerTag)
+  ) {
     // cannot thunk force functions as it will result in non-evaluation
     return node
   } else {
@@ -396,7 +399,7 @@ export const mutateToIdentifierThunk = (
 export const forceEagerEvaluationOfLazyExpression = (thunk: es.Expression): es.Expression =>
   callExpression(
     // reference the pre-defined "force" function
-    identifier('force'),
+    identifier(nameOfForceFunction),
     [thunk]
   )
 

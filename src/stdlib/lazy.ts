@@ -32,6 +32,10 @@ type ExpressibleValues = FunctionsEv | Pair<any, any> | List
 // Used for methods value, toString.
 export const astThunkNativeTag = 'Thunk-native-function'
 
+// Tag for expressions in Abstract Syntax Tree
+// that should not be lazily evaluated.
+export const astNoEagerTag = 'No-eager-evaluation'
+
 // String type for thunked lookup of names
 export const identifierType = 'identifier'
 
@@ -155,6 +159,19 @@ export const nameOfForceOnceFunction = force_once.name
  */
 export function functionShouldBeEagerlyEvaluated(name: string) {
   return name === nameOfForceFunction || name === nameOfForceOnceFunction
+}
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Given a function name reference, check if this name
+ * refers to a function that gives side-effects. Such
+ * functions should be evaluated eagerly if located
+ * on their own line, and not if they are passed as
+ * arguments to another function.
+ * @param name The function name as a string.
+ */
+export function callStatementShouldBeEagerlyEvaluated(name: string) {
+  return name === 'display' || name === 'error'
 }
 
 /**
