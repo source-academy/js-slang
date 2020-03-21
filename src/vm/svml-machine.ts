@@ -67,8 +67,6 @@ let TQ: any[] = []
 let TO = 0
 // TO_MAX is maximum amount to timeout by
 const TO_MAX = 50
-// SEQ is array for RTS, TOP_RTS when executing concurrent code
-let SEQ: any[] = []
 
 // some general-purpose registers
 let A: any = 0
@@ -105,13 +103,13 @@ export function show_registers(s: string, isShowExecuting = true) {
   str += 'F  :' + F + '\n'
   str += 'G  :' + G + '\n'
   str += 'H  :' + H + '\n'
+  str += 'I  :' + I + '\n'
   str += 'OS :' + OS + '\n'
   str += 'ENV:' + ENV + '\n'
   str += 'RTS:' + RTS + '\n'
   str += 'TOP_RTS:' + TOP_RTS + '\n'
   str += 'TQ:' + TQ + '\n'
   str += 'TO:' + TO + '\n'
-  str += 'SEQ:' + SEQ
   return str
 }
 
@@ -428,7 +426,7 @@ function EXTEND() {
 }
 
 function SET_TO() {
-  TO = Math.floor(Math.random() * TO_MAX)
+  TO = Math.ceil(Math.random() * TO_MAX)
 }
 
 // debugging: show current heap
@@ -807,8 +805,8 @@ M[OpCodes.STAG] = () => {
 
   // update array size
   D = HEAP[RES + ARRAY_SIZE_SLOT]
-  if (D < A) {
-    D = A
+  if (D < A + 1) {
+    D = A + 1
   }
   HEAP[RES + ARRAY_SIZE_SLOT] = D
   PC = PC + 1
@@ -1293,7 +1291,6 @@ export function runWithP(p: Program, context: Context): any {
   RTS = []
   TQ = []
   TO = 0
-  SEQ = []
   TOP_RTS = -1
   STATE = NORMAL
   RUNNING = true

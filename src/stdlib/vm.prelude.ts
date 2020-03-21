@@ -506,7 +506,7 @@ function _tail(xs) {
 // 90 placeholder
 function _stringify(x) {}
 
-// hack to make the call to Program easier, just replace the index 92
+// hack to make the call to Program easier, just replace the index 92 (number of primitive functions + 2)
 (() => 0)();
 `
 
@@ -607,7 +607,7 @@ export const PRIMITIVE_FUNCTION_NAMES = [
 
 export const VARARGS_NUM_ARGS = -1
 
-// indicates
+// for each function, replace a specified opcode with another opcode
 const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['display', OpCodes.MODG, OpCodes.DISPLAY],
   ['error', OpCodes.MODG, OpCodes.ERROR],
