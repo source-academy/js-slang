@@ -91,14 +91,14 @@ export function isThunkedApplication(v: TranspilerThunk<any>): boolean {
  * more arguments than expected.
  */
 export class InvalidNumberOfArgumentsInForce {
-  public expected: number;
-  public got: number;
-  public functionName: string;
+  public expected: number
+  public got: number
+  public functionName: string
 
   constructor(expected: number, got: number, functionName: string) {
-    this.expected = expected;
-    this.got = got;
-    this.functionName = functionName;
+    this.expected = expected
+    this.got = got
+    this.functionName = functionName
   }
 }
 
@@ -112,8 +112,7 @@ export class InvalidNumberOfArgumentsInForce {
 export function force(expression: any): any {
   // avoids multiple arguments given to force
   if (arguments.length !== force.length) {
-    throw new InvalidNumberOfArgumentsInForce(
-      force.length, arguments.length, nameOfForceFunction);
+    throw new InvalidNumberOfArgumentsInForce(force.length, arguments.length, nameOfForceFunction)
   }
 
   return evaluateLazyValue(expression)
@@ -134,7 +133,10 @@ export function force_once(expression: any) {
   // avoids multiple arguments given to force_once
   if (arguments.length !== force_once.length) {
     throw new InvalidNumberOfArgumentsInForce(
-      force_once.length, arguments.length, nameOfForceOnceFunction);
+      force_once.length,
+      arguments.length,
+      nameOfForceOnceFunction
+    )
   }
 
   return evaluateThunk(expression)
@@ -351,9 +353,10 @@ export function applyFunctionToThunks(
     '(' +
     (args.length === 0
       ? ''
-      : args.length === 1
-      ? args[0].toString()
-      : args.reduce((ta, tb) => ta.toString() + ', ' + tb.toString(), '')) +
+      : args.reduce((ta, tb, idx) =>
+        idx === 0
+          ? ta + tb.toString()
+          : ta + ', ' + tb.toString(), "")) +
     ')'
   return {
     type: applicationType,
