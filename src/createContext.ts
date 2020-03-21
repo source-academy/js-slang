@@ -14,7 +14,7 @@ import { Context, CustomBuiltIns, Value } from './types'
 import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
+import { lazyEvaluateInTranspiler, lazyEvaluateInChapter } from './lazyContext'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -199,8 +199,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     )
   }
 
-  if (lazyEvaluate(context)) {
-    defineBuiltin(context, 'force(expression)', lazy.force)
+  if (lazyEvaluateInTranspiler(context)) {
+    defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
+    defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.forceOnce)
   }
 }
 

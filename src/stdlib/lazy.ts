@@ -32,6 +32,7 @@ export const astThunkNativeTag = 'Thunk-native-function'
 /**
  * Given any value, check if that value is a Thunk
  * that is used by the transpiler.
+ *
  * @param v The value to be checked.
  * @returns True, if the value is a Thunk. False,
  *     if the value is another kind of value.
@@ -57,11 +58,30 @@ export function isTranspilerThunk(v: any): boolean {
  * Primitive function in Lazy Source.
  * Forces an expression to be evaluated until
  * a result is obtained.
+ *
  * @param expression The expression to be evaluated.
  */
 export function force(expression: any) {
   return evaluateLazyValue(expression)
 }
+
+// name of the force function, as "force" is a special
+// function that needs to be recognised by the transpiler
+export const nameOfForceFunction = force.name;
+
+/**
+ * Primitive function in Lazy Source.
+ * Forces an expression to be evaluated, but
+ * only once (so the result may still be a thunk).
+ *
+ * @param expression The expression to be evaluated.
+ */
+export function forceOnce(expression: any) {
+  return evaluateThunk(expression);
+}
+
+// name of the forceOnce function
+export const nameOfForceOnceFunction = forceOnce.name;
 
 /**
  * (NOT a primitive function in Lazy Source)
@@ -72,6 +92,7 @@ export function force(expression: any) {
  * values, hence the "evaluated" property is set to
  * "true", and no attempt will be made to memoize
  * the inner value of the Thunk.
+ *
  * @param value The primitive value.
  */
 export function makeThunk<T>(value: T): TranspilerThunk<T> {
@@ -89,6 +110,7 @@ export function makeThunk<T>(value: T): TranspilerThunk<T> {
  * Makes a Thunk with a binary function and two
  * Thunks. The binary function is never executed
  * before the result Thunk is forced.
+ *
  * @param t Thunk containing an operand t of type T.
  * @param u Thunk containing an operand u of type U.
  * @param binaryFunc The function to apply to t and u.
@@ -119,6 +141,7 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
  * Thunks. The unary function passed into
  * makeThunkWithPrimitiveUnary is never executed
  * before the result Thunk is forced to evaluate.
+ *
  * @param argument Thunk containing an operand t with type T.
  * @param unaryFunc The function to apply to t.
  * @param returnType Type of R, as a string.
@@ -145,6 +168,7 @@ export function makeThunkWithPrimitiveUnary<T, R>(
  * Given a predicate, consequent and alternative
  * (lazy) expression, return the Thunk representing the
  * resulting conditional statement
+ *
  * @param predicate The predicate to be evaluated
  * @param consequent The consequent expression, to be
  *     evaluated only if 'predicate' evaluates to 'true'
@@ -190,6 +214,7 @@ export function makeConditionalThunk<T>(
  * function will also memoize the result, such
  * that future attempts to call the Thunk value
  * will not result in additional calculation.
+ *
  * @param value The thunk.
  */
 export function evaluateThunk<T>(thunk: TranspilerThunk<T>): T {
@@ -216,6 +241,7 @@ export function evaluateThunk<T>(thunk: TranspilerThunk<T>): T {
  * recursively, only stopping when a primitive value type
  * that can be the result of evaluation of the program
  * (i.e. an expressible value) is obtained.
+ *
  * @param value The value to be evaluated.
  */
 export function evaluateLazyValue(value: any): ExpressibleValues {
@@ -223,6 +249,31 @@ export function evaluateLazyValue(value: any): ExpressibleValues {
     return evaluateLazyValue(evaluateThunk(value))
   } else {
     return value
+  }
+}
+
+/**
+ * Given a JavaScript function as well as thunked arguments,
+ * create a Thunk that represents the result of applying
+ * the function to the arguments.
+ *
+ * @param fun The function to be applied to the arguments.
+ * @param args The array of thunked arguments to be evaluated
+ *             by the function (if necessary).
+ * @param funStringRep The string representation of the function.
+ *                     If not provided, will default to
+ *                     "function".
+ */
+export function applyFunctionToThunks(
+  // tslint:disable-next-line: ban-types
+  fun: Function, args: TranspilerThunk<any>[], funStringRep: string = 'function'
+): TranspilerThunk<any> {
+  const stringRep = '';
+  return {
+    type: '',
+    value: () => null,
+    toString: () => stringRep,
+    evaluated: false
   }
 }
 

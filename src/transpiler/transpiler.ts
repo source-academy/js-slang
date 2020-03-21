@@ -600,7 +600,24 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 function transformValuesToThunks(program: es.Program) {
   simple(program, {
     Literal(node: es.Literal) {
-      create.mutateToThunk(node)
+      create.mutateToLiteralThunk(node)
+    }
+  })
+}
+
+/**
+ * Converts names (identifiers) in the Abstract Syntax Tree
+ * to be accessed lazily rather than eagerly. The only
+ * identifier that will not be transformed is "force", as
+ * "force" has to be eagerly evaluated to be able to
+ * enable any evaluation at all.
+ *
+ * @param program The program to transform.
+ */
+function transformIdentifiersToThunks(program: es.Program) {
+  simple(program, {
+    Identifier(node: es.Identifier) {
+      create.mutateToIdentifierThunk(node)
     }
   })
 }
@@ -780,8 +797,8 @@ export function transpile(
   if (lazyEvaluation) {
     // make literals into Thunks for lazy evaluation
     transformValuesToThunks(program)
+    transformIdentifiersToThunks(program)
   }
-  // console.log(JSON.stringify(program));
   const functionsToStringMap = generateFunctionsToStringMap(program)
   transformReturnStatementsToAllowProperTailCalls(program)
   transformCallExpressionsToCheckIfFunction(program)

@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { astThunkNativeTag } from '../stdlib/lazy'
+import { astThunkNativeTag, nameOfForceFunction, nameOfForceOnceFunction } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
 
@@ -21,7 +21,7 @@ export const identifier = (name: string): es.Identifier => ({
  * literal in its body
  * @param node The Literal to be transformed.
  */
-export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
+export const mutateToLiteralThunk = (node: es.Literal): es.ObjectExpression => {
   // creates a new copy of node.loc
   function copyLoc() {
     if (!node.loc) {
@@ -187,6 +187,179 @@ export const mutateToThunk = (node: es.Literal): es.ObjectExpression => {
     kind: 'init'
   }
   return newNode
+}
+
+/**
+ * Constructs a new Thunk value for lazy evaluation. Identifiers
+ * created from "function", "let", "const" will be transformed
+ * to ensure that the name lookup is only done when required
+ * (i.e. evaluated lazily, or evaluated by need). The only
+ * identifier that will be ignored is "force".
+ *
+ * @param node The Identifier to be transformed.
+ */
+export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpression | es.Identifier => {
+  if (node.name === nameOfForceFunction || node.name === nameOfForceOnceFunction) {
+    // cannot thunk force as it will result in non-evaluation
+    return node;
+  } else {
+    // creates a new copy of node.loc
+    function copyLoc() {
+      if (!node.loc) {
+        return undefined
+      } else {
+        return {
+          start: Object.assign({}, node.loc.start),
+          end: Object.assign({}, node.loc.end)
+        }
+      }
+    }
+    // make a new object for the new Thunk
+    const newNode = node as any
+    newNode.type = 'ObjectExpression'
+    newNode.properties = []
+    // set Thunk properties
+    // first, create type property
+    newNode.properties[0] = {
+      type: 'Property',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      method: false,
+      shorthand: false,
+      computed: false,
+      key: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: 'type'
+      },
+      // value of type is a string literal ''
+      //
+      // this is because we cannot know type of identifier
+      // until it is accessed (at runtime, only when value is needed)
+      value: {
+        type: 'Literal',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        value: '',
+        raw: '\'\''
+      },
+      kind: 'init'
+    }
+    // get arrow function
+    const arrowFunction = {
+      type: 'ArrowFunctionExpression',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      id: null,
+      expression: true,
+      generator: false,
+      params: [],
+      body: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: node.name
+      }
+    }
+    // then, create the value property
+    newNode.properties[1] = {
+      type: 'Property',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      method: false,
+      shorthand: false,
+      computed: false,
+      key: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: 'value'
+      },
+      // value of 'value' is an ArrowFunctionExpression
+      value: arrowFunction,
+      kind: 'init'
+    }
+    // get toString to show the normal result
+    const toString = {
+      type: 'ArrowFunctionExpression',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      id: null,
+      expression: true,
+      generator: false,
+      params: [],
+      body: {
+        type: 'Literal',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        value: node.name,
+        raw: node.name
+      },
+      // add tag to prevent toString() from getting wrapped in
+      // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
+      // (toString is already giving it a nice string representation)
+      tag: astThunkNativeTag
+    }
+    // create the toString property
+    // so thunks appear as normal values
+    // when stringify is called
+    newNode.properties[2] = {
+      type: 'Property',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      method: false,
+      shorthand: false,
+      computed: false,
+      key: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: 'toString'
+      },
+      value: toString,
+      kind: 'init'
+    }
+    // lastly, add the 'evaluated' property set to false
+    // (since Identifier is not a primitive value)
+    newNode.properties[3] = {
+      type: 'Property',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      method: false,
+      shorthand: false,
+      computed: false,
+      key: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: 'evaluated'
+      },
+      value: {
+        type: 'Literal',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        value: false,
+        raw: 'false'
+      },
+      kind: 'init'
+    }
+    return newNode
+  }
 }
 
 /**

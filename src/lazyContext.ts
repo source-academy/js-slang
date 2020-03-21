@@ -18,6 +18,15 @@ export default function lazyEvaluate(context: Context): boolean {
 }
 
 /**
+ * Checks if in the current context, the program will be
+ * transpiled with the lazy evaluation transpiler.
+ * @param context The context to be checked.
+ */
+export function lazyEvaluateInTranspiler(context: Context): boolean {
+  return lazyEvaluate(context)
+}
+
+/**
  * Checks whether the interpreter should evaluate the
  * expression lazily, given a chapter number.
  * @param chapter The chapter to be checked.
