@@ -9,8 +9,10 @@ import {
   VARARGS_NUM_ARGS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
-import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL } from '../constants'
+import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL, JSSLANG_PROPERTIES } from '../constants'
 import { stringify } from '../utils/stringify'
+import { PotentialInfiniteLoopError } from '../errors/timeoutErrors'
+import { locationDummyNode } from '../utils/astCreator'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
@@ -1197,10 +1199,18 @@ function SETUP_THREAD() {
 }
 
 function run(): any {
+  const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
+  const startTime = Date.now()
+
   // startup
   INITIALIZE()
 
   while (RUNNING) {
+    // infinite loop protection
+    if (Date.now() - startTime > MAX_TIME) {
+      throw new PotentialInfiniteLoopError(locationDummyNode(-1, -1))
+    }
+
     if (TO > 0) {
       // show_registers("run loop");
       // show_heap("run loop");
