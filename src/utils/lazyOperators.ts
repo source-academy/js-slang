@@ -16,7 +16,7 @@ import {
   makeThunkWithPrimitiveBinary,
   Thunk,
   makeThunkWithPrimitiveUnary,
-  makeConditionalThunk,
+  makeConditionalThunk
 } from '../stdlib/lazy'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'

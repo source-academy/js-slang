@@ -1,7 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
 import { AsyncScheduler } from './schedulers'
 import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
@@ -15,6 +14,7 @@ import { Context, CustomBuiltIns, Value } from './types'
 import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
 
 const createEmptyRuntime = () => ({
   break: false,

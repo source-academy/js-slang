@@ -12,7 +12,6 @@ import {
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { evaluate } from './interpreter/interpreter'
-import lazyEvaluate from './lazyContext'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -30,6 +29,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import lazyEvaluate from './lazyContext'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
