@@ -12,6 +12,10 @@ import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { makeThunk } from '../stdlib/lazy'
 import lazyEvaluate from '../lazyContext'
+import {
+  getThunkedArgs,
+  createThunk
+} from './lazyInterpreter'
 
 class BreakValue {}
 
@@ -138,7 +142,7 @@ function* leave(context: Context) {
   yield context
 }
 
-const currentEnvironment = (context: Context) => context.runtime.environments[0]
+export const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const replaceEnvironment = (context: Context, environment: Environment) =>
   (context.runtime.environments[0] = environment)
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
@@ -208,26 +212,6 @@ function* getArgs(context: Context, call: es.CallExpression) {
     args.push(yield* evaluate(arg, context))
   }
   return args
-}
-
-function getThunkedArgs(context: Context, call: es.CallExpression) {
-  const args = []
-  const env = currentEnvironment(context)
-  for (const arg of call.arguments) {
-    args.push(createThunk(arg, env, context))
-  }
-  return args
-}
-
-function createThunk(node: es.Node, environment: Environment, context: Context): Thunk {
-  return {
-    type: 'Thunk',
-    context,
-    value: node,
-    environment,
-    isEvaluated: false,
-    actualValue: undefined
-  }
 }
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {

@@ -115,7 +115,6 @@ export type Value = any
 
 export interface Thunk {
   type: 'Thunk'
-  context: Context
   value: es.Node
   environment: Environment | null
   isEvaluated: boolean
