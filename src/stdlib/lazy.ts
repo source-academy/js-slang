@@ -108,12 +108,12 @@ export const nameOfForceFunction = force.name
  *
  * @param expression The expression to be evaluated.
  */
-export function forceOnce(expression: any) {
+export function force_once(expression: any) {
   return evaluateThunk(expression)
 }
 
 // name of the forceOnce function
-export const nameOfForceOnceFunction = forceOnce.name
+export const nameOfForceOnceFunction = force_once.name
 
 /**
  * (NOT a primitive function in Lazy Source)

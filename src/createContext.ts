@@ -201,7 +201,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (lazyEvaluateInTranspiler(context)) {
     defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
-    defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.forceOnce)
+    defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
   }
 }
 
