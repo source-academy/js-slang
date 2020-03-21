@@ -211,7 +211,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_null(val)', lazyList.is_null)
     defineBuiltin(context, 'list(...values)', lazyList.list)
     defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
-      externalBuiltIns.visualiseList(lazy.force(v), context.externalContext))
+      externalBuiltIns.visualiseList(lazy.force(v), context.externalContext)
+    )
   }
 }
 
