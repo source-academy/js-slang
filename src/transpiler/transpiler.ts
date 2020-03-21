@@ -209,9 +209,12 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       if (node.tag && node.tag === astThunkNativeTag) {
         // do nothing
       } else {
+        // avoid assigning strings for functions that are not in the map
+        // these functions are mostly the inner lambdas of thunks
+        const stringRep = functionsToStringMap.get(node) || 'function';
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
-          create.literal(functionsToStringMap.get(node)!)
+          create.literal(stringRep)
         ])
       }
     }
