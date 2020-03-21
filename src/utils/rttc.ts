@@ -105,20 +105,29 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
 // ====================================================
 
 /**
- * Checks if a Thunk is a number
+ * Check if we are able to determine the Thunk's type
  * @param v The Thunk to be checked
  */
-const isNumberT = (v: TranspilerThunk<Value>) => v.type === 'number'
+const knownType = (v: TranspilerThunk<Value>) => v.type !== ''
+
 /**
- * Checks if a Thunk is a string
+ * Checks if a Thunk is a number, if the type is known.
+ * If the type is unknown, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isStringT = (v: TranspilerThunk<Value>) => v.type === 'string'
+const isNumberT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'number' : true
 /**
- * Checks if a Thunk is a boolean
+ * Checks if a Thunk is a string, if the type is known.
+ * If the type is unknown, assumes correct type.
  * @param v The Thunk to be checked
  */
-const isBoolT = (v: TranspilerThunk<Value>) => v.type === 'boolean'
+const isStringT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'string' : true
+/**
+ * Checks if a Thunk is a boolean, if the type is known.
+ * If the type is unknown, assumes correct type.
+ * @param v The Thunk to be checked
+ */
+const isBoolT = (v: TranspilerThunk<Value>) => knownType(v) ? v.type === 'boolean' : true
 
 /**
  * Checks that an unary expression has a correctly

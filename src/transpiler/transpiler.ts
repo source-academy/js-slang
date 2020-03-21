@@ -612,6 +612,10 @@ function transformValuesToThunks(program: es.Program) {
  * "force" has to be eagerly evaluated to be able to
  * enable any evaluation at all.
  *
+ * e.g.
+ * my_variable_name; will be transpiled into
+ * () => { force(my_variable_name) }
+ *
  * @param program The program to transform.
  */
 function transformIdentifiersToThunks(program: es.Program) {

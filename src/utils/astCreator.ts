@@ -200,7 +200,7 @@ export const mutateToLiteralThunk = (node: es.Literal): es.ObjectExpression => {
  */
 export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpression | es.Identifier => {
   if (node.name === nameOfForceFunction || node.name === nameOfForceOnceFunction) {
-    // cannot thunk force as it will result in non-evaluation
+    // cannot thunk force functions as it will result in non-evaluation
     return node;
   } else {
     // creates a new copy of node.loc
@@ -249,6 +249,29 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
       },
       kind: 'init'
     }
+    // get the call expression for force(name)
+    const callForceFunction = {
+      type: 'CallExpression',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      callee: {
+        type: 'Identifier',
+        start: newNode.start,
+        end: newNode.end,
+        loc: copyLoc(),
+        name: 'force'
+      },
+      arguments: [
+        {
+          type: 'Identifier',
+          start: newNode.start,
+          end: newNode.end,
+          loc: copyLoc(),
+          name: node.name
+        }
+      ]
+    }
     // get arrow function
     const arrowFunction = {
       type: 'ArrowFunctionExpression',
@@ -259,13 +282,7 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
       expression: true,
       generator: false,
       params: [],
-      body: {
-        type: 'Identifier',
-        start: newNode.start,
-        end: newNode.end,
-        loc: copyLoc(),
-        name: node.name
-      }
+      body: callForceFunction
     }
     // then, create the value property
     newNode.properties[1] = {
@@ -302,8 +319,8 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
         start: newNode.start,
         end: newNode.end,
         loc: copyLoc(),
-        value: node.name,
-        raw: node.name
+        value: JSON.stringify(node.name),
+        raw: JSON.stringify(node.name)
       },
       // add tag to prevent toString() from getting wrapped in
       // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
@@ -311,7 +328,7 @@ export const mutateToIdentifierThunk = (node: es.Identifier): es.ObjectExpressio
       tag: astThunkNativeTag
     }
     // create the toString property
-    // so thunks appear as normal values
+    // so thunks appear as the variable names
     // when stringify is called
     newNode.properties[2] = {
       type: 'Property',
