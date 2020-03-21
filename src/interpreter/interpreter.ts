@@ -4,21 +4,19 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Environment, Frame, Value } from '../types'
+import { Context, Environment, Frame, Value, Thunk } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
-import * as lazyOperators from '../utils/lazyOperators'
 import * as operators from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { makeThunk } from '../stdlib/lazy'
 import lazyEvaluate from '../lazyContext'
-import { getThunkedArgs, createThunk } from './lazyInterpreter'
+import { getThunkedArgs, createThunk, isThunk, evaluateThunk } from './lazyInterpreter'
 
 class BreakValue {}
 
 class ContinueValue {}
 
-class ReturnValue {
+export class ReturnValue {
   constructor(public value: Value) {}
 }
 
@@ -142,8 +140,8 @@ function* leave(context: Context) {
 export const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const replaceEnvironment = (context: Context, environment: Environment) =>
   (context.runtime.environments[0] = environment)
-const popEnvironment = (context: Context) => context.runtime.environments.shift()
-const pushEnvironment = (context: Context, environment: Environment) =>
+export const popEnvironment = (context: Context) => context.runtime.environments.shift()
+export const pushEnvironment = (context: Context, environment: Environment) =>
   context.runtime.environments.unshift(environment)
 
 const getVariable = (context: Context, name: string) => {
@@ -267,19 +265,13 @@ function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
   /**
-   * When Literals are evaluated, a thunk expression
-   * that is marked as already evaluated is returned
+   * When Literals are evaluated, the original
+   * raw value is returned.
    * @param node The node that represents the Literal
    * @param context Context of the execution
    */
   Literal: function*(node: es.Literal, context: Context) {
     return node.value
-
-    // if (lazyEvaluate(context)) {
-    //   return makeThunk(node.value)
-    // } else {
-    //   return node.value
-    // }
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
@@ -308,22 +300,29 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    let result = getVariable(context, node.name)
-    if (result !== null && result.type === 'Thunk' && result.isEvaluated) {
-      result = result.actualValue
+    if (lazyEvaluate(context)) {
+      let result = getVariable(context, node.name)
+      if (isThunk(result)) {
+        result = yield* evaluateThunk(result, context);
+      }
+      return result
+    } else {
+      return getVariable(context, node.name)
     }
-    return result
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
     const callee = yield* evaluate(node.callee, context)
     let args
 
-    if (callee instanceof Closure) {
-      // console.log('function has closure')
-      args = getThunkedArgs(context, node)
+    if (lazyEvaluate(context)) {
+      if (callee instanceof Closure) {
+        // console.log('function has closure')
+        args = getThunkedArgs(context, node)
+      } else {
+        args = yield* getArgs(context, node)
+      }
     } else {
-      // console.log('function has no closure')
       args = yield* getArgs(context, node)
     }
 
@@ -356,55 +355,35 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const value = yield* evaluate(node.argument, context)
 
-    const error = rttc.checkUnaryExpression(node, node.operator, value)
-    if (error) {
-      return handleRuntimeError(context, error)
+    if (lazyEvaluate(context)) {
+      const valueNoThunk = isThunk(value) ? yield* evaluateThunk(value, context) : value;
+      return operators.evaluateUnaryExpression(node.operator, valueNoThunk);
+    } else {
+      const error = rttc.checkUnaryExpression(node, node.operator, value)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
+      return operators.evaluateUnaryExpression(node.operator, value)
     }
-    return evaluateUnaryExpression(node.operator, value)
-
-    // if (lazyEvaluate(context)) {
-    //   const checkType = rttc.checkUnaryExpressionT(node, node.operator, value)
-    //   if (typeof checkType !== 'string') {
-    //     return handleRuntimeError(context, checkType as rttc.TypeError)
-    //   }
-    //   return lazyOperators.evaluateUnaryExpression(node.operator, value, checkType)
-    // } else {
-    //   const error = rttc.checkUnaryExpression(node, node.operator, value)
-    //   if (error) {
-    //     return handleRuntimeError(context, error)
-    //   }
-    //   return operators.evaluateUnaryExpression(node.operator, value)
-    // }
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    let left = yield* evaluate(node.left, context)
-    let right = yield* evaluate(node.right, context)
+    const left = yield* evaluate(node.left, context)
+    const right = yield* evaluate(node.right, context)
 
     // The operands may return a thunk after evaluating them as above.
-    // Thunks will be handled to yield its actual value.
-    if (left.type === 'Thunk') {
-      left = yield* evaluateThunk(left, context)
+    if (lazyEvaluate(context)) {
+      const leftNoThunk = isThunk(left) ? yield* evaluateThunk(left, context) : left;
+      const rightNoThunk = isThunk(right) ? yield* evaluateThunk(right, context) : right;
+      return operators.evaluateBinaryExpression(node.operator, leftNoThunk, rightNoThunk)
+    } else {
+      // eager evaluation
+      const error = rttc.checkBinaryExpression(node, node.operator, left, right)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
+      return operators.evaluateBinaryExpression(node.operator, left, right)
     }
-    if (right.type === 'Thunk') {
-      right = yield* evaluateThunk(right, context)
-    }
-
-    // if (lazyEvaluate(context)) {
-    //   const checkType = rttc.checkBinaryExpressionT(node, node.operator, left, right)
-    //   if (typeof checkType !== 'string') {
-    //     return handleRuntimeError(context, checkType as rttc.TypeError)
-    //   }
-    //   return lazyOperators.evaluateBinaryExpression(node.operator, left, right, checkType)
-    // } else {
-    //   const error = rttc.checkBinaryExpression(node, node.operator, left, right)
-    //   if (error) {
-    //     return handleRuntimeError(context, error)
-    //   }
-    //   return operators.evaluateBinaryExpression(node.operator, left, right)
-    // }
-
-    return evaluateBinaryExpression(node.operator, left, right)
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
@@ -415,62 +394,30 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
   },
 
-  // ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
-  //   if (lazyEvaluate(context)) {
-  //     const { line, column } = node.loc!.start
-  //     const test = yield* evaluate(node.test, context)
-  //     const consequent = yield* evaluate(node.consequent, context)
-  //     const alternate = yield* evaluate(node.alternate, context)
-
-  //     try {
-  //       return lazyOperators.conditionalOp(test, consequent, alternate, line, column);
-  //     } catch (e) {
-  //       return handleRuntimeError(context, e as rttc.TypeError);
-  //     }
-  //   } else {
-  //     return yield* this.IfStatement(node, context)
-  //   }
-  // },
-
-  // LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-  //   if (lazyEvaluate(context)) {
-  //     const left = yield* evaluate(node.left, context)
-  //     const right = yield* evaluate(node.right, context)
-
-  //     try {
-  //       return lazyOperators.logicalOp(node.operator, left, right, node.loc!.start.line, node.loc!.start.column);
-  //     } catch (e) {
-  //       return handleRuntimeError(context, e as rttc.TypeError);
-  //     }
-  //   } else {
-  //     return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
-  //   }
-  // },
-
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
 
-    let value
-    // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly
-    // Below is a list of types with lazy evaluation:
-    // 1. Binary operations
-    // 2. (TBD)
-    if (
-      declaration.init!.type === 'BinaryExpression'
-      ) {
-      // Capture the current environment (Not useful since it's not deep-cloned)
-      const currentEnv = currentEnvironment(context)
-
-      // Construct Thunk object
-      value = createThunk(declaration.init!, currentEnv, context)
+    if (lazyEvaluate(context)) {
+      let value
+      // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly
+      // Everything except literal values should be evaluated lazily
+      if (declaration.init!.type !== 'Literal') {
+        // Capture the current environment (Not useful since it's not deep-cloned)
+        const currentEnv = currentEnvironment(context)
+        // Construct Thunk object
+        value = createThunk(declaration.init!, currentEnv)
+      } else {
+        value = yield* evaluate(declaration.init!, context)
+      }
+      defineVariable(context, id.name, value, constant)
+      return undefined;
     } else {
-      value = yield* evaluate(declaration.init!, context)
+      const value = yield* evaluate(declaration.init!, context)
+      defineVariable(context, id.name, value, constant)
+      return undefined
     }
-    // const value = yield* evaluate(declaration.init!, context)
-    defineVariable(context, id.name, value, constant)
-    return undefined
   },
 
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
@@ -605,14 +552,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
-    let result = yield* reduceIf(node, context) as Value
-    if (result.type === 'Thunk') {
-      result = yield* evaluateThunk(result, context)
+    if (lazyEvaluate(context)) {
+      let result = yield* reduceIf(node, context) as Value
+      console.log(JSON.stringify(result));
+      if (isThunk(result.type)) {
+        result = yield* evaluateThunk(result, context)
+      } else {
+        result = yield* evaluate(result, context)
+      }
+      return result
     } else {
-      result = yield* evaluate(result, context)
+      return yield* evaluate(yield* reduceIf(node, context), context)
     }
-    return result
-    // return yield* evaluate(yield* reduceIf(node, context), context)
   },
 
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
@@ -620,7 +571,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
-    let returnExpression = node.argument! as Value
+    let returnExpression = node.argument!
 
     // If we have a conditional expression, reduce it until we get something else
     while (
@@ -638,18 +589,19 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const callee = yield* evaluate(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
-    } else {
+    } else if (lazyEvaluate(context)) {
       let result
-      if (returnExpression.type === 'Thunk') {
-        result = yield* evaluateThunk(returnExpression, context)
+      if (isThunk(returnExpression)) {
+        result = yield* evaluateThunk(returnExpression as unknown as Thunk, context)
       } else {
         result = yield* evaluate(returnExpression, context)
       }
-      if (result.type === 'Thunk') {
+      if (isThunk(result.type)) {
         result = yield* evaluateThunk(result, context)
       }
       return new ReturnValue(result)
-      // return new ReturnValue(yield* evaluate(returnExpression, context))
+    } else {
+      return new ReturnValue(yield* evaluate(returnExpression, context))
     }
   },
 
@@ -696,7 +648,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
-    console.log('Program')
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
@@ -707,54 +658,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
-  console.log(node.type)
+  // for debugging purposes
+  if (lazyEvaluate(context)) {
+    console.log(node.type)
+  }
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   return result
-}
-
-// Evaluates thunk and memoize
-function* evaluateThunk(thunk: Thunk, context: Context) {
-  if (thunk.isEvaluated) {
-    // Program should never enter this 'if' block.
-    // Memoized thunks should return the actual value by evaluating an Identifier node type.
-    return thunk.actualValue
-  } else {
-    // Keep count of the environments stacked on top of each other.
-    let total = 0
-
-    // Use the thunk's environment (on creation) to evaluate it.
-    const thunkEnv: Environment = thunk.environment as Environment
-
-    pushEnvironment(context, thunkEnv)
-    total++
-
-    let result: Value = yield* evaluate(thunk.value, context)
-
-    // Evaluation of a thunk may return another thunk.
-    // Keep evaluating until the final value is obtained.
-    let tempEnv: Environment
-    while (result.type === 'Thunk') {
-      // Use the thunk's environment (on creation) to evaluate it.
-      tempEnv = result.environment as Environment
-      pushEnvironment(context, tempEnv)
-      total++
-
-      result = yield* evaluate(result.value, context)
-    }
-
-    if (result instanceof ReturnValue) {
-      result = result.value
-    }
-    for (let i = 0; i < total; i++) {
-      popEnvironment(context)
-    }
-
-    // tag this thunk as 'evaluated' and memoize its value
-    thunk.isEvaluated = true
-    thunk.actualValue = result
-    return result
-  }
 }
 
 export function* apply(

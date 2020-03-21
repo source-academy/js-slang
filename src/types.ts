@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+import { thunkStringType } from './interpreter/lazyInterpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -114,7 +115,7 @@ export type Value = any
 // tslint:enable:no-any
 
 export interface Thunk {
-  type: 'Thunk'
+  type: typeof thunkStringType
   value: es.Node
   environment: Environment | null
   isEvaluated: boolean
