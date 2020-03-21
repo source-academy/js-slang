@@ -353,10 +353,10 @@ export function applyFunctionToThunks(
     '(' +
     (args.length === 0
       ? ''
-      : args.reduce((ta, tb, idx) =>
-        idx === 0
-          ? ta + tb.toString()
-          : ta + ', ' + tb.toString(), "")) +
+      : args.reduce(
+          (ta, tb, idx) => (idx === 0 ? ta + tb.toString() : ta + ', ' + tb.toString()),
+          ''
+        )) +
     ')'
   return {
     type: applicationType,
