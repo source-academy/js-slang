@@ -4,6 +4,7 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AsyncScheduler } from './schedulers'
 import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
+import * as lazyList from './stdlib/lazyList'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import * as misc from './stdlib/misc'
@@ -153,7 +154,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
   }
 
-  if (context.chapter >= 2) {
+  if (!lazyEvaluateInTranspiler(context) && context.chapter >= 2) {
     // List library
     defineBuiltin(context, 'pair(left, right)', list.pair)
     defineBuiltin(context, 'is_pair(val)', list.is_pair)
@@ -202,6 +203,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (lazyEvaluateInTranspiler(context)) {
     defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
     defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
+    // lazy list library
+    defineBuiltin(context, 'pair(left, right)', lazyList.pair)
+    defineBuiltin(context, 'is_pair(val)', lazyList.is_pair)
+    defineBuiltin(context, 'head(xs)', lazyList.head)
+    defineBuiltin(context, 'tail(xs)', lazyList.tail)
+    defineBuiltin(context, 'is_null(val)', lazyList.is_null)
+    defineBuiltin(context, 'list(...values)', lazyList.list)
+    defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
+      externalBuiltIns.visualiseList(lazy.force(v), context.externalContext))
   }
 }
 
