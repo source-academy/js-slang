@@ -34,7 +34,7 @@ export const astThunkNativeTag = 'Thunk-native-function'
 
 // Tag for expressions in Abstract Syntax Tree
 // that should not be lazily evaluated.
-export const astNoEagerTag = 'No-eager-evaluation'
+export const astEvalEagerTag = 'Required-eager-evaluation'
 
 // String type for thunked lookup of names
 export const identifierType = 'identifier'

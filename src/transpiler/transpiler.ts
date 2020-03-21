@@ -9,7 +9,7 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import {
   astThunkNativeTag,
   callStatementShouldBeEagerlyEvaluated,
-  astNoEagerTag
+  astEvalEagerTag
 } from '../stdlib/lazy'
 
 /**
@@ -729,7 +729,7 @@ function transformSideEffectStatementsToEvaluateEagerly(program: es.Program) {
         callStatementShouldBeEagerlyEvaluated(node.expression.callee.name)
       ) {
         // give identifier a tag
-        ;(node.expression.callee as any).tag = astNoEagerTag
+        ;(node.expression.callee as any).tag = astEvalEagerTag
       }
     }
   })

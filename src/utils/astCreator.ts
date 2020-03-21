@@ -4,7 +4,7 @@ import {
   identifierType,
   functionShouldBeEagerlyEvaluated,
   nameOfForceFunction,
-  astNoEagerTag
+  astEvalEagerTag
 } from '../stdlib/lazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
@@ -210,7 +210,7 @@ export const mutateToIdentifierThunk = (
   if (
     functionShouldBeEagerlyEvaluated(node.name) ||
     // check whether this identifier has the eager tag
-    (node.tag && node.tag === astNoEagerTag)
+    (node.tag && node.tag === astEvalEagerTag)
   ) {
     // cannot thunk force functions as it will result in non-evaluation
     return node
