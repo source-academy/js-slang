@@ -14,13 +14,13 @@ const arr = [2]
 const mockValues: Value[] = [num, bool, str, func, builtin, obj, arr, undefined, null]
 
 describe('Unary type combinations:', () => {
-  const valid: Array<[UnaryOperator, Value]> = [
+  const valid: [UnaryOperator, Value][] = [
     ['!', bool],
     ['+', num],
     ['-', num]
   ]
   const operators: UnaryOperator[] = ['!', '+', '-']
-  const invalid: Array<[UnaryOperator, Value]> = []
+  const invalid: [UnaryOperator, Value][] = []
 
   operators.forEach(op => {
     mockValues.forEach(value => {
@@ -56,12 +56,12 @@ describe('Unary type combinations:', () => {
 })
 
 describe('Binary + type combinations:', () => {
-  const valid: Array<[BinaryOperator, Value, Value]> = [
+  const valid: [BinaryOperator, Value, Value][] = [
     ['+', num, num],
     ['+', str, str]
   ]
   const operators: BinaryOperator[] = ['+']
-  const invalid: Array<[BinaryOperator, Value, Value]> = []
+  const invalid: [BinaryOperator, Value, Value][] = []
 
   operators.forEach(op => {
     mockValues.forEach(left => {
@@ -105,14 +105,14 @@ describe('Binary + type combinations:', () => {
 })
 
 describe('Binary (-|*|/|%) type combinations:', () => {
-  const valid: Array<[BinaryOperator, Value, Value]> = [
+  const valid: [BinaryOperator, Value, Value][] = [
     ['-', num, num],
     ['*', num, num],
     ['/', num, num],
     ['%', num, num]
   ]
   const operators: BinaryOperator[] = ['-', '*', '/', '%']
-  const invalid: Array<[BinaryOperator, Value, Value]> = []
+  const invalid: [BinaryOperator, Value, Value][] = []
 
   operators.forEach(op => {
     mockValues.forEach(left => {
@@ -156,9 +156,9 @@ describe('Binary (-|*|/|%) type combinations:', () => {
 })
 
 describe('Binary (===|!==) type combinations:', () => {
-  const valid: Array<[BinaryOperator, Value, Value]> = []
+  const valid: [BinaryOperator, Value, Value][] = []
   const operators: BinaryOperator[] = ['===', '!==']
-  const invalid: Array<[BinaryOperator, Value, Value]> = []
+  const invalid: [BinaryOperator, Value, Value][] = []
 
   // Every combination is valid
   operators.forEach(op => {
@@ -196,7 +196,7 @@ describe('Binary (===|!==) type combinations:', () => {
 })
 
 describe('Binary (<|>|<=|>=) type combinations:', () => {
-  const valid: Array<[BinaryOperator, Value, Value]> = [
+  const valid: [BinaryOperator, Value, Value][] = [
     ['<', num, num],
     ['<', str, str],
     ['>', num, num],
@@ -207,7 +207,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     ['>=', str, str]
   ]
   const operators: BinaryOperator[] = ['<', '>', '<=', '>=']
-  const invalid: Array<[BinaryOperator, Value, Value]> = []
+  const invalid: [BinaryOperator, Value, Value][] = []
 
   operators.forEach(op => {
     mockValues.forEach(left => {
@@ -285,11 +285,11 @@ describe('Ternary/if test expression type combinations:', () => {
 })
 
 describe('Member expression type combinations:', () => {
-  const valid: Array<[Value, Value]> = [
+  const valid: [Value, Value][] = [
     [obj, str],
     [arr, num]
   ]
-  const invalid: Array<[Value, Value]> = []
+  const invalid: [Value, Value][] = []
 
   mockValues.forEach(left => {
     mockValues.forEach(right => {

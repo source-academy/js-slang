@@ -37,7 +37,7 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
-  constructor(node: es.Node, private calls: Array<[string, any[]]>) {
+  constructor(node: es.Node, private calls: [string, any][]) {
     super(node)
     this.calls = this.calls.slice(-3)
   }

@@ -159,7 +159,7 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
 
 function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
-  parserRules: Array<Rule<es.Node>>
+  parserRules: Rule<es.Node>[]
 ) {
   const newWalkers = new Map<string, AncestorWalkerFn<Context>>()
   const visitedNodes = new Set<es.Node>()

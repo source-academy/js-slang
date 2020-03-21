@@ -380,7 +380,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
   for (const [identifier, ancestors] of identifiersToAncestors) {
     const name = identifier.name
-    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a) ? .has(name) )
+    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
     if (!isCurrentlyDeclared) {
       if (previousVariablesToAst.has(name)) {
         const lastAncestor: es.Node = ancestors[ancestors.length - 2]

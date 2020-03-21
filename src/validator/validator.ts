@@ -63,7 +63,7 @@ export function validateAndAnnotate(
     for (let i = ancestors.length - 1; i >= 0; i--) {
       const a = ancestors[i]
       const map = accessedBeforeDeclarationMap.get(a)
-      if (map ? .has(name) ) {
+      if (map?.has(name)) {
         map.get(name)!.accessedBeforeDeclaration = true
         if (lastAncestor.type === 'AssignmentExpression' && lastAncestor.left === id) {
           if (map.get(name)!.isConstant) {
