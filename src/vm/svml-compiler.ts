@@ -510,8 +510,11 @@ const compilers = {
     if (callType === 'primitive') {
       addBinaryInstruction(OpCodes.CALLP, callValue, node.arguments.length)
     } else if (callType === 'concurrent') {
-      if (callValue[1] === 0) {
+      if (callValue[0] === OpCodes.TEST_AND_SET) {
         addNullaryInstruction(callValue[0])
+      } else if (callValue[0] === OpCodes.CLEAR) {
+        addNullaryInstruction(callValue[0])
+        addNullaryInstruction(OpCodes.LGCU)
       } else {
         // variadic, for EXECUTE
         addUnaryInstruction(callValue[0], node.arguments.length)

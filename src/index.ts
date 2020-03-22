@@ -174,6 +174,12 @@ export async function runInContext(
     return resolvedErrorPromise
   }
   if (context.chapter === 3.4) {
+    if (previousCode === code) {
+      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+    }
+    previousCode = code
     try {
       return Promise.resolve({
         status: 'finished',
