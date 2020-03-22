@@ -65,8 +65,8 @@ let RES = -Infinity
 let TQ: any[] = []
 // TO is timeout counter: how many instructions are left for a thread to run
 let TO = 0
-// TO_MAX is maximum amount to timeout by
-const TO_MAX = 50
+// TO_DEFAULT is maximum amount to timeout by
+const TO_DEFAULT = 2
 // SEQ is array for RTS, TOP_RTS when executing concurrent code
 let SEQ: any[] = []
 
@@ -428,7 +428,7 @@ function EXTEND() {
 }
 
 function SET_TO() {
-  TO = Math.floor(Math.random() * TO_MAX)
+  TO = TO_DEFAULT
 }
 
 // debugging: show current heap
@@ -1188,7 +1188,10 @@ function TIMEOUT_THREAD() {
 }
 
 function SETUP_THREAD() {
-  ;[RTS, TOP_RTS] = TQ.shift()
+  G = TQ.splice(Math.floor(Math.random() * TQ.length), 1) // pop a thread randomly
+  // Unpack G: different behavior of array splice and array shift
+  RTS = G[0][0]
+  TOP_RTS = G[0][1]
   POP_RTS() // TOP_RTS--
   H = RES
   PC = HEAP[H + RTS_FRAME_PC_SLOT]
