@@ -9,7 +9,7 @@ let typeIdCounter = 0
  */
 function traverse(node: es.Node) {
   // @ts-ignore
-  node.typeId = typeIdCounter
+  node.typeVar = tVar(typeIdCounter)
   typeIdCounter++
   switch (node.type) {
     case 'Program': {
@@ -122,6 +122,12 @@ interface Env {
   [name: string]: TYPE | FORALL
 }
 
+function cloneEnv(env: Env) {
+  return {
+    ...env
+  }
+}
+
 type Constraint = [VAR, TYPE]
 
 /**
@@ -161,29 +167,65 @@ export function typeCheck(program: es.Program | undefined): void {
 function freshTypeVar(typeVar: VAR): VAR {
   const newVarId = typeIdCounter
   typeIdCounter++
-  const prefix = typeVar.type === 'any' ? 'T' : typeVar.type === 'addable' ? 'A' : 'N'
   return {
     ...typeVar,
-    name: `${prefix}_${newVarId}`
+    name: `T_${newVarId}`
   }
 }
 
 /**
  * Replaces all instances of type variables in the type of a polymorphic type
  */
-function fresh(monoType: TYPE): TYPE {
+function fresh(monoType: TYPE, subst: { [typeName: string]: VAR }): TYPE {
   switch (monoType.nodeType) {
     case 'Named':
       return monoType
     case 'Var':
-      return freshTypeVar(monoType)
+      return subst[monoType.name]
     case 'Function':
       return {
         ...monoType,
-        fromTypes: monoType.fromTypes.map(argType => fresh(argType)),
-        toType: fresh(monoType.toType)
+        fromTypes: monoType.fromTypes.map(argType => fresh(argType, subst)),
+        toType: fresh(monoType.toType, subst)
       }
   }
+}
+
+/** Union of free type variables */
+function union(a: VAR[], b: VAR[]): VAR[] {
+  const sum = [...a]
+  b.forEach(newVal => {
+    if (sum.findIndex(val => val.name === newVal.name) === -1) {
+      sum.push(newVal)
+    }
+  })
+  return sum
+}
+
+function freeTypeVarsInType(type: TYPE): VAR[] {
+  switch (type.nodeType) {
+    case 'Named':
+      return []
+    case 'Var':
+      return [type]
+    case 'Function':
+      return union(
+        type.fromTypes.reduce((acc, currentType) => {
+          return union(acc, freeTypeVarsInType(currentType))
+        }, []),
+        freeTypeVarsInType(type.toType)
+      )
+  }
+}
+
+function extractFreeVariablesAndGenFresh(polyType: FORALL): TYPE {
+  const monoType = polyType.type
+  const freeTypeVars = freeTypeVarsInType(monoType)
+  const substitutions = {}
+  freeTypeVars.forEach(val => {
+    substitutions[val.name] = freshTypeVar(val)
+  })
+  return fresh(monoType, substitutions)
 }
 
 /**
@@ -213,7 +255,25 @@ function occursOnLeftInConstraintList(
 ): Constraint[] {
   for (const constraint of constraints) {
     if (constraint[0].name === LHS.name) {
-      return addToConstraintList(constraints, [constraint[1], RHS])
+      // check if we shoud add a new constraint t'=t'' or t''=t', according to spec
+      if (constraint[1].nodeType === 'Var') {
+        for (const cons of constraints) {
+          // if t'', which is constraint[1] already occurs earlier in the form t'', we need
+          // to ensure our new constraint to be added is of the form t''=t'
+          if (cons[0].name === constraint[1].name) {
+            return addToConstraintList(constraints, [constraint[1], RHS])
+          }
+        }
+      }
+      return addToConstraintList(constraints, [RHS, constraint[1]])
+    }
+  }
+  if (RHS.nodeType === 'Var') {
+    if (LHS.type === 'numerical' || (LHS.type === 'addable' && RHS.type === 'any')) {
+      // We need to modify the type of the RHS so that it is at least as specific as the LHS
+      // this is so we are going from least to most specific as we recursively try to determine
+      // type of a type variable
+      RHS.type = LHS.type
     }
   }
   constraints.push([LHS, RHS])
@@ -274,48 +334,33 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
 
 function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[] {
   // @ts-ignore
-  const storedType: VAR = tVar(node.typeId)
+  const storedType: VAR = node.typeVar
   switch (node.type) {
     case 'UnaryExpression': {
-      // const [inferredType, subst1] = infer(node.argument, ctx)
-      // const funcType = env[node.operator] as FUNCTION
-      // const newType = newTypeVar(ctx)
-      // const subst2 = unify(funcType, {
-      //   nodeType: 'Function',
-      //   fromTypes: [inferredType],
-      //   toType: newType
-      // })
-      // const composedSubst = composeSubsitutions(subst1, subst2)
-      // return [applySubstToType(composedSubst, funcType.toType), composedSubst]
-      return []
+      // guaranteed to be a monomorphic function type as we only have the negation op
+      const funcType = env[node.operator] as FUNCTION
+      const argNode = node.argument
+      // @ts-ignore
+      const argType = argNode.typeVar
+      return infer(argNode, env, addToConstraintList(constraints, [tFunc(argType, storedType), funcType]))
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
-      // let newConstraints = addToConstraintList(constraints, [])
-      // const [inferredLeft, leftSubst] = infer(node.left, ctx)
-      // const newCtx = cloneCtx(ctx)
-      // applySubstToCtx(leftSubst, newCtx)
-      // const [inferredRight, rightSubst] = infer(node.right, newCtx)
-      // let composedSubst = composeSubsitutions(rightSubst, leftSubst)
-      // const lookupType = env[node.operator] as FUNCTION | FORALL
-      // let funcType: FUNCTION
-      // if (lookupType.nodeType === 'Forall') {
-      //   funcType = instantiate(ctx, lookupType) as FUNCTION
-      // } else {
-      //   funcType = lookupType
-      // }
-      // const newType = newTypeVar(ctx)
-      // const subst1 = unify(funcType, {
-      //   nodeType: 'Function',
-      //   fromTypes: [applySubstToType(composedSubst, inferredLeft), inferredRight],
-      //   toType: newType
-      // })
-      // composedSubst = composeSubsitutions(subst1, composedSubst)
-      // // console.log(composedSubst)
-      // const inferredReturnType = applySubstToType(subst1, newType)
-      // // console.log(inferredReturnType)
-      // return [inferredReturnType, composedSubst]
-      return []
+      const envType = env[node.operator]
+      const opType =
+        envType.nodeType === 'Forall' ? extractFreeVariablesAndGenFresh(envType) : envType
+      const leftNode = node.left
+      // @ts-ignore
+      const leftType = leftNode.typeVar
+      const rightNode = node.right
+      // @ts-ignore
+      const rightType = rightNode.typeVar
+      let newConstraints = addToConstraintList(constraints, [
+        tFunc(leftType, rightType, storedType),
+        opType
+      ])
+      newConstraints = infer(leftNode, env, newConstraints)
+      return infer(rightNode, env, newConstraints)
     }
     case 'ExpressionStatement': {
       return infer(
@@ -325,32 +370,26 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       )
     }
     case 'ReturnStatement': {
-      // if (node.argument === undefined) {
-      //   return [tNamedUndef, {}]
-      // } else if (node.argument === null) {
-      //   return [tNamedNull, {}]
-      // }
-      // return infer(node.argument, ctx)
-      return []
+      if (node.argument === undefined || node.argument === null) {
+        throw Error('Node argument cannot be undefined or null')
+      }
+      const argNode = node.argument
+      // @ts-ignore
+      return infer(argNode, env, addToConstraintList(constraints, [storedType, argNode.typeVar]))
     }
     case 'BlockStatement': {
-      // const newCtx = cloneCtx(ctx) // create new scope
-      // let composedSubst: Subsitution = {}
-
-      // // preprocess by adding declarations to the ctx
-      // node.body.forEach(n => preprocessDeclaration(n, newCtx))
-
-      // for (const currentNode of node.body) {
-      //   // block statement, do not need to generate intermediate annotated AST
-      //   const [inferredType, subst] = infer(currentNode, newCtx)
-      //   composedSubst = composeSubsitutions(composedSubst, subst)
-      //   applySubstToCtx(composedSubst, newCtx)
-      //   if (currentNode.type === 'ReturnStatement') {
-      //     return [inferredType, composedSubst]
-      //   }
-      // }
-      // return [tNamedUndef, composedSubst]
-      return []
+      // assuming no const decl for now
+      const newEnv = cloneEnv(env) // create new scope
+      const lastNodeIndex = node.body.findIndex((currentNode, index) => {
+        return index === node.body.length - 1 || currentNode.type === 'ReturnStatement'
+      })
+      // @ts-ignore
+      const lastNodeType = node.body[lastNodeIndex].typeVar
+      let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
+      for (let i = 0; i <= lastNodeIndex; i++) {
+        newConstraints = infer(node.body[i], newEnv, newConstraints)
+      }
+      return newConstraints
     }
     case 'Literal': {
       const literalVal = node.value
@@ -374,9 +413,12 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       if (env[identifierName]) {
         const envType = env[identifierName]
         if (envType.nodeType === 'Forall') {
-          return addToConstraintList(constraints, [fresh(envType.type), storedType])
+          return addToConstraintList(constraints, [
+            storedType,
+            extractFreeVariablesAndGenFresh(envType)
+          ])
         } else {
-          return addToConstraintList(constraints, [envType, storedType])
+          return addToConstraintList(constraints, [storedType, envType])
         }
       }
       throw Error(`Undefined identifier: ${identifierName}`)
@@ -385,16 +427,16 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
     case 'IfStatement': {
       const testNode = node.test
       // @ts-ignore
-      const testType = tVar(testNode.typeId)
+      const testType = testNode.typeVar
       let newConstraints = addToConstraintList(constraints, [testType, tNamedBool])
       const consNode = node.consequent
       // @ts-ignore
-      const consType = tVar(consNode.typeId)
+      const consType = consNode.typeVar
       newConstraints = addToConstraintList(newConstraints, [storedType, consType])
       const altNode = node.alternate
       if (altNode) {
         // @ts-ignore
-        const altType = tVar(altNode.typeId)
+        const altType = altNode.typeVar
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       }
       newConstraints = infer(testNode, env, newConstraints)
@@ -496,6 +538,19 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       return []
     }
     case 'CallExpression': {
+      const calleeNode = node.callee
+      // @ts-ignore
+      const calleeType = calleeNode.typeVar
+      const argNodes = node.arguments
+      // @ts-ignore
+      const argTypes: VAR[] = argNodes.map(argNode => argNode.typeVar)
+      argTypes.push(storedType)
+      let newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
+      newConstraints = infer(calleeNode, env, newConstraints)
+      argNodes.forEach(argNode => {
+        newConstraints = infer(argNode, env, newConstraints)
+      })
+      return newConstraints
       // const [funcType, subst1] = infer(node.callee, ctx)
       // const newCtx = cloneCtx(ctx)
       // applySubstToCtx(subst1, newCtx)
@@ -541,7 +596,7 @@ function tNamed(name: NAMED_TYPE): NAMED {
   }
 }
 
-function tVar(name: string): VAR {
+function tVar(name: string | number): VAR {
   return {
     nodeType: 'Var',
     name: `T_${name}`,
@@ -549,28 +604,28 @@ function tVar(name: string): VAR {
   }
 }
 
-// function tAddable(name: string): VAR {
-//   return {
-//     nodeType: 'Var',
-//     name,
-//     type: 'addable'
-//   }
-// }
+function tAddable(name: string): VAR {
+  return {
+    nodeType: 'Var',
+    name: `T_${name}`,
+    type: 'addable'
+  }
+}
 
 function tNumerical(name: string): VAR {
   return {
     nodeType: 'Var',
-    name: `N_${name}`,
+    name: `T_${name}`,
     type: 'numerical'
   }
 }
 
-// function tForAll(type: TYPE): FORALL {
-//   return {
-//     nodeType: 'Forall',
-//     type
-//   }
-// }
+function tForAll(type: TYPE): FORALL {
+  return {
+    nodeType: 'Forall',
+    type
+  }
+}
 
 const tNamedBool = tNamed('bool')
 const tNamedFloat = tNamed('float')
@@ -651,19 +706,19 @@ const predeclaredNames = {
 const primitiveFuncs = {
   '!': tFunc(tNamedBool, tNamedBool),
   '&&': tFunc(tNamedBool, tNamedBool, tNamedBool),
-  '||': tFunc(tNamedBool, tNamedBool, tNamedBool)
+  '||': tFunc(tNamedBool, tNamedBool, tNamedBool),
   // NOTE for now just handle for Number === Number
-  // '===': tForAll(['A', 'B'], tFunc(tVar('A'), tVar('B'), tNamedBool)),
-  // '!==': tForAll(['A', 'B'], tFunc(tVar('A'), tVar('B'), tNamedBool)),
-  // '<': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  // '<=': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  // '>': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  // '>=': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  // // "Bool==": tFunc(tNamedBool(), tNamedBool(), tNamedBool()),
-  // '+': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tVar('A'))),
-  // '-': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tVar('A'))),
-  // '*': tForAll(['A'], tFunc(tVar('A'), tVar('A'), tVar('A')))
-  // '/': tFunc(tNamedNumber(), tNamedNumber(), tNamedNumber())
+  '===': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '!==': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '<': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '<=': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '>': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '>=': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '+': tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A'))),
+  '%': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
+  '-': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
+  '*': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
+  '/': tForAll(tFunc(tNumerical('A'), tNumerical('B'), tNamedFloat))
 }
 
 const initialEnv = {
