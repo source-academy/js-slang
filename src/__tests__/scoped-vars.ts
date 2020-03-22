@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { default as createContext } from '../createContext'
-import { looseParse, parse } from '../parser'
+import { looseParse, parse } from '../parser/parser'
 import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from '../scoped-vars'
 
 /**
