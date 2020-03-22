@@ -1105,11 +1105,16 @@ M[OpCodes.EXECUTE] = () => {
     NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
     A = RES
     PUSH_RTS() // TOP_RTS++
-    TQ.push([RTS, TOP_RTS])
+    TQ.splice(Math.floor(Math.random() * TQ.length), 0, [RTS, TOP_RTS]) // insert a thread randomly
   }
   // restore present state
   ;[OS, ENV, P, PC, TOP_RTS, RTS] = G
-  PC = PC + 1
+  // Put current thread randomly into TQ
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+  A = RES
+  PUSH_RTS() // TOP_RTS++
+  TQ.splice(Math.floor(Math.random() * TQ.length), 0, [RTS, TOP_RTS])
+  SETUP_THREAD() // sets RTS, TOP_RTS, PC, ENV, P, OS, TO
 }
 
 M[OpCodes.TEST_AND_SET] = () => {
