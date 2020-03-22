@@ -342,7 +342,11 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       const argNode = node.argument
       // @ts-ignore
       const argType = argNode.typeVar
-      return infer(argNode, env, addToConstraintList(constraints, [tFunc(argType, storedType), funcType]))
+      return infer(
+        argNode,
+        env,
+        addToConstraintList(constraints, [tFunc(argType, storedType), funcType])
+      )
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
