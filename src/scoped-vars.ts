@@ -18,9 +18,10 @@ export function scopeVariables(
     enclosingLoc: enclosingLoc === undefined ? program.loc : enclosingLoc,
     children: []
   }
-  const definitionStatements = getDeclarationStatements(program.body) as Array<
-    es.VariableDeclaration | es.FunctionDeclaration
-  >
+  const definitionStatements = getDeclarationStatements(program.body) as (
+    | es.VariableDeclaration
+    | es.FunctionDeclaration
+  )[]
   const blockStatements = getBlockStatements(program.body)
   const forStatements = getForStatements(program.body)
   const ifStatements = getIfStatements(program.body)
@@ -354,15 +355,13 @@ function getAllIdentifiers(program: es.Program, target: string): es.Identifier[]
 }
 
 // Helper functions to filter nodes
-function getBlockStatements(
-  nodes: Array<es.Statement | es.ModuleDeclaration>
-): es.BlockStatement[] {
+function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.BlockStatement[] {
   return nodes.filter(statement => statement.type === 'BlockStatement') as es.BlockStatement[]
 }
 
 function getDeclarationStatements(
-  nodes: Array<es.Statement | es.ModuleDeclaration>
-): Array<es.Statement | es.ModuleDeclaration> {
+  nodes: (es.Statement | es.ModuleDeclaration)[]
+): (es.Statement | es.ModuleDeclaration)[] {
   return nodes.filter(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
@@ -370,7 +369,7 @@ function getDeclarationStatements(
 }
 
 function getAssignmentStatements(
-  nodes: Array<es.Statement | es.ModuleDeclaration>
+  nodes: (es.Statement | es.ModuleDeclaration)[]
 ): es.ExpressionStatement[] {
   return nodes.filter(
     statement =>
@@ -379,17 +378,15 @@ function getAssignmentStatements(
   ) as es.ExpressionStatement[]
 }
 
-function getIfStatements(nodes: Array<es.Statement | es.ModuleDeclaration>): es.IfStatement[] {
+function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {
   return nodes.filter(statement => statement.type === 'IfStatement') as es.IfStatement[]
 }
 
-function getForStatements(nodes: Array<es.Statement | es.ModuleDeclaration>): es.ForStatement[] {
+function getForStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.ForStatement[] {
   return nodes.filter(statement => statement.type === 'ForStatement') as es.ForStatement[]
 }
 
-function getWhileStatements(
-  nodes: Array<es.Statement | es.ModuleDeclaration>
-): es.WhileStatement[] {
+function getWhileStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.WhileStatement[] {
   return nodes.filter(statement => statement.type === 'WhileStatement') as es.WhileStatement[]
 }
 

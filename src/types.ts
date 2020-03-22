@@ -114,7 +114,7 @@ export interface BlockFrame {
   // the code directly outside the curly braces as there
   // may be variables declared there as well, such as in function definitions or for loops
   enclosingLoc?: es.SourceLocation | null
-  children: Array<DefinitionNode | BlockFrame>
+  children: (DefinitionNode | BlockFrame)[]
 }
 
 export interface DefinitionNode {
