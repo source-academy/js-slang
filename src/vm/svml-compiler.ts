@@ -340,15 +340,6 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   }
   return locals
 }
-
-// break and continue need to know how much to offset for the branch
-// instruction. When compiling the individual instruction, that info
-// is not available, so need to keep track of the break and continue
-// instruction's index to update the offset when the compiler finishes
-// compiling the loop
-const breakTracker: number[][] = []
-const continueTracker: number[][] = []
-
 function compileArguments(exprs: es.Node[], indexTable: Map<string, EnvEntry>[]) {
   let maxStackSize = 0
   for (let i = 0; i < exprs.length; i++) {
@@ -357,6 +348,24 @@ function compileArguments(exprs: es.Node[], indexTable: Map<string, EnvEntry>[])
   }
   return maxStackSize
 }
+
+// tuple of loop type, breaks, continues and continueDestinationIndex
+// break and continue need to know how much to offset for the branch
+// instruction. When compiling the individual instruction, that info
+// is not available, so need to keep track of the break and continue
+// instruction's index to update the offset when the compiler finishes
+// compiling the loop. We need to keep track of continue destination as
+// a for loop needs to know where the assignment instructions are.
+// This works because of the way a for loop is transformed to a while loop.
+// If the loop is a for loop, the last statement in the while loop block
+// is always the assignment expression
+let loopTracker: ['for' | 'while', number[], number[], number][] = []
+const LOOP_TYPE = 0
+const BREAK_INDEX = 1
+const CONT_INDEX = 2
+const CONT_DEST_INDEX = 3
+
+type taggedWhileStatement = es.WhileStatement & { isFor?: boolean }
 
 // tag loop blocks when compiling. Untagged (i.e. undefined) would mean
 // the block is not a loop block.
@@ -378,6 +387,13 @@ function compileStatements(
   const statements = node.body
   let maxStackSize = 0
   for (let i = 0; i < statements.length; i++) {
+    if (
+      node.isLoopBlock &&
+      i === statements.length - 1 &&
+      loopTracker[loopTracker.length - 1][LOOP_TYPE] === 'for'
+    ) {
+      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length
+    }
     const { maxStackSize: curExprSize } = compile(
       statements[i],
       indexTable,
@@ -468,7 +484,7 @@ const compilers = {
   // handled by insertFlag in compile function
   ReturnStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ReturnStatement
-    if (continueTracker.length > 0) {
+    if (loopTracker.length > 0) {
       throw Error('return not allowed in loops')
     }
     const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false)
@@ -700,13 +716,13 @@ const compilers = {
     const elements = node.elements
     let maxStackSize = 1
     for (let i = 0; i < elements.length; i++) {
-      addNullaryInstruction(OpCodes.DUP)
-      addUnaryInstruction(OpCodes.LGCI, i)
       // special case when element wasnt specified
       // i.e. [,]. Treat as undefined element
       if (elements[i] === null) {
         continue
       }
+      addNullaryInstruction(OpCodes.DUP)
+      addUnaryInstruction(OpCodes.LGCI, i)
       const { maxStackSize: m1 } = compile(elements[i], indexTable, false)
       addNullaryInstruction(OpCodes.STAG)
       maxStackSize = Math.max(1 + 2 + m1, maxStackSize)
@@ -748,13 +764,12 @@ const compilers = {
 
   // Loops need to have their own environment due to closures
   WhileStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
-    node = node as es.WhileStatement
+    node = node as taggedWhileStatement
     const condIndex = functionCode.length
     const { maxStackSize: m1 } = compile(node.test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
-    breakTracker.push([] as number[])
-    continueTracker.push([])
+    loopTracker.push([(node as taggedWhileStatement).isFor ? 'for' : 'while', [], [], NaN])
 
     // Add environment for loop and run in new environment
     const locals = localNames(node.body as es.BlockStatement, new Map())
@@ -769,13 +784,12 @@ const compilers = {
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
 
     // update BR instructions within loop
-    const breaks = breakTracker.pop()!
-    const continues = continueTracker.pop()!
-    for (const b of breaks) {
+    const curLoop = loopTracker.pop()!
+    for (const b of curLoop[BREAK_INDEX]) {
       functionCode[b][1] = functionCode.length - b
     }
-    for (const c of continues) {
-      functionCode[c][1] = condIndex - c
+    for (const c of curLoop[CONT_INDEX]) {
+      functionCode[c][1] = curLoop[CONT_DEST_INDEX] - c
     }
     addNullaryInstruction(OpCodes.LGCU)
     return { maxStackSize: Math.max(m1, m2), insertFlag }
@@ -784,15 +798,14 @@ const compilers = {
   BreakStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of break instruction
     addNullaryInstruction(OpCodes.POPENV)
-    breakTracker[breakTracker.length - 1].push(functionCode.length)
+    loopTracker[loopTracker.length - 1][BREAK_INDEX].push(functionCode.length)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
 
   ContinueStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of continue instruction
-    addNullaryInstruction(OpCodes.POPENV)
-    continueTracker[continueTracker.length - 1].push(functionCode.length)
+    loopTracker[loopTracker.length - 1][CONT_INDEX].push(functionCode.length)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
   },
@@ -883,6 +896,7 @@ export function compileToIns(
   SVMFunctions = []
   functionCode = []
   toCompile = []
+  loopTracker = []
   toplevel = true
   chapter = runChapter
 
@@ -951,7 +965,8 @@ function transformForLoopsToWhileLoops(program: es.Program) {
           : create.expressionStatement(init as es.Expression)
       const assignment2 = create.expressionStatement(update!)
       const newLoopBody = create.blockStatement([forLoopBody, assignment2])
-      const newLoop = create.whileStatement(newLoopBody, test!)
+      const newLoop = create.whileStatement(newLoopBody, test!) as taggedWhileStatement
+      newLoop.isFor = true
       const newBlockBody = [assignment1, newLoop]
       node = node as es.BlockStatement
       node.body = newBlockBody
