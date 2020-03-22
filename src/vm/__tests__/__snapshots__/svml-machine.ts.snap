@@ -70,6 +70,19 @@ display(NaN);",
 }
 `;
 
+exports[`primitive opcodes nullary handler 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "runtime();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes self-implemented ARRAY_LEN works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -790,7 +803,7 @@ Object {
 exports[`standard opcodes array opcodes work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const x = [1,2]; display(x[1]); display(x[3]);",
+  "code": "const x = [1,2,,1]; display(x[1]); display(x[8]);",
   "displayResult": Array [
     "2",
     "undefined",
@@ -810,10 +823,12 @@ Object {
   display(x);
   return 1;
 }
-display(f(3));",
+display(f(3));
+display(f);",
   "displayResult": Array [
     "3",
     "1",
+    "\\"<Function>\\"",
   ],
   "errors": Array [],
   "parsedErrors": "",
@@ -906,6 +921,102 @@ g(true);",
 }
 `;
 
+exports[`standard program execution block scoping works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = 1;
+function f(y) {
+  display(-x);
+}
+{
+  const x = 2;
+  function f(y) {
+    display(-x);
+  }
+  {
+    const x = 3;
+    if (true) {
+      display(x);
+    } else {
+      error('should not reach here');
+    }
+    display(x);
+    f();
+  }
+  display(x);
+}
+display(x);",
+  "displayResult": Array [
+    "3",
+    "3",
+    "-2",
+    "2",
+    "1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution const assignment throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = 1;
+x = 2;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "x",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Cannot assign new value to constant x.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution continue and break works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "while(true) {
+  break;
+  display(1);
+}
+let i = 0;
+for (i; i < 2; i = i + 1) {
+  if (i === 1) {
+    continue;
+  } else {
+    display(i);
+  }
+}",
+  "displayResult": Array [
+    "0",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution list functions work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -987,6 +1098,40 @@ Object {
     If you are certain your program is correct, press run again without editing your program.
       The time limit will be increased from 1 to 10 seconds.
       This page may be unresponsive for up to 10 seconds if you do so.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution return in loop throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  while(true) {
+    return 1;
+  }
+}
+f();",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: return not allowed in loops],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: return not allowed in loops",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

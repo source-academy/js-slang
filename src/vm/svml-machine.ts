@@ -338,11 +338,6 @@ export function NEW_CLOSURE() {
   HEAP[RES + CLOSURE_ENV_SLOT] = ENV
 }
 
-// expects closure in A, environment in B
-export function SET_CLOSURE_ENV() {
-  HEAP[A + CLOSURE_ENV_SLOT] = B
-}
-
 // stackframe nodes layout
 //
 // 0: tag  = -104
@@ -482,7 +477,7 @@ export function show_heap_value(address: number) {
   )
 }
 
-// SVMLa implementation
+// SVML implementation
 
 // We implement our machine with an array M that
 // contains subroutines. Each subroutine implements
@@ -501,10 +496,14 @@ export function show_heap_value(address: number) {
 // machine instruction of a real computer. In that case,
 // the subroutines could become machine language macros,
 // and the compiler could generate real machine code.
+// There are some exceptions due to the need to support
+// primitive functions or certain behavior
 
 const M: (() => void)[] = []
 
-M[OpCodes.NOP] = () => undefined
+M[OpCodes.NOP] = () => {
+  PC = PC + 1
+}
 
 M[OpCodes.LGCI] = () => {
   A = P[PC][LDCI_VALUE_OFFSET]
@@ -989,10 +988,7 @@ M[OpCodes.ERROR] = () => {
   POP_OS()
   D = RES
   externalFunctions.get(OpCodes.ERROR)(convertToJsFormat(D), convertToJsFormat(C))
-  NEW_UNDEFINED()
-  A = RES
-  PUSH_OS()
-  PC = PC + 1
+  // terminates
 }
 
 M[OpCodes.IS_ARRAY] = () => {
@@ -1289,6 +1285,7 @@ function convertToJsFormat(node: number): any {
 export function runWithP(p: Program, context: Context): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
+  P = []
   PC = -1
   HEAP = []
   FREE = 0

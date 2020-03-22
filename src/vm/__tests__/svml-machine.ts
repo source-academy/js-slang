@@ -264,12 +264,14 @@ Array [
           return 1;
         }
         display(f(3));
+        display(f);
         `,
       { chapter: 3.4 }
     ).toMatchInlineSnapshot(`
 Array [
   "3",
   "1",
+  "\\"<Function>\\"",
 ]
 `)
   })
@@ -284,8 +286,9 @@ Array [
 
   // NEWA, LDAG, STAG, DUP
   test('array opcodes work', () => {
-    return expectDisplayResult(`const x = [1,2]; display(x[1]); display(x[3]);`, { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`const x = [1,2,,1]; display(x[1]); display(x[8]);`, {
+      chapter: 3.4
+    }).toMatchInlineSnapshot(`
 Array [
   "2",
   "undefined",
@@ -560,7 +563,10 @@ Array [
     })
   })
 
-  // skipped nullary handler testing as they do not have deterministic output
+  test('nullary handler', () => {
+    return snapshotSuccess('runtime();', { chapter: 3.4 })
+  })
+
   test('unary handler', () => {
     return expectDisplayResult(
       stripIndent`
@@ -767,6 +773,91 @@ Array [
       The time limit will be increased from 1 to 10 seconds.
       This page may be unresponsive for up to 10 seconds if you do so."
 `)
+  })
+
+  test('block scoping works', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const x = 1;
+        function f(y) {
+          display(-x);
+        }
+        {
+          const x = 2;
+          function f(y) {
+            display(-x);
+          }
+          {
+            const x = 3;
+            if (true) {
+              display(x);
+            } else {
+              error('should not reach here');
+            }
+            display(x);
+            f();
+          }
+          display(x);
+        }
+        display(x);
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "3",
+  "3",
+  "-2",
+  "2",
+  "1",
+]
+`)
+  })
+  test('return in loop throws error', () => {
+    return expectParsedError(
+      stripIndent`
+          function f() {
+            while(true) {
+              return 1;
+            }
+          }
+          f();
+        `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`"Line -1: Error: return not allowed in loops"`)
+  })
+
+  test('continue and break works', () => {
+    return expectDisplayResult(
+      stripIndent`
+        while(true) {
+          break;
+          display(1);
+        }
+        let i = 0;
+        for (i; i < 2; i = i + 1) {
+          if (i === 1) {
+            continue;
+          } else {
+            display(i);
+          }
+        }
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "0",
+]
+`)
+  })
+
+  test('const assignment throws error', () => {
+    return expectParsedError(
+      stripIndent`
+        const x = 1;
+        x = 2;
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`"Line 2: Cannot assign new value to constant x."`)
   })
 })
 
