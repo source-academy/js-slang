@@ -1,15 +1,64 @@
 /* tslint:disable:object-literal-key-quotes no-string-literal */
-// import { typeCheck } from '../typeChecker'
-// import { createContext } from '../index'
-// import { parse as __parse } from '../parser'
-// import { typeCheck } from '../typeChecker'
+import { createContext } from '../index'
+import { parse as __parse } from '../parser'
+import { typeCheck } from '../typeChecker'
 
 // simple program to parse program and error if there are syntatical errors
-// function parse(code: any) {
-//   const program: any = __parse(code, createContext(1))
-//   expect(program).not.toBeUndefined()
-//   return program
-// }
+function parse(code: any) {
+  const program: any = __parse(code, createContext(1))
+  expect(program).not.toBeUndefined()
+  return program
+}
+
+describe('type checking overloaded binary primitives', () => {
+  it('works for the happy path', () => {
+    const code = `
+      function foo(x) {return x + 1;}
+      function bar(x, y) {return x + y;}
+      const a = 5;
+      const b = 3;
+      const c = foo(a) + bar(1, b);
+      3 + 4;
+    `
+    typeCheck(parse(code))
+    const code1 = `
+      function rec(x) {
+          return x === 1 ? x : rec(x-1);
+      }
+      rec(5);
+    `
+    typeCheck(parse(code1))
+  })
+
+  it('errors for unhappy path', () => {
+    const code = '4 + false;'
+    expect(() => typeCheck(parse(code))).toThrowError()
+    const code1 = '{const a = 4; const b = false; a + b;}'
+    expect(() => typeCheck(parse(code1))).toThrowError()
+    const code2 = `
+    {
+      function foo(x) {return x +1;}
+      const y = foo(false);
+    }
+    `
+    expect(() => typeCheck(parse(code2))).toThrowError()
+    const code3 = `{
+      function foo(x) {return x + 1}
+      function bar(x, y) {return x + y;}
+      const a = 5;
+      const b = 3;
+      const c = foo(a) + bar(1, false);
+    }`
+    expect(() => typeCheck(parse(code3))).toThrowError()
+    const code4 = `{
+      function rec(x) {
+          return x === 1 ? x : rec(x-1);
+      }
+      rec(false);
+    }`
+    expect(() => typeCheck(parse(code4))).toThrowError()
+  })
+})
 
 // describe('type checking builtin functions', () => {
 //   it('no errors for well defined use of builtin functions', () => {
@@ -42,48 +91,48 @@
 //   })
 // })
 
-describe('type checking conditional expression and if statement', () => {
-  // happy paths
-  it('does nothing now', () => {
-    expect(() => true).not.toThrowError()
-  })
-  // it('no errors for well typed conditional expression', () => {
-  //   const code = 'const flag1 = true; const flag2 = false; const x = flag1 && flag2 ? 1 : 2;'
-  //   const program = parse(code)
-  //   expect(() => typeCheck(program)).not.toThrowError()
-  // })
+// describe('type checking conditional expression and if statement', () => {
+// happy paths
+// it('does nothing now', () => {
+//   expect(() => true).not.toThrowError()
+// })
+// it('no errors for well typed conditional expression', () => {
+//   const code = 'const flag1 = true; const flag2 = false; const x = flag1 && flag2 ? 1 : 2;'
+//   const program = parse(code)
+//   expect(() => typeCheck(program)).not.toThrowError()
+// })
 
-  // it('no errors for well typed if statement', () => {
-  //   const code =
-  //     'const flag1 = true; const flag2 = false; if(flag1 || flag2) {const x = 5;} else {const y=4;}'
-  //   const program = parse(code)
-  //   expect(() => typeCheck(program)).not.toThrowError()
-  // })
+// it('no errors for well typed if statement', () => {
+//   const code =
+//     'const flag1 = true; const flag2 = false; if(flag1 || flag2) {const x = 5;} else {const y=4;}'
+//   const program = parse(code)
+//   expect(() => typeCheck(program)).not.toThrowError()
+// })
 
-  // // sad paths
-  // it('errors when adding number to string in conditional expression', () => {
-  //   const code = "const x = true ? 5 + 'foo' : 4 + 4;"
-  //   const program = parse(code)
-  //   expect(() => typeCheck(program)).toThrowError()
+// // sad paths
+// it('errors when adding number to string in conditional expression', () => {
+//   const code = "const x = true ? 5 + 'foo' : 4 + 4;"
+//   const program = parse(code)
+//   expect(() => typeCheck(program)).toThrowError()
 
-  //   const code2 = "const x = true ? 5 + 1 : 4 + 'foo';"
-  //   const program2 = parse(code2)
-  //   expect(program2).not.toBeUndefined()
-  //   expect(() => typeCheck(program2)).toThrowError()
-  // })
+//   const code2 = "const x = true ? 5 + 1 : 4 + 'foo';"
+//   const program2 = parse(code2)
+//   expect(program2).not.toBeUndefined()
+//   expect(() => typeCheck(program2)).toThrowError()
+// })
 
-  // it('errors when conditional test is not bool', () => {
-  //   const code = 'const x = 5 ? 1 : 2;'
-  //   const program = parse(code)
-  //   expect(() => typeCheck(program)).toThrowError()
-  // })
+// it('errors when conditional test is not bool', () => {
+//   const code = 'const x = 5 ? 1 : 2;'
+//   const program = parse(code)
+//   expect(() => typeCheck(program)).toThrowError()
+// })
 
-  // it('errors when if statement test is not bool', () => {
-  //   const code = 'if(5 + 4) {const x = 4;} else {const x = 5;}'
-  //   const program = parse(code)
-  //   expect(() => typeCheck(program)).toThrowError()
-  // })
-})
+// it('errors when if statement test is not bool', () => {
+//   const code = 'if(5 + 4) {const x = 4;} else {const x = 5;}'
+//   const program = parse(code)
+//   expect(() => typeCheck(program)).toThrowError()
+// })
+// })
 
 // describe('binary expressions', () => {
 //   it('errors when adding number to string', () => {

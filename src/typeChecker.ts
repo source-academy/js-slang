@@ -7,50 +7,55 @@ let typeIdCounter = 0
  * after finishing type checking
  * @param node
  */
-function traverse(node: es.Node) {
-  // @ts-ignore
-  node.typeVar = tVar(typeIdCounter)
-  typeIdCounter++
+function traverse(node: es.Node, constraints?: Constraint[]) {
+  if (constraints) {
+    // @ts-ignore
+    node.typeVar = applyConstraints(node.typeVar, constraints)
+  } else {
+    // @ts-ignore
+    node.typeVar = tVar(typeIdCounter)
+    typeIdCounter++
+  }
   switch (node.type) {
     case 'Program': {
       node.body.forEach(nodeBody => {
-        traverse(nodeBody)
+        traverse(nodeBody, constraints)
       })
       break
     }
     case 'UnaryExpression': {
-      traverse(node.argument)
+      traverse(node.argument, constraints)
       break
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
-      traverse(node.left)
-      traverse(node.right)
+      traverse(node.left, constraints)
+      traverse(node.right, constraints)
       break
     }
     case 'ExpressionStatement': {
-      traverse(node.expression)
+      traverse(node.expression, constraints)
       break
     }
     case 'BlockStatement': {
       node.body.forEach(nodeBody => {
-        traverse(nodeBody)
+        traverse(nodeBody, constraints)
       })
       break
     }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
-      traverse(node.test)
-      traverse(node.consequent)
+      traverse(node.test, constraints)
+      traverse(node.consequent, constraints)
       if (node.alternate) {
-        traverse(node.alternate)
+        traverse(node.alternate, constraints)
       }
       break
     }
     case 'CallExpression': {
-      traverse(node.callee)
+      traverse(node.callee, constraints)
       node.arguments.forEach(arg => {
-        traverse(arg)
+        traverse(arg, constraints)
       })
       break
     }
@@ -61,7 +66,7 @@ function traverse(node: es.Node) {
       if (arg === undefined || arg === null) {
         return
       }
-      traverse(arg)
+      traverse(arg, constraints)
       break
     }
     case 'VariableDeclaration': {
@@ -69,24 +74,29 @@ function traverse(node: es.Node) {
       if (init === undefined || init === null) {
         return
       }
-      traverse(init)
+      traverse(init, constraints)
       break
     }
     case 'ArrowFunctionExpression': {
       node.params.forEach(param => {
-        traverse(param)
+        traverse(param, constraints)
       })
-      traverse(node.body)
+      traverse(node.body, constraints)
       break
     }
     case 'FunctionDeclaration': {
-      // @ts-ignore
-      node.functionTypeVar = tVar(typeIdCounter)
+      if (constraints) {
+        // @ts-ignore
+        node.functionTypeVar = applyConstraints(node.functionTypeVar, constraints)
+      } else {
+        // @ts-ignore
+        node.functionTypeVar = tVar(typeIdCounter)
+      }
       typeIdCounter++
       node.params.forEach(param => {
-        traverse(param)
+        traverse(param, constraints)
       })
-      traverse(node.body)
+      traverse(node.body, constraints)
     }
     case 'Literal':
     case 'Identifier':
@@ -142,9 +152,10 @@ type Constraint = [VAR, TYPE]
  * @param program Parsed Program
  * @param context Additional context such as the week of our source program, comments etc.
  */
-export function typeCheck(program: es.Program | undefined): void {
+export function typeCheck(program: es.Program | undefined): es.Program | undefined {
+  typeIdCounter = 0
   if (program === undefined || program.body[0] === undefined) {
-    return
+    return program
   }
   const env: Env = initialEnv
   const constraints: Constraint[] = []
@@ -152,19 +163,22 @@ export function typeCheck(program: es.Program | undefined): void {
     // dont run type check for predefined functions as they include constructs we can't handle
     // like lists etc.
     if (program.body.length < 10) {
-      traverse(program)
-      console.log(program.body[0] as any)
-      // TODO: We need to do the top level transformation? and run the program as a single block
-      program.body.forEach(node => {
-        infer(node, env, constraints)
-      })
-      // console.log(env)
-      console.log(constraints)
+      const mockProgram: es.BlockStatement = {
+        type: 'BlockStatement',
+        body: program.body as es.Statement[]
+      }
+      traverse(mockProgram)
+      infer(mockProgram, env, constraints)
+      traverse(mockProgram, constraints)
+      // @ts-ignore
+      program.body = mockProgram.body
+      return program
     }
   } catch (e) {
     console.log(e)
     throw e
   }
+  return program
 }
 
 /**
@@ -357,6 +371,7 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
   }
 }
 
+/* tslint:disable cyclomatic-complexity */
 function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[] {
   // @ts-ignore
   const storedType: VAR = node.typeVar
@@ -447,11 +462,13 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
         if (declNode.type === 'FunctionDeclaration') {
           // @ts-ignore
           newEnv[declNode.id.name] = tForAll(
+            // @ts-ignore
             applyConstraints(declNode.functionTypeVar, newConstraints)
           )
         } else {
           // @ts-ignore
           newEnv[declNode.declarations[0].id.name] = tForAll(
+            // @ts-ignore
             applyConstraints(declNode.declarations[0].init.typeVar, newConstraints)
           )
         }
