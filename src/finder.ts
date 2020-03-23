@@ -1,6 +1,6 @@
-import { ancestor, findNodeAt, simple } from 'acorn-walk/dist/walk'
+import { ancestor, findNodeAt, recursive, WalkerCallback } from 'acorn-walk/dist/walk'
 import {
-  ArrowFunctionExpression,
+  ArrowFunctionExpression, BlockStatement, ForStatement,
   FunctionDeclaration,
   Identifier,
   Node,
@@ -37,26 +37,43 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
 
   const declarations: Node[] = []
   for (const root of ancestors) {
-    simple(root, {
-      VariableDeclarator(node: VariableDeclarator) {
+    recursive(root, undefined,{
+      BlockStatement(node: BlockStatement, state: any, callback) {
+        if (containsNode(node, identifier)) {
+          node.body.map(n => callback(n, state))
+        }
+      },
+      ForStatement(node: ForStatement, state: any, callback: WalkerCallback<any>) {
+        if (containsNode(node, identifier)) {
+          callback(node.init as any, state)
+          callback(node.body as any, state)
+        }
+      },
+      VariableDeclarator(node: VariableDeclarator, state: any, callback: WalkerCallback<any>) {
         if ((node.id as Identifier).name === identifier.name) {
           declarations.push(node.id)
         }
       },
-      FunctionDeclaration(node: FunctionDeclaration) {
+      FunctionDeclaration(node: FunctionDeclaration, state: any, callback: WalkerCallback<any>) {
         if (node.id && (node.id as Identifier).name === identifier.name) {
           declarations.push(node.id)
-        } else {
+        } else if (containsNode(node, identifier)) {
           const param = node.params.find(n => (n as Identifier).name === identifier.name)
           if (param) {
             declarations.push(param)
+          } else {
+            callback(node.body, state)
           }
         }
       },
-      ArrowFunctionExpression(node: ArrowFunctionExpression) {
-        const param = node.params.find(n => (n as Identifier).name === identifier.name)
-        if (param) {
-          declarations.push(param)
+      ArrowFunctionExpression(node: ArrowFunctionExpression, state: any, callback: any) {
+        if (containsNode(node, identifier)) {
+          const param = node.params.find(n => (n as Identifier).name === identifier.name)
+          if (param) {
+            declarations.push(param)
+          } else {
+            callback(node.body, state)
+          }
         }
       }
     })
@@ -66,6 +83,20 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
   }
 
   return undefined
+}
+
+function containsNode(nodeOuter: Node, nodeInner: Node) {
+  const outerLoc = nodeOuter.loc
+  const innerLoc = nodeInner.loc
+  return (
+    outerLoc && innerLoc &&
+    ((outerLoc.start.line < innerLoc.start.line &&
+    outerLoc.end.line >= innerLoc.end.line) ||
+    (outerLoc.start.line === innerLoc.start.line &&
+      outerLoc.end.line === innerLoc.end.line &&
+      outerLoc.start.column <= innerLoc.start.column &&
+      outerLoc.end.column >= innerLoc.end.column))
+  )
 }
 
 function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
