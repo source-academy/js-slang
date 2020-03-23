@@ -35,6 +35,9 @@ export const identifierType = 'identifier'
 // String type for thunked application of function
 export const applicationType = 'application'
 
+// String type for thunked conditional statement
+export const conditionalType = 'conditional'
+
 /**
  * (NOT a primitive function in Lazy Source)
  * Given any value, check if that value is a Thunk
@@ -82,6 +85,25 @@ export function isThunkedIdentifier(v: TranspilerThunk<any>): boolean {
 export function isThunkedApplication(v: TranspilerThunk<any>): boolean {
   return v.type === applicationType
 }
+
+/**
+ * (NOT a primitive function in Lazy Source)
+ * Given a thunked expression, check if the expression
+ * represents a conditional statement.
+ *
+ * @param v The thunk to be checked.
+ */
+export function isThunkedConditional(v: TranspilerThunk<any>): boolean {
+  return v.type === conditionalType
+}
+
+/**
+ * Check if we are able to determine the Thunk's type
+ * before the expression is run eagerly.
+ * @param v The Thunk to be checked.
+ */
+export const isKnownThunkType = (v: TranspilerThunk<any>) =>
+  !isThunkedIdentifier(v) && !isThunkedApplication(v) && !isThunkedConditional(v)
 
 /**
  * A class representing an error where force receives
@@ -275,8 +297,7 @@ export function makeConditionalThunk<T>(
     stringRepresentation ||
     predicate.toString() + ' ? ' + consequent.toString() + ' : ' + alternative.toString()
   return {
-    // assume consequent.type === alternative.type
-    type: consequent.type,
+    type: conditionalType,
     value: () => {
       const evaluatePredicate = evaluateLazyValue(predicate)
       if (evaluatePredicate) {

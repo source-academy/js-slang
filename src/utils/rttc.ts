@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { TranspilerThunk, isThunkedIdentifier, isThunkedApplication } from '../stdlib/lazy'
+import { TranspilerThunk, isKnownThunkType } from '../stdlib/lazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'
 
@@ -103,14 +103,6 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
 // ====================================================
 //  Runtime Type Checking for Lazy Evaluation (Thunks)
 // ====================================================
-
-/**
- * Check if we are able to determine the Thunk's type
- * before the expression is run eagerly.
- * @param v The Thunk to be checked.
- */
-const isKnownThunkType = (v: TranspilerThunk<Value>) =>
-  !isThunkedIdentifier(v) && !isThunkedApplication(v)
 
 /**
  * Checks if a Thunk is a number, if the type is known.
