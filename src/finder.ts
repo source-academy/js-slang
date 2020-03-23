@@ -1,6 +1,8 @@
 import { ancestor, findNodeAt, recursive, WalkerCallback } from 'acorn-walk/dist/walk'
 import {
-  ArrowFunctionExpression, BlockStatement, ForStatement,
+  ArrowFunctionExpression,
+  BlockStatement, ForInStatement, ForOfStatement,
+  ForStatement,
   FunctionDeclaration,
   Identifier,
   Node,
@@ -37,7 +39,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
 
   const declarations: Node[] = []
   for (const root of ancestors) {
-    recursive(root, undefined,{
+    recursive(root, undefined, {
       BlockStatement(node: BlockStatement, state: any, callback) {
         if (containsNode(node, identifier)) {
           node.body.map(n => callback(n, state))
@@ -46,12 +48,19 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
       ForStatement(node: ForStatement, state: any, callback: WalkerCallback<any>) {
         if (containsNode(node, identifier)) {
           callback(node.init as any, state)
-          callback(node.body as any, state)
+          callback(node.body, state)
         }
       },
-      VariableDeclarator(node: VariableDeclarator, state: any, callback: WalkerCallback<any>) {
-        if ((node.id as Identifier).name === identifier.name) {
-          declarations.push(node.id)
+      ForInStatement(node: ForInStatement, state: any, callback: WalkerCallback<any>) {
+        if (containsNode(node, identifier)) {
+          callback(node.left, state)
+          callback(node.body, state)
+        }
+      },
+      ForOfStatement(node: ForOfStatement, state: any, callback: WalkerCallback<any>) {
+        if (containsNode(node, identifier)) {
+          callback(node.left, state)
+          callback(node.body, state)
         }
       },
       FunctionDeclaration(node: FunctionDeclaration, state: any, callback: WalkerCallback<any>) {
@@ -75,6 +84,11 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
             callback(node.body, state)
           }
         }
+      },
+      VariableDeclarator(node: VariableDeclarator, state: any, callback: WalkerCallback<any>) {
+        if ((node.id as Identifier).name === identifier.name) {
+          declarations.push(node.id)
+        }
       }
     })
     if (declarations.length > 0) {
@@ -89,13 +103,13 @@ function containsNode(nodeOuter: Node, nodeInner: Node) {
   const outerLoc = nodeOuter.loc
   const innerLoc = nodeInner.loc
   return (
-    outerLoc && innerLoc &&
-    ((outerLoc.start.line < innerLoc.start.line &&
-    outerLoc.end.line >= innerLoc.end.line) ||
-    (outerLoc.start.line === innerLoc.start.line &&
-      outerLoc.end.line === innerLoc.end.line &&
-      outerLoc.start.column <= innerLoc.start.column &&
-      outerLoc.end.column >= innerLoc.end.column))
+    outerLoc &&
+    innerLoc &&
+    ((outerLoc.start.line < innerLoc.start.line && outerLoc.end.line >= innerLoc.end.line) ||
+      (outerLoc.start.line === innerLoc.start.line &&
+        outerLoc.end.line === innerLoc.end.line &&
+        outerLoc.start.column <= innerLoc.start.column &&
+        outerLoc.end.column >= innerLoc.end.column))
   )
 }
 
