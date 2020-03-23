@@ -21,29 +21,23 @@ export function throwIfTimeout(start: number, current: number, line: number, col
   }
 }
 
-export function forceIt(
-  val: any
-) : any {
+export function forceIt(val: any): any {
+  if (val !== undefined && val !== null && val.isThunk === true) {
+    require('util').inspect.defaultOptions.depth = null
 
-  if((val !== undefined && val !== null) && val.isThunk === true) {
-
-    require("util").inspect.defaultOptions.depth = null;
-
-    if(val.isMemoized) {
-      return val.memoizedValue;
+    if (val.isMemoized) {
+      return val.memoizedValue
     }
 
-    const evaluatedValue = forceIt(val.expr());
+    const evaluatedValue = forceIt(val.expr())
 
-    val.isMemoized = true;
-    val.memoizedValue = evaluatedValue;
+    val.isMemoized = true
+    val.memoizedValue = evaluatedValue
 
-    return evaluatedValue;
-
+    return evaluatedValue
   } else {
-    return val;
+    return val
   }
-
 }
 
 export function callIfFuncAndRightArgs(

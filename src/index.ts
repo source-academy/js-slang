@@ -19,7 +19,8 @@ import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
   Context,
-  Error as ResultError, EvaluationMethod,
+  Error as ResultError,
+  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,

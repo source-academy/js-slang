@@ -57,7 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type EvaluationMethod = 'strict' | 'lazy';
+export type EvaluationMethod = 'strict' | 'lazy'
 
 export interface Context<T = any> {
   /** The source version used */

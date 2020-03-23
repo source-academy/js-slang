@@ -90,8 +90,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: "interpreter",
-      evaluationMethod: options.evaluationMethod === undefined ? "strict" : options.evaluationMethod
+      executionMethod: 'interpreter',
+      evaluationMethod: options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
     })
   )
   if (options.native) {
@@ -99,8 +99,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(parsed, nativeTestContext.contextId, true,
-        options.evaluationMethod === undefined ? "strict" : options.evaluationMethod).transpiled
+      transpiled = transpile(
+        parsed,
+        nativeTestContext.contextId,
+        true,
+        options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
+      ).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments
@@ -120,7 +124,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       await runInContext(code, nativeTestContext, {
         scheduler,
         executionMethod: 'native',
-        evaluationMethod: options.evaluationMethod === undefined ? "strict" : options.evaluationMethod
+        evaluationMethod:
+          options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
       })
     )
     const propertiesThatShouldBeEqual = [

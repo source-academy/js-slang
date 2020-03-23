@@ -66,6 +66,16 @@ const addSome2 = addSome(2);
 
 addSome2(3);
 `,
-    {evaluationMethod: 'lazy', native: true}
-  ).toBe(6);
+    { evaluationMethod: 'lazy', native: true }
+  ).toBe(6)
+})
+
+test('Tail calls work', () => {
+  return expectResult(`
+function test(a, b) { return a === 1 ? a : b; }
+
+function test2(a) { return test(a, head(null)); }
+
+test2(1);
+`, {evaluationMethod: 'lazy', chapter: 2, native: true}).toBe(1);
 })

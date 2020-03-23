@@ -190,7 +190,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
       // If it's undefined then we're dealing with a thunk
-      if(functionsToStringMap.get(node)! !== undefined) {
+      if (functionsToStringMap.get(node)! !== undefined) {
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
           create.literal(functionsToStringMap.get(node)!)
@@ -211,7 +211,10 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(program: es.Program, evaluationMethod : EvaluationMethod) {
+function transformReturnStatementsToAllowProperTailCalls(
+  program: es.Program,
+  evaluationMethod: EvaluationMethod
+) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -233,14 +236,11 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, ev
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
-        const args =
-          evaluationMethod === 'strict' ? expression.arguments : [] as es.Expression[];
+        const args = evaluationMethod === 'strict' ? expression.arguments : ([] as es.Expression[])
 
-        if(evaluationMethod === 'lazy') {
-          for(const arg of expression.arguments) {
-
-            args.push(delayIt(arg as es.Expression));
-
+        if (evaluationMethod === 'lazy') {
+          for (const arg of expression.arguments) {
+            args.push(delayIt(arg as es.Expression))
           }
         }
 
@@ -248,10 +248,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, ev
           create.property('isTail', create.literal(true)),
           create.property('function', expression.callee as es.Expression),
           create.property('functionName', create.literal(functionName)),
-          create.property(
-            'arguments',
-            create.arrayExpression(args as es.Expression[])
-          ),
+          create.property('arguments', create.arrayExpression(args as es.Expression[])),
           create.property('line', create.literal(line)),
           create.property('column', create.literal(column))
         ])
@@ -276,32 +273,33 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, ev
 }
 
 function delayIt(expr: es.Expression) {
-
-  const exprThunked = create.blockArrowFunction([], [
-    create.returnStatement(expr)
-  ], expr.loc === null ? undefined : expr.loc);
+  const exprThunked = create.blockArrowFunction(
+    [],
+    [create.returnStatement(expr)],
+    expr.loc === null ? undefined : expr.loc
+  )
 
   const obj = create.objectExpression([
     create.property('isThunk', create.literal(true)),
     create.property('memoizedValue', create.literal(0)),
     create.property('isMemoized', create.literal(false)),
     create.property('expr', exprThunked)
-  ]);
-  return obj;
+  ])
+  return obj
 }
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program, evaluationMethod : EvaluationMethod) {
-
+function transformCallExpressionsToCheckIfFunction(
+  program: es.Program,
+  evaluationMethod: EvaluationMethod
+) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
-      const args = evaluationMethod === 'strict' ? node.arguments : [] as es.Expression[];
+      const args = evaluationMethod === 'strict' ? node.arguments : ([] as es.Expression[])
 
-      if(evaluationMethod === 'lazy') {
-        for(const arg of node.arguments) {
-
-          args.push(delayIt(arg as es.Expression));
-
+      if (evaluationMethod === 'lazy') {
+        for (const arg of node.arguments) {
+          args.push(delayIt(arg as es.Expression))
         }
       }
 
@@ -673,56 +671,61 @@ function addInfiniteLoopProtection(program: es.Program) {
   })
 }
 
-export function transpile(program: es.Program, id: number, skipUndefinedVariableErrors = false, evaluationMethod : EvaluationMethod = 'strict') {
-
-    contextId = id
-    refreshLatestIdentifiers(program)
-    NATIVE_STORAGE[contextId].globals = {
-      variables: new Map(),
-      previousScope: NATIVE_STORAGE[contextId].globals
-    }
-    if (program.body.length === 0) {
-      return { transpiled: '' }
-    }
-    const functionsToStringMap = generateFunctionsToStringMap(program)
-    transformReturnStatementsToAllowProperTailCalls(program, evaluationMethod)
-    transformCallExpressionsToCheckIfFunction(program, evaluationMethod)
-    transformUnaryAndBinaryOperationsToFunctionCalls(program)
-    transformSomeExpressionsToCheckIfBoolean(program)
-    transformPropertyAssignment(program)
-    transformPropertyAccess(program)
-    checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
-      program,
-      skipUndefinedVariableErrors
-    )
-    transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
-    wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
-    addInfiniteLoopProtection(program)
-    const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
-    const statements = program.body as es.Statement[]
-    const lastStatement = statements.pop() as es.Statement
-    const {
+export function transpile(
+  program: es.Program,
+  id: number,
+  skipUndefinedVariableErrors = false,
+  evaluationMethod: EvaluationMethod = 'strict'
+) {
+  contextId = id
+  refreshLatestIdentifiers(program)
+  NATIVE_STORAGE[contextId].globals = {
+    variables: new Map(),
+    previousScope: NATIVE_STORAGE[contextId].globals
+  }
+  if (program.body.length === 0) {
+    return { transpiled: '' }
+  }
+  const functionsToStringMap = generateFunctionsToStringMap(program)
+  transformReturnStatementsToAllowProperTailCalls(program, evaluationMethod)
+  transformCallExpressionsToCheckIfFunction(program, evaluationMethod)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program)
+  transformSomeExpressionsToCheckIfBoolean(program)
+  transformPropertyAssignment(program)
+  transformPropertyAccess(program)
+  checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
+    program,
+    skipUndefinedVariableErrors
+  )
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
+  addInfiniteLoopProtection(program)
+  const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
+  const statements = program.body as es.Statement[]
+  const lastStatement = statements.pop() as es.Statement
+  const {
+    lastStatementStoredInResult,
+    evalMap
+  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+  const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
+    wrapWithPreviouslyDeclaredGlobals([
+      ...statements,
       lastStatementStoredInResult,
-      evalMap
-    } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
-    const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
-      wrapWithPreviouslyDeclaredGlobals([
-        ...statements,
-        lastStatementStoredInResult,
-        ...statementsToSaveDeclaredGlobals
-      ]),
-      create.returnStatement(create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult]))
-    ])
-    program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
+      ...statementsToSaveDeclaredGlobals
+    ]),
+    create.returnStatement(
+      create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
+    )
+  ])
+  program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
-    /*require("util").inspect.defaultOptions.depth = null;
+  /*require("util").inspect.defaultOptions.depth = null;
     console.log(program);*/
 
-    const map = new SourceMapGenerator({ file: 'source' })
-    const transpiled = generate(program, { sourceMap: map })
-    const codeMap = map.toJSON()
-    return { transpiled, codeMap, evalMap }
-
+  const map = new SourceMapGenerator({ file: 'source' })
+  const transpiled = generate(program, { sourceMap: map })
+  const codeMap = map.toJSON()
+  return { transpiled, codeMap, evalMap }
 }
 
 function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
