@@ -278,11 +278,11 @@ export function makeConditionalThunk<T>(
     // assume consequent.type === alternative.type
     type: consequent.type,
     value: () => {
-      const evaluatePredicate = evaluateThunk(predicate)
+      const evaluatePredicate = evaluateLazyValue(predicate)
       if (evaluatePredicate) {
-        return evaluateThunk(consequent)
+        return evaluateLazyValue(consequent)
       } else {
-        return evaluateThunk(alternative)
+        return evaluateLazyValue(alternative)
       }
     },
     toString: () => stringRep,
@@ -372,7 +372,7 @@ export function applyFunctionToThunks(
     type: applicationType,
     value: () => {
       // evaluate possibly lazy value representing the function
-      const originalFunction = evaluateThunk(fun)
+      const originalFunction = evaluateLazyValue(fun)
       // originalFunction might not be a function!
       // (didn't have chance to check this at transpile time)
       if (typeof originalFunction === 'function') {
