@@ -1,4 +1,4 @@
-% Created 2020-03-20 Fri 10:54
+% Created 2020-03-23 Mon 13:45
 % Intended LaTeX compiler: pdflatex
 \input source_header.tex
 \newcommand{\qed}{$\Box$}
@@ -98,6 +98,7 @@ Some notes on program execution:
 \item Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
 \item As a result, all programs here are concurrent programs, even if they do not call \texttt{concurrent\_execute}.
 \item None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
+\item To simulate high interleaving of concurrent threads, all enqueues and dequeues from \(\textit{tq}\) is done randomly: a thread is inserted into a random index, or popped from a random index in \(\textit{tq}\).
 \end{enumerate}
 
 \paragraph{Thread timeout}
@@ -121,8 +122,10 @@ where the primed values are just like normal VM code execution, and the timeout 
 \paragraph{Starting \texttt{EXECUTE}}
 \label{sec:org6246ae4}
 \(\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})}\\\)
-\(\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), \textit{to}-1)\\\)
-Closures representing threads \(i\) (two-tuples of \(\textit{pc}_i\) and \(\textit{e}_i\)) on the operand stack are converted into threads \(i\). Thread \(i\) is a four-tuple of each thread \(i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. Initially, thread \(i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
+\(\transition (\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), c)\\\)
+Closures representing threads \(i\) (two-tuples of \(\textit{pc}_i\) and \(\textit{e}_i\)) on the operand stack are converted into threads \(i\). Thread \(i\) is a four-tuple of each thread \(i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). Initially, thread \(i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
+The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. This is shown by the disappearance of \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), meaning that the thread that calls \texttt{concurrent\_execute} is enqueued on the thread queue.
+Some next thread is dequeued from the thread queue, \(\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j\), with a constant timeout value \(c\).
 
 \paragraph{Returning from thread}
 \label{sec:org3702574}
