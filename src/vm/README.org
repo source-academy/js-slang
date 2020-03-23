@@ -47,6 +47,7 @@ Some notes on program execution:
 0. Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
 0. As a result, all programs here are concurrent programs, even if they do not call =concurrent_execute=.
 0. None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
+0. To simulate high interleaving of concurrent threads, all enqueues and dequeues from $\textit{tq}$ is done randomly: a thread is inserted into a random index, or popped from a random index in $\textit{tq}$.
 
 **** Thread timeout
 $\\\Rule{}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.((\textit{os}_1, \textit{pc}_1, \textit{e}_1).\textit{rs}_1), c)}\\$
@@ -65,8 +66,10 @@ where the primed values are just like normal VM code execution, and the timeout 
 
 **** Starting =EXECUTE=
 $\\\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})}\\$
-$\transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), \textit{to}-1)\\$
-Closures representing threads $i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $i$. Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
+$\transition (\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, ((\langle \rangle, \textit{pc}_1, \textit{e}_1).\langle \rangle). \cdots .((\langle \rangle, \textit{pc}_n, \textit{e}_n).\langle \rangle), c)\\$
+Closures representing threads $i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $i$. Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
+The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. This is shown by the disappearance of $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, meaning that the thread that calls =concurrent_execute= is enqueued on the thread queue.
+Some next thread is dequeued from the thread queue, $\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j$, with a constant timeout value $c$.
 
 **** Returning from thread
 $\\\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}\\$
