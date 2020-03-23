@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, ExecutionMethod, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, EvaluationMethod, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -33,7 +33,7 @@ interface TestOptions {
   chapter?: number
   testBuiltins?: TestBuiltins
   native?: boolean
-  executionMethod?: ExecutionMethod
+  evaluationMethod?: EvaluationMethod
 }
 
 export function createTestContext({
@@ -90,7 +90,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: options.executionMethod === undefined ? "interpreter_strict" : options.executionMethod
+      executionMethod: "interpreter",
+      evaluationMethod: options.evaluationMethod === undefined ? "strict" : options.evaluationMethod
     })
   )
   if (options.native) {
@@ -98,7 +99,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(parsed, nativeTestContext.contextId, true).transpiled
+      transpiled = transpile(parsed, nativeTestContext.contextId, true,
+        options.evaluationMethod === undefined ? "strict" : options.evaluationMethod).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments
@@ -117,7 +119,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       nativeTestContext,
       await runInContext(code, nativeTestContext, {
         scheduler,
-        executionMethod: 'native'
+        executionMethod: 'native',
+        evaluationMethod: options.evaluationMethod === undefined ? "strict" : options.evaluationMethod
       })
     )
     const propertiesThatShouldBeEqual = [

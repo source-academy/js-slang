@@ -56,7 +56,8 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter_lazy' | 'interpreter_strict' | 'auto'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type EvaluationMethod = 'strict' | 'lazy';
 
 export interface Context<T = any> {
   /** The source version used */
@@ -104,6 +105,8 @@ export interface Context<T = any> {
   contextId: number
 
   executionMethod: ExecutionMethod
+
+  evaluationMethod: EvaluationMethod
 }
 
 // tslint:disable:no-any

@@ -21,6 +21,31 @@ export function throwIfTimeout(start: number, current: number, line: number, col
   }
 }
 
+export function forceIt(
+  val: any
+) : any {
+
+  if((val !== undefined && val !== null) && val.isThunk === true) {
+
+    require("util").inspect.defaultOptions.depth = null;
+
+    if(val.isMemoized) {
+      return val.memoizedValue;
+    }
+
+    const evaluatedValue = forceIt(val.expr());
+
+    val.isMemoized = true;
+    val.memoizedValue = evaluatedValue;
+
+    return evaluatedValue;
+
+  } else {
+    return val;
+  }
+
+}
+
 export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,
@@ -31,10 +56,14 @@ export function callIfFuncAndRightArgs(
     start: { line, column },
     end: { line, column }
   })
+
+  candidate = forceIt(candidate)
+
   if (typeof candidate === 'function') {
     if (candidate.transformedFunction === undefined) {
       try {
-        return candidate(...args)
+        const forcedArgs = args.map(forceIt)
+        return candidate(...forcedArgs)
       } catch (error) {
         // if we already handled the error, simply pass it on
         if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
@@ -57,6 +86,7 @@ export function callIfFuncAndRightArgs(
 }
 
 export function boolOrErr(candidate: any, line: number, column: number) {
+  candidate = forceIt(candidate)
   const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate
@@ -66,6 +96,7 @@ export function boolOrErr(candidate: any, line: number, column: number) {
 }
 
 export function unaryOp(operator: UnaryOperator, argument: any, line: number, column: number) {
+  argument = forceIt(argument)
   const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column),
     operator,
@@ -95,6 +126,8 @@ export function binaryOp(
   line: number,
   column: number
 ) {
+  left = forceIt(left)
+  right = forceIt(right)
   const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column),
     operator,

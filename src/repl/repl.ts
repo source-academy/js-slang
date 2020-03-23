@@ -8,7 +8,8 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   const context = createContext(chapter)
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
-    executionMethod: 'interpreter_lazy',
+    executionMethod: 'native',
+    evaluationMethod: 'lazy',
     useSubst
   }
   runInContext(prelude, context, options).then(preludeResult => {
