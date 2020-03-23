@@ -79,8 +79,15 @@ function traverse(node: es.Node) {
       traverse(node.body)
       break
     }
-    case 'FunctionDeclaration':
-    // const id
+    case 'FunctionDeclaration': {
+      // @ts-ignore
+      node.functionTypeVar = tVar(typeIdCounter)
+      typeIdCounter++
+      node.params.forEach(param => {
+        traverse(param)
+      })
+      traverse(node.body)
+    }
     case 'Literal':
     case 'Identifier':
     default:
@@ -229,6 +236,32 @@ function extractFreeVariablesAndGenFresh(polyType: FORALL): TYPE {
 }
 
 /**
+ * Going down the DAG that is the constraint list
+ */
+function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
+  switch (type.nodeType) {
+    case 'Named': {
+      return type
+    }
+    case 'Var': {
+      for (const constraint of constraints) {
+        if (constraint[0].name === type.name) {
+          return applyConstraints(constraint[1], constraints)
+        }
+      }
+      return type
+    }
+    case 'Function': {
+      return {
+        ...type,
+        fromTypes: type.fromTypes.map(fromType => applyConstraints(fromType, constraints)),
+        toType: applyConstraints(type.toType, constraints)
+      }
+    }
+  }
+}
+
+/**
  * Check if a type contains a reference to a name, to check for an infinite type
  * e.g. A = B -> A
  * @param type
@@ -255,16 +288,7 @@ function occursOnLeftInConstraintList(
 ): Constraint[] {
   for (const constraint of constraints) {
     if (constraint[0].name === LHS.name) {
-      // check if we shoud add a new constraint t'=t'' or t''=t', according to spec
-      if (constraint[1].nodeType === 'Var') {
-        for (const cons of constraints) {
-          // if t'', which is constraint[1] already occurs earlier in the form t'', we need
-          // to ensure our new constraint to be added is of the form t''=t'
-          if (cons[0].name === constraint[1].name) {
-            return addToConstraintList(constraints, [constraint[1], RHS])
-          }
-        }
-      }
+      // second rule of spec for adding new constraint, when LHS occurs earlier in original constrain list
       return addToConstraintList(constraints, [RHS, constraint[1]])
     }
   }
@@ -313,7 +337,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
     } else if (cannotBeResolvedIfNumerical(LHS, RHS)) {
       throw Error(`Expected a number, got ${JSON.stringify(RHS)} instead.`)
     }
-    return occursOnLeftInConstraintList(LHS, constraints, RHS)
+    // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
+    return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
   } else if (RHS.nodeType === 'Var') {
     // swap around so the type var is on the left hand side
     return addToConstraintList(constraints, [RHS, LHS])
@@ -382,15 +407,56 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       return infer(argNode, env, addToConstraintList(constraints, [storedType, argNode.typeVar]))
     }
     case 'BlockStatement': {
-      // assuming no const decl for now
       const newEnv = cloneEnv(env) // create new scope
       const lastNodeIndex = node.body.findIndex((currentNode, index) => {
         return index === node.body.length - 1 || currentNode.type === 'ReturnStatement'
       })
+      let lastDeclNodeIndex = -1
+      let lastDeclFound = false
+      let n = node.body.length - 1
+      const declNodes: Array<es.FunctionDeclaration | es.VariableDeclaration> = []
+      while (n >= 0) {
+        const currNode = node.body[n]
+        if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
+          // in the event we havent yet found our last decl
+          // and we are not after our first return statement
+          if (!lastDeclFound && n <= lastNodeIndex) {
+            lastDeclFound = true
+            lastDeclNodeIndex = n
+          }
+          declNodes.push(currNode)
+        }
+        n--
+      }
+      declNodes.forEach(declNode => {
+        if (declNode.type === 'FunctionDeclaration') {
+          // @ts-ignore
+          newEnv[declNode.id.name] = declNode.functionTypeVar
+        } else {
+          // @ts-ignore
+          newEnv[declNode.declarations[0].id.name] = declNode.declarations[0].init.typeVar
+        }
+      })
       // @ts-ignore
       const lastNodeType = node.body[lastNodeIndex].typeVar
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
-      for (let i = 0; i <= lastNodeIndex; i++) {
+      for (let i = 0; i <= lastDeclNodeIndex; i++) {
+        newConstraints = infer(node.body[i], newEnv, newConstraints)
+      }
+      declNodes.forEach(declNode => {
+        if (declNode.type === 'FunctionDeclaration') {
+          // @ts-ignore
+          newEnv[declNode.id.name] = tForAll(
+            applyConstraints(declNode.functionTypeVar, newConstraints)
+          )
+        } else {
+          // @ts-ignore
+          newEnv[declNode.declarations[0].id.name] = tForAll(
+            applyConstraints(declNode.declarations[0].init.typeVar, newConstraints)
+          )
+        }
+      })
+      for (let i = lastDeclNodeIndex + 1; i <= lastNodeIndex; i++) {
         newConstraints = infer(node.body[i], newEnv, newConstraints)
       }
       return newConstraints
@@ -451,95 +517,48 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       return newConstraints
     }
     case 'ArrowFunctionExpression': {
-      // const newTypes: TYPE[] = []
-      // node.params.forEach(() => {
-      //   const newType = newTypeVar(ctx)
-      //   newTypes.push(newType)
-      // })
-      // // clone scope only after we have accounted for all the new type variables to be created
-      // const newCtx = cloneCtx(ctx)
-      // node.params.forEach((param: es.Identifier, index) => {
-      //   const newType = newTypes[index]
-      //   addToCtx(newCtx, param.name, newType)
-      // })
-      // const [bodyType, subst] = infer(node.body, newCtx)
-      // const inferredType: FUNCTION = {
-      //   nodeType: 'Function',
-      //   fromTypes: applySubstToTypes(subst, newTypes),
-      //   toType: bodyType
-      // }
-      // return [inferredType, subst]
-      return []
+      const newEnv = cloneEnv(env) // create new scope
+      const paramNodes = node.params
+      // @ts-ignore
+      const paramTypes: VAR[] = paramNodes.map(paramNode => paramNode.typeVar)
+      const bodyNode = node.body
+      // @ts-ignore
+      paramTypes.push(bodyNode.typeVar)
+      const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
+      paramNodes.forEach((paramNode: es.Identifier) => {
+        // @ts-ignore
+        newEnv[paramNode.name] = paramNode.typeVar
+      })
+      return infer(bodyNode, newEnv, newConstraints)
     }
     case 'VariableDeclaration': {
-      // forsee issues with recursive declarations
-      // assuming constant declaration for now (check the 'kind' field)
-      // const declarator = node.declarations[0] // exactly 1 declaration allowed per line
-      // const init = declarator.init
-
-      // // moved to preprocessDeclaration
-      // const id = declarator.id
-      // if (!init || id.type !== 'Identifier') {
-      //   throw Error('Either no initialization or not an identifier on LHS')
-      // }
-      // // // get a reference to the type variable representing our new variable
-      // // // this is so we know of any references made to our variable in the init
-      // // // (i.e. perhaps in some kind of recursive definition)
-      // // const newType = newTypeVar(ctx)
-      // // addToCtx(ctx, id.name, newType)
-
-      // const [inferredInitType, subst1] = infer(init, ctx)
-      // generalize(ctx.env, inferredInitType) // REDUNDANT CALL
-      // // In case we made a reference to our declared variable in our init, need to type
-      // // check the usage to see if the inferred init type is compatible with the inferred type of our
-      // // type variable based on the usage inside init
-      // const varType = ctx.env[id.name] as VAR
-      // const subst2 = unify(inferredInitType, applySubstToType(subst1, varType))
-      // const composedSubst = composeSubsitutions(subst1, subst2)
-      // addToCtx(ctx, id.name, applySubstToType(composedSubst, inferredInitType))
-      // return [tNamedUndef, composedSubst]
-      return []
+      const initNode = node.declarations[0].init
+      if (!initNode) {
+        throw Error('No initialization')
+      }
+      // @ts-ignore
+      return infer(initNode, env, addToConstraintList(constraints, [storedType, tNamedUndef]))
     }
     case 'FunctionDeclaration': {
-      // const id = node.id
-      // console.log(node)
-      // if (id === null) {
-      //   throw Error('No identifier for function declaration')
-      // }
-      // // const paramTypes: TYPE[] = []
-      // // node.params.forEach(() => {
-      // //   const newType = newTypeVar(ctx)
-      // //   paramTypes.push(newType)
-      // // })
-      // // // similar to variable declaration, catch possible type errors such as wrongly using identifier
-      // // // not as a function. for that we need to create a type variable and introduce it into the context
-      // // const functionType: FUNCTION = {
-      // //   nodeType: 'Function',
-      // //   fromTypes: paramTypes,
-      // //   toType: newTypeVar(ctx)
-      // // }
-      // // addToCtx(ctx, id.name, functionType)
-      // // clone scope only after we have accounted for all the new type variables to be created
-      // const funcType = ctx.env[id.name] as FUNCTION
-      // const newCtx = cloneCtx(ctx)
-      // node.params.forEach((param: es.Identifier, index) => {
-      //   const newType = funcType.fromTypes[index]
-      //   addToCtx(newCtx, param.name, newType)
-      // })
-      // const [bodyType, subst1] = infer(node.body, newCtx)
-      // // unify, for the same reason as in variable declaration
-      // const inferredType: FUNCTION = {
-      //   nodeType: 'Function',
-      //   fromTypes: applySubstToTypes(subst1, funcType.fromTypes),
-      //   toType: bodyType
-      // }
-      // console.log('inferredType for function')
-      // console.log(inferredType)
-      // const subst2 = unify(inferredType, applySubstToType(subst1, funcType))
-      // const composedSubst = composeSubsitutions(subst1, subst2)
-      // addToCtx(ctx, id.name, applySubstToType(composedSubst, inferredType))
-      // return [tNamedUndef, composedSubst]
-      return []
+      let newConstraints = addToConstraintList(constraints, [storedType, tNamedUndef])
+      const newEnv = cloneEnv(env) // create new scope
+      // @ts-ignore
+      const storedFunctionType = node.functionTypeVar
+      const paramNodes = node.params
+      // @ts-ignore
+      const paramTypes = paramNodes.map(paramNode => paramNode.typeVar)
+      const bodyNode = node.body
+      // @ts-ignore
+      paramTypes.push(bodyNode.typeVar)
+      newConstraints = addToConstraintList(newConstraints, [
+        storedFunctionType,
+        tFunc(...paramTypes)
+      ])
+      paramNodes.forEach((paramNode: es.Identifier) => {
+        // @ts-ignore
+        newEnv[paramNode.name] = paramNode.typeVar
+      })
+      return infer(bodyNode, newEnv, newConstraints)
     }
     case 'CallExpression': {
       const calleeNode = node.callee
@@ -555,37 +574,9 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
         newConstraints = infer(argNode, env, newConstraints)
       })
       return newConstraints
-      // const [funcType, subst1] = infer(node.callee, ctx)
-      // const newCtx = cloneCtx(ctx)
-      // applySubstToCtx(subst1, newCtx)
-      // let subst2: Subsitution = {}
-      // const argTypes: TYPE[] = []
-      // node.arguments.forEach(arg => {
-      //   const inferredArgType = infer(arg, newCtx)
-      //   argTypes.push(inferredArgType[0])
-      //   subst2 = composeSubsitutions(subst2, inferredArgType[1])
-      // })
-      // const newType = newTypeVar(ctx)
-      // const subst3 = composeSubsitutions(subst1, subst2)
-      // // Check that our supposed function is an actual function and unify with literal fn type
-      // const subst4 = unify(funcType, { nodeType: 'Function', fromTypes: argTypes, toType: newType })
-      // const funcType1 = applySubstToType(subst4, funcType) as FUNCTION
-      // // consolidate all substitutions so far
-      // const subst5 = composeSubsitutions(subst3, subst4)
-      // // attempt to unify actual argument type with expected type
-      // const paramTypes = applySubstToTypes(subst5, funcType1.fromTypes)
-      // let subst6: Subsitution = {}
-      // paramTypes.forEach((paramType, index) => {
-      //   subst6 = composeSubsitutions(subst6, unify(paramType, argTypes[index]))
-      // })
-      // // consolidate new substitutions
-      // const finalSubst = composeSubsitutions(subst5, subst6)
-      // const inferredReturnType = applySubstToType(finalSubst, funcType1.toType)
-      // return [inferredReturnType, finalSubst]
-      return []
     }
     default:
-      return []
+      return constraints
   }
 }
 
