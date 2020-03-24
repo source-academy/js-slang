@@ -48,36 +48,509 @@ Array [
     "name": "f",
     "tail": Object {
       "head": Object {
+        "f": [Function],
+      },
+      "name": "programEnvironment",
+      "tail": Object {
+        "head": Object {
+          "Infinity": Infinity,
+          "NaN": NaN,
+          "apply_in_underlying_javascript": [Function],
+          "array_length": [Function],
+          "display": [Function],
+          "draw_data": [Function],
+          "error": [Function],
+          "head": [Function],
+          "is_array": [Function],
+          "is_boolean": [Function],
+          "is_function": [Function],
+          "is_null": [Function],
+          "is_number": [Function],
+          "is_pair": [Function],
+          "is_string": [Function],
+          "is_undefined": [Function],
+          "list": [Function],
+          "list_to_stream": [Function],
+          "math_E": 2.718281828459045,
+          "math_LN10": 2.302585092994046,
+          "math_LN2": 0.6931471805599453,
+          "math_LOG10E": 0.4342944819032518,
+          "math_LOG2E": 1.4426950408889634,
+          "math_PI": 3.141592653589793,
+          "math_SQRT1_2": 0.7071067811865476,
+          "math_SQRT2": 1.4142135623730951,
+          "math_abs": [Function],
+          "math_acos": [Function],
+          "math_acosh": [Function],
+          "math_asin": [Function],
+          "math_asinh": [Function],
+          "math_atan": [Function],
+          "math_atan2": [Function],
+          "math_atanh": [Function],
+          "math_cbrt": [Function],
+          "math_ceil": [Function],
+          "math_clz32": [Function],
+          "math_cos": [Function],
+          "math_cosh": [Function],
+          "math_exp": [Function],
+          "math_expm1": [Function],
+          "math_floor": [Function],
+          "math_fround": [Function],
+          "math_hypot": [Function],
+          "math_imul": [Function],
+          "math_log": [Function],
+          "math_log10": [Function],
+          "math_log1p": [Function],
+          "math_log2": [Function],
+          "math_max": [Function],
+          "math_min": [Function],
+          "math_pow": [Function],
+          "math_random": [Function],
+          "math_round": [Function],
+          "math_sign": [Function],
+          "math_sin": [Function],
+          "math_sinh": [Function],
+          "math_sqrt": [Function],
+          "math_tan": [Function],
+          "math_tanh": [Function],
+          "math_trunc": [Function],
+          "pair": [Function],
+          "parse": [Function],
+          "parse_int": [Function],
+          "prompt": [Function],
+          "raw_display": [Function],
+          "runtime": [Function],
+          "set_head": [Function],
+          "set_tail": [Function],
+          "stream": [Function],
+          "stream_tail": [Function],
+          "stringify": [Function],
+          "tail": [Function],
+          "undefined": undefined,
+        },
+        "name": "global",
+        "tail": null,
+      },
+      "thisContext": Object {
+        "chapter": 4,
+        "contextId": 0,
+        "debugger": Object {
+          "observers": Object {
+            "callbacks": Array [],
+          },
+          "state": Object {
+            "it": Object {},
+            "scheduler": AsyncScheduler {},
+          },
+          "status": false,
+        },
+        "errors": Array [],
+        "executionMethod": "auto",
+        "externalContext": undefined,
+        "externalSymbols": Array [],
+        "numberOfOuterEnvironments": 2,
+        "prelude": null,
+        "runtime": Object {
+          "break": false,
+          "debuggerOn": true,
+          "environments": [Circular],
+          "isRunning": false,
+          "nodes": Array [
+            Node {
+              "arguments": Array [
+                Node {
+                  "end": 85,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 6,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 6,
+                    },
+                  },
+                  "raw": "2",
+                  "start": 84,
+                  "type": "Literal",
+                  "value": 2,
+                },
+              ],
+              "callee": Node {
+                "end": 83,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 6,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 6,
+                  },
+                },
+                "name": "f",
+                "start": 82,
+                "type": "Identifier",
+              },
+              "end": 86,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 4,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 6,
+                },
+              },
+              "start": 82,
+              "type": "CallExpression",
+            },
+            Node {
+              "end": 87,
+              "expression": Node {
+                "arguments": Array [
+                  Node {
+                    "end": 85,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 3,
+                        "line": 6,
+                      },
+                      "start": Position {
+                        "column": 2,
+                        "line": 6,
+                      },
+                    },
+                    "raw": "2",
+                    "start": 84,
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                ],
+                "callee": Node {
+                  "end": 83,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 1,
+                      "line": 6,
+                    },
+                    "start": Position {
+                      "column": 0,
+                      "line": 6,
+                    },
+                  },
+                  "name": "f",
+                  "start": 82,
+                  "type": "Identifier",
+                },
+                "end": 86,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 4,
+                    "line": 6,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 6,
+                  },
+                },
+                "start": 82,
+                "type": "CallExpression",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 6,
+                },
+              },
+              "start": 82,
+              "type": "ExpressionStatement",
+            },
+            Node {
+              "body": Array [
+                Node {
+                  "body": Node {
+                    "body": Array [
+                      Node {
+                        "declarations": Array [
+                          Node {
+                            "end": 29,
+                            "id": Node {
+                              "end": 25,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 9,
+                                  "line": 2,
+                                },
+                                "start": Position {
+                                  "column": 8,
+                                  "line": 2,
+                                },
+                              },
+                              "name": "y",
+                              "start": 24,
+                              "type": "Identifier",
+                            },
+                            "init": Node {
+                              "end": 29,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 13,
+                                  "line": 2,
+                                },
+                                "start": Position {
+                                  "column": 12,
+                                  "line": 2,
+                                },
+                              },
+                              "raw": "1",
+                              "start": 28,
+                              "type": "Literal",
+                              "value": 1,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 13,
+                                "line": 2,
+                              },
+                              "start": Position {
+                                "column": 8,
+                                "line": 2,
+                              },
+                            },
+                            "start": 24,
+                            "type": "VariableDeclarator",
+                          },
+                        ],
+                        "end": 30,
+                        "kind": "const",
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 14,
+                            "line": 2,
+                          },
+                          "start": Position {
+                            "column": 2,
+                            "line": 2,
+                          },
+                        },
+                        "start": 18,
+                        "type": "VariableDeclaration",
+                      },
+                      Node {
+                        "argument": Node {
+                          "end": 78,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 10,
+                              "line": 4,
+                            },
+                            "start": Position {
+                              "column": 9,
+                              "line": 4,
+                            },
+                          },
+                          "name": "x",
+                          "start": 77,
+                          "type": "Identifier",
+                        },
+                        "end": 79,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "line": 4,
+                          },
+                          "start": Position {
+                            "column": 2,
+                            "line": 4,
+                          },
+                        },
+                        "start": 70,
+                        "type": "ReturnStatement",
+                      },
+                    ],
+                    "end": 81,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 1,
+                        "line": 5,
+                      },
+                      "start": Position {
+                        "column": 14,
+                        "line": 1,
+                      },
+                    },
+                    "start": 14,
+                    "type": "BlockStatement",
+                  },
+                  "end": 81,
+                  "expression": false,
+                  "generator": false,
+                  "id": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "f",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 1,
+                      "line": 5,
+                    },
+                    "start": Position {
+                      "column": 0,
+                      "line": 1,
+                    },
+                  },
+                  "params": Array [
+                    Node {
+                      "end": 12,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 12,
+                          "line": 1,
+                        },
+                        "start": Position {
+                          "column": 11,
+                          "line": 1,
+                        },
+                      },
+                      "name": "x",
+                      "start": 11,
+                      "type": "Identifier",
+                    },
+                  ],
+                  "start": 0,
+                  "type": "FunctionDeclaration",
+                },
+                Node {
+                  "end": 87,
+                  "expression": Node {
+                    "arguments": Array [
+                      Node {
+                        "end": 85,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 3,
+                            "line": 6,
+                          },
+                          "start": Position {
+                            "column": 2,
+                            "line": 6,
+                          },
+                        },
+                        "raw": "2",
+                        "start": 84,
+                        "type": "Literal",
+                        "value": 2,
+                      },
+                    ],
+                    "callee": Node {
+                      "end": 83,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 1,
+                          "line": 6,
+                        },
+                        "start": Position {
+                          "column": 0,
+                          "line": 6,
+                        },
+                      },
+                      "name": "f",
+                      "start": 82,
+                      "type": "Identifier",
+                    },
+                    "end": 86,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 4,
+                        "line": 6,
+                      },
+                      "start": Position {
+                        "column": 0,
+                        "line": 6,
+                      },
+                    },
+                    "start": 82,
+                    "type": "CallExpression",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 5,
+                      "line": 6,
+                    },
+                    "start": Position {
+                      "column": 0,
+                      "line": 6,
+                    },
+                  },
+                  "start": 82,
+                  "type": "ExpressionStatement",
+                },
+              ],
+              "end": 87,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "sourceType": "module",
+              "start": 0,
+              "type": "Program",
+            },
+          ],
+          "value": undefined,
+        },
+      },
+    },
+    "thisContext": undefined,
+  },
+  Object {
+    "head": Object {
+      "f": [Function],
+    },
+    "name": "programEnvironment",
+    "tail": Object {
+      "head": Object {
         "Infinity": Infinity,
         "NaN": NaN,
-        "accumulate": [Function],
-        "append": [Function],
         "apply_in_underlying_javascript": [Function],
         "array_length": [Function],
-        "build_list": [Function],
         "display": [Function],
         "draw_data": [Function],
-        "enum_list": [Function],
-        "equal": [Function],
         "error": [Function],
-        "f": [Function],
-        "filter": [Function],
-        "for_each": [Function],
         "head": [Function],
         "is_array": [Function],
         "is_boolean": [Function],
         "is_function": [Function],
-        "is_list": [Function],
         "is_null": [Function],
         "is_number": [Function],
         "is_pair": [Function],
         "is_string": [Function],
         "is_undefined": [Function],
-        "length": [Function],
         "list": [Function],
-        "list_ref": [Function],
-        "list_to_string": [Function],
-        "map": [Function],
+        "list_to_stream": [Function],
         "math_E": 2.718281828459045,
         "math_LN10": 2.302585092994046,
         "math_LN2": 0.6931471805599453,
@@ -121,18 +594,16 @@ Array [
         "math_tan": [Function],
         "math_tanh": [Function],
         "math_trunc": [Function],
-        "member": [Function],
         "pair": [Function],
         "parse": [Function],
         "parse_int": [Function],
         "prompt": [Function],
         "raw_display": [Function],
-        "remove": [Function],
-        "remove_all": [Function],
-        "reverse": [Function],
         "runtime": [Function],
         "set_head": [Function],
         "set_tail": [Function],
+        "stream": [Function],
+        "stream_tail": [Function],
         "stringify": [Function],
         "tail": [Function],
         "undefined": undefined,
@@ -140,40 +611,419 @@ Array [
       "name": "global",
       "tail": null,
     },
-    "thisContext": undefined,
+    "thisContext": Object {
+      "chapter": 4,
+      "contextId": 0,
+      "debugger": Object {
+        "observers": Object {
+          "callbacks": Array [],
+        },
+        "state": Object {
+          "it": Object {},
+          "scheduler": AsyncScheduler {},
+        },
+        "status": false,
+      },
+      "errors": Array [],
+      "executionMethod": "auto",
+      "externalContext": undefined,
+      "externalSymbols": Array [],
+      "numberOfOuterEnvironments": 2,
+      "prelude": null,
+      "runtime": Object {
+        "break": false,
+        "debuggerOn": true,
+        "environments": [Circular],
+        "isRunning": false,
+        "nodes": Array [
+          Node {
+            "arguments": Array [
+              Node {
+                "end": 85,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 6,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 6,
+                  },
+                },
+                "raw": "2",
+                "start": 84,
+                "type": "Literal",
+                "value": 2,
+              },
+            ],
+            "callee": Node {
+              "end": 83,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 6,
+                },
+              },
+              "name": "f",
+              "start": 82,
+              "type": "Identifier",
+            },
+            "end": 86,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "line": 6,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 6,
+              },
+            },
+            "start": 82,
+            "type": "CallExpression",
+          },
+          Node {
+            "end": 87,
+            "expression": Node {
+              "arguments": Array [
+                Node {
+                  "end": 85,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 6,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 6,
+                    },
+                  },
+                  "raw": "2",
+                  "start": 84,
+                  "type": "Literal",
+                  "value": 2,
+                },
+              ],
+              "callee": Node {
+                "end": 83,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 6,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 6,
+                  },
+                },
+                "name": "f",
+                "start": 82,
+                "type": "Identifier",
+              },
+              "end": 86,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 4,
+                  "line": 6,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 6,
+                },
+              },
+              "start": 82,
+              "type": "CallExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 5,
+                "line": 6,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 6,
+              },
+            },
+            "start": 82,
+            "type": "ExpressionStatement",
+          },
+          Node {
+            "body": Array [
+              Node {
+                "body": Node {
+                  "body": Array [
+                    Node {
+                      "declarations": Array [
+                        Node {
+                          "end": 29,
+                          "id": Node {
+                            "end": 25,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 9,
+                                "line": 2,
+                              },
+                              "start": Position {
+                                "column": 8,
+                                "line": 2,
+                              },
+                            },
+                            "name": "y",
+                            "start": 24,
+                            "type": "Identifier",
+                          },
+                          "init": Node {
+                            "end": 29,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 13,
+                                "line": 2,
+                              },
+                              "start": Position {
+                                "column": 12,
+                                "line": 2,
+                              },
+                            },
+                            "raw": "1",
+                            "start": 28,
+                            "type": "Literal",
+                            "value": 1,
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 13,
+                              "line": 2,
+                            },
+                            "start": Position {
+                              "column": 8,
+                              "line": 2,
+                            },
+                          },
+                          "start": 24,
+                          "type": "VariableDeclarator",
+                        },
+                      ],
+                      "end": 30,
+                      "kind": "const",
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 14,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 2,
+                          "line": 2,
+                        },
+                      },
+                      "start": 18,
+                      "type": "VariableDeclaration",
+                    },
+                    Node {
+                      "argument": Node {
+                        "end": 78,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 10,
+                            "line": 4,
+                          },
+                          "start": Position {
+                            "column": 9,
+                            "line": 4,
+                          },
+                        },
+                        "name": "x",
+                        "start": 77,
+                        "type": "Identifier",
+                      },
+                      "end": 79,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 11,
+                          "line": 4,
+                        },
+                        "start": Position {
+                          "column": 2,
+                          "line": 4,
+                        },
+                      },
+                      "start": 70,
+                      "type": "ReturnStatement",
+                    },
+                  ],
+                  "end": 81,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 1,
+                      "line": 5,
+                    },
+                    "start": Position {
+                      "column": 14,
+                      "line": 1,
+                    },
+                  },
+                  "start": 14,
+                  "type": "BlockStatement",
+                },
+                "end": 81,
+                "expression": false,
+                "generator": false,
+                "id": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "f",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 5,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+                "params": Array [
+                  Node {
+                    "end": 12,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 12,
+                        "line": 1,
+                      },
+                      "start": Position {
+                        "column": 11,
+                        "line": 1,
+                      },
+                    },
+                    "name": "x",
+                    "start": 11,
+                    "type": "Identifier",
+                  },
+                ],
+                "start": 0,
+                "type": "FunctionDeclaration",
+              },
+              Node {
+                "end": 87,
+                "expression": Node {
+                  "arguments": Array [
+                    Node {
+                      "end": 85,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 3,
+                          "line": 6,
+                        },
+                        "start": Position {
+                          "column": 2,
+                          "line": 6,
+                        },
+                      },
+                      "raw": "2",
+                      "start": 84,
+                      "type": "Literal",
+                      "value": 2,
+                    },
+                  ],
+                  "callee": Node {
+                    "end": 83,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 1,
+                        "line": 6,
+                      },
+                      "start": Position {
+                        "column": 0,
+                        "line": 6,
+                      },
+                    },
+                    "name": "f",
+                    "start": 82,
+                    "type": "Identifier",
+                  },
+                  "end": 86,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 4,
+                      "line": 6,
+                    },
+                    "start": Position {
+                      "column": 0,
+                      "line": 6,
+                    },
+                  },
+                  "start": 82,
+                  "type": "CallExpression",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 5,
+                    "line": 6,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 6,
+                  },
+                },
+                "start": 82,
+                "type": "ExpressionStatement",
+              },
+            ],
+            "end": 87,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 5,
+                "line": 6,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "sourceType": "module",
+            "start": 0,
+            "type": "Program",
+          },
+        ],
+        "value": undefined,
+      },
+    },
   },
   Object {
     "head": Object {
       "Infinity": Infinity,
       "NaN": NaN,
-      "accumulate": [Function],
-      "append": [Function],
       "apply_in_underlying_javascript": [Function],
       "array_length": [Function],
-      "build_list": [Function],
       "display": [Function],
       "draw_data": [Function],
-      "enum_list": [Function],
-      "equal": [Function],
       "error": [Function],
-      "f": [Function],
-      "filter": [Function],
-      "for_each": [Function],
       "head": [Function],
       "is_array": [Function],
       "is_boolean": [Function],
       "is_function": [Function],
-      "is_list": [Function],
       "is_null": [Function],
       "is_number": [Function],
       "is_pair": [Function],
       "is_string": [Function],
       "is_undefined": [Function],
-      "length": [Function],
       "list": [Function],
-      "list_ref": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
+      "list_to_stream": [Function],
       "math_E": 2.718281828459045,
       "math_LN10": 2.302585092994046,
       "math_LN2": 0.6931471805599453,
@@ -217,18 +1067,16 @@ Array [
       "math_tan": [Function],
       "math_tanh": [Function],
       "math_trunc": [Function],
-      "member": [Function],
       "pair": [Function],
       "parse": [Function],
       "parse_int": [Function],
       "prompt": [Function],
       "raw_display": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
       "runtime": [Function],
       "set_head": [Function],
       "set_tail": [Function],
+      "stream": [Function],
+      "stream_tail": [Function],
       "stringify": [Function],
       "tail": [Function],
       "undefined": undefined,

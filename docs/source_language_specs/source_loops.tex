@@ -1,0 +1,81 @@
+\section*{Loops}
+
+\subsection*{\hypertarget{while}{while-loops}}
+
+While loops are seen as abbreviations for function applications as follows:
+
+\[
+\textbf{\texttt{while}}\ \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
+\textit{block}
+\]
+stands for
+
+\begin{center}
+  \begin{minipage}{90mm}
+$\textbf{\texttt{function}}$ \lstinline{_body()} $\textbf{\texttt{\{}}\  \textit{block} \ \textbf{\texttt{\}}}$\newline
+\lstinline{_while( () => } $\textit{expression}$ \lstinline{, _body );}
+  \end{minipage}
+\end{center}
+
+where \lstinline{_while} is defined as follows:
+
+\begin{lstlisting}
+function _while(test, body) {
+    if (test()) {
+        body(); 
+        _while(test, body); 
+    } else { 
+        undefined; 
+    }
+}
+\end{lstlisting}
+
+\subsection*{\hypertarget{for}{Simple for-loops}}
+
+\[\textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+                                          \textit{assignment}_1 \textbf{\texttt{;}} 
+\ \textit{expression} \ \textbf{\texttt{;}} \ \textit{assignment}_2 \ \textbf{\texttt{)}} \ 
+                                            \textit{block}
+\]
+stands for
+\begin{center}
+  \begin{minipage}{90mm}
+\begin{lstlisting}
+^$\textrm{\textit{assignment}}_1$^  
+while (^$\textrm{\textit{expression}}$^) {
+    ^$\textrm{\textit{block}}$^
+    ^$\textrm{\textit{assignment}}_2$^
+}
+\end{lstlisting}
+  \end{minipage}
+\end{center}
+
+\subsection*{\hypertarget{for2}{for-loops with loop control variable}}
+
+\[\textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+\textbf{\texttt{let}}\ \textit{name}\ \texttt{=}\
+\textit{expression}_1 \textbf{\texttt{;}} 
+\ \textit{expression}_2 \ \textbf{\texttt{;}} \ \textit{assignment} \ \textbf{\texttt{)}} \ 
+                                            \textit{block}
+\]
+stands for
+\begin{center}
+  \begin{minipage}{90mm}
+  \begin{lstlisting}
+{
+    let ^$\textrm{\textit{name}}$^ = ^$\textrm{\textit{expression}}_1$^;
+    for (^$\textrm{\textit{name}}$^ = ^$\textrm{\textit{name}}$^; ^$\textrm{\textit{expression}}_2$^; ^$\textrm{\textit{assignment}}$^) {
+         const _copy_of_name = ^$\textrm{\textit{name}}$^;
+         {
+             const ^$\textrm{\textit{name}}$^ = _copy_of_name;
+             ^$\textrm{\textit{block}}$^
+         }
+    }
+}
+  \end{lstlisting}
+  \end{minipage}
+
+\end{center}
+
+
+

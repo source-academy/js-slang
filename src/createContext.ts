@@ -1,14 +1,17 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
-import { stringify } from './interop'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
+import { listPrelude } from './stdlib/list.prelude'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
+import * as stream from './stdlib/stream'
+import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -45,7 +48,7 @@ export const createEmptyContext = <T>(
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
   }
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
-    globals: new Map(),
+    globals: { variables: new Map(), previousScope: null },
     operators: new Map(Object.entries(operators))
   })
   return {
@@ -54,6 +57,8 @@ export const createEmptyContext = <T>(
     errors: [],
     externalContext,
     runtime: createEmptyRuntime(),
+    numberOfOuterEnvironments: 1,
+    prelude: null,
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto'
@@ -79,9 +84,9 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.set(name, {
+  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables.set(name, {
     kind: 'const',
-    value
+    getValue: () => value
   })
 }
 
@@ -114,10 +119,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
-  const rawDisplay = (v: Value) => externalBuiltIns.rawDisplay(v, context.externalContext)
-  const display = (v: Value) => (rawDisplay(stringify(v)), v)
-  const prompt = (v: Value) => externalBuiltIns.prompt(v, context.externalContext)
-  const alert = (v: Value) => externalBuiltIns.alert(v, context.externalContext)
+  const rawDisplay = (v: Value, s: string) =>
+    externalBuiltIns.rawDisplay(v, s, context.externalContext)
+  const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
+  const prompt = (v: Value) => externalBuiltIns.prompt(v, '', context.externalContext)
+  const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
@@ -150,23 +156,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'head(xs)', list.head)
     defineBuiltin(context, 'tail(xs)', list.tail)
     defineBuiltin(context, 'is_null(val)', list.is_null)
-    defineBuiltin(context, 'is_list(val)', list.is_list)
     defineBuiltin(context, 'list(...values)', list.list)
-    defineBuiltin(context, 'length(xs)', list.length)
-    defineBuiltin(context, 'map(fun, xs)', list.map)
-    defineBuiltin(context, 'build_list(n, fun)', list.build_list)
-    defineBuiltin(context, 'for_each(fun, xs)', list.for_each)
-    defineBuiltin(context, 'list_to_string(xs)', list.list_to_string)
-    defineBuiltin(context, 'reverse(xs)', list.reverse)
-    defineBuiltin(context, 'append(xs, ys)', list.append)
-    defineBuiltin(context, 'member(val, xs)', list.member)
-    defineBuiltin(context, 'remove(val, xs)', list.remove)
-    defineBuiltin(context, 'remove_all(val, xs)', list.remove_all)
-    defineBuiltin(context, 'filter(pred, xs)', list.filter)
-    defineBuiltin(context, 'enum_list(start, end)', list.enum_list)
-    defineBuiltin(context, 'list_ref(xs, n)', list.list_ref)
-    defineBuiltin(context, 'accumulate(fun, initial, xs)', list.accumulate)
-    defineBuiltin(context, 'equal(value1, value2)', list.equal)
     defineBuiltin(context, 'draw_data(xs)', visualiseList)
   }
 
@@ -175,6 +165,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
     defineBuiltin(context, 'array_length(arr)', misc.array_length)
     defineBuiltin(context, 'is_array(val)', misc.is_array)
+
+    // Stream library
+    defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
+    defineBuiltin(context, 'stream(...values)', stream.stream)
+    defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 
   if (context.chapter >= 4) {
@@ -198,7 +193,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
-    defineBuiltin(context, 'assoc(val, xs)', list.assoc)
+  }
+}
+
+function importPrelude(context: Context) {
+  let prelude = ''
+  if (context.chapter >= 2) {
+    prelude += listPrelude
+  }
+  if (context.chapter >= 3) {
+    prelude += streamPrelude
+  }
+  if (prelude !== '') {
+    context.prelude = prelude
   }
 }
 
@@ -222,6 +229,7 @@ const createContext = <T>(
   const context = createEmptyContext(chapter, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
+  importPrelude(context)
   importExternalSymbols(context, externalSymbols)
 
   return context

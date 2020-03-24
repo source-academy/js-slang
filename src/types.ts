@@ -13,9 +13,9 @@ import * as es from 'estree'
  * different implementations. e.g display() in a web application.
  */
 export interface CustomBuiltIns {
-  rawDisplay: (value: Value, externalContext: any) => void
-  prompt: (value: Value, externalContext: any) => string | null
-  alert: (value: Value, externalContext: any) => void
+  rawDisplay: (value: Value, str: string, externalContext: any) => Value
+  prompt: (value: Value, str: string, externalContext: any) => string | null
+  alert: (value: Value, str: string, externalContext: any) => void
   /* Used for list visualisation. See #12 */
   visualiseList: (list: any, externalContext: any) => void
 }
@@ -44,7 +44,7 @@ export interface Rule<T extends es.Node> {
   name: string
   disableOn?: number
   checkers: {
-    [name: string]: (node: T, ancestors: [es.Node]) => SourceError[]
+    [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
   }
 }
 
@@ -77,6 +77,10 @@ export interface Context<T = any> {
     nodes: es.Node[]
   }
 
+  numberOfOuterEnvironments: number
+
+  prelude: string | null
+
   /** the state of the debugger */
   debugger: {
     /** External observers watching this context */
@@ -100,6 +104,24 @@ export interface Context<T = any> {
   contextId: number
 
   executionMethod: ExecutionMethod
+}
+
+export interface BlockFrame {
+  type: string
+  // loc refers to the block defined by every pair of curly braces
+  loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
+  enclosingLoc?: es.SourceLocation | null
+  children: (DefinitionNode | BlockFrame)[]
+}
+
+export interface DefinitionNode {
+  name: string
+  type: string
+  isDeclaration: boolean
+  loc?: es.SourceLocation | null
 }
 
 // tslint:disable:no-any
@@ -150,4 +172,67 @@ export interface Directive extends es.ExpressionStatement {
   type: 'ExpressionStatement'
   expression: es.Literal
   directive: string
+}
+
+/** For use in the substituter, to differentiate between a function declaration in the expression position,
+ * which has an id, as opposed to function expressions.
+ */
+export interface FunctionDeclarationExpression extends es.FunctionExpression {
+  id: es.Identifier
+  body: es.BlockStatement
+}
+
+/**
+ * For use in the substituter: call expressions can be reduced into an expression if the block
+ * only contains a single return statement; or a block, but has to be in the expression position.
+ * This is NOT compliant with the ES specifications, just as an intermediate step during substitutions.
+ */
+export interface BlockExpression extends es.BaseExpression {
+  type: 'BlockExpression'
+  body: es.Statement[]
+}
+
+export type substituterNodes = es.Node | BlockExpression
+
+export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
+
+export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+
+export interface Untypable {
+  typability?: 'Untypable'
+  inferredType?: Type
+}
+
+export interface NotYetTyped {
+  typability?: 'NotYetTyped'
+  inferredType?: Type
+}
+
+export interface Typedd {
+  typability?: 'Typed'
+  inferredType?: Type
+}
+
+export type Type = Primitive | Variable | FunctionType | List
+
+export interface Primitive {
+  kind: 'primitive'
+  name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
+}
+
+export interface Variable {
+  kind: 'variable'
+  name: string
+}
+
+// cannot name Function, conflicts with TS
+export interface FunctionType {
+  kind: 'function'
+  parameterTypes: Type[]
+  returnType: Type
+}
+
+export interface List {
+  kind: 'list'
+  elementType: Type
 }

@@ -1,0 +1,27 @@
+\section*{Arrays}
+
+Arrays in Source are created using literal array expressions:
+\begin{lstlisting}
+let my_array_1 = [];
+let my_array_2 = [42, 71, 13];
+\end{lstlisting}
+Arrays in Source are limited to integers as keys.
+In statements like
+\begin{lstlisting}
+a[i];
+a[j] = v;
+\end{lstlisting}
+the values \lstinline{i} and \lstinline{j} must be integers if \lstinline{a} is an array.
+
+Note that pairs in Source are represented by arrays with two elements. Therefore,
+\begin{lstlisting}
+is_pair([1, 2]);
+\end{lstlisting}
+and
+\begin{lstlisting}
+equal(pair(1, 2), [1, 2]);
+\end{lstlisting}
+evaluate to \texttt{true}.
+
+Access of an array with an integer index to which no prior assignment has been
+made on the array, returns \texttt{undefined}.

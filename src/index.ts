@@ -1,20 +1,23 @@
 import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal } from 'estree'
+import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
-import { evaluate } from './interpreter'
 import {
   ConstAssignment,
   ExceptionError,
   InterruptedError,
-  RuntimeSourceError,
   UndefinedVariable
-} from './interpreter-errors'
-import { parse, parseAt } from './parser'
+} from './errors/errors'
+import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { evaluate } from './interpreter/interpreter'
+import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { transpile } from './transpiler'
+import { codify, getEvaluationSteps } from './stepper/stepper'
+import { sandboxedEval } from './transpiler/evalContainer'
+import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
@@ -25,18 +28,22 @@ import {
   SourceError
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
-import { sandboxedEval } from './utils/evalContainer'
+import { validateAndAnnotate } from './validator/validator'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
+  originalMaxExecTime: number
+  useSubst: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  executionMethod: 'auto'
+  executionMethod: 'auto',
+  originalMaxExecTime: 1000,
+  useSubst: false
 }
 
 // needed to work on browsers
@@ -112,28 +119,7 @@ function convertNativeErrorToSourceError(
 
 let previousCode = ''
 
-export function runInContext(
-  code: string,
-  context: Context,
-  options: Partial<IOptions> = {}
-): Promise<Result> {
-  function getFirstLine(theCode: string) {
-    const theProgramFirstExpression = parseAt(theCode, 0)
-
-    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-      return ((theProgramFirstExpression as unknown) as Literal).value
-    }
-
-    return undefined
-  }
-  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.errors = []
-
-  verboseErrors = getFirstLine(code) === 'enable verbose'
-  const program = parse(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
+function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
   let isNativeRunnable
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
@@ -157,12 +143,54 @@ export function runInContext(
   } else {
     isNativeRunnable = theOptions.executionMethod === 'native'
   }
+  return isNativeRunnable
+}
 
+export async function runInContext(
+  code: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  function getFirstLine(theCode: string) {
+    const theProgramFirstExpression = parseAt(theCode, 0)
+
+    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
+      return ((theProgramFirstExpression as unknown) as Literal).value
+    }
+
+    return undefined
+  }
+  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
+  context.errors = []
+
+  verboseErrors = getFirstLine(code) === 'enable verbose'
+  const program = parse(code, context)
+  if (!program) {
+    return resolvedErrorPromise
+  }
+  validateAndAnnotate(program as Program, context)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
+  if (options.useSubst) {
+    const steps = getEvaluationSteps(program, context)
+    return Promise.resolve({
+      status: 'finished',
+      value: steps.map(codify)
+    } as Result)
+  }
+  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+  if (context.prelude !== null) {
+    const prelude = context.prelude
+    context.prelude = null
+    await runInContext(prelude, context, options)
+    return runInContext(code, context, options)
+  }
   if (isNativeRunnable) {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
-      JSSLANG_PROPERTIES.maxExecTime = JSSLANG_PROPERTIES.originalMaxExecTime
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
     }
     previousCode = code
     let transpiled
@@ -182,6 +210,15 @@ export function runInContext(
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         return resolvedErrorPromise
+      }
+      if (error instanceof ExceptionError) {
+        // if we know the location of the error, just throw it
+        if (error.location.start.line !== -1) {
+          context.errors.push(error)
+          return resolvedErrorPromise
+        } else {
+          error = error.error // else we try to get the location from source map
+        }
       }
       const errorStack = error.stack
       const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
@@ -235,4 +272,12 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine }
+export {
+  createContext,
+  Context,
+  Result,
+  setBreakpointAtLine,
+  scopeVariables,
+  lookupDefinition,
+  getAllOccurrencesInScope
+}

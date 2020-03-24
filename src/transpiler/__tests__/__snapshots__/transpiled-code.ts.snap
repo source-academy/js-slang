@@ -1,0 +1,235 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Ensure no name clashes 1`] = `
+"const native0 = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs0 = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr0 = native.operators.get(\\"boolOrErr\\");
+const wrap90 = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[1].globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        const boolOrErr = 1;
+        setProp(boolOrErr, 123, 1, 2, 0);
+        const f = wrap90((callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) => {
+          let wrap = 2;
+          wrap0;
+          wrap1;
+          wrap2;
+          wrap3;
+          wrap4;
+          wrap5;
+          wrap6;
+          wrap7;
+          wrap8;
+          wrap9;
+        }, \\"function f(callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) {\\\\n  let wrap = 2;\\\\n  wrap0;\\\\n  wrap1;\\\\n  wrap2;\\\\n  wrap3;\\\\n  wrap4;\\\\n  wrap5;\\\\n  wrap6;\\\\n  wrap7;\\\\n  wrap8;\\\\n  wrap9;\\\\n}\\");
+        const native = 123;
+        globals.variables.set(\\"boolOrErr\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return boolOrErr;
+          }
+        });
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+        globals.variables.set(\\"native\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return native;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+"
+`;
+
+exports[`builtins do get prepended 1`] = `
+Object {
+  "code": "\\"ensure_builtins\\";",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[0].globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        lastStatementResult = eval(\\"\\\\\\"ensure_builtins\\\\\\";\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+}
+`;

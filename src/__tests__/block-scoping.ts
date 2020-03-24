@@ -1,4 +1,5 @@
-import { expectParsedError, expectResult, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectParsedError, expectResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
@@ -120,7 +121,9 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x."`)
+  ).toMatchInlineSnapshot(
+    `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
+  )
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {

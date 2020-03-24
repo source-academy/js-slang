@@ -1,4 +1,11 @@
 node_modules
 *.js
+!*.prelude.js
 *.map
 dist/
+
+# emacs backup files
+
+*~
+
+tsconfig.tsbuildinfo

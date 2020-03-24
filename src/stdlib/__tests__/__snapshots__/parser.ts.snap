@@ -7,85 +7,29 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"constant_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"y\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 6 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 7 } } },
-    \\"value\\":
-      { \\"tag\\": \\"function_definition\\",
-        \\"parameters\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"x\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 10 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 11 } } },
-          null ],
-        \\"body\\":
-          { \\"tag\\": \\"return_statement\\",
-            \\"expression\\":
-              { \\"tag\\": \\"application\\",
-                \\"operator\\":
-                  { \\"tag\\": \\"name\\",
-                    \\"name\\": \\"+\\",
-                    \\"loc\\":
-                      { \\"start\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 18 },
-                        \\"end\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 19 } } },
-                \\"operands\\":
-                  [ { \\"tag\\": \\"name\\",
-                      \\"name\\": \\"x\\",
-                      \\"loc\\":
-                        { \\"start\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 15 },
-                          \\"end\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 16 } } },
-                  [ 1,
-                  null ] ],
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 15 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 20 } } },
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 15 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 20 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 20 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 21 } } },
-null ]",
+  "result": "[ \\"constant_declaration\\",
+[ [ \\"name\\",
+  [ \\"y\\",
+  null ] ],
+[ [ \\"function_definition\\",
+  [ [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    null ],
+  [ [ \\"return_statement\\",
+    [ [ \\"application\\",
+      [ [ \\"name\\",
+        [ \\"+\\",
+        null ] ],
+      [ [ [ \\"name\\",
+          [ \\"x\\",
+          null ] ],
+        [ 1,
+        null ] ],
+      null ] ] ],
+    null ] ],
+  null ] ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -96,9 +40,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const y = x => x + 1;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const y = x => x + 1;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -114,66 +64,24 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"function_definition\\",
-    \\"parameters\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 0 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 1 } } },
-      null ],
-    \\"body\\":
-      { \\"tag\\": \\"return_statement\\",
-        \\"expression\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 8 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 9 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"x\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 5 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 6 } } },
-              [ 1,
-              null ] ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 5 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 10 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 5 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 11 } } },
-null ]",
+  "result": "[ \\"function_definition\\",
+[ [ [ \\"name\\",
+    [ \\"x\\",
+    null ] ],
+  null ],
+[ [ \\"return_statement\\",
+  [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"+\\",
+      null ] ],
+    [ [ [ \\"name\\",
+        [ \\"x\\",
+        null ] ],
+      [ 1,
+      null ] ],
+    null ] ] ],
+  null ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -184,9 +92,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x => x + 1;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x => x + 1;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -202,103 +116,39 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"assignment\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 0 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 1 } } },
-    \\"value\\": 5,
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 6 } } },
-[ { \\"tag\\": \\"assignment\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 7 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 8 } } },
-    \\"value\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 11 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 12 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 7 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 13 } } },
-[ { \\"tag\\": \\"conditional_statement\\",
-    \\"predicate\\": true,
-    \\"consequent\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"assignment\\",
-              \\"name\\":
-                { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"x\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 26 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 27 } } },
-              \\"value\\": 5,
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 26 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 32 } } },
-          null ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 24 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 34 } } },
-    \\"alternative\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\": null,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 40 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 42 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 14 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 42 } } },
-null ] ] ]",
+  "result": "[ \\"sequence\\",
+[ [ [ \\"assignment\\",
+    [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    [ 5,
+    null ] ] ],
+  [ [ \\"assignment\\",
+    [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    null ] ] ],
+  [ [ \\"conditional_statement\\",
+    [ true,
+    [ [ \\"block\\",
+      [ [ \\"assignment\\",
+        [ [ \\"name\\",
+          [ \\"x\\",
+          null ] ],
+        [ 5,
+        null ] ] ],
+      null ] ],
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ null,
+        null ] ],
+      null ] ],
+    null ] ] ] ],
+  null ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -309,9 +159,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x = 5; x = x; if (true) { x = 5; } else {}\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x = 5; x = x; if (true) { x = 5; } else {}\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -327,53 +183,22 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"constant_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 6 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 7 } } },
-    \\"value\\": 5,
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 12 } } },
-[ { \\"tag\\": \\"variable_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"y\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 17 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 18 } } },
-    \\"value\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 21 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 22 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 13 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 23 } } },
+  "result": "[ \\"sequence\\",
+[ [ [ \\"constant_declaration\\",
+    [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    [ 5,
+    null ] ] ],
+  [ [ \\"variable_declaration\\",
+    [ [ \\"name\\",
+      [ \\"y\\",
+      null ] ],
+    [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    null ] ] ],
+  null ] ],
 null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -385,9 +210,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const x = 5; let y = x;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const x = 5; let y = x;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -403,7 +234,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "null",
+  "result": "[ \\"sequence\\",
+[ null,
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -414,9 +247,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -432,239 +271,81 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"constant_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"fib\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 9 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 12 } } },
-    \\"value\\":
-      { \\"tag\\": \\"function_definition\\",
-        \\"parameters\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"x\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 13 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 14 } } },
-          null ],
-        \\"body\\":
-          [ { \\"tag\\": \\"return_statement\\",
-              \\"expression\\":
-                { \\"tag\\": \\"conditional_expression\\",
-                  \\"predicate\\":
-                    { \\"tag\\": \\"application\\",
-                      \\"operator\\":
-                        { \\"tag\\": \\"name\\",
-                          \\"name\\": \\"<=\\",
-                          \\"loc\\":
-                            { \\"start\\":
-                                { \\"line\\": 1,
-                                  \\"column\\": 29 },
-                              \\"end\\":
-                                { \\"line\\": 1,
-                                  \\"column\\": 30 } } },
-                      \\"operands\\":
-                        [ { \\"tag\\": \\"name\\",
-                            \\"name\\": \\"x\\",
-                            \\"loc\\":
-                              { \\"start\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 25 },
-                                \\"end\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 26 } } },
-                        [ 1,
+  "result": "[ \\"sequence\\",
+[ [ [ \\"constant_declaration\\",
+    [ [ \\"name\\",
+      [ \\"fib\\",
+      null ] ],
+    [ [ \\"function_definition\\",
+      [ [ [ \\"name\\",
+          [ \\"x\\",
+          null ] ],
+        null ],
+      [ [ \\"return_statement\\",
+        [ [ \\"conditional_expression\\",
+          [ [ \\"application\\",
+            [ [ \\"name\\",
+              [ \\"<=\\",
+              null ] ],
+            [ [ [ \\"name\\",
+                [ \\"x\\",
+                null ] ],
+              [ 1,
+              null ] ],
+            null ] ] ],
+          [ [ \\"name\\",
+            [ \\"x\\",
+            null ] ],
+          [ [ \\"application\\",
+            [ [ \\"name\\",
+              [ \\"+\\",
+              null ] ],
+            [ [ [ \\"application\\",
+                [ [ \\"name\\",
+                  [ \\"fib\\",
+                  null ] ],
+                [ [ [ \\"application\\",
+                    [ [ \\"name\\",
+                      [ \\"-\\",
+                      null ] ],
+                    [ [ [ \\"name\\",
+                        [ \\"x\\",
                         null ] ],
-                      \\"loc\\":
-                        { \\"start\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 25 },
-                          \\"end\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 31 } } },
-                  \\"consequent\\":
-                    { \\"tag\\": \\"name\\",
-                      \\"name\\": \\"x\\",
-                      \\"loc\\":
-                        { \\"start\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 34 },
-                          \\"end\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 35 } } },
-                  \\"alternative\\":
-                    { \\"tag\\": \\"application\\",
-                      \\"operator\\":
-                        { \\"tag\\": \\"name\\",
-                          \\"name\\": \\"+\\",
-                          \\"loc\\":
-                            { \\"start\\":
-                                { \\"line\\": 1,
-                                  \\"column\\": 48 },
-                              \\"end\\":
-                                { \\"line\\": 1,
-                                  \\"column\\": 49 } } },
-                      \\"operands\\":
-                        [ { \\"tag\\": \\"application\\",
-                            \\"operator\\":
-                              { \\"tag\\": \\"name\\",
-                                \\"name\\": \\"fib\\",
-                                \\"loc\\":
-                                  { \\"start\\":
-                                      { \\"line\\": 1,
-                                        \\"column\\": 38 },
-                                    \\"end\\":
-                                      { \\"line\\": 1,
-                                        \\"column\\": 41 } } },
-                            \\"operands\\":
-                              [ { \\"tag\\": \\"application\\",
-                                  \\"operator\\":
-                                    { \\"tag\\": \\"name\\",
-                                      \\"name\\": \\"-\\",
-                                      \\"loc\\":
-                                        { \\"start\\":
-                                            { \\"line\\": 1,
-                                              \\"column\\": 43 },
-                                          \\"end\\":
-                                            { \\"line\\": 1,
-                                              \\"column\\": 44 } } },
-                                  \\"operands\\":
-                                    [ { \\"tag\\": \\"name\\",
-                                        \\"name\\": \\"x\\",
-                                        \\"loc\\":
-                                          { \\"start\\":
-                                              { \\"line\\": 1,
-                                                \\"column\\": 42 },
-                                            \\"end\\":
-                                              { \\"line\\": 1,
-                                                \\"column\\": 43 } } },
-                                    [ 1,
-                                    null ] ],
-                                  \\"loc\\":
-                                    { \\"start\\":
-                                        { \\"line\\": 1,
-                                          \\"column\\": 42 },
-                                      \\"end\\":
-                                        { \\"line\\": 1,
-                                          \\"column\\": 45 } } },
-                              null ],
-                            \\"loc\\":
-                              { \\"start\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 38 },
-                                \\"end\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 46 } } },
-                        [ { \\"tag\\": \\"application\\",
-                            \\"operator\\":
-                              { \\"tag\\": \\"name\\",
-                                \\"name\\": \\"fib\\",
-                                \\"loc\\":
-                                  { \\"start\\":
-                                      { \\"line\\": 1,
-                                        \\"column\\": 49 },
-                                    \\"end\\":
-                                      { \\"line\\": 1,
-                                        \\"column\\": 52 } } },
-                            \\"operands\\":
-                              [ { \\"tag\\": \\"application\\",
-                                  \\"operator\\":
-                                    { \\"tag\\": \\"name\\",
-                                      \\"name\\": \\"-\\",
-                                      \\"loc\\":
-                                        { \\"start\\":
-                                            { \\"line\\": 1,
-                                              \\"column\\": 54 },
-                                          \\"end\\":
-                                            { \\"line\\": 1,
-                                              \\"column\\": 55 } } },
-                                  \\"operands\\":
-                                    [ { \\"tag\\": \\"name\\",
-                                        \\"name\\": \\"x\\",
-                                        \\"loc\\":
-                                          { \\"start\\":
-                                              { \\"line\\": 1,
-                                                \\"column\\": 53 },
-                                            \\"end\\":
-                                              { \\"line\\": 1,
-                                                \\"column\\": 54 } } },
-                                    [ 2,
-                                    null ] ],
-                                  \\"loc\\":
-                                    { \\"start\\":
-                                        { \\"line\\": 1,
-                                          \\"column\\": 53 },
-                                      \\"end\\":
-                                        { \\"line\\": 1,
-                                          \\"column\\": 56 } } },
-                              null ],
-                            \\"loc\\":
-                              { \\"start\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 49 },
-                                \\"end\\":
-                                  { \\"line\\": 1,
-                                    \\"column\\": 57 } } },
+                      [ 1,
+                      null ] ],
+                    null ] ] ],
+                  null ],
+                null ] ] ],
+              [ [ \\"application\\",
+                [ [ \\"name\\",
+                  [ \\"fib\\",
+                  null ] ],
+                [ [ [ \\"application\\",
+                    [ [ \\"name\\",
+                      [ \\"-\\",
+                      null ] ],
+                    [ [ [ \\"name\\",
+                        [ \\"x\\",
                         null ] ],
-                      \\"loc\\":
-                        { \\"start\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 38 },
-                          \\"end\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 57 } } },
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 25 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 57 } } },
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 18 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 58 } } },
-          null ] },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 60 } } },
-[ { \\"tag\\": \\"application\\",
-    \\"operator\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"fib\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 61 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 64 } } },
-    \\"operands\\":
-      [ 4,
+                      [ 2,
+                      null ] ],
+                    null ] ] ],
+                  null ],
+                null ] ] ],
+              null ] ],
+            null ] ] ],
+          null ] ] ] ],
+        null ] ],
+      null ] ] ],
+    null ] ] ],
+  [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"fib\\",
+      null ] ],
+    [ [ 4,
       null ],
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 61 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 68 } } },
+    null ] ] ],
+  null ] ],
 null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -676,9 +357,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); } fib(4);\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); } fib(4);\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -694,96 +381,36 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"application\\",
-    \\"operator\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"f\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 0 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 1 } } },
-    \\"operands\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 2 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 3 } } },
+  "result": "[ \\"sequence\\",
+[ [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"f\\",
+      null ] ],
+    [ [ [ \\"name\\",
+        [ \\"x\\",
+        null ] ],
       null ],
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 5 } } },
-[ { \\"tag\\": \\"application\\",
-    \\"operator\\":
-      { \\"tag\\": \\"application\\",
-        \\"operator\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"thrice\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 6 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 12 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"thrice\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 13 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 19 } } },
-              null ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 6 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 20 } } },
-        \\"operands\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"plus_one\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 21 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 29 } } },
+    null ] ] ],
+  [ [ \\"application\\",
+    [ [ \\"application\\",
+      [ [ \\"application\\",
+        [ [ \\"name\\",
+          [ \\"thrice\\",
+          null ] ],
+        [ [ [ \\"name\\",
+            [ \\"thrice\\",
+            null ] ],
           null ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 6 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 30 } } },
-    \\"operands\\":
-      [ 0,
+        null ] ] ],
+      [ [ [ \\"name\\",
+          [ \\"plus_one\\",
+          null ] ],
+        null ],
+      null ] ] ],
+    [ [ 0,
       null ],
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 6 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 34 } } },
+    null ] ] ],
+  null ] ],
 null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -795,9 +422,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"f(x); thrice(thrice)(plus_one)(0);\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"f(x); thrice(thrice)(plus_one)(0);\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -813,84 +446,34 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"conditional_statement\\",
-    \\"predicate\\": true,
-    \\"consequent\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"hi\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 12 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 15 } } },
-          null ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 17 } } },
-    \\"alternative\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"haha\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 25 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 30 } } },
-          null ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 23 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 32 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 32 } } },
-[ { \\"tag\\": \\"conditional_statement\\",
-    \\"predicate\\": false,
-    \\"consequent\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\": null,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 44 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 46 } } },
-    \\"alternative\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\": null,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 52 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 54 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 33 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 54 } } },
+  "result": "[ \\"sequence\\",
+[ [ [ \\"conditional_statement\\",
+    [ true,
+    [ [ \\"block\\",
+      [ [ \\"name\\",
+        [ \\"hi\\",
+        null ] ],
+      null ] ],
+    [ [ \\"block\\",
+      [ [ \\"name\\",
+        [ \\"haha\\",
+        null ] ],
+      null ] ],
+    null ] ] ] ],
+  [ [ \\"conditional_statement\\",
+    [ false,
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ null,
+        null ] ],
+      null ] ],
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ null,
+        null ] ],
+      null ] ],
+    null ] ] ] ],
+  null ] ],
 null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -902,9 +485,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"if (true) { hi; } else { haha; } if (false) {} else {}\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"if (true) { hi; } else { haha; } if (false) {} else {}\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -920,112 +509,41 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"boolean_operation\\",
-    \\"operator\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"||\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 14 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 15 } } },
-    \\"operands\\":
-      [ { \\"tag\\": \\"application\\",
-          \\"operator\\":
-            { \\"tag\\": \\"name\\",
-              \\"name\\": \\"===\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 9 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 10 } } },
-          \\"operands\\":
-            [ { \\"tag\\": \\"application\\",
-                \\"operator\\":
-                  { \\"tag\\": \\"name\\",
-                    \\"name\\": \\"+\\",
-                    \\"loc\\":
-                      { \\"start\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 3 },
-                        \\"end\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 4 } } },
-                \\"operands\\":
-                  [ 3,
-                  [ 5,
-                  null ] ],
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 0 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 5 } } },
-            [ 8,
-            null ] ],
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 0 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 11 } } },
-      [ { \\"tag\\": \\"boolean_operation\\",
-          \\"operator\\":
-            { \\"tag\\": \\"name\\",
-              \\"name\\": \\"&&\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 23 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 24 } } },
-          \\"operands\\":
-            [ { \\"tag\\": \\"application\\",
-                \\"operator\\":
-                  { \\"tag\\": \\"name\\",
-                    \\"name\\": \\"!\\",
-                    \\"loc\\":
-                      { \\"start\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 15 },
-                        \\"end\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 16 } } },
-                \\"operands\\":
-                  [ true,
-                  null ],
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 15 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 20 } } },
-            [ false,
-            null ] ],
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 15 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 29 } } },
+  "result": "[ \\"boolean_operation\\",
+[ [ \\"name\\",
+  [ \\"||\\",
+  null ] ],
+[ [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"===\\",
       null ] ],
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 30 } } },
-null ]",
+    [ [ [ \\"application\\",
+        [ [ \\"name\\",
+          [ \\"+\\",
+          null ] ],
+        [ [ 3,
+          [ 5,
+          null ] ],
+        null ] ] ],
+      [ 8,
+      null ] ],
+    null ] ] ],
+  [ [ \\"boolean_operation\\",
+    [ [ \\"name\\",
+      [ \\"&&\\",
+      null ] ],
+    [ [ [ \\"application\\",
+        [ [ \\"name\\",
+          [ \\"!\\",
+          null ] ],
+        [ [ true,
+          null ],
+        null ] ] ],
+      [ false,
+      null ] ],
+    null ] ] ],
+  null ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1036,9 +554,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"3 + 5 === 8 || !true && false;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"3 + 5 === 8 || !true && false;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1054,15 +578,17 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ 3,
-[ true,
-[ false,
-[ \\"\\",
-[ \\"\\",
-[ \\"bob\\",
-[ 1,
-[ 20,
-null ] ] ] ] ] ] ] ]",
+  "result": "[ \\"sequence\\",
+[ [ 3,
+  [ true,
+  [ false,
+  [ \\"\\",
+  [ \\"\\",
+  [ \\"bob\\",
+  [ 1,
+  [ 20,
+  null ] ] ] ] ] ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1073,9 +599,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"3; true; false; ''; \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"; 'bob'; 1; 20;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"3; true; false; ''; \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"; 'bob'; 1; 20;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1091,315 +623,105 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"while_loop\\",
-    \\"predicate\\": true,
-    \\"statements\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"continue_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 15 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 24 } } },
-          [ { \\"tag\\": \\"break_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 25 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 31 } } },
+  "result": "[ \\"sequence\\",
+[ [ [ \\"while_loop\\",
+    [ true,
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ [ [ \\"continue_statement\\",
+            null ],
+          [ [ \\"break_statement\\",
+            null ],
           null ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 13 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 33 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 33 } } },
-[ { \\"tag\\": \\"for_loop\\",
-    \\"initialiser\\":
-      { \\"tag\\": \\"variable_declaration\\",
-        \\"name\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 43 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 44 } } },
-        \\"value\\": 0,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 39 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 48 } } },
-    \\"predicate\\":
-      { \\"tag\\": \\"application\\",
-        \\"operator\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"<\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 53 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 54 } } },
-        \\"operands\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"i\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 50 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 51 } } },
+        null ] ],
+      null ] ],
+    null ] ] ],
+  [ [ \\"for_loop\\",
+    [ [ \\"variable_declaration\\",
+      [ [ \\"name\\",
+        [ \\"i\\",
+        null ] ],
+      [ 0,
+      null ] ] ],
+    [ [ \\"application\\",
+      [ [ \\"name\\",
+        [ \\"<\\",
+        null ] ],
+      [ [ [ \\"name\\",
+          [ \\"i\\",
+          null ] ],
+        [ 1,
+        null ] ],
+      null ] ] ],
+    [ [ \\"assignment\\",
+      [ [ \\"name\\",
+        [ \\"i\\",
+        null ] ],
+      [ [ \\"application\\",
+        [ [ \\"name\\",
+          [ \\"+\\",
+          null ] ],
+        [ [ [ \\"name\\",
+            [ \\"i\\",
+            null ] ],
           [ 1,
           null ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 50 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 55 } } },
-    \\"finaliser\\":
-      { \\"tag\\": \\"assignment\\",
-        \\"name\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 57 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 58 } } },
-        \\"value\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 64 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 65 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"i\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 61 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 62 } } },
-              [ 1,
-              null ] ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 61 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 66 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 57 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 66 } } },
-    \\"statements\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"continue_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 70 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 79 } } },
-          [ { \\"tag\\": \\"break_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 80 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 86 } } },
+        null ] ] ],
+      null ] ] ],
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ [ [ \\"continue_statement\\",
+            null ],
+          [ [ \\"break_statement\\",
+            null ],
           null ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 68 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 88 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 34 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 88 } } },
-[ { \\"tag\\": \\"for_loop\\",
-    \\"initialiser\\":
-      { \\"tag\\": \\"assignment\\",
-        \\"name\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 94 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 95 } } },
-        \\"value\\": 0,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 94 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 99 } } },
-    \\"predicate\\":
-      { \\"tag\\": \\"application\\",
-        \\"operator\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"<\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 104 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 105 } } },
-        \\"operands\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"i\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 101 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 102 } } },
+        null ] ],
+      null ] ],
+    null ] ] ] ] ],
+  [ [ \\"for_loop\\",
+    [ [ \\"assignment\\",
+      [ [ \\"name\\",
+        [ \\"i\\",
+        null ] ],
+      [ 0,
+      null ] ] ],
+    [ [ \\"application\\",
+      [ [ \\"name\\",
+        [ \\"<\\",
+        null ] ],
+      [ [ [ \\"name\\",
+          [ \\"i\\",
+          null ] ],
+        [ 1,
+        null ] ],
+      null ] ] ],
+    [ [ \\"assignment\\",
+      [ [ \\"name\\",
+        [ \\"i\\",
+        null ] ],
+      [ [ \\"application\\",
+        [ [ \\"name\\",
+          [ \\"+\\",
+          null ] ],
+        [ [ [ \\"name\\",
+            [ \\"i\\",
+            null ] ],
           [ 1,
           null ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 101 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 106 } } },
-    \\"finaliser\\":
-      { \\"tag\\": \\"assignment\\",
-        \\"name\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"i\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 108 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 109 } } },
-        \\"value\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 115 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 116 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"i\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 112 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 113 } } },
-              [ 1,
-              null ] ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 112 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 117 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 108 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 117 } } },
-    \\"statements\\":
-      { \\"tag\\": \\"block\\",
-        \\"body\\":
-          [ { \\"tag\\": \\"continue_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 121 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 130 } } },
-          [ { \\"tag\\": \\"break_statement\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 131 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 137 } } },
+        null ] ] ],
+      null ] ] ],
+    [ [ \\"block\\",
+      [ [ \\"sequence\\",
+        [ [ [ \\"continue_statement\\",
+            null ],
+          [ [ \\"break_statement\\",
+            null ],
           null ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 119 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 139 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 89 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 139 } } },
-null ] ] ]",
+        null ] ],
+      null ] ],
+    null ] ] ] ] ],
+  null ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1410,9 +732,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"while (true) { continue; break; } for (let i = 0; i < 1; i = i + 1) { continue; break; } for (i = 0; i < 1; i = i + 1) { continue; break; }\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"while (true) { continue; break; } for (let i = 0; i < 1; i = i + 1) { continue; break; } for (i = 0; i < 1; i = i + 1) { continue; break; }\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1428,94 +756,32 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"constant_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"y\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 6 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 7 } } },
-    \\"value\\":
-      { \\"tag\\": \\"function_definition\\",
-        \\"parameters\\":
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"x\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 11 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 12 } } },
-          [ { \\"tag\\": \\"name\\",
-              \\"name\\": \\"y\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 14 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 15 } } },
+  "result": "[ \\"constant_declaration\\",
+[ [ \\"name\\",
+  [ \\"y\\",
+  null ] ],
+[ [ \\"function_definition\\",
+  [ [ [ \\"name\\",
+      [ \\"x\\",
+      null ] ],
+    [ [ \\"name\\",
+      [ \\"y\\",
+      null ] ],
+    null ] ],
+  [ [ \\"return_statement\\",
+    [ [ \\"application\\",
+      [ [ \\"name\\",
+        [ \\"+\\",
+        null ] ],
+      [ [ [ \\"name\\",
+          [ \\"x\\",
           null ] ],
-        \\"body\\":
-          { \\"tag\\": \\"return_statement\\",
-            \\"expression\\":
-              { \\"tag\\": \\"application\\",
-                \\"operator\\":
-                  { \\"tag\\": \\"name\\",
-                    \\"name\\": \\"+\\",
-                    \\"loc\\":
-                      { \\"start\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 23 },
-                        \\"end\\":
-                          { \\"line\\": 1,
-                            \\"column\\": 24 } } },
-                \\"operands\\":
-                  [ { \\"tag\\": \\"name\\",
-                      \\"name\\": \\"x\\",
-                      \\"loc\\":
-                        { \\"start\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 20 },
-                          \\"end\\":
-                            { \\"line\\": 1,
-                              \\"column\\": 21 } } },
-                  [ 1,
-                  null ] ],
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 20 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 25 } } },
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 20 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 25 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 25 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 26 } } },
-null ]",
+        [ 1,
+        null ] ],
+      null ] ] ],
+    null ] ],
+  null ] ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1526,9 +792,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const y = (x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"const y = (x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1544,75 +816,27 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"function_definition\\",
-    \\"parameters\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 1 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 2 } } },
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"y\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 4 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 5 } } },
+  "result": "[ \\"function_definition\\",
+[ [ [ \\"name\\",
+    [ \\"x\\",
+    null ] ],
+  [ [ \\"name\\",
+    [ \\"y\\",
+    null ] ],
+  null ] ],
+[ [ \\"return_statement\\",
+  [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"+\\",
       null ] ],
-    \\"body\\":
-      { \\"tag\\": \\"return_statement\\",
-        \\"expression\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 13 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 14 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"x\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 10 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 11 } } },
-              [ 1,
-              null ] ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 10 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 15 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 15 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 16 } } },
-null ]",
+    [ [ [ \\"name\\",
+        [ \\"x\\",
+        null ] ],
+      [ 1,
+      null ] ],
+    null ] ] ],
+  null ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1623,9 +847,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"(x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"(x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1641,75 +871,27 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"function_definition\\",
-    \\"parameters\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 1 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 2 } } },
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"y\\",
-          \\"loc\\":
-            { \\"start\\":
-                { \\"line\\": 1,
-                  \\"column\\": 4 },
-              \\"end\\":
-                { \\"line\\": 1,
-                  \\"column\\": 5 } } },
+  "result": "[ \\"function_definition\\",
+[ [ [ \\"name\\",
+    [ \\"x\\",
+    null ] ],
+  [ [ \\"name\\",
+    [ \\"y\\",
+    null ] ],
+  null ] ],
+[ [ \\"return_statement\\",
+  [ [ \\"application\\",
+    [ [ \\"name\\",
+      [ \\"+\\",
       null ] ],
-    \\"body\\":
-      { \\"tag\\": \\"return_statement\\",
-        \\"expression\\":
-          { \\"tag\\": \\"application\\",
-            \\"operator\\":
-              { \\"tag\\": \\"name\\",
-                \\"name\\": \\"+\\",
-                \\"loc\\":
-                  { \\"start\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 13 },
-                    \\"end\\":
-                      { \\"line\\": 1,
-                        \\"column\\": 14 } } },
-            \\"operands\\":
-              [ { \\"tag\\": \\"name\\",
-                  \\"name\\": \\"x\\",
-                  \\"loc\\":
-                    { \\"start\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 10 },
-                      \\"end\\":
-                        { \\"line\\": 1,
-                          \\"column\\": 11 } } },
-              [ 1,
-              null ] ],
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 10 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 15 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 15 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 16 } } },
-null ]",
+    [ [ [ \\"name\\",
+        [ \\"x\\",
+        null ] ],
+      [ 1,
+      null ] ],
+    null ] ] ],
+  null ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1720,9 +902,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"(x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"(x, y) => x + 1;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1738,16 +926,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"name\\",
-    \\"name\\": \\"x\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 2 } } },
-null ]",
+  "result": "[ \\"name\\",
+[ \\"x\\",
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1758,9 +939,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1776,34 +963,18 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"name\\",
-    \\"name\\": \\"x\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 2 } } },
-[ { \\"tag\\": \\"name\\",
-    \\"name\\": \\"moreNames\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 3 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 13 } } },
-[ { \\"tag\\": \\"name\\",
-    \\"name\\": \\"undefined\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 14 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 24 } } },
-null ] ] ]",
+  "result": "[ \\"sequence\\",
+[ [ [ \\"name\\",
+    [ \\"x\\",
+    null ] ],
+  [ [ \\"name\\",
+    [ \\"moreNames\\",
+    null ] ],
+  [ [ \\"name\\",
+    [ \\"undefined\\",
+    null ] ],
+  null ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1814,9 +985,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x; moreNames; undefined;\\\\\\"), undefined, 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, \\\\\\"x; moreNames; undefined;\\\\\\"), undefined, 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1832,50 +1009,26 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"variable_declaration\\",
-    \\"name\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"x\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 4 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 5 } } },
-    \\"value\\":
-      { \\"tag\\": \\"object_expression\\",
-        \\"pairs\\":
-          [ [ \\"a\\",
-            5 ],
-          [ [ \\"b\\",
-            10 ],
-          [ [ \\"key\\",
-            { \\"tag\\": \\"name\\",
-              \\"name\\": \\"value\\",
-              \\"loc\\":
-                { \\"start\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 29 },
-                  \\"end\\":
-                    { \\"line\\": 1,
-                      \\"column\\": 34 } } } ],
-          null ] ] ],
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 8 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 35 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 36 } } },
-null ]",
+  "result": "[ \\"variable_declaration\\",
+[ [ \\"name\\",
+  [ \\"x\\",
+  null ] ],
+[ [ \\"object_expression\\",
+  [ [ [ [ \\"property\\",
+        [ \\"a\\",
+        null ] ],
+      5 ],
+    [ [ [ \\"property\\",
+        [ \\"b\\",
+        null ] ],
+      10 ],
+    [ [ \\"key\\",
+      [ \\"name\\",
+      [ \\"value\\",
+      null ] ] ],
+    null ] ] ],
+  null ] ],
+null ] ] ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1888,92 +1041,37 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"property_access\\",
-    \\"object\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"a\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 0 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 1 } } },
-    \\"property\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"b\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 2 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 3 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 5 } } },
-[ { \\"tag\\": \\"property_access\\",
-    \\"object\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"a\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 6 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 7 } } },
-    \\"property\\": \\"b\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 6 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 10 } } },
-[ { \\"tag\\": \\"property_access\\",
-    \\"object\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"a\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 11 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 12 } } },
-    \\"property\\": 5,
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 11 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 16 } } },
-[ { \\"tag\\": \\"property_access\\",
-    \\"object\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"a\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 17 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 18 } } },
-    \\"property\\": \\"b\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 17 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 24 } } },
-null ] ] ] ]",
+  "result": "[ \\"sequence\\",
+[ [ [ \\"object_access\\",
+    [ [ \\"name\\",
+      [ \\"a\\",
+      null ] ],
+    [ [ \\"property\\",
+      [ \\"b\\",
+      null ] ],
+    null ] ] ],
+  [ [ \\"object_access\\",
+    [ [ \\"name\\",
+      [ \\"a\\",
+      null ] ],
+    [ [ \\"property\\",
+      [ \\"b\\",
+      null ] ],
+    null ] ] ],
+  [ [ \\"object_access\\",
+    [ [ \\"name\\",
+      [ \\"a\\",
+      null ] ],
+    [ 5,
+    null ] ] ],
+  [ [ \\"object_access\\",
+    [ [ \\"name\\",
+      [ \\"a\\",
+      null ] ],
+    [ \\"b\\",
+    null ] ] ],
+  null ] ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1986,141 +1084,51 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"property_assignment\\",
-    \\"object\\":
-      { \\"tag\\": \\"property_access\\",
-        \\"object\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"a\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 0 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 1 } } },
-        \\"property\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"b\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 2 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 3 } } },
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 0 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 4 } } },
-    \\"value\\": 5,
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 0 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 9 } } },
-[ { \\"tag\\": \\"property_assignment\\",
-    \\"object\\":
-      { \\"tag\\": \\"property_access\\",
-        \\"object\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"a\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 10 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 11 } } },
-        \\"property\\": \\"b\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 10 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 13 } } },
-    \\"value\\":
-      { \\"tag\\": \\"name\\",
-        \\"name\\": \\"value\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 16 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 21 } } },
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 10 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 22 } } },
-[ { \\"tag\\": \\"property_assignment\\",
-    \\"object\\":
-      { \\"tag\\": \\"property_access\\",
-        \\"object\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"a\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 23 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 24 } } },
-        \\"property\\": 5,
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 23 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 27 } } },
-    \\"value\\": \\"value\\",
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 23 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 38 } } },
-[ { \\"tag\\": \\"property_assignment\\",
-    \\"object\\":
-      { \\"tag\\": \\"property_access\\",
-        \\"object\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"a\\",
-            \\"loc\\":
-              { \\"start\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 39 },
-                \\"end\\":
-                  { \\"line\\": 1,
-                    \\"column\\": 40 } } },
-        \\"property\\": \\"b\\",
-        \\"loc\\":
-          { \\"start\\":
-              { \\"line\\": 1,
-                \\"column\\": 39 },
-            \\"end\\":
-              { \\"line\\": 1,
-                \\"column\\": 45 } } },
-    \\"value\\": 42,
-    \\"loc\\":
-      { \\"start\\":
-          { \\"line\\": 1,
-            \\"column\\": 39 },
-        \\"end\\":
-          { \\"line\\": 1,
-            \\"column\\": 51 } } },
-null ] ] ] ]",
+  "result": "[ \\"sequence\\",
+[ [ [ \\"array_assignment\\",
+    [ [ \\"object_access\\",
+      [ [ \\"name\\",
+        [ \\"a\\",
+        null ] ],
+      [ [ \\"property\\",
+        [ \\"b\\",
+        null ] ],
+      null ] ] ],
+    [ 5,
+    null ] ] ],
+  [ [ \\"array_assignment\\",
+    [ [ \\"object_access\\",
+      [ [ \\"name\\",
+        [ \\"a\\",
+        null ] ],
+      [ [ \\"property\\",
+        [ \\"b\\",
+        null ] ],
+      null ] ] ],
+    [ [ \\"name\\",
+      [ \\"value\\",
+      null ] ],
+    null ] ] ],
+  [ [ \\"array_assignment\\",
+    [ [ \\"object_access\\",
+      [ [ \\"name\\",
+        [ \\"a\\",
+        null ] ],
+      [ 5,
+      null ] ] ],
+    [ \\"value\\",
+    null ] ] ],
+  [ [ \\"array_assignment\\",
+    [ [ \\"object_access\\",
+      [ [ \\"name\\",
+        [ \\"a\\",
+        null ] ],
+      [ \\"b\\",
+      null ] ] ],
+    [ 42,
+    null ] ] ],
+  null ] ] ] ],
+null ] ]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

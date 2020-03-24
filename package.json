@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.2.1-alpha.2",
+  "version": "0.4.10",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -9,11 +9,9 @@
   "dependencies": {
     "@types/estree": "0.0.39",
     "acorn": "^6.0.5",
-    "acorn-walk": "^6.1.1",
+    "acorn-loose": "^7.0.0",
+    "acorn-walk": "^7.0.0",
     "astring": "^1.3.1",
-    "commander": "^2.19.0",
-    "common-tags": "^1.8.0",
-    "invariant": "^2.2.4",
     "source-map": "^0.7.3"
   },
   "main": "dist/index",
@@ -32,7 +30,8 @@
     "prepublishOnly": "tsc",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\""
+    "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
+    "jsdoc": "./scripts/jsdoc.sh"
   },
   "repository": {
     "type": "git",
@@ -43,20 +42,16 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/common-tags": "^1.8.0",
-    "@types/invariant": "^2.2.29",
-    "@types/jest": "^24.0.11",
-    "@types/node": "^11.13.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^13.7.0",
     "coveralls": "^3.0.2",
     "husky": "^2.3.0",
     "jest": "^23.6.0",
-    "prettier": "^1.14.3",
+    "jsdoc": "3.5.5",
+    "prettier": "^1.19.1",
     "ts-jest": "^23.10.5",
-    "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
+    "tslint": "^6.0.0",
+    "typescript": "^3.8.3"
   },
   "jest": {
     "moduleFileExtensions": [

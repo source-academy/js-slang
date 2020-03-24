@@ -1,0 +1,3431 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Access local property: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 0})[\\"a\\"];",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"getProp({   a: 0 }, \\\\\\"a\\\\\\", 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Builtins don't create additional errors when it's not their fault: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return a;
+}
+map(f, list(1, 2));",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "name": "a",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Name a not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cascading js errors work properly 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function make_alternating_stream(stream) {
+  return pair(head(stream), () => make_alternating_stream(
+                                    negate_whole_stream(
+                                        stream_tail(stream))));
+}
+
+function negate_whole_stream(stream) {
+    return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));
+}
+
+const ones = pair(1, () => ones);
+eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 8,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const make_alternating_stream = wrap(stream => {
+          return {
+            isTail: true,
+            function: pair,
+            functionName: \\"pair\\",
+            arguments: [callIfFuncAndRightArgs(head, 2, 14, stream), wrap(() => ({
+              isTail: true,
+              function: make_alternating_stream,
+              functionName: \\"make_alternating_stream\\",
+              arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
+              line: 2,
+              column: 34
+            }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\")],
+            line: 2,
+            column: 9
+          };
+        }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\");
+        const negate_whole_stream = wrap(stream => {
+          return {
+            isTail: true,
+            function: pair,
+            functionName: \\"pair\\",
+            arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
+              isTail: true,
+              function: negate_whole_stream,
+              functionName: \\"negate_whole_stream\\",
+              arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
+              line: 8,
+              column: 37
+            }), \\"() => negate_whole_stream(stream_tail(stream))\\")],
+            line: 8,
+            column: 11
+          };
+        }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\");
+        const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
+          isTail: false,
+          value: ones
+        }), \\"() => ones\\"));
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
+        globals.variables.set(\\"make_alternating_stream\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return make_alternating_stream;
+          }
+        });
+        globals.variables.set(\\"negate_whole_stream\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return negate_whole_stream;
+          }
+        });
+        globals.variables.set(\\"ones\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return ones;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cascading js errors work properly: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function h(p) {
+  return head(p);
+}
+
+h(null);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const h = wrap(p => {
+          return {
+            isTail: true,
+            function: head,
+            functionName: \\"head\\",
+            arguments: [p],
+            line: 2,
+            column: 9
+          };
+        }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
+        globals.variables.set(\\"h\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return h;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when accessing inherited property of object: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({}).valueOf;",
+  "displayResult": Array [],
+  "errors": Array [
+    GetInheritedPropertyError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "obj": Object {},
+      "prop": "valueOf",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"getProp({}, \\\\\\"valueOf\\\\\\", 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+map = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "map",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map.
+As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+undefined = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined.
+As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "map = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "map",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Cannot assign new value to constant map.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    ConstAssignment {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Cannot assign new value to constant undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function in tail call with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "g",
+      "expected": 0,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function in tail call with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "g",
+      "expected": 0,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 15,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const g = wrap(() => ({
+          isTail: false,
+          value: 1
+        }), \\"() => 1\\");
+        const f = wrap(x => ({
+          isTail: true,
+          function: g,
+          functionName: \\"g\\",
+          arguments: [x],
+          line: 2,
+          column: 15
+        }), \\"x => g(x)\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
+        globals.variables.set(\\"g\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return g;
+          }
+        });
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(x => ({
+          isTail: false,
+          value: x
+        }), \\"x => x\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(x => ({
+          isTail: false,
+          value: x
+        }), \\"x => x\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = [x => x];
+  f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = [x => x];
+f[0](1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f[0]",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = [wrap(x => ({
+          isTail: false,
+          value: x
+        }), \\"x => x\\")];
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 5,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return x;
+}
+f();",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(x => {
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 5,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return x;
+}
+f(1, 2);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "f",
+      "expected": 1,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 7,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(x => {
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value "string" - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  'string'();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 28,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "'string'",
+          "start": 20,
+          "type": "Literal",
+          "value": "string",
+        },
+        "end": 30,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 12,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\".
+Because \\"string\\" is not a function, you cannot run \\"string\\"().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value "string": expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'string'();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 8,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 8,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "'string'",
+          "start": 0,
+          "type": "Literal",
+          "value": "string",
+        },
+        "end": 10,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs('string', 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value 0 - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  0();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 21,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "0",
+          "start": 20,
+          "type": "Literal",
+          "value": 0,
+        },
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0.
+Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value 0: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "0();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 0,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 1,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "0",
+          "start": 0,
+          "type": "Literal",
+          "value": 0,
+        },
+        "end": 3,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(0, 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+[1]();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Array [
+        1,
+      ],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "elements": Array [
+            Node {
+              "end": 20,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 2,
+                },
+              },
+              "raw": "1",
+              "start": 19,
+              "type": "Literal",
+              "value": 1,
+            },
+          ],
+          "end": 21,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 2,
+            },
+          },
+          "start": 18,
+          "type": "ArrayExpression",
+        },
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "[1]();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Array [
+        1,
+      ],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "elements": Array [
+            Node {
+              "end": 2,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 2,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+              "raw": "1",
+              "start": 1,
+              "type": "Literal",
+              "value": 1,
+            },
+          ],
+          "end": 3,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "start": 0,
+          "type": "ArrayExpression",
+        },
+        "end": 5,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value [1].",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs([1], 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value null - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  null();",
+  "displayResult": Array [],
+  "errors": Array [
+    NoNullError {
+      "node": Node {
+        "end": 24,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 6,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "raw": "null",
+        "start": 20,
+        "type": "Literal",
+        "value": null,
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed.
+They're not part of the Source §1 specs.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null();",
+  "displayResult": Array [],
+  "errors": Array [
+    NoNullError {
+      "node": Node {
+        "end": 4,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 4,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "raw": "null",
+        "start": 0,
+        "type": "Literal",
+        "value": null,
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: null literals are not allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 25,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 2,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 24,
+              "key": Node {
+                "end": 21,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 2,
+                  },
+                },
+                "name": "a",
+                "start": 20,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 20,
+              "type": "Property",
+              "value": Node {
+                "end": 24,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 2,
+                  },
+                },
+                "raw": "1",
+                "start": 23,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 19,
+          "type": "ObjectExpression",
+        },
+        "end": 28,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 25,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 2,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 24,
+              "key": Node {
+                "end": 21,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 2,
+                  },
+                },
+                "name": "a",
+                "start": 20,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 2,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 20,
+              "type": "Property",
+              "value": Node {
+                "end": 24,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 2,
+                  },
+                },
+                "raw": "1",
+                "start": 23,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 19,
+          "type": "ObjectExpression",
+        },
+        "end": 28,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 1})();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": Object {
+        "a": 1,
+      },
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 7,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 1,
+              "line": 1,
+            },
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "end": 6,
+              "key": Node {
+                "end": 3,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 2,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 2,
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 1,
+                },
+              },
+              "method": false,
+              "shorthand": false,
+              "start": 2,
+              "type": "Property",
+              "value": Node {
+                "end": 6,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 5,
+                    "line": 1,
+                  },
+                },
+                "raw": "1",
+                "start": 5,
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+          ],
+          "start": 1,
+          "type": "ObjectExpression",
+        },
+        "end": 10,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value {\\"a\\": 1}.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value true - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  true();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": true,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 24,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "true",
+          "start": 20,
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 26,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 8,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true.
+Because true is not a function, you cannot run true().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value true: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": true,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 4,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "raw": "true",
+          "start": 0,
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 6,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 6,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value true.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 31,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 31,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 30,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 37,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 2,
+              },
+            },
+            "raw": "true",
+            "start": 33,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 29,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "name": "undefined",
+          "start": 20,
+          "type": "Identifier",
+        },
+        "end": 38,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 20,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "start": 20,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined(1, true);",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 11,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 10,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 17,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 1,
+              },
+            },
+            "raw": "true",
+            "start": 13,
+            "type": "Literal",
+            "value": true,
+          },
+        ],
+        "callee": Node {
+          "end": 9,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "name": "undefined",
+          "start": 0,
+          "type": "Identifier",
+        },
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 18,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined();",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": undefined,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "node": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 9,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "name": "undefined",
+          "start": 0,
+          "type": "Identifier",
+        },
+        "end": 11,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 11,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(undefined, 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring const after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring const after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring constant as variable: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring constant: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 3,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring variable as constant: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+const f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 7,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring variable: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+let f = x => x;",
+  "displayResult": Array [],
+  "errors": Array [
+    FatalSyntaxError {
+      "location": Object {
+        "end": Object {
+          "column": 5,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "parseError",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int(\\"10\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"'\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prototype;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(() => {
+          return {
+            isTail: false,
+            value: 1
+          };
+        }, \\"function f() {\\\\n  return 1;\\\\n}\\");
+        lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null.prop;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "null",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got null.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"getProp(null, \\\\\\"prop\\\\\\", 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.length;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"getProp('hi', \\\\\\"length\\\\\\", 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "function",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap(() => {
+          return {
+            isTail: false,
+            value: 1
+          };
+        }, \\"function f() {\\\\n  return 1;\\\\n}\\");
+        lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.prop = 5;",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "object or array",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": "",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"setProp('hi', \\\\\\"prop\\\\\\", 5, 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "12
+*
+'string';",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "number",
+      "got": "string",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " on right hand side of operation",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 12, 'string', 1, 0);\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with non boolean in if statement, error line at if statement, not at 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (
+1
+) {
+  2;
+} else {}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        lastStatementResult = eval(\\"if (boolOrErr(1, 1, 0)) {   2; } else {}\\");
+      }
+    }
+    return lastStatementResult;
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Undefined variable error is thrown - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+im_undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "im_undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared.
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Undefined variable error is thrown: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "im_undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "im_undefined",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Name im_undefined not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;

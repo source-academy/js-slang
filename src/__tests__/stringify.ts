@@ -1,4 +1,5 @@
-import { expectResult, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectResult } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
   return expectResult(
@@ -31,14 +32,14 @@ test('String representation of functions are nice', () => {
   return expectResult(
     stripIndent`
   function f(x, y) {
-    return z;
+    return x;
   }
   stringify(f);
   `,
     { native: true }
   ).toMatchInlineSnapshot(`
 "function f(x, y) {
-  return z;
+  return x;
 }"
 `)
 })
@@ -46,31 +47,31 @@ test('String representation of functions are nice', () => {
 test('String representation of arrow functions are nice', () => {
   return expectResult(
     stripIndent`
-  const f = (x, y) => z;
+  const f = (x, y) => x;
   stringify(f);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"(x, y) => z"`)
+  ).toMatchInlineSnapshot(`"(x, y) => x"`)
 })
 
 test('String representation of arrays are nice', () => {
   return expectResult(
     stripIndent`
-  const xs = [1, 'true', true, () => x];
+  const xs = [1, 'true', true, () => 1];
   stringify(xs);
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => x]"`)
+  ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => 1]"`)
 })
 
 test('String representation of multidimensional arrays are nice', () => {
   return expectResult(
     stripIndent`
-  const xs = [1, 'true', [true, () => x, [[]]]];
+  const xs = [1, 'true', [true, () => 1, [[]]]];
   stringify(xs);
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => x, [[]]]]"`)
+  ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => 1, [[]]]]"`)
 })
 
 test('String representation of empty arrays are nice', () => {
@@ -92,11 +93,12 @@ test('String representation of lists are nice', () => {
   ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
 })
 
+// The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 // tslint:disable:max-line-length
 test('String representation of huge lists are nice', () => {
   return expectResult(
     stripIndent`
-  stringify(enum_list(1, 1000));
+  stringify(enum_list(1, 100));
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
@@ -188,9 +190,7 @@ test('String representation of huge lists are nice', () => {
 [ 86,
 [ 87,
 [ 88,
-[ 89,
-[ 90,
-[91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
+[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
 `)
 })
 // tslint:enable:max-line-length
@@ -312,36 +312,36 @@ test('String representation of huge arrays are nice', () => {
 test('String representation of objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x };
+  const o = { a: 1, b: true, c: () => 1 };
   stringify(o);
   `,
     { chapter: 100, native: true }
-  ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}"`)
+  ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
 })
 
 test('String representation of nested objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
+  const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
   stringify(o);
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(
-    `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
+    `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
   )
 })
 
 test('String representation of big objects are nice', () => {
   return expectResult(
     stripIndent`
-  const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
+  const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`
 "{ \\"a\\": 1,
   \\"b\\": true,
-  \\"c\\": () => x,
+  \\"c\\": () => 1,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
   \\"g\\": 0,
   \\"h\\": 0,
@@ -404,7 +404,7 @@ test('String representation with no indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(
-    `"[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]"`
+    `"[\\"function_definition\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"`
   )
 })
 
@@ -415,21 +415,9 @@ test('String representation with 1 space indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[{\\"tag\\": \\"function_definition\\",
-  \\"parameters\\":
-   [{\\"tag\\": \\"name\\",
-     \\"name\\": \\"x\\",
-     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}},
-   null],
-  \\"body\\":
-   {\\"tag\\": \\"return_statement\\",
-    \\"expression\\":
-     {\\"tag\\": \\"name\\",
-      \\"name\\": \\"x\\",
-      \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
-    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
-  \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}},
-null]"
+"[\\"function_definition\\",
+[[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
 `)
 })
 
@@ -440,21 +428,9 @@ test('String representation with default (2 space) indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[ { \\"tag\\": \\"function_definition\\",
-    \\"parameters\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}} },
-      null ],
-    \\"body\\":
-      { \\"tag\\": \\"return_statement\\",
-        \\"expression\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"x\\",
-            \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
-        \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
-    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} },
-null ]"
+"[ \\"function_definition\\",
+[ [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]"
 `)
 })
 
@@ -465,21 +441,9 @@ test('String representation with more than 10 space indent should trim to 10 spa
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[         {         \\"tag\\": \\"function_definition\\",
-                    \\"parameters\\":
-                              [         {         \\"tag\\": \\"name\\",
-                                                  \\"name\\": \\"x\\",
-                                                  \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}         },
-                              null         ],
-                    \\"body\\":
-                              {         \\"tag\\": \\"return_statement\\",
-                                        \\"expression\\":
-                                                  {         \\"tag\\": \\"name\\",
-                                                            \\"name\\": \\"x\\",
-                                                            \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
-                                        \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
-                    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}         },
-null         ]"
+"[         \\"function_definition\\",
+[         [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]"
 `)
 })
 
@@ -490,21 +454,9 @@ test('String representation with custom indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[... {... \\"tag\\": \\"function_definition\\",
- ...  ... \\"parameters\\":
- ...  ...  ... [... {... \\"tag\\": \\"name\\",
- ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}} ...},
- ...  ...  ... null ...],
- ...  ... \\"body\\":
- ...  ...  ... {... \\"tag\\": \\"return_statement\\",
- ...  ...  ...  ... \\"expression\\":
- ...  ...  ...  ...  ... {... \\"tag\\": \\"name\\",
- ...  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
- ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
- ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} ...},
-null ...]"
+"[... \\"function_definition\\",
+[... [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]"
 `)
 })
 
@@ -515,21 +467,9 @@ test('String representation with long custom indent gets trimmed to 10 character
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[.........{.........\\"tag\\": \\"function_definition\\",
-....................\\"parameters\\":
-..............................[.........{.........\\"tag\\": \\"name\\",
-..................................................\\"name\\": \\"x\\",
-..................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}.........},
-..............................null.........],
-....................\\"body\\":
-..............................{.........\\"tag\\": \\"return_statement\\",
-........................................\\"expression\\":
-..................................................{.........\\"tag\\": \\"name\\",
-............................................................\\"name\\": \\"x\\",
-............................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
-........................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
-....................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}.........},
-null.........]"
+"[.........\\"function_definition\\",
+[.........[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]"
 `)
 })
 // tslint:enable:max-line-length

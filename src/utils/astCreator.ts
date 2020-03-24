@@ -1,5 +1,8 @@
 import * as es from 'estree'
-import { AllowedDeclarations } from '../types'
+import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
+
+export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
+  (decl.declarations[0].id as es.Identifier).name
 
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
@@ -75,8 +78,28 @@ export const blockArrowFunction = (
   loc
 })
 
+export const functionExpression = (
+  params: es.Identifier[],
+  body: es.Statement[] | es.BlockStatement,
+  loc?: es.SourceLocation
+): es.FunctionExpression => ({
+  type: 'FunctionExpression',
+  id: null,
+  async: false,
+  generator: false,
+  params,
+  body: Array.isArray(body) ? blockStatement(body) : body,
+  loc
+})
+
 export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
   type: 'BlockStatement',
+  body
+})
+
+export const program = (body: es.Statement[]): es.Program => ({
+  type: 'Program',
+  sourceType: 'module',
   body
 })
 
@@ -146,7 +169,124 @@ export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression =
   elements
 })
 
+export const assignmentExpression = (
+  left: es.Identifier | es.MemberExpression,
+  right: es.Expression
+): es.AssignmentExpression => ({
+  type: 'AssignmentExpression',
+  operator: '=',
+  left,
+  right
+})
+
+export const binaryExpression = (
+  operator: es.BinaryOperator,
+  left: es.Expression,
+  right: es.Expression,
+  loc?: es.SourceLocation
+): es.BinaryExpression => ({
+  type: 'BinaryExpression',
+  operator,
+  left,
+  right,
+  loc
+})
+
+export const unaryExpression = (
+  operator: es.UnaryOperator,
+  argument: es.Expression,
+  loc?: es.SourceLocation
+): es.UnaryExpression => ({
+  type: 'UnaryExpression',
+  operator,
+  prefix: true,
+  argument,
+  loc
+})
+
 // primitive: undefined is a possible value
 export const primitive = (value: any): es.Expression => {
   return value === undefined ? identifier('undefined') : literal(value)
 }
+
+export const functionDeclarationExpression = (
+  id: es.Identifier,
+  params: es.Pattern[],
+  body: es.BlockStatement,
+  loc?: es.SourceLocation
+): FunctionDeclarationExpression => ({
+  type: 'FunctionExpression',
+  id,
+  params,
+  body,
+  loc
+})
+
+export const functionDeclaration = (
+  id: es.Identifier | null,
+  params: es.Pattern[],
+  body: es.BlockStatement,
+  loc?: es.SourceLocation
+): es.FunctionDeclaration => ({
+  type: 'FunctionDeclaration',
+  id,
+  params,
+  body,
+  loc
+})
+
+export const blockExpression = (
+  body: es.Statement[],
+  loc?: es.SourceLocation
+): BlockExpression => ({
+  type: 'BlockExpression',
+  body,
+  loc
+})
+
+export const arrowFunctionExpression = (
+  params: es.Pattern[],
+  body: es.Expression | es.BlockStatement,
+  loc?: es.SourceLocation
+): es.ArrowFunctionExpression => ({
+  type: 'ArrowFunctionExpression',
+  expression: body.type !== 'BlockStatement',
+  generator: false,
+  params,
+  body,
+  loc
+})
+
+export const variableDeclaration = (
+  declarations: es.VariableDeclarator[],
+  loc?: es.SourceLocation
+): es.VariableDeclaration => ({
+  type: 'VariableDeclaration',
+  kind: 'const',
+  declarations,
+  loc
+})
+
+export const variableDeclarator = (
+  id: es.Pattern,
+  init: es.Expression,
+  loc?: es.SourceLocation
+): es.VariableDeclarator => ({
+  type: 'VariableDeclarator',
+  id,
+  init,
+  loc
+})
+
+export const ifStatement = (
+  test: es.Expression,
+  consequent: es.BlockStatement,
+  alternate: es.Statement,
+  loc?: es.SourceLocation
+): es.IfStatement => ({
+  type: 'IfStatement',
+  test,
+  consequent,
+  alternate,
+  loc
+})

@@ -2,10 +2,15 @@ import { BinaryOperator, UnaryOperator } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
+  ExceptionError,
   GetInheritedPropertyError,
   InvalidNumberOfArguments
-} from '../interpreter-errors'
-import { PotentialInfiniteLoopError, PotentialInfiniteRecursionError } from '../native-errors'
+} from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import {
+  PotentialInfiniteLoopError,
+  PotentialInfiniteRecursionError
+} from '../errors/timeoutErrors'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
@@ -27,14 +32,25 @@ export function callIfFuncAndRightArgs(
     end: { line, column }
   })
   if (typeof candidate === 'function') {
-    if (candidate.transformedFunction !== undefined) {
+    if (candidate.transformedFunction === undefined) {
+      try {
+        return candidate(...args)
+      } catch (error) {
+        // if we already handled the error, simply pass it on
+        if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+          throw new ExceptionError(error, dummy.loc!)
+        } else {
+          throw error
+        }
+      }
+    } else {
       const expectedLength = candidate.transformedFunction.length
       const receivedLength = args.length
       if (expectedLength !== receivedLength) {
         throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
       }
+      return candidate(...args)
     }
-    return candidate(...args)
   } else {
     throw new CallingNonFunctionValue(candidate, dummy)
   }
@@ -133,7 +149,7 @@ export const callIteratively = (f: any, ...args: any[]) => {
   let column = -1
   const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
   const startTime = Date.now()
-  const pastCalls: Array<[string, any[]]> = []
+  const pastCalls: [string, any[]][] = []
   while (true) {
     const dummy = locationDummyNode(line, column)
     if (Date.now() - startTime > MAX_TIME) {
@@ -156,7 +172,17 @@ export const callIteratively = (f: any, ...args: any[]) => {
         )
       }
     }
-    const res = f(...args)
+    let res
+    try {
+      res = f(...args)
+    } catch (error) {
+      // if we already handled the error, simply pass it on
+      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+        throw new ExceptionError(error, dummy.loc!)
+      } else {
+        throw error
+      }
+    }
     if (res === null || res === undefined) {
       return res
     } else if (res.isTail === true) {

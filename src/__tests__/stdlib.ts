@@ -1,5 +1,6 @@
 import { Value } from '../types'
-import { expectResult, snapshotFailure, stripIndent } from '../utils/testing'
+import { stripIndent } from '../utils/formatters'
+import { expectResult, snapshotFailure } from '../utils/testing'
 
 test.each([
   [
@@ -609,7 +610,7 @@ test.each([
     false,
     undefined
   ]
-] as Array<[number, string, boolean, Value]>)(
+] as [number, string, boolean, Value][])(
   'Builtins work as expected %#',
   (chapter: number, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {

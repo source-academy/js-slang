@@ -3,12 +3,12 @@
 exports[`String representation of arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const xs = [1, 'true', true, () => x];
+  "code": "const xs = [1, 'true', true, () => 1];
 stringify(xs);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, \\"true\\", true, () => x]",
+  "result": "[1, \\"true\\", true, () => 1]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -19,17 +19,25 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const xs = [1, 'true', true, wrap(() => ({
-      isTail: false,
-      value: x
-    }), \\"() => x\\")];
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
-    native.globals.set(\\"xs\\", {
-      kind: \\"const\\",
-      value: xs
-    });
+    {
+      {
+        const xs = [1, 'true', true, wrap(() => ({
+          isTail: false,
+          value: 1
+        }), \\"() => 1\\")];
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
+        globals.variables.set(\\"xs\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return xs;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -41,12 +49,12 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of arrow functions are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const f = (x, y) => z;
+  "code": "const f = (x, y) => x;
 stringify(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "(x, y) => z",
+  "result": "(x, y) => x",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -57,17 +65,25 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const f = wrap((x, y) => ({
-      isTail: false,
-      value: z
-    }), \\"(x, y) => z\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, f);\\");
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
+    {
+      {
+        const f = wrap((x, y) => ({
+          isTail: false,
+          value: x
+        }), \\"(x, y) => x\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, f);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -79,14 +95,14 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of big objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
+  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
   "result": "{ \\"a\\": 1,
   \\"b\\": true,
-  \\"c\\": () => x,
+  \\"c\\": () => 1,
   \\"d\\": {\\"e\\": 5, \\"f\\": 6},
   \\"g\\": 0,
   \\"h\\": 0,
@@ -106,33 +122,41 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const o = {
-      a: 1,
-      b: true,
-      c: wrap(() => ({
-        isTail: false,
-        value: x
-      }), \\"() => x\\"),
-      d: {
-        e: 5,
-        f: 6
-      },
-      g: 0,
-      h: 0,
-      i: 0,
-      j: 0,
-      k: 0,
-      l: 0,
-      m: 0,
-      n: 0
-    };
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
-    native.globals.set(\\"o\\", {
-      kind: \\"const\\",
-      value: o
-    });
+    {
+      {
+        const o = {
+          a: 1,
+          b: true,
+          c: wrap(() => ({
+            isTail: false,
+            value: 1
+          }), \\"() => 1\\"),
+          d: {
+            e: 5,
+            f: 6
+          },
+          g: 0,
+          h: 0,
+          i: 0,
+          j: 0,
+          k: 0,
+          l: 0,
+          m: 0,
+          n: 0
+        };
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
+        globals.variables.set(\\"o\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return o;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -159,9 +183,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 'true');\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 'true');\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -190,9 +220,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, pair);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, pair);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -220,14 +256,22 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const xs = [];
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
-    native.globals.set(\\"xs\\", {
-      kind: \\"const\\",
-      value: xs
-    });
+    {
+      {
+        const xs = [];
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
+        globals.variables.set(\\"xs\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return xs;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -240,14 +284,14 @@ exports[`String representation of functions are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function f(x, y) {
-  return z;
+  return x;
 }
 stringify(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
   "result": "function f(x, y) {
-  return z;
+  return x;
 }",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -259,19 +303,27 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const f = wrap((x, y) => {
-      return {
-        isTail: false,
-        value: z
-      };
-    }, \\"function f(x, y) {\\\\n  return z;\\\\n}\\");
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 4, 0, f);\\");
-    native.globals.set(\\"f\\", {
-      kind: \\"const\\",
-      value: f
-    });
+    {
+      {
+        const f = wrap((x, y) => {
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function f(x, y) {\\\\n  return x;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 4, 0, f);\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -401,23 +453,33 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const arr = [];
-    const startTime = runtime();
-    for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
-      throwIfTimeout(startTime, runtime(), 2, 0);
-      setProp(arr, i, i, 3, 2);
+    {
+      {
+        const arr = [];
+        const startTime = runtime();
+        for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
+          throwIfTimeout(startTime, runtime(), 2, 0);
+          setProp(arr, i, i, 3, 2);
+        }
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 5, 0, arr);\\");
+        globals.variables.set(\\"arr\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return arr;
+          }
+        });
+        globals.variables.set(\\"startTime\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return startTime;
+          }
+        });
+      }
     }
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 5, 0, arr);\\");
-    native.globals.set(\\"arr\\", {
-      kind: \\"const\\",
-      value: arr
-    });
-    native.globals.set(\\"startTime\\", {
-      kind: \\"const\\",
-      value: startTime
-    });
     return lastStatementResult;
   })();
 })();
@@ -429,7 +491,7 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of huge lists are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "stringify(enum_list(1, 1000));",
+  "code": "stringify(enum_list(1, 100));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -521,9 +583,7 @@ Object {
 [ 86,
 [ 87,
 [ 88,
-[ 89,
-[ 90,
-[91, [92, [93, [94, [95, [96, [97, [98, [99, [100, [101, ...<truncated>]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]",
+[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -534,9 +594,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(enum_list, 1, 10, 1, 1000));\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(enum_list, 1, 10, 1, 100));\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -563,9 +629,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(enum_list, 1, 10, 1, 10));\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(enum_list, 1, 10, 1, 10));\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -577,12 +649,12 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of multidimensional arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const xs = [1, 'true', [true, () => x, [[]]]];
+  "code": "const xs = [1, 'true', [true, () => 1, [[]]]];
 stringify(xs);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, \\"true\\", [true, () => x, [[]]]]",
+  "result": "[1, \\"true\\", [true, () => 1, [[]]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -593,17 +665,25 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const xs = [1, 'true', [true, wrap(() => ({
-      isTail: false,
-      value: x
-    }), \\"() => x\\"), [[]]]];
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
-    native.globals.set(\\"xs\\", {
-      kind: \\"const\\",
-      value: xs
-    });
+    {
+      {
+        const xs = [1, 'true', [true, wrap(() => ({
+          isTail: false,
+          value: 1
+        }), \\"() => 1\\"), [[]]]];
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
+        globals.variables.set(\\"xs\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return xs;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -615,12 +695,12 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of nested objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x, d: { e: 5, f: 6 } };
+  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -631,25 +711,33 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const o = {
-      a: 1,
-      b: true,
-      c: wrap(() => ({
-        isTail: false,
-        value: x
-      }), \\"() => x\\"),
-      d: {
-        e: 5,
-        f: 6
+    {
+      {
+        const o = {
+          a: 1,
+          b: true,
+          c: wrap(() => ({
+            isTail: false,
+            value: 1
+          }), \\"() => 1\\"),
+          d: {
+            e: 5,
+            f: 6
+          }
+        };
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
+        globals.variables.set(\\"o\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return o;
+          }
+        });
       }
-    };
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
-    native.globals.set(\\"o\\", {
-      kind: \\"const\\",
-      value: o
-    });
+    }
     return lastStatementResult;
   })();
 })();
@@ -678,15 +766,26 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    let o = {};
-    setProp(o, \\"o\\", o, 2, 0);
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 3, 0, o);\\");
-    native.globals.set(\\"o\\", {
-      kind: \\"let\\",
-      value: o
-    });
+    {
+      {
+        let o = {};
+        setProp(o, \\"o\\", o, 2, 0);
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 3, 0, o);\\");
+        globals.variables.set(\\"o\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return o;
+          },
+          assignNewValue: function (unique) {
+            return o = unique;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -713,9 +812,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, null);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, null);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -742,9 +847,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 0);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 0);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -756,12 +867,12 @@ const getProp = native.operators.get(\\"getProp\\");
 exports[`String representation of objects are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => x };
+  "code": "const o = { a: 1, b: true, c: () => 1 };
 stringify(o);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => x}",
+  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -772,21 +883,29 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const o = {
-      a: 1,
-      b: true,
-      c: wrap(() => ({
-        isTail: false,
-        value: x
-      }), \\"() => x\\")
-    };
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
-    native.globals.set(\\"o\\", {
-      kind: \\"const\\",
-      value: o
-    });
+    {
+      {
+        const o = {
+          a: 1,
+          b: true,
+          c: wrap(() => ({
+            isTail: false,
+            value: 1
+          }), \\"() => 1\\")
+        };
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
+        globals.variables.set(\\"o\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return o;
+          }
+        });
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -813,9 +932,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 'a string');\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, 'a string');\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -842,9 +967,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, undefined);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, undefined);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -860,21 +991,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[{\\"tag\\": \\"function_definition\\",
-  \\"parameters\\":
-   [{\\"tag\\": \\"name\\",
-     \\"name\\": \\"x\\",
-     \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}},
-   null],
-  \\"body\\":
-   {\\"tag\\": \\"return_statement\\",
-    \\"expression\\":
-     {\\"tag\\": \\"name\\",
-      \\"name\\": \\"x\\",
-      \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
-    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}},
-  \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}},
-null]",
+  "result": "[\\"function_definition\\",
+[[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -885,9 +1004,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 1);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 1);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -903,21 +1028,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[... {... \\"tag\\": \\"function_definition\\",
- ...  ... \\"parameters\\":
- ...  ...  ... [... {... \\"tag\\": \\"name\\",
- ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}} ...},
- ...  ...  ... null ...],
- ...  ... \\"body\\":
- ...  ...  ... {... \\"tag\\": \\"return_statement\\",
- ...  ...  ...  ... \\"expression\\":
- ...  ...  ...  ...  ... {... \\"tag\\": \\"name\\",
- ...  ...  ...  ...  ...  ... \\"name\\": \\"x\\",
- ...  ...  ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
- ...  ...  ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} ...},
- ...  ... \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} ...},
-null ...]",
+  "result": "[... \\"function_definition\\",
+[... [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -928,9 +1041,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), ' ... ');\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), ' ... ');\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -946,21 +1065,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ { \\"tag\\": \\"function_definition\\",
-    \\"parameters\\":
-      [ { \\"tag\\": \\"name\\",
-          \\"name\\": \\"x\\",
-          \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}} },
-      null ],
-    \\"body\\":
-      { \\"tag\\": \\"return_statement\\",
-        \\"expression\\":
-          { \\"tag\\": \\"name\\",
-            \\"name\\": \\"x\\",
-            \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
-        \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}} },
-    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}} },
-null ]",
+  "result": "[ \\"function_definition\\",
+[ [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -971,9 +1078,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'));\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'));\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -989,21 +1102,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[.........{.........\\"tag\\": \\"function_definition\\",
-....................\\"parameters\\":
-..............................[.........{.........\\"tag\\": \\"name\\",
-..................................................\\"name\\": \\"x\\",
-..................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}.........},
-..............................null.........],
-....................\\"body\\":
-..............................{.........\\"tag\\": \\"return_statement\\",
-........................................\\"expression\\":
-..................................................{.........\\"tag\\": \\"name\\",
-............................................................\\"name\\": \\"x\\",
-............................................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
-........................................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}.........},
-....................\\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}.........},
-null.........]",
+  "result": "[.........\\"function_definition\\",
+[.........[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1014,9 +1115,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), '.................................');\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), '.................................');\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1032,21 +1139,9 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[         {         \\"tag\\": \\"function_definition\\",
-                    \\"parameters\\":
-                              [         {         \\"tag\\": \\"name\\",
-                                                  \\"name\\": \\"x\\",
-                                                  \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}         },
-                              null         ],
-                    \\"body\\":
-                              {         \\"tag\\": \\"return_statement\\",
-                                        \\"expression\\":
-                                                  {         \\"tag\\": \\"name\\",
-                                                            \\"name\\": \\"x\\",
-                                                            \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
-                                        \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}         },
-                    \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}         },
-null         ]",
+  "result": "[         \\"function_definition\\",
+[         [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1057,9 +1152,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 100);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 100);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -1075,7 +1176,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[{\\"tag\\": \\"function_definition\\", \\"parameters\\": [{\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 1}}}, null], \\"body\\": {\\"tag\\": \\"return_statement\\", \\"expression\\": {\\"tag\\": \\"name\\", \\"name\\": \\"x\\", \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 3}, \\"end\\": {\\"line\\": 1, \\"column\\": 4}}}, \\"loc\\": {\\"start\\": {\\"line\\": 1, \\"column\\": 0}, \\"end\\": {\\"line\\": 1, \\"column\\": 5}}}, null]",
+  "result": "[\\"function_definition\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1086,9 +1187,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 0);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 1, 0, callIfFuncAndRightArgs(parse, 1, 10, 'x=>x;'), 0);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();

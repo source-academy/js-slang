@@ -1,13 +1,10 @@
-import { mockContext } from '../mocks/context'
-
-export { stripIndent, oneLine } from 'common-tags'
-
 import { default as createContext, defineBuiltin } from '../createContext'
 import { parseError, Result, runInContext } from '../index'
-import { stringify } from '../interop'
-import { parse } from '../parser'
-import { transpile } from '../transpiler'
+import { mockContext } from '../mocks/context'
+import { parse } from '../parser/parser'
+import { transpile } from '../transpiler/transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { stringify } from './stringify'
 
 export interface TestContext extends Context {
   displayResult: string[]
@@ -38,7 +35,7 @@ interface TestOptions {
   native?: boolean
 }
 
-function createTestContext({
+export function createTestContext({
   context,
   chapter = 1,
   testBuiltins = {}
@@ -48,9 +45,9 @@ function createTestContext({
   } else {
     const testContext: TestContext = {
       ...createContext(chapter, [], undefined, {
-        rawDisplay: (str, externalContext) => {
-          testContext.displayResult.push(str)
-          return str
+        rawDisplay: (str1, str2, externalContext) => {
+          testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+          return str1
         },
         prompt: (str, externalContext) => {
           testContext.promptResult.push(str)
@@ -100,17 +97,18 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(parsed, nativeTestContext.contextId).transpiled
+      transpiled = transpile(parsed, nativeTestContext.contextId, true).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments
       const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
       // replace declaration of builtins since they're repetitive
       const replacedBuiltins = replacedGlobalsLine.replace(
-        /\n *const \w+ = native\.globals\.get\("\w+"\)\.value;/g,
+        /\n      const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
         ''
       )
-      transpiled = replacedBuiltins
+      // replace the line globals = $$NATIVE_STORAGE[xxx].globals to remove [xxx]
+      transpiled = replacedBuiltins.replace(/\$\$NATIVE_STORAGE\[\d+]/, '$$NATIVE_STORAGE')
     } catch {
       transpiled = 'parseError'
     }
@@ -300,6 +298,7 @@ export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
   const start = Date.now()
   const context = mockContext(4)
+  context.prelude = null
   const promise = runInContext(code, context, {
     scheduler: 'preemptive',
     executionMethod: 'native'

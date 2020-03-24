@@ -163,9 +163,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -192,9 +198,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
@@ -221,9 +233,15 @@ const binaryOp = native.operators.get(\\"binaryOp\\");
 const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
 (( <globals redacted> ) => {
   return (() => {
-    const lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
+    {
+      {
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
+      }
+    }
     return lastStatementResult;
   })();
 })();
