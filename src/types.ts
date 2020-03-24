@@ -196,7 +196,9 @@ export type substituterNodes = es.Node | BlockExpression
 
 export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
-export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+export type TypeAnnotation = Untypable | Typed | NotYetTyped
+
+// ideally these would all not be nullable, but then it would be a pain to work with in TypeScript
 
 export interface Untypable {
   typability?: 'Untypable'
@@ -208,12 +210,12 @@ export interface NotYetTyped {
   inferredType?: Type
 }
 
-export interface Typedd {
+export interface Typed {
   typability?: 'Typed'
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List
+export type Type = Primitive | Variable | FunctionType | List | Pair
 
 export interface Primitive {
   kind: 'primitive'
@@ -235,4 +237,10 @@ export interface FunctionType {
 export interface List {
   kind: 'list'
   elementType: Type
+}
+
+export interface Pair {
+  kind: 'pair'
+  headType: Type
+  tailType: Type
 }
