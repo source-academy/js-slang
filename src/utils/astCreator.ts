@@ -572,7 +572,8 @@ export const forceEagerEvaluationOfLazyExpression = (thunk: es.Expression): es.E
   callExpression(
     // reference the pre-defined "force" function
     identifier(nameOfForceFunction),
-    [thunk]
+    [thunk],
+    thunk.loc || undefined
   )
 
 export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({

@@ -637,6 +637,21 @@ function transformIdentifiersToThunks(program: es.Program) {
 }
 
 /**
+ * Forces the last statement in the program, as this statement
+ * is likely the only result that has to be calculated.
+ * @param program The program to transform.
+ */
+function transformToForceLastStatement(program: es.Program) {
+  const statements = program.body as es.Statement[]
+  const lastIndex = statements.length - 1
+  const lastStatement = statements[lastIndex]
+  if (lastStatement.type === "ExpressionStatement") {
+    const ls = lastStatement as es.ExpressionStatement;
+    ls.expression = create.forceEagerEvaluationOfLazyExpression(ls.expression)
+  }
+}
+
+/**
  * Converts logical operations && (and) and || (or) to
  * function calls, such that they will lazily evaluate
  * using the logicalOp function defined in operators.ts
@@ -835,6 +850,7 @@ export function transpile(
     transformValuesToThunks(program)
     transformSideEffectStatementsToEvaluateEagerly(program)
     transformIdentifiersToThunks(program)
+    transformToForceLastStatement(program);
   } else {
     // can't really execute proper tail calls on thunked expressions
     transformReturnStatementsToAllowProperTailCalls(program)
