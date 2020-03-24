@@ -1,7 +1,7 @@
 import { ancestor, findNodeAt, recursive, WalkerCallback } from 'acorn-walk/dist/walk'
 import {
   ArrowFunctionExpression,
-  BlockStatement, ForInStatement, ForOfStatement,
+  BlockStatement,
   ForStatement,
   FunctionDeclaration,
   Identifier,
@@ -48,18 +48,6 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
       ForStatement(node: ForStatement, state: any, callback: WalkerCallback<any>) {
         if (containsNode(node, identifier)) {
           callback(node.init as any, state)
-          callback(node.body, state)
-        }
-      },
-      ForInStatement(node: ForInStatement, state: any, callback: WalkerCallback<any>) {
-        if (containsNode(node, identifier)) {
-          callback(node.left, state)
-          callback(node.body, state)
-        }
-      },
-      ForOfStatement(node: ForOfStatement, state: any, callback: WalkerCallback<any>) {
-        if (containsNode(node, identifier)) {
-          callback(node.left, state)
           callback(node.body, state)
         }
       },
