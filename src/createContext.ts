@@ -5,6 +5,7 @@ import { AsyncScheduler } from './schedulers'
 import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
 import * as lazyList from './stdlib/lazyList'
+import * as lazyTypeCheck from './stdlib/lazyTypeCheck'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import * as misc from './stdlib/misc'
@@ -138,12 +139,14 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'stringify(val)', stringify)
     defineBuiltin(context, 'error(str)', misc.error_message)
     defineBuiltin(context, 'prompt(str)', prompt)
-    defineBuiltin(context, 'is_number(val)', misc.is_number)
-    defineBuiltin(context, 'is_string(val)', misc.is_string)
-    defineBuiltin(context, 'is_function(val)', misc.is_function)
-    defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
-    defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
-    defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+    if (!lazyEvaluateInTranspiler(context)) {
+      defineBuiltin(context, 'is_number(val)', misc.is_number)
+      defineBuiltin(context, 'is_string(val)', misc.is_string)
+      defineBuiltin(context, 'is_function(val)', misc.is_function)
+      defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
+      defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
+      defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+    }
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
@@ -203,12 +206,21 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (lazyEvaluateInTranspiler(context)) {
     defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
     defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
+    // source 1 primitive functions
+    defineBuiltin(context, 'is_number(val)', lazyTypeCheck.is_number)
+    defineBuiltin(context, 'is_string(val)', lazyTypeCheck.is_string)
+    defineBuiltin(context, 'is_function(val)', lazyTypeCheck.is_function)
+    defineBuiltin(context, 'is_boolean(val)', lazyTypeCheck.is_boolean)
+    defineBuiltin(context, 'is_undefined(val)', lazyTypeCheck.is_undefined)
+    defineBuiltin(context, 'parse_int(str, radix)', (str: Value, radix: Value) =>
+      misc.parse_int(lazy.force(str), lazy.force(radix))
+    )
     // lazy list library
     defineBuiltin(context, 'pair(left, right)', lazyList.pair)
     defineBuiltin(context, 'is_pair(val)', lazyList.is_pair)
     defineBuiltin(context, 'head(xs)', lazyList.head)
     defineBuiltin(context, 'tail(xs)', lazyList.tail)
-    defineBuiltin(context, 'is_null(val)', lazyList.is_null)
+    defineBuiltin(context, 'is_null(val)', lazyTypeCheck.is_null)
     defineBuiltin(context, 'list(...values)', lazyList.list)
     defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
       externalBuiltIns.visualiseList(lazy.force(v), context.externalContext)

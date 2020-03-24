@@ -70,12 +70,6 @@ export function tail(xs: any) {
   }
 }
 
-// is_null returns true if arg is exactly null
-// LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_null(xs: TranspilerThunk<List>) {
-  return xs.type === 'null' || force(xs) === null
-}
-
 // list makes a list out of its arguments eagerly
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list(...elements: any[]): TranspilerThunk<List> {
