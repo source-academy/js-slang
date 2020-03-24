@@ -10,6 +10,7 @@ import {
 } from 'estree'
 import { Context } from './types'
 
+// Finds the innermost node that matches the given location
 export function findIdentifierNode(
   root: Node,
   context: Context,
@@ -33,6 +34,7 @@ export function findIdentifierNode(
   return found?.node as Identifier
 }
 
+// Recursively searches up the ancestors of the identifier from innermost to outermost scope
 export function findDeclarationNode(program: Node, identifier: Identifier): Node | undefined {
   const ancestors = findAncestors(program, identifier)
   if (!ancestors) return undefined
