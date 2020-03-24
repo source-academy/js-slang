@@ -137,9 +137,10 @@ export function parse(source: string, context: Context, fallbackToLooseParse: bo
 }
 
 function looseParse(source: string, context: Context) {
-  let program: es.Program | undefined
-  program = (acornLooseParse(source, createAcornParserOptions(context)) as unknown) as es.Program
-  ancestor(program as es.Node, walkers, undefined, context)
+  const program = (acornLooseParse(
+    source,
+    createAcornParserOptions(context)
+  ) as unknown) as es.Program
   return program
 }
 
