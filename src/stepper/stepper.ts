@@ -858,7 +858,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   // if see a function at expression position,
   //   has an identifier: replace with the name
   //   else: replace with an identifer "=>"
-  let verbose = true
+  let verboseCount = 0
   const treeifiers = {
     // Identifier: return
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
@@ -914,17 +914,17 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     ): es.Identifier | es.ArrowFunctionExpression => {
       if (target.id) {
         return target.id
-      } else if (verbose) {
+      } else if (verboseCount < 5) {
         // here onwards is guarding against arrow turned function expressions
-        verbose = false
+        verboseCount++
         const redacted = ast.arrowFunctionExpression(
           target.params,
           treeify(target.body) as es.BlockStatement
         )
-        verbose = true
+        verboseCount = 0
         return redacted
       } else {
-        // simplify the body with ellipses
+        // returns infinite substitution warning after 5 substitutions
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
@@ -966,17 +966,17 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     ArrowFunctionExpression: (
       target: es.ArrowFunctionExpression
     ): es.Identifier | es.ArrowFunctionExpression => {
-      if (verbose) {
+      if (verboseCount < 5) {
         // here onwards is guarding against arrow turned function expressions
-        verbose = false
+        verboseCount++
         const redacted = ast.arrowFunctionExpression(
           target.params,
           treeify(target.body) as es.BlockStatement
         )
-        verbose = true
+        verboseCount = 0
         return redacted
       } else {
-        // simplify the body with ellipses
+        // returns infinite substitution warning after 5 substitutions
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
