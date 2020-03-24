@@ -5,7 +5,6 @@ import {
   parseExpressionAt as acornParseAt,
   Position
 } from 'acorn'
-// @ts-ignore
 import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
