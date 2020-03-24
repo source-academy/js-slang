@@ -12,7 +12,6 @@
  * 1) change code styles so that it passes tslint test
  * 2) refactor some code to ES2015 class syntax
  */
-
 export function HighlightRulesSelector(id: number) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
@@ -122,7 +121,7 @@ export function HighlightRulesSelector(id: number) {
 
           'storage.type': 'const|let|function',
 
-          'support.function': 'alert|' + ChapterFunctionNameSelector(),
+          'support.function': ChapterFunctionNameSelector(),
 
           'variable.language':
             'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
@@ -802,11 +801,7 @@ export function ModeSelector(id: number) {
 
       // @ts-ignore
       this.createWorker = function(session) {
-        var worker = new WorkerClient(
-          ['ace'],
-          require('brace/worker/javascript'),
-          'JavaScriptWorker'
-        )
+        var worker = new WorkerClient(['ace'], require('../worker/javascript'), 'JavaScriptWorker')
         worker.attachToDocument(session.getDocument())
 
         // @ts-ignore
@@ -822,7 +817,7 @@ export function ModeSelector(id: number) {
       }
 
       // @ts-ignore
-      this.$id = 'ace/mode/source1' + id.toString()
+      this.$id = 'ace/mode/source' + id.toString()
     }.call(Mode.prototype))
 
     exports.Mode = Mode
