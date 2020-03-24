@@ -7,3 +7,5 @@ dist/
 # emacs backup files
 
 *~
+
+tsconfig.tsbuildinfo

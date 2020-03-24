@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import { MaximumStackLimitExceeded } from './interpreter-errors'
+import { MaximumStackLimitExceeded } from './errors/errors'
 import { saveState } from './stdlib/inspector'
 import { Context, Result, Scheduler, Value } from './types'
 
