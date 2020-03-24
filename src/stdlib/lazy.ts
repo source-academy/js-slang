@@ -156,9 +156,12 @@ export function force_once(expression: any) {
       arguments.length,
       nameOfForceOnceFunction
     )
+  } else if (isTranspilerThunk(expression)) {
+    return evaluateThunk(expression)
+  } else {
+    // throw new Error('force_once called on fully evaluated value')
+    return expression
   }
-
-  return evaluateThunk(expression)
 }
 
 // name of the forceOnce function

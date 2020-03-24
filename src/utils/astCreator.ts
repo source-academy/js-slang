@@ -48,9 +48,9 @@ export const mutateToLiteralThunk = (node: es.Literal): es.ObjectExpression => {
   const typeRaw = '"' + type + '"'
   // get rid of old value and old raw
   const oldValue = newNode.value
-  newNode.value = undefined
+  delete newNode.value
   const oldRaw = newNode.raw
-  newNode.raw = undefined
+  delete newNode.raw
   newNode.properties = []
   // set Thunk properties
   // first, create type property
@@ -389,6 +389,173 @@ export const mutateToIdentifierThunk = (
     }
     return newNode
   }
+}
+
+/**
+ * Constructs a new Thunk value for undefined. This
+ * is because the word undefined is parsed into an
+ * identifier for the name 'undefined' instead of
+ * the actual undefined value.
+ *
+ * @param node The Identifier to be transformed.
+ */
+export const mutateToUndefinedThunk = (
+  node: es.Identifier | any
+): es.ObjectExpression => {
+  // creates a new copy of node.loc
+  function copyLoc() {
+    if (!node.loc) {
+      return undefined
+    } else {
+      return {
+        start: Object.assign({}, node.loc.start),
+        end: Object.assign({}, node.loc.end)
+      }
+    }
+  }
+  // make a new object for the new Thunk
+  const newNode = node as any
+  newNode.type = 'ObjectExpression'
+  newNode.properties = []
+  // set Thunk properties
+  // first, create type property
+  newNode.properties[0] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'type'
+    },
+    // value of type is a string literal 'undefined'
+    value: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: 'undefined',
+      raw: JSON.stringify('undefined')
+    },
+    kind: 'init'
+  }
+  // get arrow function
+  const arrowFunction = {
+    type: 'ArrowFunctionExpression',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    id: null,
+    expression: true,
+    generator: false,
+    params: [],
+    body: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: undefined,
+      raw: 'undefined'
+    }
+  }
+  // then, create the value property
+  newNode.properties[1] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'value'
+    },
+    // value of 'value' is an ArrowFunctionExpression
+    value: arrowFunction,
+    kind: 'init'
+  }
+  // get toString to show the normal result
+  const toString = {
+    type: 'ArrowFunctionExpression',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    id: null,
+    expression: true,
+    generator: false,
+    params: [],
+    body: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: 'undefined',
+      raw: JSON.stringify('undefined')
+    },
+    // add tag to prevent toString() from getting wrapped in
+    // wrapArrowFunctionsToAllowNormalCallsAndNiceToString
+    // (toString is already giving it a nice string representation)
+    tag: astThunkNativeTag
+  }
+  // create the toString property
+  // so thunks appear as the variable names
+  // when stringify is called
+  newNode.properties[2] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'toString'
+    },
+    value: toString,
+    kind: 'init'
+  }
+  // lastly, add the 'evaluated' property set to true
+  // (undefined is a primitive value)
+  newNode.properties[3] = {
+    type: 'Property',
+    start: newNode.start,
+    end: newNode.end,
+    loc: copyLoc(),
+    method: false,
+    shorthand: false,
+    computed: false,
+    key: {
+      type: 'Identifier',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      name: 'evaluated'
+    },
+    value: {
+      type: 'Literal',
+      start: newNode.start,
+      end: newNode.end,
+      loc: copyLoc(),
+      value: true,
+      raw: 'true'
+    },
+    kind: 'init'
+  }
+  return newNode
 }
 
 /**

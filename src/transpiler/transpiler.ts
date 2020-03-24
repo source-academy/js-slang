@@ -628,7 +628,10 @@ function transformValuesToThunks(program: es.Program) {
 function transformIdentifiersToThunks(program: es.Program) {
   simple(program, {
     Identifier(node: es.Identifier) {
-      create.mutateToIdentifierThunk(node)
+      node.name === 'undefined'
+        // ensure undefined becomes a literal
+        ? create.mutateToUndefinedThunk(node)
+        : create.mutateToIdentifierThunk(node)
     }
   })
 }
