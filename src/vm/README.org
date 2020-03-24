@@ -47,7 +47,7 @@ Some notes on program execution:
 0. Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
 0. As a result, all programs here are concurrent programs, even if they do not call =concurrent_execute=.
 0. None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
-0. To simulate high interleaving of concurrent threads, all enqueues and dequeues from $\textit{tq}$ is done randomly: a thread is inserted into a random index, or popped from a random index in $\textit{tq}$.
+0. To simulate high interleaving of concurrent threads, all dequeues from $\textit{tq}$ is done randomly: a thread is popped from a random index in $\textit{tq}$.
 
 **** Thread timeout
 $\\\Rule{}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, ((\textit{os}_2, \textit{pc}_2, \textit{e}_2).\textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.((\textit{os}_1, \textit{pc}_1, \textit{e}_1).\textit{rs}_1), c)}\\$
