@@ -15,8 +15,8 @@
 \newcommand{\If}{\textbf{\texttt{if}}}
 \newcommand{\Else}{\textbf{\texttt{else}}}
 \newcommand{\Bool}{\texttt{bool}}
-\newcommand{\Float}{\texttt{float}}
-\newcommand{\Int}{\texttt{int}}
+\newcommand{\Number}{\texttt{number}}
+\newcommand{\String}{\texttt{string}}
 \newcommand{\Undefined}{\texttt{undefined}}
 
 \newtheorem{definition}{Definition}[section]
@@ -120,14 +120,10 @@ We introduce the following language of types for type inference:
 \Rule{}{T_i}
 \qquad
 \Rule{}{A_i}
-\qquad
-\Rule{}{N_i}
 \]
 
 \[
-\Rule{}{\texttt{float}}
-\qquad
-\Rule{}{\Int}
+\Rule{}{n}
 \qquad
 \Rule{}{\Bool}
 \qquad
@@ -141,8 +137,8 @@ We introduce the following language of types for type inference:
 \Rule{t}{\forall ( t )} \]
 
 \noindent
-where $n \geq 1$, and $T_i$, $A_i$ and $N_i$ represent type variables. We will capitalize 
-type variables, as in $T_1, A_2, N_{10}$. The symbols $t_i$ in the rules above
+where $n \geq 1$, and $T_i$ and $A_i$ represent type variables. We will capitalize 
+type variables, as in $T_1, A_2$. The symbols $t_i$ in the rules above
 are meta-variables that stand for types and must not be confused with type variables
 that \emph{are} types.
 As usual, parentheses can be used in practice for grouping.
@@ -151,13 +147,11 @@ $(\texttt{float}, () \rightarrow \Bool, \Undefined, T_1) \rightarrow (\Bool \rig
 Types of the form $\forall ( t )$ are called \emph{polymorphic types}, whereas
 all other are called \emph{monomorphic types}.
 
-We distinguish three kinds of type variables, $T_i$, $A_i$ and $N_i$, to be able to handle
-the overloading of operators such as \texttt{+} (for floats, integers and strings)
-and \texttt{-} (for floats and integers). A type variable $A_i$ can only
+We distinguish two kinds of type variables, $T_i$ and $A_i$, to be able to handle
+the overloading of operators such as \texttt{+} (for numbers and strings).
+A type variable $A_i$ can only
 represent ``addable'' types, i.e. 
-$\texttt{float}$, $\Int$ or $\texttt{string}$, a type variable $N_i$ can
-only represent number types, i.e.
-$\texttt{float}$ or $\Int$, and
+$\Number$ or $\String$, and
 a type variable $T_i$ can represent any type.
 
 \subsection{Type Environments}
@@ -195,14 +189,14 @@ type environment $\Gamma_0$ as follows:
 
 \begin{eqnarray*}
 & &
-       \emptyset[ - \leftarrow \forall((N, N) \rightarrow N)]\\
-&& \hspace{2mm} [ * \leftarrow \forall((N, N) \rightarrow N)]\\
-&& \hspace{2mm} [ / \leftarrow \forall((N, N) \rightarrow \Float)]\\
-&& \hspace{2mm} [ \% \leftarrow \forall((N, N) \rightarrow N)]\\
+       \emptyset[ -_2 \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ * \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ / \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ \% \leftarrow (\Number, \Number) \rightarrow \Number]\\
 && \hspace{2mm} [ \&\& \leftarrow \forall((\Bool, T) \rightarrow T)]\\
-&& \hspace{2mm} [ || \leftarrow \forall((\Bool, T) \rightarrow T)]\\
+&& \hspace{2mm} [ || \leftarrow   \forall((\Bool, T) \rightarrow T)]\\
 && \hspace{2mm} [ ! \leftarrow \Bool \rightarrow \Bool]\\
-&& \hspace{2mm} [ - \leftarrow \forall(N \rightarrow N)]\Gamma_{-2}
+&& \hspace{2mm} [ -_1 \leftarrow \Number \rightarrow \Number]\Gamma_{-2}
 \end{eqnarray*}
 
 The overloaded binary primitive are handled as follows:
@@ -223,62 +217,62 @@ The overloaded binary primitive are handled as follows:
 $\Gamma_{-1}$
 & $[$ & \texttt{display}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
 & $[$ & \texttt{error}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
-& $[$ & \texttt{Infinity}      & $\leftarrow$  & $\forall(N)$ & & & $]$ \\
+& $[$ & \texttt{Infinity}      & $\leftarrow$  & $\Number$ & & & $]$ \\
 & $[$ & \texttt{is\_boolean}      & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
 & $[$ & \texttt{is\_function} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
 & $[$ & \texttt{is\_number} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
 & $[$ & \texttt{is\_string} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
 & $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
-& $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_asin} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_asinh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_atan} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_atan2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_atanh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_cbrt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_ceil} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_clz32} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_cos} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_cosh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_exp} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_expm1} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_floor} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_fround} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_hypot} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_imul} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_max} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_min} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_PI} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_pow} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_random} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_round} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_sqrt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_SQRT1\_2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_SQRT2} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_tan} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_tanh} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{math\_trunc} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{NaN} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{parse\_int} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{prompt} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{runtime} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{stringify} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ \\
-& $[$ & \texttt{undefined} & $\leftarrow$  & $\Float$ & $\rightarrow$ & $\Float$ & $]$ & $\Gamma_0$ \\
+& $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan2} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cbrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_ceil} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_clz32} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_exp} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_expm1} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_floor} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_fround} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_hypot} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_imul} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_max} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_min} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_PI} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_pow} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_random} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_round} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sqrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_SQRT1\_2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_SQRT2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_tan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_tanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_trunc} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{NaN} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{parse\_int} & $\leftarrow$  & $(\String, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{prompt} & $\leftarrow$  & $\String$ & $\rightarrow$ & $\String$ & $]$ \\
+& $[$ & \texttt{runtime} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{stringify} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\String)$ & $]$ \\
+& $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ & $\Gamma_0$ \\
 & \end{tabular}
-
+ 
 \subsection{Preparing Programs for Type Inference}
 
 To facilitate the process of type inference, we annotate each component of the given
@@ -359,7 +353,7 @@ where:
 \begin{itemize}
 \item all $t_i$ are type variables,
 \item for any type variable $T_i$, there is at most one equation $T_i = \cdots$,
-\item no variable $t_i$ occurs in any equation $t_j = t_j'$ if $j < i$.
+\item no variable $t_i$ occurs in any equation $t_j = t_j'$ if $j > i$.
 \end{itemize}
 A constraint in solved form does not have any cycles $t^{(0)} = t^{(1)}, t^{(1)} = t^{(2)}, \ldots, t^{(k)} = t^{(0)}$.
 We \emph{apply} a type constraint $\Sigma$ in solved form to a type $t$ as follows:
@@ -389,8 +383,6 @@ in the given order:
 \item If $t$ is not a type variable and $t'$ is a type variable, then add $t' = t$ to $\Sigma$.
 \item If $t$ is $A_i$ and $t'$ is not a type variable and not $\texttt{float}$ or $\texttt{string}$,
   then stop with a type error.
-\item If $t$ is $N_i$ and $t'$ is not a type variable and not $\texttt{float}$,
-  then stop with a type error.
 \item If $t$ is $(t_1,\ldots, t_n) \rightarrow t''$ and
   $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add
   $t_1 = t_1', \cdots, t_n = t_n', t'' = t'''$ to $\Sigma$.
@@ -408,8 +400,7 @@ $S: \Sigma$ holds if and only if
 $\top, \Gamma_0 \vdash S : \Sigma$
 where $\Gamma_0$ is the intial type environment described above and $\top$ is the empty
 type constraint. The constraint $\Sigma$ can be called the constraint \emph{inferred from}
-$S$. The type of any type-annotated statement $S^t$ or expression $E^t$ is
-$\Int$ if $\Sigma(t) = N_i$ for some $i$ and $\Sigma(t)$, otherwise.
+$S$. 
 
 We define the typing relation for expressions and statements
 inductively with the following rules.
@@ -444,9 +435,7 @@ there is no type for $x$ derivable from the type environment $\Gamma$.
 Constants get the following types.
 
 \noindent
-$\Rule{\Sigma' = (\Sigma \wedge t = N)}{\Sigma, \Gamma \vdash i^t : \Sigma'}
-\qquad
-\Rule{\Sigma' = (\Sigma \wedge t = \texttt{float})}{\Sigma, \Gamma \vdash f^t : \Sigma'}$
+$\Rule{\Sigma' = (\Sigma \wedge t = \Number)}{\Sigma, \Gamma \vdash n^t : \Sigma'}$
 
 \noindent
 where $i$ and $f$ denote integer and floating point constants, respectively.

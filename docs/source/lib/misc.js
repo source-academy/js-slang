@@ -159,6 +159,6 @@ function error(v, s) {
  * @param {value} v the argument value
  * @returns {string} string representation of v
  */
-function stringify(v) {}
-
+function stringify(v) {
+}
 
