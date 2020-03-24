@@ -399,9 +399,7 @@ export const mutateToIdentifierThunk = (
  *
  * @param node The Identifier to be transformed.
  */
-export const mutateToUndefinedThunk = (
-  node: es.Identifier | any
-): es.ObjectExpression => {
+export const mutateToUndefinedThunk = (node: es.Identifier | any): es.ObjectExpression => {
   // creates a new copy of node.loc
   function copyLoc() {
     if (!node.loc) {

@@ -629,8 +629,8 @@ function transformIdentifiersToThunks(program: es.Program) {
   simple(program, {
     Identifier(node: es.Identifier) {
       node.name === 'undefined'
-        // ensure undefined becomes a literal
-        ? create.mutateToUndefinedThunk(node)
+        ? // ensure undefined becomes a literal
+          create.mutateToUndefinedThunk(node)
         : create.mutateToIdentifierThunk(node)
     }
   })
