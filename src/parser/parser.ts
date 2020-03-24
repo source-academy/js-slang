@@ -136,14 +136,6 @@ export function parse(source: string, context: Context, fallbackToLooseParse: bo
   }
 }
 
-function looseParse(source: string, context: Context) {
-  const program = (acornLooseParse(
-    source,
-    createAcornParserOptions(context)
-  ) as unknown) as es.Program
-  return program
-}
-
 const createAcornParserOptions = (context: Context): AcornOptions => ({
   sourceType: 'module',
   ecmaVersion: 6,
@@ -167,6 +159,14 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
     )
   }
 })
+
+function looseParse(source: string, context: Context) {
+  const program = (acornLooseParse(
+    source,
+    createAcornParserOptions(context)
+  ) as unknown) as es.Program
+  return program
+}
 
 function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
