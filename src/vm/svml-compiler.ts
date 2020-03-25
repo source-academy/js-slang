@@ -679,9 +679,12 @@ const compilers = {
     // undefined TODO: only use LGCU if lookup in environment fails
     let envLevel
     let index
+    let isPrimitive
     try {
-      ;({ envLevel, index } = indexOf(indexTable, node))
-      if (envLevel === 0) {
+      ;({ envLevel, index, isPrimitive } = indexOf(indexTable, node))
+      if (isPrimitive) {
+        addUnaryInstruction(OpCodes.NEWCP, index)
+      } else if (envLevel === 0) {
         addUnaryInstruction(OpCodes.LDLG, index)
       } else {
         addBinaryInstruction(OpCodes.LDPG, index, envLevel)
