@@ -12,7 +12,7 @@ Compared to Source $\S 3$, this concurrent system has the following changes:
 For details, see Section ``Concurrency Support'' below.
 
 ** Overview
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a nullary function that returns =undefined=, and the concurrent system executes each thread by running the code in the body of the nullary function.
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, and at the expiration of the time quantum, the concurrent system randomly chooses a thread to execute.
 
 To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
 
