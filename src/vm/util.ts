@@ -80,6 +80,8 @@ const OPCODES_STR = {
   [OpCodes.DUP]: 'DUP   ',
   [OpCodes.NEWENV]: 'NEWENV',
   [OpCodes.POPENV]: 'POPENV',
+  [OpCodes.NEWCP]: 'NEWCP ',
+  [OpCodes.NEWCV]: 'NEWCV ',
   [OpCodes.EXECUTE]: 'EXEC  ',
   [OpCodes.TEST_AND_SET]: 'T&S   ',
   [OpCodes.CLEAR]: 'CLEAR '
