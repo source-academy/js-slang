@@ -101,6 +101,13 @@ acorn-globals@^4.1.0:
   dependencies:
     acorn "^5.0.0"
 
+acorn-loose@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-7.0.0.tgz#a4a6e8d2ae51dd5a8bdbc274b7ce3dd84964d13a"
+  integrity sha512-TIqpAWkqpdBXfj1XDVBQ/jNbAb6ByGfoqkcz2Pwd8mEHUndxOCw9FR6TqkMCMAr5XV8zYx0+m9GcGjxZzQuA2w==
+  dependencies:
+    acorn "^7.0.0"
+
 acorn-walk@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.0.0.tgz#c8ba6f0f1aac4b0a9e32d1f0af12be769528f36b"
@@ -114,6 +121,11 @@ acorn@^6.4.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.1.tgz#531e58ba3f51b9dacb9a6646ca4debf5b14ca474"
   integrity sha512-ZVA9k326Nwrj3Cj9jlh3wGFutC2ZornPNARZwsNYqQYgN0EsV2d53w5RN/co65Ohn4sUAUtb1rSUAOD6XN9idA==
+
+acorn@^7.0.0:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.1.tgz#e35668de0b402f359de515c5482a1ab9f89a69bf"
+  integrity sha512-add7dgA5ppRPxCFJoAGfMDi7PIBXq1RtGo7BhbLaxwrXPOmw8gq48Y9ozT01hUKy9byMjlR20EJhu5zlkErEkg==
 
 ajv@^6.5.5:
   version "6.10.0"

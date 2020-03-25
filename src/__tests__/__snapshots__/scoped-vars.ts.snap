@@ -1,0 +1,535 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Going to definitions of ordinary variable definitions 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+{
+const target = 3;
+target + 4;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 3,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Object {
+      "isDeclaration": true,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 4,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "col": 3,
+      "name": "target",
+      "row": 3,
+    },
+    "value": Object {
+      "isDeclaration": false,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "col": 3,
+      "name": "MISSING",
+      "row": 3,
+    },
+    "value": undefined,
+  },
+]
+`;
+
+exports[`Going to definitions of with conditionals and loops 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+if (target < 2) {
+target = 2 + 3;
+} else if (target > 2) {
+target = \\"nooooooo\\";
+} else {
+target = 99999;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 7,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Object {
+      "isDeclaration": false,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+]
+`;
+
+exports[`Going to definitions of with function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 7,
+      "name": "target",
+      "row": 7,
+    },
+    "value": Object {
+      "isDeclaration": true,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 6,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Object {
+      "isDeclaration": true,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+]
+`;
+
+exports[`Going to definitions with arrow function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+function test(target) {
+const arrowFn = target => target + 1;
+const x = target * 777777;
+const nestedArrowFn = (y) => (target) => 1 + target;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 53,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Object {
+      "isDeclaration": true,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "name": "target",
+      "type": "DefinitionNode",
+    },
+  },
+]
+`;
+
+exports[`Scoped based refactoring of ordinary variable definitions 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+{
+const target = 3;
+target + 4;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 3,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "col": 3,
+      "name": "target",
+      "row": 3,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "col": 3,
+      "name": "MISSING",
+      "row": 3,
+    },
+    "value": Array [],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with arrow function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+function test(target) {
+const arrowFn = target => target + 1;
+const x = target * 777777;
+const nestedArrowFn = (y) => (target) => 1 + target;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 53,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 4,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with conditionals and loops 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+if (target < 2) {
+target = 2 + 3;
+} else if (target > 2) {
+target = \\"nooooooo\\";
+} else {
+target = 99999;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 7,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 7,
+      "name": "target",
+      "row": 7,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "col": 6,
+      "name": "target",
+      "row": 5,
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+]
+`;
