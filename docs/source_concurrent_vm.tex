@@ -1,4 +1,4 @@
-% Created 2020-03-25 Wed 10:07
+% Created 2020-03-26 Thu 00:24
 % Intended LaTeX compiler: pdflatex
 \input source_header.tex
 \newcommand{\qed}{$\Box$}
@@ -7,6 +7,7 @@
 \newcommand{\transition}{\rightrightarrows_s}
 \newcommand{\translate}{\twoheadrightarrow}
 \newcommand{\translateaux}{\hookrightarrow}
+\usepackage{underscore}
 \author{koo}
 \date{\today}
 \title{}
@@ -76,8 +77,8 @@ The following concurrent functions are supported:
 \end{itemize}
 
 \subsubsection{Compiling}
-\label{sec:orgbdcf42b}
-\(\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent\_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}\\\)
+\label{sec:org696fade}
+\(\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}\\\)
 Each of \(s_1. \cdots .s_n\) is a string of VM instruction that loads a closure onto the operand stack.
 
 \subsubsection{Running}
@@ -150,16 +151,16 @@ If a thread executes the \texttt{RET} statement, and both the runtime stack and 
 \end{itemize}
 
 \subsubsection{Compiling}
-\label{sec:org025d9fd}
-\(\Rule{E \translateaux s}{\texttt{test\_and\_set}(E) \translateaux s.\texttt{TEST\_AND\_SET}}\\\)
+\label{sec:orga8afe9f}
+\(\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{TEST_AND_SET}}\\\)
 where \(E\) is an array, whose head is a boolean.
 
 \(\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CLEAR}}\\\)
 where \(E\) is an array.
 
 \subsubsection{Running}
-\label{sec:org6d01845}
-\(\Rule{s(\textit{pc}) = \texttt{TEST\_AND\_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}\\\)
+\label{sec:orgc8a6ee2}
+\(\Rule{s(\textit{pc}) = \texttt{TEST_AND_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}\\\)
 where \(a\) is the address of an array stored on the heap. The head of this array is initially \(b\), where \(b\) is a boolean. After this rule executes, the head of this array is set to \(\textit{true}\).
 
 \(\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}\\\)
