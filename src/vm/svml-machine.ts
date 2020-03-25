@@ -39,19 +39,21 @@ const EXECUTE_NUM_ARGS_OFFSET = 1
 // These contain primitive values (numbers or boolean
 // values) or arrays of primitive values
 
-// P is an array that contains an SVML machine program:
-// the op-codes of instructions and their arguments
+// PROG contains the entire SVML JSON formatted program
 let PROG: Program
+// FUNC contains the function array, for easier access
 let FUNC: SVMFunction[]
+// P contains the instructions to be executed in the current function call
 let P: Instruction[]
+// GLOBAL_ENV is the env that contains all the primitive functions
 let GLOBAL_ENV = -1
-// PC is program counter: index of the next instruction
+// PC is program counter: index of the next instruction in P
 let PC = 0
 // HEAP is array containing all dynamically allocated data structures
 let HEAP: any[] = []
 // next free slot in heap
 let FREE = 0
-// OS is address of current environment in HEAP; initially a dummy value
+// ENV is address of current environment in HEAP; initially a dummy value
 let ENV = -1
 // OS is address of current operand stack in HEAP; initially a dummy value
 let OS = -Infinity
@@ -1282,7 +1284,7 @@ function convertToJsFormat(node: number): any {
 // this implementation also assumes a correct program, and does not
 // currently check for type correctness
 // an incorrect program will have undefined behaviors
-export function runWithP(p: Program, context: Context): any {
+export function runWithProgram(p: Program, context: Context): any {
   PROG = p
   FUNC = PROG[1] // list of SVMFunctions
   P = []
