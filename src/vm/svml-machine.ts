@@ -1079,7 +1079,11 @@ addPrimitiveOpCodeHandlers()
 M[OpCodes.EXECUTE] = () => {
   I = P[PC][EXECUTE_NUM_ARGS_OFFSET]
   E = OS // we need the values in OS, so store in E first
-  G = [OS, ENV, P, PC, TOP_RTS, RTS]
+  // Put current thread randomly into TQ
+  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+  A = RES
+  PUSH_RTS() // TOP_RTS++
+  TQ.push([RTS, TOP_RTS])
   // Keep track of registers first to restore present state after saving threads
   for (; I > 0; I = I - 1) {
     RTS = []
@@ -1101,15 +1105,8 @@ M[OpCodes.EXECUTE] = () => {
     NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
     A = RES
     PUSH_RTS() // TOP_RTS++
-    TQ.splice(Math.floor(Math.random() * TQ.length), 0, [RTS, TOP_RTS]) // insert a thread randomly
+    TQ.push([RTS, TOP_RTS]) // insert into TQ
   }
-  // restore present state
-  ;[OS, ENV, P, PC, TOP_RTS, RTS] = G
-  // Put current thread randomly into TQ
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS() // TOP_RTS++
-  TQ.splice(Math.floor(Math.random() * TQ.length), 0, [RTS, TOP_RTS])
   SETUP_THREAD() // sets RTS, TOP_RTS, PC, ENV, P, OS, TO
 }
 
