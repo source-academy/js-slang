@@ -4,13 +4,56 @@ import { parse as __parse } from '../parser'
 import { typeCheck } from '../typeChecker'
 
 // simple program to parse program and error if there are syntatical errors
-function parse(code: any) {
-  const program: any = __parse(code, createContext(1))
+function parse(code: any, chapter=1) {
+  const program: any = __parse(code, createContext(chapter))
   expect(program).not.toBeUndefined()
   return program
 }
 
-describe('type checking overloaded binary primitives', () => {
+describe('type checking pairs and lists', () => {
+
+  it('happy paths for pair functions', () => {
+    const code = `
+      const x = pair(3, 4);
+      head(x) + 56;
+    `
+    expect(() => typeCheck(parse(code))).not.toThrowError()
+  })
+
+  it('unhappy paths for pair functions', () => {
+    const code = `
+      const x = pair(3, 4);
+      const y = x + false;
+    `
+    expect(() => typeCheck(parse(code, 2))).toThrowError()
+
+    const code1 = `
+      const x = pair(3, pair(4, false));
+      const y = tail(tail(x)) || 1;
+    `
+    expect(() => typeCheck(parse(code1, 2))).toThrowError()
+  })
+})
+
+describe('type checking for polymorphic builtin functions', () => {
+  it('works in happy case', () => {
+    const code = `
+      const x = is_boolean('file') || false;
+    `
+    typeCheck(parse(code))
+
+  })
+
+  it('errors in unhappy path', () => {
+    const code = `
+      const x = is_boolean(5) + 5;
+    `
+    const program = parse(code)
+    expect(() => typeCheck(program)).toThrowError()
+  })
+})
+
+describe('type checking overloaded unary/binary primitives', () => {
   it('works for the happy path', () => {
     const code = `
       function foo(x) {return x + 1;}
@@ -28,6 +71,11 @@ describe('type checking overloaded binary primitives', () => {
       rec(5);
     `
     typeCheck(parse(code1))
+    const code2 = `
+      const x = !false;
+      const y = x || true;
+    `
+    typeCheck(parse(code2))
   })
 
   it('errors for unhappy path', () => {

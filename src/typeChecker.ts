@@ -41,6 +41,11 @@ function traverse(node: es.Node, constraints?: Constraint[]) {
       node.body.forEach(nodeBody => {
         traverse(nodeBody, constraints)
       })
+      // save return type to block
+      if (constraints && node.body.length) {
+        // @ts-ignore
+        node.typeVar = node.body[node.body.length-1]
+      }
       break
     }
     case 'ConditionalExpression': // both cases are the same
@@ -105,13 +110,27 @@ function traverse(node: es.Node, constraints?: Constraint[]) {
   }
 }
 
-type NAMED_TYPE = 'bool' | 'float' | 'string' | 'undefined'
+type NAMED_TYPE = 'bool' | 'float' | 'string' | 'undefined' | 'pair' // | 'list'
 type VAR_TYPE = 'any' | 'numerical' | 'addable'
 
 interface NAMED {
   nodeType: 'Named'
   name: NAMED_TYPE
 }
+
+interface PAIR extends NAMED {
+  nodeType: 'Named',
+  name: 'pair',
+  head: TYPE,
+  tail: TYPE
+}
+
+// interface LIST extends NAMED {
+//   nodeType: 'Named',
+//   name: 'list',
+//   listName: TYPE
+// }
+
 interface VAR {
   nodeType: 'Var'
   name: string
@@ -131,7 +150,7 @@ interface FORALL {
 }
 
 /** Monotypes */
-type TYPE = NAMED | VAR | FUNCTION
+type TYPE = NAMED | VAR | FUNCTION | PAIR // | LIST
 
 // Type Definitions
 // Our type environment maps variable names to types.
@@ -172,6 +191,8 @@ export function typeCheck(program: es.Program | undefined): es.Program | undefin
       traverse(mockProgram, constraints)
       // @ts-ignore
       program.body = mockProgram.body
+      // @ts-ignore
+      program.typeVar = mockProgram.typeVar // NOTE does not really work as expected
       return program
     }
   } catch (e) {
@@ -322,6 +343,7 @@ function cannotBeResolvedIfAddable(LHS: VAR, RHS: TYPE): boolean {
   return (
     LHS.type === 'addable' &&
     RHS.nodeType !== 'Var' &&
+    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'float' || RHS.name == 'pair'))
     !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'float'))
   )
 }
@@ -632,6 +654,23 @@ function tNumerical(name: string): VAR {
   }
 }
 
+function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
+  return {
+    nodeType: 'Named',
+    name: 'pair',
+    head: var1,
+    tail: var2
+  }
+} 
+
+// function tList(var1: VAR): LIST {
+//   return {
+//     nodeType: 'Named',
+//     name: 'list',
+//     listName: var1
+//   }
+// }
+
 function tForAll(type: TYPE): FORALL {
   return {
     nodeType: 'Forall',
@@ -667,11 +706,10 @@ const predeclaredNames = {
   math_SQRT1_2: tNamedFloat,
   math_SQRT2: tNamedFloat,
   // is something functions
-  // is_boolean: tForAll(['A'], tFunc(tVar('A'), tNamedBool)),
-  // is_function: tForAll(['A'], tFunc(tVar('A'), tNamedBool)),
-  // is_number: tForAll(['A'], tFunc(tVar('A'), tNamedBool)),
-  // is_string: tForAll(['A'], tFunc(tVar('A'), tNamedBool)),
-  // is_undefined: tForAll(['A'], tFunc(tVar('A'), tNamedBool)),
+  is_boolean: tForAll(tFunc(tVar('A'), tNamedBool)),
+  is_number: tForAll(tFunc(tVar('A'), tNamedBool)),
+  is_string: tForAll(tFunc(tVar('A'), tNamedBool)),
+  is_undefined: tForAll(tFunc(tVar('A'), tNamedBool)),
   // math functions
   math_abs: tFunc(tNamedFloat, tNamedFloat),
   math_acos: tFunc(tNamedFloat, tNamedFloat),
@@ -708,6 +746,14 @@ const predeclaredNames = {
   math_tan: tFunc(tNamedFloat, tNamedFloat),
   math_tanh: tFunc(tNamedFloat, tNamedFloat),
   math_trunc: tFunc(tNamedFloat, tNamedFloat),
+  // source 2 
+  // pair: tForAll(tFunc(tVar('A'), 
+  //               tPair(tVar('B'), tList(tVar('C'))), 
+  //               tPair(tVar('A'), tPair(tVar('B'),
+  //                                      tList(tVar('C')))))),
+  pair: tForAll(tFunc(tVar('A'), tVar('B'), tPair(tVar('A'), tVar('B')))),
+  head: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('A'))),
+  tail: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('B'))),
   // misc functions
   parse_int: tFunc(tNamedString, tNamedFloat, tNamedFloat),
   prompt: tFunc(tNamedString, tNamedString),
