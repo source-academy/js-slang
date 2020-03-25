@@ -102,6 +102,8 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.CALL:
       case OpCodes.CALLT:
       case OpCodes.NEWENV:
+      case OpCodes.NEWCP:
+      case OpCodes.NEWCV:
         b.putU(8, instr[1] as number)
         break
       case OpCodes.LDPG:
@@ -126,6 +128,15 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.JMP:
         throw new Error('JMP assembling not implemented')
     }
+  }
+
+  const binary = b.asArray()
+  if (binary.byteLength - 4 !== instrOffsets[instrOffsets.length - 1]) {
+    throw new Error(
+      `Assembler bug: calculated function length ${
+        instrOffsets[instrOffsets.length - 1]
+      } is different from actual length ${binary.byteLength - 4}`
+    )
   }
 
   return {
