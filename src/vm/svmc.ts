@@ -11,9 +11,11 @@ interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
   sourceChapter: 1 | 2 | 3
   inputFilename: string
+  outputFilename: string | null
 }
 
 const readFileAsync = util.promisify(fs.readFile)
+const writeFileAsync = util.promisify(fs.writeFile)
 
 // This is a console program. We're going to print.
 /* tslint:disable:no-console */
@@ -22,7 +24,8 @@ function parseOptions(): CliOptions | null {
   const ret: CliOptions = {
     compileTo: 'binary',
     sourceChapter: 3,
-    inputFilename: ''
+    inputFilename: '',
+    outputFilename: null
   }
 
   let endOfOptions = false
@@ -63,6 +66,11 @@ function parseOptions(): CliOptions | null {
             console.error('Invalid Source chapter: %d', argInt)
             error = true
           }
+          args.splice(0, argShiftNumber)
+          break
+        case '--out':
+        case '-o':
+          ret.outputFilename = argument
           args.splice(0, argShiftNumber)
           break
         case '--':
@@ -149,7 +157,17 @@ async function main() {
     return
   }
 
-  process.stdout.write(assemble(compiled))
+  const binary = assemble(compiled)
+
+  switch (options.outputFilename) {
+    case '-':
+      process.stdout.write(binary)
+      break
+    case null:
+      options.outputFilename = options.inputFilename.replace(/\.js$/i, '') + '.svm'
+    default:
+      return writeFileAsync(options.outputFilename, binary)
+  }
 }
 
 main().catch(err => {
