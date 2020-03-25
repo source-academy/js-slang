@@ -510,7 +510,10 @@ function _stringify(x) {}
 (() => 0)();
 `
 
-// list of all primitive functions in alphabetical order
+// list of all primitive functions in alphabetical order. This determines the index
+// of the function in the program array.
+// If adding support for primitive functions, need to modify this array and the prelude
+// above.
 export const PRIMITIVE_FUNCTION_NAMES = [
   'accumulate',
   'append',

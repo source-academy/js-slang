@@ -29,7 +29,7 @@ import {
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
-import { runWithP } from './vm/svml-machine'
+import { runWithProgram } from './vm/svml-machine'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -183,7 +183,7 @@ export async function runInContext(
     try {
       return Promise.resolve({
         status: 'finished',
-        value: runWithP(compileWithPrelude(program, context), context)
+        value: runWithProgram(compileWithPrelude(program, context), context)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {

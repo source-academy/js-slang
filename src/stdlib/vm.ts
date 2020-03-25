@@ -1,6 +1,6 @@
 import { Context, Value } from '../types'
 import { compileToIns, Program as machineProgram, compileWithPrelude } from '../vm/svml-compiler'
-import { runWithP } from '../vm/svml-machine'
+import { runWithProgram } from '../vm/svml-machine'
 import { stringifyProgram } from '../vm/util'
 import { ParseError } from './parser'
 import { parse } from '../parser/parser'
@@ -29,5 +29,5 @@ export function stringify_compiled(code: machineProgram) {
 }
 
 export function run_vm(code: machineProgram, context: Context): any {
-  return runWithP(code, context)
+  return runWithProgram(code, context)
 }

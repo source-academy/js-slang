@@ -51,6 +51,7 @@ export type Program = [
 
 let chapter = 3
 
+// Array of function headers in the compiled program
 let SVMFunctions: SVMFunction[] = []
 function updateFunction(index: number, stackSize: number, ins: Instruction[]) {
   const f = SVMFunctions[index]
@@ -58,6 +59,7 @@ function updateFunction(index: number, stackSize: number, ins: Instruction[]) {
   f[3] = ins
 }
 
+// Individual function's machine code
 let functionCode: Instruction[] = []
 // three insert functions (nullary, unary, binary)
 function addNullaryInstruction(opCode: number) {
@@ -177,7 +179,10 @@ interface EnvEntry {
 // (check for variable, function declaration in each block. Check for params in each function call)
 // for any duplicates, rename recursively within scope
 // recurse for any blocks
-function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string, EnvEntry>) {
+function extractAndRenameNames(
+  baseNode: es.BlockStatement | es.Program,
+  names: Map<string, EnvEntry>
+) {
   // get all declared names of current scope and keep track of names to rename
   const namesToRename = new Map<string, string>()
   for (const stmt of baseNode.body) {
@@ -216,12 +221,12 @@ function localNames(baseNode: es.BlockStatement | es.Program, names: Map<string,
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
-      localNames(node, names)
+      extractAndRenameNames(node, names)
     } else if (stmt.type === 'IfStatement') {
       const { consequent, alternate } = stmt as es.IfStatement
-      localNames(consequent as es.BlockStatement, names)
+      extractAndRenameNames(consequent as es.BlockStatement, names)
       // Source spec must have alternate
-      localNames(alternate! as es.BlockStatement, names)
+      extractAndRenameNames(alternate! as es.BlockStatement, names)
     }
   }
   return names
@@ -340,6 +345,7 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   }
   return locals
 }
+
 function compileArguments(exprs: es.Node[], indexTable: Map<string, EnvEntry>[]) {
   let maxStackSize = 0
   for (let i = 0; i < exprs.length; i++) {
@@ -379,6 +385,7 @@ type taggedBlockStatement = (es.Program | es.BlockStatement) & {
   isFunctionBlock?: boolean
 }
 
+// used to compile block bodies
 function compileStatements(
   node: taggedBlockStatement,
   indexTable: Map<string, EnvEntry>[],
@@ -414,16 +421,19 @@ function compileStatements(
 
 // each compiler should return a maxStackSize
 const compilers = {
+  // wrapper
   Program(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Program
     return compileStatements(node, indexTable, insertFlag)
   },
 
+  // wrapper
   BlockStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.BlockStatement
     return compileStatements(node, indexTable, insertFlag)
   },
 
+  // wrapper
   ExpressionStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ExpressionStatement
     return compile(node.expression, indexTable, insertFlag)
@@ -445,6 +455,7 @@ const compilers = {
     return { maxStackSize, insertFlag }
   },
 
+  // wrapper, compile as an arrow function expression instead
   FunctionDeclaration(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.FunctionDeclaration
     return compile(
@@ -491,6 +502,9 @@ const compilers = {
     return { maxStackSize, insertFlag: true }
   },
 
+  // Three types of calls, normal function calls declared by the Source program,
+  // primitive function calls that are predefined, and concurrent constructs only available in
+  // Source 3.4. We differentiate them with callType.
   CallExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.CallExpression
     let maxStackOperator = 0
@@ -509,10 +523,10 @@ const compilers = {
           addBinaryInstruction(OpCodes.LDPG, index, envLevel)
         }
       } catch (error) {
-        // to accomodate concurrency operators
+        // to accomodate concurrency constructs
         const matches = CONCURRENCY_PRIMITIVES.filter(func => func[0] === error.name)
         if (matches.length === 0 || chapter !== 3.4) {
-          throw error
+          throw error // propogate error if not a concurrency construct
         }
         callType = 'concurrent'
         callValue = [matches[0][1], matches[0][2]] // array of [opcode, numargs]
@@ -521,7 +535,7 @@ const compilers = {
       ;({ maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false))
     }
 
-    const maxStackOperands = compileArguments(node.arguments, indexTable)
+    let maxStackOperands = compileArguments(node.arguments, indexTable)
 
     if (callType === 'primitive') {
       addBinaryInstruction(OpCodes.CALLP, callValue, node.arguments.length)
@@ -537,10 +551,11 @@ const compilers = {
         addNullaryInstruction(OpCodes.LGCU)
       }
     } else {
-      // normal call
+      // normal call. only normal function calls have the function on the stack
       addUnaryInstruction(OpCodes.CALL, node.arguments.length)
+      maxStackOperands++
     }
-    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands + 1), insertFlag }
+    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands), insertFlag }
   },
 
   UnaryExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
@@ -581,6 +596,7 @@ const compilers = {
     throw Error('Unsupported operation')
   },
 
+  // convert logical expressions to conditional expressions
   LogicalExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.LogicalExpression
     if (node.operator === '&&') {
@@ -634,7 +650,7 @@ const compilers = {
       const index = names.size
       names.set(param.name, { index, isVar: true, isPrimitive: false })
     }
-    localNames(bodyNode, names)
+    extractAndRenameNames(bodyNode, names)
     const extendedIndexTable = extendIndexTable(indexTable, names)
 
     const newSVMFunction: SVMFunction = [NaN, names.size, node.params.length, []]
@@ -667,6 +683,7 @@ const compilers = {
         throw error
       }
       if (typeof matches[0][1] === 'number') {
+        // for NaN and Infinity
         addUnaryInstruction(OpCodes.LGCI, matches[0][1])
       } else if (matches[0][1] === undefined) {
         addNullaryInstruction(OpCodes.LGCU)
@@ -721,6 +738,7 @@ const compilers = {
       if (elements[i] === null) {
         continue
       }
+      // keep the array in the stack
       addNullaryInstruction(OpCodes.DUP)
       addUnaryInstruction(OpCodes.LGCI, i)
       const { maxStackSize: m1 } = compile(elements[i], indexTable, false)
@@ -746,7 +764,7 @@ const compilers = {
       addNullaryInstruction(OpCodes.LGCU)
       return { maxStackSize, insertFlag }
     } else if (node.left.type === 'MemberExpression' && node.left.computed === true) {
-      // case for a[0] = 1
+      // case for array member assignment
       const { maxStackSize: m1 } = compile(node.left.object, indexTable, false)
       const { maxStackSize: m2 } = compile(node.left.property, indexTable, false)
       const { maxStackSize: m3 } = compile(node.right, indexTable, false)
@@ -772,7 +790,7 @@ const compilers = {
     loopTracker.push([(node as taggedWhileStatement).isFor ? 'for' : 'while', [], [], NaN])
 
     // Add environment for loop and run in new environment
-    const locals = localNames(node.body as es.BlockStatement, new Map())
+    const locals = extractAndRenameNames(node.body as es.BlockStatement, new Map())
     addUnaryInstruction(OpCodes.NEWENV, locals.size)
     const extendedIndexTable = extendIndexTable(indexTable, locals)
     const body = node.body as taggedBlockStatement
@@ -805,6 +823,7 @@ const compilers = {
 
   ContinueStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of continue instruction
+    // no need to POPENV as continue will go to the end of the while loop
     loopTracker[loopTracker.length - 1][CONT_INDEX].push(functionCode.length)
     addUnaryInstruction(OpCodes.BR, NaN)
     return { maxStackSize: 0, insertFlag }
@@ -844,6 +863,10 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
   let maxStackSize = temp
 
   // TODO: Tail call
+  // insertFlag decides whether we need to introduce a RETG instruction. For some functions
+  // where return is not specified, there is an implicit "return undefined", which we do here.
+  // Source programs should return the last evaluated statement, which is what toplevel handles.
+  // TODO: Source programs should return last evaluated statement.
   if (newInsertFlag) {
     if (expr.type === 'ReturnStatement') {
       addNullaryInstruction(OpCodes.RETG)
@@ -858,6 +881,7 @@ function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag:
         expr.type === 'LogicalExpression' ||
         expr.type === 'MemberExpression' ||
         expr.type === 'AssignmentExpression' ||
+        expr.type === 'ArrowFunctionExpression' ||
         expr.type === 'VariableDeclaration')
     ) {
       // Conditional expressions are already handled
@@ -884,13 +908,13 @@ export function compileWithPrelude(program: es.Program, context: Context) {
   const prelude = compileToIns(parse(vmPrelude, context)!)
   generatePrimitiveFunctionCode(prelude)
 
-  return compileToIns(program, prelude, 3.4)
+  return compileToIns(program, context.chapter, prelude)
 }
 
 export function compileToIns(
   program: es.Program,
-  prelude?: Program,
-  runChapter: number = 3
+  runChapter: number = 3,
+  prelude?: Program
 ): Program {
   // reset variables
   SVMFunctions = []
@@ -901,7 +925,7 @@ export function compileToIns(
   chapter = runChapter
 
   transformForLoopsToWhileLoops(program)
-  const locals = localNames(program, new Map<string, EnvEntry>())
+  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>())
   const topFunction: SVMFunction = [NaN, locals.size, 0, []]
   if (prelude) {
     SVMFunctions.push(...prelude[1])
