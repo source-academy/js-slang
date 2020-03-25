@@ -4,7 +4,13 @@ import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import { EvaluationMethod, ExecutionMethod } from '../types'
 
-function startRepl(chapter = 1, executionMethod : ExecutionMethod = 'interpreter', evaluationMethod : EvaluationMethod = 'strict', useSubst: boolean = false, prelude = '') {
+function startRepl(
+  chapter = 1,
+  executionMethod: ExecutionMethod = 'interpreter',
+  evaluationMethod: EvaluationMethod = 'strict',
+  useSubst: boolean = false,
+  prelude = ''
+) {
   // use defaults for everything
   const context = createContext(chapter)
   const options: Partial<IOptions> = {
@@ -44,34 +50,33 @@ function startRepl(chapter = 1, executionMethod : ExecutionMethod = 'interpreter
 }
 
 function main() {
-
-  const opt = require('node-getopt').create([
-    ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)'],
-    ['s', 'use-subst', 'use substitution'],
-    ['h', 'help', 'display this help'],
-    ['n', 'native', 'use the native execution method'],
-    ['l', 'lazy', 'use lazy evaluation']
-  ])
+  const opt = require('node-getopt')
+    .create([
+      ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)'],
+      ['s', 'use-subst', 'use substitution'],
+      ['h', 'help', 'display this help'],
+      ['n', 'native', 'use the native execution method'],
+      ['l', 'lazy', 'use lazy evaluation']
+    ])
     .bindHelp()
-    .setHelp("Usage: node repl.js [FILENAME] [OPTION]\n\n[[OPTIONS]]")
-    .parseSystem();
+    .setHelp('Usage: node repl.js [FILENAME] [OPTION]\n\n[[OPTIONS]]')
+    .parseSystem()
 
-  const executionMethod = opt.options.native === true ? 'native' : 'interpreter';
-  const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict';
-  const chapter = opt.options.chapter !== undefined ? parseInt(opt.options.chapter, 10) : 1;
-  const useSubst = opt.options.s;
+  const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
+  const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict'
+  const chapter = opt.options.chapter !== undefined ? parseInt(opt.options.chapter, 10) : 1
+  const useSubst = opt.options.s
 
-  if(opt.argv.length > 0) {
+  if (opt.argv.length > 0) {
     fs.readFile(opt.argv[0], 'utf8', (err, data) => {
-      if(err) {
+      if (err) {
         throw err
       }
       startRepl(chapter, executionMethod, evaluationMethod, useSubst, data)
-    });
+    })
   } else {
     startRepl(chapter, executionMethod, evaluationMethod, useSubst, '')
   }
-
 }
 
 main()
