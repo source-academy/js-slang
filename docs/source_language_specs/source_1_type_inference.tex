@@ -32,9 +32,8 @@
 \subsection{The language Source \S 1}
 
 The set of expressions $E$ is the least set that satisfies the following rules, 
-where $x$ ranges over a set of names $V$, 
-$n$ ranges over the numbers, $p_1$ ranges over the set of 
-unary primitive operations 
+where $x$ ranges over a set of names $V$, $n$ ranges over the positive integers, 
+$p_1$ ranges over the set of unary primitive operations 
 $P_1 = \{$\verb#!#$\}$, and $p_2$ ranges over the set of binary 
 primitive operations
 $P_2 = \{$\verb@||@,\verb#&&#,\verb#+#,
@@ -43,8 +42,6 @@ $P_2 = \{$\verb@||@,\verb#&&#,\verb#+#,
 $\Rule{}{x}$
 \hfill 
 $\Rule{}{i}$
-\hfill 
-$\Rule{}{f}$
 \hfill 
 $\Rule{}{s}$
 \hfill 
@@ -62,7 +59,7 @@ $\Rule{E \qquad E_1 \qquad E_2}{E\ \texttt{?}\ E_1\ \texttt{:}\ E_2}$
 \hfill
 $\Rule{E\quad E_1\quad \cdots \quad E_n}{E\ \Lp\ E_1\texttt{,}\cdots\texttt{,} E_n\Rp}$
 
-The letters $x$, $i$, $f$ and $s$ stand for names, integers, floats and strings, respectively.
+The letters $x$, $i$ and $s$ stand for names, numbers, strings, respectively.
 
 The set of statements is 
 the least set that satisfies the
@@ -101,15 +98,44 @@ as abbreviations for constant declaration statements as follows
 %
 \[ \Const\ f\ \texttt{=}\ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ S\ \Rc \texttt{;} \]
 %
-and function definitions of the form 
+function definitions of the form 
 %
 \[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ E \]
 %
 \noindent
 as abbreviations for the following
 %
-\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ \texttt{return}\ E\ \texttt{;}\ \Rc \]
-
+\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ \Return\ E\ \texttt{;}\ \Rc \]
+%
+Conditional statements of the form 
+\begin{lstlisting}
+if (x1) {
+    const x = 1;    
+} else if (x2) {
+    const y = 3;
+} else if (x3) {
+    const a = 3;
+} else {
+    const b = 3;
+}
+\end{lstlisting}
+\noindent
+are treated as abbreviations for the following
+\begin{lstlisting}
+if (x1) {
+    const x = 1;    
+} else {
+    if (x2) {
+        const y = 3;
+    } else {
+        if (x3) {
+            const a = 3;
+        } else {
+            const b = 3;
+        }
+    }
+}
+\end{lstlisting}
   
 \subsection{A Language of Types}
 \label{simpltyped}
@@ -123,11 +149,11 @@ We introduce the following language of types for type inference:
 \]
 
 \[
-\Rule{}{n}
+\Rule{}{\Number}
 \qquad
 \Rule{}{\Bool}
 \qquad
-\Rule{}{\texttt{string}}
+\Rule{}{\String}
 \qquad
 \Rule{}{\Undefined}
 \]
@@ -138,12 +164,13 @@ We introduce the following language of types for type inference:
 
 \noindent
 where $n \geq 1$, and $T_i$ and $A_i$ represent type variables. We will capitalize 
-type variables, as in $T_1, A_2$. The symbols $t_i$ in the rules above
+type variables, as in $T_1, A_2$. We will also refer to the types in the second row (i.e. $\Bool$,
+$\Undefined$, $\Number$, $\String$) as \emph{base types}. The symbols $t_i$ in the rules above
 are meta-variables that stand for types and must not be confused with type variables
 that \emph{are} types.
 As usual, parentheses can be used in practice for grouping.
-Examples of valid types are $\texttt{float}$ and
-$(\texttt{float}, () \rightarrow \Bool, \Undefined, T_1) \rightarrow (\Bool \rightarrow A_2)$.
+Examples of valid types are $\Number$ and
+$(\Number, () \rightarrow \Bool, \Undefined, T_1) \rightarrow (\Bool \rightarrow A_2)$.
 Types of the form $\forall ( t )$ are called \emph{polymorphic types}, whereas
 all other are called \emph{monomorphic types}.
 
@@ -358,17 +385,23 @@ where:
 A constraint in solved form does not have any cycles $t^{(0)} = t^{(1)}, t^{(1)} = t^{(2)}, \ldots, t^{(k)} = t^{(0)}$.
 We \emph{apply} a type constraint $\Sigma$ in solved form to a type $t$ as follows:
 
-$\Rule{\textrm{if }t_i = t_i'\textrm{ occurs in }\Sigma}{
-  \Sigma(t_i) = \Sigma(t_i')}
-\qquad
-\Rule{t' = \Sigma(t) \qquad t_1' = \Sigma(t_1) \qquad \cdots \qquad t_n' = \Sigma(t_n) }{
+\[
+  \Rule{\textrm{if $t_i$ is a \emph{base type} or }t_i = t_i'\textrm{ does not occur in }\Sigma}{
+    \Sigma(t_i) = t_i}
+  \qquad
+  \Rule{\textrm{if }t_i = t_i'\textrm{ occurs in }\Sigma}{
+    \Sigma(t_i) = \Sigma(t_i')}  
+\]
+
+\[
+  \Rule{t' = \Sigma(t) \qquad t_1' = \Sigma(t_1) \qquad \cdots \qquad t_n' = \Sigma(t_n) }{
   \Sigma((t_1, \ldots, t_n) \rightarrow t) = (t_1', \ldots, t_n') \rightarrow t'}
-$
+\]
 
 \noindent
-Example: If $\Sigma = (T_1 = \texttt{float} \wedge T_2 = T_3 \rightarrow \texttt{bool} \wedge T_3 = \texttt{float}
-\rightarrow \texttt{bool})$, we have $\Sigma(\texttt{float} \rightarrow T_2) = \texttt{float} \rightarrow ((\texttt{float}
-\rightarrow \texttt{bool}) \rightarrow \texttt{bool})$.
+Example: If $\Sigma = (T_1 = \Number \wedge T_2 = T_3 \rightarrow \Bool \wedge T_3 = \Number
+\rightarrow \Bool)$, we have $\Sigma(\Number \rightarrow T_2) = \Number \rightarrow ((\Number
+\rightarrow \Bool) \rightarrow \Bool)$.
 
 Note that in our framework, type constraints never contain any polymorphic types. Thus
 you will never see ``$\forall$'' an a type constraint.
@@ -376,17 +409,22 @@ you will never see ``$\forall$'' an a type constraint.
 We add a constraint $t = t'$ to a solved form $\Sigma$ by applying the following rules
 in the given order:
 \begin{itemize}
-\item If $t$ is a type variable that does not occur on the left in any equation in $\Sigma$,
-  then add $t = t'$ in front of $\Sigma$.
-\item If $t$ is a type variable and there is an equation $t = t''$ in $\Sigma$, then
-  add the equation $t' = t''$ to $\Sigma$.
-\item If $t$ is not a type variable and $t'$ is a type variable, then add $t' = t$ to $\Sigma$.
-\item If $t$ is $A_i$ and $t'$ is not a type variable and not $\texttt{float}$ or $\texttt{string}$,
+\item If $t$ is a \emph{base type} and $t'$ is also a \emph{base type} of the same kind, do nothing.
+\item If $t$ is not a type variable and $t'$ is a type variable, then we now try to add $t' = t$ to
+$\Sigma$, following the same rules.
+\item If $t$ is a type variable and $\Sigma(t')$ is a type variable with the same name as $t$, do nothing.
+\item If $t$ is a type variable, $\Sigma(t')$ is a function type and $t$ is contained in $\Sigma(t')$, then stop
+  with a type error as we will have an infinite type. (e.g. A = B -> A)
+\item If $t$ is $A_i$ and $\Sigma(t')$ is not a type variable and not $\Number$ or $\String$,
   then stop with a type error.
+\item If $t$ is a type variable and there is an equation $t = t''$ in $\Sigma$, then
+  we now try to add the equation $t' = t''$ to $\Sigma$, following the same rules.
+\item If $t$ is a type variable that does not occur on the left in any equation in $\Sigma$,
+  then add $t = \Sigma(t')$ in the front of $\Sigma$.
 \item If $t$ is $(t_1,\ldots, t_n) \rightarrow t''$ and
-  $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add
-  $t_1 = t_1', \cdots, t_n = t_n', t'' = t'''$ to $\Sigma$.
-\item Any other case  (e.g. $\texttt{bool} = \texttt{string}$) stops with a type error.
+  $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add n constraints
+  $t_1 = t_1', \cdots, t_n = t_n', t'' = t'''$ to $\Sigma$, each time going through the above set of rules.
+\item Any other case  (e.g. $\Bool = \String$) stops with a type error.
 \end{itemize}
 This process is guaranteed to terminate either with a type error or with a new solved form.
 
@@ -412,21 +450,21 @@ applies when $\Gamma(x)$ is monomorphic, i.e. $\Gamma(x) \neq \forall t'$.
 
 \noindent
 $\Rule{\Gamma(x) \neq \forall t' \qquad
-  \Sigma' = (\Sigma \wedge \Gamma(x) = t)}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
+  \Sigma' = (\Sigma \wedge t = \Gamma(x))}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
 
 If $\Gamma(x)$ is polymorphic,  i.e. $\Gamma(x) = \forall t'$, we replace all type variables in
 $t'$ with fresh type variables:
 
 \noindent
 $\Rule{\Gamma(x) = \forall t' \qquad
-  \Sigma' = (\Sigma \wedge \textit{fresh}(t') = t)}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
+  \Sigma' = (\Sigma \wedge t = \textit{fresh}(t'))}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
 
 \noindent
 where $\textit{fresh}(t')$ results from $t'$ by replacing all type variables consistently with
 fresh type variables.
 
-Example: $\textit{fresh}(\texttt{bool} \rightarrow (T_1 \rightarrow (T_2 \rightarrow T_2)))$
-might return $\texttt{bool} \rightarrow (T_{77} \rightarrow (T_{88} \rightarrow T_{88})))$.
+Example: $\textit{fresh}(\Bool \rightarrow (T_1 \rightarrow (T_2 \rightarrow T_2)))$
+might return $\Bool \rightarrow (T_{77} \rightarrow (T_{88} \rightarrow T_{88})))$.
 
 If $\Gamma(x)$ is not defined, then neither rule is applicable.
 In this case, we say that
@@ -435,35 +473,43 @@ there is no type for $x$ derivable from the type environment $\Gamma$.
 Constants get the following types.
 
 \noindent
-$\Rule{\Sigma' = (\Sigma \wedge t = \Number)}{\Sigma, \Gamma \vdash n^t : \Sigma'}$
+\[
+  \Rule{\Sigma' = (\Sigma \wedge t = \Number)}{\Sigma, \Gamma \vdash n^t : \Sigma'}
+  \qquad
+  \Rule{\Sigma' = (\Sigma \wedge t = \String)}{\Sigma, \Gamma \vdash s^t : \Sigma'}
+\]
+\noindent
+where $n$ denotes any literal number $s$ denotes any literal string.
 
 \noindent
-where $i$ and $f$ denote integer and floating point constants, respectively.
-
-\noindent
-$\Rule{\Sigma' = (\Sigma \wedge t = \Bool)}{\Sigma, \Gamma \vdash \TruE^t : \Sigma'}$
-
-\noindent
-$\Rule{\Sigma' = (\Sigma \wedge t = \Bool)}{\Sigma, \Gamma \vdash \FalsE^t : \Sigma'}$
+\[
+  \Rule{\Sigma' = (\Sigma \wedge t = \Bool)}{\Sigma, \Gamma \vdash \TruE^t : \Sigma'}
+  \quad
+  \Rule{\Sigma' = (\Sigma \wedge t = \Bool)}{\Sigma, \Gamma \vdash \FalsE^t : \Sigma'}  
+\]
 
 \noindent
 Important for typing conditionals is that the consequent and alternative
 expressions get the same type. 
 
 \noindent
-$\Rule{(\Sigma_0 \wedge t_0 = \Bool \wedge t = t_1 \wedge t_1 = t_2),
-          \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
-\Sigma_1, \Gamma \vdash E_1^{t_1} : \Sigma_2 \quad
-\Sigma_2, \Gamma \vdash E_2^{t_2} : \Sigma_3 }{
-\Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \texttt{?}\ E_1^{t_1}\ \texttt{:}\ E_2^{t_2})^t\ :\ \Sigma_3}$
+\[
+  \Rule{(\Sigma_0 \wedge t_0 = \Bool \wedge t = t_1 \wedge t_1 = t_2),
+  \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
+  \Sigma_1, \Gamma \vdash E_1^{t_1} : \Sigma_2 \quad
+  \Sigma_2, \Gamma \vdash E_2^{t_2} : \Sigma_3 }{
+  \Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \texttt{?}\ E_1^{t_1}\ \texttt{:}\ E_2^{t_2})^t\ :\ \Sigma_3}  
+\]
 
 We have the following rule for function application.
 
 \noindent
-$\Rule{(\Sigma_0 \wedge t_0 = (t_1, \ldots, t_n) \rightarrow t),
-            \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad \cdots \quad 
+\[
+  \Rule{(\Sigma_0 \wedge t_0 = (t_1, \ldots, t_n) \rightarrow t),
+    \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad \cdots \quad 
   \Sigma_n, \Gamma \vdash E_n^{t_n} : \Sigma_{n+1}}{
-  \Sigma_0, \Gamma \vdash (E_0^{t_0}\ \Lp \ E_1^{t_1}, \ldots, E_n^{t_n}\ \Rp)^t : \Sigma_{n+1}}$
+  \Sigma_0, \Gamma \vdash (E_0^{t_0}\ \Lp \ E_1^{t_1}, \ldots, E_n^{t_n}\ \Rp)^t : \Sigma_{n+1}}  
+\]
 
 \noindent
 The type of the operator needs to be a function type with the right
@@ -475,10 +521,12 @@ as the return type of the function type that is the type of the operator.
 The typing of function definition statements is defined as follows.
 
 \noindent
-$\Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftarrow t_1]\cdots
-  [x_n \leftarrow t_n]
-  \vdash S^{t} : \Sigma'}{
-  \Sigma, \Gamma \vdash ( \Lp  x_1^{t_1}, \ldots, x_n^{t_n} \Rp\ \texttt{=>}\ \Lc\ S^{t}\ \Rc)^{t'} : \Sigma'}$
+\[
+  \Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftarrow t_1]\cdots
+    [x_n \leftarrow t_n]
+    \vdash S^{t} : \Sigma'}{
+    \Sigma, \Gamma \vdash ( \Lp  x_1^{t_1}, \ldots, x_n^{t_n} \Rp\ \texttt{=>}\ \Lc\ S^{t}\ \Rc)^{t'} : \Sigma'}  
+\]
 
 
 %% \vspace{5mm}
@@ -526,7 +574,7 @@ $\Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftar
 %% \item $\Rule{}{n}$, $\Rule{}{\TruE}$, $\Rule{}{\FalsE}$\\
 %% The only typing rules that apply in these cases are the respective rules
 %% for typing of constants, NumT, TrueT and FalseT (page~\pageref{numt}).
-%% They assign a unique type (\texttt{number} for numbers, \texttt{bool} for
+%% They assign a unique type (\texttt{number} for numbers, \Bool for
 %% $\TruE$ and $\FalsE$) to the constant expressions.
 %% \item 
 %% $\Rule{E}{p_1[E]}$, $\Rule{E_1\quad E_2}{p_2[E_1, E_2]}$\\
@@ -541,7 +589,7 @@ $\Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftar
 %% \end{quotation}
 %% The only typing rule that applies in this case is the rule Prim$_1$.
 %% The only possible type for $\texttt{!}[E]$ according to this rule is
-%% \texttt{bool}.
+%% \Bool.
 
 %% The argument for the binary primitive operations is similar.
 %% \item $\Rule{E \qquad E_1 \qquad E_2}{E\ \texttt{?}\ E_1\ \texttt{:}\ E_2}$\\
@@ -610,12 +658,13 @@ $\Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftar
 \subsection{Typing Relation on Statements}
 
 The following rule deals with the typing of sequences. We assume that
-whenever there is a return statement in a sequence, it is the last statement in
-the sequence. (One could consider a ``dead code'' error otherwise.)
+whenever there is a return statement or a conditional statement with a return statement within a
+sequence, it is the last statement in the sequence.
+(One could consider a ``dead code'' error otherwise.)
 
 \[
 \Rule{
-  (\Sigma_1 \wedge t_2 = t_3), \Gamma \vdash S_1^{t_1} : \Sigma_2 \qquad 
+  (\Sigma_1 \wedge t_3 = t_2), \Gamma \vdash S_1^{t_1} : \Sigma_2 \qquad 
   \Sigma_2, \Gamma \vdash S_2^{t_2} : \Sigma_3}{
 \Sigma_1, \Gamma \vdash (S_1^{t_1}\ S_2^{t_2})^{t_3}  : \Sigma_3}
 \]
@@ -624,8 +673,8 @@ the sequence. (One could consider a ``dead code'' error otherwise.)
 Return statements are typed as follows.
 \[
 \Rule{
-(\Sigma \wedge t = t'), \Gamma \vdash E^{t} : \Sigma' }{
-\Sigma, \Gamma \vdash (\texttt{return}\ E^{t} \texttt{;})^{t'} : \Sigma'}
+(\Sigma \wedge t' = t), \Gamma \vdash E^{t} : \Sigma' }{
+\Sigma, \Gamma \vdash (\Return\ E^{t} \texttt{;})^{t'} : \Sigma'}
 \]
 
 \noindent
