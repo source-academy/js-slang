@@ -192,7 +192,7 @@ function extractAndRenameNames(
       if (names.has(name)) {
         const loc = node.loc!.start // should be present
         const oldName = name
-        name = name + '_' + loc.line + '_' + loc.column
+        name = `${name}-${loc.line}-${loc.column}`
         namesToRename.set(oldName, name)
       }
       const isVar = node.kind === 'let'
@@ -204,7 +204,7 @@ function extractAndRenameNames(
       if (names.has(name)) {
         const loc = node.loc!.start // should be present
         const oldName = name
-        name = name + '_' + loc.line + '_' + loc.column
+        name = `${name}-${loc.line}-${loc.column}`
         namesToRename.set(oldName, name)
       }
       const isVar = false
