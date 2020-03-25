@@ -697,7 +697,7 @@ const compilers = {
       }
       if (typeof matches[0][1] === 'number') {
         // for NaN and Infinity
-        addUnaryInstruction(OpCodes.LGCI, matches[0][1])
+        addUnaryInstruction(OpCodes.LGCF32, matches[0][1])
       } else if (matches[0][1] === undefined) {
         addNullaryInstruction(OpCodes.LGCU)
       } else {
