@@ -706,8 +706,8 @@ declarations, the typing is easy:
 \[
 \Rule{
   S\ \textrm{does not contain }\Const \qquad
-  \Sigma, \Gamma \vdash S^{t} : \Sigma' }{
-\Sigma, \Gamma \vdash \Lc \ S \ \Rc^{t}  : \Sigma_3}
+  (\Sigma \wedge t' = t), \Gamma \vdash S^{t} : \Sigma' }{
+\Sigma, \Gamma \vdash \Lc \ S^{t} \ \Rc^{t'}  : \Sigma_3}
 \]
 
 \noindent
@@ -729,7 +729,7 @@ that the body of a block has two parts:
 \Rule{
   \begin{minipage}{120mm}
     $\Gamma[x_1 \leftarrow t_1]\cdots[x_n \leftarrow t_n]\Gamma' $\\
-    $\Sigma_1 = (\Sigma_0 \wedge t = t')$ \\
+    $\Sigma_1 = (\Sigma_0 \wedge t = t' \wedge t'_1 = undefined \wedge \cdots \wedge t'_n = undefined)$ \\
     $\Sigma_1, \Gamma' \vdash E_1^{t_1} : \Sigma_2 \cdots
      \Sigma_n, \Gamma' \vdash E_n^{t_n} : \Sigma_{n+1}$\\
     $\Gamma'[x_1 \leftarrow \forall \Sigma_{n+1}(t_1)]\cdots[x_n \leftarrow \forall \Sigma_{n+1}(t_n)]\Gamma'' $\\
@@ -737,8 +737,8 @@ that the body of a block has two parts:
   \end{minipage}
 }{
   \Sigma_0, \Gamma \vdash \Lc\
-  \Const\ x_1 \ \texttt{=}\ E_1^{t_1} \texttt{; } \cdots
-  \Const\ x_n \ \texttt{=}\ E_n^{t_n} \texttt{; } \ S^t \Rc^{t'} : \Gamma_{n+2}
+  (\Const\ x_1 \ \texttt{=}\ E_1^{t_1} \texttt{;)}^{t'_1} \texttt{ } \cdots \texttt{ }
+  (\Const\ x_n \ \texttt{=}\ E_n^{t_n} \texttt{;)}^{t'_n} \texttt{ } \ S^t \Rc^{t'} : \Gamma_{n+2}
 }
 \]
 
