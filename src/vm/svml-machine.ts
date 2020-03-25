@@ -1079,11 +1079,7 @@ addPrimitiveOpCodeHandlers()
 M[OpCodes.EXECUTE] = () => {
   I = P[PC][EXECUTE_NUM_ARGS_OFFSET]
   E = OS // we need the values in OS, so store in E first
-  // Put current thread randomly into TQ
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS() // TOP_RTS++
-  TQ.push([RTS, TOP_RTS])
+  TQ.push([OS, ENV, PC + 1, P, RTS, TOP_RTS])
   // Keep track of registers first to restore present state after saving threads
   for (; I > 0; I = I - 1) {
     RTS = []
@@ -1100,12 +1096,8 @@ M[OpCodes.EXECUTE] = () => {
     D = HEAP[H + CLOSURE_ENV_SLOT]
     NEW_ENVIRONMENT()
     ENV = RES
-    PC = -1 // will be saved as PC = 0
     P = F[FUNC_CODE_OFFSET]
-    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-    A = RES
-    PUSH_RTS() // TOP_RTS++
-    TQ.push([RTS, TOP_RTS]) // insert into TQ
+    TQ.push([OS, ENV, 0, P, RTS, TOP_RTS])
   }
   SETUP_THREAD() // sets RTS, TOP_RTS, PC, ENV, P, OS, TO
 }
@@ -1175,12 +1167,7 @@ function TIMEOUT_THREAD() {
     SET_TO()
   } else {
     // timeout only if no other threads
-    // timeout at current ins so need to step back.
-    PC = PC - 1
-    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-    A = RES
-    PUSH_RTS() // TOP_RTS++
-    TQ.push([RTS, TOP_RTS])
+    TQ.push([OS, ENV, PC, P, RTS, TOP_RTS])
     SETUP_THREAD()
   }
 }
@@ -1188,14 +1175,7 @@ function TIMEOUT_THREAD() {
 function SETUP_THREAD() {
   G = TQ.splice(Math.floor(Math.random() * TQ.length), 1) // pop a thread randomly
   // Unpack G: different behavior of array splice and array shift
-  RTS = G[0][0]
-  TOP_RTS = G[0][1]
-  POP_RTS() // TOP_RTS--
-  H = RES
-  PC = HEAP[H + RTS_FRAME_PC_SLOT]
-  ENV = HEAP[H + RTS_FRAME_ENV_SLOT]
-  P = HEAP[H + RTS_FRAME_FUNC_INS_SLOT]
-  OS = HEAP[H + RTS_FRAME_OS_SLOT]
+  ;[OS, ENV, PC, P, RTS, TOP_RTS] = G[0]
   SET_TO()
 }
 
