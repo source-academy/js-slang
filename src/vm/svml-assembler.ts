@@ -66,6 +66,9 @@ function serialiseFunction(f: SVMFunction): ImFunction {
     switch (opcode) {
       case OpCodes.LDCI:
       case OpCodes.LGCI:
+        if (!Number.isInteger(instr[1] as number)) {
+          throw new Error(`Non-integral operand to LDCI/LDGI: ${instr[1]} (this is a compiler bug)`)
+        }
         b.putI(32, instr[1] as number)
         break
       case OpCodes.LDCF32:
