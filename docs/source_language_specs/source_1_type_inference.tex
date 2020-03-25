@@ -420,7 +420,9 @@ $\Sigma$, following the same rules.
 \item If $t$ is a type variable and there is an equation $t = t''$ in $\Sigma$, then
   we now try to add the equation $t' = t''$ to $\Sigma$, following the same rules.
 \item If $t$ is a type variable that does not occur on the left in any equation in $\Sigma$,
-  then add $t = \Sigma(t')$ in the front of $\Sigma$.
+  then add $t = \Sigma(t')$ in the front of $\Sigma$. In addition, if $\Sigma(t)$ is an "addable"
+  type variable $A_i$ and $\Sigma(t')$ is a regular type variable $T_j$, we must convert $\Sigma(t')$
+  into an "addable" type $A_j$.  
 \item If $t$ is $(t_1,\ldots, t_n) \rightarrow t''$ and
   $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add n constraints
   $t_1 = t_1', \cdots, t_n = t_n', t'' = t'''$ to $\Sigma$, each time going through the above set of rules.
