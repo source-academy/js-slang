@@ -719,9 +719,6 @@ export function transpile(
   ])
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
-  /*require("util").inspect.defaultOptions.depth = null;
-    console.log(program);*/
-
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
