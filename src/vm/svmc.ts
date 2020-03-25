@@ -105,6 +105,21 @@ function parseOptions(): CliOptions | null {
 async function main() {
   const options = parseOptions()
   if (options == null) {
+    console.error(`Usage: svmc [options...] <input file>
+
+Options:
+-t, --compile-to <option>: [binary]
+  json: Compile only, but don't assemble.
+  binary: Compile and assemble.
+  debug: Compile and pretty-print the compiler output. For debugging the compiler.
+  ast: Parse and pretty-print the AST. For debugging the parser.
+-c, --chapter <chapter>: [3]
+  1, 2, or 3. Sets the Source chapter.
+-o, --out <filename>: [see below]
+  Sets the output filename.
+  Defaults to the input filename, minus any '.js' extension, plus '.svm'.
+--:
+  Signifies the end of arguments, in case your input filename starts with -.`)
     process.exitCode = 1
     return
   }
