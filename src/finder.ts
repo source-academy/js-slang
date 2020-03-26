@@ -95,11 +95,14 @@ function containsNode(nodeOuter: Node, nodeInner: Node) {
   return (
     outerLoc &&
     innerLoc &&
-    ((outerLoc.start.line < innerLoc.start.line && outerLoc.end.line >= innerLoc.end.line) ||
-      (outerLoc.start.line === innerLoc.start.line &&
-        outerLoc.end.line === innerLoc.end.line &&
-        outerLoc.start.column <= innerLoc.start.column &&
-        outerLoc.end.column >= innerLoc.end.column))
+    ((outerLoc.start.line === innerLoc.start.line &&
+      outerLoc.end.line === innerLoc.end.line &&
+      outerLoc.start.column <= innerLoc.start.column &&
+      outerLoc.end.column >= innerLoc.end.column) ||
+    (outerLoc.start.line < innerLoc.start.line &&
+      outerLoc.end.line >= innerLoc.end.line) ||
+    (outerLoc.start.line <= innerLoc.start.line &&
+      outerLoc.end.line > innerLoc.end.line))
   )
 }
 
@@ -120,7 +123,6 @@ function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
     VariablePattern: (node: any, ancestors: [Node]) => {
       if (identifier.name === node.name && identifier.loc === node.loc) {
         foundAncestors = Object.assign([], ancestors).reverse()
-        foundAncestors.shift()
       }
     }
   })
