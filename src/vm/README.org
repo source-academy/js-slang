@@ -21,9 +21,9 @@ However, this design departs from the textbook, as the system does not execute p
 
 ** Concurrency Support
 The following concurrent functions are supported:
-- =concurrent_execute=: $\textit{primitive}$, executes multiple threads concurrently. Each $f_1, \cdots ,f_n$ is a nullary function that returns =undefined=, and each thread is executed by running the code in the body of the nullary function. Returns =undefined=.
-- =test_and_set=: $\textit{primitive}$, assumes the head of array $a$ is a boolean $b$. Sets the head of $a$ to =true=. Returns $b$.
-- =clear=: $\textit{primitive}$, sets the head of array $a$ to =false=. Returns =undefined=.
+- $\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}$: $\textit{primitive}$, executes multiple threads concurrently. Each $\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}$ is a nullary function that returns =undefined=, and each thread is executed by running the code in the body of the nullary function. Returns =undefined=.
+- =test_and_set(a)=: $\textit{primitive}$, assumes the head of array =a= is a boolean $b$. Sets the head of =a= to =true=. Returns $b$.
+- =clear(a)=: $\textit{primitive}$, sets the head of array =a= to =false=. Returns =undefined=.
 
 ** =EXECUTE= Rules
 
