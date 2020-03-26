@@ -502,14 +502,19 @@ const compilers = {
     if (loopTracker.length > 0) {
       throw Error('return not allowed in loops')
     }
-    const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false)
+    const { maxStackSize } = compile(node.argument as es.Expression, indexTable, false, true)
     return { maxStackSize, insertFlag: true }
   },
 
   // Three types of calls, normal function calls declared by the Source program,
   // primitive function calls that are predefined, and concurrent constructs only available in
   // Source 3.4. We differentiate them with callType.
-  CallExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  CallExpression(
+    node: es.Node,
+    indexTable: Map<string, EnvEntry>[],
+    insertFlag: boolean,
+    isTailCallPosition: boolean = false
+  ) {
     node = node as es.CallExpression
     let maxStackOperator = 0
     let callType: 'normal' | 'primitive' | 'concurrent' = 'normal'
@@ -542,7 +547,11 @@ const compilers = {
     let maxStackOperands = compileArguments(node.arguments, indexTable)
 
     if (callType === 'primitive') {
-      addBinaryInstruction(OpCodes.CALLP, callValue, node.arguments.length)
+      addBinaryInstruction(
+        isTailCallPosition ? OpCodes.CALLTP : OpCodes.CALLP,
+        callValue,
+        node.arguments.length
+      )
     } else if (callType === 'concurrent') {
       if (callValue[0] === OpCodes.TEST_AND_SET) {
         addNullaryInstruction(callValue[0])
@@ -556,7 +565,7 @@ const compilers = {
       }
     } else {
       // normal call. only normal function calls have the function on the stack
-      addUnaryInstruction(OpCodes.CALL, node.arguments.length)
+      addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length)
       maxStackOperands++
     }
     return { maxStackSize: Math.max(maxStackOperator, maxStackOperands), insertFlag }
@@ -586,39 +595,51 @@ const compilers = {
   },
 
   // convert logical expressions to conditional expressions
-  LogicalExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  LogicalExpression(
+    node: es.Node,
+    indexTable: Map<string, EnvEntry>[],
+    insertFlag: boolean,
+    isTailCallPosition: boolean = false
+  ) {
     node = node as es.LogicalExpression
     if (node.operator === '&&') {
       const { maxStackSize } = compile(
         create.conditionalExpression(node.left, node.right, create.literal(false)),
         indexTable,
-        false
+        false,
+        isTailCallPosition
       )
       return { maxStackSize, insertFlag }
     } else if (node.operator === '||') {
       const { maxStackSize } = compile(
         create.conditionalExpression(node.left, create.literal(true), node.right),
         indexTable,
-        false
+        false,
+        isTailCallPosition
       )
       return { maxStackSize, insertFlag }
     }
     throw Error('Unsupported operation')
   },
 
-  ConditionalExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ConditionalExpression(
+    node: es.Node,
+    indexTable: Map<string, EnvEntry>[],
+    insertFlag: boolean,
+    isTailCallPosition: boolean = false
+  ) {
     const { test, consequent, alternate } = node as es.IfStatement
     const { maxStackSize: m1 } = compile(test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
-    const { maxStackSize: m2 } = compile(consequent, indexTable, insertFlag)
+    const { maxStackSize: m2 } = compile(consequent, indexTable, insertFlag, isTailCallPosition)
     let BRIndex = NaN
     if (!insertFlag) {
       addUnaryInstruction(OpCodes.BR, NaN)
       BRIndex = functionCode.length - 1
     }
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
-    const { maxStackSize: m3 } = compile(alternate!, indexTable, insertFlag)
+    const { maxStackSize: m3 } = compile(alternate!, indexTable, insertFlag, isTailCallPosition)
     if (!insertFlag) {
       functionCode[BRIndex][1] = functionCode.length - BRIndex
     }
@@ -658,9 +679,12 @@ const compilers = {
     // undefined TODO: only use LGCU if lookup in environment fails
     let envLevel
     let index
+    let isPrimitive
     try {
-      ;({ envLevel, index } = indexOf(indexTable, node))
-      if (envLevel === 0) {
+      ;({ envLevel, index, isPrimitive } = indexOf(indexTable, node))
+      if (isPrimitive) {
+        addUnaryInstruction(OpCodes.NEWCP, index)
+      } else if (envLevel === 0) {
         addUnaryInstruction(OpCodes.LDLG, index)
       } else {
         addBinaryInstruction(OpCodes.LDPG, index, envLevel)
@@ -673,7 +697,7 @@ const compilers = {
       }
       if (typeof matches[0][1] === 'number') {
         // for NaN and Infinity
-        addUnaryInstruction(OpCodes.LGCI, matches[0][1])
+        addUnaryInstruction(OpCodes.LGCF32, matches[0][1])
       } else if (matches[0][1] === undefined) {
         addNullaryInstruction(OpCodes.LGCU)
       } else {
@@ -843,18 +867,28 @@ const compilers = {
   }
 }
 
-function compile(expr: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+function compile(
+  expr: es.Node,
+  indexTable: Map<string, EnvEntry>[],
+  insertFlag: boolean,
+  isTailCallPosition: boolean = false
+) {
   const compiler = compilers[expr.type]
   if (!compiler) {
     throw Error('Unsupported operation')
   }
-  const { maxStackSize: temp, insertFlag: newInsertFlag } = compiler(expr, indexTable, insertFlag)
+  const { maxStackSize: temp, insertFlag: newInsertFlag } = compiler(
+    expr,
+    indexTable,
+    insertFlag,
+    isTailCallPosition
+  )
   let maxStackSize = temp
 
-  // TODO: Tail call
   // insertFlag decides whether we need to introduce a RETG instruction. For some functions
   // where return is not specified, there is an implicit "return undefined", which we do here.
   // Source programs should return the last evaluated statement, which is what toplevel handles.
+  // TODO: Don't emit an unnecessary RETG after a tail call. (This is harmless, but wastes an instruction.)
   // TODO: Source programs should return last evaluated statement.
   if (newInsertFlag) {
     if (expr.type === 'ReturnStatement') {
