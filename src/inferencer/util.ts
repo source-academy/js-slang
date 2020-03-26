@@ -144,3 +144,20 @@ export function toJson(nativeType: t.Type): TypeAnnotation {
     }
   }
 }
+
+export function clone<T>(object: T): T {
+  return Object.assign(Object.create(Object.getPrototypeOf(object)), object);
+}
+
+/**
+ * Unchains variables until it gets to a type or a variable without an instance. Unused.
+ * @param type  The type to be pruned.
+ * @returns The pruned type.
+ */
+export function prune(type: t.Type): t.Type {
+  if (type instanceof t.Var && type.instance) {
+    type.instance = prune(type.instance)
+    return type.instance
+  }
+  return type
+}

@@ -136,7 +136,7 @@ export function typeToString(type: Type): string {
       return `[${typeToString(type.headType)}, ${typeToString(type.tailType)}]`
     case 'function':
       let parametersString = type.parameterTypes.map(typeToString).join(', ')
-      if (type.parameterTypes.length > 1) {
+      if (type.parameterTypes.length !== 1 || (type.parameterTypes[0].kind === 'function')) {
         parametersString = `(${parametersString})`
       }
       return `${parametersString} -> ${typeToString(type.returnType)}`

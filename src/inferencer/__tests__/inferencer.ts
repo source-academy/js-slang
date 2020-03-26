@@ -10,7 +10,7 @@ import { validateAndAnnotate } from '../../validator/validator'
 
 function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
   return program.body
-    .filter(node => ['VariableDeclaration', 'FunctionDeclaration'])
+    .filter(node => ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type))
     .map(
       (
         node: TypeAnnotatedNode<es.VariableDeclaration> | TypeAnnotatedNode<es.FunctionDeclaration>
@@ -39,29 +39,25 @@ test('Type inference of list prelude', async () => {
 "Line 17: The (===) operator expected arguments to be of the type(s):
       Addable1, Addable1
     but instead received:
-      [T1, T1], [T1, T1]
-Line 72: The function expected arguments to be of the type(s):
-      T1
-    but instead received:
-      List<T1>"
+      [T1, T2], [T1, T2]"
 `)
   expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
-"is_list: List<T1> -> T2
+"is_list: [T1, List<T2>] -> T3
 equal: Couldn't infer type
-length: List<T1> -> number
-map: (T1 -> T2, List<T1>) -> List<T2>
-build_list: (number, number -> T1) -> List<T1>
-for_each: (T1 -> T2, List<T1>) -> boolean
-list_to_string: Couldn't infer type
-reverse: List<T1> -> List<T1>
-append: (List<T1>, List<T1>) -> List<T1>
-member: (Addable1, List<Addable1>) -> List<Addable1>
-remove: (Addable1, List<Addable1>) -> List<Addable1>
-remove_all: (Addable1, List<Addable1>) -> List<Addable1>
-filter: (T1 -> boolean, List<T1>) -> List<T1>
-enum_list: (number, number) -> List<number>
-list_ref: (List<T1>, number) -> T1
-accumulate: ((T1, T2) -> T2, T2, List<T1>) -> T2"
+length: [T1, List<T2>] -> number
+map: (T1 -> T2, [T3, List<T4>]) -> List<T5>
+build_list: (number, T1) -> T2
+for_each: (T1 -> T2, [T3, List<T4>]) -> boolean
+list_to_string: [T1, List<T2>] -> string
+reverse: T1 -> T2
+append: ([T1, List<T2>], [T3, T4]) -> [T3, T4]
+member: (Addable1, List<T1>) -> List<T1>
+remove: (Addable1, [T1, List<T2>]) -> List<T3>
+remove_all: (Addable1, [T1, List<T2>]) -> List<T3>
+filter: (T1 -> boolean, [T2, List<T3>]) -> [T2, List<T3>]
+enum_list: (number, number) -> List<T1>
+list_ref: ([T1, T2], number) -> T3
+accumulate: ((T1, T2) -> T2, T2, [T3, List<T4>]) -> T2"
 `)
 })
 
@@ -207,5 +203,80 @@ list4th: T1
 pair4th: number
 tooshortpair: [number, [number, [number, number]]]
 tooshortpair4th: Couldn't infer type"
+`)
+})
+
+test('Test monomorphic and polymorphic phase', async () => {
+  const code = `
+function id(x) { return x; }
+function f(x) { return id(x) === 2 ? id(false) : id(true); } // also not well typed
+const f4 = f(4); // this is error , since f not well typed
+
+`
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`
+"Line 3: The function expected arguments to be of the type(s):
+      number
+    but instead received:
+      boolean
+Line 3: The function expected arguments to be of the type(s):
+      number
+    but instead received:
+      boolean"
+`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"id: number -> number
+f: Couldn't infer type
+f4: T1"
+`)
+})
+
+test('Test monomorphic and polymorphic phase part 2', async () => {
+  const code = `
+function id(x) { return x; }
+
+const num = id(1);
+const bool = id(true); // these work, because they both create fresh copy of id.
+
+`
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"id: T1 -> T1
+num: T1
+bool: T1"
+`)
+})
+
+test('Test higher order functions', async () => {
+  const code = `
+const zero = x => x;
+const succ = n => f => x => f(n(f)(x));
+const one = succ(zero);
+const two = succ(one);
+
+`
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"zero: T1 -> T1
+succ: ((T1 -> T2) -> T3 -> T1) -> (T1 -> T2) -> T3 -> T2
+one: T1
+two: T1"
 `)
 })

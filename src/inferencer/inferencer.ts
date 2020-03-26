@@ -9,7 +9,7 @@ import * as t from './types'
 import { Environment, Scope, Type } from './types'
 import * as es from 'estree'
 import { Context, TypeAnnotatedNode } from '../types'
-import { createEnv, toJson } from './util'
+import { createEnv, prune, toJson } from './util'
 import {
   ConsequentAlternateMismatchError,
   InvalidArgumentTypesError,
@@ -62,23 +62,17 @@ function unify(a: Type, b: Type) {
   } else if (!(a instanceof t.Var || b instanceof t.Var)) {
     if (a instanceof t.Polymorphic && b instanceof t.Polymorphic) {
       if (a.name !== b.name) {
+        // try unify List<T> with Pair<U, V> by converting List<T> into Pair<T, List<T>>
         if (a instanceof t.List && b instanceof t.Pair) {
           unify(new t.Pair(a.types[0], a), b)
         } else {
           throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
         }
+      } else {
+        for (let i = 0; i < a.types.length; i++) {
+          unify(a.types[i], b.types[i])
+        }
       }
-      for (let i = 0; i < a.types.length; i++) {
-        unify(a.types[i], b.types[i])
-      }
-    } else if (a instanceof t.Function && b instanceof t.Function) {
-      if (a.argTypes.length !== b.argTypes.length) {
-        throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
-      }
-      for (let i = 0; i < a.argTypes.length; i++) {
-        unify(a.argTypes[i], b.argTypes[i])
-      }
-      unify(a.retType, b.retType)
     } else if (a.constructor !== b.constructor) {
       throw new Error(`Unable to unify ${a} with ${b}`)
     }
@@ -87,46 +81,10 @@ function unify(a: Type, b: Type) {
   }
 }
 
-/**
- * Unchains variables until it gets to a type or a variable without an instance. Unused.
- * @param type  The type to be pruned.
- * @returns The pruned type.
- */
-export function prune(type: Type): Type {
-  if (type instanceof t.Var && type.instance) {
-    type.instance = prune(type.instance)
-    return type.instance
-  }
-  return type
-}
-
-function fresh(type: Type, mappings = new Map()): Type {
-  type = prune(type)
-  if (type instanceof t.Var) {
-    if (!mappings.has(type.name)) {
-      mappings.set(type.name, type.fresh())
-    }
-    return mappings.get(type.name)
-  } else if (type instanceof t.Function) {
-    return new t.Function(
-      type.argTypes.map(argType => fresh(argType, mappings)),
-      fresh(type.retType, mappings)
-    )
-  } else if (type instanceof t.Polymorphic) {
-    const clone = type.fresh()
-    clone.types = clone.types.map((elementType: t.Type) => fresh(elementType, mappings))
-    return clone
-  } else {
-    return type
-  }
-}
-
 function occursInType(t1: Type, t2: Type): boolean {
   t2 = prune(t2)
   if (t2 === t1) {
     return true
-  } else if (t2 instanceof t.Function) {
-    return occursInTypeArray(t1, t2.argTypes) || occursInType(t1, t2.retType)
   } else if (t2 instanceof t.Polymorphic) {
     return occursInTypeArray(t1, t2.types)
   }
@@ -142,7 +100,7 @@ function getFreshTypeIfNeeded(name: string, env: Environment): Type {
   while (currentEnv !== null) {
     if (currentEnv[0].has(name)) {
       const type = currentEnv[0].get(name)!
-      return currentEnv[0].shouldGeneralise() ? type : fresh(type)
+      return currentEnv[0].shouldGeneralise() ? type : type.fresh()
     }
     currentEnv = currentEnv[1]
   }
@@ -165,7 +123,7 @@ function getListTypeVar(candidate: Type): Type | null {
  */
 function normalise(type: Type): Type {
   const listVar = getListTypeVar(type)
-  // if it has a list type, return it.
+  // if it is a List<T>
   if (listVar !== null) {
     return new t.Pair(listVar, type)
   }
