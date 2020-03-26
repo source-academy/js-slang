@@ -209,3 +209,48 @@ tooshortpair: [number, [number, [number, number]]]
 tooshortpair4th: Couldn't infer type"
 `)
 })
+
+test('Test monomorphic and polymorphic phase part 2', async () => {
+  const code = `
+function id(x) { return x; }
+
+const num = id(1);
+const bool = id(true); // these work, because they both create fresh copy of id.
+
+`
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"id: T1 -> T1
+num: number
+bool: boolean"
+`)
+})
+
+test('Test higher order functions', async () => {
+  const code = `
+const zero = f => x => x;
+const succ = n => f => x => n(f)(f(x));
+const one = succ(zero);
+const two = succ(one);
+
+`
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"zero: T1 -> T2 -> T2
+succ: ((T1 -> T2) -> T2 -> T3) -> (T1 -> T2) -> T1 -> T3
+one: (T1 -> T2) -> T1 -> T2
+two: (T1 -> T1) -> T1 -> T1"
+`)
+})

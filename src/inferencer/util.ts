@@ -109,10 +109,7 @@ export function toJson(nativeType: t.Type): Type {
     } else if (type instanceof t.Undefined) {
       return create.primitive('undefined')
     } else if (type instanceof t.Function) {
-      return create.fn(
-        type.argTypes.map(a => helper(a)),
-        helper(type.retType)
-      )
+      return create.fn(type.argTypes.map(helper), helper(type.retType))
     } else if (type instanceof t.Var && type.instance !== null) {
       return helper(type.instance)
     } else if (type instanceof t.List) {
@@ -134,4 +131,21 @@ export function toJson(nativeType: t.Type): Type {
     throw Error('Unknown type!')
   }
   return helper(nativeType)
+}
+
+export function clone<T>(object: T): T {
+  return Object.assign(Object.create(Object.getPrototypeOf(object)), object)
+}
+
+/**
+ * Unchains variables until it gets to a type or a variable without an instance. Unused.
+ * @param type  The type to be pruned.
+ * @returns The pruned type.
+ */
+export function prune(type: t.Type): t.Type {
+  if (type instanceof t.Var && type.instance) {
+    type.instance = prune(type.instance)
+    return type.instance
+  }
+  return type
 }

@@ -67,18 +67,14 @@ function unify(a: Type, b: Type) {
         } else {
           throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
         }
+      } else {
+        if (a.types.length !== b.types.length) {
+          throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
+        }
+        for (let i = 0; i < a.types.length; i++) {
+          unify(a.types[i], b.types[i])
+        }
       }
-      for (let i = 0; i < a.types.length; i++) {
-        unify(a.types[i], b.types[i])
-      }
-    } else if (a instanceof t.Function && b instanceof t.Function) {
-      if (a.argTypes.length !== b.argTypes.length) {
-        throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
-      }
-      for (let i = 0; i < a.argTypes.length; i++) {
-        unify(a.argTypes[i], b.argTypes[i])
-      }
-      unify(a.retType, b.retType)
     } else if (a.constructor !== b.constructor) {
       throw new Error(`Unable to unify ${a} with ${b}`)
     }
@@ -100,33 +96,10 @@ export function prune(type: Type): Type {
   return type
 }
 
-function fresh(type: Type, mappings = new Map()): Type {
-  type = prune(type)
-  if (type instanceof t.Var) {
-    if (!mappings.has(type.name)) {
-      mappings.set(type.name, type.fresh())
-    }
-    return mappings.get(type.name)
-  } else if (type instanceof t.Function) {
-    return new t.Function(
-      type.argTypes.map(argType => fresh(argType, mappings)),
-      fresh(type.retType, mappings)
-    )
-  } else if (type instanceof t.Polymorphic) {
-    const clone = type.fresh()
-    clone.types = clone.types.map((elementType: t.Type) => fresh(elementType, mappings))
-    return clone
-  } else {
-    return type
-  }
-}
-
 function occursInType(t1: Type, t2: Type): boolean {
   t2 = prune(t2)
   if (t2 === t1) {
     return true
-  } else if (t2 instanceof t.Function) {
-    return occursInTypeArray(t1, t2.argTypes) || occursInType(t1, t2.retType)
   } else if (t2 instanceof t.Polymorphic) {
     return occursInTypeArray(t1, t2.types)
   }
@@ -142,7 +115,7 @@ function getFreshTypeIfNeeded(name: string, env: Environment): Type {
   while (currentEnv !== null) {
     if (currentEnv[0].has(name)) {
       const type = currentEnv[0].get(name)!
-      return currentEnv[0].shouldGeneralise() ? type : fresh(type)
+      return currentEnv[0].shouldGeneralise() ? type : type.fresh()
     }
     currentEnv = currentEnv[1]
   }

@@ -1,5 +1,1656 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Test higher order functions 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 25,
+          "id": Node {
+            "end": 11,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 2,
+              },
+            },
+            "name": "zero",
+            "start": 7,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "body": Node {
+              "body": Node {
+                "end": 25,
+                "inferredType": Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 24,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 23,
+                    "line": 2,
+                  },
+                },
+                "name": "x",
+                "start": 24,
+                "typability": "Typed",
+                "type": "Identifier",
+              },
+              "end": 25,
+              "expression": true,
+              "generator": false,
+              "id": null,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 24,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 18,
+                  "line": 2,
+                },
+              },
+              "params": Array [
+                Node {
+                  "end": 20,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 19,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 18,
+                      "line": 2,
+                    },
+                  },
+                  "name": "x",
+                  "start": 19,
+                  "type": "Identifier",
+                },
+              ],
+              "start": 19,
+              "typability": "Typed",
+              "type": "ArrowFunctionExpression",
+            },
+            "end": 25,
+            "expression": true,
+            "generator": false,
+            "id": null,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              ],
+              "returnType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T2",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T2",
+                },
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 24,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 2,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 15,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 14,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 13,
+                    "line": 2,
+                  },
+                },
+                "name": "f",
+                "start": 14,
+                "type": "Identifier",
+              },
+            ],
+            "start": 14,
+            "typability": "Typed",
+            "type": "ArrowFunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 24,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 2,
+            },
+          },
+          "start": 7,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 26,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [
+          Object {
+            "kind": "variable",
+            "name": "T1",
+          },
+        ],
+        "returnType": Object {
+          "kind": "function",
+          "parameterTypes": Array [
+            Object {
+              "kind": "variable",
+              "name": "T2",
+            },
+          ],
+          "returnType": Object {
+            "kind": "variable",
+            "name": "T2",
+          },
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 25,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "start": 1,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 65,
+          "id": Node {
+            "end": 37,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 3,
+              },
+            },
+            "name": "succ",
+            "start": 33,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "body": Node {
+              "body": Node {
+                "body": Node {
+                  "arguments": Array [
+                    Node {
+                      "arguments": Array [
+                        Node {
+                          "end": 63,
+                          "inferredType": Object {
+                            "kind": "variable",
+                            "name": "T1",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 36,
+                              "line": 3,
+                            },
+                            "start": Position {
+                              "column": 35,
+                              "line": 3,
+                            },
+                          },
+                          "name": "x",
+                          "start": 62,
+                          "typability": "Typed",
+                          "type": "Identifier",
+                        },
+                      ],
+                      "callee": Node {
+                        "end": 61,
+                        "inferredType": Object {
+                          "kind": "variable",
+                          "name": "T1",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 34,
+                            "line": 3,
+                          },
+                          "start": Position {
+                            "column": 33,
+                            "line": 3,
+                          },
+                        },
+                        "name": "f",
+                        "start": 60,
+                        "typability": "Typed",
+                        "type": "Identifier",
+                      },
+                      "end": 64,
+                      "inferredType": Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 37,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 33,
+                          "line": 3,
+                        },
+                      },
+                      "start": 60,
+                      "typability": "Typed",
+                      "type": "CallExpression",
+                    },
+                  ],
+                  "callee": Node {
+                    "arguments": Array [
+                      Node {
+                        "end": 58,
+                        "inferredType": Object {
+                          "kind": "function",
+                          "parameterTypes": Array [
+                            Object {
+                              "kind": "variable",
+                              "name": "T1",
+                            },
+                          ],
+                          "returnType": Object {
+                            "kind": "variable",
+                            "name": "T2",
+                          },
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 31,
+                            "line": 3,
+                          },
+                          "start": Position {
+                            "column": 30,
+                            "line": 3,
+                          },
+                        },
+                        "name": "f",
+                        "start": 57,
+                        "typability": "Typed",
+                        "type": "Identifier",
+                      },
+                    ],
+                    "callee": Node {
+                      "end": 56,
+                      "inferredType": Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 29,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 28,
+                          "line": 3,
+                        },
+                      },
+                      "name": "n",
+                      "start": 55,
+                      "typability": "Typed",
+                      "type": "Identifier",
+                    },
+                    "end": 59,
+                    "inferredType": Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 32,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 28,
+                        "line": 3,
+                      },
+                    },
+                    "start": 55,
+                    "typability": "Typed",
+                    "type": "CallExpression",
+                  },
+                  "end": 65,
+                  "inferredType": Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 38,
+                      "line": 3,
+                    },
+                    "start": Position {
+                      "column": 28,
+                      "line": 3,
+                    },
+                  },
+                  "start": 55,
+                  "typability": "Typed",
+                  "type": "CallExpression",
+                },
+                "end": 65,
+                "expression": true,
+                "generator": false,
+                "id": null,
+                "inferredType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "variable",
+                    "name": "T2",
+                  },
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 38,
+                    "line": 3,
+                  },
+                  "start": Position {
+                    "column": 23,
+                    "line": 3,
+                  },
+                },
+                "params": Array [
+                  Node {
+                    "end": 51,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 24,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 23,
+                        "line": 3,
+                      },
+                    },
+                    "name": "x",
+                    "start": 50,
+                    "type": "Identifier",
+                  },
+                ],
+                "start": 50,
+                "typability": "Typed",
+                "type": "ArrowFunctionExpression",
+              },
+              "end": 65,
+              "expression": true,
+              "generator": false,
+              "id": null,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T2",
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "variable",
+                    "name": "T3",
+                  },
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 38,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 18,
+                  "line": 3,
+                },
+              },
+              "params": Array [
+                Node {
+                  "end": 46,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 19,
+                      "line": 3,
+                    },
+                    "start": Position {
+                      "column": 18,
+                      "line": 3,
+                    },
+                  },
+                  "name": "f",
+                  "start": 45,
+                  "type": "Identifier",
+                },
+              ],
+              "start": 45,
+              "typability": "Typed",
+              "type": "ArrowFunctionExpression",
+            },
+            "end": 65,
+            "expression": true,
+            "generator": false,
+            "id": null,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T1",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T3",
+                    },
+                  },
+                },
+              ],
+              "returnType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T2",
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "variable",
+                    "name": "T3",
+                  },
+                },
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 38,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 3,
+              },
+            },
+            "params": Array [
+              Node {
+                "end": 41,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 14,
+                    "line": 3,
+                  },
+                  "start": Position {
+                    "column": 13,
+                    "line": 3,
+                  },
+                },
+                "name": "n",
+                "start": 40,
+                "type": "Identifier",
+              },
+            ],
+            "start": 40,
+            "typability": "Typed",
+            "type": "ArrowFunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 38,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 3,
+            },
+          },
+          "start": 33,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 66,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [
+          Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T2",
+                },
+              },
+            ],
+            "returnType": Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "variable",
+                  "name": "T2",
+                },
+              ],
+              "returnType": Object {
+                "kind": "variable",
+                "name": "T3",
+              },
+            },
+          },
+        ],
+        "returnType": Object {
+          "kind": "function",
+          "parameterTypes": Array [
+            Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              ],
+              "returnType": Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            },
+          ],
+          "returnType": Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+            ],
+            "returnType": Object {
+              "kind": "variable",
+              "name": "T3",
+            },
+          },
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 39,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      "start": 27,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 89,
+          "id": Node {
+            "end": 76,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 4,
+              },
+            },
+            "name": "one",
+            "start": 73,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "arguments": Array [
+              Node {
+                "end": 88,
+                "inferredType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T2",
+                    },
+                  },
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 17,
+                    "line": 4,
+                  },
+                },
+                "name": "zero",
+                "start": 84,
+                "typability": "Typed",
+                "type": "Identifier",
+              },
+            ],
+            "callee": Node {
+              "end": 83,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "function",
+                        "parameterTypes": Array [
+                          Object {
+                            "kind": "variable",
+                            "name": "T1",
+                          },
+                        ],
+                        "returnType": Object {
+                          "kind": "variable",
+                          "name": "T2",
+                        },
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T2",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T3",
+                      },
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T1",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T3",
+                    },
+                  },
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "name": "succ",
+              "start": 79,
+              "typability": "Typed",
+              "type": "Identifier",
+            },
+            "end": 89,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "variable",
+                    "name": "T2",
+                  },
+                },
+              ],
+              "returnType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T2",
+                },
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 22,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 4,
+              },
+            },
+            "start": 79,
+            "typability": "Typed",
+            "type": "CallExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 22,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 4,
+            },
+          },
+          "start": 73,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 90,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [
+          Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+            ],
+            "returnType": Object {
+              "kind": "variable",
+              "name": "T2",
+            },
+          },
+        ],
+        "returnType": Object {
+          "kind": "function",
+          "parameterTypes": Array [
+            Object {
+              "kind": "variable",
+              "name": "T1",
+            },
+          ],
+          "returnType": Object {
+            "kind": "variable",
+            "name": "T2",
+          },
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "start": 67,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 112,
+          "id": Node {
+            "end": 100,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 5,
+              },
+            },
+            "name": "two",
+            "start": 97,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "arguments": Array [
+              Node {
+                "end": 111,
+                "inferredType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T1",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T2",
+                    },
+                  },
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 20,
+                    "line": 5,
+                  },
+                  "start": Position {
+                    "column": 17,
+                    "line": 5,
+                  },
+                },
+                "name": "one",
+                "start": 108,
+                "typability": "Typed",
+                "type": "Identifier",
+              },
+            ],
+            "callee": Node {
+              "end": 107,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "function",
+                        "parameterTypes": Array [
+                          Object {
+                            "kind": "variable",
+                            "name": "T1",
+                          },
+                        ],
+                        "returnType": Object {
+                          "kind": "variable",
+                          "name": "T2",
+                        },
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T2",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T3",
+                      },
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "function",
+                      "parameterTypes": Array [
+                        Object {
+                          "kind": "variable",
+                          "name": "T1",
+                        },
+                      ],
+                      "returnType": Object {
+                        "kind": "variable",
+                        "name": "T2",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "function",
+                    "parameterTypes": Array [
+                      Object {
+                        "kind": "variable",
+                        "name": "T1",
+                      },
+                    ],
+                    "returnType": Object {
+                      "kind": "variable",
+                      "name": "T3",
+                    },
+                  },
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "line": 5,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 5,
+                },
+              },
+              "name": "succ",
+              "start": 103,
+              "typability": "Typed",
+              "type": "Identifier",
+            },
+            "end": 112,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "variable",
+                      "name": "T1",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                },
+              ],
+              "returnType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 5,
+              },
+            },
+            "start": 103,
+            "typability": "Typed",
+            "type": "CallExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 5,
+            },
+          },
+          "start": 97,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 113,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [
+          Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+            ],
+            "returnType": Object {
+              "kind": "variable",
+              "name": "T1",
+            },
+          },
+        ],
+        "returnType": Object {
+          "kind": "function",
+          "parameterTypes": Array [
+            Object {
+              "kind": "variable",
+              "name": "T1",
+            },
+          ],
+          "returnType": Object {
+            "kind": "variable",
+            "name": "T1",
+          },
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      "start": 91,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 115,
+  "inferredType": Object {
+    "kind": "primitive",
+    "name": "undefined",
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 0,
+      "line": 7,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "typability": "Typed",
+  "type": "Program",
+}
+`;
+
+exports[`Test monomorphic and polymorphic phase part 2 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "argument": Node {
+              "end": 26,
+              "inferredType": Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 25,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 24,
+                  "line": 2,
+                },
+              },
+              "name": "x",
+              "start": 25,
+              "typability": "Typed",
+              "type": "Identifier",
+            },
+            "end": 27,
+            "inferredType": Object {
+              "kind": "variable",
+              "name": "T1",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 26,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 17,
+                "line": 2,
+              },
+            },
+            "start": 18,
+            "typability": "Typed",
+            "type": "ReturnStatement",
+          },
+        ],
+        "end": 29,
+        "inferredType": Object {
+          "kind": "variable",
+          "name": "T1",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 28,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 15,
+            "line": 2,
+          },
+        },
+        "start": 16,
+        "typability": "Typed",
+        "type": "BlockStatement",
+      },
+      "end": 29,
+      "expression": false,
+      "generator": false,
+      "id": Node {
+        "end": 12,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 11,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 9,
+            "line": 2,
+          },
+        },
+        "name": "id",
+        "start": 10,
+        "type": "Identifier",
+      },
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [
+          Object {
+            "kind": "variable",
+            "name": "T1",
+          },
+        ],
+        "returnType": Object {
+          "kind": "variable",
+          "name": "T1",
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 28,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      "params": Array [
+        Node {
+          "end": 14,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 2,
+            },
+          },
+          "name": "x",
+          "start": 13,
+          "type": "Identifier",
+        },
+      ],
+      "start": 1,
+      "typability": "Typed",
+      "type": "FunctionDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 48,
+          "id": Node {
+            "end": 40,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 4,
+              },
+            },
+            "name": "num",
+            "start": 37,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "arguments": Array [
+              Node {
+                "end": 47,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 16,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 15,
+                    "line": 4,
+                  },
+                },
+                "raw": "1",
+                "start": 46,
+                "typability": "Typed",
+                "type": "Literal",
+                "value": 1,
+              },
+            ],
+            "callee": Node {
+              "end": 45,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "name": "id",
+              "start": 43,
+              "typability": "Typed",
+              "type": "Identifier",
+            },
+            "end": 48,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 4,
+              },
+            },
+            "start": 43,
+            "typability": "Typed",
+            "type": "CallExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 17,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 4,
+            },
+          },
+          "start": 37,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 49,
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "number",
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "start": 31,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 71,
+          "id": Node {
+            "end": 60,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 5,
+              },
+            },
+            "name": "bool",
+            "start": 56,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "arguments": Array [
+              Node {
+                "end": 70,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 20,
+                    "line": 5,
+                  },
+                  "start": Position {
+                    "column": 16,
+                    "line": 5,
+                  },
+                },
+                "raw": "true",
+                "start": 66,
+                "typability": "Typed",
+                "type": "Literal",
+                "value": true,
+              },
+            ],
+            "callee": Node {
+              "end": 65,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "variable",
+                    "name": "T1",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "variable",
+                  "name": "T1",
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 5,
+                },
+                "start": Position {
+                  "column": 13,
+                  "line": 5,
+                },
+              },
+              "name": "id",
+              "start": 63,
+              "typability": "Typed",
+              "type": "Identifier",
+            },
+            "end": 71,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "boolean",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 5,
+              },
+            },
+            "start": 63,
+            "typability": "Typed",
+            "type": "CallExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 5,
+            },
+          },
+          "start": 56,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 72,
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "boolean",
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      "start": 50,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 132,
+  "inferredType": Object {
+    "kind": "primitive",
+    "name": "undefined",
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 0,
+      "line": 7,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "typability": "Typed",
+  "type": "Program",
+}
+`;
+
 exports[`Type inference of list prelude 1`] = `
 Node {
   "body": Array [

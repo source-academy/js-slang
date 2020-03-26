@@ -1,5 +1,6 @@
 // tslint:disable:max-classes-per-file
 import * as es from 'estree'
+import { clone } from './util'
 /**
  * Defines types in Source 1.
  * @version 0.0.1
@@ -14,6 +15,11 @@ export interface Type {
    * Displays the type information in a human-readable form.
    */
   toString(): string
+
+  /**
+   * Creates a fresh type
+   */
+  fresh(mappings?: Map<string, Type>): Type
 }
 
 /**
@@ -22,6 +28,10 @@ export interface Type {
 export class InternalError extends Error implements Type {
   toString() {
     return 'ERROR'
+  }
+
+  fresh() {
+    return this
   }
 }
 
@@ -52,55 +62,46 @@ export class Scope extends Map<string, Type> {
  */
 export type Environment = null | [Scope, Environment]
 
-export class Float implements Type {
-  toString() {
-    return 'Float'
+export class Primitive implements Type {
+  constructor(public name: string) {}
+
+  fresh(): Type {
+    // don't need to recreate for fresh type
+    return this
+  }
+
+  toString(): string {
+    return this.name
   }
 }
 
-export class Integer implements Type {
-  toString() {
-    return 'Integer'
+export class Float extends Primitive {
+  constructor() {
+    super('Float')
   }
 }
 
-export class Bool implements Type {
-  toString() {
-    return 'Bool'
+export class Integer extends Primitive {
+  constructor() {
+    super('Integer')
   }
 }
 
-export class String implements Type {
-  toString() {
-    return 'String'
+export class Bool extends Primitive {
+  constructor() {
+    super('Bool')
   }
 }
 
-export class Undefined implements Type {
-  toString() {
-    return 'Undefined'
+export class String extends Primitive {
+  constructor() {
+    super('String')
   }
 }
 
-/**
- * The type of a general n-ary function, which captures a n-tuple of types of its parameter, and its return type.
- */
-export class Function implements Type {
-  /**
-   * @param argTypes The types of the arguments of this function.
-   * @param retType  The return type of this function.
-   */
-  constructor(public argTypes: Type[], public retType: Type) {}
-  toString() {
-    const argStr = this.argTypes.map(t => t.toString()).join(', ')
-    const separator = ' -> '
-    return this.argTypes.length === 1
-      ? `(${argStr}${separator}${this.retType.toString()})`
-      : `((${argStr})${separator}${this.retType.toString()})`
-  }
-
-  fresh() {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+export class Undefined extends Primitive {
+  constructor() {
+    super('Undefined')
   }
 }
 
@@ -116,10 +117,14 @@ export class Var implements Type {
   /**
    *  The symbolic typename of this type variable.
    */
-  public name = genVar()
+  private _name = genVar()
+
+  get name() {
+    return this._name
+  }
 
   toString() {
-    return this.instance === null ? this.name : this.instance.toString()
+    return this.instance === null ? this._name : this.instance.toString()
   }
 
   /**
@@ -131,10 +136,18 @@ export class Var implements Type {
   }
 
   /**
-   * Returns a fresh copy of this type variable
+   * Returns a fresh copy of this type variable.
    */
-  fresh() {
-    return new Var()
+  fresh(mappings: Map<string, Type> = new Map()): Type {
+    if (this.instance !== null) {
+      return this.instance.fresh(mappings)
+    }
+    if (!mappings.has(this._name)) {
+      const cloned = clone(this)
+      cloned._name = genVar()
+      mappings.set(this._name, cloned)
+    }
+    return mappings.get(this._name)!
   }
 }
 
@@ -158,10 +171,9 @@ export class Constrained extends Var {
     }
   }
 
-  /**
-   *  The symbolic typename of this constrained type variable.
-   */
-  public name = this.description + genVar()
+  get name() {
+    return this.description + super.name
+  }
 
   /**
    *
@@ -181,13 +193,6 @@ export class Constrained extends Var {
    */
   canContain(candidate: Type): boolean {
     return this.possibleTypes.some(possibleType => candidate instanceof possibleType)
-  }
-
-  /**
-   * Returns a fresh copy of this constrained type variable.
-   */
-  fresh() {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
   }
 }
 
@@ -233,8 +238,38 @@ export class Polymorphic implements Type {
     return `${this.name}<${this.types.join(', ')}>`
   }
 
-  fresh() {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+  fresh(mappings: Map<string, Type> = new Map()): Type {
+    const cloned = clone(this)
+    cloned.types = cloned.types.map((elementType: Type) => elementType.fresh(mappings))
+    return cloned
+  }
+}
+
+/**
+ * The type of a general n-ary function, which captures a n-tuple of types of its parameter, and its return type.
+ */
+export class Function extends Polymorphic {
+  /**
+   * @param _argTypes The types of the arguments of this function.
+   * @param _retType  The return type of this function.
+   */
+  constructor(private _argTypes: Type[], private _retType: Type) {
+    super('Function', [..._argTypes, _retType])
+  }
+  toString() {
+    const argStr = this._argTypes.map(t => t.toString()).join(', ')
+    const separator = ' -> '
+    return this._argTypes.length === 1
+      ? `(${argStr}${separator}${this._retType.toString()})`
+      : `((${argStr})${separator}${this._retType.toString()})`
+  }
+
+  get argTypes() {
+    return this.types.slice(0, -1)
+  }
+
+  get retType() {
+    return this.types[this.types.length - 1]
   }
 }
 
