@@ -7,6 +7,7 @@ import {
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
+import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
@@ -160,7 +161,7 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
   }
 })
 
-function looseParse(source: string, context: Context) {
+export function looseParse(source: string, context: Context) {
   const program = (acornLooseParse(
     source,
     createAcornParserOptions(context)

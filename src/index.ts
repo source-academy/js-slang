@@ -14,8 +14,9 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './stepper/stepper'
+import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -196,7 +197,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
       status: 'finished',
-      value: steps.map(codify)
+      value: steps
     } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
@@ -292,4 +293,12 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine }
+export {
+  createContext,
+  Context,
+  Result,
+  setBreakpointAtLine,
+  scopeVariables,
+  lookupDefinition,
+  getAllOccurrencesInScope
+}

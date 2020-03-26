@@ -28,6 +28,5 @@ jobs:
     - run: yarn format:ci
     - run: yarn tslint
     - run: yarn test
-    - run: yarn test-coveralls
       env:
         CI: true

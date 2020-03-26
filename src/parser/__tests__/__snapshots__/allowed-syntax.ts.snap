@@ -5117,7 +5117,7 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": Array [
-    "array_access",
+    "object_access",
     Array [
       Array [
         "array_expression",
@@ -5512,7 +5512,7 @@ Object {
         ],
         Array [
           Array [
-            "array_access",
+            "object_access",
             Array [
               Array [
                 "name",
@@ -6006,7 +6006,7 @@ Object {
             "array_assignment",
             Array [
               Array [
-                "array_access",
+                "object_access",
                 Array [
                   Array [
                     "name",
@@ -6564,7 +6564,7 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": Array [
-    "array_access",
+    "object_access",
     Array [
       Array [
         "object_expression",
@@ -6949,7 +6949,7 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": Array [
-    "array_access",
+    "object_access",
     Array [
       Array [
         "object_expression",
@@ -7344,7 +7344,7 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": Array [
-    "array_access",
+    "object_access",
     Array [
       Array [
         "object_expression",
@@ -7567,7 +7567,7 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": Array [
-    "array_access",
+    "object_access",
     Array [
       Array [
         "object_expression",
@@ -7804,7 +7804,7 @@ Object {
         ],
         Array [
           Array [
-            "array_access",
+            "object_access",
             Array [
               Array [
                 "object_expression",
@@ -8152,7 +8152,7 @@ Object {
             "array_assignment",
             Array [
               Array [
-                "array_access",
+                "object_access",
                 Array [
                   Array [
                     "name",
@@ -8429,7 +8429,7 @@ Object {
             "array_assignment",
             Array [
               Array [
-                "array_access",
+                "object_access",
                 Array [
                   Array [
                     "name",
@@ -8718,7 +8718,7 @@ Object {
               "array_assignment",
               Array [
                 Array [
-                  "array_access",
+                  "object_access",
                   Array [
                     Array [
                       "name",
