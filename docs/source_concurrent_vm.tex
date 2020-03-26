@@ -137,7 +137,7 @@ where the primed values are just like normal VM code execution, and the timeout 
 \paragraph{Running thread, returning from function}
 \label{sec:org3b01708}
 $$\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} \neq \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{rs'}, \textit{tq}, \textit{to}-1)}$$
-where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the \texttt{RET} statement inside a function, and the thread does the normal thing of popping \texttt{rs} and so on.
+where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the \texttt{RET} statement inside a function, and the thread does the normal thing of popping \(\textit{rs}\) and so on.
 
 \paragraph{Starting \texttt{EXECUTE}}
 \label{sec:org4122bdd}
