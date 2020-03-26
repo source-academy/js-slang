@@ -341,7 +341,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') {
-      return
+      break
     }
     const symbols = node.specifiers.map(specifier => specifier.local.name)
     for (const symbol of symbols) {
