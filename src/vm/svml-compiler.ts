@@ -13,7 +13,10 @@ import { Context } from '../types'
 import { parse } from '../parser/parser'
 import OpCodes from './opcodes'
 
-const VALID_UNARY_OPERATORS = new Map([['!', OpCodes.NOTG]])
+const VALID_UNARY_OPERATORS = new Map([
+  ['!', OpCodes.NOTG],
+  ['-', OpCodes.NEGG]
+])
 const VALID_BINARY_OPERATORS = new Map([
   ['+', OpCodes.ADDG],
   ['-', OpCodes.SUBG],
@@ -24,7 +27,8 @@ const VALID_BINARY_OPERATORS = new Map([
   ['>', OpCodes.GTG],
   ['<=', OpCodes.LEG],
   ['>=', OpCodes.GEG],
-  ['===', OpCodes.EQG]
+  ['===', OpCodes.EQG],
+  ['!==', OpCodes.NEQG]
 ])
 
 type Offset = number // instructions to skip
@@ -566,13 +570,6 @@ const compilers = {
       addNullaryInstruction(opCode)
       return { maxStackSize, insertFlag }
     }
-    if (node.operator === '-') {
-      // special case as no direct opcode
-      const { maxStackSize: m1 } = compile(node.argument, indexTable, false)
-      addUnaryInstruction(OpCodes.LGCI, -1)
-      addNullaryInstruction(OpCodes.MULG)
-      return { maxStackSize: m1 + 1, insertFlag }
-    }
     throw Error('Unsupported operation')
   },
 
@@ -583,14 +580,6 @@ const compilers = {
       const { maxStackSize: m1 } = compile(node.left, indexTable, false)
       const { maxStackSize: m2 } = compile(node.right, indexTable, false)
       addNullaryInstruction(opCode)
-      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
-    }
-    if (node.operator === '!==') {
-      // special case as no direct opcode
-      const { maxStackSize: m1 } = compile(node.left, indexTable, false)
-      const { maxStackSize: m2 } = compile(node.right, indexTable, false)
-      addNullaryInstruction(OpCodes.EQG)
-      addNullaryInstruction(OpCodes.NOTG)
       return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
     }
     throw Error('Unsupported operation')

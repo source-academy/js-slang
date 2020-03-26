@@ -859,6 +859,20 @@ Array [
       { chapter: 3.4 }
     ).toMatchInlineSnapshot(`"Line 2: Cannot assign new value to constant x."`)
   })
+
+  test('treat primitive functions as first-class', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const x = list;
+        display(x(1,2));
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "[1, [2, null]]",
+]
+`)
+  })
 })
 
 // fails with a large enough TO
