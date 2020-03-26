@@ -512,6 +512,19 @@ SourceLocation {
 }
 `;
 
+exports[`Find declaration of of variable in update statement of a for loop 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 10,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 9,
+    "line": 1,
+  },
+}
+`;
+
 exports[`Find function declaration 1`] = `
 SourceLocation {
   "end": Position {

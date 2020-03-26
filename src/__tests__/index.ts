@@ -672,3 +672,17 @@ test('Find variable declaration of same name as variable declaration in block st
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
+
+test('Find declaration of of variable in update statement of a for loop', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = stripIndent`
+  for (let x = 10; x < 12; ++x) {
+      display(x);
+  }
+  let x = 5;
+  `
+  const expected = new SourceLocationTestResult(1, 9, 1, 10)
+  const actual = findDeclaration(code, context, { line: 1, column: 17 })
+  expectResultsToMatch(actual, expected)
+  expect(actual).toMatchSnapshot()
+})
