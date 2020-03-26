@@ -64,17 +64,20 @@ let contextId: number
 
 function transformSingleImportDeclaration(moduleCounter: number, node: es.ImportDeclaration) {
   const result = []
-  const moduleNode = parse(loadIIFEModuleText(node.source.value as string))
-  const moduleExpr = moduleNode['body'][0] as es.Expression
+  const moduleNode = parse(loadIIFEModuleText(node.source.value as string)) as unknown as es.Program
+  const moduleExpr = moduleNode.body[0] as unknown as es.Expression
   const tempNamespace = `__MODULE_${moduleCounter}__`
   // const __MODULE_xxx__ = ...;
   result.push(create.constantDeclaration(tempNamespace, moduleExpr))
   // const yyy = __MODULE_xxx__.yyy;
   const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
   for (const symbol of neededSymbols) {
-    result.push(create.constantDeclaration(
-      symbol, create.memberExpression(create.identifier(tempNamespace), symbol)
-    ))
+    result.push(
+      create.constantDeclaration(
+        symbol,
+        create.memberExpression(create.identifier(tempNamespace), symbol)
+      )
+    )
   }
   return result
 }
@@ -83,12 +86,12 @@ function transformImportDeclarations(program: es.Program) {
   const imports = []
   let result: es.VariableDeclaration[] = []
   let moduleCounter = 0
-  while (program.body.length > 0 && program.body[0].type == 'ImportDeclaration') {
+  while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
     imports.unshift(program.body.shift() as es.ImportDeclaration)
   }
   for (const node of imports) {
     result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
-    moduleCounter++;
+    moduleCounter++
   }
   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
 }
@@ -336,7 +339,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') {
-      return;
+      return
     }
     const symbols = node.specifiers.map(specifier => specifier.local.name)
     for (const symbol of symbols) {
