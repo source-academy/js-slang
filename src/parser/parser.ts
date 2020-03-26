@@ -7,7 +7,6 @@ import {
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
-import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
