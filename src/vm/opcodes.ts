@@ -79,6 +79,11 @@ export enum OpCodes {
   POPENV = 77,
   NEWCP = 78,
   NEWCV = 79,
+  NEGG = 80,
+  NEGF = 81,
+  NEQG = 82,
+  NEQF = 83,
+  NEQB = 84,
 
   // custom opcodes
   ARRAY_LEN = 1000,

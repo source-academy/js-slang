@@ -428,6 +428,26 @@ function EXTEND() {
   NEW_ENVIRONMENT()
 }
 
+// expect operands to check equality for in A and B
+// return result as boolean literal in A
+function CHECK_EQUAL() {
+  A = C === D // same reference (for arrays and functions)
+  B = HEAP[C + TAG_SLOT] === HEAP[D + TAG_SLOT] // check same type
+  E = HEAP[C + TAG_SLOT] === UNDEFINED_TAG
+  A = A || (B && E) // check undefined
+  E = HEAP[C + TAG_SLOT] === NULL_TAG
+  A = A || (B && E) // check null
+
+  E = HEAP[C + TAG_SLOT] === NUMBER_TAG
+  E = E || HEAP[C + TAG_SLOT] === STRING_TAG
+  E = E || HEAP[C + TAG_SLOT] === BOOL_TAG
+  E = E && B // check same type and has boxed value
+  C = HEAP[C + BOXED_VALUE_SLOT]
+  D = HEAP[D + BOXED_VALUE_SLOT]
+  E = E && C === D
+  A = A || E
+}
+
 const NORMAL_CALL = 0
 const TAIL_CALL = 1
 const PRIMITIVE_CALL = 2
@@ -722,6 +742,15 @@ M[OpCodes.MODG] = () => {
   PC = PC + 1
 }
 
+M[OpCodes.NEGG] = () => {
+  POP_OS()
+  A = -HEAP[RES + NUMBER_VALUE_SLOT]
+  NEW_NUMBER()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
 M[OpCodes.NOTG] = () => {
   POP_OS()
   A = !HEAP[RES + BOOL_VALUE_SLOT]
@@ -783,21 +812,20 @@ M[OpCodes.EQG] = () => {
   C = RES
   POP_OS()
   D = RES
-  A = C === D // same reference (for arrays and functions)
-  B = HEAP[C + TAG_SLOT] === HEAP[D + TAG_SLOT] // check same type
-  E = HEAP[C + TAG_SLOT] === UNDEFINED_TAG
-  A = A || (B && E) // check undefined
-  E = HEAP[C + TAG_SLOT] === NULL_TAG
-  A = A || (B && E) // check null
+  CHECK_EQUAL()
+  NEW_BOOL()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
 
-  E = HEAP[C + TAG_SLOT] === NUMBER_TAG
-  E = E || HEAP[C + TAG_SLOT] === STRING_TAG
-  E = E || HEAP[C + TAG_SLOT] === BOOL_TAG
-  E = E && B // check same type and has boxed value
-  C = HEAP[C + BOXED_VALUE_SLOT]
-  D = HEAP[D + BOXED_VALUE_SLOT]
-  E = E && C === D
-  A = A || E
+M[OpCodes.NEQG] = () => {
+  POP_OS()
+  C = RES
+  POP_OS()
+  D = RES
+  CHECK_EQUAL()
+  A = !A
   NEW_BOOL()
   A = RES
   PUSH_OS()
