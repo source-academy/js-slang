@@ -51,7 +51,11 @@ Some notes on program execution:
 0. To simulate high interleaving of concurrent threads, all dequeues from $\textit{tq}$ is done randomly: a thread is popped from a random index in $\textit{tq}$.
 
 **** Thread timeout
-$$\Rule{}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1), c)}$$
+$$\Rule{}{
+\begin{aligned}
+&(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0)\\
+\transition &(\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1), c)
+\end{aligned}}$$
 If a thread times out and has not finished execution (has not executed the =RET= statement), then it is enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a constant timeout value $c$.
 
 The above rule assumes there is least one thread in the thread queue. To cover all cases, here is the rule for zero threads in the thread queue:
@@ -66,8 +70,11 @@ $$\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} 
 where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the =RET= statement inside a function, and the thread does the normal thing of popping =rs= and so on.
 
 **** Starting =EXECUTE=
-$$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})}$$
-$$\transition (\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), c)$$
+$$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{
+\begin{aligned}
+&((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})\\
+\transition &(\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), c)
+\end{aligned}}$$
 Closures representing threads $i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $i$. Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
 The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. This is shown by the disappearance of $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, meaning that the thread that calls =concurrent_execute= is enqueued on the thread queue.
 Some next thread is dequeued from the thread queue, $\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j$, with a constant timeout value $c$.
