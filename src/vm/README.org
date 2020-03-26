@@ -86,7 +86,7 @@ $$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{
 &((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})\\
 \transition &(\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), c)
 \end{aligned}}$$
-Closures representing threads $i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $i$. Thread $i$ is a four-tuple of each thread $i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. Initially, thread $i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
+Closures representing threads $t_i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $t_i$. Thread $t_i$ is a four-tuple of each thread $t_i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. Initially, thread $t_i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
 The thread that calls =concurrent_execute= also continues to execute concurrently with the other threads. This is shown by the disappearance of $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, meaning that the thread that calls =concurrent_execute= is enqueued on the thread queue.
 Some next thread is dequeued from the thread queue, $\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j$, with a constant timeout value $c$.
 
