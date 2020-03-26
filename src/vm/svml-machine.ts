@@ -27,11 +27,15 @@ const BR_OFFSET = 1
 const LD_ST_INDEX_OFFSET = 1
 const LD_ST_ENV_OFFSET = 2
 const CALL_NUM_ARGS_OFFSET = 1
+const CALLT_NUM_ARGS_OFFSET = 1
 const CALLP_ID_OFFSET = 1
 const CALLP_NUM_ARGS_OFFSET = 2
+const CALLTP_ID_OFFSET = 1
+const CALLTP_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
+const NEWCP_ID_OFFSET = 1
 const EXECUTE_NUM_ARGS_OFFSET = 1
 
 // VIRTUAL MACHINE
@@ -81,6 +85,7 @@ let F: any = 0
 let G: any = 0
 let H: any = 0
 let I: any = 0
+let J: any = 0
 
 function show_executing(s: string) {
   let str = ''
@@ -421,6 +426,64 @@ function EXTEND() {
   D = A
   A = B
   NEW_ENVIRONMENT()
+}
+
+const NORMAL_CALL = 0
+const TAIL_CALL = 1
+const PRIMITIVE_CALL = 2
+const PRIMITIVE_TAIL_CALL = 3
+
+// expect number of arguments in G, closure in F, type of call in J
+// currently only checks number of arguments for variadic functions
+// uses A,B,C,D,E,F,G,H,I,J
+function FUNCTION_CALL() {
+  // prep for EXTEND
+  A = HEAP[F + CLOSURE_ENV_SLOT]
+  // A is now env to be extended
+  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
+  H = FUNC[H]
+  // H is now the function header of the function to call
+  I = H[FUNC_NUM_ARGS_OFFSET]
+  B = H[FUNC_ENV_SIZE_OFFSET]
+  // B is now the environment extension count
+  EXTEND() // after this, RES is new env
+  E = RES
+
+  // for varargs (-1), put all elements into an array. hacky implementation
+  if (I === VARARGS_NUM_ARGS) {
+    NEW_ARRAY()
+    I = RES
+    for (C = G - 1; C >= 0; C = C - 1) {
+      POP_OS()
+      HEAP[I + ARRAY_VALUE_SLOT][C] = RES
+    }
+    HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
+    D = E + HEAP[E + FIRST_CHILD_SLOT]
+    HEAP[D] = I
+  } else {
+    D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
+    // D is now address where last argument goes in new env
+    for (C = D; C > D - G; C = C - 1) {
+      POP_OS() // now RES has the address of the next arg
+      HEAP[C] = RES // copy argument into new env
+    }
+  }
+
+  if (J === NORMAL_CALL || J === TAIL_CALL) {
+    POP_OS() // closure is on top of OS; pop it as not needed
+  }
+  if (J === NORMAL_CALL || J === PRIMITIVE_CALL) {
+    // normal calls need to push to RTS
+    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+    A = RES
+    PUSH_RTS()
+  }
+  PC = 0
+  P = H[FUNC_CODE_OFFSET]
+  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
+  NEW_OS()
+  OS = RES
+  ENV = E
 }
 
 function SET_TO() {
@@ -846,86 +909,40 @@ M[OpCodes.BR] = () => {
   PC = PC + (P[PC][BR_OFFSET] as number)
 }
 
-// currently does not properly check number of arguments
 M[OpCodes.CALL] = () => {
   G = P[PC][CALL_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
-  // prep for EXTEND
-  A = HEAP[F + CLOSURE_ENV_SLOT]
-  // A is now env to be extended
-  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
-  H = FUNC[H]
-  // H is now the function header of the function to call
-  B = H[FUNC_ENV_SIZE_OFFSET]
-  // B is now the environment extension count
-  EXTEND() // after this, RES is new env
-  E = RES
-  D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
-  // D is now address where last argument goes in new env
-  for (C = D; C > D - G; C = C - 1) {
-    POP_OS() // now RES has the address of the next arg
-    HEAP[C] = RES // copy argument into new env
-  }
-  POP_OS() // closure is on top of OS; pop it as not needed
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS()
-  PC = 0
-  P = H[FUNC_CODE_OFFSET]
-  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
-  NEW_OS()
-  OS = RES
-  ENV = E
+
+  J = NORMAL_CALL
+  FUNCTION_CALL()
 }
 
-// currently does not properly check number of arguments
-// only checks to account for vardic
+M[OpCodes.CALLT] = () => {
+  G = P[PC][CALLT_NUM_ARGS_OFFSET] // lets keep number of arguments in G
+  // we peek down OS to get the closure
+  F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
+
+  J = TAIL_CALL
+  FUNCTION_CALL()
+}
+
 M[OpCodes.CALLP] = () => {
   G = P[PC][CALLP_NUM_ARGS_OFFSET] // lets keep number of arguments in G
   F = P[PC][CALLP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
 
-  // prep for EXTEND
-  A = HEAP[F + CLOSURE_ENV_SLOT]
-  // A is now env to be extended
-  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
-  H = FUNC[H]
-  // H is now the function header of the function to call
-  I = H[FUNC_NUM_ARGS_OFFSET]
-  B = H[FUNC_ENV_SIZE_OFFSET]
-  // B is now the environment extension count
-  EXTEND() // after this, RES is new env
-  E = RES
+  J = PRIMITIVE_CALL
+  FUNCTION_CALL()
+}
 
-  // for varargs (-1), put all elements into an array. hacky implementation
-  if (I === VARARGS_NUM_ARGS) {
-    NEW_ARRAY()
-    I = RES
-    for (C = G - 1; C >= 0; C = C - 1) {
-      POP_OS()
-      HEAP[I + ARRAY_VALUE_SLOT][C] = RES
-    }
-    HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
-    D = E + HEAP[E + FIRST_CHILD_SLOT]
-    HEAP[D] = I
-  } else {
-    D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
-    // D is now address where last argument goes in new env
-    for (C = D; C > D - G; C = C - 1) {
-      POP_OS() // now RES has the address of the next arg
-      HEAP[C] = RES // copy argument into new env
-    }
-  }
-  NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-  A = RES
-  PUSH_RTS()
-  PC = 0
-  P = H[FUNC_CODE_OFFSET]
-  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
-  NEW_OS()
-  OS = RES
-  ENV = E
+M[OpCodes.CALLTP] = () => {
+  G = P[PC][CALLTP_NUM_ARGS_OFFSET] // lets keep number of arguments in G
+  F = P[PC][CALLTP_ID_OFFSET] // lets keep primitiveCall Id in F
+  F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
+
+  J = PRIMITIVE_TAIL_CALL
+  FUNCTION_CALL()
 }
 
 M[OpCodes.RETG] = () => {
@@ -958,6 +975,13 @@ M[OpCodes.NEWENV] = () => {
 
 M[OpCodes.POPENV] = () => {
   ENV = HEAP[ENV + PREVIOUS_ENV_SLOT] // restore to parent env
+  PC = PC + 1
+}
+
+M[OpCodes.NEWCP] = () => {
+  A = P[PC][NEWCP_ID_OFFSET]
+  A = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + A]
+  PUSH_OS()
   PC = PC + 1
 }
 
@@ -1297,6 +1321,7 @@ export function runWithProgram(p: Program, context: Context): any {
   G = 0
   H = 0
   I = 0
+  J = 0
 
   // setup externalBuiltins
   // certain functions are imported from cadet-frontend

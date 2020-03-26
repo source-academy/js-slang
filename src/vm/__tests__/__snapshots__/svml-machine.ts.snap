@@ -1174,3 +1174,19 @@ display(eval_stream(s, 10));",
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`standard program execution treat primitive functions as first-class: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = list;
+display(x(1,2));",
+  "displayResult": Array [
+    "[1, [2, null]]",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
