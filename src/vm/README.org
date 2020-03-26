@@ -5,7 +5,7 @@
 #+LATEX_HEADER: \newcommand{\transition}{\rightrightarrows_s}
 #+LATEX_HEADER: \newcommand{\translate}{\twoheadrightarrow}
 #+LATEX_HEADER: \newcommand{\translateaux}{\hookrightarrow}
-#+LATEX_HEADER: \usepackage{underscore}
+#+LATEX_HEADER: \usepackage[strings]{underscore}
 
 * Specification of Concurrent Virtual Machine
 Compared to Source $\S 3$, this concurrent system has the following changes:
