@@ -9,7 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { loadModuleByName } from '../modules/moduleLoader'
+import { loadIIFEModule } from '../modules/moduleLoader'
 
 class BreakValue {}
 
@@ -86,6 +86,12 @@ function hoistIdentifier(context: Context, name: string, node: es.Node) {
 function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
   for (const declaration of node.declarations) {
     hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+  }
+}
+
+function hoistImportDeclarations(context: Context, node: es.ImportDeclaration) {
+  for (const declaration of node.specifiers) {
+    hoistIdentifier(context, declaration.local.name, node)
   }
 }
 
@@ -570,10 +576,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
     const moduleName = node.source.value as string
     const neededSymbols = node.specifiers.map(spec => spec.local.name)
-    for (const symbol of neededSymbols) {
-      context.externalSymbols.push(symbol)
+    const module = loadIIFEModule(moduleName)
+    hoistImportDeclarations(context, node)
+    for (const name of neededSymbols) {
+      defineVariable(context, name, module[name], true);
     }
-    yield loadModuleByName(moduleName, neededSymbols)
+    return undefined
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {

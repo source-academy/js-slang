@@ -1,4 +1,5 @@
 import { ancestor, simple } from 'acorn-walk/dist/walk'
+import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
@@ -6,6 +7,7 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
 import { AllowedDeclarations, Value } from '../types'
 import * as create from '../utils/astCreator'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { loadIIFEModuleText } from '../modules/moduleLoader'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -59,6 +61,37 @@ const globalIds = {
   globals: create.identifier('dummy')
 }
 let contextId: number
+
+function transformSingleImportDeclaration(moduleCounter: number, node: es.ImportDeclaration) {
+  const result = []
+  const moduleNode = parse(loadIIFEModuleText(node.source.value as string))
+  const moduleExpr = moduleNode['body'][0] as es.Expression
+  const tempNamespace = `__MODULE_${moduleCounter}__`
+  // const __MODULE_xxx__ = ...;
+  result.push(create.constantDeclaration(tempNamespace, moduleExpr))
+  // const yyy = __MODULE_xxx__.yyy;
+  const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
+  for (const symbol of neededSymbols) {
+    result.push(create.constantDeclaration(
+      symbol, create.memberExpression(create.identifier(tempNamespace), symbol)
+    ))
+  }
+  return result
+}
+
+function transformImportDeclarations(program: es.Program) {
+  const imports = []
+  let result: es.VariableDeclaration[] = []
+  let moduleCounter = 0
+  while (program.body.length > 0 && program.body[0].type == 'ImportDeclaration') {
+    imports.unshift(program.body.shift() as es.ImportDeclaration)
+  }
+  for (const node of imports) {
+    result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+    moduleCounter++;
+  }
+  program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+}
 
 function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
@@ -300,6 +333,18 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     }
     variableScope = variableScope.previousScope
     variableScopeId = create.memberExpression(variableScopeId, 'previousScope')
+  }
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      return;
+    }
+    const symbols = node.specifiers.map(specifier => specifier.local.name)
+    for (const symbol of symbols) {
+      previousVariablesToAst.set(symbol, {
+        isConstant: true,
+        variableLocationId: create.literal(-1)
+      })
+    }
   }
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
@@ -655,6 +700,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
+  transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement

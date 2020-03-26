@@ -269,8 +269,12 @@
         "version": "b467896ca0ee3052006b88d9913d1a028cabfa73a8ff5e1fa9a21c9d3a4f032e",
         "signature": "d5f44ee024d724305c449d237dbf4f05686cfe01cf365a6c88839c930fb983e5"
       },
+      "./src/modules/moduleloader.ts": {
+        "version": "e1506b3fc88ca5ff411c1edfae9d7e12a31fe4ddc853f94fd1c9f719ea0a44a9",
+        "signature": "1b57db3b670b99fa1f1671143c123a8b2bb46bea433cd0903ec94cb5392db04f"
+      },
       "./src/transpiler/transpiler.ts": {
-        "version": "f640fd0bf4b1c03c5038a57fe3dace44e07dd9fd9d42805f3c9c19e3df8641d3",
+        "version": "c875d82743d169362ae842840a67cdad94f9c187ebb12e8b2f990b0290a62980",
         "signature": "defb95eb9bfc044d654745c961690a9cfad2eaa1e53e489faa95446707de18da"
       },
       "./src/errors/validityerrors.ts": {
@@ -289,12 +293,8 @@
         "version": "edc372fd60443eb9099df3bc0f55e47a53b0b84492dbe9e088d2ceab20614095",
         "signature": "c60cf4f612d729df3683ebe68856d7f966b36c0d1b4b74f1a9ed7b75fea926f9"
       },
-      "./src/modules/moduleloader.ts": {
-        "version": "12abf3872e4df14be233b1a4a6ec4b7503276917836949f5290661773d4d8f2f",
-        "signature": "db6b1fb1085fec54d32179da886c57d6b0e1787a33909ea8e8a7771a245856e6"
-      },
       "./src/interpreter/interpreter.ts": {
-        "version": "489bc1d9e266f66e39fcb0b7daa7e4f9502bbaec06a6c7027999f3bd6c600aef",
+        "version": "126e1d0aa971640761d905354e7e3e17437d9cd723e765c5277a6f81bed8fa61",
         "signature": "776540ff5a9dee5b8456d0c4cdad40c84b6a1534c4b298421a04b1c169ed5d17"
       },
       "./src/interpreter/closure.ts": {
@@ -1268,8 +1268,15 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.5/util.d.ts"
       ],
+      "./src/modules/moduleloader.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.5/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.5/util.d.ts"
+      ],
       "./src/transpiler/transpiler.ts": [
         "./src/typings/acorn-walk.d.ts",
+        "./node_modules/acorn/dist/acorn.d.ts",
         "./src/typings/astring.d.ts",
         "./node_modules/@types/estree/index.d.ts",
         "./node_modules/source-map/source-map.d.ts",
@@ -1277,6 +1284,7 @@
         "./src/types.ts",
         "./src/utils/astcreator.ts",
         "./src/errors/errors.ts",
+        "./src/modules/moduleloader.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.5/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -1329,12 +1337,6 @@
         "./node_modules/@types/estree/index.d.ts",
         "./src/index.ts",
         "./src/types.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.5/fs.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.5/util.d.ts"
-      ],
-      "./src/modules/moduleloader.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.5/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -2511,6 +2513,7 @@
         "./node_modules/@types/estree/index.d.ts"
       ],
       "./src/interpreter/interpreter.ts": [
+        "./node_modules/@types/estree/index.d.ts",
         "./src/types.ts",
         "./src/interpreter/closure.ts"
       ],
@@ -3093,6 +3096,7 @@
       "./src/validator/validator.ts",
       "./src/index.ts",
       "./src/stdlib/inspector.ts",
+      "./src/interpreter/interpreter.ts",
       "./src/interpreter/closure.ts",
       "./src/utils/stringify.ts",
       "./src/errors/errors.ts",
@@ -3194,8 +3198,7 @@
       "./node_modules/@types/normalize-package-data/index.d.ts",
       "./node_modules/@types/yargs-parser/index.d.ts",
       "./node_modules/@types/yargs/index.d.ts",
-      "./src/modules/moduleloader.ts",
-      "./src/interpreter/interpreter.ts"
+      "./src/modules/moduleloader.ts"
     ]
   },
   "version": "3.8.3"
