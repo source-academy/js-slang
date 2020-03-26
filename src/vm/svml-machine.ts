@@ -15,6 +15,7 @@ import { PotentialInfiniteLoopError } from '../errors/timeoutErrors'
 import { locationDummyNode } from '../utils/astCreator'
 
 const LDCI_VALUE_OFFSET = 1
+const LDCF32_VALUE_OFFSET = 1
 const LDCF64_VALUE_OFFSET = 1
 const LGCS_VALUE_OFFSET = 1
 const FUNC_MAX_STACK_SIZE_OFFSET = 0
@@ -509,6 +510,14 @@ M[OpCodes.NOP] = () => {
 
 M[OpCodes.LGCI] = () => {
   A = P[PC][LDCI_VALUE_OFFSET]
+  NEW_NUMBER()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.LGCF32] = () => {
+  A = P[PC][LDCF32_VALUE_OFFSET]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
