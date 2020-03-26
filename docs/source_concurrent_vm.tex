@@ -1,4 +1,4 @@
-% Created 2020-03-26 Thu 16:33
+% Created 2020-03-26 Thu 16:34
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -62,9 +62,9 @@ However, this design departs from the textbook, as the system does not execute p
 \label{sec:orgaa84fb2}
 The following concurrent functions are supported:
 \begin{itemize}
-\item \texttt{concurrent\_execute}: \(\textit{primitive}\), executes multiple threads concurrently. Each \(f_1, \cdots ,f_n\) is a nullary function that returns \texttt{undefined}, and each thread is executed by running the code in the body of the nullary function. Returns \texttt{undefined}.
-\item \texttt{test\_and\_set}: \(\textit{primitive}\), assumes the head of array \(a\) is a boolean \(b\). Sets the head of \(a\) to \texttt{true}. Returns \(b\).
-\item \texttt{clear}: \(\textit{primitive}\), sets the head of array \(a\) to \texttt{false}. Returns \texttt{undefined}.
+\item \(\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}\): \(\textit{primitive}\), executes multiple threads concurrently. Each \(\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\) is a nullary function that returns \texttt{undefined}, and each thread is executed by running the code in the body of the nullary function. Returns \texttt{undefined}.
+\item \texttt{test\_and\_set(a)}: \(\textit{primitive}\), assumes the head of array \texttt{a} is a boolean \(b\). Sets the head of \texttt{a} to \texttt{true}. Returns \(b\).
+\item \texttt{clear(a)}: \(\textit{primitive}\), sets the head of array \texttt{a} to \texttt{false}. Returns \texttt{undefined}.
 \end{itemize}
 
 \subsection{\texttt{EXECUTE} Rules}
