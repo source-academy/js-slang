@@ -64,8 +64,10 @@ let contextId: number
 
 function transformSingleImportDeclaration(moduleCounter: number, node: es.ImportDeclaration) {
   const result = []
-  const moduleNode = parse(loadIIFEModuleText(node.source.value as string)) as unknown as es.Program
-  const moduleExpr = moduleNode.body[0] as unknown as es.Expression
+  const moduleNode = (parse(
+    loadIIFEModuleText(node.source.value as string)
+  ) as unknown) as es.Program
+  const moduleExpr = (moduleNode.body[0] as unknown) as es.Expression
   const tempNamespace = `__MODULE_${moduleCounter}__`
   // const __MODULE_xxx__ = ...;
   result.push(create.constantDeclaration(tempNamespace, moduleExpr))
