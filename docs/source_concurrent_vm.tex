@@ -1,4 +1,4 @@
-% Created 2020-03-26 Thu 11:46
+% Created 2020-03-26 Thu 16:33
 % Intended LaTeX compiler: pdflatex
 \input source_header.tex
 \newcommand{\qed}{$\Box$}
@@ -99,7 +99,22 @@ Some notes on program execution:
 \item Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
 \item As a result, all programs here are concurrent programs, even if they do not call \texttt{concurrent\_execute}.
 \item None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
-\item To simulate high interleaving of concurrent threads, all dequeues from \(\textit{tq}\) is done randomly: a thread is popped from a random index in \(\textit{tq}\).
+\end{enumerate}
+
+Design choices:
+\begin{enumerate}
+\item Our concurrent system simulates a uniform distribution of execution traces, in the sense that running the same program infinitely many times should give a uniform distribution of program execution traces.
+This is in contrast to actual concurrent systems, where some traces occur with very low probability. There, the programmer may not even be aware that such low probability traces exist. So it is possible for the programmer to believe their program is correct, until they encounter a bug in one of the low probability execution traces.
+To avoid this, our concurrent system presents to the programmer each trace with equal probability. The programmer is then exposed more to low probability execution traces, and thinks more about low probability execution traces when reasoning about their code.
+We achieved this by inserting uniform randomness into the scheduling algorithm.
+\item With round-robin scheduling, where resource starvation is impossible, there are three possible ways of inserting uniform randomness, but some introduce starvation (in each way of inserting uniform randomness, we assume all other parts of the scheduling are non-random):
+\begin{description}
+\item[{Random removal from the thread queue}] \(\textit{allows starvation}\), since it is possible for some thread to never be removed, and thus never be scheduled.
+\item[{Random insertion into the thread queue}] \(\textit{allows starvation}\), since from all concurrent threads \(t_i\), whenever some concurrent thread \(t_n\) performs a nested call of \texttt{concurrent\_execute} that spawns children, it is possible for \(t_n\)'s children to be scheduled in front of all \(t_i\) in the thread queue. If this scenario repeats again for nested calls to \texttt{concurrent\_execute} in each of \(t_n\)'s children, then none of \(t_i\) will ever be scheduled.
+\item[{Random time quanta}] \(\textit{does not allow starvation}\), since no priority is assigned to concurrent threads, so the ordering of existing concurrent threads in the thread queue is respected.
+\end{description}
+Therefore, to avoid starvation, we choose to insert uniform randomness by allocating uniformly random time quanta to concurrent threads.
+This choice of inserting uniform randomness has the additional benefit of also being fair when the execution time of a single run goes to infinity: the expected amount of time allocated to each concurrent thread is equal.
 \end{enumerate}
 
 \paragraph{Thread timeout}
