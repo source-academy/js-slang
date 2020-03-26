@@ -1,7 +1,7 @@
 import * as t from './types'
 import { Scope } from './types'
 
-import { Context, Type } from '../types'
+import { Context, Type, TypeAnnotation } from '../types'
 
 import * as create from '../utils/typeAstCreator'
 
@@ -76,7 +76,7 @@ export function createEnv(context: Context): t.Environment {
   return [env, null]
 }
 
-export function toJson(nativeType: t.Type): Type {
+export function toJson(nativeType: t.Type): TypeAnnotation {
   const mappings: Map<string, string> = new Map()
   const counterMap: Map<string, number> = new Map([
     ['T', 1],
@@ -133,5 +133,14 @@ export function toJson(nativeType: t.Type): Type {
     }
     throw Error('Unknown type!')
   }
-  return helper(nativeType)
+  try {
+    return {
+      typability: 'Typed',
+      inferredType: helper(nativeType)
+    }
+  } catch {
+    return {
+      typability: 'Untypable'
+    }
+  }
 }

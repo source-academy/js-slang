@@ -232,8 +232,8 @@ export function analyse(
       if (!isInternalError(e)) {
         const error = new InvalidArgumentTypesError(
           fun,
-          (prune(funType) as t.Function).argTypes.map(toJson),
-          argTypes.map(toJson)
+          (prune(funType) as t.Function).argTypes.map(type => toJson(type).inferredType!),
+          argTypes.map(type => toJson(type).inferredType!)
         )
         context.errors.push(error)
       }
@@ -247,7 +247,9 @@ export function analyse(
       unify(testType, new t.Bool())
     } catch (e) {
       if (!isInternalError(e)) {
-        context.errors.push(new InvalidTestConditionError(conditional, toJson(testType)))
+        context.errors.push(
+          new InvalidTestConditionError(conditional, toJson(testType).inferredType!)
+        )
       }
       return new t.InternalError()
     }
@@ -260,8 +262,8 @@ export function analyse(
         context.errors.push(
           new ConsequentAlternateMismatchError(
             conditional,
-            toJson(consequentType),
-            toJson(alternateType)
+            toJson(consequentType).inferredType!,
+            toJson(alternateType).inferredType!
           )
         )
       }
@@ -323,12 +325,7 @@ export function analyse(
                 : statement.id?.name!
             const type = scopeMap.get(id)!
             const annotated = statement as TypeAnnotatedNode<es.VariableDeclaration>
-            try {
-              annotated.inferredType = toJson(type)
-              annotated.typability = 'Typed'
-            } catch {
-              annotated.typability = 'Untypable'
-            }
+            Object.assign(annotated, toJson(type))
           }
         }
         // find the first return value, undefined otherwise.
@@ -405,11 +402,6 @@ export function analyse(
   })()
 
   result = normalise(result)
-  try {
-    node.typability = 'Typed'
-    node.inferredType = toJson(result)
-  } catch {
-    node.typability = 'Untypable'
-  }
+  Object.assign(node, toJson(result))
   return result
 }
