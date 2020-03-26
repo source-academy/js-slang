@@ -99,10 +99,8 @@ function containsNode(nodeOuter: Node, nodeInner: Node) {
       outerLoc.end.line === innerLoc.end.line &&
       outerLoc.start.column <= innerLoc.start.column &&
       outerLoc.end.column >= innerLoc.end.column) ||
-    (outerLoc.start.line < innerLoc.start.line &&
-      outerLoc.end.line >= innerLoc.end.line) ||
-    (outerLoc.start.line <= innerLoc.start.line &&
-      outerLoc.end.line > innerLoc.end.line))
+      (outerLoc.start.line < innerLoc.start.line && outerLoc.end.line >= innerLoc.end.line) ||
+      (outerLoc.start.line <= innerLoc.start.line && outerLoc.end.line > innerLoc.end.line))
   )
 }
 
