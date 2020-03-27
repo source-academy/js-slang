@@ -1,4 +1,4 @@
-% Created 2020-03-26 Thu 16:34
+% Created 2020-03-27 Fri 12:05
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -51,8 +51,8 @@ Compared to Source \(\S 3\), this concurrent system has the following changes:
 For details, see Section ``Concurrency Support'' below.
 
 \subsection{Overview}
-\label{sec:org3a177cd}
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system randomly chooses a thread to execute.
+\label{sec:org074ba1b}
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
 
 To comply with the textbook, the thread that calls \texttt{concurrent\_execute} also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no \texttt{join} primitive concurrent function.
 
@@ -124,7 +124,7 @@ $$\Rule{}{
 &(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0)\\
 \transition &(\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1), c)
 \end{aligned}}$$
-If a thread times out and has not finished execution (has not executed the \texttt{RET} statement), then it is enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a constant timeout value \(c\).
+If a thread times out and has not finished execution (has not executed the \texttt{RET} statement), then it is enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a random timeout value \(c\).
 
 The above rule assumes there is least one thread in the thread queue. To cover all cases, here is the rule for zero threads in the thread queue:
 $$\Rule{}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, c)}$$
@@ -144,16 +144,16 @@ where the primed values are just like normal VM code execution, and the timeout 
 $$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{
 \begin{aligned}
 &((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})\\
-\transition &(\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), c)
+\transition &(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), c)
 \end{aligned}}$$
 Closures representing threads \(t_i\) (two-tuples of \(\textit{pc}_i\) and \(\textit{e}_i\)) on the operand stack are converted into threads \(t_i\). Thread \(t_i\) is a four-tuple of each thread \(t_i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). Initially, thread \(t_i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
-The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. This is shown by the disappearance of \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), meaning that the thread that calls \texttt{concurrent\_execute} is enqueued on the thread queue.
-Some next thread is dequeued from the thread queue, \(\textit{os}_j, \textit{pc}_j, \textit{e}_j, \textit{rs}_j\), with a constant timeout value \(c\).
+The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. This is shown by the \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\) being in the machine state after the transition arrow.
+This next thread executes with a random timeout value \(c\).
 
 \paragraph{Returning from thread}
 \label{sec:org8d9b4a3}
 $$\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}$$
-If a thread executes the \texttt{RET} statement, and the runtime stack is empty, then the thread is not enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a constant timeout value \(c\).
+If a thread executes the \texttt{RET} statement, and the runtime stack is empty, then the thread is not enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a random timeout value \(c\).
 
 The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
 
