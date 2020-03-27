@@ -301,6 +301,8 @@ Array [
       stripIndent`
           const x = [1,2];
           const f = () => {};
+          const y = test_and_set;
+          const z = list;
           display(undefined === undefined &&
           null === null &&
           null !== undefined &&
@@ -316,6 +318,9 @@ Array [
           'stringa' === 'stringa' &&
           'stringa' !== 'stringb' &&
           true !== null &&
+          y !== z &&
+          z === list &&
+          y === test_and_set &&
           0 !== "0");
           `,
       { chapter: 3.4 }
@@ -870,6 +875,69 @@ Array [
     ).toMatchInlineSnapshot(`
 Array [
   "[1, [2, null]]",
+]
+`)
+  })
+
+  test('treat internal functions as first-class', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const x = test_and_set;
+        const xs = list(false);
+        display(x(xs));
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "false",
+]
+`)
+  })
+
+  test('wrong number of arguments for internal functions throws error', () => {
+    return expectParsedError(
+      stripIndent`
+        const x = list(false);
+        test_and_set(x, 1);
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
+    )
+  })
+
+  test('tail call for internal functions work', () => {
+    return expectDisplayResult(
+      stripIndent`
+        function f() {
+          return test_and_set(list(true));
+        }
+        display(f());
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "true",
+]
+`)
+  })
+
+  test('closures declared in for loops work', () => {
+    return expectDisplayResult(
+      stripIndent`
+        let f = null;
+        f = () => { display(-1); };
+        for(let i = 0; i < 5; i = i + 1) {
+          if (i === 3) {
+            f = () => { display(i); };
+          } else {}
+        }
+        f();
+      `,
+      { chapter: 3.4 }
+    ).toMatchInlineSnapshot(`
+Array [
+  "3",
 ]
 `)
   })

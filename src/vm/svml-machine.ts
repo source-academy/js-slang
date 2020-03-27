@@ -6,7 +6,8 @@ import {
   UNARY_PRIMITIVES,
   BINARY_PRIMITIVES,
   EXTERNAL_PRIMITIVES,
-  VARARGS_NUM_ARGS
+  VARARGS_NUM_ARGS,
+  INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL, JSSLANG_PROPERTIES } from '../constants'
@@ -32,11 +33,15 @@ const CALLP_ID_OFFSET = 1
 const CALLP_NUM_ARGS_OFFSET = 2
 const CALLTP_ID_OFFSET = 1
 const CALLTP_NUM_ARGS_OFFSET = 2
+const CALLV_ID_OFFSET = 1
+const CALLV_NUM_ARGS_OFFSET = 2
+const CALLTV_ID_OFFSET = 1
+const CALLTV_NUM_ARGS_OFFSET = 2
 const NEWC_ADDR_OFFSET = 1
 const ADDR_FUNC_INDEX_OFFSET = 0
 const NEWENV_NUM_ARGS_OFFSET = 1
 const NEWCP_ID_OFFSET = 1
-const EXECUTE_NUM_ARGS_OFFSET = 1
+const NEWCV_ID_OFFSET = 1
 
 // VIRTUAL MACHINE
 
@@ -48,6 +53,12 @@ const EXECUTE_NUM_ARGS_OFFSET = 1
 let PROG: Program
 // FUNC contains the function array, for easier access
 let FUNC: SVMFunction[]
+// INTERNAL is the function array for internal functions
+const INTERNAL: [string, OpCodes, number, boolean][] = INTERNAL_FUNCTIONS
+const INTERNAL_OPCODE_SLOT = 1
+const INTERNAL_NUM_ARGS_SLOT = 2
+const INTERNAL_HAS_RETURN_VAL_SLOT = 3
+
 // P contains the instructions to be executed in the current function call
 let P: Instruction[]
 // GLOBAL_ENV is the env that contains all the primitive functions
@@ -72,8 +83,8 @@ let RES = -Infinity
 let TQ: any[] = []
 // TO is timeout counter: how many instructions are left for a thread to run
 let TO = 0
-// TO_DEFAULT is default amount to timeout by
-const TO_DEFAULT = 2
+// TO_MAX is max amount to timeout by
+const TO_MAX = 15
 
 // some general-purpose registers
 let A: any = 0
@@ -86,6 +97,7 @@ let G: any = 0
 let H: any = 0
 let I: any = 0
 let J: any = 0
+let K: any = 0
 
 function show_executing(s: string) {
   let str = ''
@@ -127,6 +139,7 @@ let RUNNING = true
 const NORMAL = 0
 const DIV_ERROR = 1
 const TYPE_ERROR = 2
+const NUM_ARGS_ERROR = 3
 
 let STATE = NORMAL
 
@@ -323,25 +336,35 @@ function POP_OS() {
 // closure nodes layout
 //
 // 0: tag  = -103
-// 1: size = 6
+// 1: size = 7
 // 2: offset of first child from the tag: 6 (only environment)
 // 3: offset of last child from the tag: 6
-// 4: index = index of function in program function array
-// 5: environment
+// 4: type of function (normal, primitive, internal)
+// 5: index = index of function in program function array
+// 6: environment
 
 const CLOSURE_TAG = -103
-const CLOSURE_SIZE = 6
-const CLOSURE_FUNC_INDEX_SLOT = 4
-const CLOSURE_ENV_SLOT = 5
+const CLOSURE_SIZE = 7
+const CLOSURE_NORMAL_TYPE = 0
+// not necessary right now due to the way primitives are handled
+// const CLOSURE_PRIMITIVE_TYPE = 1
+const CLOSURE_INTERNAL_TYPE = 2
+const CLOSURE_TYPE_SLOT = 4
+const CLOSURE_FUNC_INDEX_SLOT = 5
+const CLOSURE_ENV_SLOT = 6
 
-// changes A, B, E, expects index of function in program function array in A
-export function NEW_CLOSURE() {
+// changes A, B, E, F
+// expects index of function in FUNC / INTERNAL in A
+// expects type of function in B
+export function NEW_FUNCTION() {
   E = A
+  F = B
   A = CLOSURE_TAG
   B = CLOSURE_SIZE
   NEW()
   HEAP[RES + FIRST_CHILD_SLOT] = CLOSURE_ENV_SLOT
   HEAP[RES + LAST_CHILD_SLOT] = CLOSURE_ENV_SLOT
+  HEAP[RES + CLOSURE_TYPE_SLOT] = F
   HEAP[RES + CLOSURE_FUNC_INDEX_SLOT] = E
   HEAP[RES + CLOSURE_ENV_SLOT] = ENV
 }
@@ -428,15 +451,23 @@ function EXTEND() {
   NEW_ENVIRONMENT()
 }
 
-// expect operands to check equality for in A and B
+// expect operands to check equality for in C and D
 // return result as boolean literal in A
 function CHECK_EQUAL() {
-  A = C === D // same reference (for arrays and functions)
+  A = C === D // same reference (for arrays and normal functions)
   B = HEAP[C + TAG_SLOT] === HEAP[D + TAG_SLOT] // check same type
   E = HEAP[C + TAG_SLOT] === UNDEFINED_TAG
   A = A || (B && E) // check undefined
   E = HEAP[C + TAG_SLOT] === NULL_TAG
   A = A || (B && E) // check null
+
+  E = HEAP[C + TAG_SLOT] === CLOSURE_TAG // check functions
+  if (B && E) {
+    // if internal, compare index
+    E = HEAP[C + CLOSURE_TYPE_SLOT] === HEAP[D + CLOSURE_TYPE_SLOT]
+    E = E && HEAP[C + CLOSURE_FUNC_INDEX_SLOT] === HEAP[D + CLOSURE_FUNC_INDEX_SLOT]
+    A = A || E
+  }
 
   E = HEAP[C + TAG_SLOT] === NUMBER_TAG
   E = E || HEAP[C + TAG_SLOT] === STRING_TAG
@@ -452,62 +483,106 @@ const NORMAL_CALL = 0
 const TAIL_CALL = 1
 const PRIMITIVE_CALL = 2
 const PRIMITIVE_TAIL_CALL = 3
+const INTERNAL_CALL = 4
+const INTERNAL_TAIL_CALL = 5
 
-// expect number of arguments in G, closure in F, type of call in J
+// expect number of arguments in G, closure (index for internal) in F,
+// type of call in J
 // currently only checks number of arguments for variadic functions
-// uses A,B,C,D,E,F,G,H,I,J
+// uses A,B,C,D,E,F,G,H,I,J,K
 function FUNCTION_CALL() {
-  // prep for EXTEND
-  A = HEAP[F + CLOSURE_ENV_SLOT]
-  // A is now env to be extended
-  H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
-  H = FUNC[H]
-  // H is now the function header of the function to call
-  I = H[FUNC_NUM_ARGS_OFFSET]
-  B = H[FUNC_ENV_SIZE_OFFSET]
-  // B is now the environment extension count
-  EXTEND() // after this, RES is new env
-  E = RES
-
-  // for varargs (-1), put all elements into an array. hacky implementation
-  if (I === VARARGS_NUM_ARGS) {
-    NEW_ARRAY()
-    I = RES
-    for (C = G - 1; C >= 0; C = C - 1) {
-      POP_OS()
-      HEAP[I + ARRAY_VALUE_SLOT][C] = RES
+  if (
+    J === INTERNAL_CALL ||
+    J === INTERNAL_TAIL_CALL ||
+    ((J === NORMAL_CALL || J === TAIL_CALL) &&
+      HEAP[F + CLOSURE_TYPE_SLOT] === CLOSURE_INTERNAL_TYPE)
+  ) {
+    if (J === NORMAL_CALL || J === TAIL_CALL) {
+      F = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
     }
-    HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
-    D = E + HEAP[E + FIRST_CHILD_SLOT]
-    HEAP[D] = I
+    INTERNAL_FUNCTION_CALL()
   } else {
-    D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
-    // D is now address where last argument goes in new env
-    for (C = D; C > D - G; C = C - 1) {
-      POP_OS() // now RES has the address of the next arg
-      HEAP[C] = RES // copy argument into new env
-    }
-  }
+    // prep for EXTEND
+    A = HEAP[F + CLOSURE_ENV_SLOT]
+    // A is now env to be extended
+    H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
+    H = FUNC[H]
+    // H is now the function header of the function to call
+    I = H[FUNC_NUM_ARGS_OFFSET]
+    B = H[FUNC_ENV_SIZE_OFFSET]
+    // B is now the environment extension count
+    EXTEND() // after this, RES is new env
+    E = RES
 
-  if (J === NORMAL_CALL || J === TAIL_CALL) {
-    POP_OS() // closure is on top of OS; pop it as not needed
+    // for varargs (-1), put all elements into an array. hacky implementation
+    if (I === VARARGS_NUM_ARGS) {
+      NEW_ARRAY()
+      I = RES
+      for (C = G - 1; C >= 0; C = C - 1) {
+        POP_OS()
+        HEAP[I + ARRAY_VALUE_SLOT][C] = RES
+      }
+      HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
+      D = E + HEAP[E + FIRST_CHILD_SLOT]
+      HEAP[D] = I
+    } else {
+      D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
+      // D is now address where last argument goes in new env
+      for (C = D; C > D - G; C = C - 1) {
+        POP_OS() // now RES has the address of the next arg
+        HEAP[C] = RES // copy argument into new env
+      }
+    }
+
+    if (J === NORMAL_CALL || J === TAIL_CALL) {
+      POP_OS() // closure is on top of OS; pop it as not needed
+    }
+    if (J === NORMAL_CALL || J === PRIMITIVE_CALL) {
+      // normal calls need to push to RTS
+      NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
+      A = RES
+      PUSH_RTS()
+    }
+    PC = 0
+    P = H[FUNC_CODE_OFFSET]
+    A = H[FUNC_MAX_STACK_SIZE_OFFSET]
+    NEW_OS()
+    OS = RES
+    ENV = E
   }
-  if (J === NORMAL_CALL || J === PRIMITIVE_CALL) {
-    // normal calls need to push to RTS
-    NEW_RTS_FRAME() // saves PC+1, ENV, OS, P
-    A = RES
-    PUSH_RTS()
+}
+
+// expects type of call in J, internal function id in F
+// number of arguments in G
+// actually no difference between tail and normal
+function INTERNAL_FUNCTION_CALL() {
+  F = INTERNAL[F]
+  K = F // save the internal function
+  if (K[INTERNAL_NUM_ARGS_SLOT] !== VARARGS_NUM_ARGS && K[INTERNAL_NUM_ARGS_SLOT] !== G) {
+    STATE = NUM_ARGS_ERROR
+    RUNNING = false
+  } else {
+    M[K[INTERNAL_OPCODE_SLOT]]() // call subroutine directly
+
+    if (K[INTERNAL_HAS_RETURN_VAL_SLOT]) {
+      // pop return value if present
+      POP_OS()
+      D = RES
+    } else {
+      NEW_UNDEFINED()
+      D = RES
+    }
+    if (J === NORMAL_CALL || J === TAIL_CALL) {
+      POP_OS() // pop closure
+    }
+    A = D
+    PUSH_OS() // push return value back
+    PC = PC + 1
   }
-  PC = 0
-  P = H[FUNC_CODE_OFFSET]
-  A = H[FUNC_MAX_STACK_SIZE_OFFSET]
-  NEW_OS()
-  OS = RES
-  ENV = E
 }
 
 function SET_TO() {
-  TO = TO_DEFAULT
+  TO = Math.ceil(Math.random() * TO_MAX)
 }
 
 // debugging: show current heap
@@ -834,7 +909,8 @@ M[OpCodes.NEQG] = () => {
 
 M[OpCodes.NEWC] = () => {
   A = (P[PC][NEWC_ADDR_OFFSET] as Address)[ADDR_FUNC_INDEX_OFFSET]
-  NEW_CLOSURE()
+  B = CLOSURE_NORMAL_TYPE
+  NEW_FUNCTION()
   A = RES
   PUSH_OS()
   PC = PC + 1
@@ -973,6 +1049,22 @@ M[OpCodes.CALLTP] = () => {
   FUNCTION_CALL()
 }
 
+M[OpCodes.CALLV] = () => {
+  G = P[PC][CALLV_NUM_ARGS_OFFSET]
+  F = P[PC][CALLV_ID_OFFSET]
+
+  J = INTERNAL_CALL
+  FUNCTION_CALL()
+}
+
+M[OpCodes.CALLTV] = () => {
+  G = P[PC][CALLTV_NUM_ARGS_OFFSET]
+  F = P[PC][CALLTV_ID_OFFSET]
+
+  J = INTERNAL_TAIL_CALL
+  FUNCTION_CALL()
+}
+
 M[OpCodes.RETG] = () => {
   POP_RTS()
   H = RES
@@ -1006,9 +1098,23 @@ M[OpCodes.POPENV] = () => {
   PC = PC + 1
 }
 
+// for now, we treat all primitive functions as normal functions
+// until we find a way to deal with streams.
+// problem with streams is that they create nullary functions, which
+// will be called using CALL, and are considered normal functions by
+// the compiler and machine
 M[OpCodes.NEWCP] = () => {
   A = P[PC][NEWCP_ID_OFFSET]
   A = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + A]
+  PUSH_OS()
+  PC = PC + 1
+}
+
+M[OpCodes.NEWCV] = () => {
+  A = P[PC][NEWCV_ID_OFFSET]
+  B = CLOSURE_INTERNAL_TYPE
+  NEW_FUNCTION()
+  A = RES
   PUSH_OS()
   PC = PC + 1
 }
@@ -1137,10 +1243,15 @@ M[OpCodes.STRINGIFY] = () => {
 
 addPrimitiveOpCodeHandlers()
 
+// Internal functions. They are called directly in internal function calls
+// All internal functions should not use register J or K, and can find
+// the number of arguments in G. They should also not increment PC.
+
+// expects num args in G
 M[OpCodes.EXECUTE] = () => {
-  I = P[PC][EXECUTE_NUM_ARGS_OFFSET]
+  I = G
   E = OS // we need the values in OS, so store in E first
-  TQ.push([OS, ENV, PC + 1, P, RTS, TOP_RTS])
+  G = [OS, ENV, PC, P, RTS, TOP_RTS] // store current state first
   // Keep track of registers first to restore present state after saving threads
   for (; I > 0; I = I - 1) {
     RTS = []
@@ -1160,7 +1271,7 @@ M[OpCodes.EXECUTE] = () => {
     P = F[FUNC_CODE_OFFSET]
     TQ.push([OS, ENV, 0, P, RTS, TOP_RTS])
   }
-  SETUP_THREAD() // sets RTS, TOP_RTS, PC, ENV, P, OS, TO
+  ;[OS, ENV, PC, P, RTS, TOP_RTS] = G // restore state
 }
 
 M[OpCodes.TEST_AND_SET] = () => {
@@ -1172,7 +1283,6 @@ M[OpCodes.TEST_AND_SET] = () => {
   HEAP[D + ARRAY_VALUE_SLOT][0] = RES
   A = E
   PUSH_OS() // push old value to os
-  PC = PC + 1
 }
 
 M[OpCodes.CLEAR] = () => {
@@ -1181,7 +1291,6 @@ M[OpCodes.CLEAR] = () => {
   A = false
   NEW_BOOL()
   HEAP[D + ARRAY_VALUE_SLOT][0] = RES
-  PC = PC + 1
 }
 
 // called whenever the machine is first run
@@ -1225,6 +1334,7 @@ function RUN_INSTRUCTION() {
 function TIMEOUT_THREAD() {
   if (TQ.length === 0) {
     // if no other threads, no need to timeout
+    // differ from 3.4 spec: to reduce overhead
     SET_TO()
   } else {
     // timeout only if no other threads
@@ -1234,9 +1344,8 @@ function TIMEOUT_THREAD() {
 }
 
 function SETUP_THREAD() {
-  G = TQ.splice(Math.floor(Math.random() * TQ.length), 1) // pop a thread randomly
-  // Unpack G: different behavior of array splice and array shift
-  ;[OS, ENV, PC, P, RTS, TOP_RTS] = G[0]
+  G = TQ.shift()
+  ;[OS, ENV, PC, P, RTS, TOP_RTS] = G
   SET_TO()
 }
 
@@ -1267,7 +1376,7 @@ function run(): any {
   }
 
   // handle errors
-  if (STATE === DIV_ERROR || STATE === TYPE_ERROR) {
+  if (STATE !== NORMAL) {
     throw Error('execution aborted: ' + getErrorType())
   }
 
@@ -1284,6 +1393,8 @@ function getErrorType(): string {
       return 'division by 0'
     case TYPE_ERROR:
       return 'types of operands do not match'
+    case NUM_ARGS_ERROR:
+      return 'incorrect number of arguments encountered for function call'
     default:
       throw Error('invalid error type')
   }
@@ -1350,6 +1461,7 @@ export function runWithProgram(p: Program, context: Context): any {
   H = 0
   I = 0
   J = 0
+  K = 0
 
   // setup externalBuiltins
   // certain functions are imported from cadet-frontend
