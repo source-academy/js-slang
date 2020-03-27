@@ -31,8 +31,8 @@ The following concurrent functions are supported:
 - For simplicity, heap is not represented in the rules.
 
 *** Compiling
-$$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}$$
-Each of $s_1. \cdots .s_n$ is a string of VM instruction that loads a closure onto the operand stack.
+$$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$
+Each of $s_1. \cdots .s_n$ is a string of VM instruction that loads a closure onto the operand stack, and $id$ is the opcode of =EXECUTE=.
 
 *** Running
 There are additional structures in our VM:
@@ -107,11 +107,11 @@ If a thread executes the =RET= statement, and both the runtime stack and the thr
 - =test_and_set= is an atomic operation.
 
 *** Compiling
-$$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{TEST_AND_SET}}$$
-where $E$ is an array, whose head is a boolean.
+$$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where $E$ is an array, whose head is a boolean, and $id$ is the opcode of =TEST_AND_SET=.
 
-$$\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CLEAR}}$$
-where $E$ is an array.
+$$\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where $E$ is an array, and $id$ is the opcode of =CLEAR=.
 
 *** Running
 $$\Rule{s(\textit{pc}) = \texttt{TEST_AND_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}$$

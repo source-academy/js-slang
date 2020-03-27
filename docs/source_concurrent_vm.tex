@@ -1,4 +1,4 @@
-% Created 2020-03-27 Fri 12:05
+% Created 2020-03-27 Fri 14:07
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -77,9 +77,9 @@ The following concurrent functions are supported:
 \end{itemize}
 
 \subsubsection{Compiling}
-\label{sec:org2aa2d47}
-$$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{EXECUTE n}}$$
-Each of \(s_1. \cdots .s_n\) is a string of VM instruction that loads a closure onto the operand stack.
+\label{sec:orga885586}
+$$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$
+Each of \(s_1. \cdots .s_n\) is a string of VM instruction that loads a closure onto the operand stack, and \(id\) is the opcode of \texttt{EXECUTE}.
 
 \subsubsection{Running}
 \label{sec:orgd7da3c4}
@@ -174,11 +174,11 @@ If a thread executes the \texttt{RET} statement, and both the runtime stack and 
 
 \subsubsection{Compiling}
 \label{sec:org3da3cbf}
-$$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{TEST_AND_SET}}$$
-where \(E\) is an array, whose head is a boolean.
+$$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where \(E\) is an array, whose head is a boolean, and \(id\) is the opcode of \texttt{TEST\_AND\_SET}.
 
-$$\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CLEAR}}$$
-where \(E\) is an array.
+$$\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where \(E\) is an array, and \(id\) is the opcode of \texttt{CLEAR}.
 
 \subsubsection{Running}
 \label{sec:org8c0a658}
