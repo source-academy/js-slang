@@ -1,4 +1,4 @@
-% Created 2020-03-27 Fri 18:28
+% Created 2020-03-27 Fri 18:39
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -96,7 +96,7 @@ $$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle, \langle \rang
 Some notes on program execution:
 \begin{enumerate}
 \item When the program calls \texttt{concurrent\_execute}, it executes the rest of its code along with the concurrent threads, therefore the sequential program becomes a concurrent thread.
-\item Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
+\item Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue. However, implementations of the VM may, as an optimization, avoid pushing and popping while executing sequential code.
 \item As a result, all programs here are concurrent programs, even if they do not call \texttt{concurrent\_execute}.
 \item None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
 \end{enumerate}
