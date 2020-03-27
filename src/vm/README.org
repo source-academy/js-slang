@@ -45,7 +45,7 @@ $$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle, \langle \rang
 
 Some notes on program execution:
 0. When the program calls =concurrent_execute=, it executes the rest of its code along with the concurrent threads, therefore the sequential program becomes a concurrent thread.
-0. Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue.
+0. Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue. However, implementations of the VM may, as an optimization, avoid pushing and popping while executing sequential code.
 0. As a result, all programs here are concurrent programs, even if they do not call =concurrent_execute=.
 0. None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
 
