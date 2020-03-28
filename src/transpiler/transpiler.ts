@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
-import { AllowedDeclarations, Value } from '../types'
+import { AllowedDeclarations, EvaluationMethod, Value } from '../types'
 import * as create from '../utils/astCreator'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 
@@ -47,6 +47,7 @@ function getUniqueId(uniqueId = 'unique') {
 
 const globalIds = {
   native: create.identifier('dummy'),
+  forceIt: create.identifier('dummy'),
   callIfFuncAndRightArgs: create.identifier('dummy'),
   boolOrErr: create.identifier('dummy'),
   wrap: create.identifier('dummy'),
@@ -188,10 +189,13 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      create.mutateToCallExpression(node, globalIds.wrap, [
-        { ...node },
-        create.literal(functionsToStringMap.get(node)!)
-      ])
+      // If it's undefined then we're dealing with a thunk
+      if (functionsToStringMap.get(node)! !== undefined) {
+        create.mutateToCallExpression(node, globalIds.wrap, [
+          { ...node },
+          create.literal(functionsToStringMap.get(node)!)
+        ])
+      }
     }
   })
 }
@@ -207,7 +211,10 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
+function transformReturnStatementsToAllowProperTailCalls(
+  program: es.Program,
+  evaluationMethod: EvaluationMethod
+) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -229,14 +236,19 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
+        const args = evaluationMethod === 'strict' ? expression.arguments : ([] as es.Expression[])
+
+        if (evaluationMethod === 'lazy') {
+          for (const arg of expression.arguments) {
+            args.push(delayIt(arg as es.Expression))
+          }
+        }
+
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
           create.property('function', expression.callee as es.Expression),
           create.property('functionName', create.literal(functionName)),
-          create.property(
-            'arguments',
-            create.arrayExpression(expression.arguments as es.Expression[])
-          ),
+          create.property('arguments', create.arrayExpression(args as es.Expression[])),
           create.property('line', create.literal(line)),
           create.property('column', create.literal(column))
         ])
@@ -260,16 +272,44 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   })
 }
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program) {
+function delayIt(expr: es.Expression) {
+  const exprThunked = create.blockArrowFunction(
+    [],
+    [create.returnStatement(expr)],
+    expr.loc === null ? undefined : expr.loc
+  )
+
+  const obj = create.objectExpression([
+    create.property('isThunk', create.literal(true)),
+    create.property('memoizedValue', create.literal(0)),
+    create.property('isMemoized', create.literal(false)),
+    create.property('expr', exprThunked)
+  ])
+  return obj
+}
+
+function transformCallExpressionsToCheckIfFunction(
+  program: es.Program,
+  evaluationMethod: EvaluationMethod
+) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
+      const args = evaluationMethod === 'strict' ? node.arguments : ([] as es.Expression[])
+
+      if (evaluationMethod === 'lazy') {
+        for (const arg of node.arguments) {
+          args.push(delayIt(arg as es.Expression))
+        }
+      }
+
       node.arguments = [
         node.callee as es.Expression,
         create.literal(line),
         create.literal(column),
-        ...node.arguments
+        ...args
       ]
+
       node.callee = globalIds.callIfFuncAndRightArgs
     }
   })
@@ -631,7 +671,12 @@ function addInfiniteLoopProtection(program: es.Program) {
   })
 }
 
-export function transpile(program: es.Program, id: number, skipUndefinedVariableErrors = false) {
+export function transpile(
+  program: es.Program,
+  id: number,
+  skipUndefinedVariableErrors = false,
+  evaluationMethod: EvaluationMethod = 'strict'
+) {
   contextId = id
   refreshLatestIdentifiers(program)
   NATIVE_STORAGE[contextId].globals = {
@@ -642,8 +687,8 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
-  transformReturnStatementsToAllowProperTailCalls(program)
-  transformCallExpressionsToCheckIfFunction(program)
+  transformReturnStatementsToAllowProperTailCalls(program, evaluationMethod)
+  transformCallExpressionsToCheckIfFunction(program, evaluationMethod)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
@@ -668,7 +713,9 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
       lastStatementStoredInResult,
       ...statementsToSaveDeclaredGlobals
     ]),
-    create.returnStatement(globalIds.lastStatementResult)
+    create.returnStatement(
+      create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
+    )
   ])
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 

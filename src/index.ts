@@ -22,6 +22,7 @@ import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
+  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
@@ -35,6 +36,7 @@ export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
+  evaluationMethod: EvaluationMethod
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -43,6 +45,7 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
+  evaluationMethod: 'strict',
   originalMaxExecTime: 1000,
   useSubst: false
 }
@@ -143,6 +146,7 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
     }
   } else {
     isNativeRunnable = theOptions.executionMethod === 'native'
+    context.executionMethod = theOptions.executionMethod
   }
   return isNativeRunnable
 }
@@ -182,6 +186,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
+  context.evaluationMethod = theOptions.evaluationMethod
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -218,7 +223,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId)
+      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
