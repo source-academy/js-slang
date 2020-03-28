@@ -6,7 +6,7 @@ dist/
 .idea/
 
 # emacs backup files
-
 *~
 
 tsconfig.tsbuildinfo
+test-report.html
