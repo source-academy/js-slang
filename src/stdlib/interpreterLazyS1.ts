@@ -1,5 +1,9 @@
 import { Value } from '../types'
-import { isInterpreterThunk, evaluateThunkOnce, evaluateThunk } from '../interpreter/lazyInterpreter'
+import {
+  isInterpreterThunk,
+  evaluateThunkOnce,
+  evaluateThunk
+} from '../interpreter/lazyInterpreter'
 
 export function is_thunk(v: Value) {
   if (isInterpreterThunk(v)) {

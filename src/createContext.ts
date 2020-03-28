@@ -161,7 +161,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
       defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     } else {
-      if (isNativeRunnable) { // Uses Transpiler (Lazy)
+      if (isNativeRunnable) {
+        // Uses Transpiler (Lazy)
         defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
         defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
         // source 1 primitive functions
@@ -173,7 +174,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'parse_int(str, radix)', (str: Value, radix: Value) =>
           misc.parse_int(lazy.force(str), lazy.force(radix))
         )
-      } else { // Uses Interpreter (Lazy)
+      } else {
+        // Uses Interpreter (Lazy)
         defineBuiltin(context, 'force(val)', interpreterLazyS1.force)
         defineBuiltin(context, 'is_thunk(val)', interpreterLazyS1.is_thunk)
         defineBuiltin(context, 'is_number(val)', interpreterLazyS1.is_number)
@@ -252,8 +254,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
   }
-
-
 }
 
 function importPrelude(context: Context) {

@@ -15,8 +15,8 @@ export const thunkStringType = 'Thunk'
 const mathLib = Object.getOwnPropertyNames(Math).map(prop => 'math_' + prop)
 
 // List of built-in functions that will not be evaluated lazily.
-export const eagerFunctions =
-[ ...mathLib,
+export const eagerFunctions = [
+  ...mathLib,
   'runtime',
   'display',
   'raw_display',

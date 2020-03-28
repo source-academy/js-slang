@@ -10,7 +10,13 @@ import * as operators from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import lazyEvaluate from '../lazyContext'
-import { getThunkedArgs, createThunk, isInterpreterThunk, evaluateThunk, eagerFunctions } from './lazyInterpreter'
+import {
+  getThunkedArgs,
+  createThunk,
+  isInterpreterThunk,
+  evaluateThunk,
+  eagerFunctions
+} from './lazyInterpreter'
 
 class BreakValue {}
 
