@@ -21,9 +21,9 @@ However, this design departs from the textbook, as the system does not execute p
 
 ** Concurrency Support
 The following concurrent functions are supported:
-- $\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}$: $\textit{primitive}$, setup multiple threads for concurrent execution. For each nullary function $\texttt{f}_\texttt{i}$ that returns =undefined=, setup a thread $\texttt{t}_\texttt{i}$ that executes the code in the body of $\texttt{f}_\texttt{i}$. The thread that called =concurrent_execute= also executes concurrently with all $\texttt{t}_\texttt{i}$. Returns =undefined=.
-- =test_and_set(a)=: $\textit{primitive}$, assumes the head of array =a= is a boolean $b$. Sets the head of =a= to =true=. Returns $b$.
-- =clear(a)=: $\textit{primitive}$, sets the head of array =a= to =false=. Returns =undefined=.
+- $\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}$: $\textit{primitive}$, setup multiple threads for concurrent execution. For each nullary function $\texttt{f}_\texttt{i}$ that returns =undefined=, setup a thread $\texttt{t}_\texttt{i}$ that executes the code in the body of $\texttt{f}_\texttt{i}$. The thread that called =concurrent_execute= also executes concurrently with all $\texttt{t}_\texttt{i}$. Returns =undefined=. This is an atomic operation.
+- =test_and_set(a)=: $\textit{primitive}$, assumes the head of array =a= is a boolean $b$. Sets the head of =a= to =true=. Returns $b$. This is an atomic operation.
+- =clear(a)=: $\textit{primitive}$, sets the head of array =a= to =false=. Returns =undefined=. This is an atomic operation.
 
 ** =EXECUTE= Rules
 
