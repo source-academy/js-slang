@@ -14,7 +14,7 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
+import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -171,6 +171,30 @@ export function findDeclaration(
   return declarationNode.loc
 }
 
+export function getAllOccurrencesInScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (
+    declarationNode == null ||
+    identifierNode === declarationNode ||
+    declarationNode.loc == null
+  ) {
+    return []
+  }
+  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -298,12 +322,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export {
-  createContext,
-  Context,
-  Result,
-  setBreakpointAtLine,
-  scopeVariables,
-  lookupDefinition,
-  getAllOccurrencesInScope
-}
+export { createContext, Context, Result, setBreakpointAtLine }

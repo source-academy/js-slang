@@ -1,34 +1,18 @@
-import * as es from 'estree'
 import { default as createContext } from '../createContext'
-import { looseParse, parse } from '../parser/parser'
-import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from '../scoped-vars'
+import { getAllOccurrencesInScope } from '../index'
 /* tslint:disable:max-classes-per-file */
 
-/**
- * Helper function to get the parsed estree program to test the function
- */
-function testParseHelper(
-  code: string,
-  // default to 4
-  chapter: number = 4,
-  useLooseParser: boolean = false
-): es.Program | undefined {
-  if (useLooseParser) {
-    return looseParse(code, createContext(chapter))
-  } else {
-    return parse(code, createContext(chapter))
-  }
-}
+const context = createContext(4)
 
 class Target {
   public name: string
-  public row: number
-  public col: number
+  public line: number
+  public column: number
 
-  constructor(name: string, row: number, col: number) {
+  constructor(name: string, line: number, column: number) {
     this.name = name
-    this.row = row
-    this.col = col
+    this.line = line
+    this.column = column
   }
 }
 
@@ -157,54 +141,19 @@ const conditionalsLoopsTests = [
   )
 ]
 
-test('Going to definitions of ordinary variable definitions', () => {
-  const actuals: any = []
-  variableDefinitionTests.forEach(testCase => {
-    const program = testParseHelper(testCase.code)
-    if (program === undefined) {
-      return
-    }
-    const scopedTree = scopeVariables(program)
-    testCase.targets.forEach(target => {
-      actuals.push(
-        result(testCase, target, lookupDefinition(target.name, target.row, target.col, scopedTree))
-      )
-    })
-  })
-  expect(actuals).toMatchSnapshot()
-})
-
 test('Scoped based refactoring of ordinary variable definitions', () => {
   const actuals: any = []
   variableDefinitionTests.forEach(testCase => {
-    const scopedTree = testParseHelper(testCase.code)
-    if (scopedTree === undefined) {
-      return
-    }
     testCase.targets.forEach(target => {
       actuals.push(
         result(
           testCase,
           target,
-          getAllOccurrencesInScope(target.name, target.row, target.col, scopedTree)
+          getAllOccurrencesInScope(testCase.code, context, {
+            line: target.line,
+            column: target.column
+          })
         )
-      )
-    })
-  })
-  expect(actuals).toMatchSnapshot()
-})
-
-test('Going to definitions of with function scopes', () => {
-  const actuals: any = []
-  functionScopeTests.forEach(testCase => {
-    const program = testParseHelper(testCase.code)
-    if (program === undefined) {
-      return
-    }
-    const scopedTree = scopeVariables(program)
-    testCase.targets.forEach(target => {
-      actuals.push(
-        result(testCase, target, lookupDefinition(target.name, target.row, target.col, scopedTree))
       )
     })
   })
@@ -214,34 +163,16 @@ test('Going to definitions of with function scopes', () => {
 test('Scoped based refactoring with function scopes', () => {
   const actuals: any = []
   functionScopeTests.forEach(testCase => {
-    const scopedTree = testParseHelper(testCase.code)
-    if (scopedTree === undefined) {
-      return
-    }
     testCase.targets.forEach(target => {
       actuals.push(
         result(
           testCase,
           target,
-          getAllOccurrencesInScope(target.name, target.row, target.col, scopedTree)
+          getAllOccurrencesInScope(testCase.code, context, {
+            line: target.line,
+            column: target.column
+          })
         )
-      )
-    })
-  })
-  expect(actuals).toMatchSnapshot()
-})
-
-test('Going to definitions with arrow function scopes', () => {
-  const actuals: any = []
-  arrowFunctionScopeTests.forEach(testCase => {
-    const program = testParseHelper(testCase.code)
-    if (program === undefined) {
-      return
-    }
-    const scopedTree = scopeVariables(program)
-    testCase.targets.forEach(target => {
-      actuals.push(
-        result(testCase, target, lookupDefinition(target.name, target.row, target.col, scopedTree))
       )
     })
   })
@@ -251,34 +182,16 @@ test('Going to definitions with arrow function scopes', () => {
 test('Scoped based refactoring with arrow function scopes', () => {
   const actuals: any = []
   arrowFunctionScopeTests.forEach(testCase => {
-    const scopedTree = testParseHelper(testCase.code)
-    if (scopedTree === undefined) {
-      return
-    }
     testCase.targets.forEach(target => {
       actuals.push(
         result(
           testCase,
           target,
-          getAllOccurrencesInScope(target.name, target.row, target.col, scopedTree)
+          getAllOccurrencesInScope(testCase.code, context, {
+            line: target.line,
+            column: target.column
+          })
         )
-      )
-    })
-  })
-  expect(actuals).toMatchSnapshot()
-})
-
-test('Going to definitions of with conditionals and loops', () => {
-  const actuals: any = []
-  conditionalsLoopsTests.forEach(testCase => {
-    const program = testParseHelper(testCase.code)
-    if (program === undefined) {
-      return
-    }
-    const scopedTree = scopeVariables(program)
-    testCase.targets.forEach(target => {
-      actuals.push(
-        result(testCase, target, lookupDefinition(target.name, target.row, target.col, scopedTree))
       )
     })
   })
@@ -288,16 +201,15 @@ test('Going to definitions of with conditionals and loops', () => {
 test('Scoped based refactoring with conditionals and loops', () => {
   const actuals: any = []
   conditionalsLoopsTests.forEach(testCase => {
-    const scopedTree = testParseHelper(testCase.code)
-    if (scopedTree === undefined) {
-      return
-    }
     testCase.targets.forEach(target => {
       actuals.push(
         result(
           testCase,
           target,
-          getAllOccurrencesInScope(target.name, target.row, target.col, scopedTree)
+          getAllOccurrencesInScope(testCase.code, context, {
+            line: target.line,
+            column: target.column
+          })
         )
       )
     })

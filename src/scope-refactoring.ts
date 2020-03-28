@@ -1,5 +1,6 @@
 import { simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
+import { isInLoc } from './finder'
 import { BlockFrame, DefinitionNode } from './types'
 
 export function scopeVariables(
@@ -200,72 +201,17 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   return block
 }
 
-// Functions to lookup definition location of any variable
-export function lookupDefinition(
-  variableName: string,
-  line: number,
-  col: number,
-  node: BlockFrame,
-  currentDefinition?: DefinitionNode,
-  // This determines whether the function looks up where the variable is declared
-  // vs where it was assigned its latest value
-  lookupOriginalDeclaration: boolean = false
-): DefinitionNode | void {
-  if (!isInLoc(line, col, node.enclosingLoc as es.SourceLocation)) {
-    return undefined
-  }
-
-  const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
-    .filter(child => child.name === variableName)
-    // If the lookupOriginalDeclaration is true, we only search for the original declaration
-    // of the variable. Redefinitions of let variables are hence excluded
-    .filter(child => (lookupOriginalDeclaration ? child.isDeclaration : true))
-    // Only get definitions before the current cursor location
-    .filter(child =>
-      child.loc
-        ? child.loc.start.line < line ||
-          (child.loc.start.line === line && child.loc.start.column <= col)
-        : false
-    )
-  // Grab the latest definition
-  currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
-  const blockToRecurse = node.children
-    .filter(isBlockFrame)
-    .filter(block => isInLoc(line, col, block.enclosingLoc as es.SourceLocation))
-
-  if (blockToRecurse.length > 1) {
-    throw new Error('Variable is part of more than one child block. This should never happen.')
-  }
-
-  return blockToRecurse.length === 1
-    ? lookupDefinition(
-        variableName,
-        line,
-        col,
-        blockToRecurse[0],
-        currentDefinition,
-        lookupOriginalDeclaration
-      )
-    : currentDefinition
-}
-
 // This function works by first searching for closest declaration of that variable in the parent scopes
 // Then, using the block where the node is found as the root, recurse on the children and get all
 // usages of the variable there
-export function getAllOccurrencesInScope(
-  target: string,
-  line: number,
-  col: number,
-  program: es.Program
+export function getAllOccurrencesInScopeHelper(
+  definitionLocation: es.SourceLocation,
+  program: es.Program,
+  target: string
 ): es.SourceLocation[] {
   const lookupTree = scopeVariables(program)
   // Find closest declaration of node.
-  const defNode = lookupDefinition(target, line, col, lookupTree, undefined, true)
-  if (defNode == null || defNode.loc == null) {
-    return []
-  }
-  const defLoc = defNode.loc
-  const block = getBlockFromLoc(defLoc, lookupTree)
+  const block = getBlockFromLoc(definitionLocation, lookupTree)
   const identifiers = getAllIdentifiers(program, target)
   // Recurse on teh children
   const nestedBlocks = block.children.filter(isBlockFrame)
@@ -426,29 +372,6 @@ function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFram
     return -1
   } else {
     return x.loc.start.column - y.loc.start.column
-  }
-}
-
-// This checks if a given (line, col) value is part of another node.
-function isInLoc(line: number, col: number, location: es.SourceLocation): boolean {
-  if (location == null) {
-    return false
-  }
-
-  if (location.start.line < line && location.end.line > line) {
-    return true
-  } else if (location.start.line === line && location.end.line > line) {
-    return location.start.column <= col
-  } else if (location.start.line < line && location.end.line === line) {
-    return location.end.column >= col
-  } else if (location.start.line === line && location.end.line === line) {
-    if (location.start.column <= col && location.end.column >= col) {
-      return true
-    } else {
-      return false
-    }
-  } else {
-    return false
   }
 }
 
