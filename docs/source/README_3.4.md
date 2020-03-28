@@ -31,17 +31,22 @@ order. Click on a name to see how it is used.
     </li>
   </ul>
 
-## What can you do in Source §3?
+## What can you do in Source §3.4?
 
 You can use all features of
 <a href="../source_3/">Source §3</a> and all
 features that are introduced in
-<a href="https://sicp.comp.nus.edu.sg/chapters/47">chapter 3</a> of the
+<a href="https://sicp.comp.nus.edu.sg/chapters/65">chapter 3.4</a> of the
 textbook.
-Below are the features that Source §3.4 changes from Source §3.
+Below are the features that Source §3.4 adds to Source §3.
 
-### Limitations
-All programs return undefined
+### Concurrency
+To introduce concurrency into your programs, you can use the
+functions in the <a href="../CONCURRENCY/">CONCURRENCY</a> group
+of predeclared functions, already mentioned above. All programs
+run in Source §3.4 are concurrent programs, and they return
+`undefined`.
+
 No prompt
 
 ###
@@ -50,7 +55,7 @@ No prompt
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3.pdf">Specification of Source §3</a>. Feel free to
+<a href="../source_3.4.pdf">Specification of Source §3.4</a>. Feel free to
 take a peek!
 
 
