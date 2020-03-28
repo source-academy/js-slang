@@ -27,7 +27,6 @@ export function scopeVariables(
   const forStatements = getForStatements(program.body)
   const ifStatements = getIfStatements(program.body)
   const whileStatements = getWhileStatements(program.body)
-  const assignmentStatements = getAssignmentStatements(program.body)
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement)
   ) as es.VariableDeclaration[]
@@ -51,9 +50,6 @@ export function scopeVariables(
   const functionDefinitionNodes = functionDeclarations.map(declaration => declaration.definition)
   const functionBodyNodes = functionDeclarations.map(declaration => declaration.body)
 
-  const variableAssignmentNodes = assignmentStatements.map(statement =>
-    scopeAssignmentStatement(statement)
-  )
   const variableDefinitionNodes = variableStatements.map(statement =>
     scopeVariableDeclaration(statement)
   )
@@ -78,7 +74,6 @@ export function scopeVariables(
   block.children = [
     ...variableDefinitionNodes,
     ...functionDefinitionNodes,
-    ...variableAssignmentNodes,
     ...functionBodyNodes,
     ...arrowFunctionNodes,
     ...ifStatementNodes,
@@ -125,17 +120,6 @@ export function scopeFunctionDeclaration(
   body.children = [...parameters, ...body.children]
   // Treat function parameters as definitions in the function body, since their scope is limited to the body.
   return { definition, body }
-}
-
-function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode {
-  return {
-    name: ((node.expression as es.AssignmentExpression).left as es.Identifier).name,
-    type: 'DefinitionNode',
-    // assignmentStatements are usually found when assigning new values to let variables
-    // This node represents the latest value of the current variable
-    isDeclaration: false,
-    loc: ((node.expression as es.AssignmentExpression).left as es.Identifier).loc
-  }
 }
 
 function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
@@ -312,16 +296,6 @@ function getDeclarationStatements(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
   )
-}
-
-function getAssignmentStatements(
-  nodes: (es.Statement | es.ModuleDeclaration)[]
-): es.ExpressionStatement[] {
-  return nodes.filter(
-    statement =>
-      statement.type === 'ExpressionStatement' &&
-      statement.expression.type === 'AssignmentExpression'
-  ) as es.ExpressionStatement[]
 }
 
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {

@@ -185,11 +185,7 @@ export function getAllOccurrencesInScope(
     return []
   }
   const declarationNode = findDeclarationNode(program, identifierNode)
-  if (
-    declarationNode == null ||
-    identifierNode === declarationNode ||
-    declarationNode.loc == null
-  ) {
+  if (declarationNode == null || declarationNode.loc == null) {
     return []
   }
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)

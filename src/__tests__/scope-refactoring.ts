@@ -66,15 +66,14 @@ const variableDefinitionTests = [
       target = 2;
       target + 99;
     `,
-    [new Target('target', 3, 3), new Target('MISSING', 3, 3)]
+    [new Target('target', 3, 3)]
   )
 ]
 
 const functionScopeTests = [
   new CodeTest(
     'Test 1',
-    `
-      let target = 1;
+    `let target = 1;
       target = 2;
       function test(target) {
         const x = 3;
@@ -84,7 +83,7 @@ const functionScopeTests = [
         }
       }
     `,
-    [new Target('target', 7, 7), new Target('target', 5, 6)]
+    [new Target('target', 7, 3), new Target('target', 1, 6)]
   )
 ]
 
@@ -99,7 +98,7 @@ const arrowFunctionScopeTests = [
         const nestedArrowFn = (y) => (target) => 1 + target;
       }
     `,
-    [new Target('target', 5, 53)]
+    [new Target('target', 5, 48)]
   )
 ]
 
@@ -116,7 +115,7 @@ const conditionalsLoopsTests = [
         target = 99999;
       }
     `,
-    [new Target('target', 5, 7)]
+    [new Target('target', 5, 2)]
   ),
   new CodeTest(
     'Test 2',
@@ -126,7 +125,7 @@ const conditionalsLoopsTests = [
         target += 99;
       }
     `,
-    [new Target('target', 3, 5), new Target('target', 2, 13), new Target('i', 5, 2)]
+    [new Target('target', 3, 5), new Target('target', 2, 11), new Target('i', 5, 2)]
   ),
   new CodeTest(
     'Test 3',
