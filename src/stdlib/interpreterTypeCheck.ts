@@ -1,5 +1,4 @@
-import { Context, Value } from '../types'
-import { stringify } from '../utils/stringify'
+import { Value } from '../types'
 
 export function is_number(v: Value) {
   return typeof v === 'number'
@@ -27,20 +26,20 @@ export function is_boolean(xs: Value) {
  * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: string, radix: number) {
-    if (
-      typeof str === 'string' &&
-      typeof radix === 'number' &&
-      Number.isInteger(radix) &&
-      2 <= radix &&
-      radix <= 36
-    ) {
-      return parseInt(str, radix)
-    } else {
-      throw new Error(
-        'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
-      )
-    }
+  if (
+    typeof str === 'string' &&
+    typeof radix === 'number' &&
+    Number.isInteger(radix) &&
+    2 <= radix &&
+    radix <= 36
+  ) {
+    return parseInt(str, radix)
+  } else {
+    throw new Error(
+      'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    )
   }
+}
 
 /* Not supported in Lazy Evaluation
 

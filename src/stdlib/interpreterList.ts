@@ -14,7 +14,7 @@ interface NonEmptyList extends Pair<any, any> {}
 function array_test(x: any) {
   if (isInterpreterThunk(x)) {
     // Unwrap the thunk to expose the actual argument.
-    let it = evaluateThunk(x, x.context)
+    const it = evaluateThunk(x, x.context)
     let result = it.next()
     while (!result.done) {
       result = it.next()
@@ -44,7 +44,7 @@ export function pair<H, T>(x: H, xs: T): Pair<H, T> {
 export function is_pair(x: any) {
   if (isInterpreterThunk(x)) {
     // Unwrap the thunk to expose the actual argument.
-    let it = evaluateThunk(x, x.context)
+    const it = evaluateThunk(x, x.context)
     let result = it.next()
     while (!result.done) {
       result = it.next()
@@ -61,7 +61,7 @@ export function is_pair(x: any) {
 export function head(xs: any) {
   if (isInterpreterThunk(xs)) {
     // Unwrap the thunk to expose the actual argument.
-    let it = evaluateThunk(xs, xs.context)
+    const it = evaluateThunk(xs, xs.context)
     let result = it.next()
     while (!result.done) {
       result = it.next()
@@ -82,7 +82,9 @@ export function head(xs: any) {
       // }
       return result.value[0]
     } else {
-      throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(result.value))
+      throw new Error(
+        'head(xs) expects a pair as argument xs, but encountered ' + stringify(result.value)
+      )
     }
   } else {
     if (is_pair(xs)) {
@@ -99,7 +101,7 @@ export function head(xs: any) {
 export function tail(xs: any) {
   if (isInterpreterThunk(xs)) {
     // Unwrap the thunk to expose the actual argument.
-    let it = evaluateThunk(xs, xs.context)
+    const it = evaluateThunk(xs, xs.context)
     let result = it.next()
     while (!result.done) {
       result = it.next()
@@ -120,7 +122,9 @@ export function tail(xs: any) {
       // }
       return result.value[1]
     } else {
-      throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(result.value))
+      throw new Error(
+        'tail(xs) expects a pair as argument xs, but encountered ' + stringify(result.value)
+      )
     }
   } else {
     if (is_pair(xs)) {
@@ -136,7 +140,7 @@ export function tail(xs: any) {
 export function is_null(xs: any) {
   if (isInterpreterThunk(xs)) {
     // Unwrap the thunk to expose the arg.
-    let it = evaluateThunk(xs, xs.context)
+    const it = evaluateThunk(xs, xs.context)
     let result = it.next()
     while (!result.done) {
       result = it.next()

@@ -32,7 +32,11 @@ export function getThunkedArgs(context: Context, call: es.CallExpression) {
  * @param node The Node to be thunked
  * @param environment The environment to run the statement in
  */
-export function createThunk(node: es.Node, environment: Environment, context: Context): InterpreterThunk {
+export function createThunk(
+  node: es.Node,
+  environment: Environment,
+  context: Context
+): InterpreterThunk {
   return {
     type: thunkStringType,
     value: node,

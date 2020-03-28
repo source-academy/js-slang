@@ -285,7 +285,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     //     return node.value
     //   }
     // } else {
-      
+
     // }
     return node.value
   },
@@ -322,7 +322,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   Identifier: function*(node: es.Identifier, context: Context) {
     console.log('Identifier')
-    let result = getVariable(context, node.name)
+    const result = getVariable(context, node.name)
     if (lazyEvaluate(context)) {
       if (isInterpreterThunk(result) && result.isEvaluated) {
         console.log('already memoized. returning actual value')

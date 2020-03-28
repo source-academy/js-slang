@@ -645,8 +645,8 @@ function transformToForceLastStatement(program: es.Program) {
   const statements = program.body as es.Statement[]
   const lastIndex = statements.length - 1
   const lastStatement = statements[lastIndex]
-  if (lastStatement.type === "ExpressionStatement") {
-    const ls = lastStatement as es.ExpressionStatement;
+  if (lastStatement.type === 'ExpressionStatement') {
+    const ls = lastStatement as es.ExpressionStatement
     ls.expression = create.forceEagerEvaluationOfLazyExpression(ls.expression)
   }
 }
@@ -850,7 +850,7 @@ export function transpile(
     transformValuesToThunks(program)
     transformSideEffectStatementsToEvaluateEagerly(program)
     transformIdentifiersToThunks(program)
-    transformToForceLastStatement(program);
+    transformToForceLastStatement(program)
   } else {
     // can't really execute proper tail calls on thunked expressions
     transformReturnStatementsToAllowProperTailCalls(program)
