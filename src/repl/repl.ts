@@ -37,7 +37,7 @@ function startRepl(
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash
           writer: output =>
-            output.toString !== Object.prototype.toString
+            output != null && output.toString !== Object.prototype.toString()
               ? output.toString()
               : util.inspect(output, {
                   depth: 1000,
