@@ -2,6 +2,8 @@
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AsyncScheduler } from './schedulers'
+import * as interpreterLazyS2 from './stdlib/interpreterLazyS2'
+import * as interpreterLazyS1 from './stdlib/interpreterLazyS1'
 import * as lazy from './stdlib/lazy'
 import * as list from './stdlib/list'
 import * as lazyList from './stdlib/lazyList'
@@ -16,7 +18,8 @@ import { Context, CustomBuiltIns, Value } from './types'
 import * as lazyOperators from './utils/lazyOperators'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-import { lazyEvaluateInTranspiler, lazyEvaluateInChapter } from './lazyContext'
+import lazyEvaluate, { lazyEvaluateInChapter } from './lazyContext'
+import { isNativeRunnable } from './index'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -132,6 +135,17 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
+  if (lazyEvaluate(context)) {
+    defineBuiltin(context, 'is_object(val)', misc.is_object)
+    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
+    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
+    defineBuiltin(context, 'alert(val)', alert)
+    // tslint:disable-next-line:ban-types
+    defineBuiltin(context, 'timed(fun)', (f: Function) =>
+      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
+    )
+  }
+
   if (context.chapter >= 1) {
     defineBuiltin(context, 'runtime()', misc.runtime)
     defineBuiltin(context, 'display(val)', display)
@@ -139,13 +153,36 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'stringify(val)', stringify)
     defineBuiltin(context, 'error(str)', misc.error_message)
     defineBuiltin(context, 'prompt(str)', prompt)
-    if (!lazyEvaluateInTranspiler(context)) {
+    if (!lazyEvaluate(context)) {
       defineBuiltin(context, 'is_number(val)', misc.is_number)
       defineBuiltin(context, 'is_string(val)', misc.is_string)
       defineBuiltin(context, 'is_function(val)', misc.is_function)
       defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
       defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
       defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+    } else {
+      if (isNativeRunnable) { // Uses Transpiler (Lazy)
+        defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
+        defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
+        // source 1 primitive functions
+        defineBuiltin(context, 'is_number(val)', lazyTypeCheck.is_number)
+        defineBuiltin(context, 'is_string(val)', lazyTypeCheck.is_string)
+        defineBuiltin(context, 'is_function(val)', lazyTypeCheck.is_function)
+        defineBuiltin(context, 'is_boolean(val)', lazyTypeCheck.is_boolean)
+        defineBuiltin(context, 'is_undefined(val)', lazyTypeCheck.is_undefined)
+        defineBuiltin(context, 'parse_int(str, radix)', (str: Value, radix: Value) =>
+          misc.parse_int(lazy.force(str), lazy.force(radix))
+        )
+      } else { // Uses Interpreter (Lazy)
+        defineBuiltin(context, 'force(val)', interpreterLazyS1.force)
+        defineBuiltin(context, 'is_thunk(val)', interpreterLazyS1.is_thunk)
+        defineBuiltin(context, 'is_number(val)', interpreterLazyS1.is_number)
+        defineBuiltin(context, 'is_string(val)', interpreterLazyS1.is_string)
+        defineBuiltin(context, 'is_function(val)', interpreterLazyS1.is_function)
+        defineBuiltin(context, 'is_boolean(val)', interpreterLazyS1.is_boolean)
+        defineBuiltin(context, 'is_undefined(val)', interpreterLazyS1.is_undefined)
+        defineBuiltin(context, 'parse_int(str, radix)', interpreterLazyS1.parse_int)
+      }
     }
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
@@ -157,18 +194,42 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
   }
 
-  if (!lazyEvaluateInTranspiler(context) && context.chapter >= 2) {
-    // List library
-    defineBuiltin(context, 'pair(left, right)', list.pair)
-    defineBuiltin(context, 'is_pair(val)', list.is_pair)
-    defineBuiltin(context, 'head(xs)', list.head)
-    defineBuiltin(context, 'tail(xs)', list.tail)
-    defineBuiltin(context, 'is_null(val)', list.is_null)
-    defineBuiltin(context, 'list(...values)', list.list)
-    defineBuiltin(context, 'draw_data(xs)', visualiseList)
+  if (context.chapter >= 2) {
+    if (!lazyEvaluate(context)) {
+      // List library
+      defineBuiltin(context, 'pair(left, right)', list.pair)
+      defineBuiltin(context, 'is_pair(val)', list.is_pair)
+      defineBuiltin(context, 'head(xs)', list.head)
+      defineBuiltin(context, 'tail(xs)', list.tail)
+      defineBuiltin(context, 'is_null(val)', list.is_null)
+      defineBuiltin(context, 'list(...values)', list.list)
+      defineBuiltin(context, 'draw_data(xs)', visualiseList)
+    } else {
+      if (isNativeRunnable) {
+        // lazy list library for transpiler
+        defineBuiltin(context, 'pair(left, right)', lazyList.pair)
+        defineBuiltin(context, 'is_pair(val)', lazyList.is_pair)
+        defineBuiltin(context, 'head(xs)', lazyList.head)
+        defineBuiltin(context, 'tail(xs)', lazyList.tail)
+        defineBuiltin(context, 'is_null(val)', lazyTypeCheck.is_null)
+        defineBuiltin(context, 'list(...values)', lazyList.list)
+        defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
+          externalBuiltIns.visualiseList(lazy.force(v), context.externalContext)
+        )
+      } else {
+        // lazy list library for interpreter
+        defineBuiltin(context, 'pair(left, right)', interpreterLazyS2.pair)
+        defineBuiltin(context, 'is_pair(val)', interpreterLazyS2.is_pair)
+        defineBuiltin(context, 'head(xs)', interpreterLazyS2.head)
+        defineBuiltin(context, 'tail(xs)', interpreterLazyS2.tail)
+        defineBuiltin(context, 'is_null(val)', interpreterLazyS2.is_null)
+        defineBuiltin(context, 'list(...values)', interpreterLazyS2.list)
+        defineBuiltin(context, 'draw_data(xs)', visualiseList)
+      }
+    }
   }
 
-  if (context.chapter >= 3) {
+  if (context.chapter >= 3 && !lazyEvaluate(context)) {
     defineBuiltin(context, 'set_head(xs, val)', list.set_head)
     defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
     defineBuiltin(context, 'array_length(arr)', misc.array_length)
@@ -180,7 +241,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 
-  if (context.chapter >= 4) {
+  if (context.chapter >= 4 && !lazyEvaluate(context)) {
     defineBuiltin(context, 'parse(program_string)', (str: string) =>
       parser.parse(str, createContext(context.chapter))
     )
@@ -192,40 +253,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     )
   }
 
-  if (context.chapter >= 100) {
-    defineBuiltin(context, 'is_object(val)', misc.is_object)
-    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
-    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
-    defineBuiltin(context, 'alert(val)', alert)
-    // tslint:disable-next-line:ban-types
-    defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
-    )
-  }
 
-  if (lazyEvaluateInTranspiler(context)) {
-    defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
-    defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
-    // source 1 primitive functions
-    defineBuiltin(context, 'is_number(val)', lazyTypeCheck.is_number)
-    defineBuiltin(context, 'is_string(val)', lazyTypeCheck.is_string)
-    defineBuiltin(context, 'is_function(val)', lazyTypeCheck.is_function)
-    defineBuiltin(context, 'is_boolean(val)', lazyTypeCheck.is_boolean)
-    defineBuiltin(context, 'is_undefined(val)', lazyTypeCheck.is_undefined)
-    defineBuiltin(context, 'parse_int(str, radix)', (str: Value, radix: Value) =>
-      misc.parse_int(lazy.force(str), lazy.force(radix))
-    )
-    // lazy list library
-    defineBuiltin(context, 'pair(left, right)', lazyList.pair)
-    defineBuiltin(context, 'is_pair(val)', lazyList.is_pair)
-    defineBuiltin(context, 'head(xs)', lazyList.head)
-    defineBuiltin(context, 'tail(xs)', lazyList.tail)
-    defineBuiltin(context, 'is_null(val)', lazyTypeCheck.is_null)
-    defineBuiltin(context, 'list(...values)', lazyList.list)
-    defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
-      externalBuiltIns.visualiseList(lazy.force(v), context.externalContext)
-    )
-  }
 }
 
 function importPrelude(context: Context) {

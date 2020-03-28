@@ -12,6 +12,25 @@ import { Context, InterpreterThunk, Environment, Value } from '../types'
 
 export const thunkStringType = 'Thunk'
 
+const mathLib = Object.getOwnPropertyNames(Math).map(prop => 'math_' + prop)
+
+// List of built-in functions that will not be evaluated lazily.
+export const eagerFunctions =
+[ ...mathLib,
+  'runtime',
+  'display',
+  'raw_display',
+  'stringify',
+  'error',
+  'prompt',
+  'alert',
+  'has_own_property',
+  'timed',
+  'is_object',
+  'is_NaN',
+  'draw_data'
+]
+
 /**
  * Gets the thunked arguments from a lazy evaluated
  * Source function
@@ -68,7 +87,7 @@ export function isInterpreterThunk(v: any): boolean {
   )
 }
 
-// Evaluates thunk and memoize.
+// Evaluates thunks recursively until a value is obtained and memoize.
 export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
   if (thunk.isEvaluated) {
     return thunk.actualValue
@@ -95,6 +114,25 @@ export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
     // Mark this thunk as 'evaluated' and memoize its value.
     thunk.isEvaluated = true
     thunk.actualValue = result
+    return result
+  }
+}
+
+// Evaluates a thunk once without memoizing.
+export function* evaluateThunkOnce(thunk: InterpreterThunk, context: Context): any {
+  if (thunk.isEvaluated) {
+    return thunk.actualValue
+  } else {
+    // Use the thunk's environment (on creation) to evaluate it.
+    const thunkEnv: Environment = thunk.environment as Environment
+    pushEnvironment(context, thunkEnv)
+
+    let result: Value = yield* evaluate(thunk.value, context)
+
+    if (result instanceof ReturnValue) {
+      result = result.value
+    }
+    popEnvironment(context)
     return result
   }
 }

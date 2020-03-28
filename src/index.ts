@@ -121,15 +121,16 @@ function convertNativeErrorToSourceError(
 }
 
 let previousCode = ''
+let isNativeRunnable: boolean
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
-  let isNativeRunnable
+  let isNative
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
       if (verboseErrors) {
-        isNativeRunnable = false
+        isNative = false
       } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
+        isNative = false
       } else {
         let hasDeuggerStatement = false
         simple(program, {
@@ -137,16 +138,16 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
             hasDeuggerStatement = true
           }
         })
-        isNativeRunnable = !hasDeuggerStatement
+        isNative = !hasDeuggerStatement
       }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+      context.executionMethod = isNative ? 'native' : 'interpreter'
     } else {
-      isNativeRunnable = context.executionMethod === 'native'
+      isNative = context.executionMethod === 'native'
     }
   } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
+    isNative = theOptions.executionMethod === 'native'
   }
-  return isNativeRunnable
+  return isNative
 }
 
 export async function runInContext(
@@ -182,13 +183,14 @@ export async function runInContext(
       value: steps.map(codify)
     } as Result)
   }
-  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+  isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
     await runInContext(prelude, context, options)
     return runInContext(code, context, options)
   }
+  context.chapter = 100 // TEMPORARY: to force program in lazy mode when using cadet frontend.
   if (isNativeRunnable) {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -278,4 +280,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine }
+export { createContext, Context, Result, setBreakpointAtLine, isNativeRunnable }

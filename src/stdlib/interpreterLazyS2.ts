@@ -1,5 +1,6 @@
 import { stringify } from '../utils/stringify'
-import { isInterpreterThunk, evaluateThunk } from '../interpreter/lazyInterpreter'
+import { isInterpreterThunk } from '../interpreter/lazyInterpreter'
+import { force, force_once } from './interpreterLazyS1'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
@@ -13,16 +14,11 @@ interface NonEmptyList extends Pair<any, any> {}
 // the Firefox environment (especially Web Console)
 function array_test(x: any) {
   if (isInterpreterThunk(x)) {
-    // Unwrap the thunk to expose the actual argument.
-    const it = evaluateThunk(x, x.context)
-    let result = it.next()
-    while (!result.done) {
-      result = it.next()
-    }
+    const result = force_once(x)
     if (Array.isArray === undefined) {
-      return result.value instanceof Array
+      return result instanceof Array
     } else {
-      return Array.isArray(result.value)
+      return Array.isArray(result)
     }
   } else {
     if (Array.isArray === undefined) {
@@ -43,13 +39,8 @@ export function pair<H, T>(x: H, xs: T): Pair<H, T> {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_pair(x: any) {
   if (isInterpreterThunk(x)) {
-    // Unwrap the thunk to expose the actual argument.
-    const it = evaluateThunk(x, x.context)
-    let result = it.next()
-    while (!result.done) {
-      result = it.next()
-    }
-    return array_test(result.value) && result.value.length === 2
+    const result = force_once(x)
+    return array_test(result) && result.length === 2
   } else {
     return array_test(x) && x.length === 2
   }
@@ -60,30 +51,17 @@ export function is_pair(x: any) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function head(xs: any) {
   if (isInterpreterThunk(xs)) {
-    // Unwrap the thunk to expose the actual argument.
-    const it = evaluateThunk(xs, xs.context)
-    let result = it.next()
-    while (!result.done) {
-      result = it.next()
-    }
-    if (result.value !== null && is_pair(result.value)) {
+    const result = force(xs)
+    if (result !== null && is_pair(result)) {
       // If head is a thunk, force its value.
-      // Uncommenting these lines will return the forced value instead of a thunk when calling head().
-      // if (isInterpreterThunk(result.value[0])) {
-      //   // Evaluate the thunk to obtain the actual value.
-      //   it = evaluateThunk(result.value[0], result.value[0].context)
-      //   result = it.next()
-      //   while (!result.done) {
-      //     result = it.next()
-      //   }
-      //   return result.value
-      // } else {
-      //   return result.value[0]
-      // }
-      return result.value[0]
+      if (result[0] !== null && isInterpreterThunk(result[0])) {
+        return force(result[0])
+      } else {
+        return result[0]
+      }
     } else {
       throw new Error(
-        'head(xs) expects a pair as argument xs, but encountered ' + stringify(result.value)
+        'head(xs) expects a pair as argument xs, but encountered ' + stringify(result)
       )
     }
   } else {
@@ -100,30 +78,17 @@ export function head(xs: any) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function tail(xs: any) {
   if (isInterpreterThunk(xs)) {
-    // Unwrap the thunk to expose the actual argument.
-    const it = evaluateThunk(xs, xs.context)
-    let result = it.next()
-    while (!result.done) {
-      result = it.next()
-    }
-    if (result.value !== null && is_pair(result.value)) {
+    const result = force(xs)
+    if (result !== null && is_pair(result)) {
       // If tail is a thunk, force its value.
-      // Uncommenting these lines will return the actual value instead of a thunk when calling tail().
-      // if (isInterpreterThunk(result.value[1])) {
-      //   // Evaluate the thunk to obtain the actual value.
-      //   it = evaluateThunk(result.value[1], result.value[1].context)
-      //   result = it.next()
-      //   while (!result.done) {
-      //     result = it.next()
-      //   }
-      //   return result.value
-      // } else {
-      //   return result.value[1]
-      // }
-      return result.value[1]
+      if (result[1] !== null && isInterpreterThunk(result[1])) {
+        return force(result[1])
+      } else {
+        return result[1]
+      }
     } else {
       throw new Error(
-        'tail(xs) expects a pair as argument xs, but encountered ' + stringify(result.value)
+        'tail(xs) expects a pair as argument xs, but encountered ' + stringify(result)
       )
     }
   } else {
@@ -139,13 +104,8 @@ export function tail(xs: any) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_null(xs: any) {
   if (isInterpreterThunk(xs)) {
-    // Unwrap the thunk to expose the arg.
-    const it = evaluateThunk(xs, xs.context)
-    let result = it.next()
-    while (!result.done) {
-      result = it.next()
-    }
-    return result.value === null
+    const result = force_once(xs)
+    return result === null
   } else {
     return xs === null
   }
