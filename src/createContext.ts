@@ -206,6 +206,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (lazyEvaluateInTranspiler(context)) {
     defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
     defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
+    defineBuiltin(context, lazy.nameOfForcePairFunction + '(expression)', lazy.force_pair)
     // source 1 primitive functions
     defineBuiltin(context, 'is_number(val)', lazyTypeCheck.is_number)
     defineBuiltin(context, 'is_string(val)', lazyTypeCheck.is_string)

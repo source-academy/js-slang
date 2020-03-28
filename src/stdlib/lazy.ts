@@ -2,6 +2,7 @@ import { typeOf } from '../utils/typeOf'
 import { Expression } from 'estree'
 import { CallingNonFunctionValue, ExceptionError, InvalidNumberOfArguments } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { is_pair, set_head, set_tail, head, tail } from './list'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -168,6 +169,42 @@ export function force_once(expression: any) {
 export const nameOfForceOnceFunction = force_once.name
 
 /**
+ * Primitive function in Lazy Source.
+ * Given a pair, forces the pair's head and tail to
+ * be evaluated fully. Normally, force and force_once
+ * will leave pairs of thunks as final values, but
+ * force_pair will attempt to force evaluation of the
+ * head and tail as well, such that the result is
+ * similar to eager evaluation of that pair.
+ *
+ * force_pair works for lists and trees, because if the head
+ * or tail of a pair also evaluates to a pair, that pair's
+ * head and tail will be evaluated fully as well.
+ *
+ * @param expression The expression to be evaluated.
+ */
+export function force_pair(expression: any) {
+  // avoids multiple arguments given to force_pair
+  if (arguments.length !== force_pair.length) {
+    throw new InvalidNumberOfArgumentsInForce(
+      force_pair.length,
+      arguments.length,
+      nameOfForcePairFunction
+    )
+  }
+  const initialForce = evaluateLazyValue(expression);
+  if (is_pair(initialForce)) {
+    // need to force_pair for lists and trees
+    set_head(initialForce, force_pair(head(initialForce)));
+    set_tail(initialForce, force_pair(tail(initialForce)));
+  }
+  return initialForce;
+}
+
+// name of the forcePair function
+export const nameOfForcePairFunction = force_pair.name
+
+/**
  * (NOT a primitive function in Lazy Source)
  * Given a function name reference, check if this name
  * refers to an eagerly evaluated function in Lazy
@@ -176,7 +213,8 @@ export const nameOfForceOnceFunction = force_once.name
  * @param name The function name as a string.
  */
 export function functionShouldBeEagerlyEvaluated(name: string) {
-  return name === nameOfForceFunction || name === nameOfForceOnceFunction
+  return name === nameOfForceFunction || name === nameOfForceOnceFunction ||
+    name === nameOfForcePairFunction
 }
 
 /**
