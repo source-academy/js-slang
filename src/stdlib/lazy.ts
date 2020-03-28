@@ -192,13 +192,13 @@ export function force_pair(expression: any) {
       nameOfForcePairFunction
     )
   }
-  const initialForce = evaluateLazyValue(expression);
+  const initialForce = evaluateLazyValue(expression)
   if (is_pair(initialForce)) {
     // need to force_pair for lists and trees
-    set_head(initialForce, force_pair(head(initialForce)));
-    set_tail(initialForce, force_pair(tail(initialForce)));
+    set_head(initialForce, force_pair(head(initialForce)))
+    set_tail(initialForce, force_pair(tail(initialForce)))
   }
-  return initialForce;
+  return initialForce
 }
 
 // name of the forcePair function
@@ -213,8 +213,11 @@ export const nameOfForcePairFunction = force_pair.name
  * @param name The function name as a string.
  */
 export function functionShouldBeEagerlyEvaluated(name: string) {
-  return name === nameOfForceFunction || name === nameOfForceOnceFunction ||
+  return (
+    name === nameOfForceFunction ||
+    name === nameOfForceOnceFunction ||
     name === nameOfForcePairFunction
+  )
 }
 
 /**
