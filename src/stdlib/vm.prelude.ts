@@ -610,6 +610,13 @@ export const PRIMITIVE_FUNCTION_NAMES = [
 
 export const VARARGS_NUM_ARGS = -1
 
+// name, opcode, number of arguments, has return value
+export const INTERNAL_FUNCTIONS: [string, OpCodes, number, boolean][] = [
+  ['test_and_set', OpCodes.TEST_AND_SET, 1, true],
+  ['clear', OpCodes.CLEAR, 1, false],
+  ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS, false]
+]
+
 // for each function, replace a specified opcode with another opcode
 const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['display', OpCodes.MODG, OpCodes.DISPLAY],
@@ -685,13 +692,6 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['undefined', undefined],
   ['Infinity', Infinity],
   ['NaN', NaN]
-]
-
-// name, opcode, number of args
-export const CONCURRENCY_PRIMITIVES: [string, number, number][] = [
-  ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS],
-  ['test_and_set', OpCodes.TEST_AND_SET, 0],
-  ['clear', OpCodes.CLEAR, 0]
 ]
 
 // helper functions to generate machine code

@@ -430,6 +430,8 @@ Object {
   "alertResult": Array [],
   "code": "const x = [1,2];
 const f = () => {};
+const y = test_and_set;
+const z = list;
 display(undefined === undefined &&
 null === null &&
 null !== undefined &&
@@ -445,6 +447,9 @@ f !== (() => {}) &&
 'stringa' === 'stringa' &&
 'stringa' !== 'stringb' &&
 true !== null &&
+y !== z &&
+z === list &&
+y === test_and_set &&
 0 !== \\"0\\");",
   "displayResult": Array [
     "true",
@@ -961,6 +966,28 @@ display(x);",
 }
 `;
 
+exports[`standard program execution closures declared in for loops work: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = null;
+f = () => { display(-1); };
+for(let i = 0; i < 5; i = i + 1) {
+  if (i === 3) {
+    f = () => { display(i); };
+  } else {}
+}
+f();",
+  "displayResult": Array [
+    "3",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution const assignment throws error: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1175,6 +1202,41 @@ display(eval_stream(s, 10));",
 }
 `;
 
+exports[`standard program execution tail call for internal functions work: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return test_and_set(list(true));
+}
+display(f());",
+  "displayResult": Array [
+    "true",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution treat internal functions as first-class: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = test_and_set;
+const xs = list(false);
+display(x(xs));",
+  "displayResult": Array [
+    "false",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution treat primitive functions as first-class: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -1187,6 +1249,36 @@ display(x(1,2));",
   "parsedErrors": "",
   "result": undefined,
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution wrong number of arguments for internal functions throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = list(false);
+test_and_set(x, 1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;

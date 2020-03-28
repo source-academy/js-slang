@@ -7,7 +7,7 @@ import {
   generatePrimitiveFunctionCode,
   PRIMITIVE_FUNCTION_NAMES,
   CONSTANT_PRIMITIVES,
-  CONCURRENCY_PRIMITIVES
+  INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
 import { parse } from '../parser/parser'
@@ -129,13 +129,19 @@ function toCompileTaskIndexTable(toCompileTask: CompileTask): Map<string, EnvEnt
 function makeEmptyIndexTable(): Map<string, EnvEntry>[] {
   return []
 }
-function makeIndexTableWithPrimitives(): Map<string, EnvEntry>[] {
-  const primitives = new Map<string, EnvEntry>()
+function makeIndexTableWithPrimitivesAndInternals(): Map<string, EnvEntry>[] {
+  const names = new Map<string, EnvEntry>()
   for (let i = 0; i < PRIMITIVE_FUNCTION_NAMES.length; i++) {
     const name = PRIMITIVE_FUNCTION_NAMES[i]
-    primitives.set(name, { index: i, isVar: false, isPrimitive: true })
+    names.set(name, { index: i, isVar: false, type: 'primitive' })
   }
-  return extendIndexTable(makeEmptyIndexTable(), primitives)
+  if (chapter === 3.4) {
+    for (let i = 0; i < INTERNAL_FUNCTIONS.length; i++) {
+      const name = INTERNAL_FUNCTIONS[i][0]
+      names.set(name, { index: i, isVar: false, type: 'internal' })
+    }
+  }
+  return extendIndexTable(makeEmptyIndexTable(), names)
 }
 function extendIndexTable(indexTable: Map<string, EnvEntry>[], names: Map<string, EnvEntry>) {
   return indexTable.concat([names])
@@ -145,8 +151,8 @@ function indexOf(indexTable: Map<string, EnvEntry>[], node: es.Identifier) {
   for (let i = indexTable.length - 1; i >= 0; i--) {
     if (indexTable[i].has(name)) {
       const envLevel = indexTable.length - 1 - i
-      const { index, isVar, isPrimitive } = indexTable[i].get(name)!
-      return { envLevel, index, isVar, isPrimitive }
+      const { index, isVar, type } = indexTable[i].get(name)!
+      return { envLevel, index, isVar, type }
     }
   }
   throw new UndefinedVariable(name, node)
@@ -155,6 +161,21 @@ function indexOf(indexTable: Map<string, EnvEntry>[], node: es.Identifier) {
 // a small complication: the toplevel function
 // needs to return the value of the last statement
 let toplevel = true
+
+const toplevelReturnNodes = new Set([
+  'Literal',
+  'UnaryExpression',
+  'BinaryExpression',
+  'CallExpression',
+  'Identifier',
+  'ArrayExpression',
+  'LogicalExpression',
+  'MemberExpression',
+  'AssignmentExpression',
+  'ArrowFunctionExpression',
+  'IfStatement',
+  'VariableDeclaration'
+])
 
 function continueToCompile() {
   while (toCompile.length !== 0) {
@@ -174,7 +195,7 @@ function continueToCompile() {
 interface EnvEntry {
   index: number
   isVar: boolean
-  isPrimitive: boolean
+  type?: 'primitive' | 'internal' // for functions
 }
 
 // extracts all name declarations within a function, and renames all shadowed names
@@ -201,7 +222,7 @@ function extractAndRenameNames(
       }
       const isVar = node.kind === 'let'
       const index = names.size
-      names.set(name, { index, isVar, isPrimitive: false })
+      names.set(name, { index, isVar })
     } else if (stmt.type === 'FunctionDeclaration') {
       const node = stmt as es.FunctionDeclaration
       let name = (node.id as es.Identifier).name
@@ -213,7 +234,7 @@ function extractAndRenameNames(
       }
       const isVar = false
       const index = names.size
-      names.set(name, { index, isVar, isPrimitive: false })
+      names.set(name, { index, isVar })
     }
   }
 
@@ -415,9 +436,11 @@ function compileStatements(
     }
     maxStackSize = Math.max(maxStackSize, curExprSize)
   }
-  if (statements.length === 0 && node.isFunctionBlock) {
+  if (statements.length === 0 && !node.isLoopBlock) {
     addNullaryInstruction(OpCodes.LGCU)
-    addNullaryInstruction(OpCodes.RETG)
+    if (insertFlag || node.isFunctionBlock) {
+      addNullaryInstruction(OpCodes.RETG)
+    }
     maxStackSize++
   }
   return { maxStackSize, insertFlag: false }
@@ -488,6 +511,7 @@ const compilers = {
       if (envLevel === 0) {
         addUnaryInstruction(OpCodes.STLG, index)
       } else {
+        // this should never happen
         addBinaryInstruction(OpCodes.STPG, index, envLevel)
       }
       addNullaryInstruction(OpCodes.LGCU)
@@ -517,28 +541,18 @@ const compilers = {
   ) {
     node = node as es.CallExpression
     let maxStackOperator = 0
-    let callType: 'normal' | 'primitive' | 'concurrent' = 'normal'
+    let callType: 'normal' | 'primitive' | 'internal' = 'normal'
     let callValue: any = NaN
     if (node.callee.type === 'Identifier') {
       const callee = node.callee as es.Identifier
-      try {
-        const { envLevel, index, isPrimitive } = indexOf(indexTable, callee)
-        if (isPrimitive) {
-          callType = 'primitive'
-          callValue = index
-        } else if (envLevel === 0) {
-          addUnaryInstruction(OpCodes.LDLG, index)
-        } else {
-          addBinaryInstruction(OpCodes.LDPG, index, envLevel)
-        }
-      } catch (error) {
-        // to accomodate concurrency constructs
-        const matches = CONCURRENCY_PRIMITIVES.filter(func => func[0] === error.name)
-        if (matches.length === 0 || chapter !== 3.4) {
-          throw error // propogate error if not a concurrency construct
-        }
-        callType = 'concurrent'
-        callValue = [matches[0][1], matches[0][2]] // array of [opcode, numargs]
+      const { envLevel, index, type } = indexOf(indexTable, callee)
+      if (type === 'primitive' || type === 'internal') {
+        callType = type
+        callValue = index
+      } else if (envLevel === 0) {
+        addUnaryInstruction(OpCodes.LDLG, index)
+      } else {
+        addBinaryInstruction(OpCodes.LDPG, index, envLevel)
       }
     } else {
       ;({ maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false))
@@ -552,17 +566,12 @@ const compilers = {
         callValue,
         node.arguments.length
       )
-    } else if (callType === 'concurrent') {
-      if (callValue[0] === OpCodes.TEST_AND_SET) {
-        addNullaryInstruction(callValue[0])
-      } else if (callValue[0] === OpCodes.CLEAR) {
-        addNullaryInstruction(callValue[0])
-        addNullaryInstruction(OpCodes.LGCU)
-      } else {
-        // variadic, for EXECUTE
-        addUnaryInstruction(callValue[0], node.arguments.length)
-        addNullaryInstruction(OpCodes.LGCU)
-      }
+    } else if (callType === 'internal') {
+      addBinaryInstruction(
+        isTailCallPosition ? OpCodes.CALLTV : OpCodes.CALLV,
+        callValue,
+        node.arguments.length
+      )
     } else {
       // normal call. only normal function calls have the function on the stack
       addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length)
@@ -658,7 +667,7 @@ const compilers = {
     for (let param of node.params) {
       param = param as es.Identifier
       const index = names.size
-      names.set(param.name, { index, isVar: true, isPrimitive: false })
+      names.set(param.name, { index, isVar: true })
     }
     extractAndRenameNames(bodyNode, names)
     const extendedIndexTable = extendIndexTable(indexTable, names)
@@ -676,14 +685,15 @@ const compilers = {
   Identifier(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Identifier
 
-    // undefined TODO: only use LGCU if lookup in environment fails
     let envLevel
     let index
-    let isPrimitive
+    let type
     try {
-      ;({ envLevel, index, isPrimitive } = indexOf(indexTable, node))
-      if (isPrimitive) {
+      ;({ envLevel, index, type } = indexOf(indexTable, node))
+      if (type === 'primitive') {
         addUnaryInstruction(OpCodes.NEWCP, index)
+      } else if (type === 'internal') {
+        addUnaryInstruction(OpCodes.NEWCV, index)
       } else if (envLevel === 0) {
         addUnaryInstruction(OpCodes.LDLG, index)
       } else {
@@ -889,25 +899,13 @@ function compile(
   // where return is not specified, there is an implicit "return undefined", which we do here.
   // Source programs should return the last evaluated statement, which is what toplevel handles.
   // TODO: Don't emit an unnecessary RETG after a tail call. (This is harmless, but wastes an instruction.)
+  // (There are unnecessary RETG for many cases at the top level)
   // TODO: Source programs should return last evaluated statement.
   if (newInsertFlag) {
     if (expr.type === 'ReturnStatement') {
       addNullaryInstruction(OpCodes.RETG)
-    } else if (
-      toplevel &&
-      (expr.type === 'Literal' ||
-        expr.type === 'UnaryExpression' ||
-        expr.type === 'BinaryExpression' ||
-        expr.type === 'CallExpression' ||
-        expr.type === 'Identifier' ||
-        expr.type === 'ArrayExpression' ||
-        expr.type === 'LogicalExpression' ||
-        expr.type === 'MemberExpression' ||
-        expr.type === 'AssignmentExpression' ||
-        expr.type === 'ArrowFunctionExpression' ||
-        expr.type === 'VariableDeclaration')
-    ) {
-      // Conditional expressions are already handled
+    } else if (toplevel && toplevelReturnNodes.has(expr.type)) {
+      // conditional expressions already handled
       addNullaryInstruction(OpCodes.RETG)
     } else if (
       expr.type === 'Program' ||
@@ -956,7 +954,7 @@ export function compileToIns(
   const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0 // GE + # primitive func
   SVMFunctions[topFunctionIndex] = topFunction
 
-  const extendedTable = extendIndexTable(makeIndexTableWithPrimitives(), locals)
+  const extendedTable = extendIndexTable(makeIndexTableWithPrimitivesAndInternals(), locals)
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
   return [0, SVMFunctions]
