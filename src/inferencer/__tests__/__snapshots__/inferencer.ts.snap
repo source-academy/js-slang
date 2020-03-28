@@ -1651,6 +1651,966 @@ Node {
 }
 `;
 
+exports[`Test operators and function application errors 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "end": 10,
+      "expression": Node {
+        "end": 9,
+        "left": Node {
+          "end": 4,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 2,
+            },
+          },
+          "raw": "1",
+          "start": 3,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": 1,
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 8,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 2,
+          },
+        },
+        "operator": "+",
+        "right": Node {
+          "end": 9,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 8,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 2,
+            },
+          },
+          "raw": "\\"\\"",
+          "start": 7,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": "",
+        },
+        "start": 3,
+        "typability": "Untypable",
+        "type": "BinaryExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "start": 3,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 19,
+      "expression": Node {
+        "argument": Node {
+          "end": 18,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 3,
+              "line": 3,
+            },
+          },
+          "raw": "true",
+          "start": 14,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 3,
+          },
+        },
+        "operator": "-",
+        "prefix": true,
+        "start": 13,
+        "typability": "Untypable",
+        "type": "UnaryExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 3,
+        },
+      },
+      "start": 13,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 30,
+      "expression": Node {
+        "end": 29,
+        "left": Node {
+          "end": 24,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 4,
+            },
+          },
+          "raw": "\\"\\"",
+          "start": 22,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": "",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 9,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 4,
+          },
+        },
+        "operator": "*",
+        "right": Node {
+          "end": 29,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 7,
+              "line": 4,
+            },
+          },
+          "raw": "\\"\\"",
+          "start": 27,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": "",
+        },
+        "start": 22,
+        "typability": "Untypable",
+        "type": "BinaryExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 4,
+        },
+      },
+      "start": 22,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 41,
+      "expression": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 38,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            ],
+            "returnType": Object {
+              "headType": Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              "kind": "pair",
+              "tailType": Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 6,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 6,
+            },
+          },
+          "name": "pair",
+          "start": 34,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 40,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 8,
+            "line": 6,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 6,
+          },
+        },
+        "start": 34,
+        "typability": "Untypable",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 6,
+        },
+      },
+      "start": 34,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 52,
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "end": 50,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 8,
+                "line": 7,
+              },
+              "start": Position {
+                "column": 7,
+                "line": 7,
+              },
+            },
+            "raw": "1",
+            "start": 49,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "end": 48,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            ],
+            "returnType": Object {
+              "headType": Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              "kind": "pair",
+              "tailType": Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 7,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 7,
+            },
+          },
+          "name": "pair",
+          "start": 44,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 51,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 9,
+            "line": 7,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 7,
+          },
+        },
+        "start": 44,
+        "typability": "Untypable",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 7,
+        },
+      },
+      "start": 44,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 69,
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "end": 61,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 8,
+                "line": 8,
+              },
+              "start": Position {
+                "column": 7,
+                "line": 8,
+              },
+            },
+            "raw": "1",
+            "start": 60,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 64,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 8,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 8,
+              },
+            },
+            "raw": "2",
+            "start": 63,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 67,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 8,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 8,
+              },
+            },
+            "raw": "3",
+            "start": 66,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "callee": Node {
+          "end": 59,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            ],
+            "returnType": Object {
+              "headType": Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+              "kind": "pair",
+              "tailType": Object {
+                "kind": "variable",
+                "name": "T2",
+              },
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 8,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 8,
+            },
+          },
+          "name": "pair",
+          "start": 55,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 68,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 15,
+            "line": 8,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 8,
+          },
+        },
+        "start": 55,
+        "typability": "Untypable",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 8,
+        },
+      },
+      "start": 55,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 92,
+          "id": Node {
+            "end": 82,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 10,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 10,
+              },
+            },
+            "name": "one",
+            "start": 79,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "body": Node {
+              "end": 92,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 10,
+                },
+                "start": Position {
+                  "column": 20,
+                  "line": 10,
+                },
+              },
+              "raw": "1",
+              "start": 91,
+              "typability": "Typed",
+              "type": "Literal",
+              "value": 1,
+            },
+            "end": 92,
+            "expression": true,
+            "generator": false,
+            "id": null,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 10,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 10,
+              },
+            },
+            "params": Array [],
+            "start": 85,
+            "typability": "Typed",
+            "type": "ArrowFunctionExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 10,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 10,
+            },
+          },
+          "start": 79,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 93,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [],
+        "returnType": Object {
+          "kind": "primitive",
+          "name": "number",
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 22,
+          "line": 10,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 10,
+        },
+      },
+      "start": 73,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "end": 103,
+      "expression": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "end": 100,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [],
+            "returnType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 5,
+              "line": 12,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 12,
+            },
+          },
+          "name": "one",
+          "start": 97,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 102,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "number",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 12,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 12,
+          },
+        },
+        "start": 97,
+        "typability": "Typed",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 12,
+        },
+      },
+      "start": 97,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 113,
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "end": 111,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 13,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 13,
+              },
+            },
+            "raw": "1",
+            "start": 110,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "end": 109,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [],
+            "returnType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 5,
+              "line": 13,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 13,
+            },
+          },
+          "name": "one",
+          "start": 106,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 112,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 8,
+            "line": 13,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 13,
+          },
+        },
+        "start": 106,
+        "typability": "Untypable",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 13,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 13,
+        },
+      },
+      "start": 106,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "end": 129,
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "end": 121,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 14,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 14,
+              },
+            },
+            "raw": "1",
+            "start": 120,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 124,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 14,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 14,
+              },
+            },
+            "raw": "2",
+            "start": 123,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 127,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 14,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 14,
+              },
+            },
+            "raw": "3",
+            "start": 126,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "callee": Node {
+          "end": 119,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [],
+            "returnType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 5,
+              "line": 14,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 14,
+            },
+          },
+          "name": "one",
+          "start": 116,
+          "typability": "Typed",
+          "type": "Identifier",
+        },
+        "end": 128,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "line": 14,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 14,
+          },
+        },
+        "start": 116,
+        "typability": "Untypable",
+        "type": "CallExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 14,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 14,
+        },
+      },
+      "start": 116,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+  ],
+  "end": 132,
+  "inferredType": Object {
+    "kind": "primitive",
+    "name": "undefined",
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 2,
+      "line": 15,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "typability": "Typed",
+  "type": "Program",
+}
+`;
+
 exports[`Type inference of list prelude 1`] = `
 Node {
   "body": Array [

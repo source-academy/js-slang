@@ -27,6 +27,8 @@ function comparableXcomparableRBool() {
   return new t.Function([comparable, comparable], new t.Bool())
 }
 
+export const UNARY_MINUS_OPERATOR = 'unary-'
+
 /**
  * Creates an initial environment that contains types for primitive operators.
  * @returns The initial environment.
@@ -42,7 +44,7 @@ export function createEnv(context: Context): t.Environment {
 
   // unary operators
   env.set('!', new t.Function([new t.Bool()], new t.Bool()))
-  env.set('-', new t.Function([new t.Float()], new t.Float()))
+  env.set(UNARY_MINUS_OPERATOR, new t.Function([new t.Float()], new t.Float()))
 
   // binary operators
   env.set('+', comparableXcomparableRcomparable())

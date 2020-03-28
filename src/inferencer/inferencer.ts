@@ -9,7 +9,7 @@ import * as t from './types'
 import { Environment, Scope, Type } from './types'
 import * as es from 'estree'
 import { Context, TypeAnnotatedNode } from '../types'
-import { createEnv, toJson } from './util'
+import { createEnv, toJson, UNARY_MINUS_OPERATOR } from './util'
 import {
   ConsequentAlternateMismatchError,
   InvalidArgumentTypesError,
@@ -197,7 +197,12 @@ export function analyse(
     const argTypes = args.map(arg => analyse(arg, context, env))
     const resultType = new t.Var()
     const funType: t.Function = ('operator' in fun
-      ? getFreshTypeIfNeeded(fun.operator, env)
+      ? getFreshTypeIfNeeded(
+          fun.type === 'UnaryExpression' && fun.operator === '-'
+            ? UNARY_MINUS_OPERATOR
+            : fun.operator,
+          env
+        )
       : analyse(fun, context, env)) as t.Function
     try {
       unify(new t.Function(argTypes, resultType), funType)
@@ -205,6 +210,7 @@ export function analyse(
       if (!isInternalError(e)) {
         const error = new InvalidArgumentTypesError(
           fun,
+          args,
           (prune(funType) as t.Function).argTypes.map(toJson),
           argTypes.map(toJson)
         )

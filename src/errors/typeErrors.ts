@@ -1,7 +1,8 @@
 import * as es from 'estree'
 import { ErrorSeverity, ErrorType, SourceError, Type, TypeAnnotatedNode } from '../types'
-import { stripIndent } from '../utils/formatters'
+import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
+import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
 
@@ -11,6 +12,7 @@ export class InvalidArgumentTypesError implements SourceError {
 
   constructor(
     public node: TypeAnnotatedNode<es.Node>,
+    public args: TypeAnnotatedNode<es.Node>[],
     public expectedTypes: Type[],
     public receivedTypes: Type[]
   ) {}
@@ -20,15 +22,48 @@ export class InvalidArgumentTypesError implements SourceError {
   }
 
   public explain() {
-    if (this.expectedTypes.length === 0) {
-      return `Expected no arguments to this function, instead received ${this.receivedTypes.length}`
+    const argStrings = this.args.map(arg => simplify(generate(arg)))
+    if ('operator' in this.node) {
+      const op = this.node.operator
+      if (this.expectedTypes.length === 2) {
+        // binary operator
+        return stripIndent`
+        A type mismatch was detected in the binary expression:
+          ${argStrings[0]} ${op} ${argStrings[1]}
+        The binary operator (${op}) expected two operands with types:
+          ${typeToString(this.expectedTypes[0])} ${op} ${typeToString(this.expectedTypes[1])}
+        but instead it received two operands of types:
+          ${typeToString(this.receivedTypes[0])} ${op} ${typeToString(this.receivedTypes[1])}
+        `
+      } else {
+        // unary operator
+        return stripIndent`
+        A type mismatch was detected in the unary expression:
+          ${op} ${argStrings[0]}
+        The unary operator (${op}) expected its operand to be of type:
+          ${typeToString(this.expectedTypes[0])}
+        but instead it received an operand of type:
+          ${typeToString(this.receivedTypes[0])}
+        `
+      }
     }
-    return stripIndent`The ${
-      'operator' in this.node ? `(${this.node.operator}) operator` : 'function'
-    } expected arguments to be of the type(s):
-      ${this.expectedTypes.map(typeToString).join(', ')}
-    but instead received:
-      ${this.receivedTypes.map(typeToString).join(', ')}
+    const functionString = simplify(generate(this.node))
+    function formatPhrasing(types: Type[]) {
+      switch (types.length) {
+        case 0:
+          return 'no arguments,'
+        case 1:
+          return `an argument of type: ${typeToString(types[0])}`
+        default:
+          return `${types.length} arguments of types:
+      ${types.map(typeToString).join(', ')}`
+      }
+    }
+    return stripIndent`
+    A type mismatch was detected in the function call:
+      ${functionString}(${argStrings.join(', ')})
+    The function expected ${formatPhrasing(this.expectedTypes)}
+    but instead received ${formatPhrasing(this.receivedTypes)}
     `
   }
 

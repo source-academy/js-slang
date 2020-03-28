@@ -10,7 +10,7 @@ import { validateAndAnnotate } from '../../validator/validator'
 
 function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
   return program.body
-    .filter(node => ['VariableDeclaration', 'FunctionDeclaration'])
+    .filter(node => ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type))
     .map(
       (
         node: TypeAnnotatedNode<es.VariableDeclaration> | TypeAnnotatedNode<es.FunctionDeclaration>
@@ -36,14 +36,16 @@ test('Type inference of list prelude', async () => {
   analyse(program, context)
   expect(program).toMatchSnapshot()
   expect(parseError(context.errors)).toMatchInlineSnapshot(`
-"Line 17: The (===) operator expected arguments to be of the type(s):
-      Addable1, Addable1
-    but instead received:
-      [T1, T1], [T1, T1]
-Line 72: The function expected arguments to be of the type(s):
-      T1
-    but instead received:
-      List<T1>"
+"Line 17: A type mismatch was detected in the binary expression:
+  x === y
+The binary operator (===) expected two operands with types:
+  Addable1 === Addable1
+but instead it received two operands of types:
+  [T1, T1] === [T1, T1]
+Line 72: A type mismatch was detected in the function call:
+  list_to_string(tail(xs))
+The function expected an argument of type: T1
+but instead received an argument of type: List<T1>"
 `)
   expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
 "is_list: List<T1> -> T2
@@ -174,18 +176,22 @@ const tooshortpair4th = fourth(tooshortpair);
   analyse(program, context)
   expect(program).toMatchSnapshot()
   expect(parseError(context.errors)).toMatchInlineSnapshot(`
-"Line 42: The function expected arguments to be of the type(s):
-      [number, number], [number, number]
-    but instead received:
-      List<number>, List<number>
-Line 45: The function expected arguments to be of the type(s):
-      number -> number, List<number>
-    but instead received:
-      number -> number, [number, number]
-Line 57: The function expected arguments to be of the type(s):
-      [number, [number, [number, [T1, T2]]]]
-    but instead received:
-      [number, [number, [number, number]]]"
+"Line 42: A type mismatch was detected in the function call:
+  add_rat(listof3, listof3)
+The function expected 2 arguments of types:
+  [number, number], [number, number]
+but instead received 2 arguments of types:
+  List<number>, List<number>
+Line 45: A type mismatch was detected in the function call:
+  map(x => x, make_rat(1, 2))
+The function expected 2 arguments of types:
+  number -> number, List<number>
+but instead received 2 arguments of types:
+  number -> number, [number, number]
+Line 57: A type mismatch was detected in the function call:
+  fourth(tooshortpair)
+The function expected an argument of type: [number, [number, [number, [T1, T2]]]]
+but instead received an argument of type: [number, [number, [number, number]]]"
 `)
   expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
 "make_rat: (number, number) -> [number, number]
@@ -253,4 +259,74 @@ succ: ((T1 -> T2) -> T2 -> T3) -> (T1 -> T2) -> T1 -> T3
 one: (T1 -> T2) -> T1 -> T2
 two: (T1 -> T1) -> T1 -> T1"
 `)
+})
+
+test('Test operators and function application errors', async () => {
+  const code = `
+  1 + "";
+  -true;
+  "" * "";
+
+  pair();
+  pair(1);
+  pair(1, 2, 3);
+
+  const one = () => 1;
+
+  one();
+  one(1);
+  one(1, 2, 3);
+  `
+  const context = mockContext(2)
+  const program = parse(code, context)!
+  expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
+  analyse(program, context)
+  expect(program).toMatchSnapshot()
+  expect(parseError(context.errors)).toMatchInlineSnapshot(`
+"Line 2: A type mismatch was detected in the binary expression:
+  1 + \\"\\"
+The binary operator (+) expected two operands with types:
+  number + number
+but instead it received two operands of types:
+  number + string
+Line 3: A type mismatch was detected in the unary expression:
+  - true
+The unary operator (-) expected its operand to be of type:
+  number
+but instead it received an operand of type:
+  boolean
+Line 4: A type mismatch was detected in the binary expression:
+  \\"\\" * \\"\\"
+The binary operator (*) expected two operands with types:
+  number * number
+but instead it received two operands of types:
+  string * string
+Line 6: A type mismatch was detected in the function call:
+  pair()
+The function expected 2 arguments of types:
+  T1, T1
+but instead received no arguments,
+Line 7: A type mismatch was detected in the function call:
+  pair(1)
+The function expected 2 arguments of types:
+  T1, T1
+but instead received an argument of type: number
+Line 8: A type mismatch was detected in the function call:
+  pair(1, 2, 3)
+The function expected 2 arguments of types:
+  T1, T1
+but instead received 3 arguments of types:
+  number, number, number
+Line 13: A type mismatch was detected in the function call:
+  one(1)
+The function expected no arguments,
+but instead received an argument of type: number
+Line 14: A type mismatch was detected in the function call:
+  one(1, 2, 3)
+The function expected no arguments,
+but instead received 3 arguments of types:
+  number, number, number"
+`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"one: () -> number"`)
 })
