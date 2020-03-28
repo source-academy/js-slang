@@ -180,6 +180,8 @@ export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
 export type TypeAnnotation = Untypable | Typedd | NotYetTyped
 
+export type TypeVariableAnnotatedNode<T extends es.Node> = TypeVariable & T
+
 export interface Untypable {
   typability?: 'Untypable'
   inferredType?: Type
@@ -193,6 +195,10 @@ export interface NotYetTyped {
 export interface Typedd {
   typability?: 'Typed'
   inferredType?: Type
+}
+
+export interface TypeVariable {
+  typeVariableId?: number
 }
 
 export type Type = Primitive | Variable | FunctionType | List
