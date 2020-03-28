@@ -68,7 +68,7 @@ function main() {
       ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
     .bindHelp()
-    .setHelp('Usage: node repl.js [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
+    .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
     .parseSystem()
 
   const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
