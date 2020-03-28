@@ -41,7 +41,7 @@ You can set additional options:
 
 .. code-block::
 
-  Usage: js-slang [PROGRAM] [OPTION]
+  Usage: js-slang [PROGRAM_STRING] [OPTION]
 
     -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
     -s, --use-subst       use substitution
