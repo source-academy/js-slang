@@ -221,8 +221,12 @@ function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
 ): IterableIterator<es.Node> {
-  const test = yield* evaluate(node.test, context)
-
+  let test = yield* evaluate(node.test, context)
+  if (lazyEvaluate(context)) {
+    if (isInterpreterThunk(test)) {
+      test = yield* evaluateThunk(test, context)
+    }
+  }
   const error = rttc.checkIfStatement(node, test)
   if (error) {
     return handleRuntimeError(context, error)
@@ -271,14 +275,28 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
    * @param context Context of the execution
    */
   Literal: function*(node: es.Literal, context: Context) {
+    console.log('Literal')
+    // console.log(node)
+    // if (lazyEvaluate(context)) {
+    //   if (node.value === null) {
+    //     console.log('its NULL buddy')
+    //     return null
+    //   } else {
+    //     return node.value
+    //   }
+    // } else {
+      
+    // }
     return node.value
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
+    console.log('ThisExpression')
     return context.runtime.environments[0].thisContext
   },
 
   ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
+    console.log('ArrayExpression')
     const res = []
     for (const n of node.elements) {
       res.push(yield* evaluate(n, context))
@@ -287,48 +305,51 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   DebuggerStatement: function*(node: es.DebuggerStatement, context: Context) {
+    console.log('DebuggerStatement')
     context.runtime.break = true
     yield
   },
 
   FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
+    console.log('FunctionExpression')
     return new Closure(node, currentEnvironment(context), context)
   },
 
   ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
+    console.log('ArrowFunctionExpression')
     return Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
+    console.log('Identifier')
+    let result = getVariable(context, node.name)
     if (lazyEvaluate(context)) {
-      let result = getVariable(context, node.name)
-      if (isInterpreterThunk(result)) {
-        result = yield* evaluateThunk(result, context);
+      if (isInterpreterThunk(result) && result.isEvaluated) {
+        console.log('already memoized. returning actual value')
+        return result.actualValue
+      } else {
+        return result
       }
-      return result
     } else {
-      return getVariable(context, node.name)
+      return result
     }
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
+    console.log('CallExpression')
     const callee = yield* evaluate(node.callee, context)
     let args
-
+    console.log('passed evaluating callee')
     if (lazyEvaluate(context)) {
-      if (callee instanceof Closure) {
-        // console.log('function has closure')
-        args = getThunkedArgs(context, node)
-      } else {
-        args = yield* getArgs(context, node)
-      }
+      // Delay evaluation of arguments.
+      args = getThunkedArgs(context, node)
     } else {
       args = yield* getArgs(context, node)
     }
-
-    // console.log(args)
+    console.log('passed getting args')
     let thisContext
     if (node.callee.type === 'MemberExpression') {
+      console.log('getting in MemberExpression?!')
       thisContext = yield* evaluate(node.callee.object, context)
     }
     const result = yield* apply(context, callee, args, node, thisContext)
@@ -336,6 +357,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   NewExpression: function*(node: es.NewExpression, context: Context) {
+    console.log('NewExpression')
     const callee = yield* evaluate(node.callee, context)
     const args = []
     for (const arg of node.arguments) {
@@ -353,10 +375,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
+    console.log('UnaryExpression')
     const value = yield* evaluate(node.argument, context)
 
     if (lazyEvaluate(context)) {
       const valueNoThunk = isInterpreterThunk(value) ? yield* evaluateThunk(value, context) : value;
+      const error = rttc.checkUnaryExpression(node, node.operator, valueNoThunk)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
       return operators.evaluateUnaryExpression(node.operator, valueNoThunk);
     } else {
       const error = rttc.checkUnaryExpression(node, node.operator, value)
@@ -368,16 +395,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
+    console.log('BinaryExpression')
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
-    // The operands may return a thunk after evaluating them as above.
     if (lazyEvaluate(context)) {
+      // The operands may return a thunk after evaluating them as above.
       const leftNoThunk = isInterpreterThunk(left) ? yield* evaluateThunk(left, context) : left;
       const rightNoThunk = isInterpreterThunk(right) ? yield* evaluateThunk(right, context) : right;
+      const error = rttc.checkBinaryExpression(node, node.operator, leftNoThunk, rightNoThunk)
+      if (error) {
+        return handleRuntimeError(context, error)
+      }
       return operators.evaluateBinaryExpression(node.operator, leftNoThunk, rightNoThunk)
     } else {
-      // eager evaluation
+      // Eager evaluation
       const error = rttc.checkBinaryExpression(node, node.operator, left, right)
       if (error) {
         return handleRuntimeError(context, error)
@@ -387,27 +419,30 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
+    console.log('ConditionalExpression')
     return yield* this.IfStatement(node, context)
   },
 
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
+    console.log('LogicalExpression')
     return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
   },
 
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
+    console.log('VariableDeclaration')
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
 
     if (lazyEvaluate(context)) {
       let value
-      // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly
-      // Everything except literal values should be evaluated lazily
-      if (declaration.init!.type !== 'Literal') {
-        // Capture the current environment (Not useful since it's not deep-cloned)
+      // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly.
+      // Everything except literal values and arrow functions should be evaluated lazily.
+      if (declaration.init!.type !== 'Literal' && declaration.init!.type !== 'ArrowFunctionExpression') {
+        // Capture the current environment (Currently not useful since it's not deep-cloned).
         const currentEnv = currentEnvironment(context)
-        // Construct Thunk object
-        value = createThunk(declaration.init!, currentEnv)
+        // Construct Thunk object.
+        value = createThunk(declaration.init!, currentEnv, context)
       } else {
         value = yield* evaluate(declaration.init!, context)
       }
@@ -421,14 +456,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+    console.log('ContinueStatement')
     return new ContinueValue()
   },
 
   BreakStatement: function*(node: es.BreakStatement, context: Context) {
+    console.log('BreakStatement')
     return new BreakValue()
   },
 
   ForStatement: function*(node: es.ForStatement, context: Context) {
+    console.log('ForStatement')
     // Create a new block scope for the loop variables
     const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
     pushEnvironment(context, loopEnvironment)
@@ -481,6 +519,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
+    console.log('MemberExpression')
     let obj = yield* evaluate(node.object, context)
     if (obj instanceof Closure) {
       obj = obj.fun
@@ -513,6 +552,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
+    console.log('AssignmentExpression')
     if (node.left.type === 'MemberExpression') {
       const left = node.left
       const obj = yield* evaluate(left.object, context)
@@ -544,6 +584,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
+    console.log('FunctionDeclaration')
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node, currentEnvironment(context), context)
@@ -552,10 +593,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
+    console.log('IfStatement')
     if (lazyEvaluate(context)) {
-      let result = yield* reduceIf(node, context) as Value
-      console.log(JSON.stringify(result));
-      if (isInterpreterThunk(result.type)) {
+      let result = yield* reduceIf(node, context)
+      if (isInterpreterThunk(result)) {
         result = yield* evaluateThunk(result, context)
       } else {
         result = yield* evaluate(result, context)
@@ -567,10 +608,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
+    console.log('ExpressionStatement')
     return yield* evaluate(node.expression, context)
   },
 
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
+    console.log('ReturnStatement')
     let returnExpression = node.argument!
 
     // If we have a conditional expression, reduce it until we get something else
@@ -585,27 +628,38 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression') {
-      const callee = yield* evaluate(returnExpression.callee, context)
-      const args = yield* getArgs(context, returnExpression)
-      return new TailCallReturnValue(callee, args, returnExpression)
-    } else if (lazyEvaluate(context)) {
-      let result
-      if (isInterpreterThunk(returnExpression)) {
-        result = yield* evaluateThunk(returnExpression as unknown as InterpreterThunk, context)
+    if (lazyEvaluate(context)) {
+      if (returnExpression.type === 'CallExpression') {
+        const callee = yield* evaluate(returnExpression.callee, context)
+        const args = getThunkedArgs(context, returnExpression)
+        return new TailCallReturnValue(callee, args, returnExpression)
       } else {
-        result = yield* evaluate(returnExpression, context)
+        let result
+        if (isInterpreterThunk(returnExpression)) {
+          result = yield* evaluateThunk(returnExpression as unknown as InterpreterThunk, context)
+        } else {
+          result = yield* evaluate(returnExpression, context)
+        }
+
+        // Keep unwrapping the thunk until the actual value is obtained.
+        while (isInterpreterThunk(result)) {
+          result = yield* evaluateThunk(result, context)
+        }
+        return new ReturnValue(result)
       }
-      if (isInterpreterThunk(result.type)) {
-        result = yield* evaluateThunk(result, context)
-      }
-      return new ReturnValue(result)
     } else {
-      return new ReturnValue(yield* evaluate(returnExpression, context))
+      if (returnExpression.type === 'CallExpression') {
+        const callee = yield* evaluate(returnExpression.callee, context)
+        const args = yield* getArgs(context, returnExpression)
+        return new TailCallReturnValue(callee, args, returnExpression)
+      } else {
+        return new ReturnValue(yield* evaluate(returnExpression, context))
+      }
     }
   },
 
   WhileStatement: function*(node: es.WhileStatement, context: Context) {
+    console.log('WhileStatement')
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
@@ -623,6 +677,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
+    console.log('ObjectExpression')
     const obj = {}
     for (const prop of node.properties) {
       let key
@@ -637,6 +692,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
+    console.log('BlockStatement')
     let result: Value
 
     // Create a new environment (block scoping)
@@ -648,6 +704,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
+    console.log('Program')
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
@@ -659,9 +716,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
   // for debugging purposes
-  if (lazyEvaluate(context)) {
-    console.log(node.type)
-  }
+  // if (lazyEvaluate(context)) {
+  //   console.log(node.type)
+  // }
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   return result

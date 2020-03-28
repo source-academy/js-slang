@@ -15,13 +15,13 @@ export const thunkStringType = 'Thunk'
 /**
  * Gets the thunked arguments from a lazy evaluated
  * Source function
- * @param call The CallExpression that led to evaluationy
+ * @param call The CallExpression that led to evaluation
  */
 export function getThunkedArgs(context: Context, call: es.CallExpression) {
   const args = []
   const env = currentEnvironment(context)
   for (const arg of call.arguments) {
-    args.push(createThunk(arg, env))
+    args.push(createThunk(arg, env, context))
   }
   return args
 }
@@ -32,13 +32,14 @@ export function getThunkedArgs(context: Context, call: es.CallExpression) {
  * @param node The Node to be thunked
  * @param environment The environment to run the statement in
  */
-export function createThunk(node: es.Node, environment: Environment): InterpreterThunk {
+export function createThunk(node: es.Node, environment: Environment, context: Context): InterpreterThunk {
   return {
     type: thunkStringType,
     value: node,
     environment,
     isEvaluated: false,
-    actualValue: undefined
+    actualValue: undefined,
+    context
   }
 }
 
@@ -50,7 +51,7 @@ export function createThunk(node: es.Node, environment: Environment): Interprete
 export function isInterpreterThunk(v: any): boolean {
   return (
     typeof v === 'object' &&
-    Object.keys(v).length === 5 &&
+    Object.keys(v).length === 6 &&
     v.type !== undefined &&
     v.type === thunkStringType &&
     v.isEvaluated !== undefined &&
@@ -58,48 +59,36 @@ export function isInterpreterThunk(v: any): boolean {
     v.value !== undefined &&
     typeof v.value === 'object' &&
     v.environment !== undefined &&
-    typeof v.environment === 'object'
+    typeof v.environment === 'object' &&
+    typeof v.context === 'object'
   )
 }
 
-// Evaluates thunk and memoize
+// Evaluates thunk and memoize.
 export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
   if (thunk.isEvaluated) {
-    // Program should never enter this 'if' block.
-    // Memoized thunks should return the actual value by evaluating an Identifier node type.
     return thunk.actualValue
   } else {
-    // Keep count of the environments stacked on top of each other.
-    let total = 0
-
     // Use the thunk's environment (on creation) to evaluate it.
     const thunkEnv: Environment = thunk.environment as Environment
-
     pushEnvironment(context, thunkEnv)
-    total++
 
     let result: Value = yield* evaluate(thunk.value, context)
 
-    // Evaluation of a thunk may return another thunk.
-    // Keep evaluating until the final value is obtained.
-    let tempEnv: Environment
-    while (result.type === 'Thunk') {
-      // Use the thunk's environment (on creation) to evaluate it.
-      tempEnv = result.environment as Environment
-      pushEnvironment(context, tempEnv)
-      total++
-
-      result = yield* evaluate(result.value, context)
+    // Evaluating a thunk may return another thunk.
+    // Recursively evaluate thunks until a value is obtained.
+    // result may be null so it's value will be checked to avoid errors.
+    if (result !== null && isInterpreterThunk(result)) {
+      result = yield* evaluateThunk(result, context)
     }
 
     if (result instanceof ReturnValue) {
       result = result.value
     }
-    for (let i = 0; i < total; i++) {
-      popEnvironment(context)
-    }
 
-    // tag this thunk as 'evaluated' and memoize its value
+    popEnvironment(context)
+
+    // Mark this thunk as 'evaluated' and memoize its value.
     thunk.isEvaluated = true
     thunk.actualValue = result
     return result

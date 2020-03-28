@@ -120,6 +120,7 @@ export interface InterpreterThunk {
   environment: Environment | null
   isEvaluated: boolean
   actualValue: Value
+  context: Context
 }
 
 export type AllowedDeclarations = 'const' | 'let'
