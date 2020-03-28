@@ -38,14 +38,13 @@ function startRepl(
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash
           writer: output => {
-            return output instanceof Closure || typeof output === 'function' ?
-              output.toString() :
-              util.inspect(output, {
-                depth: 1000,
-                colors: true
-              })
+            return output instanceof Closure || typeof output === 'function'
+              ? output.toString()
+              : util.inspect(output, {
+                  depth: 1000,
+                  colors: true
+                })
           }
-
         }
       )
     } else {
