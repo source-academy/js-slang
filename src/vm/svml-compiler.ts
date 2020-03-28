@@ -436,9 +436,9 @@ function compileStatements(
     }
     maxStackSize = Math.max(maxStackSize, curExprSize)
   }
-  if (statements.length === 0) {
+  if (statements.length === 0 && !node.isLoopBlock) {
     addNullaryInstruction(OpCodes.LGCU)
-    if (node.isFunctionBlock) {
+    if (insertFlag || node.isFunctionBlock) {
       addNullaryInstruction(OpCodes.RETG)
     }
     maxStackSize++
