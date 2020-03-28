@@ -2,6 +2,7 @@
 
 exports[`Ensure no name clashes 1`] = `
 "const native0 = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs0 = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr0 = native.operators.get(\\"boolOrErr\\");
 const wrap90 = native.operators.get(\\"wrap\\");
@@ -130,7 +131,7 @@ const globals = $$NATIVE_STORAGE[1].globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 "
@@ -140,6 +141,7 @@ exports[`builtins do get prepended 1`] = `
 Object {
   "code": "\\"ensure_builtins\\";",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -235,7 +237,7 @@ const globals = $$NATIVE_STORAGE[0].globals;
         lastStatementResult = eval(\\"\\\\\\"ensure_builtins\\\\\\";\\");
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",

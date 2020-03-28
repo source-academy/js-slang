@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.6",
+  "version": "0.4.14",
   "description": "Javascript-based interpreter for slang, written in Typescript",
   "author": {
     "name": "Source Academy",
@@ -8,10 +8,13 @@
   },
   "dependencies": {
     "@types/estree": "0.0.39",
-    "acorn": "^6.0.5",
+    "acorn": "^6.4.1",
+    "acorn-loose": "^7.0.0",
     "acorn-walk": "^7.0.0",
     "astring": "^1.3.1",
-    "source-map": "^0.7.3"
+    "node-getopt": "^0.3.2",
+    "source-map": "^0.7.3",
+    "jest-html-reporter": "^2.8.2"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -46,6 +49,7 @@
     "coveralls": "^3.0.2",
     "husky": "^2.3.0",
     "jest": "^23.6.0",
+    "jest-html-reporter": "^2.8.2",
     "jsdoc": "3.5.5",
     "prettier": "^1.19.1",
     "ts-jest": "^23.10.5",
@@ -70,6 +74,17 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts"
+    ],
+    "reporters": [
+      "default",
+      [
+        "./node_modules/jest-html-reporter",
+        {
+          "pageTitle": "Test Report",
+          "includeFailureMsg": true,
+          "includeConsoleLog": true
+        }
+      ]
     ]
   },
   "husky": {

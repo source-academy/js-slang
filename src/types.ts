@@ -57,6 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type EvaluationMethod = 'strict' | 'lazy'
 
 export interface Context<T = any> {
   /** The source version used */
@@ -104,6 +105,26 @@ export interface Context<T = any> {
   contextId: number
 
   executionMethod: ExecutionMethod
+
+  evaluationMethod: EvaluationMethod
+}
+
+export interface BlockFrame {
+  type: string
+  // loc refers to the block defined by every pair of curly braces
+  loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
+  enclosingLoc?: es.SourceLocation | null
+  children: (DefinitionNode | BlockFrame)[]
+}
+
+export interface DefinitionNode {
+  name: string
+  type: string
+  isDeclaration: boolean
+  loc?: es.SourceLocation | null
 }
 
 // tslint:disable:no-any
