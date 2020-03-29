@@ -12,7 +12,7 @@ import {
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { evaluate } from './interpreter/interpreter'
+import { startEvaluation } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
@@ -277,7 +277,7 @@ export async function runInContext(
       )
     }
   } else {
-    const it = evaluate(program, context)
+    const it = startEvaluation(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()

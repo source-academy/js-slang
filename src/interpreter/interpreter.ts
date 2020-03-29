@@ -77,6 +77,14 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
 
 const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
+// A tag used to identify the last statement in lazy evaluation
+const LAST_STATEMENT_TAG = 'the_last_statement'
+
+// Type definition for the last statement
+interface ExpressionStatementWithTag extends es.ExpressionStatement {
+  tag?: string
+}
+
 function hoistIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
@@ -282,17 +290,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
    * @param context Context of the execution
    */
   Literal: function*(node: es.Literal, context: Context) {
-    // console.log('Literal')
     return node.value
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
-    // console.log('ThisExpression')
     return context.runtime.environments[0].thisContext
   },
 
   ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
-    // console.log('ArrayExpression')
     const res = []
     for (const n of node.elements) {
       res.push(yield* evaluate(n, context))
@@ -301,13 +306,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   DebuggerStatement: function*(node: es.DebuggerStatement, context: Context) {
-    // console.log('DebuggerStatement')
     context.runtime.break = true
     yield
   },
 
   FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
-    // console.log('FunctionExpression')
     return new Closure(node, currentEnvironment(context), context)
   },
 
@@ -316,7 +319,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    const result = getVariable(context, node.name)
+    let result = getVariable(context, node.name)
+    if (lazyEvaluate(context)) {
+      while (isInterpreterThunk(result)) {
+        result = yield* evaluateThunk(result, context)
+      }
+    }
     return result
   },
 
@@ -353,7 +361,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   NewExpression: function*(node: es.NewExpression, context: Context) {
-    // console.log('NewExpression')
     const callee = yield* evaluate(node.callee, context)
     const args = []
     for (const arg of node.arguments) {
@@ -371,7 +378,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
-    // console.log('UnaryExpression')
     const value = yield* evaluate(node.argument, context)
 
     if (lazyEvaluate(context)) {
@@ -393,7 +399,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    // console.log('BinaryExpression')
     const left = yield* evaluate(node.left, context)
     const right = yield* evaluate(node.right, context)
 
@@ -417,17 +422,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function*(node: es.ConditionalExpression, context: Context) {
-    // console.log('ConditionalExpression')
     return yield* this.IfStatement(node, context)
   },
 
   LogicalExpression: function*(node: es.LogicalExpression, context: Context) {
-    // console.log('LogicalExpression')
     return yield* this.ConditionalExpression(transformLogicalExpression(node), context)
   },
 
   VariableDeclaration: function*(node: es.VariableDeclaration, context: Context) {
-    // console.log('VariableDeclaration')
     const declaration = node.declarations[0]
     const constant = node.kind === 'const'
     const id = declaration.id as es.Identifier
@@ -459,17 +461,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
-    // console.log('ContinueStatement')
     return new ContinueValue()
   },
 
   BreakStatement: function*(node: es.BreakStatement, context: Context) {
-    // console.log('BreakStatement')
     return new BreakValue()
   },
 
   ForStatement: function*(node: es.ForStatement, context: Context) {
-    // console.log('ForStatement')
     // Create a new block scope for the loop variables
     const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
     pushEnvironment(context, loopEnvironment)
@@ -522,7 +521,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
-    // console.log('MemberExpression')
     let obj = yield* evaluate(node.object, context)
     if (obj instanceof Closure) {
       obj = obj.fun
@@ -555,7 +553,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-    // console.log('AssignmentExpression')
     if (node.left.type === 'MemberExpression') {
       const left = node.left
       const obj = yield* evaluate(left.object, context)
@@ -587,7 +584,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
-    // console.log('FunctionDeclaration')
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
     const closure = new Closure(node, currentEnvironment(context), context)
@@ -596,7 +592,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
-    // console.log('IfStatement')
     if (lazyEvaluate(context)) {
       let result = yield* reduceIf(node, context)
       if (result !== null && isInterpreterThunk(result)) {
@@ -611,12 +606,33 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
-    // console.log('ExpressionStatement')
+    const statement = node as ExpressionStatementWithTag;
+
+    if (lazyEvaluate(context)) {
+      if (statement.tag === LAST_STATEMENT_TAG) {
+        let result = yield* evaluate(node.expression, context)
+        while (isInterpreterThunk(result)) {
+          result = yield* evaluateThunk(result, context)
+          result = yield* evaluate(result, context)
+        }
+        return result
+      } else if (node.expression.type === 'CallExpression') {
+          // prevent thunk of functions like display
+          const toString = (node.expression.callee as any).name
+          if (eagerFunctions.includes(toString)) {
+            return yield* evaluate(node.expression, context)
+          } else {
+            return createThunk(node, currentEnvironment(context), context);
+          }
+      } else {
+        return createThunk(node, currentEnvironment(context), context);
+      }
+    }
+    // evaluate the last statement of the program eagerly
     return yield* evaluate(node.expression, context)
   },
 
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
-    // console.log('ReturnStatement')
     let returnExpression = node.argument!
 
     // If we have a conditional expression, reduce it until we get something else
@@ -663,7 +679,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   WhileStatement: function*(node: es.WhileStatement, context: Context) {
-    // console.log('WhileStatement')
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
@@ -681,7 +696,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
-    // console.log('ObjectExpression')
     const obj = {}
     for (const prop of node.properties) {
       let key
@@ -696,7 +710,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
-    // console.log('BlockStatement')
     let result: Value
 
     // Create a new environment (block scoping)
@@ -708,7 +721,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
-    // console.log('Program')
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
@@ -786,4 +798,28 @@ export function* apply(
     popEnvironment(context)
   }
   return result
+}
+
+/**
+ * The entry point for the interpreter. For lazy evaluation,
+ * this ensures that the last statement is forced, such that
+ * the program evaluates to a finite value.
+ *
+ * @param program The program to be evaluated.
+ * @param context The context to evaluate the program in.
+ */
+export function startEvaluation(program: es.Program, context: Context) {
+  if (lazyEvaluate(context)) {
+    const statements = program.body as es.Statement[]
+    if (statements.length > 0) {
+      const lastIndex = statements.length - 1
+      const lastStatement = statements[lastIndex] as ExpressionStatementWithTag
+      if (lastStatement.type === 'ExpressionStatement') {
+        lastStatement.tag = LAST_STATEMENT_TAG
+      }
+    }
+    return evaluate(program, context)
+  } else {
+    return evaluate(program, context)
+  }
 }
