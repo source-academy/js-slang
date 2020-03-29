@@ -44,8 +44,10 @@ but instead it received two operands of types:
   [T1, T1] === [T1, T1]
 Line 72: A type mismatch was detected in the function call:
   list_to_string(tail(xs))
-The function expected an argument of type: T1
-but instead received an argument of type: List<T1>"
+The function expected an argument of type:
+  T1
+but instead received an argument of type:
+  List<T1>"
 `)
   expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
 "is_list: List<T1> -> T2
@@ -190,8 +192,10 @@ but instead received 2 arguments of types:
   number -> number, [number, number]
 Line 57: A type mismatch was detected in the function call:
   fourth(tooshortpair)
-The function expected an argument of type: [number, [number, [number, [T1, T2]]]]
-but instead received an argument of type: [number, [number, [number, number]]]"
+The function expected an argument of type:
+  [number, [number, [number, [T1, T2]]]]
+but instead received an argument of type:
+  [number, [number, [number, number]]]"
 `)
   expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
 "make_rat: (number, number) -> [number, number]
@@ -276,6 +280,20 @@ test('Test operators and function application errors', async () => {
   one();
   one(1);
   one(1, 2, 3);
+
+  1 ? true : true;
+  const validCondNum = true ? () => 1 : () => 3;
+  true ? x => 1 : () => 1;
+
+  function invalidIf() {
+    if (true) {
+      return 1;
+    } else { }
+  }
+
+  if (1) {
+  } else {
+  }
   `
   const context = mockContext(2)
   const program = parse(code, context)!
@@ -311,7 +329,8 @@ Line 7: A type mismatch was detected in the function call:
   pair(1)
 The function expected 2 arguments of types:
   T1, T1
-but instead received an argument of type: number
+but instead received an argument of type:
+  number
 Line 8: A type mismatch was detected in the function call:
   pair(1, 2, 3)
 The function expected 2 arguments of types:
@@ -321,12 +340,39 @@ but instead received 3 arguments of types:
 Line 13: A type mismatch was detected in the function call:
   one(1)
 The function expected no arguments,
-but instead received an argument of type: number
+but instead received an argument of type:
+  number
 Line 14: A type mismatch was detected in the function call:
   one(1, 2, 3)
 The function expected no arguments,
 but instead received 3 arguments of types:
-  number, number, number"
+  number, number, number
+Line 16: Expected the test part of the conditional expression:
+  1 ? ... : ...
+to have type boolean, but instead it is type:
+  number
+Line 18: The two branches of the conditional expression:
+  true ? ... : ...
+produce different types!
+The true branch has type:
+  T1 -> number
+but the false branch has type:
+  () -> number
+Line 21: The two branches of the if statement:
+  if (true) { ... } else { ... }
+produce different types!
+The true branch has type:
+  number
+but the false branch has type:
+  undefined
+Line 26: Expected the test part of the if statement:
+  if (1) { ... } else { ... }
+to have type boolean, but instead it is type:
+  number"
 `)
-  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"one: () -> number"`)
+  expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"one: () -> number
+validCondNum: () -> number
+invalidIf: Couldn't infer type"
+`)
 })

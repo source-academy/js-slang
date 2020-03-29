@@ -53,7 +53,8 @@ export class InvalidArgumentTypesError implements SourceError {
         case 0:
           return 'no arguments,'
         case 1:
-          return `an argument of type: ${typeToString(types[0])}`
+          return `an argument of type:
+      ${typeToString(types[0])}`
         default:
           return `${types.length} arguments of types:
       ${types.map(typeToString).join(', ')}`
@@ -72,18 +73,40 @@ export class InvalidArgumentTypesError implements SourceError {
   }
 }
 
+function formatIf(node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>) {
+  let ifString = simplify(generate(node.test))
+  let type
+  if (node.type === 'IfStatement') {
+    ifString = `if (${ifString}) { ... } else { ... }`
+    type = 'if statement'
+  } else {
+    ifString = `${ifString} ? ... : ...`
+    type = 'conditional expression'
+  }
+  return { ifString, type }
+}
+
 export class InvalidTestConditionError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+  constructor(
+    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+    public receivedType: Type
+  ) {}
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    return `Expected the condition to be a boolean, instead received: ${this.receivedType}`
+    const { ifString, type } = formatIf(this.node)
+    return stripIndent`
+    Expected the test part of the ${type}:
+      ${ifString}
+    to have type boolean, but instead it is type:
+      ${typeToString(this.receivedType)}
+    `
   }
 
   public elaborate() {
@@ -96,7 +119,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
+    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
     public consequentType: Type,
     public alternateType: Type
   ) {}
@@ -106,10 +129,16 @@ export class ConsequentAlternateMismatchError implements SourceError {
   }
 
   public explain() {
-    return stripIndent`The if part has type:
-      ${this.consequentType}
-    but the else part has type:
-      ${this.alternateType}`
+    const { ifString, type } = formatIf(this.node)
+    return stripIndent`
+    The two branches of the ${type}:
+      ${ifString}
+    produce different types!
+    The true branch has type:
+      ${typeToString(this.consequentType)}
+    but the false branch has type:
+      ${typeToString(this.alternateType)}
+    `
   }
 
   public elaborate() {

@@ -2588,16 +2588,738 @@ Node {
       "typability": "Typed",
       "type": "ExpressionStatement",
     },
+    Node {
+      "end": 149,
+      "expression": Node {
+        "alternate": Node {
+          "end": 148,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 17,
+              "line": 16,
+            },
+            "start": Position {
+              "column": 13,
+              "line": 16,
+            },
+          },
+          "raw": "true",
+          "start": 144,
+          "type": "Literal",
+          "value": true,
+        },
+        "consequent": Node {
+          "end": 141,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 16,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 16,
+            },
+          },
+          "raw": "true",
+          "start": 137,
+          "type": "Literal",
+          "value": true,
+        },
+        "end": 148,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 16,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 16,
+          },
+        },
+        "start": 133,
+        "test": Node {
+          "end": 134,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 3,
+              "line": 16,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 16,
+            },
+          },
+          "raw": "1",
+          "start": 133,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": 1,
+        },
+        "typability": "Untypable",
+        "type": "ConditionalExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 16,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 16,
+        },
+      },
+      "start": 133,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 197,
+          "id": Node {
+            "end": 170,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 20,
+                "line": 17,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 17,
+              },
+            },
+            "name": "validCondNum",
+            "start": 158,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "alternate": Node {
+              "body": Node {
+                "end": 197,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 47,
+                    "line": 17,
+                  },
+                  "start": Position {
+                    "column": 46,
+                    "line": 17,
+                  },
+                },
+                "raw": "3",
+                "start": 196,
+                "typability": "Typed",
+                "type": "Literal",
+                "value": 3,
+              },
+              "end": 197,
+              "expression": true,
+              "generator": false,
+              "id": null,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 47,
+                  "line": 17,
+                },
+                "start": Position {
+                  "column": 40,
+                  "line": 17,
+                },
+              },
+              "params": Array [],
+              "start": 190,
+              "typability": "Typed",
+              "type": "ArrowFunctionExpression",
+            },
+            "consequent": Node {
+              "body": Node {
+                "end": 187,
+                "inferredType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 37,
+                    "line": 17,
+                  },
+                  "start": Position {
+                    "column": 36,
+                    "line": 17,
+                  },
+                },
+                "raw": "1",
+                "start": 186,
+                "typability": "Typed",
+                "type": "Literal",
+                "value": 1,
+              },
+              "end": 187,
+              "expression": true,
+              "generator": false,
+              "id": null,
+              "inferredType": Object {
+                "kind": "function",
+                "parameterTypes": Array [],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 37,
+                  "line": 17,
+                },
+                "start": Position {
+                  "column": 30,
+                  "line": 17,
+                },
+              },
+              "params": Array [],
+              "start": 180,
+              "typability": "Typed",
+              "type": "ArrowFunctionExpression",
+            },
+            "end": 197,
+            "inferredType": Object {
+              "kind": "function",
+              "parameterTypes": Array [],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 47,
+                "line": 17,
+              },
+              "start": Position {
+                "column": 23,
+                "line": 17,
+              },
+            },
+            "start": 173,
+            "test": Node {
+              "end": 177,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "boolean",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 27,
+                  "line": 17,
+                },
+                "start": Position {
+                  "column": 23,
+                  "line": 17,
+                },
+              },
+              "raw": "true",
+              "start": 173,
+              "typability": "Typed",
+              "type": "Literal",
+              "value": true,
+            },
+            "typability": "Typed",
+            "type": "ConditionalExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 47,
+              "line": 17,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 17,
+            },
+          },
+          "start": 158,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 198,
+      "inferredType": Object {
+        "kind": "function",
+        "parameterTypes": Array [],
+        "returnType": Object {
+          "kind": "primitive",
+          "name": "number",
+        },
+      },
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 48,
+          "line": 17,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 17,
+        },
+      },
+      "start": 152,
+      "typability": "Typed",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "end": 225,
+      "expression": Node {
+        "alternate": Node {
+          "body": Node {
+            "end": 224,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 25,
+                "line": 18,
+              },
+              "start": Position {
+                "column": 24,
+                "line": 18,
+              },
+            },
+            "raw": "1",
+            "start": 223,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+          "end": 224,
+          "expression": true,
+          "generator": false,
+          "id": null,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [],
+            "returnType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 25,
+              "line": 18,
+            },
+            "start": Position {
+              "column": 18,
+              "line": 18,
+            },
+          },
+          "params": Array [],
+          "start": 217,
+          "typability": "Typed",
+          "type": "ArrowFunctionExpression",
+        },
+        "consequent": Node {
+          "body": Node {
+            "end": 214,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 18,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 18,
+              },
+            },
+            "raw": "1",
+            "start": 213,
+            "typability": "Typed",
+            "type": "Literal",
+            "value": 1,
+          },
+          "end": 214,
+          "expression": true,
+          "generator": false,
+          "id": null,
+          "inferredType": Object {
+            "kind": "function",
+            "parameterTypes": Array [
+              Object {
+                "kind": "variable",
+                "name": "T1",
+              },
+            ],
+            "returnType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 15,
+              "line": 18,
+            },
+            "start": Position {
+              "column": 9,
+              "line": 18,
+            },
+          },
+          "params": Array [
+            Node {
+              "end": 209,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 18,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 18,
+                },
+              },
+              "name": "x",
+              "start": 208,
+              "type": "Identifier",
+            },
+          ],
+          "start": 208,
+          "typability": "Typed",
+          "type": "ArrowFunctionExpression",
+        },
+        "end": 224,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 25,
+            "line": 18,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 18,
+          },
+        },
+        "start": 201,
+        "test": Node {
+          "end": 205,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 6,
+              "line": 18,
+            },
+            "start": Position {
+              "column": 2,
+              "line": 18,
+            },
+          },
+          "raw": "true",
+          "start": 201,
+          "typability": "Typed",
+          "type": "Literal",
+          "value": true,
+        },
+        "typability": "Untypable",
+        "type": "ConditionalExpression",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 18,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 18,
+        },
+      },
+      "start": 201,
+      "typability": "Typed",
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "alternate": Node {
+              "body": Array [],
+              "end": 298,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "undefined",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "line": 23,
+                },
+                "start": Position {
+                  "column": 11,
+                  "line": 23,
+                },
+              },
+              "start": 295,
+              "typability": "Typed",
+              "type": "BlockStatement",
+            },
+            "consequent": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "end": 282,
+                    "inferredType": Object {
+                      "kind": "primitive",
+                      "name": "number",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 14,
+                        "line": 22,
+                      },
+                      "start": Position {
+                        "column": 13,
+                        "line": 22,
+                      },
+                    },
+                    "raw": "1",
+                    "start": 281,
+                    "typability": "Typed",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "end": 283,
+                  "inferredType": Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 22,
+                    },
+                    "start": Position {
+                      "column": 6,
+                      "line": 22,
+                    },
+                  },
+                  "start": 274,
+                  "typability": "Typed",
+                  "type": "ReturnStatement",
+                },
+              ],
+              "end": 289,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 23,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 21,
+                },
+              },
+              "start": 266,
+              "typability": "Typed",
+              "type": "BlockStatement",
+            },
+            "end": 298,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 23,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 21,
+              },
+            },
+            "start": 256,
+            "test": Node {
+              "end": 264,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "boolean",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 12,
+                  "line": 21,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 21,
+                },
+              },
+              "raw": "true",
+              "start": 260,
+              "typability": "Typed",
+              "type": "Literal",
+              "value": true,
+            },
+            "typability": "Untypable",
+            "type": "IfStatement",
+          },
+        ],
+        "end": 302,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 24,
+          },
+          "start": Position {
+            "column": 23,
+            "line": 20,
+          },
+        },
+        "start": 250,
+        "typability": "Untypable",
+        "type": "BlockStatement",
+      },
+      "end": 302,
+      "expression": false,
+      "generator": false,
+      "id": Node {
+        "end": 247,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 20,
+            "line": 20,
+          },
+          "start": Position {
+            "column": 11,
+            "line": 20,
+          },
+        },
+        "name": "invalidIf",
+        "start": 238,
+        "type": "Identifier",
+      },
+      "inferredType": Object {
+        "kind": "primitive",
+        "name": "undefined",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 24,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 20,
+        },
+      },
+      "params": Array [],
+      "start": 229,
+      "typability": "Untypable",
+      "type": "FunctionDeclaration",
+    },
+    Node {
+      "alternate": Node {
+        "body": Array [],
+        "end": 329,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 28,
+          },
+          "start": Position {
+            "column": 9,
+            "line": 27,
+          },
+        },
+        "start": 324,
+        "type": "BlockStatement",
+      },
+      "consequent": Node {
+        "body": Array [],
+        "end": 318,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 27,
+          },
+          "start": Position {
+            "column": 9,
+            "line": 26,
+          },
+        },
+        "start": 313,
+        "type": "BlockStatement",
+      },
+      "end": 329,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 28,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 26,
+        },
+      },
+      "start": 306,
+      "test": Node {
+        "end": 311,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "number",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 7,
+            "line": 26,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 26,
+          },
+        },
+        "raw": "1",
+        "start": 310,
+        "typability": "Typed",
+        "type": "Literal",
+        "value": 1,
+      },
+      "typability": "Untypable",
+      "type": "IfStatement",
+    },
   ],
-  "end": 132,
-  "inferredType": Object {
-    "kind": "primitive",
-    "name": "undefined",
-  },
+  "end": 332,
   "loc": SourceLocation {
     "end": Position {
       "column": 2,
-      "line": 15,
+      "line": 29,
     },
     "start": Position {
       "column": 0,
@@ -2606,7 +3328,7 @@ Node {
   },
   "sourceType": "module",
   "start": 0,
-  "typability": "Typed",
+  "typability": "Untypable",
   "type": "Program",
 }
 `;
