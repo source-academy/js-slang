@@ -23,6 +23,16 @@ function checkConstantDeclarationAnnotation(
   }
 }
 
+function checkBinaryExpressionAnnotation(
+  declaration: TypeVariableAnnotatedNode<es.BinaryExpression | es.LogicalExpression>
+) {
+  const left: TypeVariableAnnotatedNode<es.Expression> = declaration.left
+  const right: TypeVariableAnnotatedNode<es.Expression> = declaration.right
+  expect(left.typeVariableId).not.toBe(undefined)
+  expect(right.typeVariableId).not.toBe(undefined)
+  expect(declaration).not.toBe(undefined)
+}
+
 test('constant declarations will have identifier and value annotated', async () => {
   const code = stripIndent`
   const x = 1;
@@ -32,5 +42,19 @@ test('constant declarations will have identifier and value annotated', async () 
   const annotatedAst = await toAnnotatedAst(code)
   simple(annotatedAst, {
     VariableDeclarator: checkConstantDeclarationAnnotation
+  })
+})
+
+test('binary expressions will be annotated', async () => {
+  const code = stripIndent`
+    const x = 1 + 1;
+    const y = x - 2;
+    const z = true && false;
+    const a = z || true;
+    `
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    BinaryExpression: checkBinaryExpressionAnnotation,
+    LogicalExpression: checkBinaryExpressionAnnotation
   })
 })
