@@ -1,12 +1,15 @@
 import * as es from 'estree'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
+/** Name of Unary negative builtin operator */
+const NEGATIVE_OP = '-_1'
 let typeIdCounter = 0
 /**
  * Traverse node and add `type_id` attr to it. This id will be used to recover inferred node types
  * after finishing type checking
  * @param node
  */
+/* tslint:disable cyclomatic-complexity */
 function traverse(node: es.Node, constraints?: Constraint[]) {
   if (constraints) {
     // @ts-ignore
@@ -389,8 +392,8 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
   const storedType: VAR = node.typeVar
   switch (node.type) {
     case 'UnaryExpression': {
-      // guaranteed to be a monomorphic function type as we only have the negation op
-      const funcType = env[node.operator] as FUNCTION
+      const op = node.operator === '-' ? NEGATIVE_OP : node.operator
+      const funcType = env[op] as FUNCTION // in either case its a monomorphic type
       const argNode = node.argument
       // @ts-ignore
       const argType = argNode.typeVar
@@ -441,7 +444,7 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
       let n = node.body.length - 1
-      const declNodes: Array<es.FunctionDeclaration | es.VariableDeclaration> = []
+      const declNodes: (es.FunctionDeclaration | es.VariableDeclaration)[] = []
       while (n >= 0) {
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
@@ -742,7 +745,7 @@ const predeclaredNames = {
 }
 
 const primitiveFuncs = {
-  '-_1': tFunc(tNamedNumber, tNamedNumber),
+  [NEGATIVE_OP]: tFunc(tNamedNumber, tNamedNumber),
   '!': tFunc(tNamedBool, tNamedBool),
   '&&': tForAll(tFunc(tNamedBool, tVar('T'), tVar('T'))),
   '||': tForAll(tFunc(tNamedBool, tVar('T'), tVar('T'))),

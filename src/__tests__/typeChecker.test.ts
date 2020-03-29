@@ -1,6 +1,6 @@
 /* tslint:disable:object-literal-key-quotes no-string-literal */
 import { createContext } from '../index'
-import { parse as __parse } from '../parser'
+import { parse as __parse } from '../parser/parser'
 import { typeCheck } from '../typeChecker'
 
 // simple program to parse program and error if there are syntatical errors
