@@ -3,7 +3,6 @@ node_modules
 !*.prelude.js
 *.map
 dist/
-.idea/
 
 # emacs backup files
 
