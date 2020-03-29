@@ -192,6 +192,113 @@ Array [
     'function only runs once and value is memoised'
   )
 
+const recursiveFunctionWorks = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function m(f, x) {
+    display("m");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);
+`,
+    '20',
+    'recursive function works'
+  )
+
+const recursiveFunctionWorksDisplay = (executionMethod: ExecutionMethod) =>
+  runTestForDisplay(
+    executionMethod,
+    `
+function m(f, x) {
+    display("m");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);
+`,
+    `
+Array [
+  "\\"m\\"",
+  "\\"m\\"",
+  "\\"m\\"",
+  "\\"m\\"",
+  "\\"m\\"",
+]
+`,
+    'recursive function gives correct display statements'
+  )
+
+const unusedFunctionArgumentsNotEvaluatedError = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function add(a, b) {
+    return b;
+}
+add(error(), 3);
+`,
+    '3',
+    'function arguments (error) that are unused are not evaluated'
+  )
+
+const unusedFunctionArgumentsNotEvaluatedDisplay = (executionMethod: ExecutionMethod) =>
+  runTestForDisplay(
+    executionMethod,
+    `
+function add(a, b) {
+    return b;
+}
+add((() => display("helo"))(), 3);
+`,
+    'Array []',
+    'function arguments (display) that are unused are not evaluated'
+  )
+
+const unusedStatementsNotEvaluated = (executionMethod: ExecutionMethod) =>
+  runTestForDisplay(
+    executionMethod,
+    `
+(() => display("helo"))();
+76;
+`,
+    'Array []',
+    'statements that are unused are not evaluated'
+  )
+
+const assignmentUsingNamesWorks = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+const a = 4;
+const g = a;
+g;
+`,
+    '4',
+    'variable assignment to another name works'
+  )
+
+const ifStatementsWork = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function if_else(cond) {
+  if (cond) {
+    return 456;
+  } else {
+    error();
+    return 987;
+  }
+}
+if_else(true && (false || true));
+`,
+    '456',
+    'if statements work'
+  )
+
 // ================== RUN THE TESTS ====================
 const testArray = [
   isNumberReturnsTrue,
@@ -206,7 +313,14 @@ const testArray = [
   lazyFunctionArguments,
   lazyEvaluationOfFunctions,
   lazyMemoisation,
-  errorEvaluatesToError
+  errorEvaluatesToError,
+  recursiveFunctionWorks,
+  recursiveFunctionWorksDisplay,
+  unusedFunctionArgumentsNotEvaluatedError,
+  unusedFunctionArgumentsNotEvaluatedDisplay,
+  unusedStatementsNotEvaluated,
+  assignmentUsingNamesWorks,
+  ifStatementsWork
 ]
 testArray.forEach(tst => tst('interpreter'))
 testArray.forEach(tst => tst('native'))

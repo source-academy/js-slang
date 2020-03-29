@@ -1,5 +1,563 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`a self-declared map function gives correct display statements (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function gives correct display statements (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function gives correct display statements (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function gives correct display statements (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function gives correct display statements (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function gives correct display statements (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+stringify(force_pair(m(s, list(1, 2, 3))));",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[3, [6, [9, null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function only evaluates the required amount (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function only evaluates the required amount (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function only evaluates the required amount (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function works to give the first element in a list (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function works to give the first element in a list (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`a self-declared map function works to give the first element in a list (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, xs) {
+    display(\\"m\\");
+    return is_null(xs)
+        ? xs
+        : pair(f(head(xs)), m(f, tail(xs)));
+}
+const s = x => x * 3;
+head(m(s, list(1, 2, 3)));",
+  "displayResult": Array [
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct display statements (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct display statements (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct display statements (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct result (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct result (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate gives correct result (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs2 = list(7, 8, 9, 10, 11, 13);
+const sum1 = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, 0, xs2);
+sum1;",
+  "displayResult": Array [
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+    "\\"add\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 58,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function gives correct display statements (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function gives correct display statements (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function gives correct display statements (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function works lazily (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function works lazily (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter function works lazily (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1, 2, 3, 4, 5, 6);
+const filtered = filter(x => {
+        display(\\"filter\\");
+        return x % 2 === 0;
+    }, xs);
+head(filtered);",
+  "displayResult": Array [
+    "\\"filter\\"",
+    "\\"filter\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`filter returns the correct list (auto): expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -205,6 +763,246 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`permutations function works in lazy (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function permutations(s) {
+    return is_null(s)
+        ? list(null)
+        : accumulate(append, null,
+            map(x => map(p => pair(x, p),
+                         permutations(remove(x, s))),
+                s));
+}
+
+equal(permutations(list(1, 2, 3)), list(list(1, 2, 3),
+                                        list(1, 3, 2),
+                                        list(2, 1, 3),
+                                        list(2, 3, 1),
+                                        list(3, 1, 2),
+                                        list(3, 2, 1)));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`permutations function works in lazy (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function permutations(s) {
+    return is_null(s)
+        ? list(null)
+        : accumulate(append, null,
+            map(x => map(p => pair(x, p),
+                         permutations(remove(x, s))),
+                s));
+}
+
+equal(permutations(list(1, 2, 3)), list(list(1, 2, 3),
+                                        list(1, 3, 2),
+                                        list(2, 1, 3),
+                                        list(2, 3, 1),
+                                        list(3, 1, 2),
+                                        list(3, 2, 1)));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`permutations function works in lazy (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function permutations(s) {
+    return is_null(s)
+        ? list(null)
+        : accumulate(append, null,
+            map(x => map(p => pair(x, p),
+                         permutations(remove(x, s))),
+                s));
+}
+
+equal(permutations(list(1, 2, 3)), list(list(1, 2, 3),
+                                        list(1, 3, 2),
+                                        list(2, 1, 3),
+                                        list(2, 3, 1),
+                                        list(3, 1, 2),
+                                        list(3, 2, 1)));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments gives error when called (auto): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);
+sum;",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "accumulate",
+      "expected": 3,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 3 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments gives error when called (interpreter): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);
+sum;",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "accumulate",
+      "expected": 3,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 3 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments gives error when called (native): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);
+sum;",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "accumulate",
+      "expected": 3,
+      "got": 2,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Expected 3 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments works, as long as it is not called (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments works, as long as it is not called (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`wrong number of arguments works, as long as it is not called (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs1 = list(7, 8, 9, 10, 11, 13);
+const sum = accumulate((x, y) => {
+        display(\\"add\\");
+        return x + y;
+    }, xs1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

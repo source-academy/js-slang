@@ -87,6 +87,102 @@ Object {
 }
 `;
 
+exports[`function arguments (display) that are unused are not evaluated (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add((() => display(\\"helo\\"))(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments (display) that are unused are not evaluated (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add((() => display(\\"helo\\"))(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments (display) that are unused are not evaluated (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add((() => display(\\"helo\\"))(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments (error) that are unused are not evaluated (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add(error(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments (error) that are unused are not evaluated (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add(error(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments (error) that are unused are not evaluated (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(a, b) {
+    return b;
+}
+add(error(), 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`function arguments are lazily evaluated (auto): expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -247,6 +343,69 @@ sq;",
   "errors": Array [],
   "parsedErrors": "",
   "result": 49,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`if statements work (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+  if (cond) {
+    return 456;
+  } else {
+    error();
+    return 987;
+  }
+}
+if_else(true && (false || true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 456,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`if statements work (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+  if (cond) {
+    return 456;
+  } else {
+    error();
+    return 987;
+  }
+}
+if_else(true && (false || true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 456,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`if statements work (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+  if (cond) {
+    return 456;
+  } else {
+    error();
+    return 987;
+  }
+}
+if_else(true && (false || true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 456,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -598,6 +757,243 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function gives correct display statements (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function gives correct display statements (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function gives correct display statements (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function works (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function works (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`recursive function works (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function m(f, x) {
+    display(\\"m\\");
+    return x === 0
+        ? x
+        : f(x) + m(f, x - 1);
+}
+m(x => x * 2, 4);",
+  "displayResult": Array [
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+    "\\"m\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`statements that are unused are not evaluated (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(() => display(\\"helo\\"))();
+76;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 76,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`statements that are unused are not evaluated (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(() => display(\\"helo\\"))();
+76;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 76,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`statements that are unused are not evaluated (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(() => display(\\"helo\\"))();
+76;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 76,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`variable assignment to another name works (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 4;
+const g = a;
+g;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`variable assignment to another name works (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 4;
+const g = a;
+g;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`variable assignment to another name works (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 4;
+const g = a;
+g;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
