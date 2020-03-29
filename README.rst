@@ -22,23 +22,33 @@ To build,
   $ yarn
   $ yarn build
 
+To add "js-slang" to your PATH, build it as per the above instructions, then run
+
+.. code-block::
+
+  $ cd dist
+  $ npm link
+
+If you do not wish to add "js-slang" to your PATH, replace "js-slang" with "node dist/repl/repl.js" in the following examples.
+
 To try out *Source* in a REPL, run
 
 .. code-block::
 
-  $ node dist/repl/repl.js -c [chapter] # default: 1
+  $ js-slang -c [chapter] # default: 1
 
-You can set additional options for the REPL:
+You can set additional options:
 
 .. code-block::
 
-  Usage: node repl.js [FILENAME] [OPTION]
+  Usage: js-slang [PROGRAM_STRING] [OPTION]
 
-    -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4)
+    -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
     -s, --use-subst       use substitution
     -h, --help            display this help
     -n, --native          use the native execution method
     -l, --lazy            use lazy evaluation
+    -e, --eval            don't show REPL, only display output of evaluation
 
 Documentation
 -------------
