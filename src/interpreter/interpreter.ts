@@ -512,7 +512,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    infiniteLoopStaticAnalysis(node, currentEnvironment(context).infiniteLoopDetection);
+    infiniteLoopStaticAnalysis(node, currentEnvironment(context).infiniteLoopDetection, currentEnvironment(context));
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined

@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { InfiniteLoopData, Environment } from '../types'
-import * as sym from './symbolicExecutor'
+import * as makeUnaryChecker from './analyzer'
 import * as errors from '../errors/errors'
 
 function getVars(node: es.Node): string[] {
@@ -115,11 +115,14 @@ export function makeFunctionState(name: string, args: any[], relevantVars: numbe
 
 export function infiniteLoopStaticAnalysis(
   node: es.FunctionDeclaration,
-  infiniteLoopDetection: InfiniteLoopData
+  infiniteLoopDetection: InfiniteLoopData,
+  env: Environment
 ) {
   const functionId = node.id as es.Identifier
   infiniteLoopDetection.relevantVars[functionId.name] = getRelevantVars(node)
-  infiniteLoopDetection.checkers = infiniteLoopDetection.checkers.concat(sym.toName(node))
+  infiniteLoopDetection.checkers = infiniteLoopDetection.checkers.concat(
+    makeUnaryChecker.toName(node, env)
+  )
   // return context;
 }
 
