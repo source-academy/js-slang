@@ -639,15 +639,18 @@ function transformIdentifiersToThunks(program: es.Program) {
 /**
  * Forces the last statement in the program, as this statement
  * is likely the only result that has to be calculated.
+ *
  * @param program The program to transform.
  */
-function transformToForceLastStatement(program: es.Program) {
+export function transformToForceLastStatement(program: es.Program) {
   const statements = program.body as es.Statement[]
-  const lastIndex = statements.length - 1
-  const lastStatement = statements[lastIndex]
-  if (lastStatement.type === 'ExpressionStatement') {
-    const ls = lastStatement as es.ExpressionStatement
-    ls.expression = create.forceEagerEvaluationOfLazyExpression(ls.expression)
+  if (statements.length > 0) {
+    const lastIndex = statements.length - 1
+    const lastStatement = statements[lastIndex]
+    if (lastStatement.type === 'ExpressionStatement') {
+      const ls = lastStatement as es.ExpressionStatement
+      ls.expression = create.forceEagerEvaluationOfLazyExpression(ls.expression)
+    }
   }
 }
 

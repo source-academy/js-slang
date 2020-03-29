@@ -2,6 +2,7 @@ import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
 import { Value } from '../types'
 import { isTranspilerThunk } from '../transpiler/lazyTranspiler'
+import { isInterpreterThunk } from '../interpreter/lazyInterpreter'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -119,6 +120,10 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       isTranspilerThunk(v)
     ) {
       return v.toString()
+    } else if (isInterpreterThunk(v)) {
+      return v.actualValue
+        ? JSON.stringify(v.actualValue)
+        : "<thunk>"
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
     } else if (Array.isArray(v)) {

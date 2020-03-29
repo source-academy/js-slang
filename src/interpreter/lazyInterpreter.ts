@@ -9,6 +9,7 @@ import {
   popEnvironment
 } from './interpreter'
 import { Context, InterpreterThunk, Environment, Value } from '../types'
+import Closure from './closure'
 
 export const thunkStringType = 'Thunk'
 
@@ -36,11 +37,20 @@ export const eagerFunctions = [
  * Source function.
  * @param call The CallExpression that led to evaluation.
  */
-export function getThunkedArgs(context: Context, call: es.CallExpression) {
+export function* getThunkedArgs(context: Context, call: es.CallExpression) {
   const args = []
   const env = currentEnvironment(context)
   for (const arg of call.arguments) {
-    args.push(createThunk(arg, env, context))
+    if (arg.type === 'ArrowFunctionExpression') {
+      // avoid thunking arrow expressions passed as function arguments
+      args.push(Closure.makeFromArrowFunction(arg, env, context))
+    } else if (arg.type === 'Identifier' || arg.type === 'Literal') {
+      // avoid thunking names and literals, just get the thunk the name points to
+      const result = yield* evaluate(arg, context)
+      args.push(result)
+    } else {
+      args.push(createThunk(arg, env, context))
+    }
   }
   return args
 }
@@ -94,6 +104,7 @@ export function createThunk(
  */
 export function isInterpreterThunk(v: any): boolean {
   return (
+    v !== null &&
     typeof v === 'object' &&
     Object.keys(v).length === 6 &&
     v.type !== undefined &&
@@ -114,7 +125,9 @@ export function isInterpreterThunk(v: any): boolean {
  * @returns The value after evaluation.
  */
 export function* evaluateThunk(thunk: InterpreterThunk, context: Context): Value {
-  if (thunk.isEvaluated) {
+  if (!isInterpreterThunk(thunk)) {
+    return thunk
+  } else if (thunk.isEvaluated) {
     return thunk.actualValue
   } else {
     // Use the thunk's environment (on creation) to evaluate it.

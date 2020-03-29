@@ -312,27 +312,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
-    // console.log('ArrowFunctionExpression')
     return Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    // console.log('Identifier')
     const result = getVariable(context, node.name)
-    if (lazyEvaluate(context)) {
-      if (result !== null && isInterpreterThunk(result) && result.isEvaluated) {
-        return result.actualValue
-      } else {
-        return result
-      }
-    } else {
-      return result
-    }
+    return result
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
-    // console.log('CallExpression')
-    const callee = yield* evaluate(node.callee, context)
+    let callee = yield* evaluate(node.callee, context)
+    if (lazyEvaluate(context)) {
+      callee = isInterpreterThunk(callee)
+        ? yield* evaluateThunk(callee, context)
+        : callee
+    }
 
     let args
     if (lazyEvaluate(context)) {
@@ -345,7 +339,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         args = yield* getEagerArgs(context, node)
       } else {
         // Delay evaluation of arguments.
-        args = getThunkedArgs(context, node)
+        args = yield* getThunkedArgs(context, node)
       }
     } else {
       args = yield* getArgs(context, node)
@@ -381,7 +375,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const value = yield* evaluate(node.argument, context)
 
     if (lazyEvaluate(context)) {
-      const valueNoThunk = value !== null && isInterpreterThunk(value) ? yield* evaluateThunk(value, context) : value;
+      const valueNoThunk = value !== null && isInterpreterThunk(value)
+        ? yield* evaluateThunk(value, context)
+        : value;
       const error = rttc.checkUnaryExpression(node, node.operator, valueNoThunk)
       if (error) {
         return handleRuntimeError(context, error)
@@ -441,7 +437,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // Check if the expression (RHS of the assignment statement) should be evaluated lazily or eagerly.
       // Everything except literal values and arrow functions should be thunked.
       // Arrow function args will still be evaluated lazily.
-      if (declaration.init!.type !== 'Literal' && declaration.init!.type !== 'ArrowFunctionExpression') {
+      // Also, evaluate identifiers eagerly as they would already be thunked.
+      if (declaration.init!.type !== 'Literal' &&
+        declaration.init!.type !== 'ArrowFunctionExpression' &&
+        declaration.init!.type !== 'Identifier'
+      ) {
         // Capture the current environment (Currently not useful since it's not deep-cloned).
         const currentEnv = currentEnvironment(context)
         // Construct Thunk object.
@@ -634,7 +634,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (lazyEvaluate(context)) {
       if (returnExpression.type === 'CallExpression') {
         const callee = yield* evaluate(returnExpression.callee, context)
-        const args = getThunkedArgs(context, returnExpression)
+        const args = yield* getThunkedArgs(context, returnExpression)
         return new TailCallReturnValue(callee, args, returnExpression)
       } else {
         let result
