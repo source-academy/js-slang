@@ -121,9 +121,7 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     ) {
       return v.toString()
     } else if (isInterpreterThunk(v)) {
-      return v.actualValue
-        ? JSON.stringify(v.actualValue)
-        : "<thunk>"
+      return v.actualValue ? JSON.stringify(v.actualValue) : '<thunk>'
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
     } else if (Array.isArray(v)) {
