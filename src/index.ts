@@ -53,10 +53,12 @@ const DEFAULT_OPTIONS: IOptions = {
 }
 
 // needed to work on browsers
-// @ts-ignore
-SourceMapConsumer.initialize({
-  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
-})
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  SourceMapConsumer.initialize({
+    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+  })
+}
 
 // deals with parsing error objects and converting them to strings (for repl at least)
 
