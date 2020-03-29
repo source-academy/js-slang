@@ -1,5 +1,5 @@
 import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal, Program } from 'estree'
+import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { writeFileSync } from 'fs'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
@@ -11,11 +11,13 @@ import {
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './stepper/stepper'
+import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -150,6 +152,26 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
   return isNative
 }
 
+export function findDeclaration(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation | null | undefined {
+  const program = parse(code, context, true)
+  if (!program) {
+    return null
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return null
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode || identifierNode === declarationNode) {
+    return null
+  }
+  return declarationNode.loc
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -180,7 +202,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
       status: 'finished',
-      value: steps.map(codify)
+      value: steps
     } as Result)
   }
   isNativeRunnable = determineExecutionMethod(theOptions, context, program)
@@ -280,4 +302,13 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine, isNativeRunnable }
+export {
+  createContext,
+  Context,
+  Result,
+  setBreakpointAtLine,
+  scopeVariables,
+  lookupDefinition,
+  getAllOccurrencesInScope,
+  isNativeRunnable
+}
