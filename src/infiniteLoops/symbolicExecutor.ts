@@ -116,15 +116,6 @@ function getFromEnv(name: string, store: Map<string, stype.SSymbol>[]) {
   return undefined
 }
 
-export function isTerminal(node: stype.SymbolicExecutable): boolean {
-  if (node.type === 'BranchSymbol') {
-    return isTerminal(node.consequent) && isTerminal(node.alternate)
-  } else if (node.type === 'SequenceSymbol') {
-    return node.symbols.every(isTerminal) // check
-  }
-  return node.type !== 'FunctionSymbol' && node.type !== 'SkipSymbol'
-}
-
 const getVariable = (env: Environment, name: string) => {
   let environment: Environment | null = env
   while (environment) {
@@ -167,7 +158,7 @@ export function symbolicExecute(
     const id = declaration.id as es.Identifier
     if (rhs) {
       const result = symbolicExecute(rhs, store, env)
-      if (isTerminal(result)) {
+      if (stype.isTerminal(result)) {
         store[0][id.name] = result
         return stype.unusedSymbol
       } else {
@@ -178,14 +169,15 @@ export function symbolicExecute(
     return stype.unusedSymbol
   } else if (node.type === 'ExpressionStatement') {
     return symbolicExecute(node.expression, store, env)
-  } else if (node.type === 'IfStatement' || node.type === 'ConditionalExpression') {
-    // TODO if cond expr value is used
+  } else if (node.type === 'IfStatement') {
     const test = symbolicExecute(node.test, store, env)
     const consequent = symbolicExecute(node.consequent, store, env)
     const alternate = node.alternate
       ? symbolicExecute(node.alternate, store, env)
       : stype.unusedSymbol
     return stype.makeBranchSymbol(test, consequent, alternate)
+  } else if ( node.type === 'ConditionalExpression') { // TODO
+    return stype.skipSymbol
   } else if (node.type === 'BlockStatement') {
     const newContext = [new Map()].concat(store)
     return stype.makeSequenceSymbol(node.body.map(x => symbolicExecute(x, newContext, env)))
@@ -225,8 +217,8 @@ export function symbolicExecute(
     if (arg === undefined || arg === null || arg.type === 'Identifier' || arg.type === 'Literal') {
       return stype.terminateSymbol
     } else {
-      const value = symbolicExecute(arg, store, env)
-      return isTerminal(value) ? stype.terminateSymbol : value
+      const value = symbolicExecute(arg, store, env) // TODO check: skip is term?
+      return value.type === 'SkipSymbol' || stype.isTerminal(value) ? stype.terminateSymbol : value
     }
   }
   return stype.skipSymbol

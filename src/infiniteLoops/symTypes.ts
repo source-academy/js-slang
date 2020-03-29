@@ -29,7 +29,7 @@ export function makeNumberSymbol(name: string, constant: number, isPositive?: bo
     isPositive: isPositive === undefined ? true : isPositive
   } as NumberSymbol
 }
-interface LiteralValueSymbol {
+export interface LiteralValueSymbol {
   type: 'LiteralValueSymbol'
   value: number | boolean
 }
@@ -37,7 +37,7 @@ export function makeLiteralValueSymbol(value: number | boolean) {
   return { type: 'LiteralValueSymbol', value } as LiteralValueSymbol
 }
 // here for convenience
-interface LogicalSymbol {
+export interface LogicalSymbol {
   type: 'LogicalSymbol'
   left: BooleanSymbol
   right: BooleanSymbol
@@ -64,7 +64,7 @@ export interface InequalitySymbol {
 export function makeInequalitySymbol(name: string, constant: number, direction: number) {
   return { type: 'InequalitySymbol', name, constant, direction } as InequalitySymbol
 }
-interface FunctionSymbol {
+export interface FunctionSymbol {
   type: 'FunctionSymbol'
   name: string
   args: SSymbol[]
@@ -88,13 +88,13 @@ interface SequenceSymbol {
 export function makeSequenceSymbol(symbols: SSymbol[]) {
   return { type: 'SequenceSymbol', symbols } as SequenceSymbol
 }
-interface SkipSymbol {
+export interface SkipSymbol {
   type: 'SkipSymbol'
 }
-interface TerminateSymbol {
+export interface TerminateSymbol {
   type: 'TerminateSymbol'
 }
-interface UnusedSymbol {
+export interface UnusedSymbol {
   type: 'UnusedSymbol'
 }
 export const skipSymbol = { type: 'SkipSymbol' } as SkipSymbol
@@ -124,4 +124,23 @@ export function isBooleanSymbol(node: SymbolicExecutable): node is BooleanSymbol
 }
 export function negateNumberSymbol(sym: NumberSymbol): NumberSymbol {
   return { ...sym, constant: -sym.constant, isPositive: true }
+}
+
+export function isTerminal(node: SymbolicExecutable): boolean {
+  if (node.type === 'BranchSymbol') {
+    return isTerminal(node.consequent) && isTerminal(node.alternate)
+  } else if (node.type === 'SequenceSymbol') {
+    return node.symbols.every(isTerminal) // check
+  }
+  return node.type !== 'FunctionSymbol' && node.type !== 'SkipSymbol'
+}
+
+export interface Transition {
+  caller: FunctionSymbol
+  callee: FunctionSymbol | TerminateSymbol
+  condition: BooleanSymbol | SkipSymbol | null
+}
+
+export function makeTransition (caller: FunctionSymbol, callee: FunctionSymbol | TerminateSymbol, condition: BooleanSymbol | SkipSymbol | null) {
+  return {caller, callee, condition} as Transition
 }

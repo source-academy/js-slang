@@ -1,6 +1,5 @@
 import * as stype from './symTypes'
 
-import { isTerminal } from './symbolicExecutor'
 function collapseConjunction(node: stype.BooleanSymbol): stype.BooleanSymbol {
   if (node.type === 'LogicalSymbol' && node.conjunction) {
     const left = node.left
@@ -46,19 +45,20 @@ function seperateDisjunctions(node: stype.BooleanSymbol): stype.BooleanSymbol[] 
 function processLogical(node: stype.BooleanSymbol) {
   return seperateDisjunctions(node).map(collapseConjunction)
 }
-export function serialize(node: stype.SSymbol): stype.SSymbol[][] {
-  if (isTerminal(node)) {
+
+function unTree(node: stype.SSymbol): stype.SSymbol[][] {
+  if (stype.isTerminal(node)) {
     return [[stype.terminateSymbol]]
   } else if (node.type === 'SequenceSymbol') {
     let result: stype.SSymbol[][] = []
-    const temp = node.symbols.map(serialize)
+    const temp = node.symbols.map(unTree)
     for (const subList of temp) {
       result = result.concat(subList)
     }
     return result
   } else if (node.type === 'BranchSymbol') {
-    const consTail = serialize(node.consequent)
-    const altTail = serialize(node.alternate)
+    const consTail = unTree(node.consequent)
+    const altTail = unTree(node.alternate)
     let result: stype.SSymbol[][] = []
     if (stype.isBooleanSymbol(node.test)) {
       for (const sym of processLogical(node.test)) {
@@ -76,4 +76,26 @@ export function serialize(node: stype.SSymbol): stype.SSymbol[][] {
     return [[node]]
   }
   return []
+}
+
+export function serialize(firstCall: stype.FunctionSymbol, node: stype.SSymbol): stype.Transition[] {
+  const result: stype.Transition[] = []
+  const symLists = unTree(node)
+  for (const sList of symLists) {
+    let cond = null
+    for (const sym of sList) {
+      if (stype.isBooleanSymbol(sym)) {
+        if(cond === null) {
+          cond = sym
+        } else if(stype.isBooleanSymbol(cond)){
+          cond = stype.makeLogicalSymbol(cond, sym, true)
+        } // if cond = skip, don't change cond
+      } else if (sym.type === 'FunctionSymbol' || sym.type === 'TerminateSymbol') {
+        result.push(stype.makeTransition(firstCall, sym, cond))
+      } else if (sym.type === 'SkipSymbol') {
+        cond = stype.skipSymbol
+      }
+    }
+  }
+  return result
 }
