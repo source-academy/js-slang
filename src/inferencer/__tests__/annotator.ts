@@ -45,6 +45,43 @@ function checkLiteralAnnotation(literal: TypeVariableAnnotatedNode<es.Literal>) 
   expect(literal.typeVariableId).not.toBe(undefined)
 }
 
+function checkFunctionDeclarationAnnotation(
+  functionDeclaration: TypeVariableAnnotatedNode<es.FunctionDeclaration>
+) {
+  const params: TypeVariableAnnotatedNode<es.Pattern>[] = functionDeclaration.params
+  params.forEach(param => {
+    expect(param.typeVariableId).not.toBe(undefined)
+    expect(param.isPolymorphic).toBe(true)
+  })
+
+  // TODO figure out what to do with the function body.
+  const result: TypeVariableAnnotatedNode<es.BlockStatement> = functionDeclaration.body
+  expect(result.typeVariableId).not.toBe(undefined)
+}
+
+function checkFunctionDefinitionAnnotation(
+  functionDefinition: TypeVariableAnnotatedNode<es.ArrowFunctionExpression>
+) {
+  const params: TypeVariableAnnotatedNode<es.Pattern>[] = functionDefinition.params
+  params.forEach(param => {
+    expect(param.typeVariableId).not.toBe(undefined)
+    expect(param.isPolymorphic).toBe(true)
+  })
+
+  // TODO figure out what to do with the function body.
+  const result: TypeVariableAnnotatedNode<es.Node> = functionDefinition.body
+  expect(result.typeVariableId).not.toBe(undefined)
+}
+
+function checkFunctionApplicationAnnotation(
+  functionApplication: TypeVariableAnnotatedNode<es.CallExpression>
+) {
+  functionApplication.arguments.forEach((argument: TypeVariableAnnotatedNode<es.Expression>) => {
+    expect(argument.typeVariableId).not.toBe(undefined)
+    expect(argument.isPolymorphic).toBe(true)
+  })
+}
+
 test('constant declarations will have identifier and value annotated', async () => {
   const code = stripIndent`
   const x = 1;
@@ -91,5 +128,36 @@ test('literals are annotated', async () => {
   const annotatedAst = await toAnnotatedAst(code)
   simple(annotatedAst, {
     Literal: checkLiteralAnnotation
+  })
+})
+
+test('function declarations are annotated', async () => {
+  const code = stripIndent`
+    function something(x) {
+        return x;
+    }`
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    FunctionDeclaration: checkFunctionDeclarationAnnotation
+  })
+})
+
+test('function definitions are annotated', async () => {
+  const code = stripIndent`
+      const x = x => x;
+      y => y + 1;`
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    ArrowFunctionExpression: checkFunctionDefinitionAnnotation
+  })
+})
+
+test('function applications are annotated', async () => {
+  const code = stripIndent`
+    somefunction(1);
+    `
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    CallExpression: checkFunctionApplicationAnnotation
   })
 })
