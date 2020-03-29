@@ -97,7 +97,7 @@ const listsAreMappedLazily = (executionMethod: ExecutionMethod) =>
           display("mapped");
           return x * 2;
       }, ones);
-  head(twos);
+  force(head(twos));
   head(tail(twos));
 `,
     `

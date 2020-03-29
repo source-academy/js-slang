@@ -24,7 +24,8 @@ import lazyEvaluate, {
   lazyEvaluateInTranspiler,
   lazyEvaluateInInterpreter,
   lazyEvaluateInSource1,
-  lazyEvaluateAuto
+  lazyEvaluateAuto,
+  lazyEvaluateInSource2
 } from './lazyContext'
 
 const createEmptyRuntime = () => ({
@@ -313,11 +314,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
 function importPrelude(context: Context) {
   let prelude = ''
-  if (context.chapter >= 2) {
+  if (lazyEvaluateInSource2(context.chapter) && !lazyEvaluateInSource1(context.chapter)) {
     prelude += listPrelude
-  }
-  if (context.chapter >= 3) {
-    prelude += streamPrelude
+  } else {
+    if (context.chapter >= 2) {
+      prelude += listPrelude
+    }
+    if (context.chapter >= 3) {
+      prelude += streamPrelude
+    }
   }
   if (prelude !== '') {
     context.prelude = prelude

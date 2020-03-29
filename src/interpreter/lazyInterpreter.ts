@@ -29,7 +29,11 @@ export const eagerFunctions = [
   'timed',
   'is_object',
   'is_NaN',
-  'draw_data'
+  'draw_data',
+  // force functions have to be eagerly evaluated!
+  'force',
+  'force_once',
+  'force_pair'
 ]
 
 /**
