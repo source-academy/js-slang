@@ -4,14 +4,13 @@ import { parse as __parse } from '../parser'
 import { typeCheck } from '../typeChecker'
 
 // simple program to parse program and error if there are syntatical errors
-function parse(code: any, chapter=1) {
+function parse(code: any, chapter = 1) {
   const program: any = __parse(code, createContext(chapter))
   expect(program).not.toBeUndefined()
   return program
 }
 
 describe('type checking pairs and lists', () => {
-
   it('happy paths for pair functions', () => {
     const code = `
       const x = pair(3, 4);
@@ -41,7 +40,6 @@ describe('type checking for polymorphic builtin functions', () => {
       const x = is_boolean('file') || false;
     `
     typeCheck(parse(code))
-
   })
 
   it('errors in unhappy path', () => {

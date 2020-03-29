@@ -44,7 +44,7 @@ function traverse(node: es.Node, constraints?: Constraint[]) {
       // save return type to block
       if (constraints && node.body.length) {
         // @ts-ignore
-        node.typeVar = node.body[node.body.length-1]
+        node.typeVar = node.body[node.body.length - 1]
       }
       break
     }
@@ -119,9 +119,9 @@ interface NAMED {
 }
 
 interface PAIR extends NAMED {
-  nodeType: 'Named',
-  name: 'pair',
-  head: TYPE,
+  nodeType: 'Named'
+  name: 'pair'
+  head: TYPE
   tail: TYPE
 }
 
@@ -641,7 +641,7 @@ function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
     head: var1,
     tail: var2
   }
-} 
+}
 
 // function tList(var1: VAR): LIST {
 //   return {
@@ -726,9 +726,9 @@ const predeclaredNames = {
   math_tan: tFunc(tNamedNumber, tNamedNumber),
   math_tanh: tFunc(tNamedNumber, tNamedNumber),
   math_trunc: tFunc(tNamedNumber, tNamedNumber),
-  // source 2 
-  // pair: tForAll(tFunc(tVar('A'), 
-  //               tPair(tVar('B'), tList(tVar('C'))), 
+  // source 2
+  // pair: tForAll(tFunc(tVar('A'),
+  //               tPair(tVar('B'), tList(tVar('C'))),
   //               tPair(tVar('A'), tPair(tVar('B'),
   //                                      tList(tVar('C')))))),
   pair: tForAll(tFunc(tVar('A'), tVar('B'), tPair(tVar('A'), tVar('B')))),
