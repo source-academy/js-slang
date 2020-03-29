@@ -858,7 +858,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   // if see a function at expression position,
   //   has an identifier: replace with the name
   //   else: replace with an identifer "=>"
-  let verboseCount = 0
+  let verbose = true
   const treeifiers = {
     // Identifier: return
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
@@ -914,17 +914,17 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     ): es.Identifier | es.ArrowFunctionExpression => {
       if (target.id) {
         return target.id
-      } else if (verboseCount < 5) {
+      } else if (verbose) {
         // here onwards is guarding against arrow turned function expressions
-        verboseCount++
+        verbose = false
         const redacted = ast.arrowFunctionExpression(
           target.params,
           treeify(target.body) as es.BlockStatement
         )
-        verboseCount = 0
+        verbose = true
         return redacted
       } else {
-        // returns infinite substitution warning after 5 substitutions
+        // simplify the body with ellipses
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
@@ -966,17 +966,17 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     ArrowFunctionExpression: (
       target: es.ArrowFunctionExpression
     ): es.Identifier | es.ArrowFunctionExpression => {
-      if (verboseCount < 5) {
+      if (verbose) {
         // here onwards is guarding against arrow turned function expressions
-        verboseCount++
+        verbose = false
         const redacted = ast.arrowFunctionExpression(
           target.params,
           treeify(target.body) as es.BlockStatement
         )
-        verboseCount = 0
+        verbose = true
         return redacted
       } else {
-        // returns infinite substitution warning after 5 substitutions
+        // simplify the body with ellipses
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
@@ -1048,7 +1048,7 @@ export function getEvaluationSteps(program: es.Program, context: Context): es.Pr
     // and predefined fns.
     reduced = substPredefinedFns(reduced, context)[0]
     while ((reduced as es.Program).body.length > 0) {
-      if (steps.length === 999) {
+      if (steps.length === 19999) {
         steps.push(
           ast.program([ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))])
         )
