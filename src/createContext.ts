@@ -156,12 +156,21 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     } else if (lazyEvaluateInTranspiler(context)) {
       // Uses Transpiler (Lazy)
-      defineBuiltin(context, transpilerLazy.nameOfForceFunction + '(expression)',
-        transpilerLazy.force)
-      defineBuiltin(context, transpilerLazy.nameOfForceOnceFunction + '(expression)',
-        transpilerLazy.force_once)
-      defineBuiltin(context, transpilerLazy.nameOfForcePairFunction + '(expression)',
-        transpilerLazy.force_pair)
+      defineBuiltin(
+        context,
+        transpilerLazy.nameOfForceFunction + '(expression)',
+        transpilerLazy.force
+      )
+      defineBuiltin(
+        context,
+        transpilerLazy.nameOfForceOnceFunction + '(expression)',
+        transpilerLazy.force_once
+      )
+      defineBuiltin(
+        context,
+        transpilerLazy.nameOfForcePairFunction + '(expression)',
+        transpilerLazy.force_pair
+      )
       // source 1 primitive functions
       defineBuiltin(context, 'is_number(val)', transpilerLazyTypeCheck.is_number)
       defineBuiltin(context, 'is_string(val)', transpilerLazyTypeCheck.is_string)
@@ -183,7 +192,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'parse_int(str, radix)', interpreterLazyTypeCheck.parse_int)
     } else if (lazyEvaluateAuto(context)) {
       // have not determined which execution method will be used yet
-
     } else {
       // unknown execution method for lazy
       throw new Error('Unknown lazy evaluation method ' + context.executionMethod)

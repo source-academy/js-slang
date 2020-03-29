@@ -25,9 +25,7 @@ export default function lazyEvaluate(context: Context): boolean {
  * @param context The context to be checked.
  */
 export function lazyEvaluateInTranspiler(context: Context): boolean {
-  return (
-    lazyEvaluate(context) && context.executionMethod === 'native'
-  )
+  return lazyEvaluate(context) && context.executionMethod === 'native'
 }
 
 /**
