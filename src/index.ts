@@ -1,3 +1,4 @@
+// @ts-ignore
 import { simple } from 'acorn-walk/dist/walk'
 import { DebuggerStatement, Literal, Program } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
@@ -12,7 +13,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { codify, getEvaluationSteps } from './stepper/stepper'
@@ -29,9 +30,10 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { evaluateNonDet } from './interpreter/nonDetInterpreter'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async'
+  scheduler: 'preemptive' | 'async' | 'nondet'
   steps: number
   executionMethod: ExecutionMethod
   originalMaxExecTime: number
@@ -246,14 +248,20 @@ export async function runInContext(
       )
     }
   } else {
-    const it = evaluate(program, context)
-    let scheduler: Scheduler
-    if (theOptions.scheduler === 'async') {
-      scheduler = new AsyncScheduler()
-    } else {
-      scheduler = new PreemptiveScheduler(theOptions.steps)
+    if(theOptions.scheduler!=='nondet'){
+      const it = evaluate(program, context)
+      let scheduler: Scheduler
+      if (theOptions.scheduler === 'async') {
+        scheduler = new AsyncScheduler()
+      } else {
+        scheduler = new PreemptiveScheduler(theOptions.steps)
+      }
+      return scheduler.run(it, context)
+    }else{
+      const it = evaluateNonDet(program, context)
+      return new NonDetScheduler().run(it,context)
     }
-    return scheduler.run(it, context)
+
   }
 }
 
