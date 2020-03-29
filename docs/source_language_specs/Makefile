@@ -1,6 +1,6 @@
-PDFLATEX = latexmk
+PDFLATEX = pdflatex
 
-SPECSNUMS = 1 2 3 4 styleguide 1_type_inference 
+SPECSNUMS = 1 2 3 4 styleguide
 
 SPECS = $(SPECSNUMS:%=source_%)
 

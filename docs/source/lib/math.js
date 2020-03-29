@@ -204,7 +204,6 @@ function math_cosh( x )	{}
  * computes the exponential function of <CODE>x</CODE> 
  * (e raised to the power of <CODE>x</CODE>, where e is the base of the natural logarithms).
  * 
- * @param { number } <CODE>x</CODE> - given number
  * @returns {number} e to the power of <CODE>x</CODE>
  */
 function math_exp( x )	{}
