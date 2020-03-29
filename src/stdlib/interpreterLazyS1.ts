@@ -66,12 +66,15 @@ export function is_function(xs: Value) {
 }
 
 /**
- * Source version of parseInt. Both arguments are required.
+ * Source (Lazy) version of parseInt. Both arguments are required.
+ * The arguments for this function may or may not be Thunks.
+ * `arg1` contains the actual value of the argument
+ * `arg2` contains the actual value of the argument `radix`.
  *
  * @param str String representation of the integer to be parsed. Required.
  * @param radix Base to parse the given `str`. Required.
  *
- * An error is thrown if `str` is not of type string, or `radix` is not an
+ * An error is thrown if `arg1` is not of type string, or `arg2` is not an
  * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: Value, radix: Value) {
@@ -94,6 +97,12 @@ export function parse_int(str: Value, radix: Value) {
   }
 }
 
+/**
+ * Source built-in function.
+ * Forces the value out from an expression.
+ * @param v The input node/statement to be evaluated.
+ * @returns The final value after evaluation.
+ */
 export function force(v: any) {
   if (isInterpreterThunk(v)) {
     // Evaluate to obtain the final value.
@@ -109,6 +118,12 @@ export function force(v: any) {
   }
 }
 
+/**
+ * Unwraps a Thunk to expose its underlying value.
+ * May or may not return the final value.
+ * @param v The input node/statement to be evaluated.
+ * @returns The value extracted from the Thunk.
+ */
 export function force_once(v: any) {
   if (isInterpreterThunk(v)) {
     // Evaluate once.

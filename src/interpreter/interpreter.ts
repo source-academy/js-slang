@@ -15,7 +15,8 @@ import {
   createThunk,
   isInterpreterThunk,
   evaluateThunk,
-  eagerFunctions
+  eagerFunctions,
+  getEagerArgs,
 } from './lazyInterpreter'
 
 class BreakValue {}
@@ -341,7 +342,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const re = /(function )([^( ]+)/g // RegEx to extract the function name located at index 2
       const fun = re.exec(toString)!
       if (fun !== null && eagerFunctions.includes(fun[2])) {
-        args = yield* getArgs(context, node)
+        args = yield* getEagerArgs(context, node)
       } else {
         // Delay evaluation of arguments.
         args = getThunkedArgs(context, node)
@@ -642,6 +643,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         } else {
           result = yield* evaluate(returnExpression, context)
         }
+
+        // Force the final value for return statements.
+        while (result !== null && isInterpreterThunk(result)) {
+          result = yield* evaluateThunk(result, context)
+        }
+        
         return new ReturnValue(result)
       }
     } else {

@@ -1,4 +1,4 @@
-// functions used in the lazy evaluating interpreter
+// Functions used in the lazy evaluating interpreter
 
 import * as es from 'estree'
 import {
@@ -14,7 +14,7 @@ export const thunkStringType = 'Thunk'
 
 const mathLib = Object.getOwnPropertyNames(Math).map(prop => 'math_' + prop)
 
-// List of built-in functions that will not be evaluated lazily.
+// List of built-in functions that will not be evaluated lazily under Lazy Source.
 export const eagerFunctions = [
   ...mathLib,
   'runtime',
@@ -33,8 +33,8 @@ export const eagerFunctions = [
 
 /**
  * Gets the thunked arguments from a lazy evaluated
- * Source function
- * @param call The CallExpression that led to evaluation
+ * Source function.
+ * @param call The CallExpression that led to evaluation.
  */
 export function getThunkedArgs(context: Context, call: es.CallExpression) {
   const args = []
@@ -46,10 +46,31 @@ export function getThunkedArgs(context: Context, call: es.CallExpression) {
 }
 
 /**
+ * A function that eagerly evaluates every arguments.
+ * Used for functions with names included in eagerFunctions array.
+ * @param call The CallExpression that led to evaluation.
+ */
+export function* getEagerArgs(context: Context, call: es.CallExpression) : Value {
+  const args = []
+  for (const arg of call.arguments) {
+    // Unwrap the arg to expose the actual argument.
+    // This may return a Thunk.
+    let result = yield* evaluate(arg, context)
+
+    // If result is Thunk, evaluate until it reaches a value.
+    while (result !== null && isInterpreterThunk(result)) {
+      result = yield* evaluateThunk(result, context)
+    }
+    args.push(result)
+  }
+  return args
+}
+
+/**
  * Creates a thunked expression using the given statement
- * as a Node. The Node will not be run until required
- * @param node The Node to be thunked
- * @param environment The environment to run the statement in
+ * as a Node. The Node will not be run until required.
+ * @param node The Node to be thunked.
+ * @param environment The environment to run the statement in.
  */
 export function createThunk(
   node: es.Node,
@@ -67,8 +88,8 @@ export function createThunk(
 }
 
 /**
- * Checks whether the value is a thunked expression in the interpreter
- * @param v The value to be checked
+ * Checks whether the value is a thunked expression in the interpreter.
+ * @param v The value to be checked.
  * @returns True, if the value is a thunk.
  */
 export function isInterpreterThunk(v: any): boolean {
@@ -87,8 +108,12 @@ export function isInterpreterThunk(v: any): boolean {
   )
 }
 
-// Evaluates thunks recursively until a value is obtained and memoize.
-export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
+/**
+ * Evaluates thunks recursively until a value is obtained and memoize.
+ * @param thunk The thunk to be evaluated.
+ * @returns The value after evaluation.
+ */
+export function* evaluateThunk(thunk: InterpreterThunk, context: Context): Value {
   if (thunk.isEvaluated) {
     return thunk.actualValue
   } else {
@@ -100,7 +125,7 @@ export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
 
     // Evaluating a thunk may return another thunk.
     // Recursively evaluate thunks until a value is obtained.
-    // result may be null so it's value will be checked to avoid errors.
+    // `result` may be null so it will be checked to avoid errors.
     if (result !== null && isInterpreterThunk(result)) {
       result = yield* evaluateThunk(result, context)
     }
@@ -118,8 +143,12 @@ export function* evaluateThunk(thunk: InterpreterThunk, context: Context): any {
   }
 }
 
-// Evaluates a thunk once without memoizing.
-export function* evaluateThunkOnce(thunk: InterpreterThunk, context: Context): any {
+/**
+ * Evaluates a thunk once without memoizing.
+ * @param thunk The thunk to be evaluated.
+ * @returns The value after evaluation.
+ */
+export function* evaluateThunkOnce(thunk: InterpreterThunk, context: Context): Value {
   if (thunk.isEvaluated) {
     return thunk.actualValue
   } else {
