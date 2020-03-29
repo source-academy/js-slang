@@ -44,8 +44,8 @@ export function* getThunkedArgs(context: Context, call: es.CallExpression) {
     if (arg.type === 'ArrowFunctionExpression') {
       // avoid thunking arrow expressions passed as function arguments
       args.push(Closure.makeFromArrowFunction(arg, env, context))
-    } else if (arg.type === 'Identifier' || arg.type === 'Literal') {
-      // avoid thunking names and literals, just get the thunk the name points to
+    } else if (arg.type === 'Literal') {
+      // avoid thunking literals, just get the thunk the name points to
       const result = yield* evaluate(arg, context)
       args.push(result)
     } else {
