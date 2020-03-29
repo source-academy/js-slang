@@ -1,0 +1,604 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`error evaluates to error (auto): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "error(\\"This is the error\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "This is the error"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: \\"This is the error\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`error evaluates to error (interpreter): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "error(\\"This is the error\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "This is the error"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: \\"This is the error\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`error evaluates to error (native): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "error(\\"This is the error\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "This is the error"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: \\"This is the error\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments are lazily evaluated (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function try_me(test, alternative) {
+    return test ? 123 : alternative;
+}
+try_me(true, head(null));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 123,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments are lazily evaluated (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function try_me(test, alternative) {
+    return test ? 123 : alternative;
+}
+try_me(true, head(null));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 123,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function arguments are lazily evaluated (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function try_me(test, alternative) {
+    return test ? 123 : alternative;
+}
+try_me(true, head(null));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 123,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function does not run if it does not need to (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function does not run if it does not need to (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function does not run if it does not need to (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function only runs once and value is memoised (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);
+force(sq);
+force(sq);
+sq;",
+  "displayResult": Array [
+    "\\"squared\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 49,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function only runs once and value is memoised (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);
+force(sq);
+force(sq);
+sq;",
+  "displayResult": Array [
+    "\\"squared\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 49,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`function only runs once and value is memoised (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+    display(\\"squared\\");
+    return x * x;
+}
+const sq = square(7);
+force(sq);
+force(sq);
+sq;",
+  "displayResult": Array [
+    "\\"squared\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 49,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns false for string (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(\\"hello\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns false for string (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(\\"hello\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns false for string (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(\\"hello\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns true for boolean (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(true || false);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns true for boolean (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(true || false);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is boolean returns true for boolean (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_boolean(true || false);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns false for number (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function(670);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns false for number (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function(670);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns false for number (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function(670);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns true for function (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function((x, y) => x + y);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns true for function (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function((x, y) => x + y);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is function returns true for function (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_function((x, y) => x + y);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns false for boolean (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(true);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns false for boolean (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(true);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns false for boolean (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(true);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns true for number (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(145);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns true for number (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(145);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is number returns true for number (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(145);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns false for function (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(() => \\"world\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns false for function (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(() => \\"world\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns false for function (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(() => \\"world\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns true for string (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(\\"\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns true for string (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(\\"\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is string returns true for string (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_string(\\"\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`names are lazily accessed (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 1 + a;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`names are lazily accessed (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 1 + a;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`names are lazily accessed (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 1 + a;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

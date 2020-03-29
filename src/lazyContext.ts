@@ -1,7 +1,7 @@
 import { Context } from './types'
 
-const LAZY_SOURCE_1 = 2001
-const LAZY_SOURCE_2 = 2002
+export const LAZY_SOURCE_1 = 2001
+export const LAZY_SOURCE_2 = 2002
 
 /**
  * Checks whether the interpreter should evaluate

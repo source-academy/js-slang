@@ -16,55 +16,58 @@ import { parse_int as originalParseInt } from './misc'
 // tslint:disable: variable-name
 
 // =============== LAZY EVALUATION FUNCTIONS ================
-export const force = (...args: any[]) => switchBetween(args, transpiler.force, intTypeCheck.force)
+export const force = (...args: any[]) =>
+  switchBetween(args, transpiler.force, intTypeCheck.force, 'force')
 
 export const force_once = (...args: any[]) =>
-  switchBetween(args, transpiler.force_once, intTypeCheck.force_once)
+  switchBetween(args, transpiler.force_once, intTypeCheck.force_once, 'force_once')
 
 export const force_pair = (...args: any[]) =>
-  switchBetween(args, transpiler.force_pair, intTypeCheck.force_pair)
+  switchBetween(args, transpiler.force_pair, intTypeCheck.force_pair, 'force_pair')
 
 export const is_thunk = (...args: any[]) =>
-  switchBetween(args, transpiler.is_thunk, intTypeCheck.is_thunk)
+  switchBetween(args, transpiler.is_thunk, intTypeCheck.is_thunk, 'is_thunk')
 
 // ================== TYPE CHECK FUNCTIONS ==================
 
 export const is_number = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_number, intTypeCheck.is_number)
+  switchBetween(args, transTypeCheck.is_number, intTypeCheck.is_number, 'is_number')
 
 export const is_string = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_string, intTypeCheck.is_string)
+  switchBetween(args, transTypeCheck.is_string, intTypeCheck.is_string, 'is_string')
 
 export const is_function = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_function, intTypeCheck.is_function)
+  switchBetween(args, transTypeCheck.is_function, intTypeCheck.is_function, 'is_function')
 
 export const is_boolean = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_boolean, intTypeCheck.is_boolean)
+  switchBetween(args, transTypeCheck.is_boolean, intTypeCheck.is_boolean, 'is_boolean')
 
 export const is_undefined = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_undefined, intTypeCheck.is_undefined)
+  switchBetween(args, transTypeCheck.is_undefined, intTypeCheck.is_undefined, 'is_undefined')
 
 // ===================== MISC FUNCTIONS =====================
 export const parse_int = (...args: any[]) =>
   switchBetween(
     args,
     (str: any, radix: any) => originalParseInt(transpiler.force(str), transpiler.force(radix)),
-    intTypeCheck.parse_int
+    intTypeCheck.parse_int,
+    'parse_int'
   )
 
 // ===================== LIST FUNCTIONS =====================
-export const pair = (...args: any[]) => switchBetween(args, transList.pair, intList.pair)
+export const pair = (...args: any[]) => switchBetween(args, transList.pair, intList.pair, 'pair')
 
-export const is_pair = (...args: any[]) => switchBetween(args, transList.is_pair, intList.is_pair)
+export const is_pair = (...args: any[]) =>
+  switchBetween(args, transList.is_pair, intList.is_pair, 'is_pair')
 
-export const head = (...args: any[]) => switchBetween(args, transList.head, intList.head)
+export const head = (...args: any[]) => switchBetween(args, transList.head, intList.head, 'head')
 
-export const tail = (...args: any[]) => switchBetween(args, transList.tail, intList.tail)
+export const tail = (...args: any[]) => switchBetween(args, transList.tail, intList.tail, 'tail')
 
 export const is_null = (...args: any[]) =>
-  switchBetween(args, transTypeCheck.is_null, intList.is_null)
+  switchBetween(args, transTypeCheck.is_null, intList.is_null, 'is_null')
 
-export const list = (...args: any[]) => switchBetween(args, transList.list, intList.list)
+export const list = (...args: any[]) => switchBetween(args, transList.list, intList.list, 'list')
 
 /**
  * Given the (thunked) arguments of a function, as well as the

@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, SourceError, Value, ExecutionMethod } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -33,6 +33,7 @@ interface TestOptions {
   chapter?: number
   testBuiltins?: TestBuiltins
   native?: boolean
+  executionMethod?: ExecutionMethod
 }
 
 export function createTestContext({

@@ -1,0 +1,508 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addition (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "43694 + 89076;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 132770,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`addition (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "43694 + 89076;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 132770,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`addition (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "43694 + 89076;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 132770,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? 20 : 46;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 46,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? 20 : 46;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 46,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy alternative) (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true ? 782 : error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 782,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy alternative) (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true ? 782 : error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 782,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy alternative) (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true ? 782 : error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 782,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy consequent) (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? error() : 934;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 934,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy consequent) (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? error() : 934;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 934,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (lazy consequent) (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? error() : 934;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 934,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`conditionals test (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false ? 20 : 46;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 46,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`division (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "69573 / 7;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9939,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`division (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "69573 / 7;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9939,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`division (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "69573 / 7;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9939,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`equality (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "4 === 423;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`equality (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "4 === 423;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`equality (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "4 === 423;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`inequality (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "577 !== 577;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`inequality (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "577 !== 577;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`inequality (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "577 !== 577;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical Or (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true || error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical Or (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true || error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical Or (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true || error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true && false;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true && false;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (lazy) (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false && error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (lazy) (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false && error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (lazy) (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false && error();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`logical and (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true && false;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplication (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "95533 * 269;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 25698377,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplication (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "95533 * 269;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 25698377,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplication (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "95533 * 269;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 25698377,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`nested expressions test (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(true && (true || false)) ? (441 * 2) : (7 + 245);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 882,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`nested expressions test (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(true && (true || false)) ? (441 * 2) : (7 + 245);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 882,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`nested expressions test (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "(true && (true || false)) ? (441 * 2) : (7 + 245);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 882,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`subtraction (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "83553 - 28018;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 55535,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`subtraction (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "83553 - 28018;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 55535,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`subtraction (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "83553 - 28018;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 55535,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
