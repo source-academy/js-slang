@@ -62,12 +62,12 @@ run() {
 	     ${DST}/lib/array.js \
 	     ${DST}/lib/pairmutator.js
     
-    # Source §3.4
+    # Source §3 Concurrent
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -R ${DST}/README_3.4.md \
-	     -d ${DST}/"source_3.4"/ \
+	     -R ${DST}/README_3_CONCURRENT.md \
+	     -d ${DST}/"source_3_concurrent"/ \
 	     ${DST}/lib/misc.js \
 	     ${DST}/lib/math.js \
              ${DST}/lib/list.js \

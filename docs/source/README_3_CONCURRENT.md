@@ -1,11 +1,11 @@
-Source §3.4 is a small programming language, designed for the third chapter
+Source §3 Concurrent is a small programming language, designed for the third chapter
 of the textbook
 <a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
 
-## What names are predeclared in Source §3.4?
+## What names are predeclared in Source §3 Concurrent?
 
-On the right, you see all predeclared names of Source §3.4, in alphabetical
+On the right, you see all predeclared names of Source §3 Concurrent, in alphabetical
 order. Click on a name to see how it is used.
   <ul>
     <li>
@@ -31,31 +31,28 @@ order. Click on a name to see how it is used.
     </li>
   </ul>
 
-## What can you do in Source §3.4?
+## What can you do in Source §3 Concurrent?
 
 You can use all features of
 <a href="../source_3/">Source §3</a> and all
 features that are introduced in
 <a href="https://sicp.comp.nus.edu.sg/chapters/65">chapter 3.4</a> of the
 textbook.
-Below are the features that Source §3.4 adds to Source §3.
+Below are the features that Source §3 Concurrent adds to Source §3.
 
 ### Concurrency
 To introduce concurrency into your programs, you can use the
 functions in the <a href="../CONCURRENCY/">CONCURRENCY</a> group
 of predeclared functions, already mentioned above. All programs
-run in Source §3.4 are concurrent programs, and they return
-`undefined`.
-
-No prompt
-
-###
+run in Source §3 Concurrent are concurrent programs, and they return
+`undefined`. To get feedback from your programs, use the `display` predeclared
+function.
 
 ## You want the definitive specs?
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3.4.pdf">Specification of Source §3.4</a>. Feel free to
+<a href="../source_3_concurrent.pdf">Specification of Source §3 Concurrent</a>. Feel free to
 take a peek!
 
 
