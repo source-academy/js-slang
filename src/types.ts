@@ -44,7 +44,7 @@ export interface Rule<T extends es.Node> {
   name: string
   disableOn?: number
   checkers: {
-    [name: string]: (node: T, ancestors: [es.Node]) => SourceError[]
+    [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
   }
 }
 
@@ -57,6 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type EvaluationMethod = 'strict' | 'lazy'
 
 export interface Context<T = any> {
   /** The source version used */
@@ -104,6 +105,26 @@ export interface Context<T = any> {
   contextId: number
 
   executionMethod: ExecutionMethod
+
+  evaluationMethod: EvaluationMethod
+}
+
+export interface BlockFrame {
+  type: string
+  // loc refers to the block defined by every pair of curly braces
+  loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
+  enclosingLoc?: es.SourceLocation | null
+  children: (DefinitionNode | BlockFrame)[]
+}
+
+export interface DefinitionNode {
+  name: string
+  type: string
+  isDeclaration: boolean
+  loc?: es.SourceLocation | null
 }
 
 // tslint:disable:no-any
@@ -175,3 +196,46 @@ export interface BlockExpression extends es.BaseExpression {
 }
 
 export type substituterNodes = es.Node | BlockExpression
+
+export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
+
+export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+
+export interface Untypable {
+  typability?: 'Untypable'
+  inferredType?: Type
+}
+
+export interface NotYetTyped {
+  typability?: 'NotYetTyped'
+  inferredType?: Type
+}
+
+export interface Typedd {
+  typability?: 'Typed'
+  inferredType?: Type
+}
+
+export type Type = Primitive | Variable | FunctionType | List
+
+export interface Primitive {
+  kind: 'primitive'
+  name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
+}
+
+export interface Variable {
+  kind: 'variable'
+  name: string
+}
+
+// cannot name Function, conflicts with TS
+export interface FunctionType {
+  kind: 'function'
+  parameterTypes: Type[]
+  returnType: Type
+}
+
+export interface List {
+  kind: 'list'
+  elementType: Type
+}

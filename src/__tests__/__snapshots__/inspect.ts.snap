@@ -18,6 +18,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -1210,6 +1211,7 @@ Object {
               },
             },
             "start": 27,
+            "typability": "NotYetTyped",
             "type": "VariableDeclaration",
           },
           "loc": SourceLocation {
@@ -1572,6 +1574,7 @@ Object {
                         },
                       },
                       "start": 27,
+                      "typability": "NotYetTyped",
                       "type": "VariableDeclaration",
                     },
                     "loc": SourceLocation {
@@ -1779,6 +1782,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -1894,6 +1898,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -3278,6 +3283,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -3393,6 +3399,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -3805,6 +3812,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -3870,6 +3878,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -4229,6 +4238,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -4946,6 +4956,7 @@ Object {
                       },
                     },
                     "start": 36,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -5043,6 +5054,7 @@ Object {
                       },
                     },
                     "start": 52,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -5109,6 +5121,7 @@ Object {
                       },
                     },
                     "start": 71,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -5205,6 +5218,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -5320,6 +5334,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -6064,6 +6079,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -6179,6 +6195,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -6921,6 +6938,7 @@ Object {
                       },
                     },
                     "start": 22,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7019,6 +7037,7 @@ Object {
                       },
                     },
                     "start": 42,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7117,6 +7136,7 @@ Object {
                       },
                     },
                     "start": 62,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7214,6 +7234,7 @@ Object {
                       },
                     },
                     "start": 82,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7311,6 +7332,7 @@ Object {
                       },
                     },
                     "start": 101,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7409,6 +7431,7 @@ Object {
                       },
                     },
                     "start": 120,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7506,6 +7529,7 @@ Object {
                       },
                     },
                     "start": 140,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7604,6 +7628,7 @@ Object {
                       },
                     },
                     "start": 159,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7701,6 +7726,7 @@ Object {
                       },
                     },
                     "start": 178,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7798,6 +7824,7 @@ Object {
                       },
                     },
                     "start": 197,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -7895,6 +7922,7 @@ Object {
                       },
                     },
                     "start": 216,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                   Node {
@@ -8006,6 +8034,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -8121,6 +8150,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -8517,6 +8547,7 @@ Object {
             },
           },
           "start": 3,
+          "typability": "NotYetTyped",
           "type": "VariableDeclaration",
         },
         Node {
@@ -8585,6 +8616,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -8651,6 +8683,7 @@ Object {
                 },
               },
               "start": 19,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
           ],
@@ -8962,6 +8995,7 @@ Object {
             },
           ],
           "start": 181,
+          "typability": "NotYetTyped",
           "type": "FunctionDeclaration",
         },
         Node {
@@ -9259,6 +9293,7 @@ Object {
                 },
               ],
               "start": 181,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -9813,6 +9848,7 @@ Object {
                 },
               ],
               "start": 332,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -10092,6 +10128,7 @@ Object {
                 },
               ],
               "start": 543,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -10485,6 +10522,7 @@ Object {
                 },
               ],
               "start": 829,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -10879,6 +10917,7 @@ Object {
                       },
                     ],
                     "start": 1168,
+                    "typability": "NotYetTyped",
                     "type": "FunctionDeclaration",
                   },
                   Node {
@@ -11090,6 +11129,7 @@ Object {
                 },
               ],
               "start": 1136,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -11514,6 +11554,7 @@ Object {
                 },
               ],
               "start": 1598,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -12070,6 +12111,7 @@ Object {
                 },
               ],
               "start": 1939,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -12432,6 +12474,7 @@ Object {
                       },
                     ],
                     "start": 2244,
+                    "typability": "NotYetTyped",
                     "type": "FunctionDeclaration",
                   },
                   Node {
@@ -12578,6 +12621,7 @@ Object {
                 },
               ],
               "start": 2219,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -12937,6 +12981,7 @@ Object {
                 },
               ],
               "start": 2629,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -13327,6 +13372,7 @@ Object {
                 },
               ],
               "start": 2962,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -13832,6 +13878,7 @@ Object {
                 },
               ],
               "start": 3230,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -14386,6 +14433,7 @@ Object {
                 },
               ],
               "start": 3436,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -14940,6 +14988,7 @@ Object {
                 },
               ],
               "start": 3747,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -15266,6 +15315,7 @@ Object {
                 },
               ],
               "start": 4055,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -15609,6 +15659,7 @@ Object {
                 },
               ],
               "start": 4305,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -16000,6 +16051,7 @@ Object {
                 },
               ],
               "start": 4839,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -16295,6 +16347,7 @@ Object {
                 },
               ],
               "start": 5129,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -16642,6 +16695,7 @@ Object {
                 },
               ],
               "start": 5323,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -16970,6 +17024,7 @@ Object {
                 },
               ],
               "start": 5562,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -17249,6 +17304,7 @@ Object {
                 },
               ],
               "start": 5860,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -17661,6 +17717,7 @@ Object {
                 },
               ],
               "start": 6468,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -18010,6 +18067,7 @@ Object {
                       },
                     ],
                     "start": 6947,
+                    "typability": "NotYetTyped",
                     "type": "FunctionDeclaration",
                   },
                   Node {
@@ -18156,6 +18214,7 @@ Object {
                 },
               ],
               "start": 6913,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -18580,6 +18639,7 @@ Object {
                 },
               ],
               "start": 7584,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -18961,6 +19021,7 @@ Object {
                       },
                     ],
                     "start": 7967,
+                    "typability": "NotYetTyped",
                     "type": "FunctionDeclaration",
                   },
                   Node {
@@ -19107,6 +19168,7 @@ Object {
                 },
               ],
               "start": 7935,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -19485,6 +19547,7 @@ Object {
                 },
               ],
               "start": 8490,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -19875,6 +19938,7 @@ Object {
                 },
               ],
               "start": 8946,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -20399,6 +20463,7 @@ Object {
                 },
               ],
               "start": 9332,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -20972,6 +21037,7 @@ Object {
                 },
               ],
               "start": 9669,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -21546,6 +21612,7 @@ Object {
                 },
               ],
               "start": 10237,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -21891,6 +21958,7 @@ Object {
                 },
               ],
               "start": 10625,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -22124,6 +22192,7 @@ Object {
                 },
               ],
               "start": 10937,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -22517,6 +22586,7 @@ Object {
                 },
               ],
               "start": 11264,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -22860,6 +22930,7 @@ Object {
                 },
               ],
               "start": 11635,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
           ],
@@ -22910,6 +22981,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -23710,6 +23782,7 @@ Object {
             },
           },
           "start": 33,
+          "typability": "NotYetTyped",
           "type": "VariableDeclaration",
         },
         Node {
@@ -23777,6 +23850,7 @@ Object {
                 },
               },
               "start": 33,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
           ],
@@ -23860,6 +23934,7 @@ Object {
                   },
                 },
                 "start": 33,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
             ],
@@ -23942,6 +24017,7 @@ Object {
               },
             },
             "start": 7,
+            "typability": "NotYetTyped",
             "type": "VariableDeclaration",
           },
           "loc": SourceLocation {
@@ -24155,6 +24231,7 @@ Object {
                       },
                     },
                     "start": 33,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                 ],
@@ -24237,6 +24314,7 @@ Object {
                   },
                 },
                 "start": 7,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
               "loc": SourceLocation {
@@ -24430,6 +24508,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -25230,6 +25309,7 @@ Object {
             },
           },
           "start": 33,
+          "typability": "NotYetTyped",
           "type": "VariableDeclaration",
         },
         Node {
@@ -25297,6 +25377,7 @@ Object {
                 },
               },
               "start": 33,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
           ],
@@ -25380,6 +25461,7 @@ Object {
                   },
                 },
                 "start": 33,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
             ],
@@ -25462,6 +25544,7 @@ Object {
               },
             },
             "start": 7,
+            "typability": "NotYetTyped",
             "type": "VariableDeclaration",
           },
           "loc": SourceLocation {
@@ -25675,6 +25758,7 @@ Object {
                       },
                     },
                     "start": 33,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                 ],
@@ -25757,6 +25841,7 @@ Object {
                   },
                 },
                 "start": 7,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
               "loc": SourceLocation {
@@ -25950,6 +26035,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -26750,6 +26836,7 @@ Object {
             },
           },
           "start": 33,
+          "typability": "NotYetTyped",
           "type": "VariableDeclaration",
         },
         Node {
@@ -26817,6 +26904,7 @@ Object {
                 },
               },
               "start": 33,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
           ],
@@ -26900,6 +26988,7 @@ Object {
                   },
                 },
                 "start": 33,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
             ],
@@ -26982,6 +27071,7 @@ Object {
               },
             },
             "start": 7,
+            "typability": "NotYetTyped",
             "type": "VariableDeclaration",
           },
           "loc": SourceLocation {
@@ -27195,6 +27285,7 @@ Object {
                       },
                     },
                     "start": 33,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                 ],
@@ -27277,6 +27368,7 @@ Object {
                   },
                 },
                 "start": 7,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
               "loc": SourceLocation {
@@ -27470,6 +27562,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -28270,6 +28363,7 @@ Object {
             },
           },
           "start": 33,
+          "typability": "NotYetTyped",
           "type": "VariableDeclaration",
         },
         Node {
@@ -28337,6 +28431,7 @@ Object {
                 },
               },
               "start": 33,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
           ],
@@ -28420,6 +28515,7 @@ Object {
                   },
                 },
                 "start": 33,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
             ],
@@ -28502,6 +28598,7 @@ Object {
               },
             },
             "start": 7,
+            "typability": "NotYetTyped",
             "type": "VariableDeclaration",
           },
           "loc": SourceLocation {
@@ -28715,6 +28812,7 @@ Object {
                       },
                     },
                     "start": 33,
+                    "typability": "NotYetTyped",
                     "type": "VariableDeclaration",
                   },
                 ],
@@ -28797,6 +28895,7 @@ Object {
                   },
                 },
                 "start": 7,
+                "typability": "NotYetTyped",
                 "type": "VariableDeclaration",
               },
               "loc": SourceLocation {
@@ -28990,6 +29089,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -29347,6 +29447,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -29807,6 +29908,7 @@ Object {
             },
           ],
           "start": 3,
+          "typability": "NotYetTyped",
           "type": "FunctionDeclaration",
         },
         Node {
@@ -29940,6 +30042,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -30055,6 +30158,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -30864,6 +30968,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -30979,6 +31084,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -31338,6 +31444,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -31865,6 +31972,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -31980,6 +32088,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -33019,6 +33128,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -33134,6 +33244,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -34173,6 +34284,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -34288,6 +34400,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -35327,6 +35440,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -35442,6 +35556,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -36498,6 +36613,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -36613,6 +36729,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -36972,6 +37089,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -38027,6 +38145,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -38142,6 +38261,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -39197,6 +39317,7 @@ Object {
                 },
               ],
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "FunctionDeclaration",
             },
             Node {
@@ -39312,6 +39433,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -39671,6 +39793,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -40583,6 +40706,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -40810,6 +40934,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -41852,6 +41977,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -42079,6 +42205,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -42991,6 +43118,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -43218,6 +43346,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
@@ -44260,6 +44389,7 @@ Object {
                 },
               },
               "start": 3,
+              "typability": "NotYetTyped",
               "type": "VariableDeclaration",
             },
             Node {
@@ -44487,6 +44617,7 @@ Object {
       "status": false,
     },
     "errors": Array [],
+    "evaluationMethod": "strict",
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],

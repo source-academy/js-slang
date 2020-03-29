@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import { MaximumStackLimitExceeded } from './interpreter-errors'
+import { MaximumStackLimitExceeded } from './errors/errors'
 import { saveState } from './stdlib/inspector'
 import { Context, Result, Scheduler, Value } from './types'
 
@@ -51,6 +51,7 @@ export class PreemptiveScheduler implements Scheduler {
           while (!itValue.done && step < this.steps) {
             step++
             itValue = it.next()
+
             actuallyBreak = context.runtime.break && context.runtime.debuggerOn
             if (actuallyBreak) {
               itValue.done = true
