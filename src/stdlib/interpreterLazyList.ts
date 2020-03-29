@@ -1,6 +1,6 @@
 import { stringify } from '../utils/stringify'
 import { isInterpreterThunk } from '../interpreter/lazyInterpreter'
-import { force, force_once } from './interpreterLazyS1'
+import { force, force_once } from './interpreterLazyTypeCheck'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)

@@ -5,7 +5,7 @@ import {
   functionShouldBeEagerlyEvaluated,
   nameOfForceFunction,
   astEvalEagerTag
-} from '../stdlib/lazy'
+} from '../stdlib/transpilerLazy'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 import { typeOf } from './typeOf'
 

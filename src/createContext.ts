@@ -2,12 +2,12 @@
 
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AsyncScheduler } from './schedulers'
-import * as interpreterLazyS2 from './stdlib/interpreterLazyS2'
-import * as interpreterLazyS1 from './stdlib/interpreterLazyS1'
-import * as lazy from './stdlib/lazy'
+import * as interpreterLazyList from './stdlib/interpreterLazyList'
+import * as interpreterLazyTypeCheck from './stdlib/interpreterLazyTypeCheck'
+import * as transpilerLazy from './stdlib/transpilerLazy'
 import * as list from './stdlib/list'
-import * as lazyList from './stdlib/lazyList'
-import * as lazyTypeCheck from './stdlib/lazyTypeCheck'
+import * as transpilerLazyList from './stdlib/transpilerLazyList'
+import * as transpilerLazyTypeCheck from './stdlib/transpilerLazyTypeCheck'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import * as misc from './stdlib/misc'
@@ -23,7 +23,7 @@ import lazyEvaluate, {
   lazyEvaluateInTranspiler,
   lazyEvaluateInInterpreter,
   lazyEvaluateInSource1,
-  lazyEvaluateInSource2
+  lazyEvaluateAuto
 } from './lazyContext'
 
 const createEmptyRuntime = () => ({
@@ -156,28 +156,34 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     } else if (lazyEvaluateInTranspiler(context)) {
       // Uses Transpiler (Lazy)
-      defineBuiltin(context, lazy.nameOfForceFunction + '(expression)', lazy.force)
-      defineBuiltin(context, lazy.nameOfForceOnceFunction + '(expression)', lazy.force_once)
-      defineBuiltin(context, lazy.nameOfForcePairFunction + '(expression)', lazy.force_pair)
+      defineBuiltin(context, transpilerLazy.nameOfForceFunction + '(expression)',
+        transpilerLazy.force)
+      defineBuiltin(context, transpilerLazy.nameOfForceOnceFunction + '(expression)',
+        transpilerLazy.force_once)
+      defineBuiltin(context, transpilerLazy.nameOfForcePairFunction + '(expression)',
+        transpilerLazy.force_pair)
       // source 1 primitive functions
-      defineBuiltin(context, 'is_number(val)', lazyTypeCheck.is_number)
-      defineBuiltin(context, 'is_string(val)', lazyTypeCheck.is_string)
-      defineBuiltin(context, 'is_function(val)', lazyTypeCheck.is_function)
-      defineBuiltin(context, 'is_boolean(val)', lazyTypeCheck.is_boolean)
-      defineBuiltin(context, 'is_undefined(val)', lazyTypeCheck.is_undefined)
+      defineBuiltin(context, 'is_number(val)', transpilerLazyTypeCheck.is_number)
+      defineBuiltin(context, 'is_string(val)', transpilerLazyTypeCheck.is_string)
+      defineBuiltin(context, 'is_function(val)', transpilerLazyTypeCheck.is_function)
+      defineBuiltin(context, 'is_boolean(val)', transpilerLazyTypeCheck.is_boolean)
+      defineBuiltin(context, 'is_undefined(val)', transpilerLazyTypeCheck.is_undefined)
       defineBuiltin(context, 'parse_int(str, radix)', (str: Value, radix: Value) =>
-        misc.parse_int(lazy.force(str), lazy.force(radix))
+        misc.parse_int(transpilerLazy.force(str), transpilerLazy.force(radix))
       )
     } else if (lazyEvaluateInInterpreter(context)) {
       // Uses Interpreter (Lazy)
-      defineBuiltin(context, 'force(val)', interpreterLazyS1.force)
-      defineBuiltin(context, 'is_thunk(val)', interpreterLazyS1.is_thunk)
-      defineBuiltin(context, 'is_number(val)', interpreterLazyS1.is_number)
-      defineBuiltin(context, 'is_string(val)', interpreterLazyS1.is_string)
-      defineBuiltin(context, 'is_function(val)', interpreterLazyS1.is_function)
-      defineBuiltin(context, 'is_boolean(val)', interpreterLazyS1.is_boolean)
-      defineBuiltin(context, 'is_undefined(val)', interpreterLazyS1.is_undefined)
-      defineBuiltin(context, 'parse_int(str, radix)', interpreterLazyS1.parse_int)
+      defineBuiltin(context, 'force(expression)', interpreterLazyTypeCheck.force)
+      defineBuiltin(context, 'is_thunk(val)', interpreterLazyTypeCheck.is_thunk)
+      defineBuiltin(context, 'is_number(val)', interpreterLazyTypeCheck.is_number)
+      defineBuiltin(context, 'is_string(val)', interpreterLazyTypeCheck.is_string)
+      defineBuiltin(context, 'is_function(val)', interpreterLazyTypeCheck.is_function)
+      defineBuiltin(context, 'is_boolean(val)', interpreterLazyTypeCheck.is_boolean)
+      defineBuiltin(context, 'is_undefined(val)', interpreterLazyTypeCheck.is_undefined)
+      defineBuiltin(context, 'parse_int(str, radix)', interpreterLazyTypeCheck.parse_int)
+    } else if (lazyEvaluateAuto(context)) {
+      // have not determined which execution method will be used yet
+
     } else {
       // unknown execution method for lazy
       throw new Error('Unknown lazy evaluation method ' + context.executionMethod)
@@ -204,24 +210,26 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'draw_data(xs)', visualiseList)
     } else if (lazyEvaluateInTranspiler(context)) {
       // lazy list library for transpiler
-      defineBuiltin(context, 'pair(left, right)', lazyList.pair)
-      defineBuiltin(context, 'is_pair(val)', lazyList.is_pair)
-      defineBuiltin(context, 'head(xs)', lazyList.head)
-      defineBuiltin(context, 'tail(xs)', lazyList.tail)
-      defineBuiltin(context, 'is_null(val)', lazyTypeCheck.is_null)
-      defineBuiltin(context, 'list(...values)', lazyList.list)
+      defineBuiltin(context, 'pair(left, right)', transpilerLazyList.pair)
+      defineBuiltin(context, 'is_pair(val)', transpilerLazyList.is_pair)
+      defineBuiltin(context, 'head(xs)', transpilerLazyList.head)
+      defineBuiltin(context, 'tail(xs)', transpilerLazyList.tail)
+      defineBuiltin(context, 'is_null(val)', transpilerLazyTypeCheck.is_null)
+      defineBuiltin(context, 'list(...values)', transpilerLazyList.list)
       defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
-        externalBuiltIns.visualiseList(lazy.force(v), context.externalContext)
+        externalBuiltIns.visualiseList(transpilerLazy.force(v), context.externalContext)
       )
     } else if (lazyEvaluateInInterpreter(context)) {
       // lazy list library for interpreter
-      defineBuiltin(context, 'pair(left, right)', interpreterLazyS2.pair)
-      defineBuiltin(context, 'is_pair(val)', interpreterLazyS2.is_pair)
-      defineBuiltin(context, 'head(xs)', interpreterLazyS2.head)
-      defineBuiltin(context, 'tail(xs)', interpreterLazyS2.tail)
-      defineBuiltin(context, 'is_null(val)', interpreterLazyS2.is_null)
-      defineBuiltin(context, 'list(...values)', interpreterLazyS2.list)
+      defineBuiltin(context, 'pair(left, right)', interpreterLazyList.pair)
+      defineBuiltin(context, 'is_pair(val)', interpreterLazyList.is_pair)
+      defineBuiltin(context, 'head(xs)', interpreterLazyList.head)
+      defineBuiltin(context, 'tail(xs)', interpreterLazyList.tail)
+      defineBuiltin(context, 'is_null(val)', interpreterLazyList.is_null)
+      defineBuiltin(context, 'list(...values)', interpreterLazyList.list)
       defineBuiltin(context, 'draw_data(xs)', visualiseList)
+    } else if (lazyEvaluateAuto(context)) {
+      // have not determined which execution method will be used yet
     } else {
       // unknown execution method for lazy
       throw new Error('Unknown lazy evaluation method ' + context.executionMethod)

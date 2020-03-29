@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { TranspilerThunk, isKnownThunkType } from '../stdlib/lazy'
+import { TranspilerThunk, isKnownThunkType } from '../stdlib/transpilerLazy'
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'
 

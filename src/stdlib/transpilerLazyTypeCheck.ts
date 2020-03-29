@@ -1,6 +1,6 @@
-import { TranspilerThunk } from './lazy'
+import { TranspilerThunk } from './transpilerLazy'
 import { Value } from '../types'
-import { force, isTranspilerThunk } from './lazy'
+import { force, isTranspilerThunk } from './transpilerLazy'
 
 export function is_number(v: TranspilerThunk<Value>) {
   return isType(v, 'number')

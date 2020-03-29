@@ -21,22 +21,33 @@ export default function lazyEvaluate(context: Context): boolean {
 /**
  * Checks if in the current context, the program will be
  * transpiled with the lazy evaluation transpiler.
+ *
  * @param context The context to be checked.
  */
 export function lazyEvaluateInTranspiler(context: Context): boolean {
   return (
-    lazyEvaluate(context) &&
-    (context.executionMethod === 'native' || context.executionMethod === 'auto')
+    lazyEvaluate(context) && context.executionMethod === 'native'
   )
 }
 
 /**
  * Checks if in the current context, the program will be
  * interpreted with the lazy evaluation interpreter.
+ *
  * @param context The context to be checked.
  */
 export function lazyEvaluateInInterpreter(context: Context): boolean {
   return lazyEvaluate(context) && context.executionMethod === 'interpreter'
+}
+
+/**
+ * Checks if we have to dynamically determine which execution
+ * method to use in this context for lazy evaluation.
+ *
+ * @param context The context to be checked.
+ */
+export function lazyEvaluateAuto(context: Context): boolean {
+  return lazyEvaluate(context) && context.executionMethod === 'auto'
 }
 
 /**

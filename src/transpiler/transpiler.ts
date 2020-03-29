@@ -10,7 +10,7 @@ import {
   astThunkNativeTag,
   callStatementShouldBeEagerlyEvaluated,
   astEvalEagerTag
-} from '../stdlib/lazy'
+} from '../stdlib/transpilerLazy'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
