@@ -9,6 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import {LazyBuiltIn} from "../createContext";
 
 class BreakValue {}
 
@@ -647,7 +648,38 @@ export function* apply(
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
       }
-    } else if (typeof fun === 'function') {
+    }else if (fun instanceof LazyBuiltIn) {
+      try {
+        let finalArgs = args;
+        if (fun.evaluateArgs) {
+          const forcedArgs = []
+          for (const arg of args) {
+            forcedArgs.push(yield* forceIt(arg, context))
+          }
+          finalArgs = forcedArgs
+        }
+        result = fun.func.apply(thisContext, finalArgs)
+        if (fun.forceResult) {
+          result = yield* forceIt(result, context)
+        }
+        break
+      }catch (e) {
+        // Recover from exception
+        context.runtime.environments = context.runtime.environments.slice(
+            -context.numberOfOuterEnvironments
+        )
+
+        const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
+        if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
+          // The error could've arisen when the builtin called a source function which errored.
+          // If the cause was a source error, we don't want to include the error.
+          // However if the error came from the builtin itself, we need to handle it.
+          return handleRuntimeError(context, new errors.ExceptionError(e, loc))
+        }
+        result = undefined
+        throw e
+      }
+    }else if(typeof fun === 'function') {
       try {
         const forcedArgs = []
 
