@@ -7,6 +7,7 @@ Node {
       "end": 5,
       "expression": Node {
         "end": 4,
+        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -40,6 +41,7 @@ Node {
       "end": 12,
       "expression": Node {
         "end": 11,
+        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -73,6 +75,7 @@ Node {
       "end": 18,
       "expression": Node {
         "end": 17,
+        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -131,6 +134,7 @@ Node {
           "kind": "primitive",
           "name": "integer",
         },
+        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -169,6 +173,7 @@ Node {
           "kind": "primitive",
           "name": "integer",
         },
+        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 3,

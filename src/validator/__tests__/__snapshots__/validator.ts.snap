@@ -13,6 +13,7 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 64,
+        "isPolymorphic": false,
         "left": Node {
           "end": 59,
           "loc": SourceLocation {
@@ -46,6 +47,7 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
+          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -89,6 +91,7 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 45,
+        "isPolymorphic": false,
         "left": Node {
           "end": 40,
           "loc": SourceLocation {
@@ -122,6 +125,7 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
+          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
