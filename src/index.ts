@@ -127,8 +127,12 @@ let isNativeRunnable: boolean
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
   let isNative
+  console.log('options: ' + theOptions.executionMethod + '\n')
+  console.log('context: ' + context.executionMethod + '\n')
+  // options settings overrides context
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
+      // if both options and context set to auto, determine native or not
       if (verboseErrors) {
         isNative = false
       } else if (areBreakpointsSet()) {
@@ -212,7 +216,6 @@ export async function runInContext(
     await runInContext(prelude, context, options)
     return runInContext(code, context, options)
   }
-  context.chapter = 100 // TEMPORARY: to force program in lazy mode when using cadet frontend.
   if (isNativeRunnable) {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
