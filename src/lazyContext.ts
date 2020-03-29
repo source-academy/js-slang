@@ -49,5 +49,26 @@ export function lazyEvaluateInInterpreter(context: Context): boolean {
  *     evaluate eagerly.
  */
 export function lazyEvaluateInChapter(chapter: number): boolean {
-  return chapter === LAZY_SOURCE_1 || chapter === LAZY_SOURCE_2
+  return lazyEvaluateInSource1(chapter) || lazyEvaluateInSource2(chapter)
+}
+
+/**
+ * Checks whether this chapter number represents
+ * Lazy Source chapter 1 (functions, arithmetic,
+ * conditionals).
+ *
+ * @param chapter The chapter number.
+ */
+export function lazyEvaluateInSource1(chapter: number): boolean {
+  return chapter === LAZY_SOURCE_1
+}
+
+/**
+ * Checks whether this chapter number represents
+ * Lazy Source chapter 2 (pairs and lists).
+ *
+ * @param chapter The chapter number.
+ */
+export function lazyEvaluateInSource2(chapter: number): boolean {
+  return chapter === LAZY_SOURCE_2
 }

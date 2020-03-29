@@ -21,7 +21,9 @@ import { stringify } from './utils/stringify'
 import lazyEvaluate, {
   lazyEvaluateInChapter,
   lazyEvaluateInTranspiler,
-  lazyEvaluateInInterpreter
+  lazyEvaluateInInterpreter,
+  lazyEvaluateInSource1,
+  lazyEvaluateInSource2
 } from './lazyContext'
 
 const createEmptyRuntime = () => ({
@@ -190,7 +192,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
   }
 
-  if (context.chapter >= 2) {
+  if (context.chapter >= 2 && !lazyEvaluateInSource1(context.chapter)) {
     if (!lazyEvaluate(context)) {
       // List library
       defineBuiltin(context, 'pair(left, right)', list.pair)
