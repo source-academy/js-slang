@@ -41,7 +41,7 @@ export const eagerFunctions = [
  * Source function.
  * @param call The CallExpression that led to evaluation.
  */
-export function* getThunkedArgs(context: Context, call: es.CallExpression) {
+export function* getThunkedArgs(context: Context, call: es.CallExpression): any {
   const args = []
   const env = currentEnvironment(context)
   for (const arg of call.arguments) {
