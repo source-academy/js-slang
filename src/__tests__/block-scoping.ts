@@ -121,7 +121,9 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     { chapter: 3 }
-  ).toMatchInlineSnapshot(`"Line 4: Cannot assign new value to constant x."`)
+  ).toMatchInlineSnapshot(
+    `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
+  )
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {

@@ -1,6 +1,7 @@
 import * as es from 'estree'
 
-import { parse as sourceParse } from '../parser'
+import { parse as sourceParse } from '../parser/parser'
+import { libraryParserLanguage } from '../parser/syntaxBlacklist'
 import { Context, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
@@ -46,24 +47,21 @@ transformers = new Map([
 
   [
     'BlockStatement',
-    (node: es.Node) => {
-      node = node as es.BlockStatement
+    (node: es.BlockStatement) => {
       return vector_to_list(['block', makeSequenceIfNeeded(node.body)])
     }
   ],
 
   [
     'ExpressionStatement',
-    (node: es.Node) => {
-      node = node as es.ExpressionStatement
+    (node: es.ExpressionStatement) => {
       return transform(node.expression)
     }
   ],
 
   [
     'IfStatement',
-    (node: es.Node) => {
-      node = node as es.IfStatement
+    (node: es.IfStatement) => {
       return vector_to_list([
         'conditional_statement',
         transform(node.test),
@@ -75,8 +73,7 @@ transformers = new Map([
 
   [
     'FunctionDeclaration',
-    (node: es.Node) => {
-      node = node as es.FunctionDeclaration
+    (node: es.FunctionDeclaration) => {
       return vector_to_list([
         'constant_declaration',
         transform(node.id as es.Identifier),
@@ -94,8 +91,7 @@ transformers = new Map([
 
   [
     'VariableDeclaration',
-    (node: es.Node) => {
-      node = node as es.VariableDeclaration
+    (node: es.VariableDeclaration) => {
       if (node.kind === 'let') {
         return vector_to_list([
           'variable_declaration',
@@ -117,16 +113,14 @@ transformers = new Map([
 
   [
     'ReturnStatement',
-    (node: es.Node) => {
-      node = node as es.ReturnStatement
+    (node: es.ReturnStatement) => {
       return vector_to_list(['return_statement', transform(node.argument as es.Expression)])
     }
   ],
 
   [
     'CallExpression',
-    (node: es.Node) => {
-      node = node as es.CallExpression
+    (node: es.CallExpression) => {
       return vector_to_list([
         'application',
         transform(node.callee),
@@ -137,19 +131,10 @@ transformers = new Map([
 
   [
     'UnaryExpression',
-    (node: es.Node) => {
-      node = node as es.UnaryExpression
-      const loc = node.loc as es.SourceLocation
+    (node: es.UnaryExpression) => {
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column]),
-            vector_to_list([loc.start.line, loc.start.column + 1])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.argument)])
       ])
     }
@@ -157,19 +142,10 @@ transformers = new Map([
 
   [
     'BinaryExpression',
-    (node: es.Node) => {
-      node = node as es.BinaryExpression
-      const loc = node.right.loc as es.SourceLocation
+    (node: es.BinaryExpression) => {
       return vector_to_list([
         'application',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -177,19 +153,10 @@ transformers = new Map([
 
   [
     'LogicalExpression',
-    (node: es.Node) => {
-      node = node as es.LogicalExpression
-      const loc = node.right.loc as es.SourceLocation
+    (node: es.LogicalExpression) => {
       return vector_to_list([
         'boolean_operation',
-        vector_to_list([
-          'name',
-          node.operator,
-          vector_to_list([
-            vector_to_list([loc.start.line, loc.start.column - 1]),
-            vector_to_list([loc.start.line, loc.start.column])
-          ])
-        ]),
+        vector_to_list(['name', node.operator]),
         vector_to_list([transform(node.left), transform(node.right)])
       ])
     }
@@ -197,8 +164,7 @@ transformers = new Map([
 
   [
     'ConditionalExpression',
-    (node: es.Node) => {
-      node = node as es.ConditionalExpression
+    (node: es.ConditionalExpression) => {
       return vector_to_list([
         'conditional_expression',
         transform(node.test),
@@ -210,9 +176,7 @@ transformers = new Map([
 
   [
     'ArrowFunctionExpression',
-    (node: es.Node) => {
-      node = node as es.ArrowFunctionExpression
-      const loc = node.body.loc as es.SourceLocation
+    (node: es.ArrowFunctionExpression) => {
       return vector_to_list([
         'function_definition',
         vector_to_list(node.params.map(transform)),
@@ -221,46 +185,35 @@ transformers = new Map([
             // The body of a function is the statement
             // inside the curly braces.
             makeSequenceIfNeeded(node.body.body)
-          : vector_to_list([
-              'return_statement',
-              transform(node.body),
-              vector_to_list([
-                vector_to_list([loc.start.line, loc.start.column]),
-                vector_to_list([loc.end.line, loc.end.column])
-              ])
-            ])
+          : vector_to_list(['return_statement', transform(node.body)])
       ])
     }
   ],
 
   [
     'Identifier',
-    (node: es.Node) => {
-      node = node as es.Identifier
+    (node: es.Identifier) => {
       return vector_to_list(['name', node.name])
     }
   ],
 
   [
     'Literal',
-    (node: es.Node) => {
-      node = node as es.Literal
+    (node: es.Literal) => {
       return node.value
     }
   ],
 
   [
     'ArrayExpression',
-    (node: es.Node) => {
-      node = node as es.ArrayExpression
+    (node: es.ArrayExpression) => {
       return vector_to_list(['array_expression', vector_to_list(node.elements.map(transform))])
     }
   ],
 
   [
     'AssignmentExpression',
-    (node: es.Node) => {
-      node = node as es.AssignmentExpression
+    (node: es.AssignmentExpression) => {
       if (node.left.type === 'Identifier') {
         return vector_to_list([
           'assignment',
@@ -282,8 +235,7 @@ transformers = new Map([
 
   [
     'ForStatement',
-    (node: es.Node) => {
-      node = node as es.ForStatement
+    (node: es.ForStatement) => {
       return vector_to_list([
         'for_loop',
         transform(node.init as es.VariableDeclaration | es.Expression),
@@ -296,56 +248,157 @@ transformers = new Map([
 
   [
     'WhileStatement',
-    (node: es.Node) => {
-      node = node as es.WhileStatement
+    (node: es.WhileStatement) => {
       return vector_to_list(['while_loop', transform(node.test), transform(node.body)])
     }
   ],
 
   [
     'BreakStatement',
-    (node: es.Node) => {
-      node = node as es.BreakStatement
+    (node: es.BreakStatement) => {
       return vector_to_list(['break_statement'])
     }
   ],
 
   [
     'ContinueStatement',
-    (node: es.Node) => {
-      node = node as es.ContinueStatement
+    (node: es.ContinueStatement) => {
       return vector_to_list(['continue_statement'])
     }
   ],
 
   [
     'ObjectExpression',
-    (node: es.Node) => {
-      node = node as es.ObjectExpression
+    (node: es.ObjectExpression) => {
       return vector_to_list(['object_expression', vector_to_list(node.properties.map(transform))])
     }
   ],
 
   [
     'MemberExpression',
-    (node: es.Node) => {
-      node = node as es.MemberExpression
-      return vector_to_list(['array_access', transform(node.object), transform(node.property)])
+    (node: es.MemberExpression) => {
+      const key =
+        node.property.type === 'Identifier'
+          ? vector_to_list(['property', node.property.name])
+          : transform(node.property)
+      return vector_to_list(['object_access', transform(node.object), key])
     }
   ],
 
   [
     'Property',
-    (node: es.Node) => {
-      node = node as es.Property
+    (node: es.Property) => {
       if (node.key.type === 'Literal') {
         return [node.key.value, transform(node.value)]
       } else if (node.key.type === 'Identifier') {
-        return [node.key.name, transform(node.value)]
+        return [vector_to_list(['property', node.key.name]), transform(node.value)]
       } else {
         unreachable()
         throw new ParseError('Invalid property key type')
       }
+    }
+  ],
+
+  [
+    'ImportDeclaration',
+    (node: es.ImportDeclaration) => {
+      return vector_to_list([
+        'import_declaration',
+        vector_to_list(node.specifiers.map(transform)),
+        node.source.value
+      ])
+    }
+  ],
+
+  [
+    'ImportSpecifier',
+    (node: es.ImportSpecifier) => {
+      return vector_to_list(['name', node.imported.name])
+    }
+  ],
+
+  [
+    'ClassDeclaration',
+    (node: es.ClassDeclaration) => {
+      return vector_to_list([
+        'class_declaration',
+        vector_to_list([
+          'name',
+          node.id === null ? null : node.id.name,
+          node.superClass === null || node.superClass === undefined
+            ? null
+            : transform(node.superClass),
+          node.body.body.map(transform)
+        ])
+      ])
+    }
+  ],
+
+  [
+    'NewExpression',
+    (node: es.NewExpression) => {
+      return vector_to_list([
+        'new_expression',
+        transform(node.callee),
+        vector_to_list(node.arguments.map(transform))
+      ])
+    }
+  ],
+
+  [
+    'MethodDefinition',
+    (node: es.MethodDefinition) => {
+      return vector_to_list([
+        'method_definition',
+        node.kind,
+        transform(node.key),
+        transform(node.value)
+      ])
+    }
+  ],
+
+  [
+    'FunctionExpression',
+    (node: es.FunctionExpression) => {
+      return vector_to_list([
+        'function_definition',
+        vector_to_list(node.params.map(transform)),
+        makeSequenceIfNeeded(node.body.body)
+      ])
+    }
+  ],
+
+  [
+    'ThisExpression',
+    (node: es.ThisExpression) => {
+      return vector_to_list(['this_expression'])
+    }
+  ],
+
+  [
+    'Super',
+    (node: es.Super) => {
+      return vector_to_list(['super_expression'])
+    }
+  ],
+
+  [
+    'TryStatement',
+    (node: es.TryStatement) => {
+      return vector_to_list([
+        'try_statement',
+        transform(node.block),
+        node.handler === null || node.handler === undefined
+          ? null
+          : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
+        node.handler === null || node.handler === undefined ? null : transform(node.handler.body)
+      ])
+    }
+  ],
+  [
+    'ThrowStatement',
+    (node: es.ThrowStatement) => {
+      return vector_to_list(['throw_statement', transform(node.argument)])
     }
   ]
 ])
@@ -372,6 +425,7 @@ function transform(node: es.Node) {
 
 export function parse(x: string, context: Context): Value {
   let program
+  context.chapter = libraryParserLanguage
   program = sourceParse(x, context)
   if (context.errors.length > 0) {
     throw new ParseError(context.errors[0].explain())

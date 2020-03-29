@@ -13,23 +13,61 @@ Object {
 test();",
   "displayResult": Array [],
   "errors": Array [
-    ConstAssignment {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 4,
+    NoAssignmentToForVariable {
+      "node": Node {
+        "end": 84,
+        "left": Node {
+          "end": 80,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 4,
+            },
+          },
+          "name": "x",
+          "start": 79,
+          "type": "Identifier",
         },
-        "start": Position {
-          "column": 6,
-          "line": 4,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 11,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 6,
+            "line": 4,
+          },
         },
+        "operator": "=",
+        "right": Node {
+          "end": 84,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 11,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 10,
+              "line": 4,
+            },
+          },
+          "raw": "1",
+          "start": 83,
+          "type": "Literal",
+          "value": 1,
+        },
+        "start": 79,
+        "type": "AssignmentExpression",
       },
-      "name": "x",
       "severity": "Error",
-      "type": "Runtime",
+      "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 4: Cannot assign new value to constant x.",
+  "parsedErrors": "Line 4: Assignment to a for loop variable in the for loop is not allowed.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -190,6 +228,7 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -225,7 +264,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",
@@ -250,6 +289,7 @@ test();",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -292,7 +332,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",
@@ -316,6 +356,7 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -350,7 +391,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",
@@ -377,6 +418,7 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -412,7 +454,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",
@@ -437,6 +479,7 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -470,7 +513,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",
@@ -496,6 +539,7 @@ test();",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -532,7 +576,7 @@ const globals = $NATIVE_STORAGE.globals;
         });
       }
     }
-    return lastStatementResult;
+    return forceIt(lastStatementResult);
   })();
 })();
 ",

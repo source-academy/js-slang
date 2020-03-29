@@ -1,0 +1,407 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Scoped based refactoring of ordinary variable definitions 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+{
+const target = 3;
+target + 4;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 3,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "column": 3,
+      "line": 3,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with arrow function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+function test(target) {
+const arrowFn = target => target + 1;
+const x = target * 777777;
+const nestedArrowFn = (y) => (target) => 1 + target;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 48,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 36,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 30,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 51,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 45,
+          "line": 5,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with conditionals and loops 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+if (target < 2) {
+target = 2 + 3;
+} else if (target > 2) {
+target = \\"nooooooo\\";
+} else {
+target = 99999;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 2,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 2;
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 2",
+    "target": Target {
+      "column": 5,
+      "line": 3,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 2;
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 2",
+    "target": Target {
+      "column": 11,
+      "line": 2,
+      "name": "target",
+    },
+    "value": Array [],
+  },
+  Object {
+    "code": "let target = 2;
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 2",
+    "target": Target {
+      "column": 2,
+      "line": 5,
+      "name": "i",
+    },
+    "value": Array [],
+  },
+  Object {
+    "code": "let target = 2;
+while (target > 0) {
+const x = \\"i am coronavirus\\";
+target -= 0.1;
+}",
+    "label": "Test 3",
+    "target": Target {
+      "column": 4,
+      "line": 4,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 7,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 3,
+      "line": 7,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 6,
+      "line": 1,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+    ],
+  },
+]
+`;
