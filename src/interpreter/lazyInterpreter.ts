@@ -50,7 +50,7 @@ export function getThunkedArgs(context: Context, call: es.CallExpression) {
  * Used for functions with names included in eagerFunctions array.
  * @param call The CallExpression that led to evaluation.
  */
-export function* getEagerArgs(context: Context, call: es.CallExpression) : Value {
+export function* getEagerArgs(context: Context, call: es.CallExpression): Value {
   const args = []
   for (const arg of call.arguments) {
     // Unwrap the arg to expose the actual argument.

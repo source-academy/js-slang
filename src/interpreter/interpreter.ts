@@ -16,7 +16,7 @@ import {
   isInterpreterThunk,
   evaluateThunk,
   eagerFunctions,
-  getEagerArgs,
+  getEagerArgs
 } from './lazyInterpreter'
 
 class BreakValue {}
@@ -648,7 +648,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         while (result !== null && isInterpreterThunk(result)) {
           result = yield* evaluateThunk(result, context)
         }
-        
+
         return new ReturnValue(result)
       }
     } else {
