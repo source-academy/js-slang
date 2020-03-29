@@ -1241,6 +1241,15 @@ M[OpCodes.STRINGIFY] = () => {
   PC = PC + 1
 }
 
+M[OpCodes.PROMPT] = () => {
+  POP_OS()
+  A = externalFunctions.get(OpCodes.PROMPT)(convertToJsFormat(RES))
+  NEW_STRING()
+  A = RES
+  PUSH_OS()
+  PC = PC + 1
+}
+
 addPrimitiveOpCodeHandlers()
 
 // Internal functions. They are called directly in internal function calls
