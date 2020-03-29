@@ -808,7 +808,7 @@ export function* apply(
  * @param program The program to be evaluated.
  * @param context The context to evaluate the program in.
  */
-export function startEvaluation(program: es.Program, context: Context) {
+export function* startEvaluation(program: es.Program, context: Context) {
   if (lazyEvaluate(context)) {
     const statements = program.body as es.Statement[]
     if (statements.length > 0) {
@@ -818,8 +818,8 @@ export function startEvaluation(program: es.Program, context: Context) {
         lastStatement.tag = LAST_STATEMENT_TAG
       }
     }
-    return evaluate(program, context)
+    return yield* evaluate(program, context)
   } else {
-    return evaluate(program, context)
+    return yield* evaluate(program, context)
   }
 }

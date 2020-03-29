@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filter returns the correct list (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(filter(x => x % 2 === 0, list(1, 2, 3, 4, 5, 6)), list(2, 4, 6));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter returns the correct list (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(filter(x => x % 2 === 0, list(1, 2, 3, 4, 5, 6)), list(2, 4, 6));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter returns the correct list (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(filter(x => x % 2 === 0, list(1, 2, 3, 4, 5, 6)), list(2, 4, 6));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are mapped lazily (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+head(tail(twos));",
+  "displayResult": Array [
+    "\\"mapped\\"",
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are mapped lazily (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+head(tail(twos));",
+  "displayResult": Array [
+    "\\"mapped\\"",
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are mapped lazily (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+head(tail(twos));",
+  "displayResult": Array [
+    "\\"mapped\\"",
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are memoised (auto): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+force(head(twos));
+head(twos);",
+  "displayResult": Array [
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are memoised (interpreter): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+force(head(twos));
+head(twos);",
+  "displayResult": Array [
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lists are memoised (native): expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+const twos = map(x => {
+        display(\\"mapped\\");
+        return x * 2;
+    }, ones);
+force(head(twos));
+force(head(twos));
+head(twos);",
+  "displayResult": Array [
+    "\\"mapped\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`map returns the correct list (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(map(x => x / 2, list(2, 4, 8)), list(1, 2, 4));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`map returns the correct list (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(map(x => x / 2, list(2, 4, 8)), list(1, 2, 4));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`map returns the correct list (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(map(x => x / 2, list(2, 4, 8)), list(1, 2, 4));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

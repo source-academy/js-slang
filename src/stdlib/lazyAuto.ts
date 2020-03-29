@@ -1,4 +1,3 @@
-import * as interpreter from '../interpreter/lazyInterpreter'
 import * as transpiler from '../transpiler/lazyTranspiler'
 import * as intTypeCheck from './interpreterLazyTypeCheck'
 import * as transTypeCheck from './transpilerLazyTypeCheck'
@@ -90,15 +89,16 @@ export function switchBetween(
   interpreterFunc: Function,
   functionName: string = '<unknown>'
 ) {
-  if (args.every(a => !interpreter.isInterpreterThunk(a))) {
-    // since every argument is not an interpreter thunk, it
-    // can be run with the transpiler functions
+  if (args.some(transpiler.isTranspilerThunk)) {
+    // transpiler will thunk literals and names
+    // so we can be quite sure we are running this in
+    // the transpiler
     return transpilerFunc(...args)
   } else if (args.every(a => !transpiler.isTranspilerThunk(a))) {
     // since every argument is not a transpiler thunk, it
     // can be run with the interpreter functions
     return interpreterFunc(...args)
   } else {
-    throw new Error('Mixed transpiler and interpreter thunk types in function ' + functionName)
+    throw new Error('Could not determine lazy execution type for ' + functionName)
   }
 }

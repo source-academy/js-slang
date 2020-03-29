@@ -35,17 +35,9 @@ const mapReturnsCorrectly = (executionMethod: ExecutionMethod) =>
   runTestSuccess(
     executionMethod,
     `
-force_pair(map(x => x / 2, list(2, 4, 8)));
+equal(map(x => x / 2, list(2, 4, 8)), list(1, 2, 4));
 `,
-    `
-Array [
-  1, Array [
-    2, Array [
-      4, null
-    ]
-  ]
-]
-  `,
+    'true',
     'map returns the correct list'
   )
 
@@ -53,17 +45,9 @@ const filterReturnsCorrectly = (executionMethod: ExecutionMethod) =>
   runTestSuccess(
     executionMethod,
     `
-force_pair(filter(x => x % 2 === 0, list(1, 2, 3, 4, 5, 6)));
+equal(filter(x => x % 2 === 0, list(1, 2, 3, 4, 5, 6)), list(2, 4, 6));
 `,
-    `
-Array [
-  2, Array [
-    4, Array [
-      6, null
-    ]
-  ]
-]
-  `,
+    'true',
     'filter returns the correct list'
   )
 
@@ -84,7 +68,7 @@ const listsAreMemoised = (executionMethod: ExecutionMethod) =>
 Array [
   "\\"mapped\\"",
 ]
-  `,
+`,
     'lists are memoised'
   )
 
@@ -103,9 +87,9 @@ const listsAreMappedLazily = (executionMethod: ExecutionMethod) =>
     `
 Array [
   "\\"mapped\\"",
-  "\\"mapped\\""
+  "\\"mapped\\"",
 ]
-  `,
+`,
     'lists are mapped lazily'
   )
 
