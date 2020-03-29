@@ -43,6 +43,10 @@ export function annotateProgram(program: es.Program): es.Program {
     annotateNode(left)
     annotateNode(right)
   }
+
+  function annotateUnaryExpression(unaryExpression: TypeVariableAnnotatedNode<es.UnaryExpression>) {
+    const argument: TypeVariableAnnotatedNode<es.Expression> = unaryExpression.argument
+    annotateNode(argument)
   }
 
   ancestor(program as es.Node, {

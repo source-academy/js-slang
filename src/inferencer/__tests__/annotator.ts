@@ -33,6 +33,14 @@ function checkBinaryExpressionAnnotation(
   expect(declaration).not.toBe(undefined)
 }
 
+function checkUnaryExpressionAnnotation(
+  unaryExpression: TypeVariableAnnotatedNode<es.UnaryExpression>
+) {
+  const argument: TypeVariableAnnotatedNode<es.Expression> = unaryExpression.argument
+  expect(argument.typeVariableId).not.toBe(undefined)
+  expect(unaryExpression).not.toBe(undefined)
+}
+
 test('constant declarations will have identifier and value annotated', async () => {
   const code = stripIndent`
   const x = 1;
@@ -56,5 +64,17 @@ test('binary expressions will be annotated', async () => {
   simple(annotatedAst, {
     BinaryExpression: checkBinaryExpressionAnnotation,
     LogicalExpression: checkBinaryExpressionAnnotation
+  })
+})
+
+test('unary expressions will be annotated', async () => {
+  const code = stripIndent`
+      const x = true;
+      !x;
+      !false;
+      `
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    UnaryExpression: checkUnaryExpressionAnnotation
   })
 })
