@@ -286,7 +286,7 @@ export function HighlightRulesSelector(id: number) {
           },
           {
             token: ['variable.language'],
-            regex: /\.{3}|--+|[$%&*+\-~\/^]=+|!=|==[^=]|\+\++|\^|[^&]&[^&]|[^\|]\|[^\|]/,
+            regex: /\.{3}|--+|[$%&*+\-~\/^]=+|==[^=]|!=[^=]|\+\++|\^|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/,
             next: 'start'
           },
           {
