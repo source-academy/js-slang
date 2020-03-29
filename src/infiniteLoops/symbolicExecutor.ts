@@ -128,6 +128,18 @@ const getVariable = (env: Environment, name: string) => {
   return null
 }
 
+export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol {
+  function doParam(param: es.Node) {
+    if (param.type === 'Identifier') {
+      return stype.makeNumberSymbol(param.name, 0)
+    }
+    return stype.unusedSymbol
+  }
+  const id = node.id as es.Identifier
+  const args = node.params.map(doParam)
+  return stype.makeFunctionSymbol(id.name, args)
+}
+
 // TODO refactor?
 export function symbolicExecute(
   node: stype.SymbolicExecutable,
@@ -176,7 +188,8 @@ export function symbolicExecute(
       ? symbolicExecute(node.alternate, store, env)
       : stype.unusedSymbol
     return stype.makeBranchSymbol(test, consequent, alternate)
-  } else if ( node.type === 'ConditionalExpression') { // TODO
+  } else if (node.type === 'ConditionalExpression') {
+    // TODO
     return stype.skipSymbol
   } else if (node.type === 'BlockStatement') {
     const newContext = [new Map()].concat(store)

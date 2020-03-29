@@ -10,9 +10,8 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import {
-  infiniteLoopStaticAnalysis,
-  checkInfiniteLoop,
-  pushTailCallStack
+  infiniteLoopFunctionAnalysis,
+  checkInfiniteLoop
 } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
@@ -28,11 +27,8 @@ class TailCallReturnValue {
 }
 
 const createEmptyInfiniteLoopDetection = () => ({
-  status: true,
-  relevantVars: new Map(),
-  stackThreshold: 100,
-  checkers: [],
-  tailCallStack: []
+  transitionSet: new Map(), 
+  checkers: []
 })
 
 const createEnvironment = (
@@ -319,12 +315,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     const envs = context.runtime.environments
-    const threshold = currentEnvironment(context).infiniteLoopDetection.stackThreshold
-    if(context.runtime.environments.length > threshold) {
-      const error = checkInfiniteLoop(node, args, envs)
-      if(error) {
-        handleRuntimeError(context, error)
-      }
+    const error = checkInfiniteLoop(node, args, envs)
+    if(error) {
+      handleRuntimeError(context, error)
     }
 
     const result = yield* apply(context, callee, args, node, thisContext)
@@ -512,7 +505,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    infiniteLoopStaticAnalysis(node, currentEnvironment(context).infiniteLoopDetection, currentEnvironment(context));
+    infiniteLoopFunctionAnalysis(node, currentEnvironment(context).infiniteLoopDetection, currentEnvironment(context));
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
@@ -634,14 +627,6 @@ export function* apply(
         fun = result.callee
         node = result.node
         args = result.args
-        // check inf loop etc
-        if (node.callee.type === 'Identifier') {
-          pushTailCallStack(environment, node.callee.name, args)
-          const infiniteLoopError = checkInfiniteLoop(node, args, context.runtime.environments)
-          if (infiniteLoopError) {
-            handleRuntimeError(context, infiniteLoopError)
-          }
-        }
       } else if (!(result instanceof ReturnValue)) {
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
@@ -674,8 +659,6 @@ export function* apply(
   if (result instanceof ReturnValue) {
     result = result.value
   }
-  // reset tail call stack
-  currentEnvironment(context).infiniteLoopDetection.tailCallStack = []
   for (let i = 1; i <= total; i++) {
     popEnvironment(context)
   }

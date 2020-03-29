@@ -1,7 +1,5 @@
 import * as es from 'estree'
 
-export type infiniteLoopChecker = (name: string, args: any[]) => boolean
-
 // TODO find a better name
 export type SSymbol =
   | NumberSymbol
@@ -141,6 +139,14 @@ export interface Transition {
   condition: BooleanSymbol | SkipSymbol | null
 }
 
-export function makeTransition (caller: FunctionSymbol, callee: FunctionSymbol | TerminateSymbol, condition: BooleanSymbol | SkipSymbol | null) {
-  return {caller, callee, condition} as Transition
+export function makeTransition(
+  caller: FunctionSymbol,
+  callee: FunctionSymbol | TerminateSymbol,
+  condition: BooleanSymbol | SkipSymbol | null
+) {
+  return { caller, callee, condition } as Transition
 }
+
+export type TransitionSet = Map<string, Transition[]>
+
+export type infiniteLoopChecker = (name: string, args: any[]) => number

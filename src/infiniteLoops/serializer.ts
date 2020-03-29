@@ -78,16 +78,19 @@ function unTree(node: stype.SSymbol): stype.SSymbol[][] {
   return []
 }
 
-export function serialize(firstCall: stype.FunctionSymbol, node: stype.SSymbol): stype.Transition[] {
+export function serialize(
+  firstCall: stype.FunctionSymbol,
+  node: stype.SSymbol
+): stype.Transition[] {
   const result: stype.Transition[] = []
   const symLists = unTree(node)
   for (const sList of symLists) {
     let cond = null
     for (const sym of sList) {
       if (stype.isBooleanSymbol(sym)) {
-        if(cond === null) {
+        if (cond === null) {
           cond = sym
-        } else if(stype.isBooleanSymbol(cond)){
+        } else if (stype.isBooleanSymbol(cond)) {
           cond = stype.makeLogicalSymbol(cond, sym, true)
         } // if cond = skip, don't change cond
       } else if (sym.type === 'FunctionSymbol' || sym.type === 'TerminateSymbol') {
