@@ -19,7 +19,7 @@ import {
   makeConditionalThunk,
   applyFunctionToThunks,
   InvalidNumberOfArgumentsInForce
-} from '../stdlib/transpilerLazy'
+} from '../transpiler/lazyTranspiler'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'

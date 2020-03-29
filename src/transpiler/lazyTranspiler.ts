@@ -2,7 +2,7 @@ import { typeOf } from '../utils/typeOf'
 import { Expression } from 'estree'
 import { CallingNonFunctionValue, ExceptionError, InvalidNumberOfArguments } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { is_pair, set_head, set_tail, head, tail } from './list'
+import { is_pair, set_head, set_tail, head, tail } from '../stdlib/list'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -203,6 +203,14 @@ export function force_pair(expression: any) {
 
 // name of the forcePair function
 export const nameOfForcePairFunction = force_pair.name
+
+/**
+ * Primitive function in Lazy Source.
+ * Checks if a certain value is a thunk, without
+ * forcing evaluation of the thunk.
+ */
+// tslint:disable-next-line: variable-name
+export const is_thunk = isTranspilerThunk
 
 /**
  * (NOT a primitive function in Lazy Source)

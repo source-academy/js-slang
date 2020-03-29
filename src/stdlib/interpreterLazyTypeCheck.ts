@@ -4,6 +4,7 @@ import {
   evaluateThunkOnce,
   evaluateThunk
 } from '../interpreter/lazyInterpreter'
+import { is_pair, set_head, set_tail, head, tail } from './list'
 
 export function is_thunk(v: Value) {
   if (isInterpreterThunk(v)) {
@@ -137,6 +138,29 @@ export function force_once(v: any) {
   } else {
     return v
   }
+}
+
+/**
+ * Given a thunk that may possibly evaluate to a pair,
+ * evaluate it and if it evaluates to a pair, forces
+ * the evaluation of the head and tail as well.
+ *
+ * Note that force_pair performs deep evaluation on
+ * the pair, so even if the head and tail of the pair
+ * evaluates to another pair, that pair's head and
+ * tail will be evaluated fully as well. This ensures
+ * that force_pair will work for lists.
+ *
+ * @param v The input node/statement to be evaluated.
+ * @returns The value extracted from the Thunk.
+ */
+export function force_pair(v: any) {
+  const final = force(v)
+  if (is_pair(final)) {
+    set_head(final, force_pair(head(final)))
+    set_tail(final, force_pair(tail(final)))
+  }
+  return final
 }
 
 /* Not supported in Lazy Evaluation

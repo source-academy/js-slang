@@ -4,10 +4,11 @@ import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
 import { AsyncScheduler } from './schedulers'
 import * as interpreterLazyList from './stdlib/interpreterLazyList'
 import * as interpreterLazyTypeCheck from './stdlib/interpreterLazyTypeCheck'
-import * as transpilerLazy from './stdlib/transpilerLazy'
-import * as list from './stdlib/list'
+import * as transpilerLazy from './transpiler/lazyTranspiler'
 import * as transpilerLazyList from './stdlib/transpilerLazyList'
 import * as transpilerLazyTypeCheck from './stdlib/transpilerLazyTypeCheck'
+import * as lazyAuto from './stdlib/lazyAuto'
+import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import * as misc from './stdlib/misc'
@@ -172,6 +173,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         transpilerLazy.force_pair
       )
       // source 1 primitive functions
+      defineBuiltin(context, 'is_thunk(val)', transpilerLazy.is_thunk)
       defineBuiltin(context, 'is_number(val)', transpilerLazyTypeCheck.is_number)
       defineBuiltin(context, 'is_string(val)', transpilerLazyTypeCheck.is_string)
       defineBuiltin(context, 'is_function(val)', transpilerLazyTypeCheck.is_function)
@@ -183,6 +185,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     } else if (lazyEvaluateInInterpreter(context)) {
       // Uses Interpreter (Lazy)
       defineBuiltin(context, 'force(expression)', interpreterLazyTypeCheck.force)
+      defineBuiltin(context, 'force_once(expression)', interpreterLazyTypeCheck.force_once)
+      defineBuiltin(context, 'force_pair(expression)', interpreterLazyTypeCheck.force_pair)
       defineBuiltin(context, 'is_thunk(val)', interpreterLazyTypeCheck.is_thunk)
       defineBuiltin(context, 'is_number(val)', interpreterLazyTypeCheck.is_number)
       defineBuiltin(context, 'is_string(val)', interpreterLazyTypeCheck.is_string)
@@ -192,6 +196,16 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'parse_int(str, radix)', interpreterLazyTypeCheck.parse_int)
     } else if (lazyEvaluateAuto(context)) {
       // have not determined which execution method will be used yet
+      defineBuiltin(context, 'force(expression)', lazyAuto.force)
+      defineBuiltin(context, 'force_once(expression)', lazyAuto.force_once)
+      defineBuiltin(context, 'force_pair(expression)', lazyAuto.force_pair)
+      defineBuiltin(context, 'is_thunk(val)', lazyAuto.is_thunk)
+      defineBuiltin(context, 'is_number(val)', lazyAuto.is_number)
+      defineBuiltin(context, 'is_string(val)', lazyAuto.is_string)
+      defineBuiltin(context, 'is_function(val)', lazyAuto.is_function)
+      defineBuiltin(context, 'is_boolean(val)', lazyAuto.is_boolean)
+      defineBuiltin(context, 'is_undefined(val)', lazyAuto.is_undefined)
+      defineBuiltin(context, 'parse_int(str, radix)', lazyAuto.parse_int)
     } else {
       // unknown execution method for lazy
       throw new Error('Unknown lazy evaluation method ' + context.executionMethod)
@@ -238,6 +252,20 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'draw_data(xs)', visualiseList)
     } else if (lazyEvaluateAuto(context)) {
       // have not determined which execution method will be used yet
+      defineBuiltin(context, 'pair(left, right)', lazyAuto.pair)
+      defineBuiltin(context, 'is_pair(val)', lazyAuto.is_pair)
+      defineBuiltin(context, 'head(xs)', lazyAuto.head)
+      defineBuiltin(context, 'tail(xs)', lazyAuto.tail)
+      defineBuiltin(context, 'is_null(val)', lazyAuto.is_null)
+      defineBuiltin(context, 'list(...values)', lazyAuto.list)
+      defineBuiltin(context, 'draw_data(xs)', (v: Value) =>
+        lazyAuto.switchBetween(
+          [v],
+          (xs: Value) =>
+            externalBuiltIns.visualiseList(transpilerLazy.force(xs), context.externalContext),
+          visualiseList
+        )
+      )
     } else {
       // unknown execution method for lazy
       throw new Error('Unknown lazy evaluation method ' + context.executionMethod)

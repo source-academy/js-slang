@@ -1,5 +1,5 @@
 import { stringify } from '../utils/stringify'
-import { force_once, TranspilerThunk, force } from './transpilerLazy'
+import { force_once, TranspilerThunk, force } from '../transpiler/lazyTranspiler'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
