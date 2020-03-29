@@ -1,5 +1,6 @@
 import { simple } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
+import { isInLoc } from './finder'
 import { BlockFrame, DefinitionNode } from './types'
 
 export function scopeVariables(
@@ -26,7 +27,6 @@ export function scopeVariables(
   const forStatements = getForStatements(program.body)
   const ifStatements = getIfStatements(program.body)
   const whileStatements = getWhileStatements(program.body)
-  const assignmentStatements = getAssignmentStatements(program.body)
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement)
   ) as es.VariableDeclaration[]
@@ -50,9 +50,6 @@ export function scopeVariables(
   const functionDefinitionNodes = functionDeclarations.map(declaration => declaration.definition)
   const functionBodyNodes = functionDeclarations.map(declaration => declaration.body)
 
-  const variableAssignmentNodes = assignmentStatements.map(statement =>
-    scopeAssignmentStatement(statement)
-  )
   const variableDefinitionNodes = variableStatements.map(statement =>
     scopeVariableDeclaration(statement)
   )
@@ -77,7 +74,6 @@ export function scopeVariables(
   block.children = [
     ...variableDefinitionNodes,
     ...functionDefinitionNodes,
-    ...variableAssignmentNodes,
     ...functionBodyNodes,
     ...arrowFunctionNodes,
     ...ifStatementNodes,
@@ -124,17 +120,6 @@ export function scopeFunctionDeclaration(
   body.children = [...parameters, ...body.children]
   // Treat function parameters as definitions in the function body, since their scope is limited to the body.
   return { definition, body }
-}
-
-function scopeAssignmentStatement(node: es.ExpressionStatement): DefinitionNode {
-  return {
-    name: ((node.expression as es.AssignmentExpression).left as es.Identifier).name,
-    type: 'DefinitionNode',
-    // assignmentStatements are usually found when assigning new values to let variables
-    // This node represents the latest value of the current variable
-    isDeclaration: false,
-    loc: ((node.expression as es.AssignmentExpression).left as es.Identifier).loc
-  }
 }
 
 function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
@@ -200,72 +185,17 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   return block
 }
 
-// Functions to lookup definition location of any variable
-export function lookupDefinition(
-  variableName: string,
-  line: number,
-  col: number,
-  node: BlockFrame,
-  currentDefinition?: DefinitionNode,
-  // This determines whether the function looks up where the variable is declared
-  // vs where it was assigned its latest value
-  lookupOriginalDeclaration: boolean = false
-): DefinitionNode | void {
-  if (!isInLoc(line, col, node.enclosingLoc as es.SourceLocation)) {
-    return undefined
-  }
-
-  const matches = (node.children.filter(child => !isBlockFrame(child)) as DefinitionNode[])
-    .filter(child => child.name === variableName)
-    // If the lookupOriginalDeclaration is true, we only search for the original declaration
-    // of the variable. Redefinitions of let variables are hence excluded
-    .filter(child => (lookupOriginalDeclaration ? child.isDeclaration : true))
-    // Only get definitions before the current cursor location
-    .filter(child =>
-      child.loc
-        ? child.loc.start.line < line ||
-          (child.loc.start.line === line && child.loc.start.column <= col)
-        : false
-    )
-  // Grab the latest definition
-  currentDefinition = matches.length > 0 ? matches[matches.length - 1] : currentDefinition
-  const blockToRecurse = node.children
-    .filter(isBlockFrame)
-    .filter(block => isInLoc(line, col, block.enclosingLoc as es.SourceLocation))
-
-  if (blockToRecurse.length > 1) {
-    throw new Error('Variable is part of more than one child block. This should never happen.')
-  }
-
-  return blockToRecurse.length === 1
-    ? lookupDefinition(
-        variableName,
-        line,
-        col,
-        blockToRecurse[0],
-        currentDefinition,
-        lookupOriginalDeclaration
-      )
-    : currentDefinition
-}
-
 // This function works by first searching for closest declaration of that variable in the parent scopes
 // Then, using the block where the node is found as the root, recurse on the children and get all
 // usages of the variable there
-export function getAllOccurrencesInScope(
-  target: string,
-  line: number,
-  col: number,
-  program: es.Program
+export function getAllOccurrencesInScopeHelper(
+  definitionLocation: es.SourceLocation,
+  program: es.Program,
+  target: string
 ): es.SourceLocation[] {
   const lookupTree = scopeVariables(program)
   // Find closest declaration of node.
-  const defNode = lookupDefinition(target, line, col, lookupTree, undefined, true)
-  if (defNode == null || defNode.loc == null) {
-    return []
-  }
-  const defLoc = defNode.loc
-  const block = getBlockFromLoc(defLoc, lookupTree)
+  const block = getBlockFromLoc(definitionLocation, lookupTree)
   const identifiers = getAllIdentifiers(program, target)
   // Recurse on teh children
   const nestedBlocks = block.children.filter(isBlockFrame)
@@ -368,16 +298,6 @@ function getDeclarationStatements(
   )
 }
 
-function getAssignmentStatements(
-  nodes: (es.Statement | es.ModuleDeclaration)[]
-): es.ExpressionStatement[] {
-  return nodes.filter(
-    statement =>
-      statement.type === 'ExpressionStatement' &&
-      statement.expression.type === 'AssignmentExpression'
-  ) as es.ExpressionStatement[]
-}
-
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {
   return nodes.filter(statement => statement.type === 'IfStatement') as es.IfStatement[]
 }
@@ -426,29 +346,6 @@ function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFram
     return -1
   } else {
     return x.loc.start.column - y.loc.start.column
-  }
-}
-
-// This checks if a given (line, col) value is part of another node.
-function isInLoc(line: number, col: number, location: es.SourceLocation): boolean {
-  if (location == null) {
-    return false
-  }
-
-  if (location.start.line < line && location.end.line > line) {
-    return true
-  } else if (location.start.line === line && location.end.line > line) {
-    return location.start.column <= col
-  } else if (location.start.line < line && location.end.line === line) {
-    return location.end.column >= col
-  } else if (location.start.line === line && location.end.line === line) {
-    if (location.start.column <= col && location.end.column >= col) {
-      return true
-    } else {
-      return false
-    }
-  } else {
-    return false
   }
 }
 
