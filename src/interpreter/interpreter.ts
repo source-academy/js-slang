@@ -9,7 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import {LazyBuiltIn} from "../createContext";
+import { LazyBuiltIn } from '../createContext'
 
 class BreakValue {}
 
@@ -648,9 +648,9 @@ export function* apply(
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
       }
-    }else if (fun instanceof LazyBuiltIn) {
+    } else if (fun instanceof LazyBuiltIn) {
       try {
-        let finalArgs = args;
+        let finalArgs = args
         if (fun.evaluateArgs) {
           const forcedArgs = []
           for (const arg of args) {
@@ -663,10 +663,10 @@ export function* apply(
           result = yield* forceIt(result, context)
         }
         break
-      }catch (e) {
+      } catch (e) {
         // Recover from exception
         context.runtime.environments = context.runtime.environments.slice(
-            -context.numberOfOuterEnvironments
+          -context.numberOfOuterEnvironments
         )
 
         const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
@@ -679,7 +679,7 @@ export function* apply(
         result = undefined
         throw e
       }
-    }else if(typeof fun === 'function') {
+    } else if (typeof fun === 'function') {
       try {
         const forcedArgs = []
 
