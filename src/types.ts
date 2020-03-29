@@ -199,6 +199,8 @@ export interface Typedd {
 
 export interface TypeVariable {
   typeVariableId?: number
+  isAddable?: boolean
+  isPolymorphic?: boolean
 }
 
 export type Type = Primitive | Variable | FunctionType | List
