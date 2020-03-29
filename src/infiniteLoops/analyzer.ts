@@ -10,7 +10,8 @@ enum InfiniteLoopType {
 // TODO change checker to return string?
 function checkBaseCase(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
   function makeChecker(name: string): stype.infiniteLoopChecker {
-    return (name2: string, args: any[]): number => name === name2 ? InfiniteLoopType.NoBaseCase : InfiniteLoopType.Terminates
+    return (name2: string, args: any[]): number =>
+      name === name2 ? InfiniteLoopType.NoBaseCase : InfiniteLoopType.Terminates
   }
   function getName(sym: stype.FunctionSymbol | stype.TerminateSymbol) {
     return sym.type === 'TerminateSymbol' ? '*' : sym.name
@@ -36,13 +37,19 @@ function makeUnaryChecker(
     [num: string]: stype.infiniteLoopChecker
   } = {
     '-1'(name2: string, args: any[]): number {
-      return name1 === name2 && args.length === 1 && args[idx] < constant ? InfiniteLoopType.MLinearDiv : InfiniteLoopType.Terminates
+      return name1 === name2 && args.length === 1 && args[idx] < constant
+        ? InfiniteLoopType.MLinearDiv
+        : InfiniteLoopType.Terminates
     },
     '1'(name2: string, args: any[]): number {
-      return name1 === name2 && args.length === 1 && args[idx] > constant ? InfiniteLoopType.MLinearDiv : InfiniteLoopType.Terminates
+      return name1 === name2 && args.length === 1 && args[idx] > constant
+        ? InfiniteLoopType.MLinearDiv
+        : InfiniteLoopType.Terminates
     },
     '0'(name2: string, args: any[]): number {
-      return name1 === name2 && args.length === 1 && args[idx] === constant ? InfiniteLoopType.MLinearDiv : InfiniteLoopType.Terminates
+      return name1 === name2 && args.length === 1 && args[idx] === constant
+        ? InfiniteLoopType.MLinearDiv
+        : InfiniteLoopType.Terminates
     }
   }
   return test[direction.toString()]
@@ -155,7 +162,8 @@ function checkStateChange(tset: stype.TransitionSet): stype.infiniteLoopChecker[
           checkers.push(makeChecker(transition.caller, transition.condition))
         } else if (transition.condition === null) {
           const name = transition.caller.name
-          const checker = (name2: string, args: any[]): number => name === name2 ? InfiniteLoopType.MLinearDiv : InfiniteLoopType.Terminates
+          const checker = (name2: string, args: any[]): number =>
+            name === name2 ? InfiniteLoopType.MLinearDiv : InfiniteLoopType.Terminates
           checkers.push(checker)
         }
       }
@@ -173,12 +181,12 @@ export function updateCheckers(tset: stype.TransitionSet) {
 }
 
 function getErrorMessage(code: InfiniteLoopType) {
-  if(code === InfiniteLoopType.NoBaseCase) {
-    return " Did you forget your base case?"
-  } else if(code === InfiniteLoopType.NoStateChange) {
-    return " Check your function calls."
-  } else if(code === InfiniteLoopType.MLinearDiv) {
-    return " Did you call a value that is outside the range of your function?"
+  if (code === InfiniteLoopType.NoBaseCase) {
+    return ' Did you forget your base case?'
+  } else if (code === InfiniteLoopType.NoStateChange) {
+    return ' Check your function calls.'
+  } else if (code === InfiniteLoopType.MLinearDiv) {
+    return ' Did you call a value that is outside the range of your function?'
   }
   return undefined
 }
@@ -186,7 +194,7 @@ function getErrorMessage(code: InfiniteLoopType) {
 export function testFunction(name: string, args: any[], checkers: stype.infiniteLoopChecker[]) {
   for (const checker of checkers) {
     const status = checker(name, args)
-    if(status !== InfiniteLoopType.Terminates) {
+    if (status !== InfiniteLoopType.Terminates) {
       return getErrorMessage(status)
     }
   }

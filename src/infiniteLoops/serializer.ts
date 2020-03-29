@@ -55,6 +55,9 @@ function unTree(node: stype.SSymbol): stype.SSymbol[][] {
     for (const subList of temp) {
       result = result.concat(subList)
     }
+    if (result.length === 0) {
+      return [[stype.terminateSymbol]]
+    }
     return result
   } else if (node.type === 'BranchSymbol') {
     const consTail = unTree(node.consequent)
@@ -84,6 +87,7 @@ export function serialize(
 ): stype.Transition[] {
   const result: stype.Transition[] = []
   const symLists = unTree(node)
+
   for (const sList of symLists) {
     let cond = null
     for (const sym of sList) {

@@ -5,7 +5,6 @@ import { symbolicExecute, getFirstCall } from './symbolicExecutor'
 import { serialize } from './serializer'
 import * as errors from '../errors/errors'
 
-
 export function infiniteLoopFunctionAnalysis(
   node: es.FunctionDeclaration,
   infiniteLoopDetection: InfiniteLoopData,
@@ -16,7 +15,7 @@ export function infiniteLoopFunctionAnalysis(
   const firstCall = getFirstCall(node)
   const transition = serialize(firstCall, symTree)
   const tset = infiniteLoopDetection.transitionSet
-  tset.set(functionId.name, transition) 
+  tset.set(functionId.name, transition)
   infiniteLoopDetection.checkers = updateCheckers(tset)
 }
 
