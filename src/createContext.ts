@@ -350,4 +350,34 @@ const createContext = <T>(
   return context
 }
 
+/**
+ * Creates a new Context that uses default values for external
+ * symbols and built-ins, but with the option to force a certain
+ * evaluation method in the context.
+ *
+ * @param chapter The chapter number for this context.
+ * @param forceInterpreter Whether to force use of interpreter
+ *                         in the context.
+ * @param forceTranspiler Whether to force use of transpiler
+ *                        in the context.
+ */
+export const createDefaultContextWithForcedEvaluationMethod = (
+  chapter: number,
+  forceInterpreter: boolean,
+  forceTranspiler: boolean
+) => {
+  if (forceInterpreter && forceTranspiler) {
+    throw new Error('Cannot force both interpreter and transpiler!')
+  } else if (!forceInterpreter && !forceTranspiler) {
+    return createContext(chapter)
+  }
+  // use defaults for all
+  const context = createEmptyContext(chapter, [])
+  context.executionMethod = forceInterpreter ? 'interpreter' : 'native'
+  importBuiltins(context, defaultBuiltIns)
+  importPrelude(context)
+  importExternalSymbols(context, [])
+  return context
+}
+
 export default createContext

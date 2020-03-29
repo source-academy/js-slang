@@ -127,8 +127,6 @@ let isNativeRunnable: boolean
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
   let isNative
-  console.log('options: ' + theOptions.executionMethod + '\n')
-  console.log('context: ' + context.executionMethod + '\n')
   // options settings overrides context
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
