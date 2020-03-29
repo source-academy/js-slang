@@ -78,6 +78,7 @@ Object {
                   },
                   "start": 77,
                   "type": "CallExpression",
+                  "typeVariableId": 716,
                 },
                 "head": Object {
                   "x": 10,
@@ -263,6 +264,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 716,
               },
               "head": Object {
                 "x": 10,
@@ -441,6 +443,7 @@ Object {
               },
               "start": 77,
               "type": "CallExpression",
+              "typeVariableId": 716,
             },
             "head": Object {
               "x": 10,
@@ -612,6 +615,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 716,
           },
           "head": Object {
             "x": 10,
@@ -1165,7 +1169,7 @@ Object {
                   "name": "i",
                   "start": 31,
                   "type": "Identifier",
-                  "typeVariableId": 63,
+                  "typeVariableId": 710,
                 },
                 "init": Node {
                   "end": 34,
@@ -1187,7 +1191,7 @@ Object {
                   "start": 33,
                   "typability": "Typed",
                   "type": "Literal",
-                  "typeVariableId": 64,
+                  "typeVariableId": 709,
                   "value": 0,
                 },
                 "loc": SourceLocation {
@@ -1248,6 +1252,7 @@ Object {
               "name": "i",
               "start": 36,
               "type": "Identifier",
+              "typeVariableId": 711,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -1275,6 +1280,7 @@ Object {
               "name": "x",
               "start": 38,
               "type": "Identifier",
+              "typeVariableId": 712,
             },
             "start": 36,
             "type": "BinaryExpression",
@@ -1326,6 +1332,7 @@ Object {
                 "name": "i",
                 "start": 43,
                 "type": "Identifier",
+                "typeVariableId": 714,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -1358,6 +1365,7 @@ Object {
                 "start": 45,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 713,
                 "value": 1,
               },
               "start": 43,
@@ -1389,6 +1397,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 715,
               "value": 10,
             },
           ],
@@ -1421,6 +1430,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 716,
         },
         Node {
           "end": 83,
@@ -1446,6 +1456,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 715,
                 "value": 10,
               },
             ],
@@ -1478,6 +1489,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 716,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -1550,7 +1562,7 @@ Object {
                             "name": "i",
                             "start": 31,
                             "type": "Identifier",
-                            "typeVariableId": 63,
+                            "typeVariableId": 710,
                           },
                           "init": Node {
                             "end": 34,
@@ -1572,7 +1584,7 @@ Object {
                             "start": 33,
                             "typability": "Typed",
                             "type": "Literal",
-                            "typeVariableId": 64,
+                            "typeVariableId": 709,
                             "value": 0,
                           },
                           "loc": SourceLocation {
@@ -1633,6 +1645,7 @@ Object {
                         "name": "i",
                         "start": 36,
                         "type": "Identifier",
+                        "typeVariableId": 711,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -1660,6 +1673,7 @@ Object {
                         "name": "x",
                         "start": 38,
                         "type": "Identifier",
+                        "typeVariableId": 712,
                       },
                       "start": 36,
                       "type": "BinaryExpression",
@@ -1711,6 +1725,7 @@ Object {
                           "name": "i",
                           "start": 43,
                           "type": "Identifier",
+                          "typeVariableId": 714,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -1743,6 +1758,7 @@ Object {
                           "start": 45,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 713,
                           "value": 1,
                         },
                         "start": 43,
@@ -1842,6 +1858,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 715,
                     "value": 10,
                   },
                 ],
@@ -1874,6 +1891,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 716,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -1986,6 +2004,7 @@ Object {
               },
               "start": 77,
               "type": "CallExpression",
+              "typeVariableId": 826,
             },
             "head": Object {
               "x": 10,
@@ -2157,6 +2176,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 826,
           },
           "head": Object {
             "x": 10,
@@ -2690,6 +2710,7 @@ Object {
                     "name": "x",
                     "start": 60,
                     "type": "Identifier",
+                    "typeVariableId": 823,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -2722,6 +2743,7 @@ Object {
                     "start": 62,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 822,
                     "value": 1,
                   },
                   "start": 60,
@@ -2729,6 +2751,7 @@ Object {
                 },
                 "start": 58,
                 "type": "AssignmentExpression",
+                "typeVariableId": 824,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -2824,6 +2847,7 @@ Object {
                       "name": "x",
                       "start": 60,
                       "type": "Identifier",
+                      "typeVariableId": 823,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -2856,6 +2880,7 @@ Object {
                       "start": 62,
                       "typability": "Typed",
                       "type": "Literal",
+                      "typeVariableId": 822,
                       "value": 1,
                     },
                     "start": 60,
@@ -2863,6 +2888,7 @@ Object {
                   },
                   "start": 58,
                   "type": "AssignmentExpression",
+                  "typeVariableId": 824,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -2921,6 +2947,7 @@ Object {
               "name": "x",
               "start": 28,
               "type": "Identifier",
+              "typeVariableId": 821,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -2953,6 +2980,7 @@ Object {
               "start": 32,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 820,
               "value": 1,
             },
             "start": 28,
@@ -2982,6 +3010,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 825,
               "value": 10,
             },
           ],
@@ -3014,6 +3043,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 826,
         },
         Node {
           "end": 83,
@@ -3039,6 +3069,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 825,
                 "value": 10,
               },
             ],
@@ -3071,6 +3102,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 826,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -3156,6 +3188,7 @@ Object {
                                 "name": "x",
                                 "start": 60,
                                 "type": "Identifier",
+                                "typeVariableId": 823,
                               },
                               "loc": SourceLocation {
                                 "end": Position {
@@ -3188,6 +3221,7 @@ Object {
                                 "start": 62,
                                 "typability": "Typed",
                                 "type": "Literal",
+                                "typeVariableId": 822,
                                 "value": 1,
                               },
                               "start": 60,
@@ -3195,6 +3229,7 @@ Object {
                             },
                             "start": 58,
                             "type": "AssignmentExpression",
+                            "typeVariableId": 824,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -3253,6 +3288,7 @@ Object {
                         "name": "x",
                         "start": 28,
                         "type": "Identifier",
+                        "typeVariableId": 821,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -3285,6 +3321,7 @@ Object {
                         "start": 32,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 820,
                         "value": 1,
                       },
                       "start": 28,
@@ -3382,6 +3419,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 825,
                     "value": 10,
                   },
                 ],
@@ -3414,6 +3452,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 826,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -3843,7 +3882,7 @@ Object {
                     "name": "a",
                     "start": 7,
                     "type": "Identifier",
-                    "typeVariableId": 3,
+                    "typeVariableId": 100,
                   },
                   "init": Node {
                     "end": 12,
@@ -3865,7 +3904,7 @@ Object {
                     "start": 11,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 4,
+                    "typeVariableId": 99,
                     "value": 2,
                   },
                   "loc": SourceLocation {
@@ -4367,6 +4406,7 @@ Object {
             },
             "start": 107,
             "type": "CallExpression",
+            "typeVariableId": 604,
           },
           "head": Object {
             "b": Symbol(Used to implement hoisting),
@@ -4860,6 +4900,7 @@ Object {
               "start": 109,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 603,
               "value": 10,
             },
           ],
@@ -4892,6 +4933,7 @@ Object {
           },
           "start": 107,
           "type": "CallExpression",
+          "typeVariableId": 604,
         },
         Node {
           "end": 113,
@@ -4917,6 +4959,7 @@ Object {
                 "start": 109,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 603,
                 "value": 10,
               },
             ],
@@ -4949,6 +4992,7 @@ Object {
             },
             "start": 107,
             "type": "CallExpression",
+            "typeVariableId": 604,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -5002,7 +5046,7 @@ Object {
                           "name": "z",
                           "start": 40,
                           "type": "Identifier",
-                          "typeVariableId": 55,
+                          "typeVariableId": 596,
                         },
                         "init": Node {
                           "end": 46,
@@ -5024,7 +5068,7 @@ Object {
                           "start": 44,
                           "typability": "Typed",
                           "type": "Literal",
-                          "typeVariableId": 56,
+                          "typeVariableId": 595,
                           "value": 20,
                         },
                         "loc": SourceLocation {
@@ -5076,7 +5120,7 @@ Object {
                           "name": "c",
                           "start": 56,
                           "type": "Identifier",
-                          "typeVariableId": 57,
+                          "typeVariableId": 599,
                         },
                         "init": Node {
                           "end": 65,
@@ -5095,6 +5139,7 @@ Object {
                             "name": "z",
                             "start": 60,
                             "type": "Identifier",
+                            "typeVariableId": 597,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -5122,10 +5167,11 @@ Object {
                             "name": "x",
                             "start": 64,
                             "type": "Identifier",
+                            "typeVariableId": 598,
                           },
                           "start": 60,
                           "type": "BinaryExpression",
-                          "typeVariableId": 58,
+                          "typeVariableId": 600,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -5176,7 +5222,7 @@ Object {
                           "name": "b",
                           "start": 75,
                           "type": "Identifier",
-                          "typeVariableId": 59,
+                          "typeVariableId": 602,
                         },
                         "init": Node {
                           "end": 85,
@@ -5198,7 +5244,7 @@ Object {
                           "start": 79,
                           "typability": "Typed",
                           "type": "Literal",
-                          "typeVariableId": 60,
+                          "typeVariableId": 601,
                           "value": 123095,
                         },
                         "loc": SourceLocation {
@@ -5352,6 +5398,7 @@ Object {
                     "start": 109,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 603,
                     "value": 10,
                   },
                 ],
@@ -5384,6 +5431,7 @@ Object {
                 },
                 "start": 107,
                 "type": "CallExpression",
+                "typeVariableId": 604,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -5493,6 +5541,7 @@ Object {
             },
             "start": 52,
             "type": "CallExpression",
+            "typeVariableId": 200,
           },
           "head": Object {
             "x": 10,
@@ -5983,6 +6032,7 @@ Object {
               "start": 54,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 199,
               "value": 10,
             },
           ],
@@ -6015,6 +6065,7 @@ Object {
           },
           "start": 52,
           "type": "CallExpression",
+          "typeVariableId": 200,
         },
         Node {
           "end": 58,
@@ -6040,6 +6091,7 @@ Object {
                 "start": 54,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 199,
                 "value": 10,
               },
             ],
@@ -6072,6 +6124,7 @@ Object {
             },
             "start": 52,
             "type": "CallExpression",
+            "typeVariableId": 200,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -6227,6 +6280,7 @@ Object {
                     "start": 54,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 199,
                     "value": 10,
                   },
                 ],
@@ -6259,6 +6313,7 @@ Object {
                 },
                 "start": 52,
                 "type": "CallExpression",
+                "typeVariableId": 200,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -6368,6 +6423,7 @@ Object {
             },
             "start": 265,
             "type": "CallExpression",
+            "typeVariableId": 488,
           },
           "head": Object {
             "b": 100,
@@ -6869,6 +6925,7 @@ Object {
               "start": 267,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 487,
               "value": 10,
             },
           ],
@@ -6901,6 +6958,7 @@ Object {
           },
           "start": 265,
           "type": "CallExpression",
+          "typeVariableId": 488,
         },
         Node {
           "end": 271,
@@ -6926,6 +6984,7 @@ Object {
                 "start": 267,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 487,
                 "value": 10,
               },
             ],
@@ -6958,6 +7017,7 @@ Object {
             },
             "start": 265,
             "type": "CallExpression",
+            "typeVariableId": 488,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -6996,7 +7056,7 @@ Object {
                           "name": "b",
                           "start": 26,
                           "type": "Identifier",
-                          "typeVariableId": 27,
+                          "typeVariableId": 445,
                         },
                         "init": Node {
                           "end": 36,
@@ -7020,6 +7080,7 @@ Object {
                             "start": 30,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 443,
                             "value": 10,
                           },
                           "loc": SourceLocation {
@@ -7048,10 +7109,11 @@ Object {
                             "name": "x",
                             "start": 35,
                             "type": "Identifier",
+                            "typeVariableId": 444,
                           },
                           "start": 30,
                           "type": "BinaryExpression",
-                          "typeVariableId": 28,
+                          "typeVariableId": 446,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7102,7 +7164,7 @@ Object {
                           "name": "c",
                           "start": 46,
                           "type": "Identifier",
-                          "typeVariableId": 29,
+                          "typeVariableId": 449,
                         },
                         "init": Node {
                           "end": 56,
@@ -7126,6 +7188,7 @@ Object {
                             "start": 50,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 447,
                             "value": 20,
                           },
                           "loc": SourceLocation {
@@ -7154,10 +7217,11 @@ Object {
                             "name": "x",
                             "start": 55,
                             "type": "Identifier",
+                            "typeVariableId": 448,
                           },
                           "start": 50,
                           "type": "BinaryExpression",
-                          "typeVariableId": 30,
+                          "typeVariableId": 450,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7208,7 +7272,7 @@ Object {
                           "name": "d",
                           "start": 66,
                           "type": "Identifier",
-                          "typeVariableId": 31,
+                          "typeVariableId": 453,
                         },
                         "init": Node {
                           "end": 76,
@@ -7232,6 +7296,7 @@ Object {
                             "start": 70,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 451,
                             "value": 30,
                           },
                           "loc": SourceLocation {
@@ -7260,10 +7325,11 @@ Object {
                             "name": "x",
                             "start": 75,
                             "type": "Identifier",
+                            "typeVariableId": 452,
                           },
                           "start": 70,
                           "type": "BinaryExpression",
-                          "typeVariableId": 32,
+                          "typeVariableId": 454,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7314,7 +7380,7 @@ Object {
                           "name": "e",
                           "start": 86,
                           "type": "Identifier",
-                          "typeVariableId": 33,
+                          "typeVariableId": 457,
                         },
                         "init": Node {
                           "end": 95,
@@ -7333,6 +7399,7 @@ Object {
                             "name": "d",
                             "start": 90,
                             "type": "Identifier",
+                            "typeVariableId": 455,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7360,10 +7427,11 @@ Object {
                             "name": "b",
                             "start": 94,
                             "type": "Identifier",
+                            "typeVariableId": 456,
                           },
                           "start": 90,
                           "type": "BinaryExpression",
-                          "typeVariableId": 34,
+                          "typeVariableId": 458,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7414,7 +7482,7 @@ Object {
                           "name": "f",
                           "start": 105,
                           "type": "Identifier",
-                          "typeVariableId": 35,
+                          "typeVariableId": 461,
                         },
                         "init": Node {
                           "end": 114,
@@ -7433,6 +7501,7 @@ Object {
                             "name": "c",
                             "start": 109,
                             "type": "Identifier",
+                            "typeVariableId": 459,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7460,10 +7529,11 @@ Object {
                             "name": "d",
                             "start": 113,
                             "type": "Identifier",
+                            "typeVariableId": 460,
                           },
                           "start": 109,
                           "type": "BinaryExpression",
-                          "typeVariableId": 36,
+                          "typeVariableId": 462,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7514,7 +7584,7 @@ Object {
                           "name": "g",
                           "start": 124,
                           "type": "Identifier",
-                          "typeVariableId": 37,
+                          "typeVariableId": 465,
                         },
                         "init": Node {
                           "end": 134,
@@ -7538,6 +7608,7 @@ Object {
                             "start": 128,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 463,
                             "value": 10,
                           },
                           "loc": SourceLocation {
@@ -7566,10 +7637,11 @@ Object {
                             "name": "c",
                             "start": 133,
                             "type": "Identifier",
+                            "typeVariableId": 464,
                           },
                           "start": 128,
                           "type": "BinaryExpression",
-                          "typeVariableId": 38,
+                          "typeVariableId": 466,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7620,7 +7692,7 @@ Object {
                           "name": "h",
                           "start": 144,
                           "type": "Identifier",
-                          "typeVariableId": 39,
+                          "typeVariableId": 469,
                         },
                         "init": Node {
                           "end": 153,
@@ -7639,6 +7711,7 @@ Object {
                             "name": "g",
                             "start": 148,
                             "type": "Identifier",
+                            "typeVariableId": 467,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7666,10 +7739,11 @@ Object {
                             "name": "d",
                             "start": 152,
                             "type": "Identifier",
+                            "typeVariableId": 468,
                           },
                           "start": 148,
                           "type": "BinaryExpression",
-                          "typeVariableId": 40,
+                          "typeVariableId": 470,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7720,7 +7794,7 @@ Object {
                           "name": "i",
                           "start": 163,
                           "type": "Identifier",
-                          "typeVariableId": 41,
+                          "typeVariableId": 473,
                         },
                         "init": Node {
                           "end": 172,
@@ -7739,6 +7813,7 @@ Object {
                             "name": "g",
                             "start": 167,
                             "type": "Identifier",
+                            "typeVariableId": 472,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7771,11 +7846,12 @@ Object {
                             "start": 171,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 471,
                             "value": 3,
                           },
                           "start": 167,
                           "type": "BinaryExpression",
-                          "typeVariableId": 42,
+                          "typeVariableId": 474,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7826,7 +7902,7 @@ Object {
                           "name": "j",
                           "start": 182,
                           "type": "Identifier",
-                          "typeVariableId": 43,
+                          "typeVariableId": 477,
                         },
                         "init": Node {
                           "end": 191,
@@ -7845,6 +7921,7 @@ Object {
                             "name": "f",
                             "start": 186,
                             "type": "Identifier",
+                            "typeVariableId": 475,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7872,10 +7949,11 @@ Object {
                             "name": "b",
                             "start": 190,
                             "type": "Identifier",
+                            "typeVariableId": 476,
                           },
                           "start": 186,
                           "type": "BinaryExpression",
-                          "typeVariableId": 44,
+                          "typeVariableId": 478,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -7926,7 +8004,7 @@ Object {
                           "name": "k",
                           "start": 201,
                           "type": "Identifier",
-                          "typeVariableId": 45,
+                          "typeVariableId": 481,
                         },
                         "init": Node {
                           "end": 210,
@@ -7945,6 +8023,7 @@ Object {
                             "name": "b",
                             "start": 205,
                             "type": "Identifier",
+                            "typeVariableId": 479,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -7972,10 +8051,11 @@ Object {
                             "name": "e",
                             "start": 209,
                             "type": "Identifier",
+                            "typeVariableId": 480,
                           },
                           "start": 205,
                           "type": "BinaryExpression",
-                          "typeVariableId": 46,
+                          "typeVariableId": 482,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -8026,7 +8106,7 @@ Object {
                           "name": "l",
                           "start": 220,
                           "type": "Identifier",
-                          "typeVariableId": 47,
+                          "typeVariableId": 485,
                         },
                         "init": Node {
                           "end": 229,
@@ -8045,6 +8125,7 @@ Object {
                             "name": "b",
                             "start": 224,
                             "type": "Identifier",
+                            "typeVariableId": 483,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -8072,10 +8153,11 @@ Object {
                             "name": "c",
                             "start": 228,
                             "type": "Identifier",
+                            "typeVariableId": 484,
                           },
                           "start": 224,
                           "type": "BinaryExpression",
-                          "typeVariableId": 48,
+                          "typeVariableId": 486,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -8243,6 +8325,7 @@ Object {
                     "start": 267,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 487,
                     "value": 10,
                   },
                 ],
@@ -8275,6 +8358,7 @@ Object {
                 },
                 "start": 265,
                 "type": "CallExpression",
+                "typeVariableId": 488,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -8688,7 +8772,7 @@ Object {
                 "name": "a",
                 "start": 9,
                 "type": "Identifier",
-                "typeVariableId": 69,
+                "typeVariableId": 928,
               },
               "init": Node {
                 "end": 15,
@@ -8710,7 +8794,7 @@ Object {
                 "start": 13,
                 "typability": "Typed",
                 "type": "Literal",
-                "typeVariableId": 70,
+                "typeVariableId": 927,
                 "value": 10,
               },
               "loc": SourceLocation {
@@ -8764,7 +8848,7 @@ Object {
                     "name": "a",
                     "start": 9,
                     "type": "Identifier",
-                    "typeVariableId": 69,
+                    "typeVariableId": 928,
                   },
                   "init": Node {
                     "end": 15,
@@ -8786,7 +8870,7 @@ Object {
                     "start": 13,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 70,
+                    "typeVariableId": 927,
                     "value": 10,
                   },
                   "loc": SourceLocation {
@@ -8838,7 +8922,7 @@ Object {
                     "name": "b",
                     "start": 25,
                     "type": "Identifier",
-                    "typeVariableId": 71,
+                    "typeVariableId": 930,
                   },
                   "init": Node {
                     "end": 31,
@@ -8860,7 +8944,7 @@ Object {
                     "start": 29,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 72,
+                    "typeVariableId": 929,
                     "value": 20,
                   },
                   "loc": SourceLocation {
@@ -8963,6 +9047,7 @@ Object {
                     },
                     "start": 213,
                     "type": "CallExpression",
+                    "typeVariableId": 833,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -9025,6 +9110,7 @@ Object {
                       },
                       "start": 229,
                       "type": "CallExpression",
+                      "typeVariableId": 831,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -9118,9 +9204,11 @@ Object {
                       },
                       "start": 244,
                       "type": "CallExpression",
+                      "typeVariableId": 832,
                     },
                     "start": 229,
                     "type": "LogicalExpression",
+                    "typeVariableId": 834,
                   },
                   "start": 213,
                   "type": "LogicalExpression",
@@ -9261,6 +9349,7 @@ Object {
                         },
                         "start": 213,
                         "type": "CallExpression",
+                        "typeVariableId": 833,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -9323,6 +9412,7 @@ Object {
                           },
                           "start": 229,
                           "type": "CallExpression",
+                          "typeVariableId": 831,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -9416,9 +9506,11 @@ Object {
                           },
                           "start": 244,
                           "type": "CallExpression",
+                          "typeVariableId": 832,
                         },
                         "start": 229,
                         "type": "LogicalExpression",
+                        "typeVariableId": 834,
                       },
                       "start": 213,
                       "type": "LogicalExpression",
@@ -9525,6 +9617,7 @@ Object {
                           "name": "x",
                           "start": 444,
                           "type": "Identifier",
+                          "typeVariableId": 839,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -9552,6 +9645,7 @@ Object {
                           "name": "y",
                           "start": 450,
                           "type": "Identifier",
+                          "typeVariableId": 840,
                         },
                         "start": 444,
                         "type": "BinaryExpression",
@@ -9688,6 +9782,7 @@ Object {
                           },
                           "start": 391,
                           "type": "CallExpression",
+                          "typeVariableId": 837,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -9830,6 +9925,7 @@ Object {
                           },
                           "start": 418,
                           "type": "CallExpression",
+                          "typeVariableId": 838,
                         },
                         "start": 391,
                         "type": "LogicalExpression",
@@ -9896,6 +9992,7 @@ Object {
                           },
                           "start": 364,
                           "type": "CallExpression",
+                          "typeVariableId": 835,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -9956,6 +10053,7 @@ Object {
                           },
                           "start": 378,
                           "type": "CallExpression",
+                          "typeVariableId": 836,
                         },
                         "start": 364,
                         "type": "LogicalExpression",
@@ -10085,6 +10183,7 @@ Object {
                           "start": 592,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 842,
                           "value": 1,
                         },
                         "loc": SourceLocation {
@@ -10179,6 +10278,7 @@ Object {
                           },
                           "start": 596,
                           "type": "CallExpression",
+                          "typeVariableId": 843,
                         },
                         "start": 592,
                         "type": "BinaryExpression",
@@ -10203,6 +10303,7 @@ Object {
                         "start": 588,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 841,
                         "value": 0,
                       },
                       "end": 612,
@@ -10581,6 +10682,7 @@ Object {
                         "raw": "null",
                         "start": 874,
                         "type": "Literal",
+                        "typeVariableId": 844,
                         "value": null,
                       },
                       "end": 916,
@@ -10769,6 +10871,7 @@ Object {
                                     "name": "i",
                                     "start": 1249,
                                     "type": "Identifier",
+                                    "typeVariableId": 848,
                                   },
                                   "loc": SourceLocation {
                                     "end": Position {
@@ -10801,6 +10904,7 @@ Object {
                                     "start": 1253,
                                     "typability": "Typed",
                                     "type": "Literal",
+                                    "typeVariableId": 847,
                                     "value": 1,
                                   },
                                   "start": 1249,
@@ -10996,6 +11100,7 @@ Object {
                                 "name": "i",
                                 "start": 1219,
                                 "type": "Identifier",
+                                "typeVariableId": 846,
                               },
                               "loc": SourceLocation {
                                 "end": Position {
@@ -11028,6 +11133,7 @@ Object {
                                 "start": 1223,
                                 "typability": "Typed",
                                 "type": "Literal",
+                                "typeVariableId": 845,
                                 "value": 0,
                               },
                               "start": 1219,
@@ -11167,6 +11273,7 @@ Object {
                             "name": "n",
                             "start": 1310,
                             "type": "Identifier",
+                            "typeVariableId": 850,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -11199,6 +11306,7 @@ Object {
                             "start": 1314,
                             "typability": "Typed",
                             "type": "Literal",
+                            "typeVariableId": 849,
                             "value": 1,
                           },
                           "start": 1310,
@@ -11235,6 +11343,7 @@ Object {
                           "raw": "null",
                           "start": 1322,
                           "type": "Literal",
+                          "typeVariableId": 851,
                           "value": null,
                         },
                       ],
@@ -11453,6 +11562,7 @@ Object {
                             },
                             "start": 1680,
                             "type": "CallExpression",
+                            "typeVariableId": 853,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -11613,6 +11723,7 @@ Object {
                             "raw": "true",
                             "start": 1659,
                             "type": "Literal",
+                            "typeVariableId": 852,
                             "value": true,
                           },
                           "end": 1664,
@@ -11867,6 +11978,7 @@ Object {
                                   "raw": "\\"[\\"",
                                   "start": 2045,
                                   "type": "Literal",
+                                  "typeVariableId": 855,
                                   "value": "[",
                                 },
                                 "loc": SourceLocation {
@@ -11961,9 +12073,11 @@ Object {
                                   },
                                   "start": 2051,
                                   "type": "CallExpression",
+                                  "typeVariableId": 856,
                                 },
                                 "start": 2045,
                                 "type": "BinaryExpression",
+                                "typeVariableId": 858,
                               },
                               "loc": SourceLocation {
                                 "end": Position {
@@ -11991,10 +12105,12 @@ Object {
                                 "raw": "\\",\\"",
                                 "start": 2078,
                                 "type": "Literal",
+                                "typeVariableId": 857,
                                 "value": ",",
                               },
                               "start": 2045,
                               "type": "BinaryExpression",
+                              "typeVariableId": 859,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -12088,9 +12204,11 @@ Object {
                               },
                               "start": 2100,
                               "type": "CallExpression",
+                              "typeVariableId": 860,
                             },
                             "start": 2045,
                             "type": "BinaryExpression",
+                            "typeVariableId": 862,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -12118,6 +12236,7 @@ Object {
                             "raw": "\\"]\\"",
                             "start": 2127,
                             "type": "Literal",
+                            "typeVariableId": 861,
                             "value": "]",
                           },
                           "start": 2045,
@@ -12201,6 +12320,7 @@ Object {
                         "raw": "\\"null\\"",
                         "start": 2002,
                         "type": "Literal",
+                        "typeVariableId": 854,
                         "value": "null",
                       },
                       "end": 2158,
@@ -12743,6 +12863,7 @@ Object {
                           "raw": "null",
                           "start": 2395,
                           "type": "Literal",
+                          "typeVariableId": 863,
                           "value": null,
                         },
                       ],
@@ -13365,6 +13486,7 @@ Object {
                             "name": "v",
                             "start": 3017,
                             "type": "Identifier",
+                            "typeVariableId": 865,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -13425,6 +13547,7 @@ Object {
                             },
                             "start": 3023,
                             "type": "CallExpression",
+                            "typeVariableId": 866,
                           },
                           "start": 3017,
                           "type": "BinaryExpression",
@@ -13446,6 +13569,7 @@ Object {
                         "raw": "null",
                         "start": 3010,
                         "type": "Literal",
+                        "typeVariableId": 864,
                         "value": null,
                       },
                       "end": 3058,
@@ -13871,6 +13995,7 @@ Object {
                             "name": "v",
                             "start": 3285,
                             "type": "Identifier",
+                            "typeVariableId": 868,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -13931,6 +14056,7 @@ Object {
                             },
                             "start": 3291,
                             "type": "CallExpression",
+                            "typeVariableId": 869,
                           },
                           "start": 3285,
                           "type": "BinaryExpression",
@@ -13952,6 +14078,7 @@ Object {
                         "raw": "null",
                         "start": 3278,
                         "type": "Literal",
+                        "typeVariableId": 867,
                         "value": null,
                       },
                       "end": 3348,
@@ -14426,6 +14553,7 @@ Object {
                             "name": "v",
                             "start": 3503,
                             "type": "Identifier",
+                            "typeVariableId": 871,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -14486,6 +14614,7 @@ Object {
                             },
                             "start": 3509,
                             "type": "CallExpression",
+                            "typeVariableId": 872,
                           },
                           "start": 3503,
                           "type": "BinaryExpression",
@@ -14507,6 +14636,7 @@ Object {
                         "raw": "null",
                         "start": 3492,
                         "type": "Literal",
+                        "typeVariableId": 870,
                         "value": null,
                       },
                       "end": 3593,
@@ -15265,6 +15395,7 @@ Object {
                                   "name": "start",
                                   "start": 4140,
                                   "type": "Identifier",
+                                  "typeVariableId": 877,
                                 },
                                 "loc": SourceLocation {
                                   "end": Position {
@@ -15297,6 +15428,7 @@ Object {
                                   "start": 4148,
                                   "typability": "Typed",
                                   "type": "Literal",
+                                  "typeVariableId": 876,
                                   "value": 1,
                                 },
                                 "start": 4140,
@@ -15395,6 +15527,7 @@ Object {
                         "raw": "null",
                         "start": 4111,
                         "type": "Literal",
+                        "typeVariableId": 875,
                         "value": null,
                       },
                       "end": 4156,
@@ -15426,6 +15559,7 @@ Object {
                           "name": "start",
                           "start": 4097,
                           "type": "Identifier",
+                          "typeVariableId": 873,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -15453,6 +15587,7 @@ Object {
                           "name": "end",
                           "start": 4105,
                           "type": "Identifier",
+                          "typeVariableId": 874,
                         },
                         "start": 4097,
                         "type": "BinaryExpression",
@@ -15628,6 +15763,7 @@ Object {
                               "name": "n",
                               "start": 4381,
                               "type": "Identifier",
+                              "typeVariableId": 881,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -15660,6 +15796,7 @@ Object {
                               "start": 4385,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 880,
                               "value": 1,
                             },
                             "start": 4381,
@@ -15774,6 +15911,7 @@ Object {
                           "name": "n",
                           "start": 4341,
                           "type": "Identifier",
+                          "typeVariableId": 879,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -15806,6 +15944,7 @@ Object {
                           "start": 4347,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 878,
                           "value": 0,
                         },
                         "start": 4341,
@@ -16355,6 +16494,7 @@ Object {
                         },
                         "start": 5163,
                         "type": "CallExpression",
+                        "typeVariableId": 884,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -16417,6 +16557,7 @@ Object {
                           },
                           "start": 5179,
                           "type": "CallExpression",
+                          "typeVariableId": 882,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -16510,9 +16651,11 @@ Object {
                           },
                           "start": 5194,
                           "type": "CallExpression",
+                          "typeVariableId": 883,
                         },
                         "start": 5179,
                         "type": "LogicalExpression",
+                        "typeVariableId": 885,
                       },
                       "start": 5163,
                       "type": "LogicalExpression",
@@ -16800,6 +16943,7 @@ Object {
                         "raw": "null",
                         "start": 5380,
                         "type": "Literal",
+                        "typeVariableId": 886,
                         "value": null,
                       },
                       "end": 5443,
@@ -17129,6 +17273,7 @@ Object {
                         "raw": "null",
                         "start": 5619,
                         "type": "Literal",
+                        "typeVariableId": 887,
                         "value": null,
                       },
                       "end": 5677,
@@ -17301,6 +17446,7 @@ Object {
                           "start": 5924,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 889,
                           "value": 1,
                         },
                         "loc": SourceLocation {
@@ -17395,6 +17541,7 @@ Object {
                           },
                           "start": 5928,
                           "type": "CallExpression",
+                          "typeVariableId": 890,
                         },
                         "start": 5924,
                         "type": "BinaryExpression",
@@ -17419,6 +17566,7 @@ Object {
                         "start": 5916,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 888,
                         "value": 0,
                       },
                       "end": 5958,
@@ -17816,6 +17964,7 @@ Object {
                         "raw": "null",
                         "start": 6522,
                         "type": "Literal",
+                        "typeVariableId": 891,
                         "value": null,
                       },
                       "end": 6592,
@@ -18056,6 +18205,7 @@ Object {
                                           "name": "i",
                                           "start": 7039,
                                           "type": "Identifier",
+                                          "typeVariableId": 896,
                                         },
                                         "loc": SourceLocation {
                                           "end": Position {
@@ -18088,6 +18238,7 @@ Object {
                                           "start": 7043,
                                           "typability": "Typed",
                                           "type": "Literal",
+                                          "typeVariableId": 895,
                                           "value": 1,
                                         },
                                         "start": 7039,
@@ -18188,6 +18339,7 @@ Object {
                               "raw": "null",
                               "start": 6993,
                               "type": "Literal",
+                              "typeVariableId": 894,
                               "value": null,
                             },
                             "end": 7046,
@@ -18219,6 +18371,7 @@ Object {
                                 "name": "i",
                                 "start": 6978,
                                 "type": "Identifier",
+                                "typeVariableId": 892,
                               },
                               "loc": SourceLocation {
                                 "end": Position {
@@ -18246,6 +18399,7 @@ Object {
                                 "name": "n",
                                 "start": 6983,
                                 "type": "Identifier",
+                                "typeVariableId": 893,
                               },
                               "start": 6978,
                               "type": "BinaryExpression",
@@ -18355,6 +18509,7 @@ Object {
                           "start": 7067,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 897,
                           "value": 0,
                         },
                       ],
@@ -18573,6 +18728,7 @@ Object {
                             },
                             "start": 7673,
                             "type": "CallExpression",
+                            "typeVariableId": 899,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -18733,6 +18889,7 @@ Object {
                             "raw": "true",
                             "start": 7652,
                             "type": "Literal",
+                            "typeVariableId": 898,
                             "value": true,
                           },
                           "end": 7657,
@@ -19325,6 +19482,7 @@ Object {
                           "raw": "null",
                           "start": 8151,
                           "type": "Literal",
+                          "typeVariableId": 900,
                           "value": null,
                         },
                       ],
@@ -19999,6 +20157,7 @@ Object {
                             },
                             "start": 9014,
                             "type": "CallExpression",
+                            "typeVariableId": 902,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -20026,6 +20185,7 @@ Object {
                             "name": "x",
                             "start": 9026,
                             "type": "Identifier",
+                            "typeVariableId": 903,
                           },
                           "start": 9014,
                           "type": "BinaryExpression",
@@ -20047,6 +20207,7 @@ Object {
                         "raw": "null",
                         "start": 9003,
                         "type": "Literal",
+                        "typeVariableId": 901,
                         "value": null,
                       },
                       "end": 9078,
@@ -20491,6 +20652,7 @@ Object {
                             "name": "v",
                             "start": 9402,
                             "type": "Identifier",
+                            "typeVariableId": 905,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -20551,6 +20713,7 @@ Object {
                             },
                             "start": 9408,
                             "type": "CallExpression",
+                            "typeVariableId": 906,
                           },
                           "start": 9402,
                           "type": "BinaryExpression",
@@ -20572,6 +20735,7 @@ Object {
                         "raw": "null",
                         "start": 9391,
                         "type": "Literal",
+                        "typeVariableId": 904,
                         "value": null,
                       },
                       "end": 9512,
@@ -21065,6 +21229,7 @@ Object {
                             "name": "v",
                             "start": 9743,
                             "type": "Identifier",
+                            "typeVariableId": 908,
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -21125,6 +21290,7 @@ Object {
                             },
                             "start": 9749,
                             "type": "CallExpression",
+                            "typeVariableId": 909,
                           },
                           "start": 9743,
                           "type": "BinaryExpression",
@@ -21146,6 +21312,7 @@ Object {
                         "raw": "null",
                         "start": 9732,
                         "type": "Literal",
+                        "typeVariableId": 907,
                         "value": null,
                       },
                       "end": 9871,
@@ -21721,6 +21888,7 @@ Object {
                         "raw": "null",
                         "start": 10294,
                         "type": "Literal",
+                        "typeVariableId": 910,
                         "value": null,
                       },
                       "end": 10426,
@@ -21925,6 +22093,7 @@ Object {
                                     "name": "start",
                                     "start": 10734,
                                     "type": "Identifier",
+                                    "typeVariableId": 915,
                                   },
                                   "loc": SourceLocation {
                                     "end": Position {
@@ -21957,6 +22126,7 @@ Object {
                                     "start": 10742,
                                     "typability": "Typed",
                                     "type": "Literal",
+                                    "typeVariableId": 914,
                                     "value": 1,
                                   },
                                   "start": 10734,
@@ -22073,6 +22243,7 @@ Object {
                         "raw": "null",
                         "start": 10687,
                         "type": "Literal",
+                        "typeVariableId": 913,
                         "value": null,
                       },
                       "end": 10750,
@@ -22104,6 +22275,7 @@ Object {
                           "name": "start",
                           "start": 10669,
                           "type": "Identifier",
+                          "typeVariableId": 911,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -22131,6 +22303,7 @@ Object {
                           "name": "end",
                           "start": 10677,
                           "type": "Identifier",
+                          "typeVariableId": 912,
                         },
                         "start": 10669,
                         "type": "BinaryExpression",
@@ -22275,6 +22448,7 @@ Object {
                                   "name": "n",
                                   "start": 11006,
                                   "type": "Identifier",
+                                  "typeVariableId": 917,
                                 },
                                 "loc": SourceLocation {
                                   "end": Position {
@@ -22307,6 +22481,7 @@ Object {
                                   "start": 11010,
                                   "typability": "Typed",
                                   "type": "Literal",
+                                  "typeVariableId": 916,
                                   "value": 1,
                                 },
                                 "start": 11006,
@@ -22596,6 +22771,7 @@ Object {
                                   "name": "n",
                                   "start": 11383,
                                   "type": "Identifier",
+                                  "typeVariableId": 922,
                                 },
                                 "loc": SourceLocation {
                                   "end": Position {
@@ -22628,6 +22804,7 @@ Object {
                                   "start": 11387,
                                   "typability": "Typed",
                                   "type": "Literal",
+                                  "typeVariableId": 921,
                                   "value": 1,
                                 },
                                 "start": 11383,
@@ -22710,6 +22887,7 @@ Object {
                         "raw": "null",
                         "start": 11316,
                         "type": "Literal",
+                        "typeVariableId": 920,
                         "value": null,
                       },
                       "end": 11390,
@@ -22741,6 +22919,7 @@ Object {
                           "name": "n",
                           "start": 11302,
                           "type": "Identifier",
+                          "typeVariableId": 919,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -22773,6 +22952,7 @@ Object {
                           "start": 11308,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 918,
                           "value": 0,
                         },
                         "start": 11302,
@@ -22949,6 +23129,7 @@ Object {
                               "name": "n",
                               "start": 11727,
                               "type": "Identifier",
+                              "typeVariableId": 926,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -22981,6 +23162,7 @@ Object {
                               "start": 11731,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 925,
                               "value": 1,
                             },
                             "start": 11727,
@@ -23095,6 +23277,7 @@ Object {
                           "name": "n",
                           "start": 11672,
                           "type": "Identifier",
+                          "typeVariableId": 924,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -23127,6 +23310,7 @@ Object {
                           "start": 11678,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 923,
                           "value": 0,
                         },
                         "start": 11672,
@@ -24034,7 +24218,7 @@ Object {
                 "name": "b",
                 "start": 39,
                 "type": "Identifier",
-                "typeVariableId": 79,
+                "typeVariableId": 1787,
               },
               "init": Node {
                 "end": 44,
@@ -24051,7 +24235,7 @@ Object {
                 "name": "i",
                 "start": 43,
                 "type": "Identifier",
-                "typeVariableId": 80,
+                "typeVariableId": 1788,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -24104,7 +24288,7 @@ Object {
                     "name": "b",
                     "start": 39,
                     "type": "Identifier",
-                    "typeVariableId": 79,
+                    "typeVariableId": 1787,
                   },
                   "init": Node {
                     "end": 44,
@@ -24121,7 +24305,7 @@ Object {
                     "name": "i",
                     "start": 43,
                     "type": "Identifier",
-                    "typeVariableId": 80,
+                    "typeVariableId": 1788,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -24190,7 +24374,7 @@ Object {
                       "name": "b",
                       "start": 39,
                       "type": "Identifier",
-                      "typeVariableId": 79,
+                      "typeVariableId": 1787,
                     },
                     "init": Node {
                       "end": 44,
@@ -24207,7 +24391,7 @@ Object {
                       "name": "i",
                       "start": 43,
                       "type": "Identifier",
-                      "typeVariableId": 80,
+                      "typeVariableId": 1788,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -24274,7 +24458,7 @@ Object {
                   "name": "i",
                   "start": 11,
                   "type": "Identifier",
-                  "typeVariableId": 77,
+                  "typeVariableId": 1782,
                 },
                 "init": Node {
                   "end": 14,
@@ -24296,7 +24480,7 @@ Object {
                   "start": 13,
                   "typability": "Typed",
                   "type": "Literal",
-                  "typeVariableId": 78,
+                  "typeVariableId": 1781,
                   "value": 1,
                 },
                 "loc": SourceLocation {
@@ -24357,6 +24541,7 @@ Object {
               "name": "i",
               "start": 15,
               "type": "Identifier",
+              "typeVariableId": 1784,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -24389,6 +24574,7 @@ Object {
               "start": 17,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1783,
               "value": 10,
             },
             "start": 15,
@@ -24441,6 +24627,7 @@ Object {
                 "name": "i",
                 "start": 22,
                 "type": "Identifier",
+                "typeVariableId": 1786,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -24473,6 +24660,7 @@ Object {
                 "start": 24,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1785,
                 "value": 2,
               },
               "start": 22,
@@ -24506,7 +24694,7 @@ Object {
                           "name": "b",
                           "start": 39,
                           "type": "Identifier",
-                          "typeVariableId": 79,
+                          "typeVariableId": 1787,
                         },
                         "init": Node {
                           "end": 44,
@@ -24523,7 +24711,7 @@ Object {
                           "name": "i",
                           "start": 43,
                           "type": "Identifier",
-                          "typeVariableId": 80,
+                          "typeVariableId": 1788,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -24590,7 +24778,7 @@ Object {
                       "name": "i",
                       "start": 11,
                       "type": "Identifier",
-                      "typeVariableId": 77,
+                      "typeVariableId": 1782,
                     },
                     "init": Node {
                       "end": 14,
@@ -24612,7 +24800,7 @@ Object {
                       "start": 13,
                       "typability": "Typed",
                       "type": "Literal",
-                      "typeVariableId": 78,
+                      "typeVariableId": 1781,
                       "value": 1,
                     },
                     "loc": SourceLocation {
@@ -24673,6 +24861,7 @@ Object {
                   "name": "i",
                   "start": 15,
                   "type": "Identifier",
+                  "typeVariableId": 1784,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -24705,6 +24894,7 @@ Object {
                   "start": 17,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1783,
                   "value": 10,
                 },
                 "start": 15,
@@ -24757,6 +24947,7 @@ Object {
                     "name": "i",
                     "start": 22,
                     "type": "Identifier",
+                    "typeVariableId": 1786,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -24789,6 +24980,7 @@ Object {
                     "start": 24,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1785,
                     "value": 2,
                   },
                   "start": 22,
@@ -25602,7 +25794,7 @@ Object {
                 "name": "b",
                 "start": 39,
                 "type": "Identifier",
-                "typeVariableId": 79,
+                "typeVariableId": 1787,
               },
               "init": Node {
                 "end": 44,
@@ -25619,7 +25811,7 @@ Object {
                 "name": "i",
                 "start": 43,
                 "type": "Identifier",
-                "typeVariableId": 80,
+                "typeVariableId": 1788,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -25672,7 +25864,7 @@ Object {
                     "name": "b",
                     "start": 39,
                     "type": "Identifier",
-                    "typeVariableId": 79,
+                    "typeVariableId": 1787,
                   },
                   "init": Node {
                     "end": 44,
@@ -25689,7 +25881,7 @@ Object {
                     "name": "i",
                     "start": 43,
                     "type": "Identifier",
-                    "typeVariableId": 80,
+                    "typeVariableId": 1788,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -25758,7 +25950,7 @@ Object {
                       "name": "b",
                       "start": 39,
                       "type": "Identifier",
-                      "typeVariableId": 79,
+                      "typeVariableId": 1787,
                     },
                     "init": Node {
                       "end": 44,
@@ -25775,7 +25967,7 @@ Object {
                       "name": "i",
                       "start": 43,
                       "type": "Identifier",
-                      "typeVariableId": 80,
+                      "typeVariableId": 1788,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -25842,7 +26034,7 @@ Object {
                   "name": "i",
                   "start": 11,
                   "type": "Identifier",
-                  "typeVariableId": 77,
+                  "typeVariableId": 1782,
                 },
                 "init": Node {
                   "end": 14,
@@ -25864,7 +26056,7 @@ Object {
                   "start": 13,
                   "typability": "Typed",
                   "type": "Literal",
-                  "typeVariableId": 78,
+                  "typeVariableId": 1781,
                   "value": 1,
                 },
                 "loc": SourceLocation {
@@ -25925,6 +26117,7 @@ Object {
               "name": "i",
               "start": 15,
               "type": "Identifier",
+              "typeVariableId": 1784,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -25957,6 +26150,7 @@ Object {
               "start": 17,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1783,
               "value": 10,
             },
             "start": 15,
@@ -26009,6 +26203,7 @@ Object {
                 "name": "i",
                 "start": 22,
                 "type": "Identifier",
+                "typeVariableId": 1786,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -26041,6 +26236,7 @@ Object {
                 "start": 24,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1785,
                 "value": 2,
               },
               "start": 22,
@@ -26074,7 +26270,7 @@ Object {
                           "name": "b",
                           "start": 39,
                           "type": "Identifier",
-                          "typeVariableId": 79,
+                          "typeVariableId": 1787,
                         },
                         "init": Node {
                           "end": 44,
@@ -26091,7 +26287,7 @@ Object {
                           "name": "i",
                           "start": 43,
                           "type": "Identifier",
-                          "typeVariableId": 80,
+                          "typeVariableId": 1788,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -26158,7 +26354,7 @@ Object {
                       "name": "i",
                       "start": 11,
                       "type": "Identifier",
-                      "typeVariableId": 77,
+                      "typeVariableId": 1782,
                     },
                     "init": Node {
                       "end": 14,
@@ -26180,7 +26376,7 @@ Object {
                       "start": 13,
                       "typability": "Typed",
                       "type": "Literal",
-                      "typeVariableId": 78,
+                      "typeVariableId": 1781,
                       "value": 1,
                     },
                     "loc": SourceLocation {
@@ -26241,6 +26437,7 @@ Object {
                   "name": "i",
                   "start": 15,
                   "type": "Identifier",
+                  "typeVariableId": 1784,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -26273,6 +26470,7 @@ Object {
                   "start": 17,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1783,
                   "value": 10,
                 },
                 "start": 15,
@@ -26325,6 +26523,7 @@ Object {
                     "name": "i",
                     "start": 22,
                     "type": "Identifier",
+                    "typeVariableId": 1786,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -26357,6 +26556,7 @@ Object {
                     "start": 24,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1785,
                     "value": 2,
                   },
                   "start": 22,
@@ -27170,7 +27370,7 @@ Object {
                 "name": "b",
                 "start": 39,
                 "type": "Identifier",
-                "typeVariableId": 79,
+                "typeVariableId": 1787,
               },
               "init": Node {
                 "end": 44,
@@ -27187,7 +27387,7 @@ Object {
                 "name": "i",
                 "start": 43,
                 "type": "Identifier",
-                "typeVariableId": 80,
+                "typeVariableId": 1788,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -27240,7 +27440,7 @@ Object {
                     "name": "b",
                     "start": 39,
                     "type": "Identifier",
-                    "typeVariableId": 79,
+                    "typeVariableId": 1787,
                   },
                   "init": Node {
                     "end": 44,
@@ -27257,7 +27457,7 @@ Object {
                     "name": "i",
                     "start": 43,
                     "type": "Identifier",
-                    "typeVariableId": 80,
+                    "typeVariableId": 1788,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -27326,7 +27526,7 @@ Object {
                       "name": "b",
                       "start": 39,
                       "type": "Identifier",
-                      "typeVariableId": 79,
+                      "typeVariableId": 1787,
                     },
                     "init": Node {
                       "end": 44,
@@ -27343,7 +27543,7 @@ Object {
                       "name": "i",
                       "start": 43,
                       "type": "Identifier",
-                      "typeVariableId": 80,
+                      "typeVariableId": 1788,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -27410,7 +27610,7 @@ Object {
                   "name": "i",
                   "start": 11,
                   "type": "Identifier",
-                  "typeVariableId": 77,
+                  "typeVariableId": 1782,
                 },
                 "init": Node {
                   "end": 14,
@@ -27432,7 +27632,7 @@ Object {
                   "start": 13,
                   "typability": "Typed",
                   "type": "Literal",
-                  "typeVariableId": 78,
+                  "typeVariableId": 1781,
                   "value": 1,
                 },
                 "loc": SourceLocation {
@@ -27493,6 +27693,7 @@ Object {
               "name": "i",
               "start": 15,
               "type": "Identifier",
+              "typeVariableId": 1784,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -27525,6 +27726,7 @@ Object {
               "start": 17,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1783,
               "value": 10,
             },
             "start": 15,
@@ -27577,6 +27779,7 @@ Object {
                 "name": "i",
                 "start": 22,
                 "type": "Identifier",
+                "typeVariableId": 1786,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -27609,6 +27812,7 @@ Object {
                 "start": 24,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1785,
                 "value": 2,
               },
               "start": 22,
@@ -27642,7 +27846,7 @@ Object {
                           "name": "b",
                           "start": 39,
                           "type": "Identifier",
-                          "typeVariableId": 79,
+                          "typeVariableId": 1787,
                         },
                         "init": Node {
                           "end": 44,
@@ -27659,7 +27863,7 @@ Object {
                           "name": "i",
                           "start": 43,
                           "type": "Identifier",
-                          "typeVariableId": 80,
+                          "typeVariableId": 1788,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -27726,7 +27930,7 @@ Object {
                       "name": "i",
                       "start": 11,
                       "type": "Identifier",
-                      "typeVariableId": 77,
+                      "typeVariableId": 1782,
                     },
                     "init": Node {
                       "end": 14,
@@ -27748,7 +27952,7 @@ Object {
                       "start": 13,
                       "typability": "Typed",
                       "type": "Literal",
-                      "typeVariableId": 78,
+                      "typeVariableId": 1781,
                       "value": 1,
                     },
                     "loc": SourceLocation {
@@ -27809,6 +28013,7 @@ Object {
                   "name": "i",
                   "start": 15,
                   "type": "Identifier",
+                  "typeVariableId": 1784,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -27841,6 +28046,7 @@ Object {
                   "start": 17,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1783,
                   "value": 10,
                 },
                 "start": 15,
@@ -27893,6 +28099,7 @@ Object {
                     "name": "i",
                     "start": 22,
                     "type": "Identifier",
+                    "typeVariableId": 1786,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -27925,6 +28132,7 @@ Object {
                     "start": 24,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1785,
                     "value": 2,
                   },
                   "start": 22,
@@ -28738,7 +28946,7 @@ Object {
                 "name": "b",
                 "start": 39,
                 "type": "Identifier",
-                "typeVariableId": 79,
+                "typeVariableId": 1787,
               },
               "init": Node {
                 "end": 44,
@@ -28755,7 +28963,7 @@ Object {
                 "name": "i",
                 "start": 43,
                 "type": "Identifier",
-                "typeVariableId": 80,
+                "typeVariableId": 1788,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -28808,7 +29016,7 @@ Object {
                     "name": "b",
                     "start": 39,
                     "type": "Identifier",
-                    "typeVariableId": 79,
+                    "typeVariableId": 1787,
                   },
                   "init": Node {
                     "end": 44,
@@ -28825,7 +29033,7 @@ Object {
                     "name": "i",
                     "start": 43,
                     "type": "Identifier",
-                    "typeVariableId": 80,
+                    "typeVariableId": 1788,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -28894,7 +29102,7 @@ Object {
                       "name": "b",
                       "start": 39,
                       "type": "Identifier",
-                      "typeVariableId": 79,
+                      "typeVariableId": 1787,
                     },
                     "init": Node {
                       "end": 44,
@@ -28911,7 +29119,7 @@ Object {
                       "name": "i",
                       "start": 43,
                       "type": "Identifier",
-                      "typeVariableId": 80,
+                      "typeVariableId": 1788,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -28978,7 +29186,7 @@ Object {
                   "name": "i",
                   "start": 11,
                   "type": "Identifier",
-                  "typeVariableId": 77,
+                  "typeVariableId": 1782,
                 },
                 "init": Node {
                   "end": 14,
@@ -29000,7 +29208,7 @@ Object {
                   "start": 13,
                   "typability": "Typed",
                   "type": "Literal",
-                  "typeVariableId": 78,
+                  "typeVariableId": 1781,
                   "value": 1,
                 },
                 "loc": SourceLocation {
@@ -29061,6 +29269,7 @@ Object {
               "name": "i",
               "start": 15,
               "type": "Identifier",
+              "typeVariableId": 1784,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -29093,6 +29302,7 @@ Object {
               "start": 17,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1783,
               "value": 10,
             },
             "start": 15,
@@ -29145,6 +29355,7 @@ Object {
                 "name": "i",
                 "start": 22,
                 "type": "Identifier",
+                "typeVariableId": 1786,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -29177,6 +29388,7 @@ Object {
                 "start": 24,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1785,
                 "value": 2,
               },
               "start": 22,
@@ -29210,7 +29422,7 @@ Object {
                           "name": "b",
                           "start": 39,
                           "type": "Identifier",
-                          "typeVariableId": 79,
+                          "typeVariableId": 1787,
                         },
                         "init": Node {
                           "end": 44,
@@ -29227,7 +29439,7 @@ Object {
                           "name": "i",
                           "start": 43,
                           "type": "Identifier",
-                          "typeVariableId": 80,
+                          "typeVariableId": 1788,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -29294,7 +29506,7 @@ Object {
                       "name": "i",
                       "start": 11,
                       "type": "Identifier",
-                      "typeVariableId": 77,
+                      "typeVariableId": 1782,
                     },
                     "init": Node {
                       "end": 14,
@@ -29316,7 +29528,7 @@ Object {
                       "start": 13,
                       "typability": "Typed",
                       "type": "Literal",
-                      "typeVariableId": 78,
+                      "typeVariableId": 1781,
                       "value": 1,
                     },
                     "loc": SourceLocation {
@@ -29377,6 +29589,7 @@ Object {
                   "name": "i",
                   "start": 15,
                   "type": "Identifier",
+                  "typeVariableId": 1784,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -29409,6 +29622,7 @@ Object {
                   "start": 17,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1783,
                   "value": 10,
                 },
                 "start": 15,
@@ -29461,6 +29675,7 @@ Object {
                     "name": "i",
                     "start": 22,
                     "type": "Identifier",
+                    "typeVariableId": 1786,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -29493,6 +29708,7 @@ Object {
                     "start": 24,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1785,
                     "value": 2,
                   },
                   "start": 22,
@@ -30259,6 +30475,7 @@ Object {
                     "name": "x",
                     "start": 29,
                     "type": "Identifier",
+                    "typeVariableId": 1031,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -30286,6 +30503,7 @@ Object {
                     "name": "x",
                     "start": 33,
                     "type": "Identifier",
+                    "typeVariableId": 1032,
                   },
                   "start": 29,
                   "type": "BinaryExpression",
@@ -30393,6 +30611,7 @@ Object {
                         "name": "x",
                         "start": 29,
                         "type": "Identifier",
+                        "typeVariableId": 1031,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -30420,6 +30639,7 @@ Object {
                         "name": "x",
                         "start": 33,
                         "type": "Identifier",
+                        "typeVariableId": 1032,
                       },
                       "start": 29,
                       "type": "BinaryExpression",
@@ -30528,6 +30748,7 @@ Object {
                     "start": 44,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1033,
                     "value": 10,
                   },
                 ],
@@ -30560,6 +30781,7 @@ Object {
                 },
                 "start": 42,
                 "type": "CallExpression",
+                "typeVariableId": 1034,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -30669,6 +30891,7 @@ Object {
             },
             "start": 42,
             "type": "CallExpression",
+            "typeVariableId": 1138,
           },
           "head": Object {
             "x": "bob",
@@ -31140,6 +31363,7 @@ Object {
               "name": "x",
               "start": 29,
               "type": "Identifier",
+              "typeVariableId": 1135,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -31167,6 +31391,7 @@ Object {
               "name": "x",
               "start": 33,
               "type": "Identifier",
+              "typeVariableId": 1136,
             },
             "start": 29,
             "type": "BinaryExpression",
@@ -31202,6 +31427,7 @@ Object {
               "raw": "\\"bob\\"",
               "start": 44,
               "type": "Literal",
+              "typeVariableId": 1137,
               "value": "bob",
             },
           ],
@@ -31234,6 +31460,7 @@ Object {
           },
           "start": 42,
           "type": "CallExpression",
+          "typeVariableId": 1138,
         },
         Node {
           "end": 51,
@@ -31254,6 +31481,7 @@ Object {
                 "raw": "\\"bob\\"",
                 "start": 44,
                 "type": "Literal",
+                "typeVariableId": 1137,
                 "value": "bob",
               },
             ],
@@ -31286,6 +31514,7 @@ Object {
             },
             "start": 42,
             "type": "CallExpression",
+            "typeVariableId": 1138,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -31323,6 +31552,7 @@ Object {
                         "name": "x",
                         "start": 29,
                         "type": "Identifier",
+                        "typeVariableId": 1135,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -31350,6 +31580,7 @@ Object {
                         "name": "x",
                         "start": 33,
                         "type": "Identifier",
+                        "typeVariableId": 1136,
                       },
                       "start": 29,
                       "type": "BinaryExpression",
@@ -31453,6 +31684,7 @@ Object {
                     "raw": "\\"bob\\"",
                     "start": 44,
                     "type": "Literal",
+                    "typeVariableId": 1137,
                     "value": "bob",
                   },
                 ],
@@ -31485,6 +31717,7 @@ Object {
                 },
                 "start": 42,
                 "type": "CallExpression",
+                "typeVariableId": 1138,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -32261,6 +32494,7 @@ Object {
                 "start": 44,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1345,
                 "value": 123345898,
               },
             ],
@@ -32293,6 +32527,7 @@ Object {
             },
             "start": 42,
             "type": "CallExpression",
+            "typeVariableId": 1346,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -32330,6 +32565,7 @@ Object {
                         "name": "x",
                         "start": 29,
                         "type": "Identifier",
+                        "typeVariableId": 1343,
                       },
                       "loc": SourceLocation {
                         "end": Position {
@@ -32357,6 +32593,7 @@ Object {
                         "name": "x",
                         "start": 33,
                         "type": "Identifier",
+                        "typeVariableId": 1344,
                       },
                       "start": 29,
                       "type": "BinaryExpression",
@@ -32465,6 +32702,7 @@ Object {
                     "start": 44,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1345,
                     "value": 123345898,
                   },
                 ],
@@ -32497,6 +32735,7 @@ Object {
                 },
                 "start": 42,
                 "type": "CallExpression",
+                "typeVariableId": 1346,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -32606,6 +32845,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1456,
           },
           "head": Object {
             "ctrlf": 1,
@@ -33080,6 +33320,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1454,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -33112,6 +33353,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1453,
                     "value": 1,
                   },
                   "start": 59,
@@ -33168,6 +33410,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1452,
               "value": 0,
             },
             "end": 69,
@@ -33199,6 +33442,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1451,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -33231,6 +33475,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1450,
                 "value": 0,
               },
               "start": 33,
@@ -33274,6 +33519,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1455,
               "value": 1,
             },
           ],
@@ -33306,6 +33552,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1456,
         },
         Node {
           "end": 82,
@@ -33331,6 +33578,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1455,
                 "value": 1,
               },
             ],
@@ -33363,6 +33611,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1456,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -33403,6 +33652,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1454,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -33435,6 +33685,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1453,
                               "value": 1,
                             },
                             "start": 59,
@@ -33491,6 +33742,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1452,
                         "value": 0,
                       },
                       "end": 69,
@@ -33522,6 +33774,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1451,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -33554,6 +33807,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1450,
                           "value": 0,
                         },
                         "start": 33,
@@ -33665,6 +33919,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1455,
                     "value": 1,
                   },
                 ],
@@ -33697,6 +33952,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1456,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -34280,6 +34536,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1454,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -34312,6 +34569,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1453,
                     "value": 1,
                   },
                   "start": 59,
@@ -34368,6 +34626,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1452,
               "value": 0,
             },
             "end": 69,
@@ -34399,6 +34658,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1451,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -34431,6 +34691,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1450,
                 "value": 0,
               },
               "start": 33,
@@ -34474,6 +34735,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1455,
               "value": 1,
             },
           ],
@@ -34506,6 +34768,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1456,
         },
         Node {
           "end": 82,
@@ -34531,6 +34794,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1455,
                 "value": 1,
               },
             ],
@@ -34563,6 +34827,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1456,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -34603,6 +34868,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1454,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -34635,6 +34901,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1453,
                               "value": 1,
                             },
                             "start": 59,
@@ -34691,6 +34958,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1452,
                         "value": 0,
                       },
                       "end": 69,
@@ -34722,6 +34990,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1451,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -34754,6 +35023,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1450,
                           "value": 0,
                         },
                         "start": 33,
@@ -34865,6 +35135,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1455,
                     "value": 1,
                   },
                 ],
@@ -34897,6 +35168,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1456,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -35480,6 +35752,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1454,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -35512,6 +35785,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1453,
                     "value": 1,
                   },
                   "start": 59,
@@ -35568,6 +35842,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1452,
               "value": 0,
             },
             "end": 69,
@@ -35599,6 +35874,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1451,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -35631,6 +35907,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1450,
                 "value": 0,
               },
               "start": 33,
@@ -35674,6 +35951,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1455,
               "value": 1,
             },
           ],
@@ -35706,6 +35984,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1456,
         },
         Node {
           "end": 82,
@@ -35731,6 +36010,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1455,
                 "value": 1,
               },
             ],
@@ -35763,6 +36043,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1456,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -35803,6 +36084,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1454,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -35835,6 +36117,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1453,
                               "value": 1,
                             },
                             "start": 59,
@@ -35891,6 +36174,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1452,
                         "value": 0,
                       },
                       "end": 69,
@@ -35922,6 +36206,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1451,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -35954,6 +36239,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1450,
                           "value": 0,
                         },
                         "start": 33,
@@ -36065,6 +36351,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1455,
                     "value": 1,
                   },
                 ],
@@ -36097,6 +36384,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1456,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -36679,6 +36967,7 @@ Object {
           "start": 49,
           "typability": "Typed",
           "type": "Literal",
+          "typeVariableId": 1562,
           "value": 0,
         },
         Node {
@@ -36702,6 +36991,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1564,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -36734,6 +37024,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1563,
                     "value": 1,
                   },
                   "start": 59,
@@ -36790,6 +37081,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1562,
               "value": 0,
             },
             "end": 69,
@@ -36821,6 +37113,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1561,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -36853,6 +37146,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1560,
                 "value": 0,
               },
               "start": 33,
@@ -36896,6 +37190,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1565,
               "value": 1,
             },
           ],
@@ -36928,6 +37223,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1566,
         },
         Node {
           "end": 82,
@@ -36953,6 +37249,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1565,
                 "value": 1,
               },
             ],
@@ -36985,6 +37282,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1566,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -37025,6 +37323,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1564,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -37057,6 +37356,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1563,
                               "value": 1,
                             },
                             "start": 59,
@@ -37113,6 +37413,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1562,
                         "value": 0,
                       },
                       "end": 69,
@@ -37144,6 +37445,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1561,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -37176,6 +37478,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1560,
                           "value": 0,
                         },
                         "start": 33,
@@ -37287,6 +37590,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1565,
                     "value": 1,
                   },
                 ],
@@ -37319,6 +37623,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1566,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -37787,6 +38092,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1676,
           },
           "head": Object {
             "ctrlf": 1,
@@ -38277,6 +38583,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1674,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -38309,6 +38616,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1673,
                     "value": 1,
                   },
                   "start": 59,
@@ -38365,6 +38673,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1672,
               "value": 0,
             },
             "end": 69,
@@ -38396,6 +38705,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1671,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -38428,6 +38738,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1670,
                 "value": 0,
               },
               "start": 33,
@@ -38471,6 +38782,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1675,
               "value": 1,
             },
           ],
@@ -38503,6 +38815,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1676,
         },
         Node {
           "end": 82,
@@ -38528,6 +38841,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1675,
                 "value": 1,
               },
             ],
@@ -38560,6 +38874,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1676,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -38600,6 +38915,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1674,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -38632,6 +38948,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1673,
                               "value": 1,
                             },
                             "start": 59,
@@ -38688,6 +39005,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1672,
                         "value": 0,
                       },
                       "end": 69,
@@ -38719,6 +39037,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1671,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -38751,6 +39070,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1670,
                           "value": 0,
                         },
                         "start": 33,
@@ -38862,6 +39182,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1675,
                     "value": 1,
                   },
                 ],
@@ -38894,6 +39215,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1676,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -39493,6 +39815,7 @@ Object {
                     "name": "ctrlf",
                     "start": 59,
                     "type": "Identifier",
+                    "typeVariableId": 1674,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -39525,6 +39848,7 @@ Object {
                     "start": 67,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1673,
                     "value": 1,
                   },
                   "start": 59,
@@ -39581,6 +39905,7 @@ Object {
               "start": 49,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1672,
               "value": 0,
             },
             "end": 69,
@@ -39612,6 +39937,7 @@ Object {
                 "name": "ctrlf",
                 "start": 33,
                 "type": "Identifier",
+                "typeVariableId": 1671,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -39644,6 +39970,7 @@ Object {
                 "start": 41,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1670,
                 "value": 0,
               },
               "start": 33,
@@ -39687,6 +40014,7 @@ Object {
               "start": 79,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1675,
               "value": 1,
             },
           ],
@@ -39719,6 +40047,7 @@ Object {
           },
           "start": 77,
           "type": "CallExpression",
+          "typeVariableId": 1676,
         },
         Node {
           "end": 82,
@@ -39744,6 +40073,7 @@ Object {
                 "start": 79,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1675,
                 "value": 1,
               },
             ],
@@ -39776,6 +40106,7 @@ Object {
             },
             "start": 77,
             "type": "CallExpression",
+            "typeVariableId": 1676,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -39816,6 +40147,7 @@ Object {
                               "name": "ctrlf",
                               "start": 59,
                               "type": "Identifier",
+                              "typeVariableId": 1674,
                             },
                             "loc": SourceLocation {
                               "end": Position {
@@ -39848,6 +40180,7 @@ Object {
                               "start": 67,
                               "typability": "Typed",
                               "type": "Literal",
+                              "typeVariableId": 1673,
                               "value": 1,
                             },
                             "start": 59,
@@ -39904,6 +40237,7 @@ Object {
                         "start": 49,
                         "typability": "Typed",
                         "type": "Literal",
+                        "typeVariableId": 1672,
                         "value": 0,
                       },
                       "end": 69,
@@ -39935,6 +40269,7 @@ Object {
                           "name": "ctrlf",
                           "start": 33,
                           "type": "Identifier",
+                          "typeVariableId": 1671,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -39967,6 +40302,7 @@ Object {
                           "start": 41,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1670,
                           "value": 0,
                         },
                         "start": 33,
@@ -40078,6 +40414,7 @@ Object {
                     "start": 79,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1675,
                     "value": 1,
                   },
                 ],
@@ -40110,6 +40447,7 @@ Object {
                 },
                 "start": 77,
                 "type": "CallExpression",
+                "typeVariableId": 1676,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -41039,6 +41377,7 @@ Object {
                 "name": "a",
                 "start": 39,
                 "type": "Identifier",
+                "typeVariableId": 1897,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -41071,6 +41410,7 @@ Object {
                 "start": 43,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1896,
                 "value": 3,
               },
               "start": 39,
@@ -41078,6 +41418,7 @@ Object {
             },
             "start": 35,
             "type": "AssignmentExpression",
+            "typeVariableId": 1898,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -41142,6 +41483,7 @@ Object {
                     "name": "a",
                     "start": 39,
                     "type": "Identifier",
+                    "typeVariableId": 1897,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -41174,6 +41516,7 @@ Object {
                     "start": 43,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1896,
                     "value": 3,
                   },
                   "start": 39,
@@ -41181,6 +41524,7 @@ Object {
                 },
                 "start": 35,
                 "type": "AssignmentExpression",
+                "typeVariableId": 1898,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -41261,6 +41605,7 @@ Object {
                       "name": "a",
                       "start": 39,
                       "type": "Identifier",
+                      "typeVariableId": 1897,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -41293,6 +41638,7 @@ Object {
                       "start": 43,
                       "typability": "Typed",
                       "type": "Literal",
+                      "typeVariableId": 1896,
                       "value": 3,
                     },
                     "start": 39,
@@ -41300,6 +41646,7 @@ Object {
                   },
                   "start": 35,
                   "type": "AssignmentExpression",
+                  "typeVariableId": 1898,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -41358,6 +41705,7 @@ Object {
               "name": "a",
               "start": 23,
               "type": "Identifier",
+              "typeVariableId": 1895,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -41390,6 +41738,7 @@ Object {
               "start": 27,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1894,
               "value": 3,
             },
             "start": 23,
@@ -41418,7 +41767,7 @@ Object {
                     "name": "a",
                     "start": 7,
                     "type": "Identifier",
-                    "typeVariableId": 83,
+                    "typeVariableId": 1893,
                   },
                   "init": Node {
                     "end": 12,
@@ -41440,7 +41789,7 @@ Object {
                     "start": 11,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 84,
+                    "typeVariableId": 1892,
                     "value": 9,
                   },
                   "loc": SourceLocation {
@@ -41524,6 +41873,7 @@ Object {
                           "name": "a",
                           "start": 39,
                           "type": "Identifier",
+                          "typeVariableId": 1897,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -41556,6 +41906,7 @@ Object {
                           "start": 43,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1896,
                           "value": 3,
                         },
                         "start": 39,
@@ -41563,6 +41914,7 @@ Object {
                       },
                       "start": 35,
                       "type": "AssignmentExpression",
+                      "typeVariableId": 1898,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -41621,6 +41973,7 @@ Object {
                   "name": "a",
                   "start": 23,
                   "type": "Identifier",
+                  "typeVariableId": 1895,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -41653,6 +42006,7 @@ Object {
                   "start": 27,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1894,
                   "value": 3,
                 },
                 "start": 23,
@@ -42185,6 +42539,7 @@ Object {
             "name": "a",
             "start": 39,
             "type": "Identifier",
+            "typeVariableId": 1897,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -42217,6 +42572,7 @@ Object {
             "start": 43,
             "typability": "Typed",
             "type": "Literal",
+            "typeVariableId": 1896,
             "value": 3,
           },
           "start": 39,
@@ -42268,6 +42624,7 @@ Object {
               "name": "a",
               "start": 39,
               "type": "Identifier",
+              "typeVariableId": 1897,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -42300,6 +42657,7 @@ Object {
               "start": 43,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1896,
               "value": 3,
             },
             "start": 39,
@@ -42307,6 +42665,7 @@ Object {
           },
           "start": 35,
           "type": "AssignmentExpression",
+          "typeVariableId": 1898,
         },
         Node {
           "end": 45,
@@ -42356,6 +42715,7 @@ Object {
                 "name": "a",
                 "start": 39,
                 "type": "Identifier",
+                "typeVariableId": 1897,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -42388,6 +42748,7 @@ Object {
                 "start": 43,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1896,
                 "value": 3,
               },
               "start": 39,
@@ -42395,6 +42756,7 @@ Object {
             },
             "start": 35,
             "type": "AssignmentExpression",
+            "typeVariableId": 1898,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -42459,6 +42821,7 @@ Object {
                     "name": "a",
                     "start": 39,
                     "type": "Identifier",
+                    "typeVariableId": 1897,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -42491,6 +42854,7 @@ Object {
                     "start": 43,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1896,
                     "value": 3,
                   },
                   "start": 39,
@@ -42498,6 +42862,7 @@ Object {
                 },
                 "start": 35,
                 "type": "AssignmentExpression",
+                "typeVariableId": 1898,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -42578,6 +42943,7 @@ Object {
                       "name": "a",
                       "start": 39,
                       "type": "Identifier",
+                      "typeVariableId": 1897,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -42610,6 +42976,7 @@ Object {
                       "start": 43,
                       "typability": "Typed",
                       "type": "Literal",
+                      "typeVariableId": 1896,
                       "value": 3,
                     },
                     "start": 39,
@@ -42617,6 +42984,7 @@ Object {
                   },
                   "start": 35,
                   "type": "AssignmentExpression",
+                  "typeVariableId": 1898,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -42675,6 +43043,7 @@ Object {
               "name": "a",
               "start": 23,
               "type": "Identifier",
+              "typeVariableId": 1895,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -42707,6 +43076,7 @@ Object {
               "start": 27,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1894,
               "value": 3,
             },
             "start": 23,
@@ -42735,7 +43105,7 @@ Object {
                     "name": "a",
                     "start": 7,
                     "type": "Identifier",
-                    "typeVariableId": 83,
+                    "typeVariableId": 1893,
                   },
                   "init": Node {
                     "end": 12,
@@ -42757,7 +43127,7 @@ Object {
                     "start": 11,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 84,
+                    "typeVariableId": 1892,
                     "value": 9,
                   },
                   "loc": SourceLocation {
@@ -42841,6 +43211,7 @@ Object {
                           "name": "a",
                           "start": 39,
                           "type": "Identifier",
+                          "typeVariableId": 1897,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -42873,6 +43244,7 @@ Object {
                           "start": 43,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1896,
                           "value": 3,
                         },
                         "start": 39,
@@ -42880,6 +43252,7 @@ Object {
                       },
                       "start": 35,
                       "type": "AssignmentExpression",
+                      "typeVariableId": 1898,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -42938,6 +43311,7 @@ Object {
                   "name": "a",
                   "start": 23,
                   "type": "Identifier",
+                  "typeVariableId": 1895,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -42970,6 +43344,7 @@ Object {
                   "start": 27,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1894,
                   "value": 3,
                 },
                 "start": 23,
@@ -43533,6 +43908,7 @@ Object {
                 "name": "a",
                 "start": 39,
                 "type": "Identifier",
+                "typeVariableId": 1897,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -43565,6 +43941,7 @@ Object {
                 "start": 43,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1896,
                 "value": 3,
               },
               "start": 39,
@@ -43572,6 +43949,7 @@ Object {
             },
             "start": 35,
             "type": "AssignmentExpression",
+            "typeVariableId": 1898,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -43636,6 +44014,7 @@ Object {
                     "name": "a",
                     "start": 39,
                     "type": "Identifier",
+                    "typeVariableId": 1897,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -43668,6 +44047,7 @@ Object {
                     "start": 43,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1896,
                     "value": 3,
                   },
                   "start": 39,
@@ -43675,6 +44055,7 @@ Object {
                 },
                 "start": 35,
                 "type": "AssignmentExpression",
+                "typeVariableId": 1898,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -43755,6 +44136,7 @@ Object {
                       "name": "a",
                       "start": 39,
                       "type": "Identifier",
+                      "typeVariableId": 1897,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -43787,6 +44169,7 @@ Object {
                       "start": 43,
                       "typability": "Typed",
                       "type": "Literal",
+                      "typeVariableId": 1896,
                       "value": 3,
                     },
                     "start": 39,
@@ -43794,6 +44177,7 @@ Object {
                   },
                   "start": 35,
                   "type": "AssignmentExpression",
+                  "typeVariableId": 1898,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -43852,6 +44236,7 @@ Object {
               "name": "a",
               "start": 23,
               "type": "Identifier",
+              "typeVariableId": 1895,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -43884,6 +44269,7 @@ Object {
               "start": 27,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1894,
               "value": 3,
             },
             "start": 23,
@@ -43912,7 +44298,7 @@ Object {
                     "name": "a",
                     "start": 7,
                     "type": "Identifier",
-                    "typeVariableId": 83,
+                    "typeVariableId": 1893,
                   },
                   "init": Node {
                     "end": 12,
@@ -43934,7 +44320,7 @@ Object {
                     "start": 11,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 84,
+                    "typeVariableId": 1892,
                     "value": 9,
                   },
                   "loc": SourceLocation {
@@ -44018,6 +44404,7 @@ Object {
                           "name": "a",
                           "start": 39,
                           "type": "Identifier",
+                          "typeVariableId": 1897,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -44050,6 +44437,7 @@ Object {
                           "start": 43,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1896,
                           "value": 3,
                         },
                         "start": 39,
@@ -44057,6 +44445,7 @@ Object {
                       },
                       "start": 35,
                       "type": "AssignmentExpression",
+                      "typeVariableId": 1898,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -44115,6 +44504,7 @@ Object {
                   "name": "a",
                   "start": 23,
                   "type": "Identifier",
+                  "typeVariableId": 1895,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -44147,6 +44537,7 @@ Object {
                   "start": 27,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1894,
                   "value": 3,
                 },
                 "start": 23,
@@ -44679,6 +45070,7 @@ Object {
             "name": "a",
             "start": 39,
             "type": "Identifier",
+            "typeVariableId": 1897,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -44711,6 +45103,7 @@ Object {
             "start": 43,
             "typability": "Typed",
             "type": "Literal",
+            "typeVariableId": 1896,
             "value": 3,
           },
           "start": 39,
@@ -44762,6 +45155,7 @@ Object {
               "name": "a",
               "start": 39,
               "type": "Identifier",
+              "typeVariableId": 1897,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -44794,6 +45188,7 @@ Object {
               "start": 43,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1896,
               "value": 3,
             },
             "start": 39,
@@ -44801,6 +45196,7 @@ Object {
           },
           "start": 35,
           "type": "AssignmentExpression",
+          "typeVariableId": 1898,
         },
         Node {
           "end": 45,
@@ -44850,6 +45246,7 @@ Object {
                 "name": "a",
                 "start": 39,
                 "type": "Identifier",
+                "typeVariableId": 1897,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -44882,6 +45279,7 @@ Object {
                 "start": 43,
                 "typability": "Typed",
                 "type": "Literal",
+                "typeVariableId": 1896,
                 "value": 3,
               },
               "start": 39,
@@ -44889,6 +45287,7 @@ Object {
             },
             "start": 35,
             "type": "AssignmentExpression",
+            "typeVariableId": 1898,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -44953,6 +45352,7 @@ Object {
                     "name": "a",
                     "start": 39,
                     "type": "Identifier",
+                    "typeVariableId": 1897,
                   },
                   "loc": SourceLocation {
                     "end": Position {
@@ -44985,6 +45385,7 @@ Object {
                     "start": 43,
                     "typability": "Typed",
                     "type": "Literal",
+                    "typeVariableId": 1896,
                     "value": 3,
                   },
                   "start": 39,
@@ -44992,6 +45393,7 @@ Object {
                 },
                 "start": 35,
                 "type": "AssignmentExpression",
+                "typeVariableId": 1898,
               },
               "loc": SourceLocation {
                 "end": Position {
@@ -45072,6 +45474,7 @@ Object {
                       "name": "a",
                       "start": 39,
                       "type": "Identifier",
+                      "typeVariableId": 1897,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -45104,6 +45507,7 @@ Object {
                       "start": 43,
                       "typability": "Typed",
                       "type": "Literal",
+                      "typeVariableId": 1896,
                       "value": 3,
                     },
                     "start": 39,
@@ -45111,6 +45515,7 @@ Object {
                   },
                   "start": 35,
                   "type": "AssignmentExpression",
+                  "typeVariableId": 1898,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -45169,6 +45574,7 @@ Object {
               "name": "a",
               "start": 23,
               "type": "Identifier",
+              "typeVariableId": 1895,
             },
             "loc": SourceLocation {
               "end": Position {
@@ -45201,6 +45607,7 @@ Object {
               "start": 27,
               "typability": "Typed",
               "type": "Literal",
+              "typeVariableId": 1894,
               "value": 3,
             },
             "start": 23,
@@ -45229,7 +45636,7 @@ Object {
                     "name": "a",
                     "start": 7,
                     "type": "Identifier",
-                    "typeVariableId": 83,
+                    "typeVariableId": 1893,
                   },
                   "init": Node {
                     "end": 12,
@@ -45251,7 +45658,7 @@ Object {
                     "start": 11,
                     "typability": "Typed",
                     "type": "Literal",
-                    "typeVariableId": 84,
+                    "typeVariableId": 1892,
                     "value": 9,
                   },
                   "loc": SourceLocation {
@@ -45335,6 +45742,7 @@ Object {
                           "name": "a",
                           "start": 39,
                           "type": "Identifier",
+                          "typeVariableId": 1897,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -45367,6 +45775,7 @@ Object {
                           "start": 43,
                           "typability": "Typed",
                           "type": "Literal",
+                          "typeVariableId": 1896,
                           "value": 3,
                         },
                         "start": 39,
@@ -45374,6 +45783,7 @@ Object {
                       },
                       "start": 35,
                       "type": "AssignmentExpression",
+                      "typeVariableId": 1898,
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -45432,6 +45842,7 @@ Object {
                   "name": "a",
                   "start": 23,
                   "type": "Identifier",
+                  "typeVariableId": 1895,
                 },
                 "loc": SourceLocation {
                   "end": Position {
@@ -45464,6 +45875,7 @@ Object {
                   "start": 27,
                   "typability": "Typed",
                   "type": "Literal",
+                  "typeVariableId": 1894,
                   "value": 3,
                 },
                 "start": 23,

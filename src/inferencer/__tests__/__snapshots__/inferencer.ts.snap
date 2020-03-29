@@ -20,6 +20,7 @@ Node {
         "raw": "true",
         "start": 0,
         "type": "Literal",
+        "typeVariableId": 4,
         "value": true,
       },
       "loc": SourceLocation {
@@ -52,6 +53,7 @@ Node {
         "raw": "false",
         "start": 6,
         "type": "Literal",
+        "typeVariableId": 5,
         "value": false,
       },
       "loc": SourceLocation {
@@ -84,6 +86,7 @@ Node {
         "raw": "1.90",
         "start": 13,
         "type": "Literal",
+        "typeVariableId": 6,
         "value": 1.9,
       },
       "loc": SourceLocation {
@@ -142,6 +145,7 @@ Node {
         "start": 0,
         "typability": "Typed",
         "type": "Literal",
+        "typeVariableId": 7,
         "value": 1,
       },
       "loc": SourceLocation {
@@ -179,6 +183,7 @@ Node {
         "start": 5,
         "typability": "Typed",
         "type": "Literal",
+        "typeVariableId": 8,
         "value": 0,
       },
       "loc": SourceLocation {
