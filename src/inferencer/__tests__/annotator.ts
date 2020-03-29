@@ -41,6 +41,10 @@ function checkUnaryExpressionAnnotation(
   expect(unaryExpression).not.toBe(undefined)
 }
 
+function checkLiteralAnnotation(literal: TypeVariableAnnotatedNode<es.Literal>) {
+  expect(literal.typeVariableId).not.toBe(undefined)
+}
+
 test('constant declarations will have identifier and value annotated', async () => {
   const code = stripIndent`
   const x = 1;
@@ -76,5 +80,16 @@ test('unary expressions will be annotated', async () => {
   const annotatedAst = await toAnnotatedAst(code)
   simple(annotatedAst, {
     UnaryExpression: checkUnaryExpressionAnnotation
+  })
+})
+
+test('literals are annotated', async () => {
+  const code = stripIndent`
+    const x = 1;
+    1;
+    `
+  const annotatedAst = await toAnnotatedAst(code)
+  simple(annotatedAst, {
+    Literal: checkLiteralAnnotation
   })
 })

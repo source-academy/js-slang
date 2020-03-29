@@ -15,6 +15,9 @@ function annotateNode(node: TypeVariableAnnotatedNode<es.Node>, isPolymorphic?: 
 }
 // main function that will annotate an AST with type variables
 export function annotateProgram(program: es.Program): es.Program {
+  function annotateLiteral(literal: TypeVariableAnnotatedNode<es.Literal>) {
+    annotateNode(literal)
+  }
   function annotateConstantDeclaration(
     declaration: TypeVariableAnnotatedNode<es.VariableDeclarator>
   ) {
@@ -50,7 +53,12 @@ export function annotateProgram(program: es.Program): es.Program {
   }
 
   ancestor(program as es.Node, {
-    VariableDeclarator: annotateConstantDeclaration
+    Literal: annotateLiteral,
+    VariableDeclarator: annotateConstantDeclaration,
+    ExpressionStatement: annotateExpressionStatement,
+    BinaryExpression: annotateBinaryExpression,
+    LogicalExpression: annotateBinaryExpression,
+    UnaryExpression: annotateUnaryExpression
   })
 
   return program
