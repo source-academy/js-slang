@@ -110,8 +110,8 @@ function traverse(node: es.Node, constraints?: Constraint[]) {
   }
 }
 
-type NAMED_TYPE = 'bool' | 'float' | 'string' | 'undefined' | 'pair' // | 'list'
-type VAR_TYPE = 'any' | 'numerical' | 'addable'
+type NAMED_TYPE = 'bool' | 'number' | 'string' | 'undefined' | 'pair' // | 'list'
+type VAR_TYPE = 'any' | 'addable'
 
 interface NAMED {
   nodeType: 'Named'
@@ -323,12 +323,12 @@ function occursOnLeftInConstraintList(
 ): Constraint[] {
   for (const constraint of constraints) {
     if (constraint[0].name === LHS.name) {
-      // second rule of spec for adding new constraint, when LHS occurs earlier in original constrain list
+      // when LHS occurs earlier in original constrain list
       return addToConstraintList(constraints, [RHS, constraint[1]])
     }
   }
   if (RHS.nodeType === 'Var') {
-    if (LHS.type === 'numerical' || (LHS.type === 'addable' && RHS.type === 'any')) {
+    if (LHS.type === 'addable' && RHS.type === 'any') {
       // We need to modify the type of the RHS so that it is at least as specific as the LHS
       // this is so we are going from least to most specific as we recursively try to determine
       // type of a type variable
@@ -343,16 +343,8 @@ function cannotBeResolvedIfAddable(LHS: VAR, RHS: TYPE): boolean {
   return (
     LHS.type === 'addable' &&
     RHS.nodeType !== 'Var' &&
-    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'float' || RHS.name == 'pair'))
-    !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'float'))
-  )
-}
-
-function cannotBeResolvedIfNumerical(LHS: VAR, RHS: TYPE): boolean {
-  return (
-    LHS.type === 'numerical' &&
-    RHS.nodeType !== 'Var' &&
-    !(RHS.nodeType === 'Named' && RHS.name === 'float')
+    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name == 'pair'))
+    !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number'))
   )
 }
 
@@ -370,8 +362,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
       throw Error(`Expected either a number or a string, got ${JSON.stringify(RHS)} instead.`)
-    } else if (cannotBeResolvedIfNumerical(LHS, RHS)) {
-      throw Error(`Expected a number, got ${JSON.stringify(RHS)} instead.`)
     }
     // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
@@ -506,10 +496,8 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       if (literalVal === null) {
         // will need to change this to make it a pair type when doing S2
         return addToConstraintList(constraints, [storedType, tNamedUndef])
-      } else if (typeof literalVal === 'number' && Math.round(literalVal) === literalVal) {
-        return addToConstraintList(constraints, [storedType, freshTypeVar(tNumerical(''))])
       } else if (typeOfLiteral === 'number') {
-        return addToConstraintList(constraints, [storedType, tNamedFloat])
+        return addToConstraintList(constraints, [storedType, tNamedNumber])
       } else if (typeOfLiteral === 'boolean') {
         return addToConstraintList(constraints, [storedType, tNamedBool])
       } else if (typeOfLiteral === 'string') {
@@ -646,14 +634,6 @@ function tAddable(name: string): VAR {
   }
 }
 
-function tNumerical(name: string): VAR {
-  return {
-    nodeType: 'Var',
-    name: `T_${name}`,
-    type: 'numerical'
-  }
-}
-
 function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
   return {
     nodeType: 'Named',
@@ -679,7 +659,7 @@ function tForAll(type: TYPE): FORALL {
 }
 
 const tNamedBool = tNamed('bool')
-const tNamedFloat = tNamed('float')
+const tNamedNumber = tNamed('number')
 const tNamedString = tNamed('string')
 const tNamedUndef = tNamed('undefined')
 
@@ -695,57 +675,57 @@ function tFunc(...types: TYPE[]): FUNCTION {
 
 const predeclaredNames = {
   // constants
-  Infinity: tNamedFloat,
-  NaN: tNamedFloat,
+  Infinity: tNamedNumber,
+  NaN: tNamedNumber,
   undefined: tNamedUndef,
-  math_LN2: tNamedFloat,
-  math_LN10: tNamedFloat,
-  math_LOG2E: tNamedFloat,
-  math_LOG10E: tNamedFloat,
-  math_PI: tNamedFloat,
-  math_SQRT1_2: tNamedFloat,
-  math_SQRT2: tNamedFloat,
+  math_LN2: tNamedNumber,
+  math_LN10: tNamedNumber,
+  math_LOG2E: tNamedNumber,
+  math_LOG10E: tNamedNumber,
+  math_PI: tNamedNumber,
+  math_SQRT1_2: tNamedNumber,
+  math_SQRT2: tNamedNumber,
   // is something functions
-  is_boolean: tForAll(tFunc(tVar('A'), tNamedBool)),
-  is_number: tForAll(tFunc(tVar('A'), tNamedBool)),
-  is_string: tForAll(tFunc(tVar('A'), tNamedBool)),
-  is_undefined: tForAll(tFunc(tVar('A'), tNamedBool)),
+  is_boolean: tForAll(tFunc(tVar('T'), tNamedBool)),
+  is_number: tForAll(tFunc(tVar('T'), tNamedBool)),
+  is_string: tForAll(tFunc(tVar('T'), tNamedBool)),
+  is_undefined: tForAll(tFunc(tVar('T'), tNamedBool)),
   // math functions
-  math_abs: tFunc(tNamedFloat, tNamedFloat),
-  math_acos: tFunc(tNamedFloat, tNamedFloat),
-  math_acosh: tFunc(tNamedFloat, tNamedFloat),
-  math_asin: tFunc(tNamedFloat, tNamedFloat),
-  math_asinh: tFunc(tNamedFloat, tNamedFloat),
-  math_atan: tFunc(tNamedFloat, tNamedFloat),
-  math_atan2: tFunc(tNamedFloat, tNamedFloat),
-  math_atanh: tFunc(tNamedFloat, tNamedFloat),
-  math_cbrt: tFunc(tNamedFloat, tNamedFloat),
-  math_ceil: tFunc(tNamedFloat, tNamedFloat),
-  math_clz32: tFunc(tNamedFloat, tNamedFloat),
-  math_cos: tFunc(tNamedFloat, tNamedFloat),
-  math_cosh: tFunc(tNamedFloat, tNamedFloat),
-  math_exp: tFunc(tNamedFloat, tNamedFloat),
-  math_expm1: tFunc(tNamedFloat, tNamedFloat),
-  math_floor: tFunc(tNamedFloat, tNamedFloat),
-  math_fround: tFunc(tNamedFloat, tNamedFloat),
-  math_hypot: tFunc(tNamedFloat, tNamedFloat),
-  math_imul: tFunc(tNamedFloat, tNamedFloat),
-  math_log: tFunc(tNamedFloat, tNamedFloat),
-  math_log1p: tFunc(tNamedFloat, tNamedFloat),
-  math_log2: tFunc(tNamedFloat, tNamedFloat),
-  math_log10: tFunc(tNamedFloat, tNamedFloat),
-  math_max: tFunc(tNamedFloat, tNamedFloat),
-  math_min: tFunc(tNamedFloat, tNamedFloat),
-  math_pow: tFunc(tNamedFloat, tNamedFloat),
-  math_random: tFunc(tNamedFloat, tNamedFloat),
-  math_round: tFunc(tNamedFloat, tNamedFloat),
-  math_sign: tFunc(tNamedFloat, tNamedFloat),
-  math_sin: tFunc(tNamedFloat, tNamedFloat),
-  math_sinh: tFunc(tNamedFloat, tNamedFloat),
-  math_sqrt: tFunc(tNamedFloat, tNamedFloat),
-  math_tan: tFunc(tNamedFloat, tNamedFloat),
-  math_tanh: tFunc(tNamedFloat, tNamedFloat),
-  math_trunc: tFunc(tNamedFloat, tNamedFloat),
+  math_abs: tFunc(tNamedNumber, tNamedNumber),
+  math_acos: tFunc(tNamedNumber, tNamedNumber),
+  math_acosh: tFunc(tNamedNumber, tNamedNumber),
+  math_asin: tFunc(tNamedNumber, tNamedNumber),
+  math_asinh: tFunc(tNamedNumber, tNamedNumber),
+  math_atan: tFunc(tNamedNumber, tNamedNumber),
+  math_atan2: tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  math_atanh: tFunc(tNamedNumber, tNamedNumber),
+  math_cbrt: tFunc(tNamedNumber, tNamedNumber),
+  math_ceil: tFunc(tNamedNumber, tNamedNumber),
+  math_clz32: tFunc(tNamedNumber, tNamedNumber),
+  math_cos: tFunc(tNamedNumber, tNamedNumber),
+  math_cosh: tFunc(tNamedNumber, tNamedNumber),
+  math_exp: tFunc(tNamedNumber, tNamedNumber),
+  math_expm1: tFunc(tNamedNumber, tNamedNumber),
+  math_floor: tFunc(tNamedNumber, tNamedNumber),
+  math_fround: tFunc(tNamedNumber, tNamedNumber),
+  math_hypot: tForAll(tVar('T')),
+  math_imul: tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  math_log: tFunc(tNamedNumber, tNamedNumber),
+  math_log1p: tFunc(tNamedNumber, tNamedNumber),
+  math_log2: tFunc(tNamedNumber, tNamedNumber),
+  math_log10: tFunc(tNamedNumber, tNamedNumber),
+  math_max: tForAll(tVar('T')),
+  math_min: tForAll(tVar('T')),
+  math_pow: tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  math_random: tFunc(tNamedNumber),
+  math_round: tFunc(tNamedNumber, tNamedNumber),
+  math_sign: tFunc(tNamedNumber, tNamedNumber),
+  math_sin: tFunc(tNamedNumber, tNamedNumber),
+  math_sinh: tFunc(tNamedNumber, tNamedNumber),
+  math_sqrt: tFunc(tNamedNumber, tNamedNumber),
+  math_tan: tFunc(tNamedNumber, tNamedNumber),
+  math_tanh: tFunc(tNamedNumber, tNamedNumber),
+  math_trunc: tFunc(tNamedNumber, tNamedNumber),
   // source 2 
   // pair: tForAll(tFunc(tVar('A'), 
   //               tPair(tVar('B'), tList(tVar('C'))), 
@@ -755,28 +735,29 @@ const predeclaredNames = {
   head: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('A'))),
   tail: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('B'))),
   // misc functions
-  parse_int: tFunc(tNamedString, tNamedFloat, tNamedFloat),
+  parse_int: tFunc(tNamedString, tNamedNumber, tNamedNumber),
   prompt: tFunc(tNamedString, tNamedString),
-  runtime: tFunc(tNamedFloat),
-  stringify: tFunc(tVar('any'), tNamedString)
+  runtime: tFunc(tNamedNumber),
+  stringify: tForAll(tFunc(tVar('T'), tNamedString))
 }
 
 const primitiveFuncs = {
+  '-_1': tFunc(tNamedNumber, tNamedNumber),
   '!': tFunc(tNamedBool, tNamedBool),
-  '&&': tFunc(tNamedBool, tNamedBool, tNamedBool),
-  '||': tFunc(tNamedBool, tNamedBool, tNamedBool),
+  '&&': tForAll(tFunc(tNamedBool, tVar('T'), tVar('T'))),
+  '||': tForAll(tFunc(tNamedBool, tVar('T'), tVar('T'))),
   // NOTE for now just handle for Number === Number
-  '===': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  '!==': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  '<': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  '<=': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  '>': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
-  '>=': tForAll(tFunc(tVar('A'), tVar('A'), tNamedBool)),
+  '===': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
+  '!==': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
+  '<': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
+  '<=': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
+  '>': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
+  '>=': tForAll(tFunc(tAddable('A'), tAddable('A'), tNamedBool)),
   '+': tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A'))),
-  '%': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
-  '-': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
-  '*': tForAll(tFunc(tNumerical('A'), tNumerical('A'), tNumerical('A'))),
-  '/': tForAll(tFunc(tNumerical('A'), tNumerical('B'), tNamedFloat))
+  '%': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  '-': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  '*': tFunc(tNamedNumber, tNamedNumber, tNamedNumber),
+  '/': tFunc(tNamedNumber, tNamedNumber, tNamedNumber)
 }
 
 const initialEnv = {
