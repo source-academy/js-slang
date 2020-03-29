@@ -19,7 +19,7 @@ function checkConstantDeclarationAnnotation(
   if (declaration.init !== null && declaration.init !== undefined) {
     const init: TypeVariableAnnotatedNode<es.Expression> = declaration.init
     expect(init.typeVariableId).not.toBe(undefined)
-    expect(id.typeVariableId! + 1).toEqual(init.typeVariableId!)
+    expect(id.typeVariableId!).not.toEqual(init.typeVariableId!)
   }
 }
 
