@@ -33,6 +33,7 @@ import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
+export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { generate } from 'escodegen'
 

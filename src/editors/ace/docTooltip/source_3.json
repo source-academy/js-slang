@@ -1,0 +1,512 @@
+{
+  "Infinity": {
+    "title": "Infinity:number",
+    "description": "<div><h4>Infinity:number</h4><div class=\"description\">\n    The name <code>Infinity</code> refers to the special number value <code>Infinity</code>.\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-infinity\">ECMAScript Specification, Section 4.3.23</a>\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_LN2": {
+    "title": "math_LN2:number",
+    "description": "<div><h4>math_LN2:number</h4><div class=\"description\">\n    The Number value for the natural logarithm of 2, \nwhich is approximately 0.6931471805599453.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_LN10": {
+    "title": "math_LN10:number",
+    "description": "<div><h4>math_LN10:number</h4><div class=\"description\">\n    The Number value for the natural logarithm of 10, \nwhich is approximately 2.302585092994046.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_LOG2E": {
+    "title": "math_LOG2E:number",
+    "description": "<div><h4>math_LOG2E:number</h4><div class=\"description\">\n    The Number value for the base-2 logarithm of e&#8477;, the base of the natural logarithms; \nthis value is approximately 1.4426950408889634.\n<p></p>NOTE:\nThe value of math_LOG2E is approximately the reciprocal of the value of math_LN2.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_LOG10E": {
+    "title": "math_LOG10E:number",
+    "description": "<div><h4>math_LOG10E:number</h4><div class=\"description\">\n    The Number value for the base-10 logarithm of e, \nthe base of the natural logarithms; this value is approximately 0.4342944819032518.\n<p></p>NOTE:\nThe value of math_LOG10E is approximately the reciprocal of the value of math_LN10.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_PI": {
+    "title": "math_PI:number",
+    "description": "<div><h4>math_PI:number</h4><div class=\"description\">\n    The Number value for &#960;, the ratio of the circumference of a circle to its diameter, \nwhich is approximately 3.1415926535897932.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_SQRT1_2": {
+    "title": "math_SQRT1_2:number",
+    "description": "<div><h4>math_SQRT1_2:number</h4><div class=\"description\">\n    The Number value for the square root of 0.5, which is approximately 0.7071067811865476.\n<p></p>NOTE:\nThe value of math_SQRT1_2 is approximately the reciprocal of the value of math_SQRT2.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "math_SQRT2": {
+    "title": "math_SQRT2:number",
+    "description": "<div><h4>math_SQRT2:number</h4><div class=\"description\">\n    The Number value for the square root of 2, which is approximately 1.4142135623730951.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "NaN": {
+    "title": "NaN:number",
+    "description": "<div><h4>NaN:number</h4><div class=\"description\">\n    The name <code>NaN</code> refers to the special number value <code>NaN</code> (\"not a number\"). Note that \n<code>NaN</code> is a number, as specified by <code>is_number</code>.\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-nan\">ECMAScript Specification, Section 4.3.24</a>\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "undefined": {
+    "title": "undefined:undefined",
+    "description": "<div><h4>undefined:undefined</h4><div class=\"description\">\n    The name <code>undefined</code> refers to the special value <code>undefined</code>.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/4\">textbook explanation in section 1.1.2</a>.\n</div>\n    </div>",
+    "meta": "const"
+  },
+  "accumulate": {
+    "title": "accumulate(f, initial, xs) \u2192 {value}",
+    "description": "<div><h4>accumulate(f, initial, xs) &#8594; {value}</h4><div class=\"description\">\n    Applies binary\nfunction <code>f</code> to the elements of <code>xs</code> from\nright-to-left order, first applying <code>f</code> to the last element\nand the value <code>initial</code>, resulting in <code>r</code><sub>1</sub>,\nthen to the \nsecond-last element and <code>r</code><sub>1</sub>, resulting in\n<code>r</code><sub>2</sub>,\netc, and finally\nto the first element and <code>r</code><sub>n-1</sub>, where\n<code>n</code> is the length of the\nlist. Thus, <code>accumulate(f,zero,list(1,2,3))</code> results in\n<code>f(1, f(2, f(3, zero)))</code>.\nRecursive process;\ntime: <code>O(n)</code>, space: <code>O(n)</code>,\nwhere <code>n</code> is the length of <code>xs</code>\nassuming <code>f</code> takes constant time.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "append": {
+    "title": "append(xs, ys) \u2192 {list}",
+    "description": "<div><h4>append(xs, ys) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that results from \nappending the list <code>ys</code> to the list <code>xs</code>.\nRecursive process; time: <code>O(n)</code>, space:\n<code>O(n)</code>, where <code>n</code> is the length of <code>xs</code>.\nIn the result, null at the end of the first argument list\nis replaced by the second argument, regardless what the second\nargument consists of.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "array_length": {
+    "title": "array_length(x) \u2192 {number}",
+    "description": "<div><h4>array_length(x) &#8594; {number}</h4><div class=\"description\">\n    returns\nthe current length of array <code>x</code>, which is 1 plus the\nhighest index that has been used so far in an array assignment on \n<code>x</code>. Here literal array expressions are counted too: The\narray <code>[10, 20, 30]</code> has a length of 3.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "build_list": {
+    "title": "build_list(n, f) \u2192 {list}",
+    "description": "<div><h4>build_list(n, f) &#8594; {list}</h4><div class=\"description\">\n    Makes a list with <code>n</code>\nelements by applying the unary function <code>f</code>\nto the numbers 0 to <code>n - 1</code>, assumed to be a non-negative integer.\nRecursive process; time: <code>O(n)</code>, space: <code>O(n)</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "build_stream": {
+    "title": "build_stream(n, f) \u2192 {stream}",
+    "description": "<div><h4>build_stream(n, f) &#8594; {stream}</h4><div class=\"description\">\n    Makes a stream with <code>n</code>\nelements by applying the unary function <code>f</code>\nto the numbers 0 to <code>n - 1</code>, assumed to be a non-negative integer.\nLazy? Yes: The result stream forces the application of <code>f</code>\n          for the next element\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "display": {
+    "title": "display(v, s) \u2192 {value}",
+    "description": "<div><h4>display(v, s) &#8594; {value}</h4><div class=\"description\">\n    Displays the given string <code>s</code>, followed by a space character, followed by the\nvalue <code>v</code> in the console. The notation used for the display of values \nis consistent with \n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>, \nbut also displays <code>undefined</code> and function objects.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "draw_data": {
+    "title": "draw_data(x) \u2192 {value}",
+    "description": "<div><h4>draw_data(x) &#8594; {value}</h4><div class=\"description\">\n    visualizes <code>x</code> in a separate drawing\narea in the Source Academy using a box-and-pointer diagram; time, space:\nO(n), where n is the number of data structures such as\npairs in <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "enum_list": {
+    "title": "enum_list(start, end) \u2192 {list}",
+    "description": "<div><h4>enum_list(start, end) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that enumerates\nnumbers starting from <code>start</code> using a step size of 1, until\nthe number exceeds (<code>&gt;</code>) <code>end</code>.\nRecursive process;\ntime: <code>O(n)</code>, space: <code>O(n)</code>,\nwhere <code>n</code> is the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "enum_stream": {
+    "title": "enum_stream(start, end) \u2192 {stream}",
+    "description": "<div><h4>enum_stream(start, end) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that enumerates\nnumbers starting from <code>start</code> using a step size of 1, until\nthe number exceeds (<code>&gt;</code>) <code>end</code>.\nLazy? Yes: The result stream forces the construction of\n           each next element\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "equal": {
+    "title": "equal(x, y) \u2192 {boolean}",
+    "description": "<div><h4>equal(x, y) &#8594; {boolean}</h4><div class=\"description\">\n    Returns <code>true</code> if both\nhave the same structure with respect to <code>pair</code>,\nand the same numbers, boolean values, functions or empty list\nat corresponding leave positions (places that are not themselves pairs),\nand <code>false</code> otherwise; time, space:\n<code>O(n)</code>, where <code>n</code> is the number of pairs in\n<code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "error": {
+    "title": "error(v, s) \u2192 {value}",
+    "description": "<div><h4>error(v, s) &#8594; {value}</h4><div class=\"description\">\n    Displays the given string <code>s</code>, followed by a space character, followed by the\nvalue <code>v</code> in the console with error flag. \nThe evaluation\nof any call of <code>error</code> aborts the running program immediately.\nThe notation used for the display of values \nis consistent with \n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>, \nbut also displays <code>undefined</code> and function objects.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "eval_stream": {
+    "title": "eval_stream(s, n) \u2192 {list}",
+    "description": "<div><h4>eval_stream(s, n) &#8594; {list}</h4><div class=\"description\">\n    Constructs the list of the first <code>n</code> elements\nof a given stream <code>s</code>\nLazy? Sort-of: <code>eval_stream</code> only forces the computation of\nthe first <code>n</code> elements, and leaves the rest of\nthe stream untouched.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "filter": {
+    "title": "filter(pred, xs) \u2192 {list}",
+    "description": "<div><h4>filter(pred, xs) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that contains\nonly those elements for which the one-argument function\n<code>pred</code>\nreturns <code>true</code>.\nRecursive process;\ntime: <code>O(n)</code>, space: <code>O(n)</code>,\nwhere <code>n</code> is the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "for_each": {
+    "title": "for_each(f, xs) \u2192 {boolean}",
+    "description": "<div><h4>for_each(f, xs) &#8594; {boolean}</h4><div class=\"description\">\n    Applies unary function <code>f</code> to every\nelement of the list <code>xs</code>.\nIterative process; time: <code>O(n)</code>, space: <code>O(1)</code>,\nWhere <code>n</code> is the length of <code>xs</code>.\n<code>f</code> is applied element-by-element:\n<code>for_each(fun, list(1, 2))</code> results in the calls\n<code>fun(1)</code> and <code>fun(2)</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "head": {
+    "title": "head(p) \u2192 {value}",
+    "description": "<div><h4>head(p) &#8594; {value}</h4><div class=\"description\">\n    returns head (first component) of given pair <code>p</code>\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "integers_from": {
+    "title": "integers_from(start) \u2192 {stream}",
+    "description": "<div><h4>integers_from(start) &#8594; {stream}</h4><div class=\"description\">\n    Returns infinite stream if integers starting \nat given number <code>n</code> using a step size of 1.\nLazy? Yes: The result stream forces the construction of\n           each next element\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_array": {
+    "title": "is_array(x) \u2192 {boolean}",
+    "description": "<div><h4>is_array(x) &#8594; {boolean}</h4><div class=\"description\">\n    returns <code>true</code> if <code>x</code> \nis an array, and <code>false</code> if it is not.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_boolean": {
+    "title": "is_boolean(v) \u2192 {boolean}",
+    "description": "<div><h4>is_boolean(v) &#8594; {boolean}</h4><div class=\"description\">\n    checks whether a given value is a boolean\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_function": {
+    "title": "is_function(v) \u2192 {boolean}",
+    "description": "<div><h4>is_function(v) &#8594; {boolean}</h4><div class=\"description\">\n    checks whether a given value is a function\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_list": {
+    "title": "is_list(xs) \u2192 {xs}",
+    "description": "<div><h4>is_list(xs) &#8594; {xs}</h4><div class=\"description\">\n    Returns <code>true</code> if\n<code>xs</code> is a list as defined in the textbook, and\n<code>false</code> otherwise. Iterative process; \ntime: <code>O(n)</code>, space: <code>O(1)</code>, where <code>n</code>\nis the length of the \nchain of <code>tail</code> operations that can be applied to <code>xs</code>.\nrecurses down the list and checks that it ends with the empty list null\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_null": {
+    "title": "is_null(x) \u2192 {boolean}",
+    "description": "<div><h4>is_null(x) &#8594; {boolean}</h4><div class=\"description\">\n    returns <code>true</code> if <code>x</code> is the\nempty list <code>null</code>, and <code>false</code> otherwise.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_number": {
+    "title": "is_number(v) \u2192 {boolean}",
+    "description": "<div><h4>is_number(v) &#8594; {boolean}</h4><div class=\"description\">\n    checks whether a given value is a number.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/36\">textbook example</a>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_pair": {
+    "title": "is_pair(x) \u2192 {boolean}",
+    "description": "<div><h4>is_pair(x) &#8594; {boolean}</h4><div class=\"description\">\n    returns <code>true</code> if <code>x</code> is a\npair and false otherwise.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_stream": {
+    "title": "is_stream(xs) \u2192 {boolean}",
+    "description": "<div><h4>is_stream(xs) &#8594; {boolean}</h4><div class=\"description\">\n    Returns <code>true</code> if\n<code>xs</code> is a stream as defined in the textbook, and\n<code>false</code> otherwise. Iterative process; \ntime: <code>O(n)</code>, space: <code>O(1)</code>, where <code>n</code>\nis the length of the \nchain of <code>stream_tail</code> operations that can be applied to <code>xs</code>.\nrecurses down the stream and checks that it ends with the empty stream null.\nLaziness:  No: <code>is_stream</code> needs to force the given stream.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_string": {
+    "title": "is_string(v) \u2192 {boolean}",
+    "description": "<div><h4>is_string(v) &#8594; {boolean}</h4><div class=\"description\">\n    checks whether a given value is a string.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/36\">textbook example</a>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "is_undefined": {
+    "title": "is_undefined(v) \u2192 {boolean}",
+    "description": "<div><h4>is_undefined(v) &#8594; {boolean}</h4><div class=\"description\">\n    checks whether a given value is the special value <code>undefined</code>\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "length": {
+    "title": "length(xs) \u2192 {number}",
+    "description": "<div><h4>length(xs) &#8594; {number}</h4><div class=\"description\">\n    Returns the length of the list\n<code>xs</code>. \nIterative process; time: <code>O(n)</code>, space:\n<code>O(1)</code>, where <code>n</code> is the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "list": {
+    "title": "list() \u2192 {list}",
+    "description": "<div><h4>list() &#8594; {list}</h4><div class=\"description\">\n    Given <code>n</code> values, returns a list of length <code>n</code>.\nThe elements of the list are the given values in the given order.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "list_ref": {
+    "title": "list_ref(xs, n) \u2192 {value}",
+    "description": "<div><h4>list_ref(xs, n) &#8594; {value}</h4><div class=\"description\">\n    Returns the element\nof list <code>xs</code> at position <code>n</code>, \nwhere the first element has index 0.\nIterative process;\ntime: <code>O(n)</code>, space: <code>O(1)</code>,\nwhere <code>n</code> is the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "list_to_stream": {
+    "title": "list_to_stream(xs) \u2192 {stream}",
+    "description": "<div><h4>list_to_stream(xs) &#8594; {stream}</h4><div class=\"description\">\n    Given list <code>xs</code>, returns a stream of same length with\nthe same elements as <code>xs</code> in the same order.\nLaziness:  Yes: <code>list_to_stream</code> \ngoes down the list only when forced.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "list_to_string": {
+    "title": "list_to_string(xs) \u2192 {string}",
+    "description": "<div><h4>list_to_string(xs) &#8594; {string}</h4><div class=\"description\">\n    Returns a string that represents\nlist <code>xs</code> using the text-based box-and-pointer notation\n<code>[...]</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "map": {
+    "title": "map(f, xs) \u2192 {list}",
+    "description": "<div><h4>map(f, xs) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that results from list\n<code>xs</code> by element-wise application of unary function <code>f</code>. \nRecursive process; time: <code>O(n)</code>,\nspace: <code>O(n)</code>, where <code>n</code> is the length of <code>xs</code>.\n<code>f</code> is applied element-by-element:\n<code>map(f, list(1, 2))</code> results in <code>list(f(1), f(2))</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_abs": {
+    "title": "math_abs(x) \u2192 {number}",
+    "description": "<div><h4>math_abs(x) &#8594; {number}</h4><div class=\"description\">\n    computes the absolute value of x; the result has the same magnitude as <code>x</code> but has positive sign.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_acos": {
+    "title": "math_acos(x) \u2192 {number}",
+    "description": "<div><h4>math_acos(x) &#8594; {number}</h4><div class=\"description\">\n    computes the arc cosine of <code>x</code>. \nThe result is expressed in radians and ranges from +0 to +&#960;.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_acosh": {
+    "title": "math_acosh(x) \u2192 {number}",
+    "description": "<div><h4>math_acosh(x) &#8594; {number}</h4><div class=\"description\">\n    computes the inverse hyperbolic cosine of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_asin": {
+    "title": "math_asin(x) \u2192 {number}",
+    "description": "<div><h4>math_asin(x) &#8594; {number}</h4><div class=\"description\">\n    computes the arc sine of <code>x</code>. The result is expressed in radians and ranges from -&#960; / 2 to +&#960; / 2.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_asinh": {
+    "title": "math_asinh(x) \u2192 {number}",
+    "description": "<div><h4>math_asinh(x) &#8594; {number}</h4><div class=\"description\">\n    computes the inverse hyperbolic \nsine of <code>x</code>. The result is expressed in radians and ranges from -&#960; / 2 to +&#960; / 2.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_atan": {
+    "title": "math_atan(x) \u2192 {number}",
+    "description": "<div><h4>math_atan(x) &#8594; {number}</h4><div class=\"description\">\n    computes the arc tangent of <code>x</code>. The result is expressed in radians and ranges from -&#960; / 2 to +&#960; / 2.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_atan2": {
+    "title": "math_atan2(y, x) \u2192 {number}",
+    "description": "<div><h4>math_atan2(y, x) &#8594; {number}</h4><div class=\"description\">\n    computes the arc tangent of the quotient <code>y</code> / <code>x</code> of the arguments <code>y</code> and <code>x</code>, where the signs of <code>y</code> and <code>x</code> are used to determine the quadrant of the result. Note that it is intentional and traditional for the two-argument arc tangent function that the argument named <code>y</code> be first and the argument named <code>x</code> be second. The result is expressed in radians and ranges from -&#960; to +&#960;.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_atanh": {
+    "title": "math_atanh(x) \u2192 {number}",
+    "description": "<div><h4>math_atanh(x) &#8594; {number}</h4><div class=\"description\">\n    computes the inverse hyperbolic tangent of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_cbrt": {
+    "title": "math_cbrt(x) \u2192 {number}",
+    "description": "<div><h4>math_cbrt(x) &#8594; {number}</h4><div class=\"description\">\n    computes the cube root of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_ceil": {
+    "title": "math_ceil(x) \u2192 {number}",
+    "description": "<div><h4>math_ceil(x) &#8594; {number}</h4><div class=\"description\">\n    computes the smallest (closest to -&#8734;) Number value that is not less than <code>x</code> and is an integer. If <code>x</code> is already an integer, the result is <code>x</code>.\nThe value of math_ceil(x) is the same as the value of -math_floor(-x).\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_clz32": {
+    "title": "math_clz32(n) \u2192 {number}",
+    "description": "<div><h4>math_clz32(n) &#8594; {number}</h4><div class=\"description\">\n    When math_clz32 is called with one argument <code>x</code>, the following steps are taken:\nLet n be ToUint32(x).\nLet p be the number of leading zero bits in the 32-bit binary representation of n.\nReturn p.\n<p></p>NOTE:\n<br>If n is 0, p will be 32. If the most significant bit of the 32-bit binary encoding of n is 1, \np will be 0.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_cos": {
+    "title": "math_cos(x) \u2192 {number}",
+    "description": "<div><h4>math_cos(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the cosine of <code>x</code>. \nThe argument is expressed in radians.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_cosh": {
+    "title": "math_cosh(x) \u2192 {number}",
+    "description": "<div><h4>math_cosh(x) &#8594; {number}</h4><div class=\"description\">\n    computes the hyperbolic cosine of <code>x</code>.\n<p></p>NOTE:\nThe value of cosh(x) is the same as (exp(x) + exp(-x)) / 2.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_exp": {
+    "title": "math_exp() \u2192 {number}",
+    "description": "<div><h4>math_exp() &#8594; {number}</h4><div class=\"description\">\n    computes the exponential function of <code>x</code> \n(e raised to the power of <code>x</code>, where e is the base of the natural logarithms).\n</div>\n</div>",
+    "meta": "func"
+  },
+  "math_expm1": {
+    "title": "math_expm1(x) \u2192 {number}",
+    "description": "<div><h4>math_expm1(x) &#8594; {number}</h4><div class=\"description\">\n    computes subtracting 1 from the \nexponential function of <code>x</code> (e raised to the power of <code>x</code>, where e is the base of \nthe natural logarithms). The result is computed in a way that is accurate even \nwhen the value of <code>x</code> is close 0.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_floor": {
+    "title": "math_floor(x) \u2192 {number}",
+    "description": "<div><h4>math_floor(x) &#8594; {number}</h4><div class=\"description\">\n    computes the greatest (closest to +&#8734;) Number value that is not greater than <code>x</code> \nand is an integer. \n<br>If <code>x</code> is already an integer, the result is <code>x</code>.\n<p></p>NOTE:\nThe value of math_floor(x) is the same as the value of -math_ceil(-x).\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_fround": {
+    "title": "math_fround(x) \u2192 {number}",
+    "description": "<div><h4>math_fround(x) &#8594; {number}</h4><div class=\"description\">\n    When math_fround is called with argument <code>x</code>, the following steps are taken:\n<ol><li>If <code>x</code> is NaN, return NaN.</li>\n<li>If <code>x</code> is one of +0, -0, +&#8734;, -&#8734;, return <code>x</code>.</li>\n<li>Let x32 be the result of converting <code>x</code> to a value in IEEE 754-2008 binary32 format using roundTiesToEven mode.</li>\n<li>Let x64 be the result of converting x32 to a value in IEEE 754-2008 binary64 format.</li>\n<li>Return the ECMAScript Number value corresponding to x64.</li></ol>\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_hypot": {
+    "title": "math_hypot() \u2192 {number}",
+    "description": "<div><h4>math_hypot() &#8594; {number}</h4><div class=\"description\">\n    computes the square root\nof the sum of squares of its arguments.\n<br>If no arguments are passed, the result is +0.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_imul": {
+    "title": "math_imul(x, x) \u2192 {number}",
+    "description": "<div><h4>math_imul(x, x) &#8594; {number}</h4><div class=\"description\">\n    When math_imul is called with arguments <code>x</code> and <code>y</code>,\nthe following steps are taken:\n<ol>\n<li>Let a be ToUint32(x).</li>\n<li>Let b be ToUint32(y).</li>\n<li>Let product be (a &#215; b) modulo 2<sup>32</sup>.</li>\n<li>If product &#8805; 2<sup>31</sup>, return product - 2<sup>32</sup>; otherwise return product.</li></ol>\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_log": {
+    "title": "math_log(x) \u2192 {number}",
+    "description": "<div><h4>math_log(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the natural logarithm of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_log1p": {
+    "title": "math_log1p(x) \u2192 {number}",
+    "description": "<div><h4>math_log1p(x) &#8594; {number}</h4><div class=\"description\">\n    computes the natural logarithm of 1 + <code>x</code>. The result is computed in a way that is accurate even when the value of <code>x</code> is close to zero.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_log2": {
+    "title": "math_log2(x) \u2192 {number}",
+    "description": "<div><h4>math_log2(x) &#8594; {number}</h4><div class=\"description\">\n    computes the base 2 logarithm of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_log10": {
+    "title": "math_log10(x) \u2192 {number}",
+    "description": "<div><h4>math_log10(x) &#8594; {number}</h4><div class=\"description\">\n    computes the base 10 logarithm of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_max": {
+    "title": "math_max() \u2192 {number}",
+    "description": "<div><h4>math_max() &#8594; {number}</h4><div class=\"description\">\n    Given zero or more numbers, returns the largest of them.\n<br>If no arguments are given, the result is -&#8734;.\n<br>If any value is NaN, the result is NaN.\nThe comparison of values to determine the largest value is done using the \nAbstract Relational Comparison algorithm except that +0 is considered to be larger than -0.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_min": {
+    "title": "math_min() \u2192 {number}",
+    "description": "<div><h4>math_min() &#8594; {number}</h4><div class=\"description\">\n    Given zero or more arguments, returns the smallest of them.\n<br>If no arguments are given, the result is +&#8734;.\n<br>If any value is NaN, the result is NaN.\nThe comparison of values to determine the smallest value is done using the \nAbstract Relational Comparison algorithm except that +0 is considered to be larger than -0.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_pow": {
+    "title": "math_pow(base, exponent) \u2192 {number}",
+    "description": "<div><h4>math_pow(base, exponent) &#8594; {number}</h4><div class=\"description\">\n    Computes the result of raising base to \nthe power of exponent.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_random": {
+    "title": "math_random() \u2192 {number}",
+    "description": "<div><h4>math_random() &#8594; {number}</h4><div class=\"description\">\n    Returns a number value with positive sign, greater than or equal to 0 but less than 1, \nchosen randomly or pseudo randomly with approximately uniform distribution over that \nrange, using an implementation-dependent algorithm or strategy. This function takes no arguments.\nEach math_random function created for distinct realms must produce a distinct sequence \nof values from successive calls.\n</div>\n</div>",
+    "meta": "func"
+  },
+  "math_round": {
+    "title": "math_round(x) \u2192 {number}",
+    "description": "<div><h4>math_round(x) &#8594; {number}</h4><div class=\"description\">\n    Returns the number value that is closest to <code>x</code> and is an integer. \n<br>If two integers are equally close to <code>x</code>, then the result is the Number value \nthat is closer to +&#8734;. If <code>x</code> is already an integer, the result is <code>x</code>.\nNOTE 1:\nmath_round(3.5) returns 4, but math_round(-3.5) returns -3.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_sign": {
+    "title": "math_sign(x) \u2192 {number}",
+    "description": "<div><h4>math_sign(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the sign of <code>x</code>, indicating whether <code>x</code> is positive, negative, or zero.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_sin": {
+    "title": "math_sin(x) \u2192 {number}",
+    "description": "<div><h4>math_sin(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the sine of <code>x</code>. \nThe argument is expressed in radians.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_sinh": {
+    "title": "math_sinh(x) \u2192 {number}",
+    "description": "<div><h4>math_sinh(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the hyperbolic sine of <code>x</code>.\n<p></p>NOTE:\nThe value of sinh(x) is the same as (exp(x) - exp(-x)) / 2.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_sqrt": {
+    "title": "math_sqrt(x) \u2192 {number}",
+    "description": "<div><h4>math_sqrt(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the square root of <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_tan": {
+    "title": "math_tan(x) \u2192 {number}",
+    "description": "<div><h4>math_tan(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the tangent of <code>x</code>. The argument is expressed in radians.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_tanh": {
+    "title": "math_tanh(x) \u2192 {number}",
+    "description": "<div><h4>math_tanh(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the hyperbolic tangent of <code>x</code>.\n<p></p>NOTE:\nThe value of <code>math_tanh(x)</code> is the same as\n<code>(exp(x) - exp(-x))/(exp(x) + exp(-x))</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "math_trunc": {
+    "title": "math_trunc(x) \u2192 {number}",
+    "description": "<div><h4>math_trunc(x) &#8594; {number}</h4><div class=\"description\">\n    Computes the integral part of the number <code>x</code>,\nremoving any fractional digits.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "member": {
+    "title": "member(v, xs) \u2192 {list}",
+    "description": "<div><h4>member(v, xs) &#8594; {list}</h4><div class=\"description\">\n    Returns first postfix sublist\nwhose head is identical to\n<code>v</code> (using <code>===</code>); returns <code>null</code> if the\nelement does not occur in the list.\nIterative process; time: <code>O(n)</code>,\nspace: <code>O(1)</code>, where <code>n</code> is the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "pair": {
+    "title": "pair(x, y) \u2192 {pair}",
+    "description": "<div><h4>pair(x, y) &#8594; {pair}</h4><div class=\"description\">\n    makes a pair whose head (first component) is <code>x</code>\nand whose tail (second component) is <code>y</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "parse_int": {
+    "title": "parse_int(s, i) \u2192 {number}",
+    "description": "<div><h4>parse_int(s, i) &#8594; {number}</h4><div class=\"description\">\n    Interprets a given string <code>s</code> as an integer, \nusing the positive integer <code>i</code> as radix, \nand returns the respective value.\n<br>Examples: <code>parse_int(\"909\", 10)</code> returns the number \n<code>909</code>, and <code>parse_int(\"-1111\", 2)</code> returns the number \n<code>-15</code>.<br>\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parseint-string-radix\">ECMAScript Specification, Section 18.2.5</a> for details.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "prompt": {
+    "title": "prompt(s) \u2192 {string}",
+    "description": "<div><h4>prompt(s) &#8594; {string}</h4><div class=\"description\">\n    Pops up a window that displays the string <code>s</code>, provides\nan input line for the user to enter a text, a <code>Cancel</code> button and an <code>OK</code> button. \nThe call of <code>prompt</code>\nsuspends execution of the program until one of the two buttons is pressed. If \nthe <code>OK</code> button is pressed, <code>prompt</code> returns the entered text as a string.\nIf the <code>Cancel</code> button is pressed, <code>prompt</code> returns a non-string value.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "remove": {
+    "title": "remove(v, xs) \u2192 {list}",
+    "description": "<div><h4>remove(v, xs) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that results from\n<code>xs</code> by removing the first item from <code>xs</code> that\nis identical (<code>===</code>) to <code>v</code>.\nReturns the original\nlist if there is no occurrence. Recursive process;\ntime: <code>O(n)</code>, space: <code>O(n)</code>, where <code>n</code>\nis the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "remove_all": {
+    "title": "remove_all(v, xs) \u2192 {list}",
+    "description": "<div><h4>remove_all(v, xs) &#8594; {list}</h4><div class=\"description\">\n    Returns a list that results from\n<code>xs</code> by removing all items from <code>xs</code> that\nare identical (<code>===</code>) to <code>v</code>.\nReturns the original\nlist if there is no occurrence.  \nRecursive process;\ntime: <code>O(n)</code>, space: <code>O(n)</code>, where <code>n</code>\nis the length of <code>xs</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "reverse": {
+    "title": "reverse(xs) \u2192 {list}",
+    "description": "<div><h4>reverse(xs) &#8594; {list}</h4><div class=\"description\">\n    Returns list <code>xs</code> in reverse\norder. Iterative process; time: <code>O(n)</code>,\nspace: <code>O(n)</code>, where <code>n</code> is the length of <code>xs</code>.\nThe process is iterative, but consumes space <code>O(n)</code>\nbecause of the result list.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "runtime": {
+    "title": "runtime() \u2192 {number}",
+    "description": "<div><h4>runtime() &#8594; {number}</h4><div class=\"description\">\n    Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/17#ex_1.22\">textbook example</a>.\n</div>\n</div>",
+    "meta": "func"
+  },
+  "set_head": {
+    "title": "set_head(p, x) \u2192 {undefined}",
+    "description": "<div><h4>set_head(p, x) &#8594; {undefined}</h4><div class=\"description\">\n    changes the pair <code>p</code> such that its head is <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "set_tail": {
+    "title": "set_tail(p, x) \u2192 {undefined}",
+    "description": "<div><h4>set_tail(p, x) &#8594; {undefined}</h4><div class=\"description\">\n    changes the pair <code>p</code> such that its tail is <code>x</code>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream": {
+    "title": "stream() \u2192 {stream}",
+    "description": "<div><h4>stream() &#8594; {stream}</h4><div class=\"description\">\n    Given <code>n</code> values, returns a stream of length <code>n</code>.\nThe elements of the stream are the given values in the given order.\nLazy? No: A\ncomplete list is generated, \nand then a stream using <code>list_to_stream</code> is generated from it.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_append": {
+    "title": "stream_append(xs, ys) \u2192 {stream}",
+    "description": "<div><h4>stream_append(xs, ys) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that results from \nappending the stream <code>ys</code> to the stream <code>xs</code>.\nIn the result, null at the end of the first argument stream\nis replaced by the second argument, regardless what the second\nargument consists of.\nLazy? Yes: the result stream forces the actual append operation\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_filter": {
+    "title": "stream_filter(pred, xs) \u2192 {stream}",
+    "description": "<div><h4>stream_filter(pred, xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that contains\nonly those elements of given stream <code>xs</code>\nfor which the one-argument function\n<code>pred</code>\nreturns <code>true</code>.\nLazy? Yes: The result stream forces the construction of\n           each next element. Of course, the construction\n           of the next element needs to go down the stream\n           until an element is found for which <code>pred</code> holds.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_for_each": {
+    "title": "stream_for_each(f, xs) \u2192 {boolean}",
+    "description": "<div><h4>stream_for_each(f, xs) &#8594; {boolean}</h4><div class=\"description\">\n    Applies unary function <code>f</code> to every\nelement of the stream <code>xs</code>.\nIterative process; time: <code>O(n)</code>, space: <code>O(1)</code>,\nWhere <code>n</code> is the length of <code>xs</code>.\n<code>f</code> is applied element-by-element:\n<code>stream_for_each(f, stream(1, 2))</code> results in the calls\n<code>f(1)</code> and <code>f(2)</code>.\nLazy? No: <code>stream_for_each</code> \nforces the exploration of the entire stream\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_length": {
+    "title": "stream_length(xs) \u2192 {number}",
+    "description": "<div><h4>stream_length(xs) &#8594; {number}</h4><div class=\"description\">\n    Returns the length of the stream\n<code>xs</code>. \nIterative process; time: <code>O(n)</code>, space:\n<code>O(1)</code>, where <code>n</code> is the length of <code>xs</code>.\nLazy? No: The function needs to explore the whole stream\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_map": {
+    "title": "stream_map(f, xs) \u2192 {stream}",
+    "description": "<div><h4>stream_map(f, xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that results from stream\n<code>xs</code> by element-wise application \nof unary function <code>f</code>. \n<code>f</code> is applied element-by-element:\n<code>stream_map(f, stream(1,2))</code> results in\nthe same as <code>stream(f(1),f(2))</code>.\nLazy? Yes: The argument stream is only explored as forced by\n           the result stream.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_member": {
+    "title": "stream_member(v, xs) \u2192 {stream}",
+    "description": "<div><h4>stream_member(v, xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns first postfix substream\nwhose head is identical to\n<code>v</code> (using <code>===</code>); returns <code>null</code> if the\nelement does not occur in the stream.\nIterative process; time: <code>O(n)</code>,\nspace: <code>O(1)</code>, where <code>n</code> is the length of <code>xs</code>.\nLazy? Sort-of: <code>stream_member</code> \nforces the stream only until the element \nis found.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_ref": {
+    "title": "stream_ref(xs, n) \u2192 {value}",
+    "description": "<div><h4>stream_ref(xs, n) &#8594; {value}</h4><div class=\"description\">\n    Returns the element\nof stream <code>xs</code> at position <code>n</code>, \nwhere the first element has index 0.\nIterative process;\ntime: <code>O(n)</code>, space: <code>O(1)</code>,\nwhere <code>n</code> is the length of <code>xs</code>.\nLazy? Sort-of: <code>stream_ref</code> only forces the computation of\n               the first <code>n</code> elements, and leaves the rest of\n               the stream untouched.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_remove": {
+    "title": "stream_remove(v, xs) \u2192 {stream}",
+    "description": "<div><h4>stream_remove(v, xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that results from\n<code>xs</code> by removing the first item from <code>xs</code> that\nis identical (<code>===</code>) to <code>v</code>.\nReturns the original\nstream if there is no occurrence. \nLazy? Yes: the result stream forces the construction of each next element\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_remove_all": {
+    "title": "stream_remove_all(v, xs) \u2192 {stream}",
+    "description": "<div><h4>stream_remove_all(v, xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns a stream that results from\n<code>xs</code> by removing all items from <code>xs</code> that\nare identical (<code>===</code>) to <code>v</code>.\nReturns the original\nstream if there is no occurrence.  \nRecursive process.\nLazy? Yes: the result stream forces the construction of each next \nelement\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_reverse": {
+    "title": "stream_reverse(xs) \u2192 {stream}",
+    "description": "<div><h4>stream_reverse(xs) &#8594; {stream}</h4><div class=\"description\">\n    Returns stream <code>xs</code> in reverse\norder. Iterative process; time: <code>O(n)</code>,\nspace: <code>O(n)</code>, where <code>n</code> is the length of <code>xs</code>.\nThe process is iterative, but consumes space <code>O(n)</code>\nbecause of the result stream.\nLazy? No: <code>stream_reverse</code> \nforces the exploration of the entire stream\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_tail": {
+    "title": "stream_tail(xs) \u2192 {Stream}",
+    "description": "<div><h4>stream_tail(xs) &#8594; {Stream}</h4><div class=\"description\">\n    assumes that the tail (second component) of the\npair {x} is a nullary function, and returns the result of\napplying that function. Throws an exception if the argument \nis not a pair, or if the tail is not a function.\nLaziness: Yes: {stream_tail} only forces the direct tail \nstream, but not the rest of the stream, i.e. not the tail \nof the tail, etc.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stream_to_list": {
+    "title": "stream_to_list(xs) \u2192 {list}",
+    "description": "<div><h4>stream_to_list(xs) &#8594; {list}</h4><div class=\"description\">\n    Given stream <code>xs</code>, returns a list of same length with\nthe same elements as <code>xs</code> in the same order.\nLaziness:  No: <code>stream_to_list</code> needs to force the whole \nstream.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "stringify": {
+    "title": "stringify(v,) \u2192 {string}",
+    "description": "<div><h4>stringify(v,) &#8594; {string}</h4><div class=\"description\">\n    returns a string that represents the value <code>v</code>, using a\nnotation that is is consistent with \n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>, \nbut also displays <code>undefined</code> and function objects.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/62\">textbook example</a>.\n</div>\n    </div>",
+    "meta": "func"
+  },
+  "tail": {
+    "title": "tail(p) \u2192 {value}",
+    "description": "<div><h4>tail(p) &#8594; {value}</h4><div class=\"description\">\n    returns tail (second component of given pair <code>p</code>\n</div>\n    </div>",
+    "meta": "func"
+  }
+}

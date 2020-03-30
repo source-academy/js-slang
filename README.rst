@@ -71,10 +71,12 @@ in the library sources. The libraries are in repository ``cadet-frontend``, whic
 is assumed to be located in ``../cadet-frontend``, from the root of this repo.
 The command
 ``yarn jsdoc``
-makes the documentation available in folder
+makes the documentation available in folder and updates the jsons for documentation displayed in the `cadet-frontend`.
 ``doc/jsdoc/libraries/``.
 The script `jsdoc` provides an installation command to deploy the documentation via `scp` on a server:
 ``yarn jsdoc install``
+
+To update documentation displayed in autocomplete on the frontend, `js-slang` version needs to be bumped and `cadet-frontend` needs to be updated to use the new version.
 
 Testing
 -------
@@ -93,7 +95,7 @@ Error messages
 
 To enable verbose messages, have the statement ``"enable verbose";`` as the first line of your code.
 
-There are two main kinds of error messages: those that occur at runtime and those that occur at parse time. 
+There are two main kinds of error messages: those that occur at runtime and those that occur at parse time.
 The first can be found in interpreter-errors.ts, while the second can be found in rules/.
 
 Each error subclass will have explain() and elaborate(). Displaying the error will always cause the first to be
@@ -114,5 +116,5 @@ A common issue when developing modifications to js-slang is how to test it using
   $ cd js-slang
   $ yarn build
   $ cp -r dist ../cadet-frontend/node_modules/js-slang
-  
+
 Then start frontend and the new js-slang will be used.
