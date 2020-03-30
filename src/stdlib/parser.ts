@@ -6,7 +6,7 @@ import { Context, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
 
-export class ParseError extends Error {
+class ParseError extends Error {
   constructor(message: string) {
     super(message)
     this.name = 'ParseError'
