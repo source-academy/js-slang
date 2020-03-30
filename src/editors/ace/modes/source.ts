@@ -294,8 +294,7 @@ export function HighlightRulesSelector(id: number) {
           },
           {
             token: ['variable.language'],
-            regex: /\.{3}|--+|[$%&*+\-~\/^]=+|==[^=]|!=[^=]|\+\++|\^|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/,
-            next: 'start'
+            regex: /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
           },
           {
             token: keywordMapper,
@@ -312,7 +311,7 @@ export function HighlightRulesSelector(id: number) {
           },
           {
             token: 'keyword.operator',
-            regex: /\.{3}|===|=|!==|<+=?|>+=?|!|&&|\|\||[%*+-\/]/,
+            regex: /===|=|!==|<+=?|>+=?|!|&&|\|\||[%*+-\/]/,
             next: 'start'
           },
           {
