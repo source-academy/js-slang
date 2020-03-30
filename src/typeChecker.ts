@@ -4,10 +4,13 @@ import * as es from 'estree'
 /** Name of Unary negative builtin operator */
 const NEGATIVE_OP = '-_1'
 let typeIdCounter = 0
+
 /**
- * Traverse node and add `type_id` attr to it. This id will be used to recover inferred node types
- * after finishing type checking
+ * Called before and after type inference. First to add typeVar attribute to node, second to resolve
+ * the type
+ * FunctionDeclaration nodes have the functionTypeVar attribute as well
  * @param node
+ * @param constraints: undefined for first call
  */
 /* tslint:disable cyclomatic-complexity */
 function traverse(node: es.Node, constraints?: Constraint[]) {
@@ -172,7 +175,6 @@ type Constraint = [VAR, TYPE]
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
- * @param context Additional context such as the week of our source program, comments etc.
  */
 export function typeCheck(program: es.Program | undefined): es.Program | undefined {
   typeIdCounter = 0
@@ -224,6 +226,14 @@ function freshTypeVar(typeVar: VAR): VAR {
 function fresh(monoType: TYPE, subst: { [typeName: string]: VAR }): TYPE {
   switch (monoType.nodeType) {
     case 'Named':
+      if (monoType.name === 'pair') {
+        return {
+          nodeType: 'Named',
+          name: 'pair',
+          head: fresh((monoType as PAIR).head, subst),
+          tail: fresh((monoType as PAIR).tail, subst)
+        }
+      }
       return monoType
     case 'Var':
       return subst[monoType.name]
@@ -250,6 +260,12 @@ function union(a: VAR[], b: VAR[]): VAR[] {
 function freeTypeVarsInType(type: TYPE): VAR[] {
   switch (type.nodeType) {
     case 'Named':
+      if (type.name === 'pair') {
+        return union(
+          freeTypeVarsInType((type as PAIR).head),
+          freeTypeVarsInType((type as PAIR).tail)
+        )
+      }
       return []
     case 'Var':
       return [type]
@@ -279,6 +295,15 @@ function extractFreeVariablesAndGenFresh(polyType: FORALL): TYPE {
 function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
   switch (type.nodeType) {
     case 'Named': {
+      if (type.name === 'pair') {
+        console.log('returning named pair')
+        return {
+          nodeType: 'Named',
+          name: 'pair',
+          head: applyConstraints((type as PAIR).head, constraints),
+          tail: applyConstraints((type as PAIR).tail, constraints)
+        }
+      }
       return type
     }
     case 'Var': {
@@ -308,6 +333,9 @@ function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
 function contains(type: TYPE, name: string): boolean {
   switch (type.nodeType) {
     case 'Named':
+      if (type.name === 'pair') {
+        return contains((type as PAIR).head, name) || contains((type as PAIR).tail, name)
+      }
       return false
     case 'Var':
       return type.name === name
@@ -346,14 +374,21 @@ function cannotBeResolvedIfAddable(LHS: VAR, RHS: TYPE): boolean {
   return (
     LHS.type === 'addable' &&
     RHS.nodeType !== 'Var' &&
-    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name == 'pair'))
+    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
     !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number'))
   )
 }
 
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]): Constraint[] {
   if (LHS.nodeType === 'Named' && RHS.nodeType === 'Named' && LHS.name === RHS.name) {
-    return constraints
+    if (LHS.name === 'pair') {
+      let newConstraints = constraints
+      newConstraints = addToConstraintList(constraints, [(LHS as PAIR).head, (RHS as PAIR).head])
+      newConstraints = addToConstraintList(constraints, [(LHS as PAIR).tail, (RHS as PAIR).tail])
+      return newConstraints
+    } else {
+      return constraints
+    }
   } else if (LHS.nodeType === 'Var') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.nodeType === 'Var' && RHS.name === LHS.name) {
@@ -729,19 +764,24 @@ const predeclaredNames = {
   math_tan: tFunc(tNamedNumber, tNamedNumber),
   math_tanh: tFunc(tNamedNumber, tNamedNumber),
   math_trunc: tFunc(tNamedNumber, tNamedNumber),
-  // source 2
-  // pair: tForAll(tFunc(tVar('A'),
-  //               tPair(tVar('B'), tList(tVar('C'))),
-  //               tPair(tVar('A'), tPair(tVar('B'),
-  //                                      tList(tVar('C')))))),
-  pair: tForAll(tFunc(tVar('A'), tVar('B'), tPair(tVar('A'), tVar('B')))),
-  head: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('A'))),
-  tail: tForAll(tFunc(tPair(tVar('A'), tVar('B')), tVar('B'))),
   // misc functions
   parse_int: tFunc(tNamedString, tNamedNumber, tNamedNumber),
   prompt: tFunc(tNamedString, tNamedString),
   runtime: tFunc(tNamedNumber),
   stringify: tForAll(tFunc(tVar('T'), tNamedString))
+}
+
+const headType1 = tVar('headType1')
+const tailType1 = tVar('tailType1')
+const headType2 = tVar('headType2')
+const tailType2 = tVar('tailType2')
+const headType3 = tVar('headType3')
+const tailType3 = tVar('tailType3')
+
+const pairFuncs = {
+  pair: tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1))),
+  head: tForAll(tFunc(tPair(headType2, tailType2), headType2)),
+  tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3))
 }
 
 const primitiveFuncs = {
@@ -765,5 +805,6 @@ const primitiveFuncs = {
 
 const initialEnv = {
   ...predeclaredNames,
+  ...pairFuncs,
   ...primitiveFuncs
 }

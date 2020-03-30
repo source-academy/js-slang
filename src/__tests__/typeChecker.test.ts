@@ -17,6 +17,13 @@ describe('type checking pairs and lists', () => {
       head(x) + 56;
     `
     expect(() => typeCheck(parse(code))).not.toThrowError()
+
+    const code1 = `
+      function foo(x, y) { return pair(x, y); }
+      const x = foo(1, 2);
+      const y = head(x) + 34;
+    `
+    expect(() => typeCheck(parse(code1))).not.toThrowError()
   })
 
   it('unhappy paths for pair functions', () => {
@@ -26,11 +33,11 @@ describe('type checking pairs and lists', () => {
     `
     expect(() => typeCheck(parse(code, 2))).toThrowError()
 
-    // const code1 = `
-    //   const x = pair(3, pair(4, false));
-    //   const y = tail(tail(x)) + 1;
-    // `
-    // expect(() => typeCheck(parse(code1, 2))).toThrowError()
+    const code1 = `
+      const x = pair(3, pair(4, false));
+      const y = tail(tail(x)) + 1;
+    `
+    expect(() => typeCheck(parse(code1, 2))).toThrowError()
   })
 })
 
