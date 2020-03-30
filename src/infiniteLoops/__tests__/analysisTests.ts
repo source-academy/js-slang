@@ -1,9 +1,10 @@
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import * as es from 'estree'
-import { symbolicExecute } from '../symbolicExecutor'
+import { symbolicExecute, getFirstCall } from '../symbolicExecutor'
+import { serialize } from '../serializer'
 
-test('sym tree for fib function', () => {
+test('SymTree and TSet loops in fib function', () => {
   const code = `
         function fib(x) {
             if (x===0 || x===1) {
@@ -13,12 +14,18 @@ test('sym tree for fib function', () => {
             }
         }
     `
+  const env = mockContext().runtime.environments[0]
   const program = parse(code, mockContext())!
-  const symTree = symbolicExecute(
-    program.body[0] as es.FunctionDeclaration,
-    mockContext().runtime.environments[0]
-  )
+  const node = program.body[0] as es.FunctionDeclaration
+  const functionId = node.id as es.Identifier
+  const firstCall = getFirstCall(node)
+  const symTree = symbolicExecute(node, env)
+  const transition = serialize(firstCall, symTree)
+  const tset = new Map()
+  tset.set(functionId.name, transition)
+
   expect(symTree).toMatchSnapshot()
+  expect(tset).toMatchSnapshot()
 })
 
 test('sym tree with conditional expr', () => {

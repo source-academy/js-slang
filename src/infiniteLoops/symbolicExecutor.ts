@@ -9,7 +9,6 @@ function execBinarySymbol(
   flipped: boolean
 ): stype.SSymbol {
   type opFunction = (value: number, sym: stype.NumberSymbol, flipped: boolean) => stype.SSymbol
-  // TODO big todo: check the math of below (esp flipped, >= after flip etc)
   const operators: { [nodeType: string]: opFunction } = {
     '+'(value: number, sym: stype.NumberSymbol, flip: boolean) {
       return { ...sym, constant: sym.constant + value }
