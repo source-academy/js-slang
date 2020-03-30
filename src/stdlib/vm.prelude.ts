@@ -506,6 +506,18 @@ function _tail(xs) {
 // 90 placeholder
 function _stringify(x) {}
 
+// 91 custom
+// change number of args to varargs
+// replace NOTG opcode with PROMPT opcode
+function _prompt(args) {
+  if (array_length(args) === 0) {
+    const p = '';
+    return !p;
+  } else {
+    return !args[0];
+  }
+}
+
 // hack to make the call to Program easier, just replace the index 92 (number of primitive functions + 2)
 (() => 0)();
 `
@@ -605,7 +617,8 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stream_tail',
   'stream_to_list',
   'tail',
-  'stringify'
+  'stringify',
+  'prompt'
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -625,7 +638,8 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['math_min', OpCodes.MODG, OpCodes.MATH_MIN],
   ['math_hypot', OpCodes.NOTG, OpCodes.MATH_HYPOT],
   ['list'],
-  ['stream']
+  ['stream'],
+  ['prompt', OpCodes.NOTG, OpCodes.PROMPT]
 ]
 
 // primitives without a function should be manually implemented
@@ -685,7 +699,8 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['display', OpCodes.DISPLAY],
   ['draw_data', OpCodes.DRAW_DATA],
-  ['error', OpCodes.ERROR]
+  ['error', OpCodes.ERROR],
+  ['prompt', OpCodes.PROMPT]
 ]
 
 export const CONSTANT_PRIMITIVES: [string, any][] = [

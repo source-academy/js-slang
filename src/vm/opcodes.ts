@@ -136,6 +136,7 @@ export enum OpCodes {
   RUNTIME = 1047,
   STREAM = 1048,
   STRINGIFY = 1049,
+  PROMPT = 1050,
 
   // Source 3.4 Concurrency Opcodes
   EXECUTE = 2000,
