@@ -1,5 +1,5 @@
 /* tslint:disable:max-line-length */
-import { runInContext, resume, IOptions, Result } from '../index'
+import { runInContext, resume, IOptions, Result, parseError } from '../index'
 import { mockContext } from '../mocks/context'
 import { SuspendedNonDet, Finished } from '../types'
 
@@ -208,6 +208,91 @@ test('Require operator', async () => {
   )
 })
 
+/*  Deterministic block scoping tests taken from block-scoping.ts */
+
+test('Block statements', async () => {
+  await testDeterministicCode(
+    `
+    function test(){
+      const x = true;
+      {
+          const x = false;
+      }
+      return x;
+    }
+    test();
+    `,
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    function test(){
+      let x = true;
+      if(true) {
+          let x = false;
+      } else {
+          let x = false;
+      }
+      return x;
+    }
+    test();
+    `,
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    const v = f();
+    function f() {
+      return 1;
+    }
+    v;
+    `,
+    'Line -1: Name f declared later in current scope but not yet assigned',
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    const a = 1;
+    function f() {
+      display(a);
+      const a = 5;
+    }
+    f();
+    `,
+    'Line -1: Name a declared later in current scope but not yet assigned',
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    const a = 1;
+    {
+      a + a;
+      const a = 10;
+    }
+    `,
+    'Line -1: Name a declared later in current scope but not yet assigned',
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    let variable = 1;
+    function test(){
+      variable = 100;
+      let variable = true;
+      return variable;
+    }
+    test();
+    `,
+    'Line -1: Name variable not declared.',
+    true
+  )
+})
+
 // ---------------------------------- Helper functions  -------------------------------------------
 
 const nonDetTestOptions = {
@@ -215,25 +300,42 @@ const nonDetTestOptions = {
   executionMethod: 'interpreter'
 } as Partial<IOptions>
 
-export async function testDeterministicCode(code: string, expectedValue: any) {
+export async function testDeterministicCode(
+  code: string,
+  expectedValue: any,
+  hasError: boolean = false
+) {
   /* a deterministic program is equivalent to a non deterministic program
      that returns a single value */
-  await testNonDeterministicCode(code, [expectedValue])
+  await testNonDeterministicCode(code, [expectedValue], hasError)
 }
 
-export async function testNonDeterministicCode(code: string, expectedValues: any[]) {
+/* Assumes the error message (if any) is at the last index of expectedValues */
+export async function testNonDeterministicCode(
+  code: string,
+  expectedValues: any[],
+  hasError: boolean = false
+) {
   const context = makeNonDetContext()
   let result: Result = await runInContext(code, context, nonDetTestOptions)
-  const numOfRuns = expectedValues.length
+
+  const numOfRuns = hasError ? expectedValues.length - 1 : expectedValues.length
   for (let i = 0; i < numOfRuns; i++) {
     expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
     expect(result.status).toEqual('suspended-non-det')
+
     result = await resume(result)
   }
 
-  // all non deterministic programs have a final result whose value is undefined
-  expect(result.status).toEqual('finished')
-  expect((result as Finished).value).toEqual(undefined)
+  if (!hasError) {
+    // all non deterministic programs have a final result whose value is undefined
+    expect(result.status).toEqual('finished')
+    expect((result as Finished).value).toEqual(undefined)
+  } else {
+    expect(result.status).toEqual('error')
+    const message: string = parseError(context.errors)
+    expect(message).toEqual(expectedValues[expectedValues.length - 1])
+  }
 }
 
 function makeNonDetContext() {

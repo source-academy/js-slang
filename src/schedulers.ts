@@ -38,8 +38,8 @@ export class AsyncScheduler implements Scheduler {
 export class NonDetScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
-      const itValue = it.next()
       try {
+        const itValue = it.next()
         if (itValue.done) {
           resolve({ status: 'finished', context, value: itValue.value })
         } else {
