@@ -1,0 +1,257 @@
+% Created 2020-03-30 Mon 12:35
+% Intended LaTeX compiler: pdflatex
+\input{source_header.tex}
+\newcommand{\qed}{$\Box$}
+\newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
+\newcommand{\Rulee}[3]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}[#3]}
+\newcommand{\transition}{\rightrightarrows_s}
+\newcommand{\translate}{\twoheadrightarrow}
+\newcommand{\translateaux}{\hookrightarrow}
+\usepackage[strings]{underscore}
+\author{koo}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={koo},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.2.6)},
+ pdflang={English}}
+
+\renewcommand{\docheader}[3]{%
+
+  \thispagestyle{empty}
+
+\markright{SICP, JavaScript Adaptation, #2 #3, #1}
+\begin{center}
+  {\Large {\bf Specification of #2 #3}---#1 edition}\\[10mm]
+
+  {\large Jonathan Chan Wai Hon and Zhengqun Koo}\\[5mm]
+
+  {\large National University of Singapore \\
+          School of Computing}\\[10mm]
+
+  {\large \today}\\[10mm]
+\end{center}
+}
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2021}{Source}{\S 3 Concurrent}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{source_intro.tex}
+
+\section{Specification of Concurrent Virtual Machine}
+\label{sec:orgc6ebafc}
+Compared to Source \(\S 3\), this concurrent system has the following changes:
+\begin{itemize}
+\item The addition of three primitive concurrent functions.
+\end{itemize}
+For details, see Section ``Concurrency Support'' below.
+
+Please refer to Appendix A for explanations about compilation rules and VM transition rules.
+
+\subsection{Overview}
+\label{sec:org074ba1b}
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
+
+To comply with the textbook, the thread that calls \texttt{concurrent\_execute} also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no \texttt{join} primitive concurrent function.
+
+However, this design departs from the textbook, as the system does not execute parallel threads. Instead, it executes concurrent threads.
+
+\subsection{Concurrency Support}
+\label{sec:orgaa84fb2}
+The following concurrent functions are supported:
+\begin{itemize}
+\item \(\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}\): \(\textit{primitive}\), setup multiple threads for concurrent execution. For each nullary function \(\texttt{f}_\texttt{i}\) that returns \texttt{undefined}, setup a thread \(\texttt{t}_\texttt{i}\) that executes the code in the body of \(\texttt{f}_\texttt{i}\). The thread that called \texttt{concurrent\_execute} also executes concurrently with all \(\texttt{t}_\texttt{i}\). Returns \texttt{undefined}. This is an atomic operation.
+\item \texttt{test\_and\_set(a)}: \(\textit{primitive}\), assumes the head of array \texttt{a} is a boolean \(b\). Sets the head of \texttt{a} to \texttt{true}. Returns \(b\). This is an atomic operation.
+\item \texttt{clear(a)}: \(\textit{primitive}\), sets the head of array \texttt{a} to \texttt{false}. Returns \texttt{undefined}. This is an atomic operation.
+\end{itemize}
+
+\subsection{\texttt{EXECUTE} Rules}
+\label{sec:org9d11a1b}
+
+\subsubsection{Notes}
+\label{sec:org7100746}
+\begin{itemize}
+\item For simplicity, heap is not represented in the rules.
+\end{itemize}
+
+\subsubsection{Compiling}
+\label{sec:orga885586}
+$$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$
+Each of \(s_1. \cdots .s_n\) is a string of VM instruction that loads a closure onto the operand stack, and \(id\) is the opcode of \texttt{EXECUTE}.
+
+\subsubsection{Running}
+\label{sec:orgd7da3c4}
+There are additional structures in our VM:
+\begin{enumerate}
+\item \(\textit{tq}\), a register which is a queue of threads.
+\item \(\textit{to}\), a register initialized with \(0\), that indicates how many instructions are left for a thread to run.
+\end{enumerate}
+The state representing our VM will have two more corresponding structures:
+$$(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to})$$
+The initial state of our VM is a \(\textit{pc}\), which has empty \(\textit{os}\), \(\textit{env}\), \(\textit{rs}\), and \(\textit{tq}\), and zero timeout:
+$$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle, \langle \rangle, 0)$$
+
+Some notes on program execution:
+\begin{enumerate}
+\item When the program calls \texttt{concurrent\_execute}, it executes the rest of its code along with the concurrent threads, therefore the sequential program becomes a concurrent thread.
+\item Consider the case when a program does not use any primitive concurrent functions. To avoid distinguishing between the case when the program is sequential and the program is concurrent, therefore simplifying the rules, the sequential program must still execute like a concurrent thread. This means sequential execution may time out, and may be pushed and popped from the thread queue. However, implementations of the VM may, as an optimization, avoid pushing and popping while executing sequential code.
+\item As a result, all programs here are concurrent programs, even if they do not call \texttt{concurrent\_execute}.
+\item None of the programs here return a result, because concurrent programs should not return a result, since concurrent threads return nothing.
+\end{enumerate}
+
+Design choices:
+\begin{enumerate}
+\item Our concurrent system simulates a uniform distribution of execution traces, in the sense that running the same program infinitely many times should give a uniform distribution of program execution traces.
+This is in contrast to actual concurrent systems, where some traces occur with very low probability. There, the programmer may not even be aware that such low probability traces exist. So it is possible for the programmer to believe their program is correct, until they encounter a bug in one of the low probability execution traces.
+To avoid this, our concurrent system presents to the programmer each trace with equal probability. The programmer is then exposed more to low probability execution traces, and thinks more about low probability execution traces when reasoning about their code.
+We achieved this by inserting uniform randomness into the scheduling algorithm.
+\item With round-robin scheduling, where resource starvation is impossible, there are three possible ways of inserting uniform randomness, but some introduce starvation (in each way of inserting uniform randomness, we assume all other parts of the scheduling are non-random):
+\begin{description}
+\item[{Random removal from the thread queue}] \(\textit{allows starvation}\), since it is possible for some thread to never be removed, and thus never be scheduled.
+\item[{Random insertion into the thread queue}] \(\textit{allows starvation}\), since from all concurrent threads \(t_i\), whenever some concurrent thread \(t_n\) performs a nested call of \texttt{concurrent\_execute} that spawns children, it is possible for \(t_n\)'s children to be scheduled in front of all \(t_i\) in the thread queue. If this scenario repeats again for nested calls to \texttt{concurrent\_execute} in each of \(t_n\)'s children, then none of \(t_i\) will ever be scheduled.
+\item[{Random time quanta}] \(\textit{does not allow starvation}\), since no priority is assigned to concurrent threads, so the ordering of existing concurrent threads in the thread queue is respected.
+\end{description}
+Therefore, to avoid starvation, we choose to insert uniform randomness by allocating uniformly random time quanta to concurrent threads.
+This choice of inserting uniform randomness has the additional benefit of also being fair when the execution time of a single run goes to infinity: the expected amount of time allocated to each concurrent thread is equal.
+\end{enumerate}
+
+\paragraph{Thread timeout}
+\label{sec:org4c3611b}
+$$\Rule{}{
+\begin{aligned}
+&(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0)\\
+\transition &(\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}.(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1), c)
+\end{aligned}}$$
+If a thread times out and has not finished execution (has not executed the \texttt{RET} statement), then it is enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a random timeout value \(c\).
+
+The above rule assumes there is least one thread in the thread queue. To cover all cases, here is the rule for zero threads in the thread queue:
+$$\Rule{}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, 0) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, c)}$$
+
+\paragraph{Running thread}
+\label{sec:orga56b1bd}
+$$\Rule{s(\textit{pc}) \neq \texttt{RET} \qquad \textit{to} > 0}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{rs'}, \textit{tq}, \textit{to}-1)}$$
+where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements.
+
+\paragraph{Running thread, returning from function}
+\label{sec:org3b01708}
+$$\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} \neq \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os'}, \textit{pc'}, \textit{e'}, \textit{rs'}, \textit{tq}, \textit{to}-1)}$$
+where the primed values are just like normal VM code execution, and the timeout is initially nonzero, and then decrements. Note: the thread may execute the \texttt{RET} statement inside a function, and the thread does the normal thing of popping \(\textit{rs}\) and so on.
+
+\paragraph{Starting \texttt{EXECUTE}}
+\label{sec:org4122bdd}
+$$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{
+\begin{aligned}
+&((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})\\
+\transition &(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), \textit{to}-1)
+\end{aligned}}$$
+Closures representing threads \(t_i\) (two-tuples of \(\textit{pc}_i\) and \(\textit{e}_i\)) on the operand stack are converted into threads \(t_i\). Thread \(t_i\) is a four-tuple of each thread \(t_i\)'s own \(\textit{os}_i\), \(\textit{pc}_i\), \(\textit{e}_i\), and \(\textit{rs}_i\). Initially, thread \(t_i\) has empty \(\textit{os}_i\) and empty \(\textit{rs}_i\).
+The thread that calls \texttt{concurrent\_execute} also continues to execute concurrently with the other threads. This is shown by the \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\) being in the machine state after the transition arrow, and shown by the timeout decrementing.
+Note: we decrement timeout instead of setting a random timeout, since setting a random timeout makes starvation possible: the thread that only calls \texttt{concurrent\_execute}, and calls \texttt{concurrent\_execute} infinitely many times, will always be run.
+
+\paragraph{Returning from thread}
+\label{sec:org8d9b4a3}
+$$\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}$$
+If a thread executes the \texttt{RET} statement, and the runtime stack is empty, then the thread is not enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a random timeout value \(c\).
+
+The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
+
+\paragraph{Ending our VM}
+\label{sec:orgb1a275a}
+$$\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} = \langle \rangle \qquad \textit{tq} = \langle \rangle}{(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}) \transition (\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to}-1)}$$
+If a thread executes the \texttt{RET} statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, and our VM stops.
+
+\subsection{\texttt{TEST\_AND\_SET} and \texttt{CLEAR} Rules}
+\label{sec:org3306985}
+
+\subsubsection{Notes}
+\label{sec:orgcccda22}
+\begin{itemize}
+\item For simplicity, all registers and heap are not represented in the rules, except \(\textit{os}\) and \(\textit{pc}\).
+\item \texttt{test\_and\_set} is an atomic operation.
+\end{itemize}
+
+\subsubsection{Compiling}
+\label{sec:org3da3cbf}
+$$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where \(E\) is an array, whose head is a boolean, and \(id\) is the opcode of \texttt{TEST\_AND\_SET}.
+
+$$\Rule{E \translateaux s}{\texttt{clear}(E) \translateaux s.\texttt{CALLV id 1}}$$
+where \(E\) is an array, and \(id\) is the opcode of \texttt{CLEAR}.
+
+\subsubsection{Running}
+\label{sec:org8c0a658}
+$$\Rule{s(\textit{pc}) = \texttt{TEST_AND_SET}}{(a.\textit{os},\textit{pc}) \transition (b.\textit{os},\textit{pc} + 1)}$$
+where \(a\) is the address of an array stored on the heap. The head of this array is initially \(b\), where \(b\) is a boolean. After this rule executes, the head of this array is set to \(\textit{true}\).
+
+$$\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}$$
+where \(a\) is the address of an array stored on the heap. The head of this array is updated to \(\textit{false}\).
+
+\section{Appendix A}
+\label{sec:orgf83c34f}
+
+\subsection{Inference line}
+\label{sec:org548985d}
+The horizontal inference line plays the role of \(\texttt{if } \ldots \texttt{then } \ldots\) in our earlier presentations of the rules. In general, in an inductive definition of a set \(X\), an inference rule of the form
+$$\Rule{x_1 \quad \cdots \quad x_n}{x}$$
+stands for the rule \(\texttt{if } x_1 \ldots x_n\in X \texttt{, then }x \in X\).
+
+\subsection{Compilation rules}
+\label{sec:orgf1a6b5a}
+The translation from SourceA to SVML is accomplished by a function
+$$\translate: \textrm{SourceA} \rightarrow \textrm{SVML}$$
+which uses the auxilary translation function \(\translateaux\).
+
+The auxiliary translation function \(\translateaux\) is defined by many rules, some of which we have already covered in this document: the rules for \texttt{concurrent\_execute}, \texttt{test\_and\_set}, and \texttt{clear}.
+The other rules for the auxiliary translation function \(\translateaux\) will not be covered in this document. Instead, please refer to the document \href{svml-spec.pdf}{Source Virtual Machine Language}.
+
+\subsection{VM transition rules}
+\label{sec:org8cd92d9}
+The machine that we will use to execute SVML programs is a variation of a \emph{push-down automaton}. Let us fix a specific program \(s\). The machine \(M_s\) that executes \(s\) is given as an automaton that transforms a given machine state to another state. The machine state is represented by so-called registers. In the case of SVML, we need two registers, called \emph{program counter}---denoted by the symbol \textit{pc}---and \emph{operand stack} ---denoted by the symbol \textit{os}.
+
+The program counter is used to point to a specific instruction in \(s\), starting from position 0.
+For example, if \(\textit{pc} = 2\), and \(s\) is the program
+$$\begin{aligned}
+\lbrack&\texttt{LDCN 1},\\
+&\texttt{LDCN 2},\\
+&\texttt{PLUS},\\
+&\texttt{LDCN 3},\\
+&\texttt{TIMES},\\
+&\texttt{DONE}\\
+\rbrack
+\end{aligned}$$
+, then \(s(\textit{pc}) = \texttt{PLUS}\).
+
+\paragraph{Operand Stack}
+The operand stack is a sequence of values from \(\textbf{Num}+\textbf{Bool}+\textbf{Fun}\).
+
+\paragraph{Compilation of Names}
+Similar to the approach of the previous chapter, we implement names by environments. To this aim, we add a register \(e\) to the machine state. Register \(e\) represents the environment with respect to which the names are executed. Environments map names to denotable values. Thus an environment \(e\), in which \(x\) refers to the number \(1\) can be accessed by applying \(e\) to \(x\), \(e(\texttt{x}) = 1\).
+
+\paragraph{Execution of Function Application}
+According to the translation of function application, the instruction \(\texttt{CALL}\ n\) will find its arguments in reverse order on the operand stack, followed by the operator, which---according the the previous paragraph---is represented by a closure. To implement static scoping, the machine must take the environment of the closure, and extend it by a binding of the formal parameters to the actual arguments. Thus, the following rule is our first attempt to describe the execution of \(\texttt{CALL } n\).
+
+$$\Rule{s(\textit{pc}) = \texttt{CALL } n}{
+\begin{aligned}
+&(v_n.\ldots v_1.(\textit{address},x_1\cdots x_n,e').\textit{os},\textit{pc},e)\\
+\transition &(\textit{os},\textit{address},e'[x_1 \leftarrow v_1]\cdots[x_n \leftarrow v_n])
+\end{aligned}}$$
+
+There is, however, a major difficulty with this rule. What should happen when a function returns? In other words, what should the machine do when it encounters the instruction \(\texttt{RTN}\) after executing the function body? In particular, what should be the program counter, operand stack and environment after returning from a function? Of course, the program counter, operand stack and environment must be restored to their state before the function call.
+
+In order to keep program execution in a simple loop, we need to make this return information explicit. Since functions can call other functions before returning, the natural data structure for this return information is a stack. We call this stack the \emph{runtime stack}. The runtime stack, denoted by \(\textit{rs}\), will be the forth (and last) register that we add to our machine state. Each entry in the runtime stack contains the \(\textit{address}\) of the instruction to return to, and the operand stack \(\textit{os}\) and environment \(e\) to be reinstalled after the function call. Such a triplet \((\textit{address},\textit{os},e)\) is called \emph{runtime stack frame}, or simply \emph{stack frame}.
+
+Function application pushes a new stack frame on the runtime stack, in addition to the actions described in the first attempt above. Thus, the actual rule for \(\texttt{CALL}\ n\) is as follows.
+
+$$\Rule{s(\textit{pc}) = \texttt{CALL } n}{
+\begin{aligned}
+&(v_n.\ldots v_1.(\textit{address},x_1\cdots x_n,e').\textit{os},\textit{pc},e,\textit{rs})\\
+\transition &(\langle \rangle,\textit{address},e'[x_1 \leftarrow v_1]\cdots[x_n \leftarrow v_n],(\textit{pc}+1,\textit{os},e).\textit{rs})
+\end{aligned}}$$
+
+Now, we can describe the behavior of the machine \(M_s\) as a transition function \(\transition\), which transforms machine states to machine states, and which is defined by many rules, some of which we have already covered in this document: the rules for \texttt{EXECUTE}, \texttt{TEST\_AND\_SET}, and \texttt{CLEAR}.
+The other rules for the transition function \(\transition\) will not be covered in this document. Instead, please refer to the document \href{svml-is.pdf}{Source VM Instruction Set}.
+\end{document}
