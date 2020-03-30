@@ -40,11 +40,11 @@ export class NonDetScheduler implements Scheduler {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
-      console.log("it value = ",itValue.value)
+      console.log('it value = ', itValue.value)
       try {
         while (!itValue.done) {
           itValue = it.next()
-          console.log("it value = ",itValue.value)
+          console.log('it value = ', itValue.value)
 
           if (context.runtime.break) {
             saveState(context, it, this)
@@ -52,6 +52,7 @@ export class NonDetScheduler implements Scheduler {
           }
         }
       } catch (e) {
+        console.log("error in non det scheduler ",e)
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false

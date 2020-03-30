@@ -202,9 +202,16 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    args.push(yield* evaluateNonDet(arg, context))
+    const argGen = evaluateNonDet(arg, context)
+    let argNext = argGen.next()
+    while (!argNext.done) {
+      const argValue = argNext.value
+      args.push(argValue)
+      argNext = argGen.next()
+    }
+
   }
-  return args
+  yield args
 }
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
@@ -221,14 +228,14 @@ function* reduceIf(
 ): IterableIterator<es.Node> {
   const testGen = evaluateNonDet(node.test, context)
   let testNext = testGen.next()
-  while (!testNext.done){
+  while (!testNext.done) {
     const test = testNext.value
     const error = rttc.checkIfStatement(node, test)
     if (error) {
       return handleRuntimeError(context, error)
     }
     yield test ? node.consequent : node.alternate!
-    testNext=testGen.next()
+    testNext = testGen.next()
   }
 }
 
@@ -301,14 +308,30 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
-    const callee = yield* evaluateNonDet(node.callee, context)
-    const args = yield* getArgs(context, node)
-    let thisContext
-    if (node.callee.type === 'MemberExpression') {
-      thisContext = yield* evaluateNonDet(node.callee.object, context)
+    const calleeGen = evaluateNonDet(node.callee, context)
+    let calleeNext = calleeGen.next()
+    while (!calleeNext.done) {
+      const argsGen = getArgs(context, node)
+      let argsNext = argsGen.next()
+      const thisContext = undefined
+      const callee = calleeNext.value
+      while (!argsNext.done) {
+        const args = argsNext.value
+        yield* apply(context, callee, args, node, thisContext)
+        argsNext = argsGen.next()
+      }
+      calleeNext = calleeGen.next()
     }
-    const result = yield* apply(context, callee, args, node, thisContext)
-    return result
+
+    return
+
+    // const args = yield* getArgs(context, node)
+    //
+    // if (node.callee.type === 'MemberExpression') {
+    //   thisContext = yield* evaluateNonDet(node.callee.object, context)
+    // }
+    // const result =
+    // return result
   },
 
   NewExpression: function*(node: es.NewExpression, context: Context) {
@@ -550,13 +573,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression') {
-      const callee = yield* evaluateNonDet(returnExpression.callee, context)
-      const args = yield* getArgs(context, returnExpression)
-      return new TailCallReturnValue(callee, args, returnExpression)
-    } else {
+    // if (returnExpression.type === 'CallExpression') {
+    //   const callee = yield* evaluateNonDet(returnExpression.callee, context)
+    //   const args = yield* getArgs(context, returnExpression)
+    //   return new TailCallReturnValue(callee, args, returnExpression)
+    // } else {
       return new ReturnValue(yield* evaluateNonDet(returnExpression, context))
-    }
+    // }
   },
 
   WhileStatement: function*(node: es.WhileStatement, context: Context) {

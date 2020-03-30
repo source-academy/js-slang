@@ -248,7 +248,7 @@ export async function runInContext(
       )
     }
   } else {
-    if(theOptions.scheduler!=='nondet'){
+    if (theOptions.scheduler !== 'nondet') {
       const it = evaluate(program, context)
       let scheduler: Scheduler
       if (theOptions.scheduler === 'async') {
@@ -257,11 +257,10 @@ export async function runInContext(
         scheduler = new PreemptiveScheduler(theOptions.steps)
       }
       return scheduler.run(it, context)
-    }else{
+    } else {
       const it = evaluateNonDet(program, context)
-      return new NonDetScheduler().run(it,context)
+      return new NonDetScheduler().run(it, context)
     }
-
   }
 }
 
