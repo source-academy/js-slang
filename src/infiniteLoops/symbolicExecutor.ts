@@ -1,5 +1,6 @@
 import * as es from 'estree'
 import * as stype from './symTypes'
+import { Environment } from '../types'
 
 function execBinarySymbol(
   node1: stype.SymbolicExecutable,
@@ -127,30 +128,54 @@ export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol
   return stype.makeFunctionSymbol(id.name, args)
 }
 
-// TODO refactor?
-export function symbolicExecute(
-  node: stype.SymbolicExecutable,
-  store: Map<string, stype.SSymbol>[]
-): stype.SSymbol {
-  // TODO maybe switch to switch instead of if
-  if (stype.isSymbol(node)) {
-    return node as stype.SSymbol
-  } else if (node.type === 'Literal') {
+function makeStore(
+  firstCall: stype.FunctionSymbol,
+  env: Environment
+): Map<string, stype.SSymbol>[] {
+  const store = [new Map()]
+
+  let environment: Environment | null = env
+  while (environment) {
+    const frame = environment.head
+    const descriptors = Object.getOwnPropertyDescriptors(frame)
+    for (const v in frame) {
+      if (frame.hasOwnProperty(v) && typeof frame[v] === 'number' && !descriptors[v].writable) {
+        store[0].set(v, stype.makeNumberSymbol(v, frame[v]))
+      }
+    }
+    environment = (environment as Environment).tail
+  }
+
+  for (const v of firstCall.args) {
+    if (v.type === 'NumberSymbol') {
+      store[0].set(v.name, v)
+    }
+  }
+  return store
+}
+
+type Executor = (node: es.Node, store: Map<string, stype.SSymbol>[]) => stype.SSymbol
+
+export const nodeToSym: { [nodeType: string]: Executor } = {
+  'Literal'(node: es.Literal, store: Map<string, stype.SSymbol>[]) {
     if (typeof node.value === 'number' || typeof node.value === 'boolean') {
       return stype.makeLiteralValueSymbol(node.value)
     }
-  } else if (node.type === 'Identifier') {
+    return stype.skipSymbol
+  },
+  'Identifier'(node: es.Identifier, store: Map<string, stype.SSymbol>[]) {
     const checkStore = getFromStore(node.name, store)
     if (checkStore) {
       return checkStore
-    } 
+    }
     return stype.skipSymbol
-  } else if (node.type === 'VariableDeclaration') {
+  },
+  'VariableDeclaration'(node: es.VariableDeclaration, store: Map<string, stype.SSymbol>[]) {
     const declaration = node.declarations[0]
     const rhs = declaration.init
     const id = declaration.id as es.Identifier
     if (rhs) {
-      const result = symbolicExecute(rhs, store)
+      const result = symEx(rhs, store)
       if (stype.isTerminal(result)) {
         store[0][id.name] = result
         return stype.unusedSymbol
@@ -160,24 +185,30 @@ export function symbolicExecute(
       }
     }
     return stype.unusedSymbol
-  } else if (node.type === 'ExpressionStatement') {
-    return symbolicExecute(node.expression, store)
-  } else if (node.type === 'IfStatement' || node.type === 'ConditionalExpression') {
-    const test = symbolicExecute(node.test, store)
-    const consequent = symbolicExecute(node.consequent, store)
-    const alternate = node.alternate
-      ? symbolicExecute(node.alternate, store)
-      : stype.unusedSymbol
+  },
+  'ExpressionStatement'(node: es.ExpressionStatement, store: Map<string, stype.SSymbol>[]) {
+    return symEx(node.expression, store)
+  },
+  'IfStatement'(node: es.IfStatement | es.ConditionalExpression, store: Map<string, stype.SSymbol>[]) {
+    const test = symEx(node.test, store)
+    const consequent = symEx(node.consequent, store)
+    const alternate = node.alternate ? symEx(node.alternate, store) : stype.unusedSymbol
     return stype.makeBranchSymbol(test, consequent, alternate)
-  } else if (node.type === 'BlockStatement') {
+  },
+  'ConditionalExpression'(node: es.ConditionalExpression, store: Map<string, stype.SSymbol>[]) {
+    return nodeToSym['IfStatement'](node,store)
+  },
+  'BlockStatement'(node: es.BlockStatement, store: Map<string, stype.SSymbol>[]) {
     const newContext = [new Map()].concat(store)
-    return stype.makeSequenceSymbol(node.body.map(x => symbolicExecute(x, newContext)))
-  } else if (node.type === 'BinaryExpression') {
-    const lhs = symbolicExecute(node.left, store)
-    const rhs = symbolicExecute(node.right, store)
+    return stype.makeSequenceSymbol(node.body.map(x => symEx(x, newContext)))
+  },
+  'BinaryExpression'(node: es.BinaryExpression, store: Map<string, stype.SSymbol>[]) {
+    const lhs = symEx(node.left, store)
+    const rhs = symEx(node.right, store)
     return execBinarySymbol(lhs, rhs, node.operator, false)
-  } else if (node.type === 'UnaryExpression') {
-    const arg = symbolicExecute(node.argument, store)
+  },
+  'UnaryExpression'(node: es.UnaryExpression, store: Map<string, stype.SSymbol>[]) {
+    const arg = symEx(node.argument, store)
     if (node.operator === '!') {
       if (stype.isBooleanSymbol(arg)) {
         return stype.negateBooleanSymbol(arg)
@@ -192,25 +223,64 @@ export function symbolicExecute(
       }
     }
     return stype.skipSymbol
-  } else if (node.type === 'LogicalExpression') {
-    const lhs = symbolicExecute(node.left, store)
-    const rhs = symbolicExecute(node.right, store)
+  },
+  'LogicalExpression'(node: es.LogicalExpression, store: Map<string, stype.SSymbol>[]) {
+    const lhs = symEx(node.left, store)
+    const rhs = symEx(node.right, store)
     return execLogicalSymbol(lhs, rhs, node.operator)
-  } else if (node.type === 'CallExpression') {
+  },
+  'CallExpression'(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
     if (node.callee.type === 'Identifier') {
       return stype.makeFunctionSymbol(
         node.callee.name,
-        node.arguments.map(x => symbolicExecute(x, store))
+        node.arguments.map(x => symEx(x, store))
       )
     }
-  } else if (node.type === 'ReturnStatement') {
+    return stype.skipSymbol
+  },
+  'ReturnStatement'(node: es.ReturnStatement, store: Map<string, stype.SSymbol>[]) {
     const arg = node.argument
     if (arg === undefined || arg === null || arg.type === 'Identifier' || arg.type === 'Literal') {
       return stype.terminateSymbol
     } else {
-      const value = symbolicExecute(arg, store) // TODO check: skip is term?
-      return value.type === 'SkipSymbol' || value.type === 'BranchSymbol' || stype.isTerminal(value) ? stype.terminateSymbol : value
+      const value = symEx(arg, store) // TODO check: skip is term?
+      if (value.type === 'BranchSymbol') {
+        return returnConditional(value)
+      }
+      return value.type === 'SkipSymbol' || stype.isTerminal(value)
+        ? stype.terminateSymbol
+        : value
     }
   }
+}
+
+function returnConditional(sym: stype.BranchSymbol) : stype.SSymbol {
+  if(sym.consequent.type === 'BranchSymbol'){
+    const consequent = returnConditional(sym.consequent)
+    return returnConditional({...sym, consequent: consequent})
+  }
+  if(sym.alternate.type === 'BranchSymbol'){
+    const alternate = returnConditional(sym.alternate)
+    return returnConditional({...sym, consequent: alternate})
+  }
+  const consequent = stype.isTerminal(sym.consequent)? stype.terminateSymbol: sym.consequent
+  const alternate = stype.isTerminal(sym.alternate)? stype.terminateSymbol: sym.alternate
+  return stype.makeBranchSymbol(sym.test, consequent, alternate)
+}
+
+function symEx(node: stype.SymbolicExecutable, store: Map<string, stype.SSymbol>[]): stype.SSymbol {
+  if (stype.isSymbol(node)) {
+    return node as stype.SSymbol
+  }
+  const handler = nodeToSym[node.type]
+  if (handler) {
+    return handler(node, store)
+  }
   return stype.skipSymbol
+}
+
+export function symbolicExecute(node: es.FunctionDeclaration, env: Environment) {
+  const firstCall = getFirstCall(node)
+  const store = makeStore(firstCall, env)
+  return symEx(node.body, store)
 }

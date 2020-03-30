@@ -70,7 +70,7 @@ export interface FunctionSymbol {
 export function makeFunctionSymbol(name: string, args: SSymbol[]) {
   return { type: 'FunctionSymbol', name, args } as FunctionSymbol
 }
-interface BranchSymbol {
+export interface BranchSymbol {
   type: 'BranchSymbol'
   test: SSymbol
   consequent: SSymbol
@@ -79,7 +79,7 @@ interface BranchSymbol {
 export function makeBranchSymbol(test: SSymbol, consequent: SSymbol, alternate: SSymbol) {
   return { type: 'BranchSymbol', test, consequent, alternate } as BranchSymbol
 }
-interface SequenceSymbol {
+export interface SequenceSymbol {
   type: 'SequenceSymbol'
   symbols: SSymbol[]
 }
