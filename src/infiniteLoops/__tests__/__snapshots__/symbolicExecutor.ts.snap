@@ -1,5 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`nested conditional return 1`] = `
+Object {
+  "symbols": Array [
+    Object {
+      "alternate": Object {
+        "args": Array [
+          Object {
+            "type": "LiteralValueSymbol",
+            "value": 4,
+          },
+        ],
+        "name": "f",
+        "type": "FunctionSymbol",
+      },
+      "consequent": Object {
+        "alternate": Object {
+          "alternate": Object {
+            "type": "TerminateSymbol",
+          },
+          "consequent": Object {
+            "args": Array [
+              Object {
+                "type": "LiteralValueSymbol",
+                "value": 2,
+              },
+            ],
+            "name": "g",
+            "type": "FunctionSymbol",
+          },
+          "test": Object {
+            "constant": 2,
+            "direction": -1,
+            "name": "x",
+            "type": "InequalitySymbol",
+          },
+          "type": "BranchSymbol",
+        },
+        "consequent": Object {
+          "type": "TerminateSymbol",
+        },
+        "test": Object {
+          "constant": 5,
+          "direction": 1,
+          "name": "x",
+          "type": "InequalitySymbol",
+        },
+        "type": "BranchSymbol",
+      },
+      "test": Object {
+        "constant": 0,
+        "direction": 0,
+        "name": "x",
+        "type": "InequalitySymbol",
+      },
+      "type": "BranchSymbol",
+    },
+  ],
+  "type": "SequenceSymbol",
+}
+`;
+
 exports[`sym tree for fib function 1`] = `
 Object {
   "symbols": Array [

@@ -5,7 +5,6 @@ import { getFirstCall, symbolicExecute } from './symbolicExecutor'
 import { serialize } from './serializer'
 import * as errors from '../errors/errors'
 
-
 export function infiniteLoopFunctionAnalysis(
   node: es.FunctionDeclaration,
   infiniteLoopDetection: InfiniteLoopData,

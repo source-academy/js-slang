@@ -157,20 +157,20 @@ function makeStore(
 type Executor = (node: es.Node, store: Map<string, stype.SSymbol>[]) => stype.SSymbol
 
 export const nodeToSym: { [nodeType: string]: Executor } = {
-  'Literal'(node: es.Literal, store: Map<string, stype.SSymbol>[]) {
+  Literal(node: es.Literal, store: Map<string, stype.SSymbol>[]) {
     if (typeof node.value === 'number' || typeof node.value === 'boolean') {
       return stype.makeLiteralValueSymbol(node.value)
     }
     return stype.skipSymbol
   },
-  'Identifier'(node: es.Identifier, store: Map<string, stype.SSymbol>[]) {
+  Identifier(node: es.Identifier, store: Map<string, stype.SSymbol>[]) {
     const checkStore = getFromStore(node.name, store)
     if (checkStore) {
       return checkStore
     }
     return stype.skipSymbol
   },
-  'VariableDeclaration'(node: es.VariableDeclaration, store: Map<string, stype.SSymbol>[]) {
+  VariableDeclaration(node: es.VariableDeclaration, store: Map<string, stype.SSymbol>[]) {
     const declaration = node.declarations[0]
     const rhs = declaration.init
     const id = declaration.id as es.Identifier
@@ -186,28 +186,31 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     }
     return stype.unusedSymbol
   },
-  'ExpressionStatement'(node: es.ExpressionStatement, store: Map<string, stype.SSymbol>[]) {
+  ExpressionStatement(node: es.ExpressionStatement, store: Map<string, stype.SSymbol>[]) {
     return symEx(node.expression, store)
   },
-  'IfStatement'(node: es.IfStatement | es.ConditionalExpression, store: Map<string, stype.SSymbol>[]) {
+  IfStatement(
+    node: es.IfStatement | es.ConditionalExpression,
+    store: Map<string, stype.SSymbol>[]
+  ) {
     const test = symEx(node.test, store)
     const consequent = symEx(node.consequent, store)
     const alternate = node.alternate ? symEx(node.alternate, store) : stype.unusedSymbol
     return stype.makeBranchSymbol(test, consequent, alternate)
   },
-  'ConditionalExpression'(node: es.ConditionalExpression, store: Map<string, stype.SSymbol>[]) {
-    return nodeToSym['IfStatement'](node,store)
+  ConditionalExpression(node: es.ConditionalExpression, store: Map<string, stype.SSymbol>[]) {
+    return nodeToSym.IfStatement(node, store)
   },
-  'BlockStatement'(node: es.BlockStatement, store: Map<string, stype.SSymbol>[]) {
+  BlockStatement(node: es.BlockStatement, store: Map<string, stype.SSymbol>[]) {
     const newContext = [new Map()].concat(store)
     return stype.makeSequenceSymbol(node.body.map(x => symEx(x, newContext)))
   },
-  'BinaryExpression'(node: es.BinaryExpression, store: Map<string, stype.SSymbol>[]) {
+  BinaryExpression(node: es.BinaryExpression, store: Map<string, stype.SSymbol>[]) {
     const lhs = symEx(node.left, store)
     const rhs = symEx(node.right, store)
     return execBinarySymbol(lhs, rhs, node.operator, false)
   },
-  'UnaryExpression'(node: es.UnaryExpression, store: Map<string, stype.SSymbol>[]) {
+  UnaryExpression(node: es.UnaryExpression, store: Map<string, stype.SSymbol>[]) {
     const arg = symEx(node.argument, store)
     if (node.operator === '!') {
       if (stype.isBooleanSymbol(arg)) {
@@ -224,12 +227,12 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     }
     return stype.skipSymbol
   },
-  'LogicalExpression'(node: es.LogicalExpression, store: Map<string, stype.SSymbol>[]) {
+  LogicalExpression(node: es.LogicalExpression, store: Map<string, stype.SSymbol>[]) {
     const lhs = symEx(node.left, store)
     const rhs = symEx(node.right, store)
     return execLogicalSymbol(lhs, rhs, node.operator)
   },
-  'CallExpression'(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
+  CallExpression(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
     if (node.callee.type === 'Identifier') {
       return stype.makeFunctionSymbol(
         node.callee.name,
@@ -238,7 +241,7 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     }
     return stype.skipSymbol
   },
-  'ReturnStatement'(node: es.ReturnStatement, store: Map<string, stype.SSymbol>[]) {
+  ReturnStatement(node: es.ReturnStatement, store: Map<string, stype.SSymbol>[]) {
     const arg = node.argument
     if (arg === undefined || arg === null || arg.type === 'Identifier' || arg.type === 'Literal') {
       return stype.terminateSymbol
@@ -247,24 +250,21 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
       if (value.type === 'BranchSymbol') {
         return returnConditional(value)
       }
-      return value.type === 'SkipSymbol' || stype.isTerminal(value)
-        ? stype.terminateSymbol
-        : value
+      return value.type === 'SkipSymbol' || stype.isTerminal(value) ? stype.terminateSymbol : value
     }
   }
 }
 
-function returnConditional(sym: stype.BranchSymbol) : stype.SSymbol {
-  if(sym.consequent.type === 'BranchSymbol'){
-    const consequent = returnConditional(sym.consequent)
-    return returnConditional({...sym, consequent: consequent})
+function returnConditional(sym: stype.BranchSymbol): stype.SSymbol {
+  let consequent = stype.isTerminal(sym.consequent) ? stype.terminateSymbol : sym.consequent
+  let alternate = stype.isTerminal(sym.alternate) ? stype.terminateSymbol : sym.alternate
+  if (sym.consequent.type === 'BranchSymbol') {
+    consequent = returnConditional(sym.consequent)
   }
-  if(sym.alternate.type === 'BranchSymbol'){
-    const alternate = returnConditional(sym.alternate)
-    return returnConditional({...sym, consequent: alternate})
+  if (sym.alternate.type === 'BranchSymbol') {
+    alternate = returnConditional(sym.alternate)
   }
-  const consequent = stype.isTerminal(sym.consequent)? stype.terminateSymbol: sym.consequent
-  const alternate = stype.isTerminal(sym.alternate)? stype.terminateSymbol: sym.alternate
+  
   return stype.makeBranchSymbol(sym.test, consequent, alternate)
 }
 

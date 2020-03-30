@@ -128,7 +128,7 @@ export function isTerminal(node: SymbolicExecutable): boolean {
   if (node.type === 'BranchSymbol') {
     return isTerminal(node.consequent) && isTerminal(node.alternate)
   } else if (node.type === 'SequenceSymbol') {
-    return node.symbols.every(isTerminal) // check
+    return node.symbols.every(isTerminal)
   }
   return node.type !== 'FunctionSymbol' && node.type !== 'SkipSymbol'
 }
