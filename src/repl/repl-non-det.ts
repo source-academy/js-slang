@@ -1,9 +1,10 @@
 import fs = require('fs')
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
-import util = require('util')
 import { createContext, IOptions, parseError, runInContext, resume, Result } from '../index'
 import { SuspendedNonDet, Context } from '../types'
 import { CUT, TRY_AGAIN } from '../constants'
+import { inspect } from 'util'
+import Closure from '../interpreter/closure'
 
 // stores the result obtained when execution is suspended
 let previousResult: Result
@@ -76,11 +77,14 @@ function _startRepl(chapter = 1, useSubst: boolean, prelude = '') {
           },
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash
-          writer: output =>
-            util.inspect(output, {
-              depth: 1000,
-              colors: true
-            })
+          writer: output => {
+            return output instanceof Closure || typeof output === 'function'
+              ? output.toString()
+              : inspect(output, {
+                  depth: 1000,
+                  colors: true
+                })
+          }
         }
       )
     } else {
