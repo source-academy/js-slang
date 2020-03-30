@@ -36,14 +36,17 @@ export interface IOptions {
   executionMethod: ExecutionMethod
   originalMaxExecTime: number
   useSubst: boolean
+  useLazyEval: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  executionMethod: 'auto',
+  // executionMethod: 'auto',
+  executionMethod: 'interpreter', // TODO: Add a command line option for this
   originalMaxExecTime: 1000,
-  useSubst: false
+  useSubst: false,
+  useLazyEval: true // TODO: Add a command line option for this
 }
 
 // needed to work on browsers
