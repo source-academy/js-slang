@@ -9,11 +9,9 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { parse_and_compile, run_vm, stringify_compiled } from './stdlib/vm'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-import { Program } from './vm/svml-compiler'
 
 const createEmptyRuntime = () => ({
   break: false,
@@ -173,18 +171,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream)
     defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
-
-    // VM library
-    defineBuiltin(context, 'compile(program_string)', (str: string) =>
-      parse_and_compile(str, context, false)
-    )
-    defineBuiltin(context, 'prelude_compile(program_string)', (str: string) =>
-      parse_and_compile(str, context, true)
-    )
-    defineBuiltin(context, 'pretty_print_compiled(machine_code)', (code: Program) =>
-      display('', stringify_compiled(code))
-    )
-    defineBuiltin(context, 'run_vm(machine_code)', (code: Program) => run_vm(code, context))
   }
 
   if (context.chapter >= 4) {

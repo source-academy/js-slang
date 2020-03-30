@@ -9,7 +9,7 @@ import { stringifyProgram } from './util'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
-  sourceChapter: 1 | 2 | 3
+  sourceChapter: 1 | 2 | 3 | 3.4
   inputFilename: string
   outputFilename: string | null
 }
@@ -59,11 +59,11 @@ function parseOptions(): CliOptions | null {
           break
         case '--chapter':
         case '-c':
-          const argInt = parseInt(argument, 10)
-          if (argInt === 1 || argInt === 2 || argInt === 3) {
-            ret.sourceChapter = argInt
+          const argFloat = parseFloat(argument)
+          if (argFloat === 1 || argFloat === 2 || argFloat === 3 || argFloat === 3.4) {
+            ret.sourceChapter = argFloat
           } else {
-            console.error('Invalid Source chapter: %d', argInt)
+            console.error('Invalid Source chapter: %d', argFloat)
             error = true
           }
           args.splice(0, argShiftNumber)
@@ -114,7 +114,7 @@ Options:
   debug: Compile and pretty-print the compiler output. For debugging the compiler.
   ast: Parse and pretty-print the AST. For debugging the parser.
 -c, --chapter <chapter>: [3]
-  1, 2, or 3. Sets the Source chapter.
+  1, 2, 3, or 3.4 (Source 3 Concurrent). Sets the Source chapter.
 -o, --out <filename>: [see below]
   Sets the output filename.
   Defaults to the input filename, minus any '.js' extension, plus '.svm'.
@@ -162,7 +162,8 @@ Options:
     return
   }
 
-  const compiled = compileToIns(program)
+  // the current compiler does not differentiate between chapters 1,2 or 3
+  const compiled = compileToIns(program, options.sourceChapter)
 
   if (options.compileTo === 'debug') {
     console.log(stringifyProgram(compiled).trimRight())
