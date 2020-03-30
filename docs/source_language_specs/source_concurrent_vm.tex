@@ -1,4 +1,4 @@
-% Created 2020-03-30 Mon 20:12
+% Created 2020-03-30 Mon 20:49
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -8,7 +8,7 @@
 \newcommand{\translate}{\twoheadrightarrow}
 \newcommand{\translateaux}{\hookrightarrow}
 \usepackage[strings]{underscore}
-\usepackage{appendix}
+\usepackage[title]{appendix}
 \author{koo}
 \date{\today}
 \title{}
@@ -51,7 +51,7 @@ Compared to Source \(\S 3\), this concurrent system has the following changes:
 \end{itemize}
 For details, see Section ``Concurrency Support'' below.
 
-Please refer to Appendix A for explanations about compilation rules and VM transition rules.
+Please refer to \hyperref[sec:org10e3758]{Appendix A} for explanations about compilation rules and VM transition rules.
 
 \subsection{Overview}
 \label{sec:org074ba1b}
@@ -192,17 +192,17 @@ $$\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition
 where \(a\) is the address of an array stored on the heap. The head of this array is updated to \(\textit{false}\).
 
 \begin{appendices}
-\section{Appendix A}
-\label{sec:orgf83c34f}
+\section{Explanations on Inference Rules}
+\label{sec:org10e3758}
 
-\subsection{Inference line}
-\label{sec:org548985d}
+\subsection{Inference Line}
+\label{sec:orgce78d8d}
 The horizontal inference line plays the role of \(\texttt{if } \ldots \texttt{then } \ldots\) in our earlier presentations of the rules. In general, in an inductive definition of a set \(X\), an inference rule of the form
 $$\Rule{x_1 \quad \cdots \quad x_n}{x}$$
 stands for the rule \(\texttt{if } x_1 \ldots x_n\in X \texttt{, then }x \in X\).
 
-\subsection{Compilation rules}
-\label{sec:orgf1a6b5a}
+\subsection{Compilation Rules}
+\label{sec:orgcf76b4e}
 The translation from SourceA to SVML is accomplished by a function
 $$\translate: \textrm{SourceA} \rightarrow \textrm{SVML}$$
 which uses the auxilary translation function \(\translateaux\).
@@ -210,8 +210,8 @@ which uses the auxilary translation function \(\translateaux\).
 The auxiliary translation function \(\translateaux\) is defined by many rules, some of which we have already covered in this document: the rules for \texttt{concurrent\_execute}, \texttt{test\_and\_set}, and \texttt{clear}.
 The other rules for the auxiliary translation function \(\translateaux\) will not be covered in this document. Instead, please refer to the document \href{svml-spec.pdf}{Source Virtual Machine Language}.
 
-\subsection{VM transition rules}
-\label{sec:org8cd92d9}
+\subsection{VM Transition Rules}
+\label{sec:orgeeb069e}
 The machine that we will use to execute SVML programs is a variation of a \emph{push-down automaton}. Let us fix a specific program \(s\). The machine \(M_s\) that executes \(s\) is given as an automaton that transforms a given machine state to another state. The machine state is represented by so-called registers. In the case of SVML, we need two registers, called \emph{program counter}---denoted by the symbol \textit{pc}---and \emph{operand stack} ---denoted by the symbol \textit{os}.
 
 The program counter is used to point to a specific instruction in \(s\), starting from position 0.
