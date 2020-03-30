@@ -124,17 +124,16 @@ test('testing arithmetic', () => {
 })
 
 test('nested conditional return', () => {
-    const code = `
+  const code = `
           function h(x){
               return x===0 ?
                         x>5 ? 1 : x<2? g(2) : 3 : f(4);
           }
       `
-    const program = parse(code, mockContext())!
-    const symTree = symbolicExecute(
-      program.body[0] as es.FunctionDeclaration,
-      mockContext().runtime.environments[0]
-    )
-    expect(symTree).toMatchSnapshot()
-  })
-  
+  const program = parse(code, mockContext())!
+  const symTree = symbolicExecute(
+    program.body[0] as es.FunctionDeclaration,
+    mockContext().runtime.environments[0]
+  )
+  expect(symTree).toMatchSnapshot()
+})

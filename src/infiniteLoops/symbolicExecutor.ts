@@ -16,7 +16,7 @@ function execBinarySymbol(
     },
     '-'(value: number, sym: stype.NumberSymbol, flip: boolean) {
       if (flip) {
-        return { ...sym, constant: value - sym.constant, isPositive: true }
+        return { ...sym, constant: value - sym.constant, isPositive: !sym.isPositive }
       } else {
         return { ...sym, constant: sym.constant - value }
       }
@@ -39,14 +39,17 @@ function execBinarySymbol(
     '>'(value: number, sym: stype.NumberSymbol, flip: boolean) {
       return operators['<'](value, sym, !flip)
     },
-    '>='(value: number, sym: stype.NumberSymbol, flip: boolean) {
-      return operators['>'](value - 1, sym, flip)
-    },
     '<='(value: number, sym: stype.NumberSymbol, flip: boolean) {
-      return operators['<'](value + 1, sym, flip)
+      if (flip) {
+        return operators['<'](value - 1, sym, flip)
+      } else {
+        return operators['<'](value + 1, sym, flip)
+      }
+    },
+    '>='(value: number, sym: stype.NumberSymbol, flip: boolean) {
+      return operators['<='](value, sym, !flip)
     },
     '!=='(value: number, sym: stype.NumberSymbol, flip: boolean) {
-      // TODO check this (inside branch test?) *change seq to boolean sym
       return stype.negateBooleanSymbol(
         operators['==='](value, sym, false) as stype.InequalitySymbol
       )
@@ -74,7 +77,6 @@ function execBinarySymbol(
   return stype.skipSymbol
 }
 
-// TODO big refactor
 function execLogicalSymbol(
   node1: stype.SymbolicExecutable,
   node2: stype.SymbolicExecutable,
@@ -246,7 +248,7 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     if (arg === undefined || arg === null || arg.type === 'Identifier' || arg.type === 'Literal') {
       return stype.terminateSymbol
     } else {
-      const value = symEx(arg, store) // TODO check: skip is term?
+      const value = symEx(arg, store)
       if (value.type === 'BranchSymbol') {
         return returnConditional(value)
       }
@@ -264,7 +266,7 @@ function returnConditional(sym: stype.BranchSymbol): stype.SSymbol {
   if (sym.alternate.type === 'BranchSymbol') {
     alternate = returnConditional(sym.alternate)
   }
-  
+
   return stype.makeBranchSymbol(sym.test, consequent, alternate)
 }
 

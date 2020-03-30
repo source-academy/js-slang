@@ -257,7 +257,7 @@ Object {
   "symbols": Array [
     Object {
       "constant": -0,
-      "isPositive": true,
+      "isPositive": false,
       "name": "x",
       "type": "NumberSymbol",
     },
@@ -279,7 +279,7 @@ Object {
     },
     Object {
       "constant": 1,
-      "isPositive": true,
+      "isPositive": false,
       "name": "x",
       "type": "NumberSymbol",
     },
@@ -346,7 +346,7 @@ Object {
       "type": "InequalitySymbol",
     },
     Object {
-      "constant": 2,
+      "constant": 0,
       "direction": 1,
       "name": "x",
       "type": "InequalitySymbol",
@@ -370,7 +370,7 @@ Object {
       "type": "InequalitySymbol",
     },
     Object {
-      "constant": 0,
+      "constant": 2,
       "direction": -1,
       "name": "x",
       "type": "InequalitySymbol",

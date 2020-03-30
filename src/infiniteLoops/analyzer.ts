@@ -7,7 +7,6 @@ enum InfiniteLoopType {
   MLinearDiv
 }
 
-// TODO change checker to return string?
 function checkBaseCase(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
   function makeChecker(name: string): stype.infiniteLoopChecker {
     return (name2: string, args: any[]): number =>

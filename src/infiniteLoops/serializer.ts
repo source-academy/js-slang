@@ -24,7 +24,6 @@ function collapseConjunction(node: stype.BooleanSymbol): stype.BooleanSymbol {
   return node
 }
 function seperateDisjunctions(node: stype.BooleanSymbol): stype.BooleanSymbol[] {
-  // TODO also check the math
   if (node.type === 'LogicalSymbol') {
     const splitLeft = seperateDisjunctions(node.left)
     const splitRight = seperateDisjunctions(node.right)

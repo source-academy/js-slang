@@ -121,7 +121,7 @@ export function isBooleanSymbol(node: SymbolicExecutable): node is BooleanSymbol
   return node.type === 'LogicalSymbol' || node.type === 'InequalitySymbol'
 }
 export function negateNumberSymbol(sym: NumberSymbol): NumberSymbol {
-  return { ...sym, constant: -sym.constant, isPositive: true }
+  return { ...sym, constant: -sym.constant, isPositive: !sym.isPositive }
 }
 
 export function isTerminal(node: SymbolicExecutable): boolean {
