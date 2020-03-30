@@ -55,6 +55,11 @@ export function HighlightRulesSelector(id: number) {
         'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
     }
 
+    const chapter34 = {
+      keywords: '',
+      functions: 'test_and_set|clear|concurrent_execute'
+    }
+
     const chapter4 = {
       keywords: '',
       functions: 'apply_in_underlying_javascript'
@@ -70,6 +75,9 @@ export function HighlightRulesSelector(id: number) {
       }
       if (id >= 3) {
         output += '|' + chapter3.functions
+      }
+      if (id === 3.4) {
+        output += '|' + chapter34.functions
       }
       if (id >= 4) {
         output += '|' + chapter4.functions
@@ -99,7 +107,7 @@ export function HighlightRulesSelector(id: number) {
         return chapter2.keywords + '|' + chapter3.keywords + '|' + chapter4.keywords
       } else if (id === 2) {
         return chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 3) {
+      } else if (id === 3 || id === 3.4) {
         return chapter4.keywords
       } else {
         return ''
@@ -285,15 +293,16 @@ export function HighlightRulesSelector(id: number) {
             regex: /that\b/
           },
           {
-            token: ['storage.type', 'punctuation.operator', 'support.function.firebug'],
-            regex: /(console)(\.)(warn|info|log|error|time|trace|timeEnd|assert)\b/
+            token: ['variable.language'],
+            regex: /\.{3}|--+|[$%&*+\-~\/^]=+|==[^=]|!=[^=]|\+\++|\^|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/,
+            next: 'start'
           },
           {
             token: keywordMapper,
             regex: identifierRegex
           },
           {
-            token: 'punctuation.operator',
+            token: 'variable.language',
             regex: /[.](?![.])/,
             next: 'property'
           },
@@ -303,7 +312,7 @@ export function HighlightRulesSelector(id: number) {
           },
           {
             token: 'keyword.operator',
-            regex: /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
+            regex: /\.{3}|===|=|!==|<+=?|>+=?|!|&&|\|\||[%*+-\/]/,
             next: 'start'
           },
           {
@@ -357,11 +366,11 @@ export function HighlightRulesSelector(id: number) {
             regex: /[.](?![.])/
           },
           {
-            token: 'support.function',
+            token: 'variable.language',
             regex: /(s(?:h(?:ift|ow(?:Mod(?:elessDialog|alDialog)|Help))|croll(?:X|By(?:Pages|Lines)?|Y|To)?|t(?:op|rike)|i(?:n|zeToContent|debar|gnText)|ort|u(?:p|b(?:str(?:ing)?)?)|pli(?:ce|t)|e(?:nd|t(?:Re(?:sizable|questHeader)|M(?:i(?:nutes|lliseconds)|onth)|Seconds|Ho(?:tKeys|urs)|Year|Cursor|Time(?:out)?|Interval|ZOptions|Date|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Date|FullYear)|FullYear|Active)|arch)|qrt|lice|avePreferences|mall)|h(?:ome|andleEvent)|navigate|c(?:har(?:CodeAt|At)|o(?:s|n(?:cat|textual|firm)|mpile)|eil|lear(?:Timeout|Interval)?|a(?:ptureEvents|ll)|reate(?:StyleSheet|Popup|EventObject))|t(?:o(?:GMTString|S(?:tring|ource)|U(?:TCString|pperCase)|Lo(?:caleString|werCase))|est|a(?:n|int(?:Enabled)?))|i(?:s(?:NaN|Finite)|ndexOf|talics)|d(?:isableExternalCapture|ump|etachEvent)|u(?:n(?:shift|taint|escape|watch)|pdateCommands)|j(?:oin|avaEnabled)|p(?:o(?:p|w)|ush|lugins.refresh|a(?:ddings|rse(?:Int|Float)?)|r(?:int|ompt|eference))|e(?:scape|nableExternalCapture|val|lementFromPoint|x(?:p|ec(?:Script|Command)?))|valueOf|UTC|queryCommand(?:State|Indeterm|Enabled|Value)|f(?:i(?:nd|le(?:ModifiedDate|Size|CreatedDate|UpdatedDate)|xed)|o(?:nt(?:size|color)|rward)|loor|romCharCode)|watch|l(?:ink|o(?:ad|g)|astIndexOf)|a(?:sin|nchor|cos|t(?:tachEvent|ob|an(?:2)?)|pply|lert|b(?:s|ort))|r(?:ou(?:nd|teEvents)|e(?:size(?:By|To)|calc|turnValue|place|verse|l(?:oad|ease(?:Capture|Events)))|andom)|g(?:o|et(?:ResponseHeader|M(?:i(?:nutes|lliseconds)|onth)|Se(?:conds|lection)|Hours|Year|Time(?:zoneOffset)?|Da(?:y|te)|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Da(?:y|te)|FullYear)|FullYear|A(?:ttention|llResponseHeaders)))|m(?:in|ove(?:B(?:y|elow)|To(?:Absolute)?|Above)|ergeAttributes|a(?:tch|rgins|x))|b(?:toa|ig|o(?:ld|rderWidths)|link|ack))\b(?=\()/
           },
           {
-            token: 'support.function.dom',
+            token: 'variable.language.dom',
             regex: /(s(?:ub(?:stringData|mit)|plitText|e(?:t(?:NamedItem|Attribute(?:Node)?)|lect))|has(?:ChildNodes|Feature)|namedItem|c(?:l(?:ick|o(?:se|neNode))|reate(?:C(?:omment|DATASection|aption)|T(?:Head|extNode|Foot)|DocumentFragment|ProcessingInstruction|E(?:ntityReference|lement)|Attribute))|tabIndex|i(?:nsert(?:Row|Before|Cell|Data)|tem)|open|delete(?:Row|C(?:ell|aption)|T(?:Head|Foot)|Data)|focus|write(?:ln)?|a(?:dd|ppend(?:Child|Data))|re(?:set|place(?:Child|Data)|move(?:NamedItem|Child|Attribute(?:Node)?)?)|get(?:NamedItem|Element(?:sBy(?:Name|TagName|ClassName)|ById)|Attribute(?:Node)?)|blur)\b(?=\()/
           },
           {

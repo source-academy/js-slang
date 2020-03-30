@@ -14,7 +14,7 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
+import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -22,6 +22,7 @@ import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
+  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
@@ -30,11 +31,14 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { compileWithPrelude } from './vm/svml-compiler'
+import { runWithProgram } from './vm/svml-machine'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
+  evaluationMethod: EvaluationMethod
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -43,15 +47,18 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
+  evaluationMethod: 'strict',
   originalMaxExecTime: 1000,
   useSubst: false
 }
 
 // needed to work on browsers
-// @ts-ignore
-SourceMapConsumer.initialize({
-  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
-})
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  SourceMapConsumer.initialize({
+    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+  })
+}
 
 // deals with parsing error objects and converting them to strings (for repl at least)
 
@@ -143,6 +150,7 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
     }
   } else {
     isNativeRunnable = theOptions.executionMethod === 'native'
+    context.executionMethod = theOptions.executionMethod
   }
   return isNativeRunnable
 }
@@ -167,6 +175,26 @@ export function findDeclaration(
   return declarationNode.loc
 }
 
+export function getAllOccurrencesInScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (declarationNode == null || declarationNode.loc == null) {
+    return []
+  }
+  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -182,6 +210,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
+  context.evaluationMethod = theOptions.evaluationMethod
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -192,6 +221,27 @@ export async function runInContext(
   validateAndAnnotate(program as Program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
+  }
+  if (context.chapter === 3.4) {
+    if (previousCode === code) {
+      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+    }
+    previousCode = code
+    try {
+      return Promise.resolve({
+        status: 'finished',
+        value: runWithProgram(compileWithPrelude(program, context), context)
+      } as Result)
+    } catch (error) {
+      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+        context.errors.push(error) // use ExceptionErrors for non Source Errors
+        return resolvedErrorPromise
+      }
+      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+      return resolvedErrorPromise
+    }
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
@@ -218,7 +268,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId)
+      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
@@ -293,12 +343,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export {
-  createContext,
-  Context,
-  Result,
-  setBreakpointAtLine,
-  scopeVariables,
-  lookupDefinition,
-  getAllOccurrencesInScope
-}
+export { createContext, Context, Result, setBreakpointAtLine }
