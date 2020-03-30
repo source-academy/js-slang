@@ -1,4 +1,4 @@
-% Created 2020-03-30 Mon 12:35
+% Created 2020-03-30 Mon 20:12
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -8,6 +8,7 @@
 \newcommand{\translate}{\twoheadrightarrow}
 \newcommand{\translateaux}{\hookrightarrow}
 \usepackage[strings]{underscore}
+\usepackage{appendix}
 \author{koo}
 \date{\today}
 \title{}
@@ -190,6 +191,7 @@ where \(a\) is the address of an array stored on the heap. The head of this arra
 $$\Rule{s(\textit{pc}) = \texttt{CLEAR}}{(a.\textit{os},\textit{pc}) \transition (\textit{os},\textit{pc} + 1)}$$
 where \(a\) is the address of an array stored on the heap. The head of this array is updated to \(\textit{false}\).
 
+\begin{appendices}
 \section{Appendix A}
 \label{sec:orgf83c34f}
 
@@ -254,4 +256,5 @@ $$\Rule{s(\textit{pc}) = \texttt{CALL } n}{
 
 Now, we can describe the behavior of the machine \(M_s\) as a transition function \(\transition\), which transforms machine states to machine states, and which is defined by many rules, some of which we have already covered in this document: the rules for \texttt{EXECUTE}, \texttt{TEST\_AND\_SET}, and \texttt{CLEAR}.
 The other rules for the transition function \(\transition\) will not be covered in this document. Instead, please refer to the document \href{svml-is.pdf}{Source VM Instruction Set}.
+\end{appendices}
 \end{document}
