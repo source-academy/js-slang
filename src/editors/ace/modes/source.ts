@@ -55,6 +55,11 @@ export function HighlightRulesSelector(id: number) {
         'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
     }
 
+    const chapter34 = {
+      keywords: '',
+      functions: 'test_and_set|clear|concurrent_execute'
+    }
+
     const chapter4 = {
       keywords: '',
       functions: 'apply_in_underlying_javascript'
@@ -70,6 +75,9 @@ export function HighlightRulesSelector(id: number) {
       }
       if (id >= 3) {
         output += '|' + chapter3.functions
+      }
+      if (id === 3.4) {
+        output += '|' + chapter34.functions
       }
       if (id >= 4) {
         output += '|' + chapter4.functions
@@ -99,7 +107,7 @@ export function HighlightRulesSelector(id: number) {
         return chapter2.keywords + '|' + chapter3.keywords + '|' + chapter4.keywords
       } else if (id === 2) {
         return chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 3) {
+      } else if (id === 3 || id === 3.4) {
         return chapter4.keywords
       } else {
         return ''
