@@ -33,8 +33,7 @@
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
-    "jsdoc": "./scripts/jsdoc.sh && python ./scripts/updateAutocompleteDocs.py",
-    "sauce": "yarn build && cp -r dist ../cadet-frontend/node_modules/js-slang"
+    "jsdoc": "./scripts/jsdoc.sh && python ./scripts/updateAutocompleteDocs.py"
   },
   "repository": {
     "type": "git",

@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt, parseLoose } from './parser/parser'
+import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -34,8 +34,7 @@ import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-
-import { generate } from 'escodegen'
+import { getProgramNames } from './name-extractor'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -198,20 +197,14 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
-export async function getNames(
-  code: string,
-  context: Context,
-  options: Partial<IOptions> = {}
-): Promise<any> {
-  const program = parseLoose(code, context)
+export async function getNames(code: string, line: number, col: number): Promise<any> {
+  const program = parse(code, createContext(), true)
 
   if (!program) {
-    return ''
+    return []
   }
 
-  console.log(program)
-
-  return generate(program)
+  return getProgramNames(program, { line, column: col })
 }
 
 export async function runInContext(
