@@ -34,11 +34,8 @@ const createEmptyDebugger = () => ({
 })
 
 const createEmptyInfiniteLoopDetection = () => ({
-  status: true,
-  relevantVars: new Map(),
-  stackThreshold: 100,
-  checkers: [],
-  tailCallStack: []
+  transitionSet: new Map(),
+  checkers: []
 })
 
 const createGlobalEnvironment = () => ({

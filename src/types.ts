@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+import { TransitionSet, infiniteLoopChecker } from './infiniteLoops/symTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -116,11 +117,8 @@ export type Value = any
 export type AllowedDeclarations = 'const' | 'let'
 
 export interface InfiniteLoopData {
-  status: boolean
-  relevantVars: Map<string, number[]>
-  stackThreshold: number
-  checkers: ((name: string, args: any[]) => boolean)[]
-  tailCallStack: string[]
+  transitionSet: TransitionSet
+  checkers: infiniteLoopChecker[]
 }
 
 export interface Environment {

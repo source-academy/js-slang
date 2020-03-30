@@ -133,6 +133,10 @@ export function isTerminal(node: SymbolicExecutable): boolean {
   return node.type !== 'FunctionSymbol' && node.type !== 'SkipSymbol'
 }
 
+export function terminalOrSkip(node: SymbolicExecutable): boolean {
+  return isTerminal(node) || node.type === 'SkipSymbol'
+}
+
 export interface Transition {
   caller: FunctionSymbol
   callee: FunctionSymbol | TerminateSymbol

@@ -251,14 +251,14 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
       if (value.type === 'BranchSymbol') {
         return returnConditional(value)
       }
-      return value.type === 'SkipSymbol' || stype.isTerminal(value) ? stype.terminateSymbol : value
+      return stype.terminalOrSkip(value) ? stype.terminateSymbol : value
     }
   }
 }
 
 function returnConditional(sym: stype.BranchSymbol): stype.SSymbol {
-  let consequent = stype.isTerminal(sym.consequent) ? stype.terminateSymbol : sym.consequent
-  let alternate = stype.isTerminal(sym.alternate) ? stype.terminateSymbol : sym.alternate
+  let consequent = stype.terminalOrSkip(sym.consequent) ? stype.terminateSymbol : sym.consequent
+  let alternate = stype.terminalOrSkip(sym.alternate) ? stype.terminateSymbol : sym.alternate
   if (sym.consequent.type === 'BranchSymbol') {
     consequent = returnConditional(sym.consequent)
   }
