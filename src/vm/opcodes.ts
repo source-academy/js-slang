@@ -143,4 +143,54 @@ export enum OpCodes {
   CLEAR = 2002
 }
 
+export const OPCODE_MAX = 84
+
+export function getInstructionSize(opcode: OpCodes): number {
+  switch (opcode) {
+    case OpCodes.LDLG:
+    case OpCodes.LDLF:
+    case OpCodes.LDLB:
+    case OpCodes.STLG:
+    case OpCodes.STLF:
+    case OpCodes.STLB:
+    case OpCodes.CALL:
+    case OpCodes.CALLT:
+    case OpCodes.NEWENV:
+    case OpCodes.NEWCP:
+    case OpCodes.NEWCV:
+      return 2
+
+    case OpCodes.LDPG:
+    case OpCodes.LDPF:
+    case OpCodes.LDPB:
+    case OpCodes.STPG:
+    case OpCodes.STPF:
+    case OpCodes.STPB:
+    case OpCodes.CALLP:
+    case OpCodes.CALLTP:
+    case OpCodes.CALLV:
+    case OpCodes.CALLTV:
+      return 3
+
+    case OpCodes.LDCI:
+    case OpCodes.LGCI:
+    case OpCodes.LDCF32:
+    case OpCodes.LGCF32:
+    case OpCodes.LGCS:
+    case OpCodes.NEWC:
+    case OpCodes.BRF:
+    case OpCodes.BRT:
+    case OpCodes.BR:
+    case OpCodes.JMP:
+      return 5
+
+    case OpCodes.LDCF64:
+    case OpCodes.LGCF64:
+      return 9
+
+    default:
+      return 1
+  }
+}
+
 export default OpCodes
