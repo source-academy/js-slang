@@ -275,8 +275,8 @@
     "meta": "func"
   },
   "math_exp": {
-    "title": "math_exp() \u2192 {number}",
-    "description": "<div><h4>math_exp() &#8594; {number}</h4><div class=\"description\">\n    computes the exponential function of <code>x</code> \n(e raised to the power of <code>x</code>, where e is the base of the natural logarithms).\n</div>\n</div>",
+    "title": "math_exp(x) \u2192 {number}",
+    "description": "<div><h4>math_exp(x) &#8594; {number}</h4><div class=\"description\">\n    computes the exponential function of <code>x</code> \n(e raised to the power of <code>x</code>, where e is the base of the natural logarithms).\n</div>\n    </div>",
     "meta": "func"
   },
   "math_expm1": {
@@ -500,8 +500,8 @@
     "meta": "func"
   },
   "stringify": {
-    "title": "stringify(v,) \u2192 {string}",
-    "description": "<div><h4>stringify(v,) &#8594; {string}</h4><div class=\"description\">\n    returns a string that represents the value <code>v</code>, using a\nnotation that is is consistent with \n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>, \nbut also displays <code>undefined</code> and function objects.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/62\">textbook example</a>.\n</div>\n    </div>",
+    "title": "stringify(v) \u2192 {string}",
+    "description": "<div><h4>stringify(v) &#8594; {string}</h4><div class=\"description\">\n    returns a string that represents the value <code>v</code>, using a\nnotation that is is consistent with \n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>, \nbut also displays <code>undefined</code> and function objects.\nSee also <a href=\"https://sicp.comp.nus.edu.sg/chapters/62\">textbook example</a>.\n</div>\n    </div>",
     "meta": "func"
   },
   "tail": {
