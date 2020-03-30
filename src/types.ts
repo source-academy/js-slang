@@ -161,7 +161,11 @@ export interface Suspended {
   context: Context
 }
 
-export type Result = Suspended | Finished | Error
+export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
+  value: Value
+}
+
+export type Result = Suspended | SuspendedNonDet | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>

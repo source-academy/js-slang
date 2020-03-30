@@ -13,7 +13,7 @@ import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
+import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
@@ -29,11 +29,12 @@ import {
   Scheduler,
   SourceError
 } from './types'
+import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async'
+  scheduler: 'preemptive' | 'async' | 'non-det'
   steps: number
   executionMethod: ExecutionMethod
   evaluationMethod: EvaluationMethod
@@ -294,9 +295,12 @@ export async function runInContext(
       )
     }
   } else {
-    const it = evaluate(program, context)
+    let it = evaluate(program, context)
     let scheduler: Scheduler
-    if (theOptions.scheduler === 'async') {
+    if (theOptions.scheduler === 'non-det') {
+      it = nonDetEvaluate(program, context)
+      scheduler = new NonDetScheduler()
+    } else if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
     } else {
       scheduler = new PreemptiveScheduler(theOptions.steps)
