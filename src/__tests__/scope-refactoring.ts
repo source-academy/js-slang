@@ -84,6 +84,16 @@ const functionScopeTests = [
       }
     `,
     [new Target('target', 7, 3), new Target('target', 1, 6)]
+  ),
+  new CodeTest(
+    'Test 1',
+    `function parse_and_eval(1) {
+      eval_top_level(1);
+    }
+    function repl(str) {
+      const res = parse_and_eval(23);
+    }`,
+    [new Target('parse_and_eval', 1, 13)]
   )
 ]
 
@@ -125,7 +135,7 @@ const conditionalsLoopsTests = [
         target += 99;
       }
     `,
-    [new Target('target', 3, 5), new Target('target', 2, 11), new Target('i', 5, 2)]
+    [new Target('target', 3, 5), new Target('i', 2, 10)]
   ),
   new CodeTest(
     'Test 3',
@@ -137,6 +147,16 @@ const conditionalsLoopsTests = [
       }
     `,
     [new Target('target', 4, 4)]
+  ),
+  new CodeTest(
+    'Test 4',
+    `
+    let i = "dontgetconfusedwith the next one pls";
+      for (let i = 0; i < 10; i++) {
+        target += 99;
+      }
+    `,
+    [new Target('i', 2, 10), new Target('i', 1, 5)]
   )
 ]
 

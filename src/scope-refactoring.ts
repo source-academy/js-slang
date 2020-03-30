@@ -90,7 +90,6 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
   return {
     name: (node.declarations[0].id as es.Identifier).name,
     type: 'DefinitionNode',
-    isDeclaration: true,
     // Assume that only one variable can be declared per line
     loc: node.declarations[0].id.loc
   }
@@ -105,13 +104,11 @@ export function scopeFunctionDeclaration(
   const definition = {
     name: (node.id as es.Identifier).name,
     type: 'DefinitionNode',
-    isDeclaration: true,
     loc: (node.id as es.Identifier).loc
   }
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
-    isDeclaration: true,
     loc: param.loc
   }))
   // node.loc refers to the loc of the entire function definition, not just its body
@@ -126,7 +123,6 @@ function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
   const params = node.params.map(param => ({
     name: (param as es.Identifier).name,
     type: 'DefinitionNode',
-    isDeclaration: true,
     loc: param.loc
   }))
   // arrowFunctionBodies may not contain curly braces on the RHS of the arrow
@@ -174,7 +170,6 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
     ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
         type: 'DefinitionNode',
         name: (dec.id as es.Identifier).name,
-        isDeclaration: true,
         loc: (dec.id as es.Identifier).loc
       }))
     : []
@@ -221,7 +216,6 @@ function getAllOccurencesInChildScopes(
   const definitionNodes = block.children
     .filter(isDefinitionNode)
     .filter(node => node.name === target)
-    .filter(node => node.isDeclaration)
   if (definitionNodes.length !== 0) {
     return []
   }
@@ -241,17 +235,31 @@ function getAllOccurencesInChildScopes(
 
 // Gets the enclosing block of a node.
 function getBlockFromLoc(loc: es.SourceLocation, block: BlockFrame): BlockFrame {
+  let parent: BlockFrame | null = null
   let childBlocks = block.children.filter(isBlockFrame)
   let isPartOfChildBlock = childBlocks.some(node =>
     isPartOf(loc, node.enclosingLoc as es.SourceLocation)
   )
   while (isPartOfChildBlock) {
     // A block containing the loc must necessarily exist by the earlier check
+    parent = block
     block = childBlocks.filter(node => isPartOf(loc, node.enclosingLoc as es.SourceLocation))[0]
     childBlocks = block.children.filter(isBlockFrame)
     isPartOfChildBlock = childBlocks.some(node =>
       isPartOf(loc, node.enclosingLoc as es.SourceLocation)
     )
+  }
+  // We check if the parent block contains the target loc.
+  // This deals with the edge case of function definitions, as it is within the enclosing loc of the function
+  // But has scope outside of it, as its definition belongs to the outer scope
+  if (
+    parent != null &&
+    parent.children
+      .filter(isDefinitionNode)
+      .filter(node => notEmpty(node.loc))
+      .filter(node => areLocsEqual(node.loc as es.SourceLocation, loc)).length !== 0
+  ) {
+    return parent
   }
   return block
 }

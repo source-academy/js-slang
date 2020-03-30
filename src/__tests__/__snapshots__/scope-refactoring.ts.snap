@@ -246,24 +246,42 @@ target += 99;
 }",
     "label": "Test 2",
     "target": Target {
-      "column": 11,
+      "column": 10,
       "line": 2,
-      "name": "target",
-    },
-    "value": Array [],
-  },
-  Object {
-    "code": "let target = 2;
-for (let i = 0; i < 10; i++) {
-target += 99;
-}",
-    "label": "Test 2",
-    "target": Target {
-      "column": 2,
-      "line": 5,
       "name": "i",
     },
-    "value": Array [],
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 16,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 25,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 24,
+          "line": 2,
+        },
+      },
+    ],
   },
   Object {
     "code": "let target = 2;
@@ -306,6 +324,74 @@ target -= 0.1;
         "start": Position {
           "column": 0,
           "line": 4,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let i = \\"dontgetconfusedwith the next one pls\\";
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 4",
+    "target": Target {
+      "column": 10,
+      "line": 2,
+      "name": "i",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 16,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 25,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 24,
+          "line": 2,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let i = \\"dontgetconfusedwith the next one pls\\";
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 4",
+    "target": Target {
+      "column": 5,
+      "line": 1,
+      "name": "i",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
         },
       },
     ],
@@ -399,6 +485,42 @@ target * 99;
         "start": Position {
           "column": 0,
           "line": 2,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "function parse_and_eval(1) {
+eval_top_level(1);
+}
+function repl(str) {
+const res = parse_and_eval(23);
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 13,
+      "line": 1,
+      "name": "parse_and_eval",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 5,
         },
       },
     ],
