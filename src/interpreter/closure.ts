@@ -9,9 +9,21 @@ import {
   identifier,
   returnStatement
 } from '../utils/astCreator'
-import { apply } from './interpreter'
 
-const closureToJS = (value: Closure, context: Context, klass: string) => {
+export type BoundedApplyFunction = (
+  context: Context,
+  fun: Closure | Value,
+  args: Value[],
+  node: es.CallExpression,
+  thisContext?: Value
+) => Value
+
+const closureToJS = (
+  value: Closure,
+  context: Context,
+  klass: string,
+  apply: BoundedApplyFunction
+) => {
   function DummyClass(this: Closure) {
     const args: Value[] = Array.prototype.slice.call(arguments)
     const gen = apply(context, value, args, callExpression(identifier(klass), args), this)
@@ -52,7 +64,8 @@ export default class Closure extends Callable {
   public static makeFromArrowFunction(
     node: es.ArrowFunctionExpression,
     environment: Environment,
-    context: Context
+    context: Context,
+    apply: BoundedApplyFunction
   ) {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
@@ -60,11 +73,8 @@ export default class Closure extends Callable {
     const functionBody = isExpressionBody(node.body)
       ? [returnStatement(node.body, node.body.loc!)]
       : node.body
-    const closure = new Closure(
-      blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!),
-      environment,
-      context
-    )
+    const closureNode = blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!)
+    const closure = new Closure(closureNode, environment, context, apply)
 
     // Set the closure's node to point back at the original one
     closure.originalNode = node
@@ -82,7 +92,12 @@ export default class Closure extends Callable {
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(public node: es.Function, public environment: Environment, context: Context) {
+  constructor(
+    public node: es.Function,
+    public environment: Environment,
+    context: Context,
+    apply: BoundedApplyFunction
+  ) {
     super(function(this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
@@ -98,7 +113,7 @@ export default class Closure extends Callable {
     }
     // TODO: Investigate how relevant this really is.
     // .fun seems to only be used in interpreter's NewExpression handler, which uses .fun.prototype.
-    const funJS = closureToJS(this, context, this.functionName)
+    const funJS = closureToJS(this, context, this.functionName, apply)
     this.fun = funJS
   }
 

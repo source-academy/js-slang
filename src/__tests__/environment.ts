@@ -1,5 +1,5 @@
 import { Program } from 'estree'
-import { evaluate } from '../interpreter/interpreter'
+import { ApplicativeOrderEvaluationInterpreter } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { stripIndent } from '../utils/formatters'
@@ -16,7 +16,8 @@ test('Function params and body identifiers are in the same environment', () => {
   const context = mockContext(4)
   context.prelude = null // hide the unneeded prelude
   const parsed = parse(code, context)
-  const it = evaluate((parsed as any) as Program, context)
+  const interpreter = new ApplicativeOrderEvaluationInterpreter()
+  const it = interpreter.evaluate((parsed as any) as Program, context)
   const stepsToComment = 13 // manually counted magic number
   for (let i = 0; i < stepsToComment; i += 1) {
     it.next()

@@ -44,6 +44,7 @@ export function mockClosure(): Closure {
       }
     } as es.FunctionExpression,
     {} as Environment,
-    {} as Context
+    {} as Context,
+    () => null
   )
 }
