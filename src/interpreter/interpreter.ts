@@ -9,10 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import {
-  infiniteLoopFunctionAnalysis,
-  checkInfiniteLoop
-} from '../infiniteLoops/infiniteLoops'
+import { infiniteLoopFunctionAnalysis, checkInfiniteLoop } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
 
@@ -27,7 +24,7 @@ class TailCallReturnValue {
 }
 
 const createEmptyInfiniteLoopDetection = () => ({
-  transitionSet: new Map(), 
+  transitionSet: new Map(),
   checkers: []
 })
 
