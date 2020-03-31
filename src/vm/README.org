@@ -11,8 +11,9 @@
 * Introducing Concurrency to Source
 This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
 
-
 To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
+
+The level of concurrency of our system is at the instruction level. This means all instructions are atomic: the entirety of a single instruction is executed without interference from other threads. Particularly, this means updating the value of a variable is made up of many instructions, and so these instructions may be interleaved with instructions from other threads.
 
 Compared to Source $\S 3$, this concurrent system has the following changes:
 - The addition of three primitive concurrent functions.
