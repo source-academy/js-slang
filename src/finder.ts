@@ -77,7 +77,9 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       VariableDeclarator(node: VariableDeclarator, state: any, callback: WalkerCallback<any>) {
-        if ((node.id as Identifier).name === identifier.name) {
+        if ((node.id as Identifier === identifier) ||
+          ((node.id as Identifier).name === identifier.name &&
+            occursBefore(node.loc as any, identifier.loc as any))) {
           declarations.push(node.id)
         }
       }
@@ -88,6 +90,17 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
   }
 
   return undefined
+}
+
+
+function occursBefore(loc1: SourceLocation, loc2: SourceLocation): boolean {
+  if (loc1.start.line > loc2.start.line) {
+    return false
+  } else if (loc1.start.line < loc2.start.line) {
+    return true
+  } else {
+    return (loc1.start.column - loc2.start.column) < 0
+  }
 }
 
 function containsNode(nodeOuter: Node, nodeInner: Node): boolean {
