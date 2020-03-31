@@ -26,10 +26,15 @@ export function checkInfiniteLoop(node: es.CallExpression, args: any[], envs: En
     while (environment) {
       const checkers = environment.infiniteLoopDetection.checkers
       const errorMessage = testFunction(name, args, checkers)
+      const tSet = environment.infiniteLoopDetection.transitionSet
       if (errorMessage) {
         return new errors.InfiniteLoopError(node, errorMessage)
       }
-      environment = environment.tail
+      if (tSet.has(name)) {
+        break
+      } else {
+        environment = environment.tail
+      }
     }
   }
   return undefined
