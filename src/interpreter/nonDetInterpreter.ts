@@ -9,7 +9,6 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import * as _ from 'lodash'
 
 class BreakValue {}
 
@@ -258,7 +257,7 @@ function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   // return result
 
   // ??
-  for(const statement of node.body){
+  for (const statement of node.body) {
     const resultGen = evaluateNonDet(statement, context)
     let resultNext = resultGen.next()
     while (!resultNext.done) {
@@ -645,60 +644,58 @@ export function* apply(
   node: es.CallExpression,
   thisContext?: Value
 ) {
+  if (fun instanceof Closure) {
+    checkNumberOfArguments(context, fun, args, node!)
+    const environment = createEnvironment(fun, args, node)
+    environment.thisContext = thisContext
+    pushEnvironment(context, environment)
 
-
-
-    if (fun instanceof Closure) {
-      checkNumberOfArguments(context, fun, args, node!)
-      const environment = createEnvironment(fun, args, node)
-      environment.thisContext = thisContext
+    const resultGen = evaluateBlockStatement(
+      context,
+      fun.node.body as es.BlockStatement
+    )
+    let resultNext = resultGen.next()
+    while (!resultNext.done) {
+      const result = resultNext.value
+      popEnvironment(context)
+      if (result instanceof ReturnValue) {
+        yield result.value
+      } else {
+        yield undefined
+      }
       pushEnvironment(context, environment)
-
-      const resultGen =  evaluateBlockStatement(context, _.cloneDeep(fun.node.body) as es.BlockStatement)
-      let resultNext = resultGen.next()
-      while(!resultNext.done){
-        const result = resultNext.value
-        popEnvironment(context)
-        if(result instanceof ReturnValue){
-          yield result.value
-        }else{
-          yield undefined
-        }
-        pushEnvironment(context,environment)
-        resultNext=resultGen.next()
-
-      }
-      // if (result instanceof TailCallReturnValue) {
-      //   fun = result.callee
-      //   node = result.node
-      //   args = result.args
-      // } else if (!(result instanceof ReturnValue)) {
-      //   // No Return Value, set it as undefined
-      //   result = new ReturnValue(undefined)
-      // }
-    } else if (typeof fun === 'function') {
-      try {
-        yield fun.apply(thisContext, args)
-      } catch (e) {
-        // Recover from exception
-        context.runtime.environments = context.runtime.environments.slice(
-          -context.numberOfOuterEnvironments
-        )
-
-        const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
-        if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
-          // The error could've arisen when the builtin called a source function which errored.
-          // If the cause was a source error, we don't want to include the error.
-          // However if the error came from the builtin itself, we need to handle it.
-          return handleRuntimeError(context, new errors.ExceptionError(e, loc))
-        }
-        throw e
-      }
-    } else {
-      return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
+      resultNext = resultGen.next()
     }
+    // if (result instanceof TailCallReturnValue) {
+    //   fun = result.callee
+    //   node = result.node
+    //   args = result.args
+    // } else if (!(result instanceof ReturnValue)) {
+    //   // No Return Value, set it as undefined
+    //   result = new ReturnValue(undefined)
+    // }
+  } else if (typeof fun === 'function') {
+    try {
+      yield fun.apply(thisContext, args)
+    } catch (e) {
+      // Recover from exception
+      context.runtime.environments = context.runtime.environments.slice(
+        -context.numberOfOuterEnvironments
+      )
 
+      const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
+      if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
+        // The error could've arisen when the builtin called a source function which errored.
+        // If the cause was a source error, we don't want to include the error.
+        // However if the error came from the builtin itself, we need to handle it.
+        return handleRuntimeError(context, new errors.ExceptionError(e, loc))
+      }
+      throw e
+    }
+  } else {
+    return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
+  }
 
-    popEnvironment(context)
-    return
+  popEnvironment(context)
+  return
 }
