@@ -1,4 +1,4 @@
-import { BinaryOperator, UnaryOperator, LogicalOperator } from 'estree'
+import { BinaryOperator, UnaryOperator, LogicalOperator, Node } from 'estree'
 import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
@@ -157,19 +157,20 @@ export function getTypeOfBoolThunkOrError(
   }
 }
 
+/**
+ * Does a shallow checking of the type before the
+ * program is transpiled.
+ */
 export function unaryOp(
   operator: UnaryOperator,
   argument: TranspilerThunk<any>,
   line: number,
   column: number
 ) {
-  const resultType = rttc.checkUnaryExpressionT(
-    create.locationDummyNode(line, column),
-    operator,
-    argument
-  )
+  const locationNode = create.locationDummyNode(line, column)
+  const resultType = rttc.checkUnaryExpressionT(locationNode, operator, argument)
   if (typeof resultType === 'string') {
-    return evaluateUnaryExpression(operator, argument, resultType)
+    return evaluateUnaryExpression(operator, argument, resultType, locationNode)
   } else {
     throw resultType
   }
@@ -177,31 +178,39 @@ export function unaryOp(
 
 /**
  * Delays evaluation of an unary expression
- * in Lazy Source, returning a Thunk.
+ * in Lazy Source, returning a Thunk. Node with line
+ * and column number are required to throw correct
+ * errors in the event that thunks evaluate to
+ * incorrect types.
  *
  * @param operator String representing the operator
  *     to be executed.
  * @param value The argument of this operator.
  * @param returnType The return type of the evaluated
  *     expression.
+ * @param node Node representing location of the expression.
  */
 export function evaluateUnaryExpression(
   operator: UnaryOperator,
   value: TranspilerThunk<any>,
-  // default value '' to prevent problems with substitutor, intepreter
-  returnType: string = ''
+  returnType: string,
+  node: Node
 ) {
   if (operator === '!') {
-    return makeThunkWithPrimitiveUnary(value, x => !x, returnType, operator)
+    return makeThunkWithPrimitiveUnary(value, x => !x, returnType, operator, node)
   } else if (operator === '-') {
-    return makeThunkWithPrimitiveUnary(value, x => -x, returnType, operator)
+    return makeThunkWithPrimitiveUnary(value, x => -x, returnType, operator, node)
   } else if (operator === '+') {
-    return makeThunkWithPrimitiveUnary(value, x => +x, returnType, operator)
+    return makeThunkWithPrimitiveUnary(value, x => +x, returnType, operator, node)
   } else {
     return makeThunk(undefined)
   }
 }
 
+/**
+ * Does a shallow checking of the type before the
+ * program is transpiled.
+ */
 export function binaryOp(
   operator: BinaryOperator,
   left: TranspilerThunk<any>,
@@ -209,14 +218,10 @@ export function binaryOp(
   line: number,
   column: number
 ) {
-  const resultType = rttc.checkBinaryExpressionT(
-    create.locationDummyNode(line, column),
-    operator,
-    left,
-    right
-  )
+  const locationNode = create.locationDummyNode(line, column)
+  const resultType = rttc.checkBinaryExpressionT(locationNode, operator, left, right)
   if (typeof resultType === 'string') {
-    return evaluateBinaryExpression(operator, left, right, resultType)
+    return evaluateBinaryExpression(operator, left, right, resultType, locationNode)
   } else {
     throw resultType
   }
@@ -224,7 +229,10 @@ export function binaryOp(
 
 /**
  * Delays evaluation of a binary expression in
- * Lazy Source, returning a Thunk.
+ * Lazy Source, returning a Thunk. Line and
+ * column number are required to throw correct
+ * errors in the event that thunks evaluate to
+ * incorrect types.
  *
  * @param operator String representing the operator
  *     to be executed.
@@ -234,37 +242,52 @@ export function binaryOp(
  *     this operator.
  * @param returnType The return type of the evaluated
  *     expression.
+ * @param node Node representing location of the expression.
  */
 export function evaluateBinaryExpression(
   operator: BinaryOperator,
   left: TranspilerThunk<any>,
   right: TranspilerThunk<any>,
-  // default value '' to prevent problems with substitutor, intepreter
-  returnType: string = ''
+  returnType: string,
+  node: Node
 ): TranspilerThunk<any> {
   switch (operator) {
     case '+':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x + y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x + y, returnType, operator, node)
     case '-':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x - y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x - y, returnType, operator, node)
     case '*':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x * y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x * y, returnType, operator, node)
     case '/':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x / y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x / y, returnType, operator, node)
     case '%':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x % y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x % y, returnType, operator, node)
     case '===':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x === y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(
+        left,
+        right,
+        (x, y) => x === y,
+        returnType,
+        operator,
+        node
+      )
     case '!==':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x !== y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(
+        left,
+        right,
+        (x, y) => x !== y,
+        returnType,
+        operator,
+        node
+      )
     case '<=':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x <= y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x <= y, returnType, operator, node)
     case '<':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x < y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x < y, returnType, operator, node)
     case '>':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x > y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x > y, returnType, operator, node)
     case '>=':
-      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x >= y, returnType, operator)
+      return makeThunkWithPrimitiveBinary(left, right, (x, y) => x >= y, returnType, operator, node)
     default:
       return makeThunk(undefined)
   }
@@ -274,7 +297,11 @@ export function evaluateBinaryExpression(
  * This function will be called in place of logical
  * operations like && (and) or || (or), in order to
  * check whether the Thunks on left and right are of
- * type boolean, and to execute it lazily
+ * type boolean, and to execute it lazily. Line
+ * and column number are required to throw correct
+ * errors in the event that thunks evaluate to
+ * incorrect types.
+ *
  * @param operator String representing the operator
  *     to be executed.
  * @param left The (boolean) expression on the left
@@ -296,7 +323,7 @@ export function logicalOp(
   const leftType = getTypeOfBoolThunkOrError(left, line, column)
   const rightType = getTypeOfBoolThunkOrError(right, line, column)
   if (typeof leftType === 'string' && typeof rightType === 'string') {
-    return evaluateLogicalExpression(operator, left, right)
+    return evaluateLogicalExpression(operator, left, right, line, column)
   } else if (typeof leftType === 'string') {
     throw rightType
   } else {
@@ -306,7 +333,10 @@ export function logicalOp(
 
 /**
  * Delays evaluation of a logical expression && (and)
- * and || (or) in Lazy Source, returning a Thunk.
+ * and || (or) in Lazy Source, returning a Thunk. Line
+ * and column number are required to throw correct
+ * errors in the event that thunks evaluate to
+ * incorrect types.
  *
  * @param operator String representing the operator
  *     to be executed.
@@ -314,19 +344,25 @@ export function logicalOp(
  *     this operator.
  * @param right The second argument, or the right, of
  *     this operator.
+ * @param line Line number of the expression in
+ *     the program
+ * @param column Column number of the expression
+ *     in the program
  */
 export function evaluateLogicalExpression(
   operator: LogicalOperator,
   left: TranspilerThunk<any>,
-  right: TranspilerThunk<any>
+  right: TranspilerThunk<any>,
+  line: number,
+  column: number
 ): TranspilerThunk<any> {
   // string representation of resultant thunk
   const stringRep = left.toString() + ' ' + operator + ' ' + right.toString()
   switch (operator) {
     case '&&':
-      return makeConditionalThunk(left, right, makeThunk(false), stringRep)
+      return makeConditionalThunk(left, right, makeThunk(false), line, column, stringRep)
     case '||':
-      return makeConditionalThunk(left, makeThunk(true), right, stringRep)
+      return makeConditionalThunk(left, makeThunk(true), right, line, column, stringRep)
     default:
       return makeThunk(undefined)
   }
@@ -355,7 +391,7 @@ export function conditionalOp(
 ): TranspilerThunk<any> {
   const predicateType = getTypeOfBoolThunkOrError(predicate, line, column)
   if (typeof predicateType === 'string') {
-    return makeConditionalThunk(predicate, consequent, alternate)
+    return makeConditionalThunk(predicate, consequent, alternate, line, column)
   } else {
     throw predicateType
   }

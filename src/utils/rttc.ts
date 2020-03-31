@@ -4,8 +4,8 @@ import { TranspilerThunk, isKnownThunkType, isTranspilerThunk } from '../transpi
 import { ErrorSeverity, ErrorType, Value } from '../types'
 import { typeOf } from './typeOf'
 
-const LHS = ' on left hand side of operation'
-const RHS = ' on right hand side of operation'
+export const LHS = ' on left hand side of operation'
+export const RHS = ' on right hand side of operation'
 
 export class TypeError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME

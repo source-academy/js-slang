@@ -1,8 +1,10 @@
 import { typeOf } from '../utils/typeOf'
-import { Expression } from 'estree'
+import { Expression, Node, UnaryOperator, BinaryOperator } from 'estree'
 import { CallingNonFunctionValue, ExceptionError, InvalidNumberOfArguments } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { is_pair, set_head, set_tail, head, tail } from '../stdlib/list'
+import { boolOrErr } from '../utils/lazyOperators'
+import { checkBinaryExpression, checkUnaryExpression } from '../utils/rttc'
 
 /**
  * Type definitions for lazy evaluation, as well as
@@ -276,18 +278,30 @@ export function makeThunk<T>(value: T): TranspilerThunk<T> {
  * @param operator Operator represented by binaryFunc,
  *     but as a string (will be used in final string
  *     representation of the result thunk)
+ * @param node Node representing locaiton of the
+ *             expression in the program
  */
 export function makeThunkWithPrimitiveBinary<T, U, R>(
   t: TranspilerThunk<T>,
   u: TranspilerThunk<U>,
   binaryFunc: (t: T, u: U) => R,
   returnType: string,
-  operator: string
+  operator: BinaryOperator,
+  node: Node
 ): TranspilerThunk<R> {
   const stringRep = t.toString() + ' ' + operator + ' ' + u.toString()
   return {
     type: returnType,
-    value: () => binaryFunc(evaluateLazyValue(t), evaluateLazyValue(u)),
+    value: () => {
+      const tResult = evaluateLazyValue(t)
+      const uResult = evaluateLazyValue(u)
+      const runTimeTypeCheck = checkBinaryExpression(node, operator, tResult, uResult)
+      if (runTimeTypeCheck) {
+        throw runTimeTypeCheck
+      } else {
+        return binaryFunc(tResult, uResult)
+      }
+    },
     toString: () => stringRep,
     evaluated: false
   }
@@ -306,17 +320,27 @@ export function makeThunkWithPrimitiveBinary<T, U, R>(
  * @param operator Operator represented by unaryFunc,
  *     but as a string (will be used in final string
  *     representation of the result thunk)
+ * @param node Node representing location of the expression.
  */
 export function makeThunkWithPrimitiveUnary<T, R>(
   argument: TranspilerThunk<T>,
   unaryFunc: (t: T) => R,
   returnType: string,
-  operator: string
+  operator: UnaryOperator,
+  node: Node
 ): TranspilerThunk<R> {
   const stringRep = operator + argument.toString()
   return {
     type: returnType,
-    value: () => unaryFunc(evaluateLazyValue(argument)),
+    value: () => {
+      const result = evaluateLazyValue(argument)
+      const runTimeTypeCheck = checkUnaryExpression(node, operator, result)
+      if (runTimeTypeCheck) {
+        throw runTimeTypeCheck
+      } else {
+        return unaryFunc(result)
+      }
+    },
     toString: () => stringRep,
     evaluated: false
   }
@@ -332,6 +356,10 @@ export function makeThunkWithPrimitiveUnary<T, R>(
  *     evaluated only if 'predicate' evaluates to 'true'
  * @param alternative The alternative expression, to be
  *     evaluated only if 'predicate' evaluates to 'false'
+ * @param line Line number of the expression in
+ *     the program
+ * @param column Column number of the expression
+ *     in the program
  * @param stringRepresentation String representation of
  *     the operator and its operands (used for && and
  *     || operators). If not provided, the string
@@ -343,6 +371,8 @@ export function makeConditionalThunk<T>(
   predicate: TranspilerThunk<boolean>,
   consequent: TranspilerThunk<T>,
   alternative: TranspilerThunk<T>,
+  line: number,
+  column: number,
   stringRepresentation?: string
 ): TranspilerThunk<T> {
   const stringRep =
@@ -351,7 +381,7 @@ export function makeConditionalThunk<T>(
   return {
     type: conditionalType,
     value: () => {
-      const evaluatePredicate = evaluateLazyValue(predicate)
+      const evaluatePredicate = boolOrErr(evaluateLazyValue(predicate), line, column)
       if (evaluatePredicate) {
         return evaluateLazyValue(consequent)
       } else {
