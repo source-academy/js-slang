@@ -5,9 +5,9 @@ const options: Partial<IOptions> = { scheduler: 'nondet', executionMethod: 'inte
 const res = runInContext(
   // "const a=1;a+1;",
   // 'const a=1; const b=2; const c=true; c?a:b;',
-  'function add(a,b){return a+b;} function aV(){return 1;} function bV(){return 2;} add(1,2);',
+  'function add(a,b){return a()+b();} function aV(){return 1+bV();} function bV(){return 2;} if(1!==null){add(aV,bV);} else{ 999; }',
   // 'function add(a,b){return a+b;} function aV(){return 1;} function bV(){return 2;} add(aV(),bV());',
-  createContext(),
+  createContext(2),
   options
 )
 res.then(v => {

@@ -52,7 +52,7 @@ export class NonDetScheduler implements Scheduler {
           }
         }
       } catch (e) {
-        console.log("error in non det scheduler ",e)
+        console.log('error in non det scheduler ', e)
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false
