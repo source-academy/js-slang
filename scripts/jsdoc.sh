@@ -62,6 +62,21 @@ run() {
 	     ${DST}/lib/array.js \
 	     ${DST}/lib/pairmutator.js
     
+    # Source §3 Concurrent
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${DST}/README_3_CONCURRENT.md \
+	     -d ${DST}/"source_3_concurrent"/ \
+	     ${DST}/lib/misc.js \
+	     ${DST}/lib/math.js \
+             ${DST}/lib/list.js \
+	     ${DST}/lib/stream.js \
+	     ${DST}/lib/array.js \
+	     ${DST}/lib/pairmutator.js \
+		 ${DST}/lib/concurrency.js
+    
+    
     # Source §4
     
     ${JSDOC} -r -t ${TMPL} \
@@ -123,6 +138,14 @@ run() {
 	     -R ${DST}/README_PAIRMUTATORS.md \
 	     -d ${DST}/PAIRMUTATORS/ \
 	     ${DST}/lib/pairmutator.js
+    
+    # CONCURRENCY
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${DST}/README_CONCURRENCY.md \
+	     -d ${DST}/CONCURRENCY/ \
+	     ${DST}/lib/concurrency.js
     
     # MCE
     
