@@ -20,8 +20,6 @@ This concurrent system consists of concurrently executing (potentially multiple)
 
 To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
 
-However, this design departs from the textbook, as the system does not execute parallel threads. Instead, it executes concurrent threads.
-
 ** Concurrency Support
 The following concurrent functions are supported:
 - $\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}$: $\textit{primitive}$, setup multiple threads for concurrent execution. For each nullary function $\texttt{f}_\texttt{i}$ that returns =undefined=, setup a thread $\texttt{t}_\texttt{i}$ that executes the code in the body of $\texttt{f}_\texttt{i}$. The thread that called =concurrent_execute= also executes concurrently with all $\texttt{t}_\texttt{i}$. Returns =undefined=. This is an atomic operation.
@@ -30,21 +28,20 @@ The following concurrent functions are supported:
 
 ** =EXECUTE= Rules
 
-*** Notes
-- For simplicity, heap is not represented in the rules.
-
 *** Compiling
 $$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$
-Each of $s_1. \cdots .s_n$ is a string of VM instruction that loads a closure onto the operand stack, and $id$ is the opcode of =EXECUTE=.
+Each of $s_1. \cdots .s_n$ is a sequence of VM instructions that loads a closure onto the operand stack, and $id$ is the opcode of =EXECUTE=.
 
 *** Running
+The state representing a normal VM has these structures:
+$$(\textit{os}, \textit{pc}, \textit{e}, \textit{rs})$$
 There are additional structures in our VM:
 0. $\textit{tq}$, a register which is a queue of threads.
 0. $\textit{to}$, a register initialized with $0$, that indicates how many instructions are left for a thread to run.
 The state representing our VM will have two more corresponding structures:
 $$(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to})$$
-The initial state of our VM is a $\textit{pc}$, which has empty $\textit{os}$, $\textit{env}$, $\textit{rs}$, and $\textit{tq}$, and zero timeout:
-$$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle, \langle \rangle, 0)$$
+The initial state of our VM is a $\textit{pc}$ set to zero, and has empty $\textit{os}$, $\textit{env}$, $\textit{rs}$, and $\textit{tq}$, and zero timeout:
+$$(\langle \rangle, 0, \langle \rangle, \langle \rangle, \langle \rangle, 0)$$
 
 Some notes on program execution:
 0. When the program calls =concurrent_execute=, it executes the rest of its code along with the concurrent threads, therefore the sequential program becomes a concurrent thread.
@@ -96,10 +93,6 @@ $$\Rule{s(\textit{pc}) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs} 
 If a thread executes the =RET= statement, and both the runtime stack and the thread queue are empty, and the timeout is nonzero, then the timeout decrements, and our VM stops.
 
 ** =TEST_AND_SET= and =CLEAR= Rules
-
-*** Notes
-- For simplicity, all registers and heap are not represented in the rules, except $\textit{os}$ and $\textit{pc}$.
-- =test_and_set= is an atomic operation.
 
 *** Compiling
 $$\Rule{E \translateaux s}{\texttt{test_and_set}(E) \translateaux s.\texttt{CALLV id 1}}$$
