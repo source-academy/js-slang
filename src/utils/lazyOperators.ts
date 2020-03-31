@@ -56,9 +56,7 @@ export function callIfFuncAndRightArgs(
       end: { line, column }
     }
   )
-  if (rttc.isFunctionT(candidate)) {
-    return applyFunctionToThunks(candidate, args, dummy, candidate.toString())
-  } else if (typeof candidate === 'function') {
+  if (typeof candidate === 'function') {
     // functions like force are not thunked and instead evaluated eagerly
     try {
       return candidate(...args)
@@ -72,12 +70,77 @@ export function callIfFuncAndRightArgs(
         throw error
       }
     }
+  } else if (rttc.isFunctionT(candidate)) {
+    return applyFunctionToThunks(candidate, args, dummy, candidate.toString())
   } else {
     throw new CallingNonFunctionValue(candidate, dummy)
   }
 }
 
-export function boolOrErr(candidate: TranspilerThunk<any>, line: number, column: number) {
+/**
+ * Same function as in operators.ts, this function
+ * checks if the candidate is a boolean. If it is, then
+ * return that boolean, if not throw an error. This function
+ * is applied for all conditional statements, so calling
+ * if/else or conditional statements with expressions that
+ * evaluate not to booleans at runtime will be unsuccessful.
+ *
+ * @param candidate The candidate to be checked.
+ * @param line The line number of the expression.
+ * @param column The column number of the expression.
+ *
+ * @returns The boolean candidate. If candidate is not
+ *          a boolean, throw an error.
+ */
+export function boolOrErr(candidate: any, line: number, column: number) {
+  const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
+  if (error === undefined) {
+    return candidate
+  } else {
+    throw error
+  }
+}
+
+/**
+ * Given an expression (possibly a thunked one), check if the
+ * expression is marked as type 'boolean'. If it does, or if
+ * the type is not determinable at transpile time, return the
+ * expression itself
+ *
+ * @param candidate The expression to be checked.
+ * @param line The line number of the expression.
+ * @param column The column number of the expression.
+ *
+ * @returns The thunk if the type is determinable and
+ *          confirmed to be boolean. If the type is not
+ *          determinable, just return the thunk also as it
+ *          might still evaluate to boolean. For all other
+ *          cases, throw an error.
+ */
+export function throwErrorIfNotBoolThunk(candidate: TranspilerThunk<any>, line: number, column: number) {
+  const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
+  if (error === undefined) {
+    return candidate
+  } else {
+    throw error
+  }
+}
+
+/**
+ * Given an expression (possibly a thunked one), check if the
+ * expression is marked as type 'boolean'. If it does, or if
+ * the type is not determinable at transpile time, return the
+ * type of the expression as a String (e.g. "boolean").
+ *
+ * @param candidate The expression to be checked.
+ * @param line The line number of the expression.
+ * @param column The column number of the expression.
+ *
+ * @returns The String type of the candidate, if it
+ *          is determinable and "boolean", or if it is
+ *          not determinable. Otherwise, throw an error.
+ */
+export function getTypeOfBoolThunkOrError(candidate: TranspilerThunk<any>, line: number, column: number) {
   const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate.toString()
@@ -222,8 +285,8 @@ export function logicalOp(
   line: number,
   column: number
 ) {
-  const leftType = boolOrErr(left, line, column)
-  const rightType = boolOrErr(right, line, column)
+  const leftType = getTypeOfBoolThunkOrError(left, line, column)
+  const rightType = getTypeOfBoolThunkOrError(right, line, column)
   if (typeof leftType === 'string' && typeof rightType === 'string') {
     return evaluateLogicalExpression(operator, left, right)
   } else if (typeof leftType === 'string') {
@@ -282,7 +345,7 @@ export function conditionalOp(
   line: number,
   column: number
 ): TranspilerThunk<any> {
-  const predicateType = boolOrErr(predicate, line, column)
+  const predicateType = getTypeOfBoolThunkOrError(predicate, line, column)
   if (typeof predicateType === 'string') {
     return makeConditionalThunk(predicate, consequent, alternate)
   } else {

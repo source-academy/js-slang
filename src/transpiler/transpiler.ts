@@ -54,6 +54,7 @@ const globalIds = {
   native: create.identifier('dummy'),
   callIfFuncAndRightArgs: create.identifier('dummy'),
   boolOrErr: create.identifier('dummy'),
+  throwErrorIfNotBoolThunk: create.identifier('dummy'),
   wrap: create.identifier('dummy'),
   unaryOp: create.identifier('dummy'),
   binaryOp: create.identifier('dummy'),
@@ -460,21 +461,30 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
 }
 
 /**
+ * Function used in the lazy transpiler to check type.
  * Transforms if/for/while statements to check
- * whether the condition is a boolean type, and then
- * force the execution of the condition.
+ * whether the condition can be determined to be
+ * a boolean type. If so, then force the execution
+ * of the condition, before checking again if the
+ * expression really evaluates to a boolean.
+ *
  * @param program The program to be transformed
  */
 function transformSomeExpressionsToCheckIfBooleanAndForce(program: es.Program) {
   function transform(node: es.IfStatement | es.ForStatement | es.WhileStatement) {
     const { line, column } = node.loc!.start
-    node.test = create.forceEagerEvaluationOfLazyExpression(
-      create.callExpression(
-        globalIds.boolOrErr,
-        node.test
-          ? [node.test, create.literal(line), create.literal(column)]
-          : [create.literal(line), create.literal(column)]
-      )
+    const literalLine = create.literal(line)
+    const literalColumn = create.literal(column)
+    node.test = create.callExpression(
+      globalIds.boolOrErr,
+      [create.forceEagerEvaluationOfLazyExpression(
+        create.callExpression(
+          globalIds.throwErrorIfNotBoolThunk,
+          node.test
+            ? [node.test, literalLine, literalColumn]
+            : [literalLine, literalColumn]
+        )
+      ),  literalLine, literalColumn]
     )
   }
 
@@ -837,6 +847,7 @@ export function transpile(
     // remove unnecessary global ids
     delete globalIds.logicalOp
     delete globalIds.conditionalOp
+    delete globalIds.throwErrorIfNotBoolThunk
   }
   contextId = id
   refreshLatestIdentifiers(program)
