@@ -31,6 +31,8 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { compileWithPrelude } from './vm/svml-compiler'
+import { runWithProgram } from './vm/svml-machine'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -219,6 +221,27 @@ export async function runInContext(
   validateAndAnnotate(program as Program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
+  }
+  if (context.chapter === 3.4) {
+    if (previousCode === code) {
+      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+    }
+    previousCode = code
+    try {
+      return Promise.resolve({
+        status: 'finished',
+        value: runWithProgram(compileWithPrelude(program, context), context)
+      } as Result)
+    } catch (error) {
+      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+        context.errors.push(error) // use ExceptionErrors for non Source Errors
+        return resolvedErrorPromise
+      }
+      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+      return resolvedErrorPromise
+    }
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)

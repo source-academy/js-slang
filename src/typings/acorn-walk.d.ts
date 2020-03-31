@@ -8,7 +8,7 @@ declare module 'acorn-walk/dist/walk' {
     ancestors: Node[],
     type: string
   ) => void
-  type WalkerCallback<TState> = (node: Node, state: TState) => void
+  type WalkerCallback<TState> = (node: Node, state: TState, type?: string) => void
 
   type SimpleWalkerFn<TState> = (node: Node, state: TState) => void
 
