@@ -250,6 +250,12 @@ test('Require operator', async () => {
     ',
     [6, 9]
   )
+
+  await testNonDeterministicCode(
+    `const f = an_integer_between(1, 10); require(f > 3, true); f;`,
+    ['Line 1: Expected 1 arguments, but got 2.'],
+    true
+  )
 })
 
 /*  Deterministic block scoping tests taken from block-scoping.ts */

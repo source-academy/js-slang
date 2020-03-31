@@ -220,23 +220,6 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
   }
 }
 
-function* evaluateRequire(context: Context, call: es.CallExpression) {
-  if (call.arguments.length !== 1) {
-    return yield handleRuntimeError(
-      context,
-      new errors.InvalidNumberOfArguments(call, 1, call.arguments.length)
-    )
-  }
-
-  const predicate = call.arguments[0]
-  const predicateGenerator = evaluate(predicate, context)
-  for (const predicateValue of predicateGenerator) {
-    if (predicateValue) {
-      yield 'Satisfied require'
-    }
-  }
-}
-
 function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
@@ -338,8 +321,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (rttc.isIdentifier(callee)) {
       if (callee.name === 'amb') {
         return yield* getAmbArgs(context, node)
-      } else if (callee.name === 'require') {
-        return yield* evaluateRequire(context, node)
       }
     }
 
