@@ -8,25 +8,26 @@
 #+LATEX_HEADER: \usepackage[strings]{underscore}
 #+LATEX_HEADER: \usepackage[title]{appendix}
 
-* Specification of Concurrent Virtual Machine
+* Introducing Concurrency to Source
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
+
+
+To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
+
 Compared to Source $\S 3$, this concurrent system has the following changes:
 - The addition of three primitive concurrent functions.
 For details, see Section ``Concurrency Support'' below.
 
-** Overview
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
-
-To comply with the textbook, the thread that calls =concurrent_execute= also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no =join= primitive concurrent function.
-
-** Concurrency Support
+* Concurrency Support
 The following concurrent functions are supported:
 - $\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}$: $\textit{primitive}$, setup multiple threads for concurrent execution. For each nullary function $\texttt{f}_\texttt{i}$ that returns =undefined=, setup a thread $\texttt{t}_\texttt{i}$ that executes the code in the body of $\texttt{f}_\texttt{i}$. The thread that called =concurrent_execute= also executes concurrently with all $\texttt{t}_\texttt{i}$. Returns =undefined=. This is an atomic operation.
 - =test_and_set(a)=: $\textit{primitive}$, assumes the head of array =a= is a boolean $b$. Sets the head of =a= to =true=. Returns $b$. This is an atomic operation.
 - =clear(a)=: $\textit{primitive}$, sets the head of array =a= to =false=. Returns =undefined=. This is an atomic operation.
 
-** =EXECUTE= Rules
-
+* Under the hood: a Virtual Machine for Concurrent Source
 In this specification, we describe the behavior of compiling from Source to SVML, as well as running SVML, with natural deduction rules. Please refer to [[Explanations on Inference Rules][Appendix A]] for explanations about compilation rules and VM transition rules.
+
+** =EXECUTE= Rules
 
 *** Compiling
 $$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$

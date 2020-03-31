@@ -1,4 +1,4 @@
-% Created 2020-03-31 Tue 12:24
+% Created 2020-03-31 Tue 14:15
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -42,23 +42,19 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{source_intro.tex}
+\section{Introducing Concurrency to Source}
+\label{sec:org2ac2c7f}
+This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
+To comply with the textbook, the thread that calls \texttt{concurrent\_execute} also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no \texttt{join} primitive concurrent function.
 
-\section{Specification of Concurrent Virtual Machine}
-\label{sec:orgc6ebafc}
 Compared to Source \(\S 3\), this concurrent system has the following changes:
 \begin{itemize}
 \item The addition of three primitive concurrent functions.
 \end{itemize}
 For details, see Section ``Concurrency Support'' below.
 
-\subsection{Overview}
-\label{sec:org469dfa8}
-This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
-
-To comply with the textbook, the thread that calls \texttt{concurrent\_execute} also continues to execute the rest of its code concurrently with the threads. Furthermore, there is no \texttt{join} primitive concurrent function.
-
-\subsection{Concurrency Support}
-\label{sec:orgbb5bb34}
+\section{Concurrency Support}
+\label{sec:orge505f00}
 The following concurrent functions are supported:
 \begin{itemize}
 \item \(\texttt{concurrent_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}\): \(\textit{primitive}\), setup multiple threads for concurrent execution. For each nullary function \(\texttt{f}_\texttt{i}\) that returns \texttt{undefined}, setup a thread \(\texttt{t}_\texttt{i}\) that executes the code in the body of \(\texttt{f}_\texttt{i}\). The thread that called \texttt{concurrent\_execute} also executes concurrently with all \(\texttt{t}_\texttt{i}\). Returns \texttt{undefined}. This is an atomic operation.
@@ -66,10 +62,12 @@ The following concurrent functions are supported:
 \item \texttt{clear(a)}: \(\textit{primitive}\), sets the head of array \texttt{a} to \texttt{false}. Returns \texttt{undefined}. This is an atomic operation.
 \end{itemize}
 
-\subsection{\texttt{EXECUTE} Rules}
-\label{sec:orge0bf09d}
+\section{Under the hood: a Virtual Machine for Concurrent Source}
+\label{sec:org1d2bc50}
+In this specification, we describe the behavior of compiling from Source to SVML, as well as running SVML, with natural deduction rules. Please refer to \hyperref[sec:org72fc34e]{Appendix A} for explanations about compilation rules and VM transition rules.
 
-In this specification, we describe the behavior of compiling from Source to SVML, as well as running SVML, with natural deduction rules. Please refer to \hyperref[sec:orgd804cd9]{Appendix A} for explanations about compilation rules and VM transition rules.
+\subsection{\texttt{EXECUTE} Rules}
+\label{sec:org2e43dfb}
 
 \subsubsection{Compiling}
 \label{sec:org2f52610}
