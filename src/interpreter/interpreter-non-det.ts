@@ -456,9 +456,21 @@ export function* apply(
       context,
       cloneDeep(fun.node.body) as es.BlockStatement
     )
+
+    // This function takes a value that may be a ReturnValue.
+    // If so, it returns the value wrapped in the ReturnValue.
+    // If not, it returns the default value.
+    function unwrapReturnValue(result: any, defaultValue: any) {
+      if (result instanceof ReturnValue) {
+        return result.value
+      } else {
+        return defaultValue
+      }
+    }
+
     for (const applicationValue of applicationValueGenerator) {
       popEnvironment(context)
-      yield applicationValue.value
+      yield unwrapReturnValue(applicationValue, undefined)
       pushEnvironment(context, environment)
     }
   } else if (typeof fun === 'function') {
