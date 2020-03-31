@@ -18,6 +18,10 @@ test('Unary operations with non deterministic terms', async () => {
   await testNonDeterministicCode('!amb(true, false);', [false, true])
 })
 
+test('Unary operations on the wrong type should cause error', async () => {
+  await testDeterministicCode('!100;', 'Line 1: Expected boolean, got number.', true)
+})
+
 test('Binary operations', async () => {
   await testDeterministicCode('1 + 4 - 10 * 5;', -45)
   await testDeterministicCode('"hello" + " world" + "!";', 'hello world!')
@@ -33,6 +37,14 @@ test('Binary operations with non deterministic terms', async () => {
   await testNonDeterministicCode('amb((23 % 3), 7) * amb((10 / 2), 19 - 5);', [10, 28, 35, 98])
 })
 
+test('Binary operations on the wrong types should cause error', async () => {
+  await testDeterministicCode(
+    'false + 4;',
+    'Line 1: Expected string or number on left hand side of operation, got boolean.',
+    true
+  )
+})
+
 test('Assignment', async () => {
   await testDeterministicCode('let a = 5; a = 10; a;', 10)
 })
@@ -46,6 +58,18 @@ test('Assignment with non deterministic terms', async () => {
     amb(reassign_num(), num);`,
     [10, 5]
   )
+})
+
+test('Re-assignment to constant should cause error', async () => {
+  await testDeterministicCode(
+    `const f = 10; { f = 20; }`,
+    'Line 1: Cannot assign new value to constant f.',
+    true
+  )
+})
+
+test('Accessing un-declared variable should cause error', async () => {
+  await testDeterministicCode(`let g = 100; f;`, 'Line -1: Name f not declared.', true)
 })
 
 test('If-else and conditional expressions with non deterministic terms', async () => {
@@ -66,6 +90,14 @@ test('If-else and conditional expressions with non deterministic terms', async (
       9 * 10 / 5;
     }`,
     [18, 5, 'world', 'hello', false]
+  )
+})
+
+test('Conditional expression with non boolean predicate should cause error', async () => {
+  await testDeterministicCode(
+    '100 ? 5 : 5;',
+    'Line 1: Expected boolean as condition, got number.',
+    true
   )
 })
 
@@ -116,6 +148,18 @@ test('Function applications', async () => {
        reverse(list(1));
      }`,
     undefined
+  )
+})
+
+test('Applying functions with wrong number of arguments should cause error', async () => {
+  await testDeterministicCode(
+    `function foo(a, b) {
+       return a + b;
+     }
+     foo(1);
+     `,
+    `Line 4: Expected 2 arguments, but got 1.`,
+    true
   )
 })
 
