@@ -1,4 +1,4 @@
-% Created 2020-03-31 Tue 12:17
+% Created 2020-03-31 Tue 12:20
 % Intended LaTeX compiler: pdflatex
 \input{source_header.tex}
 \newcommand{\qed}{$\Box$}
@@ -51,8 +51,6 @@ Compared to Source \(\S 3\), this concurrent system has the following changes:
 \end{itemize}
 For details, see Section ``Concurrency Support'' below.
 
-Please refer to \hyperref[sec:org10e3758]{Appendix A} for explanations about compilation rules and VM transition rules.
-
 \subsection{Overview}
 \label{sec:org074ba1b}
 This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers \(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}\), and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
@@ -70,6 +68,8 @@ The following concurrent functions are supported:
 
 \subsection{\texttt{EXECUTE} Rules}
 \label{sec:org9d11a1b}
+
+In this specification, we describe the behavior of compiling from Source to SVML, as well as running SVML, with natural deduction rules. Please refer to \hyperref[sec:org985890c]{Appendix A} for explanations about compilation rules and VM transition rules.
 
 \subsubsection{Compiling}
 \label{sec:orga885586}

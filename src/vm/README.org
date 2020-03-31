@@ -13,8 +13,6 @@ Compared to Source $\S 3$, this concurrent system has the following changes:
 - The addition of three primitive concurrent functions.
 For details, see Section ``Concurrency Support'' below.
 
-Please refer to [[Explanations on Inference Rules][Appendix A]] for explanations about compilation rules and VM transition rules.
-
 ** Overview
 This concurrent system consists of concurrently executing (potentially multiple) code in multiple threads. Communication between threads is achieved by updating the values of memory shared between threads. Each thread is a collection of registers $\textit{os}, \textit{pc}, \textit{e}, \textit{rs}$, and at the expiration of the time quantum, the concurrent system executes the next thread in the thread queue.
 
@@ -27,6 +25,8 @@ The following concurrent functions are supported:
 - =clear(a)=: $\textit{primitive}$, sets the head of array =a= to =false=. Returns =undefined=. This is an atomic operation.
 
 ** =EXECUTE= Rules
+
+In this specification, we describe the behavior of compiling from Source to SVML, as well as running SVML, with natural deduction rules. Please refer to [[Explanations on Inference Rules][Appendix A]] for explanations about compilation rules and VM transition rules.
 
 *** Compiling
 $$\Rule{E_1 \translateaux s_1 \qquad \cdots \qquad E_n \translateaux s_n}{\texttt{concurrent_execute}(E_1, \cdots , E_n) \translateaux s_1. \cdots .s_n.\texttt{CALLV id n}}$$
