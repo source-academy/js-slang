@@ -15,6 +15,8 @@
 
 ## <a href="source_3/">Source §3</a>
 
+## <a href="source_3_concurrent/">Source §3 Concurrent</a>
+
 ## <a href="source_4/">Source §4</a>
 
 ## <a href="External libraries/">External Libraries</a>

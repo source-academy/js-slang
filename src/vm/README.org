@@ -185,3 +185,4 @@ $$\Rule{s(\textit{pc}) = \texttt{CALL } n}{
 Now, we can describe the behavior of the machine $M_s$ as a transition function $\transition$, which transforms machine states to machine states, and which is defined by many rules, some of which we have already covered in this document: the rules for =EXECUTE=, =TEST_AND_SET=, and =CLEAR=.
 The other rules for the transition function $\transition$ will not be covered in this document. Instead, please refer to the document [[file:svml-is.pdf][Source VM Instruction Set]].
 #+LATEX: \end{appendices}
+
