@@ -149,6 +149,23 @@ test('Function applications', async () => {
      }`,
     undefined
   )
+
+  await testDeterministicCode(`const a = 2; a();`, 'Line 1: Calling non-function value 2.', true)
+
+  await testDeterministicCode(
+    `(function() {})();`,
+    'Line 1: Function expressions are not allowed',
+    true
+  )
+
+  await testDeterministicCode(
+    `function ignoreStatementsAfterReturn(n) {
+        return n; return n * 2;
+     }
+     ignoreStatementsAfterReturn(5);
+    `,
+    5
+  )
 })
 
 test('Applying functions with wrong number of arguments should cause error', async () => {
@@ -255,6 +272,20 @@ test('Require operator', async () => {
     `const f = an_integer_between(1, 10); require(f > 3, true); f;`,
     ['Line 1: Expected 1 arguments, but got 2.'],
     true
+  )
+})
+
+test('Cut operator', async () => {
+  await testNonDeterministicCode(
+    `const f = amb(1, 2, 3); cut; f + amb(4, 5, 6);
+    `,
+    [5, 6, 7]
+  )
+
+  await testNonDeterministicCode(
+    `const f = amb(1, 2, 3);  const g = amb(4, 5, 6); cut; f + g;
+    `,
+    [5]
   )
 })
 

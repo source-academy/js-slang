@@ -299,10 +299,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     yield node.value
   },
 
-  FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
-    yield new Closure(node, currentEnvironment(context), context)
-  },
-
   ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
     yield Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
@@ -451,17 +447,6 @@ export function* apply(
   node: es.CallExpression,
   thisContext?: Value
 ) {
-  // This function takes a value that may be a ReturnValue.
-  // If so, it returns the value wrapped in the ReturnValue.
-  // If not, it returns the default value.
-  function unwrapReturnValue(result: any, defaultValue: any) {
-    if (result instanceof ReturnValue) {
-      return result.value
-    } else {
-      return defaultValue
-    }
-  }
-
   if (fun instanceof Closure) {
     checkNumberOfArguments(context, fun, args, node!)
     const environment = createEnvironment(fun, args, node)
@@ -473,7 +458,7 @@ export function* apply(
     )
     for (const applicationValue of applicationValueGenerator) {
       popEnvironment(context)
-      yield unwrapReturnValue(applicationValue, undefined)
+      yield applicationValue.value
       pushEnvironment(context, environment)
     }
   } else if (typeof fun === 'function') {
