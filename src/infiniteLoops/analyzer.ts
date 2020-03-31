@@ -7,20 +7,26 @@ enum InfiniteLoopType {
   MLinearDiv
 }
 
-function testBaseCase(checker: stype.infiniteLoopChecker, name: string, args: any[]): InfiniteLoopType {
-  return name === checker.functionName && checker.id === InfiniteLoopType.NoBaseCase ? InfiniteLoopType.NoBaseCase : InfiniteLoopType.Terminates
+function testBaseCase(
+  checker: stype.InfiniteLoopChecker,
+  name: string,
+  args: any[]
+): InfiniteLoopType {
+  return name === checker.functionName && checker.id === InfiniteLoopType.NoBaseCase
+    ? InfiniteLoopType.NoBaseCase
+    : InfiniteLoopType.Terminates
 }
 
-function checkBaseCase(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
-  function makeChecker(name: string): stype.infiniteLoopChecker {
-    const id:number = InfiniteLoopType.NoBaseCase
+function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
+  function makeChecker(name: string): stype.InfiniteLoopChecker {
+    const id: number = InfiniteLoopType.NoBaseCase
     return stype.makeLoopChecker(id, name, [])
   }
   function getName(sym: stype.FunctionSymbol | stype.TerminateSymbol) {
     return sym.type === 'TerminateSymbol' ? '*' : sym.name
   }
 
-  const checkers: stype.infiniteLoopChecker[] = []
+  const checkers: stype.InfiniteLoopChecker[] = []
   for (const [name, transitions] of tset.entries()) {
     const calleeNames = transitions.map(x => getName(x.callee))
     if (calleeNames.every(x => x === name)) {
@@ -31,7 +37,7 @@ function checkBaseCase(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
 }
 
 function testMLinearDiv(
-  checker: stype.infiniteLoopChecker,
+  checker: stype.InfiniteLoopChecker,
   name: string,
   args: any[]
 ): InfiniteLoopType {
@@ -72,7 +78,7 @@ function getArg(sym: stype.FunctionSymbol, name: string) {
   return -1
 }
 
-function checkMLinearDiv(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
+function checkMLinearDiv(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function check1(transition: stype.Transition) {
     const caller = transition.caller
     const callee = transition.callee
@@ -88,14 +94,14 @@ function checkMLinearDiv(tset: stype.TransitionSet): stype.infiniteLoopChecker[]
           const arg = callee.args[idx] as stype.NumberSymbol
           if (arg?.isPositive && arg.constant * cond.direction > 0) {
             const checkerArgs = [arg.constant, cond.direction, idx]
-            return stype.makeLoopChecker(InfiniteLoopType.MLinearDiv,  caller.name, checkerArgs)
+            return stype.makeLoopChecker(InfiniteLoopType.MLinearDiv, caller.name, checkerArgs)
           }
         }
       }
     }
     return undefined
   }
-  const checkers: stype.infiniteLoopChecker[] = []
+  const checkers: stype.InfiniteLoopChecker[] = []
   for (const transitions of tset.values()) {
     for (const transition of transitions) {
       const checker = check1(transition)
@@ -117,13 +123,24 @@ function unpackSymbol(fun: stype.FunctionSymbol, cond: stype.BooleanSymbol): num
   return lhs.concat(rhs)
 }
 
-function testStateChange(checker: stype.infiniteLoopChecker, name: string, args: any[]): InfiniteLoopType {
+function testStateChange(
+  checker: stype.InfiniteLoopChecker,
+  name: string,
+  args: any[]
+): InfiniteLoopType {
   const fun = checker.checkerArgs[0]
   const sym = checker.checkerArgs[1]
   const checks = unpackSymbol(fun, sym)
-  if(name === checker.functionName && sym !== null) {
+  if (name === checker.functionName && sym !== null) {
     for (const check of checks) {
-      if (check[2] * args[check[0]] < check[1]) {
+      const idx = check[0]
+      const constant = check[1]
+      const direction = check[2]
+      if (direction === -1 && args[idx] < constant) {
+        continue
+      } else if (direction === 0 && args[idx] === constant) {
+        continue
+      } else if (direction === 1 && args[idx] > constant) {
         continue
       }
       return InfiniteLoopType.Terminates
@@ -133,7 +150,7 @@ function testStateChange(checker: stype.infiniteLoopChecker, name: string, args:
   return InfiniteLoopType.Terminates
 }
 
-function checkStateChange(tset: stype.TransitionSet): stype.infiniteLoopChecker[] {
+function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function sameArgs(f1: stype.FunctionSymbol, f2: stype.SSymbol) {
     if (f2.type !== 'FunctionSymbol') return false
     if (f1.name !== f2.name) return false
@@ -154,7 +171,7 @@ function checkStateChange(tset: stype.TransitionSet): stype.infiniteLoopChecker[
     return true
   }
 
-  const checkers: stype.infiniteLoopChecker[] = []
+  const checkers: stype.InfiniteLoopChecker[] = []
   for (const transitions of tset.values()) {
     for (const transition of transitions) {
       if (sameArgs(transition.caller, transition.callee)) {
@@ -189,12 +206,12 @@ function getErrorMessage(code: InfiniteLoopType) {
   return undefined
 }
 
-export function testFunction(name: string, args: any[], checkers: stype.infiniteLoopChecker[]) {
+export function testFunction(name: string, args: any[], checkers: stype.InfiniteLoopChecker[]) {
   // quick fix to make the deployment work, TODO: make more robust
   const testers = [null, testBaseCase, testStateChange, testMLinearDiv]
   for (const checker of checkers) {
     const test = testers[checker.id]
-    if(test) {
+    if (test) {
       const status = test(checker, name, args)
       if (status !== InfiniteLoopType.Terminates) {
         return getErrorMessage(status)

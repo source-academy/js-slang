@@ -52,3 +52,24 @@ test('infinite loop detected no state change', () => {
       `
   return expectParsedError(code).toMatchSnapshot()
 })
+
+test('infinite loop state change with conditionals terminates', () => {
+    const works = `
+          function f(x) {
+            return x<0 || x>5? 0:f(x);
+          }
+          f(6);
+        `
+    return expectResult(works).toMatchSnapshot()
+  })
+
+
+test('infinite loop state change with conditionals detected', () => {
+    const breaks = `
+        function f(x) {
+          return x<0 || x>5? 0:f(x);
+        }
+        f(2);
+      `
+    return expectParsedError(breaks).toMatchSnapshot()
+  })

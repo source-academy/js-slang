@@ -116,6 +116,62 @@ Object {
 }
 `;
 
+exports[`infinite loop state change with conditionals detected 1`] = `"Line 5: Infinite loop detected. Check your function calls."`;
+
+exports[`infinite loop state change with conditionals detected: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+        function f(x) {
+          return x<0 || x>5? 0:f(x);
+        }
+        f(2);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    InfiniteLoopError {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 8,
+          "line": 5,
+        },
+      },
+      "message": " Check your function calls.",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5: Infinite loop detected. Check your function calls.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop state change with conditionals terminates 1`] = `0`;
+
+exports[`infinite loop state change with conditionals terminates: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+          function f(x) {
+            return x<0 || x>5? 0:f(x);
+          }
+          f(6);
+        ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`no infinite loops detected 1`] = `5`;
 
 exports[`no infinite loops detected: expectResult 1`] = `
