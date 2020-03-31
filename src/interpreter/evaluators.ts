@@ -9,6 +9,7 @@ import * as env from './environmentUtils'
 import { BreakValue, ContinueValue, ReturnValue, TailCallReturnValue } from './evaluatorUtils'
 import { Evaluator, getArgs, apply } from './evaluatorUtils'
 import { transformLogicalExpression, reduceIf, evaluateBlockStatement } from './evaluatorUtils'
+import { makeThunkAware } from './thunk'
 
 export function getEvaluators(
   evaluate: Evaluator<es.Node>,
@@ -68,14 +69,14 @@ export function getEvaluators(
       const args = yield* getArgs(context, node, evaluate)
       let thisContext
       if (node.callee.type === 'MemberExpression') {
-        thisContext = yield* evaluate(node.callee.object, context)
+        thisContext = yield* forceEvaluate(node.callee.object, context)
       }
       const result = yield* apply(context, callee, args, node, forceEvaluate, thisContext)
       return result
     },
 
     NewExpression: function*(node: es.NewExpression, context: Context) {
-      const callee = yield* evaluate(node.callee, context)
+      const callee = yield* forceEvaluate(node.callee, context)
       const args = []
       for (const arg of node.arguments) {
         args.push(yield* evaluate(arg, context))
@@ -86,13 +87,14 @@ export function getEvaluators(
         callee.fun.apply(obj, args)
       } else {
         obj.__proto__ = callee.prototype
-        callee.apply(obj, args)
+        const thunkAwareCallee = makeThunkAware(callee, obj)
+        yield* thunkAwareCallee(...args)
       }
       return obj
     },
 
     UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
-      const value = yield* evaluate(node.argument, context)
+      const value = yield* forceEvaluate(node.argument, context)
 
       const error = rttc.checkUnaryExpression(node, node.operator, value)
       if (error) {
@@ -102,8 +104,8 @@ export function getEvaluators(
     },
 
     BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-      const left = yield* evaluate(node.left, context)
-      const right = yield* evaluate(node.right, context)
+      const left = yield* forceEvaluate(node.left, context) // TODO: how about ||, &&?
+      const right = yield* forceEvaluate(node.right, context)
 
       const error = rttc.checkBinaryExpression(node, node.operator, left, right)
       if (error) {
@@ -148,10 +150,10 @@ export function getEvaluators(
       if (initNode.type === 'VariableDeclaration') {
         env.hoistVariableDeclarations(context, initNode)
       }
-      yield* evaluate(initNode, context)
+      yield* forceEvaluate(initNode, context)
 
       let value
-      while (yield* evaluate(testNode, context)) {
+      while (yield* forceEvaluate(testNode, context)) {
         // create block context and shallow copy loop environment head
         // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
         // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -166,7 +168,7 @@ export function getEvaluators(
           }
         }
 
-        value = yield* evaluate(node.body, context)
+        value = yield* forceEvaluate(node.body, context)
 
         // Remove block context
         env.popEnvironment(context)
@@ -181,7 +183,7 @@ export function getEvaluators(
           break
         }
 
-        yield* evaluate(updateNode, context)
+        yield* forceEvaluate(updateNode, context)
       }
 
       env.popEnvironment(context)
@@ -190,13 +192,13 @@ export function getEvaluators(
     },
 
     MemberExpression: function*(node: es.MemberExpression, context: Context) {
-      let obj = yield* evaluate(node.object, context)
+      let obj = yield* forceEvaluate(node.object, context)
       if (obj instanceof Closure) {
         obj = obj.fun
       }
       let prop
       if (node.computed) {
-        prop = yield* evaluate(node.property, context)
+        prop = yield* forceEvaluate(node.property, context)
       } else {
         prop = (node.property as es.Identifier).name
       }
@@ -227,10 +229,10 @@ export function getEvaluators(
     AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
       if (node.left.type === 'MemberExpression') {
         const left = node.left
-        const obj = yield* evaluate(left.object, context)
+        const obj = yield* forceEvaluate(left.object, context)
         let prop
         if (left.computed) {
-          prop = yield* evaluate(left.property, context)
+          prop = yield* forceEvaluate(left.property, context)
         } else {
           prop = (left.property as es.Identifier).name
         }
@@ -264,11 +266,11 @@ export function getEvaluators(
     },
 
     IfStatement: function*(node: es.IfStatement | es.ConditionalExpression, context: Context) {
-      return yield* evaluate(yield* reduceIf(node, context, forceEvaluate), context)
+      return yield* forceEvaluate(yield* reduceIf(node, context, forceEvaluate), context)
     },
 
     ExpressionStatement: function*(node: es.ExpressionStatement, context: Context) {
-      return yield* evaluate(node.expression, context)
+      return yield* forceEvaluate(node.expression, context)
     },
 
     ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
@@ -287,7 +289,7 @@ export function getEvaluators(
 
       // If we are now left with a CallExpression, then we use TCO
       if (returnExpression.type === 'CallExpression') {
-        const callee = yield* evaluate(returnExpression.callee, context)
+        const callee = yield* forceEvaluate(returnExpression.callee, context)
         const args = yield* getArgs(context, returnExpression, evaluate)
         return new TailCallReturnValue(callee, args, returnExpression)
       } else {
@@ -299,12 +301,12 @@ export function getEvaluators(
       let value: any // tslint:disable-line
       while (
         // tslint:disable-next-line
-        (yield* evaluate(node.test, context)) &&
+        (yield* forceEvaluate(node.test, context)) &&
         !(value instanceof ReturnValue) &&
         !(value instanceof BreakValue) &&
         !(value instanceof TailCallReturnValue)
       ) {
-        value = yield* evaluate(node.body, context)
+        value = yield* forceEvaluate(node.body, context)
       }
       if (value instanceof BreakValue) {
         return undefined
@@ -319,7 +321,7 @@ export function getEvaluators(
         if (prop.key.type === 'Identifier') {
           key = prop.key.name
         } else {
-          key = yield* evaluate(prop.key, context)
+          key = yield* forceEvaluate(prop.key, context)
         }
         obj[key] = yield* evaluate(prop.value, context)
       }

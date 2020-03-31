@@ -8,6 +8,7 @@ import { conditionalExpression, literal } from '../utils/astCreator'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import * as env from './environmentUtils'
+import { makeThunkAware } from './thunk'
 
 export class BreakValue {}
 
@@ -127,7 +128,8 @@ export function* apply(
       }
     } else if (typeof fun === 'function') {
       try {
-        result = fun.apply(thisContext, args)
+        const thunkAwareCallee = makeThunkAware(fun, thisContext)
+        result = yield* thunkAwareCallee(...args)
         break
       } catch (e) {
         // Recover from exception

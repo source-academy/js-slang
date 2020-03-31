@@ -10,7 +10,11 @@ import {
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
-import { ApplicativeOrderEvaluationInterpreter } from './interpreter/interpreter'
+import {
+  ApplicativeOrderEvaluationInterpreter,
+  LazyEvaluationInterpreter,
+  Interpreter
+} from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
@@ -46,7 +50,7 @@ const DEFAULT_OPTIONS: IOptions = {
   executionMethod: 'interpreter', // TODO: Add a command line option for this
   originalMaxExecTime: 1000,
   useSubst: false,
-  useLazyEval: true // TODO: Add a command line option for this
+  useLazyEval: false // TODO: Add a command line option for this
 }
 
 // needed to work on browsers
@@ -163,6 +167,13 @@ export async function runInContext(
 
     return undefined
   }
+
+  function getInterpreter(useLazyEval: boolean): Interpreter {
+    return useLazyEval
+      ? new LazyEvaluationInterpreter()
+      : new ApplicativeOrderEvaluationInterpreter()
+  }
+
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
 
@@ -249,8 +260,8 @@ export async function runInContext(
       )
     }
   } else {
-    const interpreter = new ApplicativeOrderEvaluationInterpreter()
-    const it = interpreter.evaluate(program, context)
+    const interpreter = getInterpreter(theOptions.useLazyEval)
+    const it = interpreter.boundedForceEvaluate(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
