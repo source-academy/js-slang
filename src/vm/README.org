@@ -132,36 +132,75 @@ $$\Rule{x_1 \quad \cdots \quad x_n}{x}$$
 stands for the rule $\texttt{if } x_1 \ldots x_n\in X \texttt{, then }x \in X$.
 
 ** Compilation Rules
-The translation from SourceA to SVML is accomplished by a function
-$$\translate: \textrm{SourceA} \rightarrow \textrm{SVML}$$
+The translation from Source to SVML is accomplished by a function
+$$\translate: \textrm{Source} \rightarrow \textrm{SVML}$$
 which uses the auxilary translation function $\translateaux$.
 
 The auxiliary translation function $\translateaux$ is defined by many rules, some of which we have already covered in this document: the rules for =concurrent_execute=, =test_and_set=, and =clear=.
 The other rules for the auxiliary translation function $\translateaux$ will not be covered in this document. Instead, please refer to the document [[file:svml-spec.pdf][Source Virtual Machine Language]].
 
 ** VM Transition Rules
-The machine that we will use to execute SVML programs is a variation of a \emph{push-down automaton}. Let us fix a specific program $s$. The machine $M_s$ that executes $s$ is given as an automaton that transforms a given machine state to another state. The machine state is represented by so-called registers. In the case of SVML, we need two registers, called \emph{program counter}---denoted by the symbol \textit{pc}---and \emph{operand stack} ---denoted by the symbol \textit{os}.
+The machine that we will use to execute SVML programs is a variation of a \emph{push-down automaton}. Let us fix a specific program $s$. The machine $M_s$ that executes $s$ is given as an automaton that transforms a given machine state to another state. The machine state is represented by so-called registers.
+In the case of SVML, we need four registers:
+- operand stack :: denoted by the symbol \textit{os}
+- program counter :: denoted by the symbol \textit{pc}
+- environment :: denoted by the symbol \textit{e}
+- runtime stack :: denoted by the symbol \textit{rs}
+The initial state of a VM is a $\textit{pc}$ set to zero, and empty $\textit{os}$, $\textit{env}$, $\textit{rs}$:
+$$(\langle \rangle, \textit{pc}, \langle \rangle, \langle \rangle)$$
 
+*** $\textit{pc}$: Program Counter
 The program counter is used to point to a specific instruction in $s$, starting from position 0.
 For example, if $\textit{pc} = 2$, and $s$ is the program
 $$\begin{aligned}
-\lbrack&\texttt{LDCN 1},\\
-&\texttt{LDCN 2},\\
-&\texttt{PLUS},\\
-&\texttt{LDCN 3},\\
-&\texttt{TIMES},\\
-&\texttt{DONE}\\
+\lbrack&\texttt{LGCI 2},\\
+&\texttt{LGCI 1},\\
+&\texttt{SUBG},\\
 \rbrack
 \end{aligned}$$
-, then $s(\textit{pc}) = \texttt{PLUS}$.
+, then $s(\textit{pc}) = \texttt{SUBG}$.
 
-\paragraph{Operand Stack}
-The operand stack is a sequence of values from $\textbf{Num}+\textbf{Bool}+\textbf{Fun}$.
+*** $\textit{os}$: Storing of Intermediate Values
+The operand stack is a sequence of boxed values holding values during an execution. These values are separated by the character $.$.
+For example, $\textit{os} = 10.20.\textit{true}$ represents an operand stack with $10$ on top, followed by $20$, followed by $\textit{true}$.
 
-\paragraph{Compilation of Names}
-Similar to the approach of the previous chapter, we implement names by environments. To this aim, we add a register $e$ to the machine state. Register $e$ represents the environment with respect to which the names are executed. Environments map names to denotable values. Thus an environment $e$, in which $x$ refers to the number $1$ can be accessed by applying $e$ to $x$, $e(\texttt{x}) = 1$.
+Now, we can describe the behavior of the machine $M_s$ as a transition function $\transition$, which transforms machine states to machine states, and which is defined by many rules.
 
-\paragraph{Execution of Function Application}
+The load instructions simply push their value on the operand stack. Here is one such load instruction, =LGCI=:
+$$\Rule{s(\textit{pc}) = \texttt{LGCI}\ i}{
+(\textit{os},\textit{pc}) \transition (i.\textit{os},\textit{pc}+1)}$$
+
+The remaining rules implement the instructions corresponding to Source's operators. They pop their arguments from the operand stack, and push the result of the operation back onto the operand stack. Here is one such instruction, =SUBG=:
+$$\Rule{s(\textit{pc}) = \texttt{SUBG}}{
+(i_2.i_1.\textit{os},\textit{pc}) \transition (i_1-i_2.\textit{os},\textit{pc}+1)}$$
+
+Note that the \texttt{SUBG} instruction subtracts the top element of the stack from the element below, because the subtrahend will be the most recently computed value and therefore appears on top of the stack, whereas the minuend has been computed before the subtrahend, and thus appears below it on the stack.
+
+*** $\textit{e}$: Compilation and Execution of Names
+We implement names by environments. To this aim, we add a register $e$ to the machine state. Register $e$ represents the environment with respect to which the names are executed. Environments map indexes of names to denotable values. Thus an environment $e$, in which $i$ is the index of the variable name that refers to the number $1$ can be accessed by applying $e$ to $i$, $e(i) = 1$.
+
+Names in environments are compiled away to become indexes in environments. For example:
+
+Assignments to name $x$ in Source are translated to instructions $\texttt{STLG}\ i$:
+$$\Rule{}{x = v \translateaux \texttt{STLG}\ i}$$
+where $i$ is the index of the stored value in the current environment, and $v$ is the stored value.
+
+Occurrences of name $x$ in Source are translated to instructions $\texttt{LDLG}\ i$:
+$$\Rule{}{x \translateaux \texttt{LDLG}\ i}$$
+where $i$ is the index of the stored value in the current environment.
+
+Assignments to names assigns the value on the operand stack to the name. Thus, the rule specifying the behavior of $\texttt{STLG}\ i$ is as follows:
+
+$$\Rule{s(\textit{pc}) = \texttt{STLG}\ i}{
+(v.\textit{os},\textit{pc},e) \transition (\textit{os},\textit{pc}+1,e')}$$
+where $e'$ is the same as $e$ for all indexes other than $i$, and $e'(i) = v$.
+
+The execution of name occurrences pushes the value to which the name refers on the operand stack. Thus, the rule specifying the behavior of $\texttt{LDLG}\ i$ is as follows:
+
+$$\Rule{s(\textit{pc}) = \texttt{LDLG}\ i}{
+(\textit{os},\textit{pc},e) \transition (e(i).\textit{os},\textit{pc}+1,e)}$$
+
+*** $\textit{rs}$: Execution of Function Application
 According to the translation of function application, the instruction $\texttt{CALL}\ n$ will find its arguments in reverse order on the operand stack, followed by the operator, which---according the the previous paragraph---is represented by a closure. To implement static scoping, the machine must take the environment of the closure, and extend it by a binding of the formal parameters to the actual arguments. Thus, the following rule is our first attempt to describe the execution of $\texttt{CALL } n$.
 
 $$\Rule{s(\textit{pc}) = \texttt{CALL } n}{
