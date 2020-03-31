@@ -1,5 +1,134 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`else if statements work (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(0);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "zero",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`else if statements work (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(0);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "zero",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`else if statements work (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(0);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "zero",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`else statements work (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+    if (cond) {
+        error();
+        return 456;
+    } else {
+      return 987;
+    }
+}
+if_else(true && (false && true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 987,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`else statements work (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+    if (cond) {
+        error();
+        return 456;
+    } else {
+      return 987;
+    }
+}
+if_else(true && (false && true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 987,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`else statements work (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function if_else(cond) {
+    if (cond) {
+        error();
+        return 456;
+    } else {
+      return 987;
+    }
+}
+if_else(true && (false && true));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 987,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`error evaluates to error (auto): expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -81,6 +210,120 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Error: \\"This is the error\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`execution of an if statement with an expression that evaluates to a number gives an error (auto): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+    return 5;
+}
+if (f()) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`execution of an if statement with an expression that evaluates to a number gives an error (interpreter): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+    return 5;
+}
+if (f()) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`execution of an if statement with an expression that evaluates to a number gives an error (native): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+    return 5;
+}
+if (f()) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Expected boolean as condition, got number.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -352,12 +595,12 @@ exports[`if statements work (auto): expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function if_else(cond) {
-  if (cond) {
-    return 456;
-  } else {
-    error();
-    return 987;
-  }
+    if (cond) {
+        return 456;
+    } else {
+        error();
+        return 987;
+    }
 }
 if_else(true && (false || true));",
   "displayResult": Array [],
@@ -373,12 +616,12 @@ exports[`if statements work (interpreter): expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function if_else(cond) {
-  if (cond) {
-    return 456;
-  } else {
-    error();
-    return 987;
-  }
+    if (cond) {
+        return 456;
+    } else {
+        error();
+        return 987;
+    }
 }
 if_else(true && (false || true));",
   "displayResult": Array [],
@@ -394,12 +637,12 @@ exports[`if statements work (native): expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function if_else(cond) {
-  if (cond) {
-    return 456;
-  } else {
-    error();
-    return 987;
-  }
+    if (cond) {
+        return 456;
+    } else {
+        error();
+        return 987;
+    }
 }
 if_else(true && (false || true));",
   "displayResult": Array [],
@@ -723,6 +966,102 @@ Object {
 }
 `;
 
+exports[`multiple if-else statements work (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else if (x === 1) {
+        return \\"one\\";
+    } else if (x === 2) {
+        return \\"two\\";
+    } else if (x === 3) {
+        return \\"three\\";
+    } else if (x === 4) {
+        return \\"four\\";
+    } else if (x === 5) {
+        return \\"five\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(9);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "positive",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiple if-else statements work (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else if (x === 1) {
+        return \\"one\\";
+    } else if (x === 2) {
+        return \\"two\\";
+    } else if (x === 3) {
+        return \\"three\\";
+    } else if (x === 4) {
+        return \\"four\\";
+    } else if (x === 5) {
+        return \\"five\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(9);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "positive",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiple if-else statements work (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function int_type(x) {
+    if (x < 0) {
+        return \\"negative\\";
+    } else if (x === 0) {
+        return \\"zero\\";
+    } else if (x === 1) {
+        return \\"one\\";
+    } else if (x === 2) {
+        return \\"two\\";
+    } else if (x === 3) {
+        return \\"three\\";
+    } else if (x === 4) {
+        return \\"four\\";
+    } else if (x === 5) {
+        return \\"five\\";
+    } else {
+        return \\"positive\\";
+    }
+}
+int_type(9);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "positive",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`names are lazily accessed (auto): expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -758,6 +1097,111 @@ Object {
   "parsedErrors": "",
   "result": undefined,
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`number literal in if statement gives an error (auto): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (123456) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`number literal in if statement gives an error (interpreter): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (123456) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`number literal in if statement gives an error (native): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (123456) {
+    display(\\"if\\");
+} else {
+    display(\\"else\\");
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    TypeError {
+      "expected": "boolean",
+      "got": "number",
+      "location": SourceLocation {
+        "end": Position {
+          "column": 1,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "side": " as condition",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -907,6 +1351,99 @@ m(x => x * 2, 4);",
   "errors": Array [],
   "parsedErrors": "",
   "result": 20,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`self-made pairs work lazily (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const pair = (a, b) => str => str === \\"head\\" ? a : b;
+const head = p => p(\\"head\\");
+const tail = p => p(\\"tail\\");
+const ones = pair(1, ones);
+function list_add(x, y) {
+    display(x);
+    if (x === null || y === null) {
+        return null;
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const ints = pair(1, list_add(ones, ints));
+head(tail(tail(tail(tail(ints)))));",
+  "displayResult": Array [
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`self-made pairs work lazily (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const pair = (a, b) => str => str === \\"head\\" ? a : b;
+const head = p => p(\\"head\\");
+const tail = p => p(\\"tail\\");
+const ones = pair(1, ones);
+function list_add(x, y) {
+    display(x);
+    if (x === null || y === null) {
+        return null;
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const ints = pair(1, list_add(ones, ints));
+head(tail(tail(tail(tail(ints)))));",
+  "displayResult": Array [
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`self-made pairs work lazily (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const pair = (a, b) => str => str === \\"head\\" ? a : b;
+const head = p => p(\\"head\\");
+const tail = p => p(\\"tail\\");
+const ones = pair(1, ones);
+function list_add(x, y) {
+    display(x);
+    if (x === null || y === null) {
+        return null;
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const ints = pair(1, list_add(ones, ints));
+head(tail(tail(tail(tail(ints)))));",
+  "displayResult": Array [
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+    "str => str === \\"head\\" ? a : b",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 5,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

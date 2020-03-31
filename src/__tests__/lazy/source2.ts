@@ -312,6 +312,26 @@ Array [
     'accumulate gives correct display statements'
   )
 
+const infiniteListAddingWorks = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+const ones = pair(1, ones);
+function list_add(x, y) {
+    if (is_null(x) || is_null(y)) {
+        return "should not be reached";
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const integers = pair(1, list_add(ones, integers));
+head(tail(tail(tail(tail(tail(tail(tail(tail(integers)))))))));
+
+`,
+    '9',
+    'infinite list added to another infinite list works'
+  )
+
 // ================== RUN THE TESTS ====================
 const testArray = [
   mapReturnsCorrectly,
@@ -328,7 +348,8 @@ const testArray = [
   wrongNumberOfArgumentsNoError,
   wrongNumberOfArgumentsError,
   accumulateWorks,
-  accumulateWorksDisplay
+  accumulateWorksDisplay,
+  infiniteListAddingWorks
 ]
 testArray.forEach(tst => tst('interpreter'))
 testArray.forEach(tst => tst('native'))

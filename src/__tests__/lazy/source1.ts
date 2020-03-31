@@ -286,17 +286,137 @@ const ifStatementsWork = (executionMethod: ExecutionMethod) =>
     executionMethod,
     `
 function if_else(cond) {
-  if (cond) {
-    return 456;
-  } else {
-    error();
-    return 987;
-  }
+    if (cond) {
+        return 456;
+    } else {
+        error();
+        return 987;
+    }
 }
 if_else(true && (false || true));
 `,
     '456',
     'if statements work'
+  )
+
+const elseStatementsWork = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function if_else(cond) {
+    if (cond) {
+        error();
+        return 456;
+    } else {
+      return 987;
+    }
+}
+if_else(true && (false && true));
+`,
+    '987',
+    'else statements work'
+  )
+
+const elseIfStatementsWork = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function int_type(x) {
+    if (x < 0) {
+        return "negative";
+    } else if (x === 0) {
+        return "zero";
+    } else {
+        return "positive";
+    }
+}
+int_type(0);
+`,
+    '"zero"',
+    'else if statements work'
+  )
+
+const ifElseStatementsMultiple = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+function int_type(x) {
+    if (x < 0) {
+        return "negative";
+    } else if (x === 0) {
+        return "zero";
+    } else if (x === 1) {
+        return "one";
+    } else if (x === 2) {
+        return "two";
+    } else if (x === 3) {
+        return "three";
+    } else if (x === 4) {
+        return "four";
+    } else if (x === 5) {
+        return "five";
+    } else {
+        return "positive";
+    }
+}
+int_type(9);
+`,
+    '"positive"',
+    'multiple if-else statements work'
+  )
+
+const expressionEvaluatingToNumberInIfGivesError = (executionMethod: ExecutionMethod) =>
+  runTestError(
+    executionMethod,
+    `
+function f() {
+    return 5;
+}
+if (f()) {
+    display("if");
+} else {
+    display("else");
+}
+  `,
+    '"Line 4: Expected boolean as condition, got number."',
+    'execution of an if statement with an expression that evaluates ' + 'to a number gives an error'
+  )
+
+const numberLiteralInIfGivesError = (executionMethod: ExecutionMethod) =>
+  runTestError(
+    executionMethod,
+    `
+if (123456) {
+    display("if");
+} else {
+    display("else");
+}
+  `,
+    '"Line 1: Expected boolean as condition, got number."',
+    'number literal in if statement gives an error'
+  )
+
+const selfMadePairsWork = (executionMethod: ExecutionMethod) =>
+  runTestSuccess(
+    executionMethod,
+    `
+const pair = (a, b) => str => str === "head" ? a : b;
+const head = p => p("head");
+const tail = p => p("tail");
+const ones = pair(1, ones);
+function list_add(x, y) {
+    display(x);
+    if (x === null || y === null) {
+        return null;
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const ints = pair(1, list_add(ones, ints));
+head(tail(tail(tail(tail(ints)))));
+`,
+    '5',
+    'self-made pairs work lazily'
   )
 
 // ================== RUN THE TESTS ====================
@@ -320,7 +440,13 @@ const testArray = [
   unusedFunctionArgumentsNotEvaluatedDisplay,
   unusedStatementsNotEvaluated,
   assignmentUsingNamesWorks,
-  ifStatementsWork
+  ifStatementsWork,
+  elseStatementsWork,
+  elseIfStatementsWork,
+  ifElseStatementsMultiple,
+  expressionEvaluatingToNumberInIfGivesError,
+  numberLiteralInIfGivesError,
+  selfMadePairsWork
 ]
 testArray.forEach(tst => tst('interpreter'))
 testArray.forEach(tst => tst('native'))

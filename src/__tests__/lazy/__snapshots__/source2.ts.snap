@@ -597,6 +597,72 @@ Object {
 }
 `;
 
+exports[`infinite list added to another infinite list works (auto): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+function list_add(x, y) {
+    if (is_null(x) || is_null(y)) {
+        return \\"should not be reached\\";
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const integers = pair(1, list_add(ones, integers));
+head(tail(tail(tail(tail(tail(tail(tail(tail(integers)))))))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite list added to another infinite list works (interpreter): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+function list_add(x, y) {
+    if (is_null(x) || is_null(y)) {
+        return \\"should not be reached\\";
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const integers = pair(1, list_add(ones, integers));
+head(tail(tail(tail(tail(tail(tail(tail(tail(integers)))))))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite list added to another infinite list works (native): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+function list_add(x, y) {
+    if (is_null(x) || is_null(y)) {
+        return \\"should not be reached\\";
+    } else {
+        return pair(head(x) + head(y), list_add(tail(x), tail(y)));
+    }
+}
+const integers = pair(1, list_add(ones, integers));
+head(tail(tail(tail(tail(tail(tail(tail(tail(integers)))))))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 9,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`lists are mapped lazily (auto): expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
