@@ -1,5 +1,15 @@
+import { Program } from 'estree'
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
+import { BlockFrame } from '../types'
+import {
+  scopeVariables,
+  getBlockFromLoc,
+  getAllIdentifiers,
+  getNodeLocsInCurrentBlockFrame,
+  getBlockFramesInCurrentBlockFrame
+} from '../scope-refactoring'
+import { parse } from '../parser/parser'
 /* tslint:disable:max-classes-per-file */
 
 const context = createContext(4)
@@ -234,4 +244,235 @@ test('Scoped based refactoring with conditionals and loops', () => {
     })
   })
   expect(actuals).toMatchSnapshot()
+})
+
+test('scopeVariables should return an accurate scope tree', () => {
+  const program = `
+    const anakin = "chancellor palpatine is evil";
+    const obiwan = "from my point of view the jedi are evil";
+    function disneyTrilogy() {
+      const isWorseThanPrequels = true;
+      return isWorseThanPrequels;
+    }
+    function functionmcfunctionface() {
+      const x = (corona) => (virus) => corona + virus;
+      let hahaha = "be";
+      return hahaha;
+    }
+  `
+  expect(scopeVariables(parse(program, context, true) as Program)).toMatchSnapshot()
+})
+
+test('scopeVariables should return an accurate scope tree with normal block scopes', () => {
+  const program = `
+    const anakin = 'chancellor palpatine is evil';
+    const obiwan = 'from my point of view the jedi are evil';
+    function disneyTrilogy() {
+      const isWorseThanPrequels = true;
+      return isWorseThanPrequels;
+    }
+    {
+      for (let i = 0; i < 10; i++) {
+        const x = 'nooooooooo';
+      }
+      if (true) {
+        const y = 10;
+      } else if (false) {
+        const t = 10;
+      } else {
+        const jfksdfjgk = 'S/U the semester!';
+      }
+    }
+  `
+  expect(scopeVariables(parse(program, context, true) as Program)).toMatchSnapshot()
+})
+
+test('getBlockFromLoc with normal variable name', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    return dancingqueen;
+  }
+}`
+  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const loc = { start: { line: 8, column: 12 }, end: { line: 8, column: 23 } }
+  expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
+})
+
+test('getBlockFromLoc with function definition name', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+function picklerick() {
+  return 1;
+}
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    return dancingqueen;
+  }
+  picklerick();
+}`
+  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
+  expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
+})
+
+test('getBlockFromLoc with arrow function name', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+const picklerick() = x => {
+  return 1;
+};
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    return dancingqueen;
+  }
+  picklerick();
+}`
+  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
+  expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
+})
+
+test('getAllIdentifiers should get all indentifiers regardless of scope', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+const picklerick() = x => {
+  return 1;
+};
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    const virus = 'OwO';
+    return dancingqueen;
+  }
+  picklerick();
+}
+for (let i = 0; i < 10; i++) {
+  while (1 > 0) {
+    // do something cool
+  }
+  function wowThisIsANestedFunction(x) {
+    const virus = 'imameme';
+    const coronavirus = 'memememe' + virus;
+    return x + 'wowwowowowowowowowowow uwu';
+  }
+  wowThisIsANestedFunction('UwU');
+}
+if (true) {
+  const x = 2;
+} else if (false) {
+  const x = corona => virus => coronavirus;
+} else {
+  return 'idontliketests';
+}
+`
+  expect(getAllIdentifiers(parse(program, context, true) as Program, 'virus').length).toBe(4)
+})
+
+test('getNodeLocsInCurrentBlockFrame should return all nodes in the current block frame', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+const picklerick() = x => {
+  return 1;
+};
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    const virus = 'OwO';
+    return dancingqueen;
+  }
+  picklerick();
+}
+for (let i = 0; i < 10; i++) {
+  while (1 > 0) {
+    // do something cool
+  }
+  function wowThisIsANestedFunction(x) {
+    const virus = 'imameme';
+    const coronavirus = 'memememe' + virus;
+    return x + 'wowwowowowowowowowowow uwu';
+  }
+  wowThisIsANestedFunction('UwU');
+}
+if (true) {
+  const x = 2;
+} else if (false) {
+  const x = corona => virus => coronavirus;
+} else {
+  return 'idontliketests';
+}`
+  const block = scopeVariables(parse(program, context, true) as Program)
+  const identifiers = getAllIdentifiers(parse(program, context, true) as Program, 'virus')
+  expect(
+    getNodeLocsInCurrentBlockFrame(
+      identifiers,
+      {
+        start: { line: 1, column: 1 },
+        end: { line: 33, column: 2 }
+      },
+      [block]
+    ).length
+  ).toBe(0)
+})
+
+test('getBlockFramesInCurrentBlockFrame', () => {
+  const program = `const y = true;
+const dancingqueen = 'you can dance, you can jive';
+const nextline = 'having the time of your life';
+const picklerick() = x => {
+  return 1;
+};
+{
+  const lmao = dancingqueen;
+  function abba() {
+    const bestSong = 'the winnner takes it all';
+    const virus = 'OwO';
+    return dancingqueen;
+  }
+  picklerick();
+}
+for (let i = 0; i < 10; i++) {
+  while (1 > 0) {
+    // do something cool
+  }
+  function wowThisIsANestedFunction(x) {
+    const virus = 'imameme';
+    const coronavirus = 'memememe' + virus;
+    return x + 'wowwowowowowowowowowow uwu';
+  }
+  wowThisIsANestedFunction('UwU');
+}
+if (true) {
+  const x = 2;
+} else if (false) {
+  const x = corona => virus => coronavirus;
+} else {
+  return 'idontliketests';
+}`
+  const block = scopeVariables(parse(program, context, true) as Program)
+  const blockFrames = block.children.filter(node => node.type === 'BlockFrame')
+  expect(
+    getBlockFramesInCurrentBlockFrame(
+      blockFrames as BlockFrame[],
+      {
+        start: { line: 1, column: 1 },
+        end: { line: 33, column: 2 }
+      },
+      []
+    ).length
+  ).toBe(6)
 })
