@@ -151,6 +151,15 @@ export function makeTransition(
   return { caller, callee, condition } as Transition
 }
 
+
 export type TransitionSet = Map<string, Transition[]>
 
-export type infiniteLoopChecker = (name: string, args: any[]) => number
+export interface infiniteLoopChecker {
+  id: number,
+  functionName: string,
+  checkerArgs: any[]
+}
+
+export function makeLoopChecker(id: number, functionName: string, checkerArgs: any[]) {
+  return {id:id, functionName: functionName, checkerArgs: checkerArgs} as infiniteLoopChecker
+}

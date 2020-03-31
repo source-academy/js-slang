@@ -7,7 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
-import { TransitionSet, infiniteLoopChecker } from './infiniteLoops/symTypes'
+import { TransitionSet, InfiniteLoopChecker } from './infiniteLoops/symTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -118,7 +118,7 @@ export type AllowedDeclarations = 'const' | 'let'
 
 export interface InfiniteLoopData {
   transitionSet: TransitionSet
-  checkers: infiniteLoopChecker[]
+  checkers: InfiniteLoopChecker[]
 }
 
 export interface Environment {
