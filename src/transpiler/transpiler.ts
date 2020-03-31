@@ -475,17 +475,16 @@ function transformSomeExpressionsToCheckIfBooleanAndForce(program: es.Program) {
     const { line, column } = node.loc!.start
     const literalLine = create.literal(line)
     const literalColumn = create.literal(column)
-    node.test = create.callExpression(
-      globalIds.boolOrErr,
-      [create.forceEagerEvaluationOfLazyExpression(
+    node.test = create.callExpression(globalIds.boolOrErr, [
+      create.forceEagerEvaluationOfLazyExpression(
         create.callExpression(
           globalIds.throwErrorIfNotBoolThunk,
-          node.test
-            ? [node.test, literalLine, literalColumn]
-            : [literalLine, literalColumn]
+          node.test ? [node.test, literalLine, literalColumn] : [literalLine, literalColumn]
         )
-      ),  literalLine, literalColumn]
-    )
+      ),
+      literalLine,
+      literalColumn
+    ])
   }
 
   simple(program, {

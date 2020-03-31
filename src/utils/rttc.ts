@@ -111,18 +111,16 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
  * If the item is an actual number, return true as well.
  * @param v The Thunk to be checked
  */
-const isNumberT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
-  ? (isKnownThunkType(v) ? v.type === 'number' : true)
-  : isNumber(v)
+const isNumberT = (v: TranspilerThunk<Value>) =>
+  isTranspilerThunk(v) ? (isKnownThunkType(v) ? v.type === 'number' : true) : isNumber(v)
 /**
  * Checks if a Thunk is a string, if the type is known.
  * If the thunk is unknown at this time, assumes correct type.
  * If the item is an actual string, return true as well.
  * @param v The Thunk to be checked
  */
-const isStringT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
-  ? (isKnownThunkType(v) ? v.type === 'string' : true)
-  : isString(v)
+const isStringT = (v: TranspilerThunk<Value>) =>
+  isTranspilerThunk(v) ? (isKnownThunkType(v) ? v.type === 'string' : true) : isString(v)
 
 /**
  * Checks if a Thunk is a boolean, if the type is known.
@@ -130,9 +128,8 @@ const isStringT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
  * If the item is an actual boolean, return true as well.
  * @param v The Thunk to be checked
  */
-const isBoolT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
-  ? (isKnownThunkType(v) ? v.type === 'boolean' : true)
-  : isBool(v)
+const isBoolT = (v: TranspilerThunk<Value>) =>
+  isTranspilerThunk(v) ? (isKnownThunkType(v) ? v.type === 'boolean' : true) : isBool(v)
 
 /**
  * Checks if a Thunk is a function, if the type is known.
@@ -140,9 +137,8 @@ const isBoolT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
  * If the item is an actual function, return true as well.
  * @param v The Thunk to be checked
  */
-export const isFunctionT = (v: TranspilerThunk<Value>) => isTranspilerThunk(v)
-  ? (isKnownThunkType(v) ? v.type === 'function' : true)
-  : isFunction(v)
+export const isFunctionT = (v: TranspilerThunk<Value>) =>
+  isTranspilerThunk(v) ? (isKnownThunkType(v) ? v.type === 'function' : true) : isFunction(v)
 
 /**
  * Checks that an unary expression has a correctly

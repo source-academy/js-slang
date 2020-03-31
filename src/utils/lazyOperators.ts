@@ -117,7 +117,11 @@ export function boolOrErr(candidate: any, line: number, column: number) {
  *          might still evaluate to boolean. For all other
  *          cases, throw an error.
  */
-export function throwErrorIfNotBoolThunk(candidate: TranspilerThunk<any>, line: number, column: number) {
+export function throwErrorIfNotBoolThunk(
+  candidate: TranspilerThunk<any>,
+  line: number,
+  column: number
+) {
   const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate
@@ -140,7 +144,11 @@ export function throwErrorIfNotBoolThunk(candidate: TranspilerThunk<any>, line: 
  *          is determinable and "boolean", or if it is
  *          not determinable. Otherwise, throw an error.
  */
-export function getTypeOfBoolThunkOrError(candidate: TranspilerThunk<any>, line: number, column: number) {
+export function getTypeOfBoolThunkOrError(
+  candidate: TranspilerThunk<any>,
+  line: number,
+  column: number
+) {
   const error = rttc.checkIfStatementT(create.locationDummyNode(line, column), candidate)
   if (error === undefined) {
     return candidate.toString()
