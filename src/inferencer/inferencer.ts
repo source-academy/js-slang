@@ -7,14 +7,38 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     const valueOfLiteral = literal.value
     if (typeof valueOfLiteral === 'number') {
-      if (Number.isInteger(valueOfLiteral)) {
-        // annotate as int
-        literal.inferredType = {
-          kind: 'primitive',
-          name: 'integer'
-        }
-        literal.typability = 'Typed'
+      // if (Number.isInteger(valueOfLiteral)) {
+      // declare as int
+      literal.inferredType = {
+        kind: 'primitive',
+        name: 'integer'
       }
+      literal.typability = 'Typed'
+      // }
+    }
+    else if (typeof valueOfLiteral === 'boolean') {
+      // declare
+      literal.inferredType = {
+        kind: 'primitive',
+        name: 'boolean'
+      }
+      literal.typability = 'Typed'
+    }
+    else if (typeof valueOfLiteral === 'string') {
+      // declare
+      literal.inferredType = {
+        kind: 'primitive',
+        name: 'string'
+      }
+      literal.typability = 'Typed'
+    }
+    else if (typeof valueOfLiteral === 'undefined') {
+      // declare
+      literal.inferredType = {
+        kind: 'primitive',
+        name: 'undefined'
+      }
+      literal.typability = 'Typed'
     }
   }
   // visit Literals and type check them
