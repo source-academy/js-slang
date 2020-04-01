@@ -9,18 +9,14 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import RuntimeError = WebAssembly.RuntimeError
+import * as _ from 'lodash'
 
-class BreakValue {}
-
-class ContinueValue {}
 
 class ReturnValue {
   constructor(public value: Value) {}
 }
 
-class TailCallReturnValue {
-  constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
-}
 
 const createEnvironment = (
   closure: Closure,
@@ -123,17 +119,6 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
-// function* visit(context: Context, node: es.Node) {
-//   checkEditorBreakpoints(context, node)
-//   context.runtime.nodes.unshift(node)
-//   yield context
-// }
-
-// function* leave(context: Context) {
-//   context.runtime.break = false
-//   context.runtime.nodes.shift()
-//   yield context
-// }
 
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const replaceEnvironment = (context: Context, environment: Environment) =>
@@ -213,6 +198,16 @@ function* getArgs(context: Context, call: es.CallExpression) {
   yield args
 }
 
+
+function* ambChoices(context: Context, call: es.CallExpression) {
+  const contextSnapshot = _.cloneDeep(context)
+  for(const arg of call.arguments){
+    yield* evaluateNonDet(arg,context)
+    _.assignIn(context,_.cloneDeep(contextSnapshot))
+  }
+}
+
+
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
     return conditionalExpression(node.left, node.right, literal(false), node.loc!)
@@ -242,31 +237,30 @@ export type Evaluator<T extends es.Node> = (node: T, context: Context) => Iterab
 
 function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
-  // let result
-  // for (const statement of node.body) {
-  //   result = yield* evaluateNonDet(statement, context)
-  //   if (
-  //     result instanceof ReturnValue ||
-  //     result instanceof TailCallReturnValue ||
-  //     result instanceof BreakValue ||
-  //     result instanceof ContinueValue
-  //   ) {
-  //     break
-  //   }
-  // }
-  // return result
+  yield* evaluateSequence(context, _.cloneDeep(node.body)) // evaluateSequence will modify node.body for recursion
+}
 
-  // ??
-  for (const statement of node.body) {
-    const resultGen = evaluateNonDet(statement, context)
-    let resultNext = resultGen.next()
-    while (!resultNext.done) {
-      const resultValue = resultNext.value
-      yield resultValue
-      resultNext = resultGen.next()
+function* evaluateSequence(context: Context, sequence: es.Statement[]): IterableIterator<Value> {
+  const statement = sequence[0]
+  const sequenceValGenerator = evaluateNonDet(statement, context)
+  if (sequence.length === 1) {
+    yield* sequenceValGenerator
+  } else {
+    sequence.shift()
+    for (const sequenceValue of sequenceValGenerator) {
+      console.log("evaluateSequence sequenceValue = "+sequenceValue)
+      if (sequenceValue instanceof ReturnValue) {
+        console.log("sequenceValue instanceof ReturnValue")
+        yield sequenceValue
+        continue
+      }
+      yield* evaluateSequence(context, sequence)
     }
+  sequence.unshift(statement) // restore the statement
   }
 }
+
+
 /**
  * WARNING: Do not use object literal shorthands, e.g.
  *   {
@@ -285,80 +279,42 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     yield node.value
   },
 
-  ThisExpression: function*(node: es.ThisExpression, context: Context) {
-    return context.runtime.environments[0].thisContext
-  },
-
-  ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
-    const res = []
-    for (const n of node.elements) {
-      res.push(yield* evaluateNonDet(n, context))
-    }
-    return res
-  },
-
-  DebuggerStatement: function*(node: es.DebuggerStatement, context: Context) {
-    context.runtime.break = true
-    yield
-  },
-
-  FunctionExpression: function*(node: es.FunctionExpression, context: Context) {
-    return new Closure(node, currentEnvironment(context), context)
-  },
-
   ArrowFunctionExpression: function*(node: es.ArrowFunctionExpression, context: Context) {
-    return Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
+    yield Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
+
     const res = getVariable(context, node.name)
     yield res
     return
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
+    if(node.callee.type==="Identifier"){
+      const funcName = node.callee.name
+      if(funcName==="amb"){
+        console.log('CallExpression amb called......')
+        yield* ambChoices(context,node)
+        return
+      }
+    }
     const calleeGen = evaluateNonDet(node.callee, context)
     let calleeNext = calleeGen.next()
     while (!calleeNext.done) {
       const argsGen = getArgs(context, node)
       let argsNext = argsGen.next()
-      const thisContext = undefined
       const callee = calleeNext.value
       while (!argsNext.done) {
         const args = argsNext.value
-        yield* apply(context, callee, args, node, thisContext)
+        yield* apply(context, callee, args, node, undefined)
         argsNext = argsGen.next()
       }
       calleeNext = calleeGen.next()
     }
 
-    return
-
-    // const args = yield* getArgs(context, node)
-    //
-    // if (node.callee.type === 'MemberExpression') {
-    //   thisContext = yield* evaluateNonDet(node.callee.object, context)
-    // }
-    // const result =
-    // return result
   },
 
-  NewExpression: function*(node: es.NewExpression, context: Context) {
-    const callee = yield* evaluateNonDet(node.callee, context)
-    const args = []
-    for (const arg of node.arguments) {
-      args.push(yield* evaluateNonDet(arg, context))
-    }
-    const obj: Value = {}
-    if (callee instanceof Closure) {
-      obj.__proto__ = callee.fun.prototype
-      callee.fun.apply(obj, args)
-    } else {
-      obj.__proto__ = callee.prototype
-      callee.apply(obj, args)
-    }
-    return obj
-  },
 
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const valueGen = evaluateNonDet(node.argument, context)
@@ -415,134 +371,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const valueGen = evaluateNonDet(declaration.init!, context)
     let valueNext = valueGen.next()
     while (!valueNext.done) {
+      console.log("VariableDeclaration called......")
       defineVariable(context, id.name, valueNext.value, constant)
-      yield "done"
+      yield "VariableDeclaration done "+valueNext.value
       valueNext = valueGen.next()
     }
-    return undefined
-  },
-
-  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
-    return new ContinueValue()
-  },
-
-  BreakStatement: function*(node: es.BreakStatement, context: Context) {
-    return new BreakValue()
-  },
-
-  ForStatement: function*(node: es.ForStatement, context: Context) {
-    // Create a new block scope for the loop variables
-    const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
-    pushEnvironment(context, loopEnvironment)
-
-    const initNode = node.init!
-    const testNode = node.test!
-    const updateNode = node.update!
-    if (initNode.type === 'VariableDeclaration') {
-      hoistVariableDeclarations(context, initNode)
-    }
-    yield* evaluateNonDet(initNode, context)
-
-    let value
-    while (yield* evaluateNonDet(testNode, context)) {
-      // create block context and shallow copy loop environment head
-      // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
-      // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-      // We copy this as a const to avoid ES6 funkiness when mutating loop vars
-      // https://github.com/source-academy/js-slang/issues/65#issuecomment-425618227
-      const environment = createBlockEnvironment(context, 'forBlockEnvironment')
-      pushEnvironment(context, environment)
-      for (const name in loopEnvironment.head) {
-        if (loopEnvironment.head.hasOwnProperty(name)) {
-          hoistIdentifier(context, name, node)
-          defineVariable(context, name, loopEnvironment.head[name], true)
-        }
-      }
-
-      value = yield* evaluateNonDet(node.body, context)
-
-      // Remove block context
-      popEnvironment(context)
-      if (value instanceof ContinueValue) {
-        value = undefined
-      }
-      if (value instanceof BreakValue) {
-        value = undefined
-        break
-      }
-      if (value instanceof ReturnValue || value instanceof TailCallReturnValue) {
-        break
-      }
-
-      yield* evaluateNonDet(updateNode, context)
-    }
-
-    popEnvironment(context)
-
-    return value
-  },
-
-  MemberExpression: function*(node: es.MemberExpression, context: Context) {
-    let obj = yield* evaluateNonDet(node.object, context)
-    if (obj instanceof Closure) {
-      obj = obj.fun
-    }
-    let prop
-    if (node.computed) {
-      prop = yield* evaluateNonDet(node.property, context)
-    } else {
-      prop = (node.property as es.Identifier).name
-    }
-
-    const error = rttc.checkMemberAccess(node, obj, prop)
-    if (error) {
-      return handleRuntimeError(context, error)
-    }
-
-    if (
-      obj !== null &&
-      obj !== undefined &&
-      typeof obj[prop] !== 'undefined' &&
-      !obj.hasOwnProperty(prop)
-    ) {
-      return handleRuntimeError(context, new errors.GetInheritedPropertyError(node, obj, prop))
-    }
-    try {
-      return obj[prop]
-    } catch {
-      return handleRuntimeError(context, new errors.GetPropertyError(node, obj, prop))
-    }
+    return
   },
 
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-    if (node.left.type === 'MemberExpression') {
-      const left = node.left
-      const obj = yield* evaluateNonDet(left.object, context)
-      let prop
-      if (left.computed) {
-        prop = yield* evaluateNonDet(left.property, context)
-      } else {
-        prop = (left.property as es.Identifier).name
-      }
-
-      const error = rttc.checkMemberAccess(node, obj, prop)
-      if (error) {
-        return handleRuntimeError(context, error)
-      }
-
-      const val = yield* evaluateNonDet(node.right, context)
-      try {
-        obj[prop] = val
-      } catch {
-        return handleRuntimeError(context, new errors.SetPropertyError(node, obj, prop))
-      }
-      return val
-    }
     const id = node.left as es.Identifier
     // Make sure it exist
-    const value = yield* evaluateNonDet(node.right, context)
-    setVariable(context, id.name, value)
-    return value
+    const valueGen = evaluateNonDet(node.right, context)
+    let valueNext = valueGen.next()
+    while (!valueNext.done) {
+      const valueV = valueNext.value
+      setVariable(context, id.name, valueV)
+      yield valueV
+      valueNext = valueGen.next()
+    }
+
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
@@ -579,46 +427,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
 
-  WhileStatement: function*(node: es.WhileStatement, context: Context) {
-    let value: any // tslint:disable-line
-    while (
-      // tslint:disable-next-line
-      (yield* evaluateNonDet(node.test, context)) &&
-      !(value instanceof ReturnValue) &&
-      !(value instanceof BreakValue) &&
-      !(value instanceof TailCallReturnValue)
-    ) {
-      value = yield* evaluateNonDet(node.body, context)
-    }
-    if (value instanceof BreakValue) {
-      return undefined
-    }
-    return value
-  },
-
-  ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
-    const obj = {}
-    for (const prop of node.properties) {
-      let key
-      if (prop.key.type === 'Identifier') {
-        key = prop.key.name
-      } else {
-        key = yield* evaluateNonDet(prop.key, context)
-      }
-      obj[key] = yield* evaluateNonDet(prop.value, context)
-    }
-    return obj
-  },
-
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
-    let result: Value
 
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    result = yield* evaluateBlockStatement(context, node)
+    const resultGen = evaluateBlockStatement(context, node)
+    let resultNext = resultGen.next()
+    while (!resultNext.done) {
+      const resultValue = resultNext.value
+      popEnvironment(context)
+      yield resultValue
+      pushEnvironment(context,environment)
+      resultNext = resultGen.next()
+    }
     popEnvironment(context)
-    return result
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
@@ -650,10 +473,7 @@ export function* apply(
     environment.thisContext = thisContext
     pushEnvironment(context, environment)
 
-    const resultGen = evaluateBlockStatement(
-      context,
-      fun.node.body as es.BlockStatement
-    )
+    const resultGen = evaluateBlockStatement(context, fun.node.body as es.BlockStatement)
     let resultNext = resultGen.next()
     while (!resultNext.done) {
       const result = resultNext.value
@@ -666,14 +486,6 @@ export function* apply(
       pushEnvironment(context, environment)
       resultNext = resultGen.next()
     }
-    // if (result instanceof TailCallReturnValue) {
-    //   fun = result.callee
-    //   node = result.node
-    //   args = result.args
-    // } else if (!(result instanceof ReturnValue)) {
-    //   // No Return Value, set it as undefined
-    //   result = new ReturnValue(undefined)
-    // }
   } else if (typeof fun === 'function') {
     try {
       yield fun.apply(thisContext, args)

@@ -39,33 +39,24 @@ export class NonDetScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
     return new Promise((resolve, reject) => {
       context.runtime.isRunning = true
-      let itValue = it.next()
-      console.log('it value = ', itValue.value)
       try {
-        while (!itValue.done) {
-          itValue = it.next()
-          console.log('it value = ', itValue.value)
-
-          if (context.runtime.break) {
-            saveState(context, it, this)
-            itValue.done = true
-          }
+        const itValue = it.next()
+        console.log('it value = ', itValue.value)
+        if (itValue.done) {
+          resolve({ status: 'finished', context, value: itValue.value })
+        } else {
+          resolve({
+            status: 'suspended',
+            it,
+            scheduler: this,
+            context,
+            value: itValue.value
+          })
         }
       } catch (e) {
-        console.log('error in non det scheduler ', e)
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false
-      }
-      if (context.runtime.break) {
-        resolve({
-          status: 'suspended',
-          it,
-          scheduler: this,
-          context
-        })
-      } else {
-        resolve({ status: 'finished', context, value: itValue.value })
       }
     })
   }
