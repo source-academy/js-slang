@@ -39,18 +39,18 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       literal.typability = 'Typed'
     }
   }
-  function inferVariableDeclaration(variableDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
-    // get variableType
-    const variableDeclarator = variableDeclaration.declarations[0]  // variableDeclarator node (todo: should we confirm its type?)
-    const variableType = variableDeclarator.init.inferredType.name;
-
-    // declare
-    variableDeclaration.inferredType = {
-      kind: 'variable',
-      name: variableType
-    }
-    variableDeclaration.typability = 'Typed'
-  }
+  // function inferVariableDeclaration(variableDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
+  //   // get variableType
+  //   const variableDeclarator = variableDeclaration.declarations[0]  // variableDeclarator node (todo: should we confirm its type?)
+  //   const variableType = variableDeclarator.init.inferredType.name;
+  //
+  //   // declare
+  //   variableDeclaration.inferredType = {
+  //     kind: 'const',  // Source 1 only has const declaration (otherwise to play safe we could also use the 'kind' value in the VariableDeclaration node)
+  //     name: variableType
+  //   }
+  //   variableDeclaration.typability = 'Typed'
+  // }
   // function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
   //   // get result type of binary expression from type environment
   //   // const resultType = ...;
