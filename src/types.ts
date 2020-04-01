@@ -204,8 +204,8 @@ export interface Primitive {
 
 export interface Variable {
   kind: 'variable'
-  id?: number,
-  isAddable?: boolean,
+  id?: number
+  isAddable?: boolean
   isPolymorphic?: boolean
 }
 
