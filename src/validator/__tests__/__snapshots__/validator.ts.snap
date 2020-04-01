@@ -42,6 +42,10 @@ Object {
         "operator": "=",
         "right": Node {
           "end": 64,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "integer",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -54,6 +58,7 @@ Object {
           },
           "raw": "10",
           "start": 62,
+          "typability": "Typed",
           "type": "Literal",
           "value": 10,
         },
@@ -111,6 +116,10 @@ Object {
         "operator": "=",
         "right": Node {
           "end": 45,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "integer",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -123,6 +132,7 @@ Object {
           },
           "raw": "10",
           "start": 43,
+          "typability": "Typed",
           "type": "Literal",
           "value": 10,
         },

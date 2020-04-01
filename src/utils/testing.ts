@@ -5,6 +5,8 @@ import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import { Context, CustomBuiltIns, SourceError, Value } from '../types'
 import { stringify } from './stringify'
+import { validateAndAnnotate } from '../validator/validator'
+import * as es from 'estree'
 
 export interface TestContext extends Context {
   displayResult: string[]
@@ -308,4 +310,11 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeLessThan(timeout * 2)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
+}
+
+export async function toValidatedAst(code: string) {
+  const context = mockContext(1)
+  const ast = parse(code, context)
+  expect(ast).not.toBeUndefined()
+  return validateAndAnnotate(ast as es.Program, context)
 }
