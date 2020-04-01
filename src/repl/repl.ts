@@ -1,7 +1,8 @@
 import fs = require('fs')
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
-import util = require('util')
+// import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
+import { stringify } from '../utils/stringify'
 
 function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   // use defaults for everything
@@ -22,13 +23,14 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
               }
             })
           },
-          // set depth to a large number so that `parse()` output will not be folded,
-          // setting to null also solves the problem, however a reference loop might crash
           writer: output =>
-            util.inspect(output, {
-              depth: 1000,
-              colors: true
-            })
+            // use stringify instead because util.inspect create super long output for functions and Closures
+            // note that js-slang/utils/stringify is used in cadet-frontend
+            stringify(output)
+          // util.inspect(output, {
+          //   depth: 1000,
+          //   colors: true
+          // })
         }
       )
     } else {
