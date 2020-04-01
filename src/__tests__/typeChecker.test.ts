@@ -11,6 +11,42 @@ function parse(code: any, chapter = 1) {
 }
 
 describe('type checking pairs and lists', () => {
+  it('happy paths for list functions', () => {
+    const code = `
+        function build(x) {
+            return x < 0 ? null : pair(4, build(x-1));
+        }
+        build(3);
+    `
+    expect(() => typeCheck(parse(code, 2))).not.toThrowError()
+    // const code1 = `
+    // function accumulate(op, init, xs) {
+    //   return is_null(xs) ? init : op(head(xs), accumulate(op, init, xs));
+    // }
+    // function map(f, xs) {
+    //   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
+    // }
+    // function append(xs, ys) {
+    //   return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+    // }
+    // function remove(v, xs) {
+    //   return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
+    // }
+    // const xs = pair(1, pair(2, null));
+    // function flatmap(f, seq) {
+    //   return accumulate(append, null, map(f, seq));
+    // }
+    // function permutations(s) {
+    //   return is_null(s) ? pair(null, null)
+    //     : flatmap(x => map(p => pair(x, p), permutations(remove(x, s))), s);
+    // }
+    // const ps = permutations(xs); 
+    // `
+    // expect(() => typeCheck(parse(code1, 2))).not.toThrowError()
+  })
+})
+
+describe('type checking pairs', () => {
   it('happy paths for pair functions', () => {
     const code = `
       const x = pair(3, 4);

@@ -116,7 +116,7 @@ function traverse(node: es.Node, constraints?: Constraint[]) {
   }
 }
 
-type NAMED_TYPE = 'bool' | 'number' | 'string' | 'undefined' | 'pair' // | 'list'
+type NAMED_TYPE = 'bool' | 'number' | 'string' | 'undefined' | 'pair' | 'list'
 type VAR_TYPE = 'any' | 'addable'
 
 interface NAMED {
@@ -131,11 +131,11 @@ interface PAIR extends NAMED {
   tail: TYPE
 }
 
-// interface LIST extends NAMED {
-//   nodeType: 'Named',
-//   name: 'list',
-//   listName: TYPE
-// }
+interface LIST extends NAMED {
+  nodeType: 'Named'
+  name: 'list'
+  listName: TYPE
+}
 
 interface VAR {
   nodeType: 'Var'
@@ -156,7 +156,23 @@ interface FORALL {
 }
 
 /** Monotypes */
-type TYPE = NAMED | VAR | FUNCTION | PAIR // | LIST
+type TYPE = NAMED | VAR | FUNCTION | PAIR | LIST
+
+function isPair(type: TYPE) {
+  return type.nodeType === 'Named' && type.name === 'pair'
+}
+
+function isList(type: TYPE) {
+  return type.nodeType === 'Named' && type.name === 'list'
+}
+
+function getListType(type: TYPE): TYPE | null {
+  if (isList(type)) {
+    const list = type as LIST
+    return list.listName
+  }
+  return null
+}
 
 // Type Definitions
 // Our type environment maps variable names to types.
@@ -291,17 +307,57 @@ function extractFreeVariablesAndGenFresh(polyType: FORALL): TYPE {
 
 /**
  * Going down the DAG that is the constraint list
+ * Apply the following normalizations
+ * List<T1> ==> Pair<T1, List<T1>>
+ * Pair<T1, Pair<T2, List<T3>> -> Pair<T4, List<T4>>
  */
 function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
+  const result = __applyConstraints(type, constraints)
+  if (isList(result)) {
+    const list = result as LIST
+    return {
+      nodeType: 'Named',
+      name: 'pair',
+      head: getListType(list) as TYPE,
+      tail: list
+    }
+  } else if (isPair(result)) {
+    const pair = result as PAIR
+    const _tail = pair.tail
+    if (isPair(_tail)) {
+      const tail = _tail as PAIR
+      if (getListType(tail.tail) !== null) {
+        // try to unify, just error if it fails
+        addToConstraintList(constraints, [tail.head, getListType(tail.tail) as TYPE])
+        addToConstraintList(constraints, [tail.head, pair.head])
+        console.log('normalization triggered')
+        return tail
+      }
+    }
+  }
+  return result
+}
+
+/**
+ * Going down the DAG that is the constraint list
+ */
+function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
   switch (type.nodeType) {
     case 'Named': {
-      if (type.name === 'pair') {
-        console.log('returning named pair')
+      if (isPair(type)) {
+        const pair = type as PAIR
         return {
           nodeType: 'Named',
           name: 'pair',
-          head: applyConstraints((type as PAIR).head, constraints),
-          tail: applyConstraints((type as PAIR).tail, constraints)
+          head: applyConstraints(pair.head, constraints),
+          tail: applyConstraints(pair.tail, constraints)
+        }
+      } else if (isList(type)) {
+        const listType = applyConstraints((type as LIST).listName, constraints)
+        return {
+          nodeType: 'Named',
+          name: 'list',
+          listName: listType
         }
       }
       return type
@@ -335,6 +391,8 @@ function contains(type: TYPE, name: string): boolean {
     case 'Named':
       if (type.name === 'pair') {
         return contains((type as PAIR).head, name) || contains((type as PAIR).tail, name)
+      } else if (type.name === 'list') {
+        return contains((type as LIST).listName, name)
       }
       return false
     case 'Var':
@@ -389,6 +447,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
     } else {
       return constraints
     }
+  } else if (isPair(LHS) && isList(RHS)) {
+    return addToConstraintList(constraints, [(LHS as PAIR).tail, getListType(RHS) as TYPE])
   } else if (LHS.nodeType === 'Var') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.nodeType === 'Var' && RHS.name === LHS.name) {
@@ -532,8 +592,7 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       const literalVal = node.value
       const typeOfLiteral = typeof literalVal
       if (literalVal === null) {
-        // will need to change this to make it a pair type when doing S2
-        return addToConstraintList(constraints, [storedType, tNamedUndef])
+        return addToConstraintList(constraints, [storedType, tList(tVar(typeIdCounter++))])
       } else if (typeOfLiteral === 'number') {
         return addToConstraintList(constraints, [storedType, tNamedNumber])
       } else if (typeOfLiteral === 'boolean') {
@@ -681,13 +740,13 @@ function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
   }
 }
 
-// function tList(var1: VAR): LIST {
-//   return {
-//     nodeType: 'Named',
-//     name: 'list',
-//     listName: var1
-//   }
-// }
+function tList(var1: VAR): LIST {
+  return {
+    nodeType: 'Named',
+    name: 'list',
+    listName: var1
+  }
+}
 
 function tForAll(type: TYPE): FORALL {
   return {
@@ -777,11 +836,15 @@ const headType2 = tVar('headType2')
 const tailType2 = tVar('tailType2')
 const headType3 = tVar('headType3')
 const tailType3 = tVar('tailType3')
+const headType4 = tVar('headType4')
+const tailType4 = tVar('tailType4')
 
 const pairFuncs = {
   pair: tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1))),
   head: tForAll(tFunc(tPair(headType2, tailType2), headType2)),
-  tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3))
+  tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3)),
+  is_pair: tForAll(tFunc(tVar('T'), tNamedBool)),
+  is_null: tForAll(tFunc(tPair(headType4, tailType4), tNamedBool))
 }
 
 const primitiveFuncs = {
