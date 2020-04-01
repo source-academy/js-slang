@@ -7,7 +7,11 @@ Node {
       "end": 5,
       "expression": Node {
         "end": 4,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -20,8 +24,8 @@ Node {
         },
         "raw": "true",
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "Literal",
-        "typeVariableId": 4,
         "value": true,
       },
       "loc": SourceLocation {
@@ -41,7 +45,11 @@ Node {
       "end": 12,
       "expression": Node {
         "end": 11,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 5,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -54,8 +62,8 @@ Node {
         },
         "raw": "false",
         "start": 6,
+        "typability": "NotYetTyped",
         "type": "Literal",
-        "typeVariableId": 5,
         "value": false,
       },
       "loc": SourceLocation {
@@ -75,7 +83,11 @@ Node {
       "end": 18,
       "expression": Node {
         "end": 17,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 6,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -88,8 +100,8 @@ Node {
         },
         "raw": "1.90",
         "start": 13,
+        "typability": "NotYetTyped",
         "type": "Literal",
-        "typeVariableId": 6,
         "value": 1.9,
       },
       "loc": SourceLocation {
@@ -134,7 +146,6 @@ Node {
           "kind": "primitive",
           "name": "integer",
         },
-        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -149,7 +160,6 @@ Node {
         "start": 0,
         "typability": "Typed",
         "type": "Literal",
-        "typeVariableId": 7,
         "value": 1,
       },
       "loc": SourceLocation {
@@ -173,7 +183,6 @@ Node {
           "kind": "primitive",
           "name": "integer",
         },
-        "isPolymorphic": false,
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -188,7 +197,6 @@ Node {
         "start": 5,
         "typability": "Typed",
         "type": "Literal",
-        "typeVariableId": 8,
         "value": 0,
       },
       "loc": SourceLocation {

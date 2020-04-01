@@ -1075,7 +1075,11 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 28,
-          "isPolymorphic": false,
+          "inferredType": Object {
+            "id": 4471,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -1088,12 +1092,16 @@ Object {
           },
           "raw": "'string'",
           "start": 20,
+          "typability": "NotYetTyped",
           "type": "Literal",
-          "typeVariableId": 4471,
           "value": "string",
         },
         "end": 30,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4472,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 12,
@@ -1105,8 +1113,8 @@ Object {
           },
         },
         "start": 20,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4472,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1143,7 +1151,11 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 8,
-          "isPolymorphic": false,
+          "inferredType": Object {
+            "id": 4466,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -1156,12 +1168,16 @@ Object {
           },
           "raw": "'string'",
           "start": 0,
+          "typability": "NotYetTyped",
           "type": "Literal",
-          "typeVariableId": 4466,
           "value": "string",
         },
         "end": 10,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4467,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1173,8 +1189,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4467,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1236,7 +1252,6 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
-          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1251,11 +1266,14 @@ Object {
           "start": 20,
           "typability": "Typed",
           "type": "Literal",
-          "typeVariableId": 4459,
           "value": 0,
         },
         "end": 23,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4460,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1267,8 +1285,8 @@ Object {
           },
         },
         "start": 20,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4460,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1309,7 +1327,6 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
-          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -1324,11 +1341,14 @@ Object {
           "start": 0,
           "typability": "Typed",
           "type": "Literal",
-          "typeVariableId": 4454,
           "value": 0,
         },
         "end": 3,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4455,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -1340,8 +1360,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4455,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1407,7 +1427,6 @@ Object {
                 "kind": "primitive",
                 "name": "integer",
               },
-              "isPolymorphic": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1422,7 +1441,6 @@ Object {
               "start": 19,
               "typability": "Typed",
               "type": "Literal",
-              "typeVariableId": 5774,
               "value": 1,
             },
           ],
@@ -1441,7 +1459,11 @@ Object {
           "type": "ArrayExpression",
         },
         "end": 23,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 5775,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1453,8 +1475,8 @@ Object {
           },
         },
         "start": 18,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 5775,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1499,7 +1521,6 @@ Object {
                 "kind": "primitive",
                 "name": "integer",
               },
-              "isPolymorphic": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1514,7 +1535,6 @@ Object {
               "start": 1,
               "typability": "Typed",
               "type": "Literal",
-              "typeVariableId": 4908,
               "value": 1,
             },
           ],
@@ -1533,7 +1553,11 @@ Object {
           "type": "ArrayExpression",
         },
         "end": 5,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4909,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1545,8 +1569,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4909,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1730,7 +1754,6 @@ Object {
                   "kind": "primitive",
                   "name": "integer",
                 },
-                "isPolymorphic": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -1745,7 +1768,6 @@ Object {
                 "start": 23,
                 "typability": "Typed",
                 "type": "Literal",
-                "typeVariableId": 6640,
                 "value": 1,
               },
             },
@@ -1754,7 +1776,11 @@ Object {
           "type": "ObjectExpression",
         },
         "end": 28,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 6641,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1766,8 +1792,8 @@ Object {
           },
         },
         "start": 18,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 6641,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1858,7 +1884,6 @@ Object {
                   "kind": "primitive",
                   "name": "integer",
                 },
-                "isPolymorphic": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -1873,7 +1898,6 @@ Object {
                 "start": 23,
                 "typability": "Typed",
                 "type": "Literal",
-                "typeVariableId": 7074,
                 "value": 1,
               },
             },
@@ -1882,7 +1906,11 @@ Object {
           "type": "ObjectExpression",
         },
         "end": 28,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 7075,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1894,8 +1922,8 @@ Object {
           },
         },
         "start": 18,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 7075,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -1985,7 +2013,6 @@ Object {
                   "kind": "primitive",
                   "name": "integer",
                 },
-                "isPolymorphic": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 6,
@@ -2000,7 +2027,6 @@ Object {
                 "start": 5,
                 "typability": "Typed",
                 "type": "Literal",
-                "typeVariableId": 6206,
                 "value": 1,
               },
             },
@@ -2009,7 +2035,11 @@ Object {
           "type": "ObjectExpression",
         },
         "end": 10,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 6207,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -2021,8 +2051,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 6207,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2058,7 +2088,11 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 24,
-          "isPolymorphic": false,
+          "inferredType": Object {
+            "id": 4447,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 6,
@@ -2071,12 +2105,16 @@ Object {
           },
           "raw": "true",
           "start": 20,
+          "typability": "NotYetTyped",
           "type": "Literal",
-          "typeVariableId": 4447,
           "value": true,
         },
         "end": 26,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4448,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 8,
@@ -2088,8 +2126,8 @@ Object {
           },
         },
         "start": 20,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4448,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2126,7 +2164,11 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 4,
-          "isPolymorphic": false,
+          "inferredType": Object {
+            "id": 4442,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 4,
@@ -2139,12 +2181,16 @@ Object {
           },
           "raw": "true",
           "start": 0,
+          "typability": "NotYetTyped",
           "type": "Literal",
-          "typeVariableId": 4442,
           "value": true,
         },
         "end": 6,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4443,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 6,
@@ -2156,8 +2202,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4443,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2230,7 +2276,11 @@ Object {
           "type": "Identifier",
         },
         "end": 31,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4424,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 13,
@@ -2242,8 +2292,8 @@ Object {
           },
         },
         "start": 20,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4424,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2285,7 +2335,6 @@ Object {
               "kind": "primitive",
               "name": "integer",
             },
-            "isPolymorphic": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -2300,12 +2349,15 @@ Object {
             "start": 30,
             "typability": "Typed",
             "type": "Literal",
-            "typeVariableId": 4432,
             "value": 1,
           },
           Node {
             "end": 37,
-            "isPolymorphic": true,
+            "inferredType": Object {
+              "id": 4433,
+              "isPolymorphic": false,
+              "kind": "variable",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 19,
@@ -2318,8 +2370,8 @@ Object {
             },
             "raw": "true",
             "start": 33,
+            "typability": "NotYetTyped",
             "type": "Literal",
-            "typeVariableId": 4433,
             "value": true,
           },
         ],
@@ -2340,7 +2392,11 @@ Object {
           "type": "Identifier",
         },
         "end": 38,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4434,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 20,
@@ -2352,8 +2408,8 @@ Object {
           },
         },
         "start": 20,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4434,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2394,7 +2450,6 @@ Object {
               "kind": "primitive",
               "name": "integer",
             },
-            "isPolymorphic": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2409,12 +2464,15 @@ Object {
             "start": 10,
             "typability": "Typed",
             "type": "Literal",
-            "typeVariableId": 4428,
             "value": 1,
           },
           Node {
             "end": 17,
-            "isPolymorphic": true,
+            "inferredType": Object {
+              "id": 4429,
+              "isPolymorphic": false,
+              "kind": "variable",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 17,
@@ -2427,8 +2485,8 @@ Object {
             },
             "raw": "true",
             "start": 13,
+            "typability": "NotYetTyped",
             "type": "Literal",
-            "typeVariableId": 4429,
             "value": true,
           },
         ],
@@ -2449,7 +2507,11 @@ Object {
           "type": "Identifier",
         },
         "end": 18,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4430,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 18,
@@ -2461,8 +2523,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4430,
       },
       "severity": "Error",
       "type": "Runtime",
@@ -2512,7 +2574,11 @@ Object {
           "type": "Identifier",
         },
         "end": 11,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 4421,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 11,
@@ -2524,8 +2590,8 @@ Object {
           },
         },
         "start": 0,
+        "typability": "NotYetTyped",
         "type": "CallExpression",
-        "typeVariableId": 4421,
       },
       "severity": "Error",
       "type": "Runtime",

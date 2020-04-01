@@ -13,7 +13,11 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 64,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 16,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "left": Node {
           "end": 59,
           "loc": SourceLocation {
@@ -47,7 +51,6 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
-          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -62,12 +65,11 @@ Object {
           "start": 62,
           "typability": "Typed",
           "type": "Literal",
-          "typeVariableId": 15,
           "value": 10,
         },
         "start": 58,
+        "typability": "NotYetTyped",
         "type": "AssignmentExpression",
-        "typeVariableId": 16,
       },
       "severity": "Error",
       "type": "Syntax",
@@ -91,7 +93,11 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 45,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 8,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "left": Node {
           "end": 40,
           "loc": SourceLocation {
@@ -125,7 +131,6 @@ Object {
             "kind": "primitive",
             "name": "integer",
           },
-          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -140,12 +145,11 @@ Object {
           "start": 43,
           "typability": "Typed",
           "type": "Literal",
-          "typeVariableId": 7,
           "value": 10,
         },
         "start": 39,
+        "typability": "NotYetTyped",
         "type": "AssignmentExpression",
-        "typeVariableId": 8,
       },
       "severity": "Error",
       "type": "Syntax",

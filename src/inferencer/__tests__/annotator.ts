@@ -2,7 +2,7 @@ import { annotateProgram } from '../annotator'
 import * as es from 'estree'
 import { simple } from 'acorn-walk/dist/walk'
 import { stripIndent } from '../../utils/formatters'
-import { TypeVariableAnnotatedNode } from '../../types'
+import { TypeAnnotatedNode, Variable } from '../../types'
 import { toValidatedAst } from '../../utils/testing'
 
 // gets annotated AST
@@ -11,74 +11,71 @@ async function toAnnotatedAst(code: string) {
   return annotateProgram(validatedAst)
 }
 
-function checkConstantDeclarationAnnotation(
-  declaration: TypeVariableAnnotatedNode<es.VariableDeclarator>
-) {
-  const id: TypeVariableAnnotatedNode<es.Pattern> = declaration.id
-  expect(id.typeVariableId).not.toBe(undefined)
+function checkConstantDeclarationAnnotation(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
+  const id: TypeAnnotatedNode<es.Pattern> = declaration.id
+  expect(id.inferredType).not.toBe(undefined)
   if (declaration.init !== null && declaration.init !== undefined) {
-    const init: TypeVariableAnnotatedNode<es.Expression> = declaration.init
-    expect(init.typeVariableId).not.toBe(undefined)
-    expect(id.typeVariableId!).not.toEqual(init.typeVariableId!)
+    const init: TypeAnnotatedNode<es.Expression> = declaration.init
+    if (init !== undefined) {
+      expect(init.inferredType).not.toBe(undefined)
+      expect((id.inferredType as Variable).id).not.toEqual((init.inferredType as Variable).id)
+    }
   }
 }
 
 function checkBinaryExpressionAnnotation(
-  declaration: TypeVariableAnnotatedNode<es.BinaryExpression | es.LogicalExpression>
+  declaration: TypeAnnotatedNode<es.BinaryExpression | es.LogicalExpression>
 ) {
-  const left: TypeVariableAnnotatedNode<es.Expression> = declaration.left
-  const right: TypeVariableAnnotatedNode<es.Expression> = declaration.right
-  expect(left.typeVariableId).not.toBe(undefined)
-  expect(right.typeVariableId).not.toBe(undefined)
+  const left: TypeAnnotatedNode<es.Expression> = declaration.left
+  const right: TypeAnnotatedNode<es.Expression> = declaration.right
+  expect((left.inferredType as Variable).id).not.toBe(undefined)
+  expect((right.inferredType as Variable).id).not.toBe(undefined)
   expect(declaration).not.toBe(undefined)
 }
 
-function checkUnaryExpressionAnnotation(
-  unaryExpression: TypeVariableAnnotatedNode<es.UnaryExpression>
-) {
-  const argument: TypeVariableAnnotatedNode<es.Expression> = unaryExpression.argument
-  expect(argument.typeVariableId).not.toBe(undefined)
+function checkUnaryExpressionAnnotation(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
+  const argument: TypeAnnotatedNode<es.Expression> = unaryExpression.argument
+  expect((argument.inferredType as Variable).id).not.toBe(undefined)
   expect(unaryExpression).not.toBe(undefined)
 }
 
-function checkLiteralAnnotation(literal: TypeVariableAnnotatedNode<es.Literal>) {
-  expect(literal.typeVariableId).not.toBe(undefined)
+function checkLiteralAnnotation(literal: TypeAnnotatedNode<es.Literal>) {
+  expect((literal.inferredType as Variable).id).not.toBe(undefined)
 }
 
 function checkFunctionDeclarationAnnotation(
-  functionDeclaration: TypeVariableAnnotatedNode<es.FunctionDeclaration>
+  functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
 ) {
-  const params: TypeVariableAnnotatedNode<es.Pattern>[] = functionDeclaration.params
+  const params: TypeAnnotatedNode<es.Pattern>[] = functionDeclaration.params
   params.forEach(param => {
-    expect(param.typeVariableId).not.toBe(undefined)
-    expect(param.isPolymorphic).toBe(true)
+    expect((param.inferredType as Variable).id).not.toBe(undefined)
+    expect((param.inferredType as Variable).isPolymorphic).toBe(true)
   })
 
   // TODO figure out what to do with the function body.
-  const result: TypeVariableAnnotatedNode<es.BlockStatement> = functionDeclaration.body
-  expect(result.typeVariableId).not.toBe(undefined)
+  const result: TypeAnnotatedNode<es.BlockStatement> = functionDeclaration.body
+  expect((result.inferredType as Variable).id).not.toBe(undefined)
 }
 
 function checkFunctionDefinitionAnnotation(
-  functionDefinition: TypeVariableAnnotatedNode<es.ArrowFunctionExpression>
+  functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>
 ) {
-  const params: TypeVariableAnnotatedNode<es.Pattern>[] = functionDefinition.params
+  const params: TypeAnnotatedNode<es.Pattern>[] = functionDefinition.params
   params.forEach(param => {
-    expect(param.typeVariableId).not.toBe(undefined)
-    expect(param.isPolymorphic).toBe(true)
+    expect((param.inferredType as Variable).id).not.toBe(undefined)
+    expect((param.inferredType as Variable).isPolymorphic).toBe(true)
   })
 
   // TODO figure out what to do with the function body.
-  const result: TypeVariableAnnotatedNode<es.Node> = functionDefinition.body
-  expect(result.typeVariableId).not.toBe(undefined)
+  const result: TypeAnnotatedNode<es.Node> = functionDefinition.body
+  expect((result.inferredType as Variable).id).not.toBe(undefined)
 }
 
 function checkFunctionApplicationAnnotation(
-  functionApplication: TypeVariableAnnotatedNode<es.CallExpression>
+  functionApplication: TypeAnnotatedNode<es.CallExpression>
 ) {
-  functionApplication.arguments.forEach((argument: TypeVariableAnnotatedNode<es.Expression>) => {
-    expect(argument.typeVariableId).not.toBe(undefined)
-    expect(argument.isPolymorphic).toBe(true)
+  functionApplication.arguments.forEach((argument: TypeAnnotatedNode<es.Expression>) => {
+    expect((argument.inferredType as Variable).id).not.toBe(undefined)
   })
 }
 

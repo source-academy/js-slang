@@ -16,7 +16,11 @@ test();",
     NoAssignmentToForVariable {
       "node": Node {
         "end": 84,
-        "isPolymorphic": false,
+        "inferredType": Object {
+          "id": 3620,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "left": Node {
           "end": 80,
           "loc": SourceLocation {
@@ -50,7 +54,6 @@ test();",
             "kind": "primitive",
             "name": "integer",
           },
-          "isPolymorphic": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -65,12 +68,11 @@ test();",
           "start": 83,
           "typability": "Typed",
           "type": "Literal",
-          "typeVariableId": 3619,
           "value": 1,
         },
         "start": 79,
+        "typability": "NotYetTyped",
         "type": "AssignmentExpression",
-        "typeVariableId": 3620,
       },
       "severity": "Error",
       "type": "Syntax",
