@@ -1,4 +1,5 @@
 import { simple } from 'acorn-walk/dist/walk'
+import { SourceLocation } from 'acorn/dist/acorn'
 import * as es from 'estree'
 import { isInLoc } from './finder'
 import { BlockFrame, DefinitionNode } from './types'
@@ -183,6 +184,56 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   // since its scope is limited to the body
   block.children = [...variables, ...block.children]
   return block
+}
+
+export function getScopeHelper(
+  definitionLocation: es.SourceLocation,
+  program: es.Program,
+  target: string
+): any {
+  const lookupTree = scopeVariables(program)
+
+  console.log(lookupTree)
+
+  // Find closest ancestor of node.
+  const block = getBlockFromLoc(definitionLocation, lookupTree)
+  const parentRange = block.loc
+
+  // Recurse on the children
+  const nestedBlocks = block.children.filter(isBlockFrame)
+  const nestedBlocksWithDefinitions = nestedBlocks.filter(child =>
+    getDefinitionsInChildScope(child, target).length > 0
+  )
+  console.log("nestedBlocksWithDefinitions", nestedBlocksWithDefinitions)
+  nestedBlocksWithDefinitions.sort(sortByLoc)
+  const rangeToExclude = nestedBlocksWithDefinitions.map(b => b.enclosingLoc)
+
+  if (rangeToExclude.length === 0) {
+    return [parentRange]
+  }
+
+  const ranges: SourceLocation[] = []
+  let prevRange = rangeToExclude.shift()
+  ranges.push({start:(parentRange as any).start, end: (prevRange as any).start})
+  rangeToExclude.map(range => {
+    ranges.push({start:(prevRange as any).end, end: (rangeToExclude.shift() as any).start})
+    prevRange = range
+  })
+  ranges.push({start:(prevRange as any).end, end: (parentRange as any).end})
+
+  return ranges
+}
+
+function getDefinitionsInChildScope(
+  block: BlockFrame,
+  target: string
+): (DefinitionNode | BlockFrame)[] {
+  console.log("Getting definitons for", target, "in", block)
+  const definitionNodes = block.children
+    .filter(isDefinitionNode)
+    .filter(node => node.name === target)
+    .filter(node => node.isDeclaration)
+  return definitionNodes
 }
 
 // This function works by first searching for closest declaration of that variable in the parent scopes
