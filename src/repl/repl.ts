@@ -1,16 +1,33 @@
-import fs = require('fs')
-import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
-import util = require('util')
+#!/usr/bin/env node
+import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
+import { inspect } from 'util'
 import { createContext, IOptions, parseError, runInContext } from '../index'
+import { EvaluationMethod, ExecutionMethod } from '../types'
+import Closure from '../interpreter/closure'
 
-function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
+function startRepl(
+  chapter = 1,
+  executionMethod: ExecutionMethod = 'interpreter',
+  evaluationMethod: EvaluationMethod = 'strict',
+  useSubst: boolean = false,
+  useRepl: boolean,
+  prelude = ''
+) {
   // use defaults for everything
   const context = createContext(chapter)
-  const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst }
+  const options: Partial<IOptions> = {
+    scheduler: 'preemptive',
+    executionMethod,
+    evaluationMethod,
+    useSubst
+  }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
       console.dir(preludeResult.value, { depth: null })
-      repl.start(
+      if (!useRepl) {
+        return
+      }
+      start(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
@@ -24,11 +41,14 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
           },
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash
-          writer: output =>
-            util.inspect(output, {
-              depth: 1000,
-              colors: true
-            })
+          writer: output => {
+            return output instanceof Closure || typeof output === 'function'
+              ? output.toString()
+              : inspect(output, {
+                  depth: 1000,
+                  colors: true
+                })
+          }
         }
       )
     } else {
@@ -38,19 +58,26 @@ function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
 }
 
 function main() {
-  const firstArg = process.argv[2]
-  if (process.argv.length === 3 && String(Number(firstArg)) !== firstArg.trim()) {
-    fs.readFile(firstArg, 'utf8', (err, data) => {
-      if (err) {
-        throw err
-      }
-      startRepl(4, false, data)
-    })
-  } else {
-    const chapter = process.argv.length > 2 ? parseInt(firstArg, 10) : 1
-    const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
-    startRepl(chapter, useSubst)
-  }
+  const opt = require('node-getopt')
+    .create([
+      ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
+      ['s', 'use-subst', 'use substitution'],
+      ['h', 'help', 'display this help'],
+      ['n', 'native', 'use the native execution method'],
+      ['l', 'lazy', 'use lazy evaluation'],
+      ['e', 'eval', "don't show REPL, only display output of evaluation"]
+    ])
+    .bindHelp()
+    .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
+    .parseSystem()
+
+  const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
+  const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict'
+  const chapter = parseInt(opt.options.chapter, 10)
+  const useSubst = opt.options.s
+  const useRepl = !opt.options.e
+  const prelude = opt.argv[0] ?? ''
+  startRepl(chapter, executionMethod, evaluationMethod, useSubst, useRepl, prelude)
 }
 
 main()

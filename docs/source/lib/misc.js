@@ -156,9 +156,9 @@ function error(v, s) {
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
  * but also displays <CODE>undefined</CODE> and function objects.
  * See also <a href="https://sicp.comp.nus.edu.sg/chapters/62">textbook example</a>.
- * @param {value} v, the argument value
+ * @param {value} v the argument value
  * @returns {string} string representation of v
  */
-function stringify(v) {}
-
+function stringify(v) {
+}
 

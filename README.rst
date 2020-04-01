@@ -13,8 +13,6 @@ for computer science majors, following Structure and Interpretation of Computer 
 Usage
 -----
 
-To run in native, set isNativeRunnable to true here: https://github.com/source-academy/js-slang/blob/master/src/index.ts#L29
-
 To build,
 
 .. code-block::
@@ -24,25 +22,33 @@ To build,
   $ yarn
   $ yarn build
 
+To add "js-slang" to your PATH, build it as per the above instructions, then run
+
+.. code-block::
+
+  $ cd dist
+  $ npm link
+
+If you do not wish to add "js-slang" to your PATH, replace "js-slang" with "node dist/repl/repl.js" in the following examples.
+
 To try out *Source* in a REPL, run
 
 .. code-block::
 
-  $ node dist/repl/repl.js [chapter] # default: 1
+  $ js-slang -c [chapter] # default: 1
 
-If you wish, you can pass in a file path instead, to evaluate some *Source* before initialising the REPL
-It will be run in *Source* chapter 4.
-
-.. code-block::
-
-  $ node dist/repl/repl.js [path/to/file]
-
-or alternatively, install js-slang and run
+You can set additional options:
 
 .. code-block::
 
-  $ npm -g install js-slang   # Install js-slang
-  $ js-slang [chapter] # default: 1
+  Usage: js-slang [PROGRAM_STRING] [OPTION]
+
+    -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
+    -s, --use-subst       use substitution
+    -h, --help            display this help
+    -n, --native          use the native execution method
+    -l, --lazy            use lazy evaluation
+    -e, --eval            don't show REPL, only display output of evaluation
 
 Documentation
 -------------

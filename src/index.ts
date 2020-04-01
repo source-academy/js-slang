@@ -1,6 +1,6 @@
 // @ts-ignore
 import { simple } from 'acorn-walk/dist/walk'
-import { DebuggerStatement, Literal, Program } from 'estree'
+import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
@@ -11,17 +11,19 @@ import {
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
+import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { codify, getEvaluationSteps } from './stepper/stepper'
+import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
+  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
@@ -36,6 +38,7 @@ export interface IOptions {
   scheduler: 'preemptive' | 'async' | 'nondet'
   steps: number
   executionMethod: ExecutionMethod
+  evaluationMethod: EvaluationMethod
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -44,15 +47,18 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
+  evaluationMethod: 'strict',
   originalMaxExecTime: 1000,
   useSubst: false
 }
 
 // needed to work on browsers
-// @ts-ignore
-SourceMapConsumer.initialize({
-  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
-})
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  SourceMapConsumer.initialize({
+    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+  })
+}
 
 // deals with parsing error objects and converting them to strings (for repl at least)
 
@@ -144,8 +150,49 @@ function determineExecutionMethod(theOptions: IOptions, context: Context, progra
     }
   } else {
     isNativeRunnable = theOptions.executionMethod === 'native'
+    context.executionMethod = theOptions.executionMethod
   }
   return isNativeRunnable
+}
+
+export function findDeclaration(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation | null | undefined {
+  const program = parse(code, context, true)
+  if (!program) {
+    return null
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return null
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode || identifierNode === declarationNode) {
+    return null
+  }
+  return declarationNode.loc
+}
+
+export function getAllOccurrencesInScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (declarationNode == null || declarationNode.loc == null) {
+    return []
+  }
+  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
 export async function runInContext(
@@ -163,6 +210,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
+  context.evaluationMethod = theOptions.evaluationMethod
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -178,7 +226,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     return Promise.resolve({
       status: 'finished',
-      value: steps.map(codify)
+      value: steps
     } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
@@ -199,7 +247,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId)
+      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
@@ -279,12 +327,4 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export {
-  createContext,
-  Context,
-  Result,
-  setBreakpointAtLine,
-  scopeVariables,
-  lookupDefinition,
-  getAllOccurrencesInScope
-}
+export { createContext, Context, Result, setBreakpointAtLine }
