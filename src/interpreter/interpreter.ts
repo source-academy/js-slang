@@ -5,7 +5,7 @@ import { Context, Value } from '../types'
 
 import { Evaluator } from './evaluatorUtils'
 import { getEvaluators } from './evaluators'
-import Thunk, { EvaluateFunction, getValue } from './thunk'
+import Thunk, { EvaluateFunction, dethunk } from './thunk'
 
 export interface Interpreter {
   boundedForceEvaluate: EvaluateFunction
@@ -62,7 +62,7 @@ export class LazyEvaluationInterpreter implements Interpreter {
     yield* this.visit(context, node)
     const result = yield* this.evaluators[node.type](node, context)
     yield* this.leave(context)
-    return yield* getValue(result)
+    return yield* dethunk(result)
   }
 
   *evaluate(node: es.Node, context: Context): IterableIterator<Value> {

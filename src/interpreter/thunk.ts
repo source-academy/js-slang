@@ -32,17 +32,30 @@ export default class Thunk {
     this.toString = () => '[Thunk <' + this.originalNode.type + '>]'
   }
 
-  public *getValue(): Value {
+  public *dethunk(): Value {
     if (!this.isEvaluated) {
       this.result = yield* this.evaluate(this.node, this.context)
       this.isEvaluated = true
     }
-    return this.result instanceof Thunk ? this.result.getValue() : this.result
+    return this.result instanceof Thunk ? this.result.dethunk() : this.result
   }
 }
 
-export function* getValue(thunk: Thunk | Value) {
-  return thunk instanceof Thunk ? yield* thunk.getValue() : thunk
+export function* dethunk(thunk: Thunk | Value): Value {
+  return thunk instanceof Thunk ? yield* thunk.dethunk() : thunk
+}
+
+/**
+ * deepDethunk is only needed for non-thunk-aware functions
+ */
+export function* deepDethunk(thunk: Thunk | Value): Value {
+  const value = thunk instanceof Thunk ? yield* thunk.dethunk() : thunk
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      value[i] = yield* deepDethunk(value[i])
+    }
+  }
+  return value
 }
 
 export function isThunkAware(fun: Value): boolean {
@@ -61,7 +74,7 @@ export function makeThunkAware(fun: Value, thisContext?: Value): MakeThunkAwareR
     }
     const dethunkedArgs = [...args]
     for (let i = 0; i < dethunkedArgs.length; i++) {
-      dethunkedArgs[i] = yield* getValue(dethunkedArgs[i])
+      dethunkedArgs[i] = yield* deepDethunk(dethunkedArgs[i])
     }
     return fun.apply(thisContext, dethunkedArgs)
   }
