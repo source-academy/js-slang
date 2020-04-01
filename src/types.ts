@@ -204,7 +204,9 @@ export interface Primitive {
 
 export interface Variable {
   kind: 'variable'
-  name: string
+  id?: number
+  isAddable?: boolean
+  isPolymorphic?: boolean
 }
 
 // cannot name Function, conflicts with TS

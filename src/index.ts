@@ -170,6 +170,7 @@ export async function runInContext(
   }
   const validated = validateAndAnnotate(program as Program, context)
   inferProgram(validated)
+  // console.log(JSON.stringify(inferred, null, 4))
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
