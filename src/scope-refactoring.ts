@@ -201,10 +201,10 @@ export function getScopeHelper(
 
   // Recurse on the children
   const nestedBlocks = block.children.filter(isBlockFrame)
-  const nestedBlocksWithDefinitions = nestedBlocks.filter(child =>
-    getDefinitionsInChildScope(child, target).length > 0
+  const nestedBlocksWithDefinitions = nestedBlocks.filter(
+    child => getDefinitionsInChildScope(child, target).length > 0
   )
-  console.log("nestedBlocksWithDefinitions", nestedBlocksWithDefinitions)
+  console.log('nestedBlocksWithDefinitions', nestedBlocksWithDefinitions)
   nestedBlocksWithDefinitions.sort(sortByLoc)
   const rangeToExclude = nestedBlocksWithDefinitions.map(b => b.enclosingLoc)
 
@@ -214,12 +214,12 @@ export function getScopeHelper(
 
   const ranges: SourceLocation[] = []
   let prevRange = rangeToExclude.shift()
-  ranges.push({start:(parentRange as any).start, end: (prevRange as any).start})
+  ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start })
   rangeToExclude.map(range => {
-    ranges.push({start:(prevRange as any).end, end: (rangeToExclude.shift() as any).start})
+    ranges.push({ start: (prevRange as any).end, end: (rangeToExclude.shift() as any).start })
     prevRange = range
   })
-  ranges.push({start:(prevRange as any).end, end: (parentRange as any).end})
+  ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end })
 
   return ranges
 }
@@ -228,7 +228,7 @@ function getDefinitionsInChildScope(
   block: BlockFrame,
   target: string
 ): (DefinitionNode | BlockFrame)[] {
-  console.log("Getting definitons for", target, "in", block)
+  console.log('Getting definitons for', target, 'in', block)
   const definitionNodes = block.children
     .filter(isDefinitionNode)
     .filter(node => node.name === target)

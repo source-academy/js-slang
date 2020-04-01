@@ -14,7 +14,7 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScopeHelper, getScopeHelper} from './scope-refactoring'
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -184,7 +184,7 @@ export function getScope(
   if (!program) {
     return []
   }
-  console.log("program", program)
+  console.log('program', program)
 
   const identifierNode = findIdentifierNode(program, context, loc)
   if (!identifierNode) {
