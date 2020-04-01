@@ -1,5 +1,6 @@
 import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode } from '../types'
+import { annotateProgram } from './annotator'
 import * as es from 'estree'
 
 // // main function that will infer a program
@@ -39,6 +40,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       literal.typability = 'Typed'
     }
   }
+  
   // function inferVariableDeclaration(variableDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
   //   // get variableType
   //   const variableDeclarator = variableDeclaration.declarations[0]  // variableDeclarator node (todo: should we confirm its type?)
@@ -83,6 +85,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   //   }
   //   functionDeclaration.typability = 'Typed'
   // }
+  
+  // annotate program
+  program = annotateProgram(program)
+  
   // visit Literals and type check them
   ancestor(program as es.Node, {
     Literal: inferLiteral,
@@ -90,6 +96,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // BinaryExpression: inferBinaryExpression
     // FunctionDeclaration: inferFunctionDeclaration
   })
+  
   // return the AST with annotated types
   return program
 }
