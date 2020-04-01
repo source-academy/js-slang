@@ -180,8 +180,6 @@ export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
 export type TypeAnnotation = Untypable | Typedd | NotYetTyped
 
-export type TypeVariableAnnotatedNode<T extends es.Node> = TypeVariable & T
-
 export interface Untypable {
   typability?: 'Untypable'
   inferredType?: Type
@@ -197,12 +195,6 @@ export interface Typedd {
   inferredType?: Type
 }
 
-export interface TypeVariable {
-  typeVariableId?: number
-  isAddable?: boolean
-  isPolymorphic?: boolean
-}
-
 export type Type = Primitive | Variable | FunctionType | List
 
 export interface Primitive {
@@ -212,7 +204,9 @@ export interface Primitive {
 
 export interface Variable {
   kind: 'variable'
-  name: string
+  id?: number,
+  isAddable?: boolean,
+  isPolymorphic?: boolean
 }
 
 // cannot name Function, conflicts with TS
