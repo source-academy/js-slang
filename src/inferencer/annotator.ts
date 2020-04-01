@@ -4,15 +4,15 @@ import * as es from 'estree'
 
 let typeVariableId = 1
 function notAnnotated(node: TypeAnnotatedNode<es.Node>): boolean {
-  return node.inferredType === undefined
+  return node.inferredType === undefined;
 }
 
 function annotateNode(node: TypeAnnotatedNode<es.Node>, isPolymorphic: boolean = false) {
   if (notAnnotated(node)) {
     node.inferredType = {
-      kind: 'variable',
+      kind: "variable",
       id: typeVariableId,
-      isPolymorphic
+      isPolymorphic,
     }
     node.typability = 'NotYetTyped'
     typeVariableId += 1
@@ -24,7 +24,9 @@ export function annotateProgram(program: es.Program): es.Program {
   function annotateLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     annotateNode(literal)
   }
-  function annotateConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
+  function annotateConstantDeclaration(
+    declaration: TypeAnnotatedNode<es.VariableDeclarator>
+  ) {
     const id: TypeAnnotatedNode<es.Pattern> = declaration.id
     annotateNode(id)
 
@@ -78,7 +80,9 @@ export function annotateProgram(program: es.Program): es.Program {
     annotateNode(result)
   }
 
-  function annotateFunctionApplication(functionApplication: TypeAnnotatedNode<es.CallExpression>) {
+  function annotateFunctionApplication(
+    functionApplication: TypeAnnotatedNode<es.CallExpression>
+  ) {
     functionApplication.arguments.forEach(argument => annotateNode(argument, true))
   }
 
