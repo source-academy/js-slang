@@ -10,8 +10,7 @@ function parse(code: any, chapter = 2) {
   const context = mockContext(2)
   const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
-  validateAndAnnotate(program, context)
-  return program
+  return validateAndAnnotate(program, context)
 }
 
 describe('type checking pairs and lists', () => {
