@@ -634,6 +634,41 @@ Array [
 ]
 `;
 
+exports[`Find scope of a variable declaration with more nesting 1`] = `
+Array [
+  Object {
+    "end": Position {
+      "column": 12,
+      "line": 6,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 3,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 11,
+    },
+    "start": Position {
+      "column": 13,
+      "line": 8,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 5,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 13,
+    },
+  },
+]
+`;
+
 exports[`Find variable declaration in block statement 1`] = `
 SourceLocation {
   "end": Position {

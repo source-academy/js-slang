@@ -226,12 +226,12 @@ export function getScopeHelper(
 
   // Recurse on the children to find other
   // definitions of the same identifier
-  const nestedBlocks = block.children.filter(isBlockFrame)
-  const nestedBlocksWithDefinitions = nestedBlocks.filter(
-    child => getDefinitionsInChildScope(child, target).length > 0
-  )
-  nestedBlocksWithDefinitions.sort(sortByLoc)
-  const rangeToExclude = nestedBlocksWithDefinitions.map(b => b.enclosingLoc)
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks
+    .map(child => getChildBlocksWithDefinitions(child, target))
+    .reduce((x, y) => [...x, ...y], [])
+
+  const rangeToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
 
   if (parentRange && rangeToExclude.length === 0) {
     return [parentRange]
@@ -251,14 +251,21 @@ export function getScopeHelper(
 
 // Returns a list of the definitions of the
 // given identifier in block
-function getDefinitionsInChildScope(
-  block: BlockFrame,
-  target: string
-): (DefinitionNode | BlockFrame)[] {
+function getChildBlocksWithDefinitions(block: BlockFrame, target: string): BlockFrame[] {
   const definitionNodes = block.children
     .filter(isDefinitionNode)
     .filter(node => node.name === target)
-  return definitionNodes
+
+  if (definitionNodes.length !== 0) {
+    return [block]
+  }
+
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks.map(child =>
+    getChildBlocksWithDefinitions(child, target)
+  )
+
+  return childBlocksWithDefinitions.reduce((x, y) => [...x, ...y], [])
 }
 
 /**

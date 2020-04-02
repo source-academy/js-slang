@@ -793,3 +793,39 @@ test('Find scope of a function declaration', () => {
   })
   expect(actual).toMatchSnapshot()
 })
+
+test('Find scope of a variable declaration with more nesting', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            for (let x = 10; x < 20; x = x + 1) {
+                display(x);
+            }
+            return x + y;
+        }
+        for (let x = 10; x < 20; x = x + 1) {
+            display(x);
+        }
+    }
+    display(x);
+  }`
+  const expected = [
+    new SourceLocationTestResult(3, 4, 6, 12),
+    new SourceLocationTestResult(8, 13, 11, 8),
+    new SourceLocationTestResult(13, 9, 14, 5)
+  ]
+  const actual = getScope(code, context, { line: 4, column: 15 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
