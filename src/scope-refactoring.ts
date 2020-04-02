@@ -209,6 +209,65 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   return block
 }
 
+/*
+This function finds the list of location ranges
+where a given identifier is in scope.
+ */
+export function getScopeHelper(
+  definitionLocation: es.SourceLocation,
+  program: es.Program,
+  target: string
+): es.SourceLocation[] {
+  const lookupTree = scopeVariables(program)
+
+  // Find closest ancestor of node.
+  const block = getBlockFromLoc(definitionLocation, lookupTree)
+  const parentRange = block.loc
+
+  // Recurse on the children to find other
+  // definitions of the same identifier
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks
+    .map(child => getChildBlocksWithDefinitions(child, target))
+    .reduce((x, y) => [...x, ...y], [])
+
+  const rangeToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
+
+  if (parentRange && rangeToExclude.length === 0) {
+    return [parentRange]
+  }
+
+  const ranges: es.SourceLocation[] = []
+  let prevRange = rangeToExclude.shift()
+  ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start })
+  rangeToExclude.map(range => {
+    ranges.push({ start: (prevRange as any).end, end: (rangeToExclude.shift() as any).start })
+    prevRange = range
+  })
+  ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end })
+
+  return ranges
+}
+
+// Returns a list of the definitions of the
+// given identifier in block
+function getChildBlocksWithDefinitions(block: BlockFrame, target: string): BlockFrame[] {
+  const definitionNodes = block.children
+    .filter(isDefinitionNode)
+    .filter(node => node.name === target)
+
+  if (definitionNodes.length !== 0) {
+    return [block]
+  }
+
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks.map(child =>
+    getChildBlocksWithDefinitions(child, target)
+  )
+
+  return childBlocksWithDefinitions.reduce((x, y) => [...x, ...y], [])
+}
+
 /**
  * Gets all instances of a variable being used in the child scope.
  * Given the definition location on the variable, get the BlockFrame it resides in.
