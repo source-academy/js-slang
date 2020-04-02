@@ -590,12 +590,12 @@ function infer(
         }
       })
       const lastNode = node.body[lastCheckedNodeIndex]
-      const lastNodeType =
-        isLastStatementInBlock && lastNode.type === 'ExpressionStatement'
-          ? // @ts-ignore
-            lastNode.expression.typeVar
-          : // @ts-ignore
-            lastNode.typeVar
+      // @ts-ignore
+      let lastNodeType = lastNode.typeVar
+      if (isLastStatementInBlock && lastNode.type === 'ExpressionStatement') {
+        // @ts-ignore
+        lastNodeType = lastNode.expression.typeVar
+      }
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         newConstraints = infer(node.body[i], newEnv, newConstraints)
