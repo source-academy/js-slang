@@ -38,10 +38,12 @@ export function scopeVariables(
     enclosingLoc: enclosingLoc === undefined ? program.loc : enclosingLoc,
     children: []
   }
-  const definitionStatements = getDeclarationStatements(program.body) as (
-    | es.VariableDeclaration
-    | es.FunctionDeclaration
-  )[]
+
+  if (program.body == null) {
+    return block
+  }
+
+  const definitionStatements = getDefinitionStatements(program.body)
   const blockStatements = getBlockStatements(program.body)
   const forStatements = getForStatements(program.body)
   const ifStatements = getIfStatements(program.body)
@@ -382,13 +384,13 @@ function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.
   return nodes.filter(statement => statement.type === 'BlockStatement') as es.BlockStatement[]
 }
 
-function getDeclarationStatements(
+function getDefinitionStatements(
   nodes: (es.Statement | es.ModuleDeclaration)[]
-): (es.Statement | es.ModuleDeclaration)[] {
+): (es.FunctionDeclaration | es.VariableDeclaration)[] {
   return nodes.filter(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
-  )
+  ) as (es.FunctionDeclaration | es.VariableDeclaration)[]
 }
 
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {
