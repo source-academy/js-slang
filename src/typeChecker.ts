@@ -203,17 +203,11 @@ export function typeCheck(program: es.Program | undefined): es.Program | undefin
     // dont run type check for predefined functions as they include constructs we can't handle
     // like lists etc.
     if (program.body.length < 10) {
-      const mockProgram: es.BlockStatement = {
-        type: 'BlockStatement',
-        body: program.body as es.Statement[]
-      }
-      traverse(mockProgram)
-      infer(mockProgram, env, constraints)
-      traverse(mockProgram, constraints)
+      traverse(program)
+      infer(program, env, constraints, true)
+      traverse(program, constraints)
       // @ts-ignore
-      program.body = mockProgram.body
-      // @ts-ignore
-      program.typeVar = mockProgram.typeVar // NOTE does not really work as expected
+      console.log(program.typeVar)
       return program
     }
   } catch (e) {
@@ -481,8 +475,28 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
   }
 }
 
+function ifStatementHasReturn(node: es.IfStatement): boolean {
+  const consNode = node.consequent as es.BlockStatement // guaranteed that they are block statements
+  const altNode = node.alternate as es.BlockStatement // guaranteed to be a block and exist
+  return blockStatementHasReturn(consNode) || blockStatementHasReturn(altNode)
+}
+
+function blockStatementHasReturn(node: es.BlockStatement): boolean {
+  const body = node.body
+  for (const stmt of body) {
+    if (stmt.type === 'ReturnStatement') {
+      return true
+    } else if (stmt.type === 'IfStatement') {
+      if (ifStatementHasReturn(stmt)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
 /* tslint:disable cyclomatic-complexity */
-function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[] {
+function infer(node: es.Node, env: Env, constraints: Constraint[], isLastStatementInBlock: boolean = false): Constraint[] {
   // @ts-ignore
   const storedType: VAR = node.typeVar
   switch (node.type) {
@@ -531,21 +545,23 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       // @ts-ignore
       return infer(argNode, env, addToConstraintList(constraints, [storedType, argNode.typeVar]))
     }
+    case 'Program':
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
-      const lastNodeIndex = node.body.findIndex((currentNode, index) => {
-        return index === node.body.length - 1 || currentNode.type === 'ReturnStatement'
+      const lastStatementIndex = node.body.length - 1
+      const lastCheckedNodeIndex = (isLastStatementInBlock) ? lastStatementIndex : node.body.findIndex((currentNode, index) => {
+        return index === lastStatementIndex || currentNode.type === 'ReturnStatement' || (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
       })
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
-      let n = node.body.length - 1
+      let n = lastStatementIndex
       const declNodes: (es.FunctionDeclaration | es.VariableDeclaration)[] = []
       while (n >= 0) {
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
           // in the event we havent yet found our last decl
           // and we are not after our first return statement
-          if (!lastDeclFound && n <= lastNodeIndex) {
+          if (!lastDeclFound && n <= lastCheckedNodeIndex) {
             lastDeclFound = true
             lastDeclNodeIndex = n
           }
@@ -562,8 +578,9 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
           newEnv[declNode.declarations[0].id.name] = declNode.declarations[0].init.typeVar
         }
       })
+      const lastNode = node.body[lastCheckedNodeIndex]
       // @ts-ignore
-      const lastNodeType = node.body[lastNodeIndex].typeVar
+      const lastNodeType = (isLastStatementInBlock && lastNode.type === 'ExpressionStatement') ? lastNode.expression.typeVar : lastNode.typeVar
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         newConstraints = infer(node.body[i], newEnv, newConstraints)
@@ -583,8 +600,14 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
           )
         }
       })
-      for (let i = lastDeclNodeIndex + 1; i <= lastNodeIndex; i++) {
-        newConstraints = infer(node.body[i], newEnv, newConstraints)
+      for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
+        // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
+        const checkedNode = node.body[i]
+        if (i === lastCheckedNodeIndex && checkedNode.type === 'IfStatement') {
+          newConstraints = infer(checkedNode, newEnv, newConstraints, isLastStatementInBlock)
+        } else {
+          newConstraints = infer(checkedNode, newEnv, newConstraints)
+        }
       }
       return newConstraints
     }
@@ -634,9 +657,9 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       }
       newConstraints = infer(testNode, env, newConstraints)
-      newConstraints = infer(consNode, env, newConstraints)
+      newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
       if (altNode) {
-        newConstraints = infer(altNode, env, newConstraints)
+        newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
       }
       return newConstraints
     }
