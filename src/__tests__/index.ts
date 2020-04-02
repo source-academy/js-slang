@@ -701,15 +701,18 @@ test('Find scope of a variable declaration', () => {
   }`
   const expected = [
     new SourceLocationTestResult(1, 0, 3, 4),
-    new SourceLocationTestResult(8, 5, 10, 3),
+    new SourceLocationTestResult(8, 5, 10, 3)
   ]
   const actual = getScope(code, context, { line: 2, column: 10 })
-  expected.forEach((expectedRange,index) => {
+  expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
-      actual[index].start.line, actual[index].start.column,
-      actual[index].end.line, actual[index].end.column)
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
     expectResultsToMatch(actualRange, expectedRange)
-  });
+  })
   expect(actual).toMatchSnapshot()
 })
 
@@ -725,16 +728,17 @@ test('Find scope of a nested variable declaration', () => {
     }
     display(x);
   }`
-  const expected = [
-    new SourceLocationTestResult(3, 4, 8, 5),
-  ]
+  const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
   const actual = getScope(code, context, { line: 4, column: 15 })
-  expected.forEach((expectedRange,index) => {
+  expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
-      actual[index].start.line, actual[index].start.column,
-      actual[index].end.line, actual[index].end.column)
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
     expectResultsToMatch(actualRange, expectedRange)
-  });
+  })
   expect(actual).toMatchSnapshot()
 })
 
@@ -750,16 +754,17 @@ test('Find scope of a function parameter', () => {
     }
     display(x);
   }`
-  const expected = [
-    new SourceLocationTestResult(5, 22, 7, 9),
-  ]
+  const expected = [new SourceLocationTestResult(5, 22, 7, 9)]
   const actual = getScope(code, context, { line: 5, column: 19 })
-  expected.forEach((expectedRange,index) => {
+  expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
-      actual[index].start.line, actual[index].start.column,
-      actual[index].end.line, actual[index].end.column)
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
     expectResultsToMatch(actualRange, expectedRange)
-  });
+  })
   expect(actual).toMatchSnapshot()
 })
 
@@ -775,15 +780,16 @@ test('Find scope of a function declaration', () => {
     }
     display(x);
   }`
-  const expected = [
-    new SourceLocationTestResult(3, 4, 8, 5),
-  ]
+  const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
   const actual = getScope(code, context, { line: 5, column: 17 })
-  expected.forEach((expectedRange,index) => {
+  expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
-      actual[index].start.line, actual[index].start.column,
-      actual[index].end.line, actual[index].end.column)
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
     expectResultsToMatch(actualRange, expectedRange)
-  });
+  })
   expect(actual).toMatchSnapshot()
 })
