@@ -40,7 +40,7 @@ describe('type checking pairs and lists', () => {
     //   return is_null(s) ? pair(null, null)
     //     : flatmap(x => map(p => pair(x, p), permutations(remove(x, s))), s);
     // }
-    // const ps = permutations(xs); 
+    // const ps = permutations(xs);
     // `
     // expect(() => typeCheck(parse(code1, 2))).not.toThrowError()
   })

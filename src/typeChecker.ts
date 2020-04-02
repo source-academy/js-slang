@@ -208,6 +208,7 @@ export function typeCheck(program: es.Program | undefined): es.Program | undefin
         body: program.body as es.Statement[]
       }
       traverse(mockProgram)
+      debugger
       infer(mockProgram, env, constraints)
       traverse(mockProgram, constraints)
       // @ts-ignore
@@ -327,6 +328,7 @@ function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
     if (isPair(_tail)) {
       const tail = _tail as PAIR
       if (getListType(tail.tail) !== null) {
+        debugger
         // try to unify, just error if it fails
         addToConstraintList(constraints, [tail.head, getListType(tail.tail) as TYPE])
         addToConstraintList(constraints, [tail.head, pair.head])
@@ -389,9 +391,9 @@ function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
 function contains(type: TYPE, name: string): boolean {
   switch (type.nodeType) {
     case 'Named':
-      if (type.name === 'pair') {
+      if (isPair(type)) {
         return contains((type as PAIR).head, name) || contains((type as PAIR).tail, name)
-      } else if (type.name === 'list') {
+      } else if (isList(type)) {
         return contains((type as LIST).listName, name)
       }
       return false
@@ -447,13 +449,19 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
     } else {
       return constraints
     }
-  } else if (isPair(LHS) && isList(RHS)) {
+  } /*else if (isPair(LHS) && isList(RHS)) { 
     return addToConstraintList(constraints, [(LHS as PAIR).tail, getListType(RHS) as TYPE])
-  } else if (LHS.nodeType === 'Var') {
+  }*/ else if (
+    LHS.nodeType === 'Var'
+  ) {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.nodeType === 'Var' && RHS.name === LHS.name) {
       return constraints
-    } else if (contains(RHS, LHS.nodeType)) {
+    } else if (contains(RHS, LHS.name)) {
+      // unify T1 with Pair<T2, T1>
+      if (isPair(RHS)) {
+        throw Error('not yet implemented, need to unify recursive pair types')
+      }
       throw Error(
         'Contains cyclic reference to itself, where the type being bound to is a function type'
       )
@@ -731,7 +739,7 @@ function tAddable(name: string): VAR {
   }
 }
 
-function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
+function tPair(var1: VAR, var2: VAR | PAIR | LIST): PAIR {
   return {
     nodeType: 'Named',
     name: 'pair',
@@ -837,14 +845,14 @@ const tailType2 = tVar('tailType2')
 const headType3 = tVar('headType3')
 const tailType3 = tVar('tailType3')
 const headType4 = tVar('headType4')
-const tailType4 = tVar('tailType4')
+// const tailType4 = tVar('tailType4')
 
 const pairFuncs = {
   pair: tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1))),
   head: tForAll(tFunc(tPair(headType2, tailType2), headType2)),
   tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3)),
   is_pair: tForAll(tFunc(tVar('T'), tNamedBool)),
-  is_null: tForAll(tFunc(tPair(headType4, tailType4), tNamedBool))
+  is_null: tForAll(tFunc(tPair(headType4, tList(headType4)), tNamedBool))
 }
 
 const primitiveFuncs = {
