@@ -206,7 +206,7 @@ export function typeCheck(program: TypeAnnotatedNode<es.Program>): es.Program | 
   try {
     // dont run type check for predefined functions as they include constructs we can't handle
     // like lists etc.
-    if (program.body.length < 10) {
+    if (program.body.length < 100) {
       traverse(program)
       infer(program, env, constraints, true)
       traverse(program, constraints)
@@ -323,7 +323,7 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
         // try to unify, just error if it fails
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
-        console.log('normalization triggered')
+        // console.log('normalization triggered')
         return tail
       }
     }
@@ -355,7 +355,26 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
     }
     case 'variable': {
       for (const constraint of constraints) {
-        if (constraint[0].name === type.name) {
+        const LHS = constraint[0]
+        const RHS = constraint[1]
+        if (LHS.name === type.name) {
+          if (contains(RHS, LHS.name)) {
+            if (isPair(RHS) && LHS === (RHS as Pair).tailType) {
+              // throw Error('need to unify pair')
+              return {
+                kind: 'list',
+                elementType: (RHS as Pair).headType
+              }
+            } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
+              return {
+                kind: 'list',
+                elementType: LHS
+              }
+            }
+            throw Error(
+              'Contains cyclic reference to itself, where the type being bound to is a function type'
+            )
+          }
           return applyConstraints(constraint[1], constraints)
         }
       }
@@ -416,7 +435,7 @@ function occursOnLeftInConstraintList(
       RHS.constraint = LHS.constraint
     }
   }
-  constraints.push([LHS, RHS])
+  if (LHS !== RHS) constraints.push([LHS, RHS])
   return constraints
 }
 
@@ -424,6 +443,7 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   return (
     LHS.constraint === 'addable' &&
     RHS.kind !== 'variable' &&
+    RHS.kind !== 'pair' &&
     // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
     !(RHS.kind === 'primitive' && (RHS.name === 'string' || RHS.name === 'number'))
   )
@@ -438,12 +458,26 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(constraints, [LHS.tailType, RHS.tailType])
     return newConstraints
   } else if (isPair(LHS) && isList(RHS)) {
-    return addToConstraintList(constraints, [(LHS as Pair).tailType, getListType(RHS) as Type])
+    throw Error('dont think i will ever hit this')
+    // return addToConstraintList(constraints, [(LHS as Pair).tailType, getListType(RHS) as Type])
+  } else if (isList(LHS) && isPair(RHS)) {
+    throw Error('dont think i will ever hit this')
   } else if (LHS.kind === 'variable') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.kind === 'variable' && RHS.name === LHS.name) {
       return constraints
     } else if (contains(RHS, LHS.name)) {
+      if (
+        isPair(RHS) &&
+        (LHS === (RHS as Pair).tailType || LHS === getListType((RHS as Pair).tailType))
+      ) {
+        // T1 = Pair<T2, T1> ===> T1 = List<T2>
+        // throw Error('need to unify pair')
+        return addToConstraintList(constraints, [LHS, tList((RHS as Pair).headType)])
+      } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
+        constraints.push([LHS, RHS])
+        return constraints
+      }
       throw Error(
         'Contains cyclic reference to itself, where the type being bound to is a function type'
       )
@@ -754,7 +788,7 @@ function tAddable(name: string): Variable {
   }
 }
 
-function tPair(var1: Variable, var2: Variable | Pair): Pair {
+function tPair(var1: Type, var2: Type): Pair {
   return {
     kind: 'pair',
     headType: var1,
@@ -762,7 +796,7 @@ function tPair(var1: Variable, var2: Variable | Pair): Pair {
   }
 }
 
-function tList(var1: Variable): List {
+function tList(var1: Type): List {
   return {
     kind: 'list',
     elementType: var1
