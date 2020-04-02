@@ -14,7 +14,7 @@ function parse(code: any, chapter = 2) {
 }
 
 describe('type checking pairs and lists', () => {
-  it.skip('happy paths for list functions', () => {
+  it('happy paths for list functions', () => {
     const code1 = `
       function accumulate(op, init, xs) {
         return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
@@ -54,12 +54,8 @@ describe('type checking pairs and lists', () => {
 })
 
 describe('type checking functions', () => {
-  it.skip('happy paths for recursive functions', () => {
+  it('happy paths for recursive functions', () => {
     const code1 = `
-      function rec(x) {
-          return x === 1 ? x : rec(x-1);
-      }
-      rec(5);
       function append(xs, ys) {
         return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
       }

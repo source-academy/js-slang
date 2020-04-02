@@ -452,6 +452,8 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
     return constraints
+  } else if (LHS.kind === 'list' && RHS.kind === 'list') {
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
     let newConstraints = constraints
     newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
