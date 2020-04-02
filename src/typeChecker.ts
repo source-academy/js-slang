@@ -496,7 +496,12 @@ function blockStatementHasReturn(node: es.BlockStatement): boolean {
 }
 
 /* tslint:disable cyclomatic-complexity */
-function infer(node: es.Node, env: Env, constraints: Constraint[], isLastStatementInBlock: boolean = false): Constraint[] {
+function infer(
+  node: es.Node,
+  env: Env,
+  constraints: Constraint[],
+  isLastStatementInBlock: boolean = false
+): Constraint[] {
   // @ts-ignore
   const storedType: VAR = node.typeVar
   switch (node.type) {
@@ -549,9 +554,15 @@ function infer(node: es.Node, env: Env, constraints: Constraint[], isLastStateme
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
       const lastStatementIndex = node.body.length - 1
-      const lastCheckedNodeIndex = (isLastStatementInBlock) ? lastStatementIndex : node.body.findIndex((currentNode, index) => {
-        return index === lastStatementIndex || currentNode.type === 'ReturnStatement' || (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
-      })
+      const lastCheckedNodeIndex = isLastStatementInBlock
+        ? lastStatementIndex
+        : node.body.findIndex((currentNode, index) => {
+            return (
+              index === lastStatementIndex ||
+              currentNode.type === 'ReturnStatement' ||
+              (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
+            )
+          })
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
       let n = lastStatementIndex
@@ -580,7 +591,10 @@ function infer(node: es.Node, env: Env, constraints: Constraint[], isLastStateme
       })
       const lastNode = node.body[lastCheckedNodeIndex]
       // @ts-ignore
-      const lastNodeType = (isLastStatementInBlock && lastNode.type === 'ExpressionStatement') ? lastNode.expression.typeVar : lastNode.typeVar
+      const lastNodeType =
+        isLastStatementInBlock && lastNode.type === 'ExpressionStatement'
+          ? lastNode.expression.typeVar
+          : lastNode.typeVar
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         newConstraints = infer(node.body[i], newEnv, newConstraints)
