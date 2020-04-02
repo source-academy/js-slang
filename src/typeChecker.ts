@@ -203,18 +203,12 @@ export function typeCheck(program: es.Program | undefined): es.Program | undefin
     // dont run type check for predefined functions as they include constructs we can't handle
     // like lists etc.
     if (program.body.length < 10) {
-      const mockProgram: es.BlockStatement = {
-        type: 'BlockStatement',
-        body: program.body as es.Statement[]
-      }
-      traverse(mockProgram)
+      traverse(program)
+      infer(program, env, constraints, true)
+      traverse(program, constraints)
       debugger
-      infer(mockProgram, env, constraints)
-      traverse(mockProgram, constraints)
       // @ts-ignore
-      program.body = mockProgram.body
-      // @ts-ignore
-      program.typeVar = mockProgram.typeVar // NOTE does not really work as expected
+      console.log(program.typeVar)
       return program
     }
   } catch (e) {
@@ -328,11 +322,10 @@ function applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
     if (isPair(_tail)) {
       const tail = _tail as PAIR
       if (getListType(tail.tail) !== null) {
-        debugger
         // try to unify, just error if it fails
         addToConstraintList(constraints, [tail.head, getListType(tail.tail) as TYPE])
         addToConstraintList(constraints, [tail.head, pair.head])
-        console.log('normalization triggered')
+        // console.log('normalization triggered')
         return tail
       }
     }
@@ -366,7 +359,32 @@ function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
     }
     case 'Var': {
       for (const constraint of constraints) {
-        if (constraint[0].name === type.name) {
+        const LHS = constraint[0]
+        const RHS = constraint[1]
+        if (LHS.name === type.name) {
+          if (contains(RHS, LHS.name)) {
+            if(isPair(RHS) && LHS === (RHS as PAIR).tail) {
+              // throw Error('need to unify pair')
+              return {
+                nodeType: 'Named',
+                name: 'list',
+                listName: (RHS as PAIR).head
+              }
+            } else if (LHS.nodeType === 'Var' && LHS === getListType(RHS)) {
+              return {
+                nodeType: 'Named',
+                name: 'list',
+                listName: LHS
+              }
+            }
+
+            console.log(LHS)
+            console.log(RHS)
+            debugger
+            throw Error(
+              'Contains cyclic reference to itself, where the type being bound to is a function type'
+            )
+          }
           return applyConstraints(constraint[1], constraints)
         }
       }
@@ -391,9 +409,9 @@ function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
 function contains(type: TYPE, name: string): boolean {
   switch (type.nodeType) {
     case 'Named':
-      if (isPair(type)) {
+      if (type.name === 'pair') {
         return contains((type as PAIR).head, name) || contains((type as PAIR).tail, name)
-      } else if (isList(type)) {
+      } else if (type.name === 'list') {
         return contains((type as LIST).listName, name)
       }
       return false
@@ -426,7 +444,8 @@ function occursOnLeftInConstraintList(
       RHS.type = LHS.type
     }
   }
-  constraints.push([LHS, RHS])
+  if(LHS !== RHS) 
+    constraints.push([LHS, RHS])
   return constraints
 }
 
@@ -434,8 +453,8 @@ function cannotBeResolvedIfAddable(LHS: VAR, RHS: TYPE): boolean {
   return (
     LHS.type === 'addable' &&
     RHS.nodeType !== 'Var' &&
-    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
-    !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number'))
+    !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
+    // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number'))
   )
 }
 
@@ -449,19 +468,27 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
     } else {
       return constraints
     }
-  } /*else if (isPair(LHS) && isList(RHS)) { 
+  } else if (isPair(LHS) && isList(RHS)) {
+    throw Error('dont think i will ever hit this')
     return addToConstraintList(constraints, [(LHS as PAIR).tail, getListType(RHS) as TYPE])
-  }*/ else if (
-    LHS.nodeType === 'Var'
-  ) {
+  } else if(isList(LHS) && isPair(RHS)) {
+    throw Error('dont think i will ever hit this')
+  } else if (LHS.nodeType === 'Var') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.nodeType === 'Var' && RHS.name === LHS.name) {
       return constraints
     } else if (contains(RHS, LHS.name)) {
-      // unify T1 with Pair<T2, T1>
-      if (isPair(RHS)) {
-        throw Error('not yet implemented, need to unify recursive pair types')
+      if(isPair(RHS) && (LHS === (RHS as PAIR).tail) || LHS === getListType((RHS as PAIR).tail)) {
+        // T1 = Pair<T2, T1> ===> T1 = List<T2>
+        // throw Error('need to unify pair')
+        return addToConstraintList(constraints,[LHS, {nodeType: 'Named', name: 'list', listName: (RHS as PAIR).head}])
+      } else if (LHS.nodeType === 'Var' && LHS === getListType(RHS)) {
+        constraints.push([LHS, RHS])
+        return constraints
       }
+      console.log(LHS)
+      console.log(RHS)
+      debugger
       throw Error(
         'Contains cyclic reference to itself, where the type being bound to is a function type'
       )
@@ -489,8 +516,33 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
   }
 }
 
+function ifStatementHasReturn(node: es.IfStatement): boolean {
+  const consNode = node.consequent as es.BlockStatement // guaranteed that they are block statements
+  const altNode = node.alternate as es.BlockStatement // guaranteed to be a block and exist
+  return blockStatementHasReturn(consNode) || blockStatementHasReturn(altNode)
+}
+
+function blockStatementHasReturn(node: es.BlockStatement): boolean {
+  const body = node.body
+  for (const stmt of body) {
+    if (stmt.type === 'ReturnStatement') {
+      return true
+    } else if (stmt.type === 'IfStatement') {
+      if (ifStatementHasReturn(stmt)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
 /* tslint:disable cyclomatic-complexity */
-function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[] {
+function infer(
+  node: es.Node,
+  env: Env,
+  constraints: Constraint[],
+  isLastStatementInBlock: boolean = false
+): Constraint[] {
   // @ts-ignore
   const storedType: VAR = node.typeVar
   switch (node.type) {
@@ -539,21 +591,29 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
       // @ts-ignore
       return infer(argNode, env, addToConstraintList(constraints, [storedType, argNode.typeVar]))
     }
+    case 'Program':
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
-      const lastNodeIndex = node.body.findIndex((currentNode, index) => {
-        return index === node.body.length - 1 || currentNode.type === 'ReturnStatement'
-      })
+      const lastStatementIndex = node.body.length - 1
+      const lastCheckedNodeIndex = isLastStatementInBlock
+        ? lastStatementIndex
+        : node.body.findIndex((currentNode, index) => {
+            return (
+              index === lastStatementIndex ||
+              currentNode.type === 'ReturnStatement' ||
+              (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
+            )
+          })
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
-      let n = node.body.length - 1
+      let n = lastStatementIndex
       const declNodes: (es.FunctionDeclaration | es.VariableDeclaration)[] = []
       while (n >= 0) {
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
           // in the event we havent yet found our last decl
           // and we are not after our first return statement
-          if (!lastDeclFound && n <= lastNodeIndex) {
+          if (!lastDeclFound && n <= lastCheckedNodeIndex) {
             lastDeclFound = true
             lastDeclNodeIndex = n
           }
@@ -570,8 +630,13 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
           newEnv[declNode.declarations[0].id.name] = declNode.declarations[0].init.typeVar
         }
       })
+      const lastNode = node.body[lastCheckedNodeIndex]
       // @ts-ignore
-      const lastNodeType = node.body[lastNodeIndex].typeVar
+      let lastNodeType = lastNode.typeVar
+      if (isLastStatementInBlock && lastNode.type === 'ExpressionStatement') {
+        // @ts-ignore
+        lastNodeType = lastNode.expression.typeVar
+      }
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         newConstraints = infer(node.body[i], newEnv, newConstraints)
@@ -591,8 +656,14 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
           )
         }
       })
-      for (let i = lastDeclNodeIndex + 1; i <= lastNodeIndex; i++) {
-        newConstraints = infer(node.body[i], newEnv, newConstraints)
+      for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
+        // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
+        const checkedNode = node.body[i]
+        if (i === lastCheckedNodeIndex && checkedNode.type === 'IfStatement') {
+          newConstraints = infer(checkedNode, newEnv, newConstraints, isLastStatementInBlock)
+        } else {
+          newConstraints = infer(checkedNode, newEnv, newConstraints)
+        }
       }
       return newConstraints
     }
@@ -642,9 +713,9 @@ function infer(node: es.Node, env: Env, constraints: Constraint[]): Constraint[]
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       }
       newConstraints = infer(testNode, env, newConstraints)
-      newConstraints = infer(consNode, env, newConstraints)
+      newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
       if (altNode) {
-        newConstraints = infer(altNode, env, newConstraints)
+        newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
       }
       return newConstraints
     }
@@ -739,7 +810,7 @@ function tAddable(name: string): VAR {
   }
 }
 
-function tPair(var1: VAR, var2: VAR | PAIR | LIST): PAIR {
+function tPair(var1: VAR, var2: VAR | PAIR): PAIR {
   return {
     nodeType: 'Named',
     name: 'pair',
@@ -845,14 +916,14 @@ const tailType2 = tVar('tailType2')
 const headType3 = tVar('headType3')
 const tailType3 = tVar('tailType3')
 const headType4 = tVar('headType4')
-// const tailType4 = tVar('tailType4')
+const tailType4 = tVar('tailType4')
 
 const pairFuncs = {
   pair: tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1))),
   head: tForAll(tFunc(tPair(headType2, tailType2), headType2)),
   tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3)),
   is_pair: tForAll(tFunc(tVar('T'), tNamedBool)),
-  is_null: tForAll(tFunc(tPair(headType4, tList(headType4)), tNamedBool))
+  is_null: tForAll(tFunc(tPair(headType4, tailType4), tNamedBool))
 }
 
 const primitiveFuncs = {
