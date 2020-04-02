@@ -1,12 +1,16 @@
 /* tslint:disable:object-literal-key-quotes no-string-literal */
-import { createContext } from '../index'
 import { parse as __parse } from '../parser/parser'
 import { typeCheck } from '../typeChecker'
+import { mockContext } from '../mocks/context'
+import { validateAndAnnotate } from '../validator/validator'
+import { Type } from '../types'
 
 // simple program to parse program and error if there are syntatical errors
-function parse(code: any, chapter = 1) {
-  const program: any = __parse(code, createContext(chapter))
+function parse(code: any, chapter = 2) {
+  const context = mockContext(2)
+  const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
+  validateAndAnnotate(program, context)
   return program
 }
 
@@ -34,19 +38,17 @@ describe('type checking pairs and lists', () => {
     `
     const program = typeCheck(parse(code1, 2))
     // @ts-ignore
-    expect(program.body[2].declarations[0].init.typeVar).toEqual({
-      nodeType: 'Named',
+    expect(program.body[2].declarations[0].init.inferredType).toEqual<Type>({
+      kind: 'primitive',
       name: 'number'
     })
     // @ts-ignore
-    expect(program.body[4].declarations[0].init.typeVar).toEqual({
-      nodeType: 'Named',
-      name: 'pair',
-      head: { nodeType: 'Named', name: 'bool' },
-      tail: {
-        nodeType: 'Named',
-        name: 'list',
-        listName: { nodeType: 'Named', name: 'bool' }
+    expect(program.body[4].declarations[0].init.inferredType).toEqual<Type>({
+      kind: 'pair',
+      headType: { kind: 'primitive', name: 'boolean' },
+      tailType: {
+        kind: 'list',
+        elementType: { kind: 'primitive', name: 'boolean' }
       }
     })
   })
