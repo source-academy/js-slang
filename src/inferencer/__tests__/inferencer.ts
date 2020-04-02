@@ -166,7 +166,7 @@ const list4th = fourth(aList);
 const pair4th = fourth(aPair);
 
 // unfortunately fourth will throw a runtime error on lists, since we do not know their length
-// but for pairs, we can check their structure! a pair without the correct structure will throw a type errpr:
+// but for pairs, we can check their structure! a pair without the correct structure will throw a type error:
 const tooshortpair = pair(1, pair(2, pair(3, 4)));
 const tooshortpair4th = fourth(tooshortpair);
 
