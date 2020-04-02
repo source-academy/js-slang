@@ -12,37 +12,67 @@ function parse(code: any, chapter = 1) {
 
 describe('type checking pairs and lists', () => {
   it('happy paths for list functions', () => {
-    const code = `
-        function build(x) {
-            return x < 0 ? null : pair(4, build(x-1));
-        }
-        build(3);
+    const code1 = `
+      function accumulate(op, init, xs) {
+        return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
+      }
+      const xs = pair(1, pair(2, null));
+      const y = accumulate((x,y)=>x+y,0,xs);
+      function map(f, xs) {
+        return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
+      }
+      const xs1 = map(x => x<4 ? true : false, xs);
+      const xs2 = map(x => x>4 ? true : false, xs);
+      function append(xs, ys) {
+          return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+      }
+      const xs3 = append(xs1, xs2);
+      function remove(v, xs) {
+        return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
+      }
+      // const xs4 = remove(true, xs3);
     `
-    expect(() => typeCheck(parse(code, 2))).not.toThrowError()
-    // const code1 = `
-    // function accumulate(op, init, xs) {
-    //   return is_null(xs) ? init : op(head(xs), accumulate(op, init, xs));
-    // }
-    // function map(f, xs) {
-    //   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
-    // }
-    // function append(xs, ys) {
-    //   return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
-    // }
-    // function remove(v, xs) {
-    //   return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
-    // }
-    // const xs = pair(1, pair(2, null));
-    // function flatmap(f, seq) {
-    //   return accumulate(append, null, map(f, seq));
-    // }
-    // function permutations(s) {
-    //   return is_null(s) ? pair(null, null)
-    //     : flatmap(x => map(p => pair(x, p), permutations(remove(x, s))), s);
-    // }
-    // const ps = permutations(xs);
-    // `
-    // expect(() => typeCheck(parse(code1, 2))).not.toThrowError()
+    const program = typeCheck(parse(code1, 2))
+    // @ts-ignore
+    expect(program.body[2].declarations[0].init.typeVar).toEqual({
+      nodeType: 'Named',
+      name: 'number'
+    })
+    // @ts-ignore
+    expect(program.body[4].declarations[0].init.typeVar).toEqual({
+      nodeType: 'Named',
+      name: 'pair',
+      head: { nodeType: 'Named', name: 'bool' },
+      tail: {
+        nodeType: 'Named',
+        name: 'list',
+        listName: { nodeType: 'Named', name: 'bool' }
+      }
+    })
+  })
+})
+
+describe('type checking functions', () => {
+  it('happy paths for recursive functions', () => {
+    const code1 = `
+      function rec(x) {
+          return x === 1 ? x : rec(x-1);
+      }
+      rec(5);
+      function append(xs, ys) {
+        return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+      }
+    `
+    typeCheck(parse(code1))
+  })
+
+  it('unhappy paths for recursive functions', () => {
+    const code = `
+      function foo(f) {
+        return foo;
+      }
+    `
+    expect(() => typeCheck(parse(code, 2))).toThrowError()
   })
 })
 
@@ -105,13 +135,6 @@ describe('type checking overloaded unary/binary primitives', () => {
       3 + 4;
     `
     typeCheck(parse(code))
-    const code1 = `
-      function rec(x) {
-          return x === 1 ? x : rec(x-1);
-      }
-      rec(5);
-    `
-    typeCheck(parse(code1))
     const code2 = `
       const x = !false;
       const y = x || true;

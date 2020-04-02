@@ -202,11 +202,10 @@ export function typeCheck(program: es.Program | undefined): es.Program | undefin
   try {
     // dont run type check for predefined functions as they include constructs we can't handle
     // like lists etc.
-    if (program.body.length < 10) {
+    if (program.body.length < 100) {
       traverse(program)
       infer(program, env, constraints, true)
       traverse(program, constraints)
-      debugger
       // @ts-ignore
       console.log(program.typeVar)
       return program
@@ -363,7 +362,7 @@ function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
         const RHS = constraint[1]
         if (LHS.name === type.name) {
           if (contains(RHS, LHS.name)) {
-            if(isPair(RHS) && LHS === (RHS as PAIR).tail) {
+            if (isPair(RHS) && LHS === (RHS as PAIR).tail) {
               // throw Error('need to unify pair')
               return {
                 nodeType: 'Named',
@@ -377,10 +376,6 @@ function __applyConstraints(type: TYPE, constraints: Constraint[]): TYPE {
                 listName: LHS
               }
             }
-
-            console.log(LHS)
-            console.log(RHS)
-            debugger
             throw Error(
               'Contains cyclic reference to itself, where the type being bound to is a function type'
             )
@@ -444,8 +439,7 @@ function occursOnLeftInConstraintList(
       RHS.type = LHS.type
     }
   }
-  if(LHS !== RHS) 
-    constraints.push([LHS, RHS])
+  if (LHS !== RHS) constraints.push([LHS, RHS])
   return constraints
 }
 
@@ -453,7 +447,10 @@ function cannotBeResolvedIfAddable(LHS: VAR, RHS: TYPE): boolean {
   return (
     LHS.type === 'addable' &&
     RHS.nodeType !== 'Var' &&
-    !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
+    !(
+      RHS.nodeType === 'Named' &&
+      (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair')
+    )
     // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number'))
   )
 }
@@ -471,24 +468,24 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [TYPE, TYPE]
   } else if (isPair(LHS) && isList(RHS)) {
     throw Error('dont think i will ever hit this')
     return addToConstraintList(constraints, [(LHS as PAIR).tail, getListType(RHS) as TYPE])
-  } else if(isList(LHS) && isPair(RHS)) {
+  } else if (isList(LHS) && isPair(RHS)) {
     throw Error('dont think i will ever hit this')
   } else if (LHS.nodeType === 'Var') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.nodeType === 'Var' && RHS.name === LHS.name) {
       return constraints
     } else if (contains(RHS, LHS.name)) {
-      if(isPair(RHS) && (LHS === (RHS as PAIR).tail) || LHS === getListType((RHS as PAIR).tail)) {
+      if (isPair(RHS) && (LHS === (RHS as PAIR).tail || LHS === getListType((RHS as PAIR).tail))) {
         // T1 = Pair<T2, T1> ===> T1 = List<T2>
         // throw Error('need to unify pair')
-        return addToConstraintList(constraints,[LHS, {nodeType: 'Named', name: 'list', listName: (RHS as PAIR).head}])
+        return addToConstraintList(constraints, [
+          LHS,
+          { nodeType: 'Named', name: 'list', listName: (RHS as PAIR).head }
+        ])
       } else if (LHS.nodeType === 'Var' && LHS === getListType(RHS)) {
         constraints.push([LHS, RHS])
         return constraints
       }
-      console.log(LHS)
-      console.log(RHS)
-      debugger
       throw Error(
         'Contains cyclic reference to itself, where the type being bound to is a function type'
       )
