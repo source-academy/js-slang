@@ -37,9 +37,8 @@ export function createEnv(context: Context): t.Environment {
   const env = new Scope(false)
 
   // logical operators
-  let type = new t.Var()
+  const type = new t.Var()
   env.set('||', new t.Function([new t.Bool(), type], type))
-  type = new t.Var()
   env.set('&&', new t.Function([new t.Bool(), type], type))
 
   // unary operators
@@ -60,16 +59,12 @@ export function createEnv(context: Context): t.Environment {
   env.set('>', comparableXcomparableRBool())
   env.set('>=', comparableXcomparableRBool())
 
-  let headType = new t.Var()
-  let tailType = new t.Var()
-  env.set('pair', new t.Function([headType, tailType], new t.Pair(headType, tailType)))
-  headType = new t.Var()
-  tailType = new t.Var()
-  env.set('tail', new t.Function([new t.Pair(headType, tailType)], tailType))
-  headType = new t.Var()
-  tailType = new t.Var()
-  env.set('head', new t.Function([new t.Pair(headType, tailType)], headType))
-  type = new t.Var()
+  const headType = new t.Var()
+  const tailType = new t.Var()
+  const pairType = new t.Pair(headType, tailType)
+  env.set('pair', new t.Function([headType, tailType], pairType))
+  env.set('tail', new t.Function([pairType], tailType))
+  env.set('head', new t.Function([pairType], headType))
   env.set('is_null', new t.Function([new t.Pair(type, new t.List(type))], new t.Bool()))
   env.set('is_pair', new t.Function([new t.Var()], new t.Bool()))
 
