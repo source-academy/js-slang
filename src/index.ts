@@ -184,8 +184,6 @@ export function getScope(
   if (!program) {
     return []
   }
-  console.log('program', program)
-
   const identifierNode = findIdentifierNode(program, context, loc)
   if (!identifierNode) {
     return []

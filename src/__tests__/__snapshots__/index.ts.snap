@@ -564,6 +564,21 @@ exports[`Find no declaration from occurrence when there is no declaration (synta
 
 exports[`Find no declaration from selection that does not refer to a declaration 1`] = `null`;
 
+exports[`Find scope of a nested variable declaration 1`] = `
+Array [
+  SourceLocation {
+    "end": Position {
+      "column": 5,
+      "line": 8,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 3,
+    },
+  },
+]
+`;
+
 exports[`Find variable declaration in block statement 1`] = `
 SourceLocation {
   "end": Position {
