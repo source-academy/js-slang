@@ -9,7 +9,7 @@ import {
   expectToLooselyMatchJS,
   expectToMatchJS
 } from '../utils/testing'
-import { findDeclaration } from '../index'
+import { findDeclaration, getScope } from '../index'
 import { Position } from 'acorn/dist/acorn'
 import { SourceLocation } from 'estree'
 
@@ -684,5 +684,185 @@ test('Find declaration of of variable in update statement of a for loop', () => 
   const expected = new SourceLocationTestResult(1, 9, 1, 10)
   const actual = findDeclaration(code, context, { line: 1, column: 17 })
   expectResultsToMatch(actual, expected)
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a variable declaration', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const expected = [
+    new SourceLocationTestResult(1, 0, 3, 4),
+    new SourceLocationTestResult(8, 5, 10, 3)
+  ]
+  const actual = getScope(code, context, { line: 2, column: 10 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a nested variable declaration', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
+  const actual = getScope(code, context, { line: 4, column: 15 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a function parameter', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const expected = [new SourceLocationTestResult(5, 22, 7, 9)]
+  const actual = getScope(code, context, { line: 5, column: 19 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a function declaration', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
+  const actual = getScope(code, context, { line: 5, column: 17 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a variable declaration with more nesting', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            for (let x = 10; x < 20; x = x + 1) {
+                display(x);
+            }
+            return x + y;
+        }
+        for (let x = 10; x < 20; x = x + 1) {
+            display(x);
+        }
+    }
+    display(x);
+  }`
+  const expected = [
+    new SourceLocationTestResult(3, 4, 6, 12),
+    new SourceLocationTestResult(8, 13, 11, 8),
+    new SourceLocationTestResult(13, 9, 14, 5)
+  ]
+  const actual = getScope(code, context, { line: 4, column: 15 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
+
+test('Find scope of a variable declaration with multiple blocks', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `const x = 1;
+    {
+        const x = 2;
+        {
+            const x = 3;
+        }
+        x ;
+        {
+            const x = 4;
+        }
+        x;
+        {
+            const x = 5;
+        }
+    }
+    x;`
+  const expected = [
+    new SourceLocationTestResult(2, 4, 4, 8),
+    new SourceLocationTestResult(6, 9, 8, 8),
+    new SourceLocationTestResult(10, 9, 12, 8),
+    new SourceLocationTestResult(14, 9, 15, 5)
+  ]
+  const actual = getScope(code, context, { line: 3, column: 15 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
   expect(actual).toMatchSnapshot()
 })

@@ -215,6 +215,11 @@ export function expectDisplayResult(code: string, options: TestOptions = {}) {
   ).resolves
 }
 
+// for use in concurrent testing
+export async function getDisplayResult(code: string, options: TestOptions = {}) {
+  return await testSuccess(code, options).then(testResult => testResult.displayResult!)
+}
+
 export function expectResult(code: string, options: TestOptions = {}) {
   return expect(
     testSuccess(code, options)
