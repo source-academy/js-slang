@@ -829,3 +829,40 @@ test('Find scope of a variable declaration with more nesting', () => {
   })
   expect(actual).toMatchSnapshot()
 })
+
+test('Find scope of a variable declaration with multiple blocks', () => {
+  const context = createTestContext({ chapter: 4 })
+  const code = `const x = 1;
+    {
+        const x = 2;
+        {
+            const x = 3;
+        }
+        x ;
+        {
+            const x = 4;
+        }
+        x;
+        {
+            const x = 5;
+        }
+    }
+    x;`
+  const expected = [
+    new SourceLocationTestResult(2, 4, 4, 8),
+    new SourceLocationTestResult(6, 9, 8, 8),
+    new SourceLocationTestResult(10, 9, 12, 8),
+    new SourceLocationTestResult(14, 9, 15, 5)
+  ]
+  const actual = getScope(code, context, { line: 3, column: 15 })
+  expected.forEach((expectedRange, index) => {
+    const actualRange = new SourceLocationTestResult(
+      actual[index].start.line,
+      actual[index].start.column,
+      actual[index].end.line,
+      actual[index].end.column
+    )
+    expectResultsToMatch(actualRange, expectedRange)
+  })
+  expect(actual).toMatchSnapshot()
+})
