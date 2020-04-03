@@ -3,7 +3,8 @@ import { parse as __parse } from '../parser/parser'
 import { typeCheck } from '../typeChecker'
 import { mockContext } from '../mocks/context'
 import { validateAndAnnotate } from '../validator/validator'
-import { Type } from '../types'
+import { TypeAnnotatedNode, Type, TypeAnnotatedFuncDecl } from '../types'
+import * as es from 'estree'
 
 // simple program to parse program and error if there are syntatical errors
 function parse(code: any, chapter = 1) {
@@ -11,6 +12,57 @@ function parse(code: any, chapter = 1) {
   const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
   return validateAndAnnotate(program, context)
+}
+
+/**
+ * Copied form https://github.com/source-academy/js-slang/pull/464#pullrequestreview-385464424
+ * @param type
+ */
+function typeToString(type: Type): string {
+  switch (type.kind) {
+    case 'primitive':
+    case 'variable':
+      return type.name
+    case 'list':
+      return `List<${typeToString(type.elementType)}>`
+    case 'pair':
+      return `[${typeToString(type.headType)}, ${typeToString(type.tailType)}]`
+    case 'function':
+      let parametersString = type.parameterTypes.map(typeToString).join(', ')
+      if (type.parameterTypes.length !== 1 || type.parameterTypes[0].kind === 'function') {
+        parametersString = `(${parametersString})`
+      }
+      return `${parametersString} -> ${typeToString(type.returnType)}`
+  }
+}
+
+function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
+  return program.body
+    .filter(node => ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type))
+    .map(
+      (
+        node: TypeAnnotatedNode<es.VariableDeclaration> | TypeAnnotatedNode<es.FunctionDeclaration>
+      ) => {
+        const id =
+          node.type === 'VariableDeclaration'
+            ? (node.declarations[0].id as es.Identifier).name
+            : node.id?.name!
+        const actualNode =
+          node.type === 'VariableDeclaration'
+            ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+            : node
+        const type =
+          actualNode.typability === 'Untypable'
+            ? "Couldn't infer type"
+            : typeToString(
+                actualNode.type === 'FunctionDeclaration'
+                  ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+                  : actualNode.inferredType!
+              )
+        return `${id}: ${type}`
+      }
+    )
+    .join('\n')
 }
 
 describe('type checking pairs and lists', () => {
@@ -36,7 +88,6 @@ describe('type checking pairs and lists', () => {
       // const xs4 = remove(true, xs3);
     `
     const program = typeCheck(parse(code1, 2))
-    // console.log(program.body[0])
     // @ts-ignore
     expect(program.body[2].declarations[0].init.inferredType).toEqual<Type>({
       kind: 'primitive',
@@ -90,17 +141,21 @@ describe('type checking functions', () => {
 describe('type checking pairs', () => {
   it('happy paths for pair functions', () => {
     const code = `
-      const x = pair(3, 4);
-      head(x) + 56;
+const x = pair(3, 4);
+head(x) + 56;
+function foo(x, y) { 
+  return pair(x, y); 
+}
+const y = foo(1, 2);
+const z = head(x) + 34;
     `
-    expect(() => typeCheck(parse(code))).not.toThrowError()
-
-    const code1 = `
-      function foo(x, y) { return pair(x, y); }
-      const x = foo(1, 2);
-      const y = head(x) + 34;
-    `
-    expect(() => typeCheck(parse(code1))).not.toThrowError()
+    const program = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+"x: [number, number]
+foo: (number, number) -> [number, number]
+y: [number, number]
+z: number"
+`)
   })
 
   it('unhappy paths for pair functions', () => {
@@ -144,13 +199,21 @@ describe('type checking overloaded unary/binary primitives', () => {
       const b = 3;
       const c = foo(a) + bar(1, b);
       3 + 4;
-    `
-    typeCheck(parse(code))
-    const code2 = `
       const x = !false;
       const y = x || true;
     `
-    typeCheck(parse(code2))
+    const program = typeCheck(parse(code))
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(
+      `
+"foo: number -> number
+bar: (number, number) -> number
+a: number
+b: number
+c: number
+x: boolean
+y: boolean"
+`
+    )
   })
 
   it('errors for unhappy path', () => {
