@@ -57,28 +57,24 @@ function unify(a: Type, b: Type) {
         throw new Error('Unable to unify ' + a + ' with ' + b)
       }
     }
-  } else if (!(a instanceof t.Var) && b instanceof t.Var) {
+  } else if (b instanceof t.Var) {
     unify(b, a)
-  } else if (!(a instanceof t.Var || b instanceof t.Var)) {
-    if (a instanceof t.Polymorphic && b instanceof t.Polymorphic) {
-      if (a.name !== b.name) {
-        if (a instanceof t.List && b instanceof t.Pair) {
-          unify(new t.Pair(a.types[0], a), b)
-        } else {
-          throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
-        }
+  } else if (a instanceof t.Polymorphic && b instanceof t.Polymorphic) {
+    if (a.name !== b.name) {
+      if (a instanceof t.List && b instanceof t.Pair) {
+        unify(new t.Pair(a.types[0], a), b)
       } else {
-        if (a.types.length !== b.types.length) {
-          throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
-        }
-        for (let i = 0; i < a.types.length; i++) {
-          unify(a.types[i], b.types[i])
-        }
+        throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
       }
-    } else if (a.constructor !== b.constructor) {
-      throw new Error(`Unable to unify ${a} with ${b}`)
+    } else {
+      if (a.types.length !== b.types.length) {
+        throw new Error('Type error: ' + a.toString() + ' is not ' + b.toString())
+      }
+      for (let i = 0; i < a.types.length; i++) {
+        unify(a.types[i], b.types[i])
+      }
     }
-  } else {
+  } else if (a.constructor !== b.constructor) {
     throw new Error(`Unable to unify ${a} with ${b}`)
   }
 }

@@ -71,7 +71,7 @@ accumulate: ((T1, T2) -> T2, T2, List<T1>) -> T2"
 
 test('Type inference of permutation', async () => {
   const code = `function accumulate(op, init, xs) {
-    return is_null(xs) ? init : op(head(xs), accumulate(op, init, xs));
+    return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
 }
 function map(f, xs) {
     return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));

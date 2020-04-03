@@ -14134,7 +14134,70 @@ Node {
                         "type": "Identifier",
                       },
                       Node {
-                        "end": 104,
+                        "arguments": Array [
+                          Node {
+                            "end": 109,
+                            "inferredType": Object {
+                              "elementType": Object {
+                                "kind": "variable",
+                                "name": "T1",
+                              },
+                              "kind": "list",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 73,
+                                "line": 2,
+                              },
+                              "start": Position {
+                                "column": 71,
+                                "line": 2,
+                              },
+                            },
+                            "name": "xs",
+                            "start": 107,
+                            "typability": "Typed",
+                            "type": "Identifier",
+                          },
+                        ],
+                        "callee": Node {
+                          "end": 106,
+                          "inferredType": Object {
+                            "kind": "function",
+                            "parameterTypes": Array [
+                              Object {
+                                "headType": Object {
+                                  "kind": "variable",
+                                  "name": "T1",
+                                },
+                                "kind": "pair",
+                                "tailType": Object {
+                                  "kind": "variable",
+                                  "name": "T2",
+                                },
+                              },
+                            ],
+                            "returnType": Object {
+                              "kind": "variable",
+                              "name": "T2",
+                            },
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 70,
+                              "line": 2,
+                            },
+                            "start": Position {
+                              "column": 66,
+                              "line": 2,
+                            },
+                          },
+                          "name": "tail",
+                          "start": 102,
+                          "typability": "Typed",
+                          "type": "Identifier",
+                        },
+                        "end": 110,
                         "inferredType": Object {
                           "elementType": Object {
                             "kind": "variable",
@@ -14144,7 +14207,7 @@ Node {
                         },
                         "loc": SourceLocation {
                           "end": Position {
-                            "column": 68,
+                            "column": 74,
                             "line": 2,
                           },
                           "start": Position {
@@ -14152,10 +14215,9 @@ Node {
                             "line": 2,
                           },
                         },
-                        "name": "xs",
                         "start": 102,
                         "typability": "Typed",
-                        "type": "Identifier",
+                        "type": "CallExpression",
                       },
                     ],
                     "callee": Node {
@@ -14179,14 +14241,14 @@ Node {
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 105,
+                    "end": 111,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
                     },
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 69,
+                        "column": 75,
                         "line": 2,
                       },
                       "start": Position {
@@ -14220,14 +14282,14 @@ Node {
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 106,
+                "end": 112,
                 "inferredType": Object {
                   "kind": "variable",
                   "name": "T1",
                 },
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 70,
+                    "column": 76,
                     "line": 2,
                   },
                   "start": Position {
@@ -14260,14 +14322,14 @@ Node {
                 "typability": "Typed",
                 "type": "Identifier",
               },
-              "end": 106,
+              "end": 112,
               "inferredType": Object {
                 "kind": "variable",
                 "name": "T1",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 70,
+                  "column": 76,
                   "line": 2,
                 },
                 "start": Position {
@@ -14355,14 +14417,14 @@ Node {
               "typability": "Typed",
               "type": "ConditionalExpression",
             },
-            "end": 107,
+            "end": 113,
             "inferredType": Object {
               "kind": "variable",
               "name": "T1",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 71,
+                "column": 77,
                 "line": 2,
               },
               "start": Position {
@@ -14375,7 +14437,7 @@ Node {
             "type": "ReturnStatement",
           },
         ],
-        "end": 109,
+        "end": 115,
         "inferredType": Object {
           "kind": "variable",
           "name": "T1",
@@ -14394,7 +14456,7 @@ Node {
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 109,
+      "end": 115,
       "expression": false,
       "generator": false,
       "id": Node {
@@ -14526,7 +14588,7 @@ Node {
                       Node {
                         "arguments": Array [
                           Node {
-                            "end": 178,
+                            "end": 184,
                             "inferredType": Object {
                               "elementType": Object {
                                 "kind": "variable",
@@ -14545,13 +14607,13 @@ Node {
                               },
                             },
                             "name": "xs",
-                            "start": 176,
+                            "start": 182,
                             "typability": "Typed",
                             "type": "Identifier",
                           },
                         ],
                         "callee": Node {
-                          "end": 175,
+                          "end": 181,
                           "inferredType": Object {
                             "kind": "function",
                             "parameterTypes": Array [
@@ -14583,11 +14645,11 @@ Node {
                             },
                           },
                           "name": "head",
-                          "start": 171,
+                          "start": 177,
                           "typability": "Typed",
                           "type": "Identifier",
                         },
-                        "end": 179,
+                        "end": 185,
                         "inferredType": Object {
                           "kind": "variable",
                           "name": "T1",
@@ -14602,13 +14664,13 @@ Node {
                             "line": 5,
                           },
                         },
-                        "start": 171,
+                        "start": 177,
                         "typability": "Typed",
                         "type": "CallExpression",
                       },
                     ],
                     "callee": Node {
-                      "end": 170,
+                      "end": 176,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -14624,11 +14686,11 @@ Node {
                         },
                       },
                       "name": "f",
-                      "start": 169,
+                      "start": 175,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 180,
+                    "end": 186,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -14643,14 +14705,14 @@ Node {
                         "line": 5,
                       },
                     },
-                    "start": 169,
+                    "start": 175,
                     "typability": "Typed",
                     "type": "CallExpression",
                   },
                   Node {
                     "arguments": Array [
                       Node {
-                        "end": 187,
+                        "end": 193,
                         "inferredType": Object {
                           "kind": "function",
                           "parameterTypes": Array [
@@ -14675,14 +14737,14 @@ Node {
                           },
                         },
                         "name": "f",
-                        "start": 186,
+                        "start": 192,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
                       Node {
                         "arguments": Array [
                           Node {
-                            "end": 196,
+                            "end": 202,
                             "inferredType": Object {
                               "elementType": Object {
                                 "kind": "variable",
@@ -14701,13 +14763,13 @@ Node {
                               },
                             },
                             "name": "xs",
-                            "start": 194,
+                            "start": 200,
                             "typability": "Typed",
                             "type": "Identifier",
                           },
                         ],
                         "callee": Node {
-                          "end": 193,
+                          "end": 199,
                           "inferredType": Object {
                             "kind": "function",
                             "parameterTypes": Array [
@@ -14739,11 +14801,11 @@ Node {
                             },
                           },
                           "name": "tail",
-                          "start": 189,
+                          "start": 195,
                           "typability": "Typed",
                           "type": "Identifier",
                         },
-                        "end": 197,
+                        "end": 203,
                         "inferredType": Object {
                           "elementType": Object {
                             "kind": "variable",
@@ -14761,13 +14823,13 @@ Node {
                             "line": 5,
                           },
                         },
-                        "start": 189,
+                        "start": 195,
                         "typability": "Typed",
                         "type": "CallExpression",
                       },
                     ],
                     "callee": Node {
-                      "end": 185,
+                      "end": 191,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -14783,11 +14845,11 @@ Node {
                         },
                       },
                       "name": "map",
-                      "start": 182,
+                      "start": 188,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 198,
+                    "end": 204,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -14802,13 +14864,13 @@ Node {
                         "line": 5,
                       },
                     },
-                    "start": 182,
+                    "start": 188,
                     "typability": "Typed",
                     "type": "CallExpression",
                   },
                 ],
                 "callee": Node {
-                  "end": 168,
+                  "end": 174,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -14844,11 +14906,11 @@ Node {
                     },
                   },
                   "name": "pair",
-                  "start": 164,
+                  "start": 170,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 199,
+                "end": 205,
                 "inferredType": Object {
                   "headType": Object {
                     "kind": "variable",
@@ -14870,12 +14932,12 @@ Node {
                     "line": 5,
                   },
                 },
-                "start": 164,
+                "start": 170,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "consequent": Node {
-                "end": 161,
+                "end": 167,
                 "inferredType": Object {
                   "elementType": Object {
                     "kind": "variable",
@@ -14894,12 +14956,12 @@ Node {
                   },
                 },
                 "raw": "null",
-                "start": 157,
+                "start": 163,
                 "typability": "Typed",
                 "type": "Literal",
                 "value": null,
               },
-              "end": 199,
+              "end": 205,
               "inferredType": Object {
                 "elementType": Object {
                   "kind": "variable",
@@ -14917,11 +14979,11 @@ Node {
                   "line": 5,
                 },
               },
-              "start": 143,
+              "start": 149,
               "test": Node {
                 "arguments": Array [
                   Node {
-                    "end": 153,
+                    "end": 159,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -14937,13 +14999,13 @@ Node {
                       },
                     },
                     "name": "xs",
-                    "start": 151,
+                    "start": 157,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 150,
+                  "end": 156,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -14971,11 +15033,11 @@ Node {
                     },
                   },
                   "name": "is_null",
-                  "start": 143,
+                  "start": 149,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 154,
+                "end": 160,
                 "inferredType": Object {
                   "kind": "primitive",
                   "name": "boolean",
@@ -14990,14 +15052,14 @@ Node {
                     "line": 5,
                   },
                 },
-                "start": 143,
+                "start": 149,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "typability": "Typed",
               "type": "ConditionalExpression",
             },
-            "end": 200,
+            "end": 206,
             "inferredType": Object {
               "elementType": Object {
                 "kind": "variable",
@@ -15015,12 +15077,12 @@ Node {
                 "line": 5,
               },
             },
-            "start": 136,
+            "start": 142,
             "typability": "Typed",
             "type": "ReturnStatement",
           },
         ],
-        "end": 202,
+        "end": 208,
         "inferredType": Object {
           "elementType": Object {
             "kind": "variable",
@@ -15038,15 +15100,15 @@ Node {
             "line": 4,
           },
         },
-        "start": 130,
+        "start": 136,
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 202,
+      "end": 208,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 122,
+        "end": 128,
         "loc": SourceLocation {
           "end": Position {
             "column": 12,
@@ -15058,7 +15120,7 @@ Node {
           },
         },
         "name": "map",
-        "start": 119,
+        "start": 125,
         "type": "Identifier",
       },
       "inferredType": Object {
@@ -15105,7 +15167,7 @@ Node {
       },
       "params": Array [
         Node {
-          "end": 124,
+          "end": 130,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -15117,11 +15179,11 @@ Node {
             },
           },
           "name": "f",
-          "start": 123,
+          "start": 129,
           "type": "Identifier",
         },
         Node {
-          "end": 128,
+          "end": 134,
           "loc": SourceLocation {
             "end": Position {
               "column": 18,
@@ -15133,11 +15195,11 @@ Node {
             },
           },
           "name": "xs",
-          "start": 126,
+          "start": 132,
           "type": "Identifier",
         },
       ],
-      "start": 110,
+      "start": 116,
       "typability": "Typed",
       "type": "FunctionDeclaration",
     },
@@ -15151,7 +15213,7 @@ Node {
                   Node {
                     "arguments": Array [
                       Node {
-                        "end": 269,
+                        "end": 275,
                         "inferredType": Object {
                           "elementType": Object {
                             "kind": "variable",
@@ -15170,13 +15232,13 @@ Node {
                           },
                         },
                         "name": "xs",
-                        "start": 267,
+                        "start": 273,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
                     ],
                     "callee": Node {
-                      "end": 266,
+                      "end": 272,
                       "inferredType": Object {
                         "kind": "function",
                         "parameterTypes": Array [
@@ -15208,11 +15270,11 @@ Node {
                         },
                       },
                       "name": "head",
-                      "start": 262,
+                      "start": 268,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 270,
+                    "end": 276,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -15227,7 +15289,7 @@ Node {
                         "line": 8,
                       },
                     },
-                    "start": 262,
+                    "start": 268,
                     "typability": "Typed",
                     "type": "CallExpression",
                   },
@@ -15236,7 +15298,7 @@ Node {
                       Node {
                         "arguments": Array [
                           Node {
-                            "end": 286,
+                            "end": 292,
                             "inferredType": Object {
                               "elementType": Object {
                                 "kind": "variable",
@@ -15255,13 +15317,13 @@ Node {
                               },
                             },
                             "name": "xs",
-                            "start": 284,
+                            "start": 290,
                             "typability": "Typed",
                             "type": "Identifier",
                           },
                         ],
                         "callee": Node {
-                          "end": 283,
+                          "end": 289,
                           "inferredType": Object {
                             "kind": "function",
                             "parameterTypes": Array [
@@ -15293,11 +15355,11 @@ Node {
                             },
                           },
                           "name": "tail",
-                          "start": 279,
+                          "start": 285,
                           "typability": "Typed",
                           "type": "Identifier",
                         },
-                        "end": 287,
+                        "end": 293,
                         "inferredType": Object {
                           "elementType": Object {
                             "kind": "variable",
@@ -15315,12 +15377,12 @@ Node {
                             "line": 8,
                           },
                         },
-                        "start": 279,
+                        "start": 285,
                         "typability": "Typed",
                         "type": "CallExpression",
                       },
                       Node {
-                        "end": 291,
+                        "end": 297,
                         "inferredType": Object {
                           "kind": "variable",
                           "name": "T1",
@@ -15336,13 +15398,13 @@ Node {
                           },
                         },
                         "name": "ys",
-                        "start": 289,
+                        "start": 295,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
                     ],
                     "callee": Node {
-                      "end": 278,
+                      "end": 284,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -15358,11 +15420,11 @@ Node {
                         },
                       },
                       "name": "append",
-                      "start": 272,
+                      "start": 278,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 292,
+                    "end": 298,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -15377,13 +15439,13 @@ Node {
                         "line": 8,
                       },
                     },
-                    "start": 272,
+                    "start": 278,
                     "typability": "Typed",
                     "type": "CallExpression",
                   },
                 ],
                 "callee": Node {
-                  "end": 261,
+                  "end": 267,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -15419,11 +15481,11 @@ Node {
                     },
                   },
                   "name": "pair",
-                  "start": 257,
+                  "start": 263,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 293,
+                "end": 299,
                 "inferredType": Object {
                   "headType": Object {
                     "kind": "variable",
@@ -15445,12 +15507,12 @@ Node {
                     "line": 8,
                   },
                 },
-                "start": 257,
+                "start": 263,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "consequent": Node {
-                "end": 254,
+                "end": 260,
                 "inferredType": Object {
                   "kind": "variable",
                   "name": "T1",
@@ -15466,11 +15528,11 @@ Node {
                   },
                 },
                 "name": "ys",
-                "start": 252,
+                "start": 258,
                 "typability": "Typed",
                 "type": "Identifier",
               },
-              "end": 293,
+              "end": 299,
               "inferredType": Object {
                 "headType": Object {
                   "kind": "variable",
@@ -15492,11 +15554,11 @@ Node {
                   "line": 8,
                 },
               },
-              "start": 238,
+              "start": 244,
               "test": Node {
                 "arguments": Array [
                   Node {
-                    "end": 248,
+                    "end": 254,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -15512,13 +15574,13 @@ Node {
                       },
                     },
                     "name": "xs",
-                    "start": 246,
+                    "start": 252,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 245,
+                  "end": 251,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -15546,11 +15608,11 @@ Node {
                     },
                   },
                   "name": "is_null",
-                  "start": 238,
+                  "start": 244,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 249,
+                "end": 255,
                 "inferredType": Object {
                   "kind": "primitive",
                   "name": "boolean",
@@ -15565,14 +15627,14 @@ Node {
                     "line": 8,
                   },
                 },
-                "start": 238,
+                "start": 244,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "typability": "Typed",
               "type": "ConditionalExpression",
             },
-            "end": 294,
+            "end": 300,
             "inferredType": Object {
               "headType": Object {
                 "kind": "variable",
@@ -15594,12 +15656,12 @@ Node {
                 "line": 8,
               },
             },
-            "start": 231,
+            "start": 237,
             "typability": "Typed",
             "type": "ReturnStatement",
           },
         ],
-        "end": 296,
+        "end": 302,
         "inferredType": Object {
           "headType": Object {
             "kind": "variable",
@@ -15621,15 +15683,15 @@ Node {
             "line": 7,
           },
         },
-        "start": 227,
+        "start": 233,
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 296,
+      "end": 302,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 218,
+        "end": 224,
         "loc": SourceLocation {
           "end": Position {
             "column": 15,
@@ -15641,7 +15703,7 @@ Node {
           },
         },
         "name": "append",
-        "start": 212,
+        "start": 218,
         "type": "Identifier",
       },
       "inferredType": Object {
@@ -15682,7 +15744,7 @@ Node {
       },
       "params": Array [
         Node {
-          "end": 221,
+          "end": 227,
           "loc": SourceLocation {
             "end": Position {
               "column": 18,
@@ -15694,11 +15756,11 @@ Node {
             },
           },
           "name": "xs",
-          "start": 219,
+          "start": 225,
           "type": "Identifier",
         },
         Node {
-          "end": 225,
+          "end": 231,
           "loc": SourceLocation {
             "end": Position {
               "column": 22,
@@ -15710,11 +15772,11 @@ Node {
             },
           },
           "name": "ys",
-          "start": 223,
+          "start": 229,
           "type": "Identifier",
         },
       ],
-      "start": 203,
+      "start": 209,
       "typability": "Typed",
       "type": "FunctionDeclaration",
     },
@@ -15729,7 +15791,7 @@ Node {
                     Node {
                       "arguments": Array [
                         Node {
-                          "end": 392,
+                          "end": 398,
                           "inferredType": Object {
                             "elementType": Object {
                               "kind": "variable",
@@ -15748,13 +15810,13 @@ Node {
                             },
                           },
                           "name": "xs",
-                          "start": 390,
+                          "start": 396,
                           "typability": "Typed",
                           "type": "Identifier",
                         },
                       ],
                       "callee": Node {
-                        "end": 389,
+                        "end": 395,
                         "inferredType": Object {
                           "kind": "function",
                           "parameterTypes": Array [
@@ -15786,11 +15848,11 @@ Node {
                           },
                         },
                         "name": "head",
-                        "start": 385,
+                        "start": 391,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
-                      "end": 393,
+                      "end": 399,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "Addable1",
@@ -15805,14 +15867,14 @@ Node {
                           "line": 11,
                         },
                       },
-                      "start": 385,
+                      "start": 391,
                       "typability": "Typed",
                       "type": "CallExpression",
                     },
                     Node {
                       "arguments": Array [
                         Node {
-                          "end": 403,
+                          "end": 409,
                           "inferredType": Object {
                             "kind": "variable",
                             "name": "Addable1",
@@ -15828,14 +15890,14 @@ Node {
                             },
                           },
                           "name": "v",
-                          "start": 402,
+                          "start": 408,
                           "typability": "Typed",
                           "type": "Identifier",
                         },
                         Node {
                           "arguments": Array [
                             Node {
-                              "end": 412,
+                              "end": 418,
                               "inferredType": Object {
                                 "elementType": Object {
                                   "kind": "variable",
@@ -15854,13 +15916,13 @@ Node {
                                 },
                               },
                               "name": "xs",
-                              "start": 410,
+                              "start": 416,
                               "typability": "Typed",
                               "type": "Identifier",
                             },
                           ],
                           "callee": Node {
-                            "end": 409,
+                            "end": 415,
                             "inferredType": Object {
                               "kind": "function",
                               "parameterTypes": Array [
@@ -15892,11 +15954,11 @@ Node {
                               },
                             },
                             "name": "tail",
-                            "start": 405,
+                            "start": 411,
                             "typability": "Typed",
                             "type": "Identifier",
                           },
-                          "end": 413,
+                          "end": 419,
                           "inferredType": Object {
                             "elementType": Object {
                               "kind": "variable",
@@ -15914,13 +15976,13 @@ Node {
                               "line": 11,
                             },
                           },
-                          "start": 405,
+                          "start": 411,
                           "typability": "Typed",
                           "type": "CallExpression",
                         },
                       ],
                       "callee": Node {
-                        "end": 401,
+                        "end": 407,
                         "inferredType": Object {
                           "kind": "variable",
                           "name": "T1",
@@ -15936,11 +15998,11 @@ Node {
                           },
                         },
                         "name": "remove",
-                        "start": 395,
+                        "start": 401,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
-                      "end": 414,
+                      "end": 420,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -15955,13 +16017,13 @@ Node {
                           "line": 11,
                         },
                       },
-                      "start": 395,
+                      "start": 401,
                       "typability": "Typed",
                       "type": "CallExpression",
                     },
                   ],
                   "callee": Node {
-                    "end": 384,
+                    "end": 390,
                     "inferredType": Object {
                       "kind": "function",
                       "parameterTypes": Array [
@@ -15997,11 +16059,11 @@ Node {
                       },
                     },
                     "name": "pair",
-                    "start": 380,
+                    "start": 386,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
-                  "end": 415,
+                  "end": 421,
                   "inferredType": Object {
                     "headType": Object {
                       "kind": "variable",
@@ -16023,14 +16085,14 @@ Node {
                       "line": 11,
                     },
                   },
-                  "start": 380,
+                  "start": 386,
                   "typability": "Typed",
                   "type": "CallExpression",
                 },
                 "consequent": Node {
                   "arguments": Array [
                     Node {
-                      "end": 376,
+                      "end": 382,
                       "inferredType": Object {
                         "elementType": Object {
                           "kind": "variable",
@@ -16049,13 +16111,13 @@ Node {
                         },
                       },
                       "name": "xs",
-                      "start": 374,
+                      "start": 380,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
                   ],
                   "callee": Node {
-                    "end": 373,
+                    "end": 379,
                     "inferredType": Object {
                       "kind": "function",
                       "parameterTypes": Array [
@@ -16087,11 +16149,11 @@ Node {
                       },
                     },
                     "name": "tail",
-                    "start": 369,
+                    "start": 375,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
-                  "end": 377,
+                  "end": 383,
                   "inferredType": Object {
                     "elementType": Object {
                       "kind": "variable",
@@ -16109,11 +16171,11 @@ Node {
                       "line": 11,
                     },
                   },
-                  "start": 369,
+                  "start": 375,
                   "typability": "Typed",
                   "type": "CallExpression",
                 },
-                "end": 415,
+                "end": 421,
                 "inferredType": Object {
                   "elementType": Object {
                     "kind": "variable",
@@ -16131,15 +16193,15 @@ Node {
                     "line": 11,
                   },
                 },
-                "start": 352,
+                "start": 358,
                 "test": Node {
-                  "end": 366,
+                  "end": 372,
                   "inferredType": Object {
                     "kind": "primitive",
                     "name": "boolean",
                   },
                   "left": Node {
-                    "end": 353,
+                    "end": 359,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -16155,7 +16217,7 @@ Node {
                       },
                     },
                     "name": "v",
-                    "start": 352,
+                    "start": 358,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
@@ -16173,7 +16235,7 @@ Node {
                   "right": Node {
                     "arguments": Array [
                       Node {
-                        "end": 365,
+                        "end": 371,
                         "inferredType": Object {
                           "elementType": Object {
                             "kind": "variable",
@@ -16192,13 +16254,13 @@ Node {
                           },
                         },
                         "name": "xs",
-                        "start": 363,
+                        "start": 369,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
                     ],
                     "callee": Node {
-                      "end": 362,
+                      "end": 368,
                       "inferredType": Object {
                         "kind": "function",
                         "parameterTypes": Array [
@@ -16230,11 +16292,11 @@ Node {
                         },
                       },
                       "name": "head",
-                      "start": 358,
+                      "start": 364,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
-                    "end": 366,
+                    "end": 372,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -16249,11 +16311,11 @@ Node {
                         "line": 11,
                       },
                     },
-                    "start": 358,
+                    "start": 364,
                     "typability": "Typed",
                     "type": "CallExpression",
                   },
-                  "start": 352,
+                  "start": 358,
                   "typability": "Typed",
                   "type": "BinaryExpression",
                 },
@@ -16261,7 +16323,7 @@ Node {
                 "type": "ConditionalExpression",
               },
               "consequent": Node {
-                "end": 349,
+                "end": 355,
                 "inferredType": Object {
                   "elementType": Object {
                     "kind": "variable",
@@ -16280,12 +16342,12 @@ Node {
                   },
                 },
                 "raw": "null",
-                "start": 345,
+                "start": 351,
                 "typability": "Typed",
                 "type": "Literal",
                 "value": null,
               },
-              "end": 415,
+              "end": 421,
               "inferredType": Object {
                 "elementType": Object {
                   "kind": "variable",
@@ -16303,11 +16365,11 @@ Node {
                   "line": 11,
                 },
               },
-              "start": 331,
+              "start": 337,
               "test": Node {
                 "arguments": Array [
                   Node {
-                    "end": 341,
+                    "end": 347,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -16323,13 +16385,13 @@ Node {
                       },
                     },
                     "name": "xs",
-                    "start": 339,
+                    "start": 345,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 338,
+                  "end": 344,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -16357,11 +16419,11 @@ Node {
                     },
                   },
                   "name": "is_null",
-                  "start": 331,
+                  "start": 337,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 342,
+                "end": 348,
                 "inferredType": Object {
                   "kind": "primitive",
                   "name": "boolean",
@@ -16376,14 +16438,14 @@ Node {
                     "line": 11,
                   },
                 },
-                "start": 331,
+                "start": 337,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "typability": "Typed",
               "type": "ConditionalExpression",
             },
-            "end": 416,
+            "end": 422,
             "inferredType": Object {
               "elementType": Object {
                 "kind": "variable",
@@ -16401,12 +16463,12 @@ Node {
                 "line": 11,
               },
             },
-            "start": 324,
+            "start": 330,
             "typability": "Typed",
             "type": "ReturnStatement",
           },
         ],
-        "end": 418,
+        "end": 424,
         "inferredType": Object {
           "elementType": Object {
             "kind": "variable",
@@ -16424,15 +16486,15 @@ Node {
             "line": 10,
           },
         },
-        "start": 320,
+        "start": 326,
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 418,
+      "end": 424,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 312,
+        "end": 318,
         "loc": SourceLocation {
           "end": Position {
             "column": 15,
@@ -16444,7 +16506,7 @@ Node {
           },
         },
         "name": "remove",
-        "start": 306,
+        "start": 312,
         "type": "Identifier",
       },
       "inferredType": Object {
@@ -16482,7 +16544,7 @@ Node {
       },
       "params": Array [
         Node {
-          "end": 314,
+          "end": 320,
           "loc": SourceLocation {
             "end": Position {
               "column": 17,
@@ -16494,11 +16556,11 @@ Node {
             },
           },
           "name": "v",
-          "start": 313,
+          "start": 319,
           "type": "Identifier",
         },
         Node {
-          "end": 318,
+          "end": 324,
           "loc": SourceLocation {
             "end": Position {
               "column": 21,
@@ -16510,20 +16572,20 @@ Node {
             },
           },
           "name": "xs",
-          "start": 316,
+          "start": 322,
           "type": "Identifier",
         },
       ],
-      "start": 297,
+      "start": 303,
       "typability": "Typed",
       "type": "FunctionDeclaration",
     },
     Node {
       "declarations": Array [
         Node {
-          "end": 452,
+          "end": 458,
           "id": Node {
-            "end": 427,
+            "end": 433,
             "loc": SourceLocation {
               "end": Position {
                 "column": 8,
@@ -16535,13 +16597,13 @@ Node {
               },
             },
             "name": "xs",
-            "start": 425,
+            "start": 431,
             "type": "Identifier",
           },
           "init": Node {
             "arguments": Array [
               Node {
-                "end": 436,
+                "end": 442,
                 "inferredType": Object {
                   "kind": "primitive",
                   "name": "number",
@@ -16557,7 +16619,7 @@ Node {
                   },
                 },
                 "raw": "1",
-                "start": 435,
+                "start": 441,
                 "typability": "Typed",
                 "type": "Literal",
                 "value": 1,
@@ -16565,7 +16627,7 @@ Node {
               Node {
                 "arguments": Array [
                   Node {
-                    "end": 444,
+                    "end": 450,
                     "inferredType": Object {
                       "kind": "primitive",
                       "name": "number",
@@ -16581,13 +16643,13 @@ Node {
                       },
                     },
                     "raw": "2",
-                    "start": 443,
+                    "start": 449,
                     "typability": "Typed",
                     "type": "Literal",
                     "value": 2,
                   },
                   Node {
-                    "end": 450,
+                    "end": 456,
                     "inferredType": Object {
                       "elementType": Object {
                         "kind": "variable",
@@ -16606,14 +16668,14 @@ Node {
                       },
                     },
                     "raw": "null",
-                    "start": 446,
+                    "start": 452,
                     "typability": "Typed",
                     "type": "Literal",
                     "value": null,
                   },
                 ],
                 "callee": Node {
-                  "end": 442,
+                  "end": 448,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -16649,11 +16711,11 @@ Node {
                     },
                   },
                   "name": "pair",
-                  "start": 438,
+                  "start": 444,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 451,
+                "end": 457,
                 "inferredType": Object {
                   "elementType": Object {
                     "kind": "primitive",
@@ -16671,13 +16733,13 @@ Node {
                     "line": 13,
                   },
                 },
-                "start": 438,
+                "start": 444,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
             ],
             "callee": Node {
-              "end": 434,
+              "end": 440,
               "inferredType": Object {
                 "kind": "function",
                 "parameterTypes": Array [
@@ -16713,11 +16775,11 @@ Node {
                 },
               },
               "name": "pair",
-              "start": 430,
+              "start": 436,
               "typability": "Typed",
               "type": "Identifier",
             },
-            "end": 452,
+            "end": 458,
             "inferredType": Object {
               "elementType": Object {
                 "kind": "primitive",
@@ -16735,7 +16797,7 @@ Node {
                 "line": 13,
               },
             },
-            "start": 430,
+            "start": 436,
             "typability": "Typed",
             "type": "CallExpression",
           },
@@ -16749,11 +16811,11 @@ Node {
               "line": 13,
             },
           },
-          "start": 425,
+          "start": 431,
           "type": "VariableDeclarator",
         },
       ],
-      "end": 453,
+      "end": 459,
       "inferredType": Object {
         "elementType": Object {
           "kind": "primitive",
@@ -16772,7 +16834,7 @@ Node {
           "line": 13,
         },
       },
-      "start": 419,
+      "start": 425,
       "typability": "Typed",
       "type": "VariableDeclaration",
     },
@@ -16783,7 +16845,7 @@ Node {
             "argument": Node {
               "arguments": Array [
                 Node {
-                  "end": 509,
+                  "end": 515,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -16821,12 +16883,12 @@ Node {
                     },
                   },
                   "name": "append",
-                  "start": 503,
+                  "start": 509,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
                 Node {
-                  "end": 515,
+                  "end": 521,
                   "inferredType": Object {
                     "elementType": Object {
                       "kind": "variable",
@@ -16845,7 +16907,7 @@ Node {
                     },
                   },
                   "raw": "null",
-                  "start": 511,
+                  "start": 517,
                   "typability": "Typed",
                   "type": "Literal",
                   "value": null,
@@ -16853,7 +16915,7 @@ Node {
                 Node {
                   "arguments": Array [
                     Node {
-                      "end": 522,
+                      "end": 528,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -16869,12 +16931,12 @@ Node {
                         },
                       },
                       "name": "f",
-                      "start": 521,
+                      "start": 527,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
                     Node {
-                      "end": 527,
+                      "end": 533,
                       "inferredType": Object {
                         "kind": "variable",
                         "name": "T1",
@@ -16890,13 +16952,13 @@ Node {
                         },
                       },
                       "name": "seq",
-                      "start": 524,
+                      "start": 530,
                       "typability": "Typed",
                       "type": "Identifier",
                     },
                   ],
                   "callee": Node {
-                    "end": 520,
+                    "end": 526,
                     "inferredType": Object {
                       "kind": "function",
                       "parameterTypes": Array [
@@ -16940,11 +17002,11 @@ Node {
                       },
                     },
                     "name": "map",
-                    "start": 517,
+                    "start": 523,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
-                  "end": 528,
+                  "end": 534,
                   "inferredType": Object {
                     "elementType": Object {
                       "kind": "variable",
@@ -16962,13 +17024,13 @@ Node {
                       "line": 15,
                     },
                   },
-                  "start": 517,
+                  "start": 523,
                   "typability": "Typed",
                   "type": "CallExpression",
                 },
               ],
               "callee": Node {
-                "end": 502,
+                "end": 508,
                 "inferredType": Object {
                   "kind": "function",
                   "parameterTypes": Array [
@@ -17017,11 +17079,11 @@ Node {
                   },
                 },
                 "name": "accumulate",
-                "start": 492,
+                "start": 498,
                 "typability": "Typed",
                 "type": "Identifier",
               },
-              "end": 529,
+              "end": 535,
               "inferredType": Object {
                 "elementType": Object {
                   "kind": "variable",
@@ -17039,11 +17101,11 @@ Node {
                   "line": 15,
                 },
               },
-              "start": 492,
+              "start": 498,
               "typability": "Typed",
               "type": "CallExpression",
             },
-            "end": 530,
+            "end": 536,
             "inferredType": Object {
               "elementType": Object {
                 "kind": "variable",
@@ -17061,12 +17123,12 @@ Node {
                 "line": 15,
               },
             },
-            "start": 485,
+            "start": 491,
             "typability": "Typed",
             "type": "ReturnStatement",
           },
         ],
-        "end": 532,
+        "end": 538,
         "inferredType": Object {
           "elementType": Object {
             "kind": "variable",
@@ -17084,15 +17146,15 @@ Node {
             "line": 14,
           },
         },
-        "start": 479,
+        "start": 485,
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 532,
+      "end": 538,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 470,
+        "end": 476,
         "loc": SourceLocation {
           "end": Position {
             "column": 16,
@@ -17104,7 +17166,7 @@ Node {
           },
         },
         "name": "flatmap",
-        "start": 463,
+        "start": 469,
         "type": "Identifier",
       },
       "inferredType": Object {
@@ -17154,7 +17216,7 @@ Node {
       },
       "params": Array [
         Node {
-          "end": 472,
+          "end": 478,
           "loc": SourceLocation {
             "end": Position {
               "column": 18,
@@ -17166,11 +17228,11 @@ Node {
             },
           },
           "name": "f",
-          "start": 471,
+          "start": 477,
           "type": "Identifier",
         },
         Node {
-          "end": 477,
+          "end": 483,
           "loc": SourceLocation {
             "end": Position {
               "column": 23,
@@ -17182,11 +17244,11 @@ Node {
             },
           },
           "name": "seq",
-          "start": 474,
+          "start": 480,
           "type": "Identifier",
         },
       ],
-      "start": 454,
+      "start": 460,
       "typability": "Typed",
       "type": "FunctionDeclaration",
     },
@@ -17204,7 +17266,7 @@ Node {
                           "body": Node {
                             "arguments": Array [
                               Node {
-                                "end": 642,
+                                "end": 648,
                                 "inferredType": Object {
                                   "kind": "variable",
                                   "name": "T1",
@@ -17220,12 +17282,12 @@ Node {
                                   },
                                 },
                                 "name": "x",
-                                "start": 641,
+                                "start": 647,
                                 "typability": "Typed",
                                 "type": "Identifier",
                               },
                               Node {
-                                "end": 645,
+                                "end": 651,
                                 "inferredType": Object {
                                   "kind": "variable",
                                   "name": "T1",
@@ -17241,13 +17303,13 @@ Node {
                                   },
                                 },
                                 "name": "p",
-                                "start": 644,
+                                "start": 650,
                                 "typability": "Typed",
                                 "type": "Identifier",
                               },
                             ],
                             "callee": Node {
-                              "end": 640,
+                              "end": 646,
                               "inferredType": Object {
                                 "kind": "function",
                                 "parameterTypes": Array [
@@ -17283,11 +17345,11 @@ Node {
                                 },
                               },
                               "name": "pair",
-                              "start": 636,
+                              "start": 642,
                               "typability": "Typed",
                               "type": "Identifier",
                             },
-                            "end": 646,
+                            "end": 652,
                             "inferredType": Object {
                               "headType": Object {
                                 "kind": "variable",
@@ -17309,11 +17371,11 @@ Node {
                                 "line": 19,
                               },
                             },
-                            "start": 636,
+                            "start": 642,
                             "typability": "Typed",
                             "type": "CallExpression",
                           },
-                          "end": 646,
+                          "end": 652,
                           "expression": true,
                           "generator": false,
                           "id": null,
@@ -17349,7 +17411,7 @@ Node {
                           },
                           "params": Array [
                             Node {
-                              "end": 632,
+                              "end": 638,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 31,
@@ -17361,11 +17423,11 @@ Node {
                                 },
                               },
                               "name": "p",
-                              "start": 631,
+                              "start": 637,
                               "type": "Identifier",
                             },
                           ],
-                          "start": 631,
+                          "start": 637,
                           "typability": "Typed",
                           "type": "ArrowFunctionExpression",
                         },
@@ -17374,7 +17436,7 @@ Node {
                             Node {
                               "arguments": Array [
                                 Node {
-                                  "end": 669,
+                                  "end": 675,
                                   "inferredType": Object {
                                     "kind": "variable",
                                     "name": "T1",
@@ -17390,12 +17452,12 @@ Node {
                                     },
                                   },
                                   "name": "x",
-                                  "start": 668,
+                                  "start": 674,
                                   "typability": "Typed",
                                   "type": "Identifier",
                                 },
                                 Node {
-                                  "end": 672,
+                                  "end": 678,
                                   "inferredType": Object {
                                     "elementType": Object {
                                       "kind": "variable",
@@ -17414,13 +17476,13 @@ Node {
                                     },
                                   },
                                   "name": "s",
-                                  "start": 671,
+                                  "start": 677,
                                   "typability": "Typed",
                                   "type": "Identifier",
                                 },
                               ],
                               "callee": Node {
-                                "end": 667,
+                                "end": 673,
                                 "inferredType": Object {
                                   "kind": "function",
                                   "parameterTypes": Array [
@@ -17455,11 +17517,11 @@ Node {
                                   },
                                 },
                                 "name": "remove",
-                                "start": 661,
+                                "start": 667,
                                 "typability": "Typed",
                                 "type": "Identifier",
                               },
-                              "end": 673,
+                              "end": 679,
                               "inferredType": Object {
                                 "elementType": Object {
                                   "kind": "variable",
@@ -17477,13 +17539,13 @@ Node {
                                   "line": 19,
                                 },
                               },
-                              "start": 661,
+                              "start": 667,
                               "typability": "Typed",
                               "type": "CallExpression",
                             },
                           ],
                           "callee": Node {
-                            "end": 660,
+                            "end": 666,
                             "inferredType": Object {
                               "kind": "variable",
                               "name": "T1",
@@ -17499,11 +17561,11 @@ Node {
                               },
                             },
                             "name": "permutations",
-                            "start": 648,
+                            "start": 654,
                             "typability": "Typed",
                             "type": "Identifier",
                           },
-                          "end": 674,
+                          "end": 680,
                           "inferredType": Object {
                             "kind": "variable",
                             "name": "T1",
@@ -17518,13 +17580,13 @@ Node {
                               "line": 19,
                             },
                           },
-                          "start": 648,
+                          "start": 654,
                           "typability": "Typed",
                           "type": "CallExpression",
                         },
                       ],
                       "callee": Node {
-                        "end": 630,
+                        "end": 636,
                         "inferredType": Object {
                           "kind": "function",
                           "parameterTypes": Array [
@@ -17568,11 +17630,11 @@ Node {
                           },
                         },
                         "name": "map",
-                        "start": 627,
+                        "start": 633,
                         "typability": "Typed",
                         "type": "Identifier",
                       },
-                      "end": 675,
+                      "end": 681,
                       "inferredType": Object {
                         "elementType": Object {
                           "headType": Object {
@@ -17597,11 +17659,11 @@ Node {
                           "line": 19,
                         },
                       },
-                      "start": 627,
+                      "start": 633,
                       "typability": "Typed",
                       "type": "CallExpression",
                     },
-                    "end": 675,
+                    "end": 681,
                     "expression": true,
                     "generator": false,
                     "id": null,
@@ -17640,7 +17702,7 @@ Node {
                     },
                     "params": Array [
                       Node {
-                        "end": 623,
+                        "end": 629,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -17652,16 +17714,16 @@ Node {
                           },
                         },
                         "name": "x",
-                        "start": 622,
+                        "start": 628,
                         "type": "Identifier",
                       },
                     ],
-                    "start": 622,
+                    "start": 628,
                     "typability": "Typed",
                     "type": "ArrowFunctionExpression",
                   },
                   Node {
-                    "end": 678,
+                    "end": 684,
                     "inferredType": Object {
                       "elementType": Object {
                         "kind": "variable",
@@ -17680,13 +17742,13 @@ Node {
                       },
                     },
                     "name": "s",
-                    "start": 677,
+                    "start": 683,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 621,
+                  "end": 627,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -17733,11 +17795,11 @@ Node {
                     },
                   },
                   "name": "flatmap",
-                  "start": 614,
+                  "start": 620,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 679,
+                "end": 685,
                 "inferredType": Object {
                   "elementType": Object {
                     "headType": Object {
@@ -17762,14 +17824,14 @@ Node {
                     "line": 19,
                   },
                 },
-                "start": 614,
+                "start": 620,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "consequent": Node {
                 "arguments": Array [
                   Node {
-                    "end": 593,
+                    "end": 599,
                     "inferredType": Object {
                       "elementType": Object {
                         "kind": "variable",
@@ -17788,13 +17850,13 @@ Node {
                       },
                     },
                     "raw": "null",
-                    "start": 589,
+                    "start": 595,
                     "typability": "Typed",
                     "type": "Literal",
                     "value": null,
                   },
                   Node {
-                    "end": 599,
+                    "end": 605,
                     "inferredType": Object {
                       "elementType": Object {
                         "kind": "variable",
@@ -17813,14 +17875,14 @@ Node {
                       },
                     },
                     "raw": "null",
-                    "start": 595,
+                    "start": 601,
                     "typability": "Typed",
                     "type": "Literal",
                     "value": null,
                   },
                 ],
                 "callee": Node {
-                  "end": 588,
+                  "end": 594,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -17856,11 +17918,11 @@ Node {
                     },
                   },
                   "name": "pair",
-                  "start": 584,
+                  "start": 590,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 600,
+                "end": 606,
                 "inferredType": Object {
                   "elementType": Object {
                     "elementType": Object {
@@ -17881,11 +17943,11 @@ Node {
                     "line": 18,
                   },
                 },
-                "start": 584,
+                "start": 590,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
-              "end": 679,
+              "end": 685,
               "inferredType": Object {
                 "elementType": Object {
                   "elementType": Object {
@@ -17906,11 +17968,11 @@ Node {
                   "line": 18,
                 },
               },
-              "start": 571,
+              "start": 577,
               "test": Node {
                 "arguments": Array [
                   Node {
-                    "end": 580,
+                    "end": 586,
                     "inferredType": Object {
                       "kind": "variable",
                       "name": "T1",
@@ -17926,13 +17988,13 @@ Node {
                       },
                     },
                     "name": "s",
-                    "start": 579,
+                    "start": 585,
                     "typability": "Typed",
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 578,
+                  "end": 584,
                   "inferredType": Object {
                     "kind": "function",
                     "parameterTypes": Array [
@@ -17960,11 +18022,11 @@ Node {
                     },
                   },
                   "name": "is_null",
-                  "start": 571,
+                  "start": 577,
                   "typability": "Typed",
                   "type": "Identifier",
                 },
-                "end": 581,
+                "end": 587,
                 "inferredType": Object {
                   "kind": "primitive",
                   "name": "boolean",
@@ -17979,14 +18041,14 @@ Node {
                     "line": 18,
                   },
                 },
-                "start": 571,
+                "start": 577,
                 "typability": "Typed",
                 "type": "CallExpression",
               },
               "typability": "Typed",
               "type": "ConditionalExpression",
             },
-            "end": 680,
+            "end": 686,
             "inferredType": Object {
               "elementType": Object {
                 "elementType": Object {
@@ -18007,12 +18069,12 @@ Node {
                 "line": 18,
               },
             },
-            "start": 564,
+            "start": 570,
             "typability": "Typed",
             "type": "ReturnStatement",
           },
         ],
-        "end": 682,
+        "end": 688,
         "inferredType": Object {
           "elementType": Object {
             "elementType": Object {
@@ -18033,15 +18095,15 @@ Node {
             "line": 17,
           },
         },
-        "start": 558,
+        "start": 564,
         "typability": "Typed",
         "type": "BlockStatement",
       },
-      "end": 682,
+      "end": 688,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 554,
+        "end": 560,
         "loc": SourceLocation {
           "end": Position {
             "column": 21,
@@ -18053,7 +18115,7 @@ Node {
           },
         },
         "name": "permutations",
-        "start": 542,
+        "start": 548,
         "type": "Identifier",
       },
       "inferredType": Object {
@@ -18090,7 +18152,7 @@ Node {
       },
       "params": Array [
         Node {
-          "end": 556,
+          "end": 562,
           "loc": SourceLocation {
             "end": Position {
               "column": 23,
@@ -18102,20 +18164,20 @@ Node {
             },
           },
           "name": "s",
-          "start": 555,
+          "start": 561,
           "type": "Identifier",
         },
       ],
-      "start": 533,
+      "start": 539,
       "typability": "Typed",
       "type": "FunctionDeclaration",
     },
     Node {
       "declarations": Array [
         Node {
-          "end": 711,
+          "end": 717,
           "id": Node {
-            "end": 692,
+            "end": 698,
             "loc": SourceLocation {
               "end": Position {
                 "column": 8,
@@ -18127,13 +18189,13 @@ Node {
               },
             },
             "name": "ps",
-            "start": 690,
+            "start": 696,
             "type": "Identifier",
           },
           "init": Node {
             "arguments": Array [
               Node {
-                "end": 710,
+                "end": 716,
                 "inferredType": Object {
                   "elementType": Object {
                     "kind": "primitive",
@@ -18152,13 +18214,13 @@ Node {
                   },
                 },
                 "name": "xs",
-                "start": 708,
+                "start": 714,
                 "typability": "Typed",
                 "type": "Identifier",
               },
             ],
             "callee": Node {
-              "end": 707,
+              "end": 713,
               "inferredType": Object {
                 "kind": "function",
                 "parameterTypes": Array [
@@ -18192,11 +18254,11 @@ Node {
                 },
               },
               "name": "permutations",
-              "start": 695,
+              "start": 701,
               "typability": "Typed",
               "type": "Identifier",
             },
-            "end": 711,
+            "end": 717,
             "inferredType": Object {
               "elementType": Object {
                 "elementType": Object {
@@ -18217,7 +18279,7 @@ Node {
                 "line": 22,
               },
             },
-            "start": 695,
+            "start": 701,
             "typability": "Typed",
             "type": "CallExpression",
           },
@@ -18231,11 +18293,11 @@ Node {
               "line": 22,
             },
           },
-          "start": 690,
+          "start": 696,
           "type": "VariableDeclarator",
         },
       ],
-      "end": 712,
+      "end": 718,
       "inferredType": Object {
         "elementType": Object {
           "elementType": Object {
@@ -18257,12 +18319,12 @@ Node {
           "line": 22,
         },
       },
-      "start": 684,
+      "start": 690,
       "typability": "Typed",
       "type": "VariableDeclaration",
     },
   ],
-  "end": 713,
+  "end": 719,
   "inferredType": Object {
     "kind": "primitive",
     "name": "undefined",
