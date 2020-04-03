@@ -64,6 +64,19 @@ describe('type checking pairs and lists', () => {
     `
     expect(() => typeCheck(parse(code, 2))).not.toThrowError()
   })
+
+  it('Will not work if used in a monomorphic manner', () => {
+    const code = `
+      function accumulate(op, init, xs) {
+        return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
+      }
+      const xs = pair(1, pair(2, null));
+      const ys = pair(true, pair(true, null));
+      const a = accumulate((x,y)=>x+y,0,xs);
+      const b = accumulate((x,y)=>x||y,0,ys);
+    `
+    expect(() => typeCheck(parse(code, 2))).toThrowError()
+  })
 })
 
 describe('type checking functions', () => {
