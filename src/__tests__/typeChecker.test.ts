@@ -6,8 +6,8 @@ import { validateAndAnnotate } from '../validator/validator'
 import { Type } from '../types'
 
 // simple program to parse program and error if there are syntatical errors
-function parse(code: any, chapter = 2) {
-  const context = mockContext(2)
+function parse(code: any, chapter = 1) {
+  const context = mockContext(chapter)
   const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
   return validateAndAnnotate(program, context)
@@ -36,6 +36,7 @@ describe('type checking pairs and lists', () => {
       // const xs4 = remove(true, xs3);
     `
     const program = typeCheck(parse(code1, 2))
+    // console.log(program.body[0])
     // @ts-ignore
     expect(program.body[2].declarations[0].init.inferredType).toEqual<Type>({
       kind: 'primitive',
@@ -50,6 +51,19 @@ describe('type checking pairs and lists', () => {
         elementType: { kind: 'primitive', name: 'boolean' }
       }
     })
+  })
+
+  it.skip('works for accumulate used with different kinds of pairs', () => {
+    const code = `
+      function accumulate(op, init, xs) {
+        return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
+      }
+      const xs = pair(1, pair(2, null));
+      const xs1 = pair(true, pair(true, null));
+      accumulate((x,y)=>x+y,0,xs);
+      accumulate((x,y)=>x||y,0,xs1);
+    `
+    expect(() => typeCheck(parse(code, 2))).not.toThrowError()
   })
 })
 
@@ -166,6 +180,25 @@ describe('type checking overloaded unary/binary primitives', () => {
       rec(false);
     }`
     expect(() => typeCheck(parse(code4))).toThrowError()
+  })
+})
+
+describe('type checking functions used in polymorphic fashion', () => {
+  it('no errors when fn used in polymorhpic fashion after last const decl', () => {
+    const code = `
+      function f(x) {return x + x;}
+      3 + f(4);
+      'a' + f('b');
+    `
+    expect(() => typeCheck(parse(code))).not.toThrowError()
+  })
+  it('errors when fn used in polymorhpic fashion before last const decl', () => {
+    const code = `
+      function f(x) {return x + x;}
+      const x = 3 + f(4);
+      const y = 'a' + f('b');
+    `
+    expect(() => typeCheck(parse(code))).toThrowError()
   })
 })
 

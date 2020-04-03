@@ -199,7 +199,7 @@ type Constraint = [Variable, Type]
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
  */
-export function typeCheck(program: TypeAnnotatedNode<es.Program>): es.Program | undefined {
+export function typeCheck(program: TypeAnnotatedNode<es.Program>): TypeAnnotatedNode<es.Program> {
   typeIdCounter = 0
   const env: Env = initialEnv
   const constraints: Constraint[] = []
