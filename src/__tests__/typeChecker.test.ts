@@ -14,7 +14,7 @@ function parse(code: any, chapter = 1) {
 }
 
 describe('type checking pairs and lists', () => {
-  it.skip('happy paths for list functions', () => {
+  it('happy paths for list functions', () => {
     const code1 = `
       function accumulate(op, init, xs) {
         return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
@@ -52,21 +52,21 @@ describe('type checking pairs and lists', () => {
     })
   })
 
-  it.skip('works for accumulate used with different kinds of pairs', () => {
+  it('works for accumulate used with different kinds of pairs', () => {
     const code = `
       function accumulate(op, init, xs) {
         return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
       }
       const xs = pair(1, pair(2, null));
-      const xs1 = pair(true, pair(true, null));
+      const ys = pair(true, pair(true, null));
       accumulate((x,y)=>x+y,0,xs);
-      accumulate((x,y)=>x||y,0,xs1);
+      accumulate((x,y)=>x||y,0,ys);
     `
     expect(() => typeCheck(parse(code, 2))).not.toThrowError()
   })
 })
 
-describe.skip('type checking functions', () => {
+describe('type checking functions', () => {
   it('happy paths for recursive functions', () => {
     const code1 = `
       function append(xs, ys) {
@@ -86,7 +86,7 @@ describe.skip('type checking functions', () => {
   })
 })
 
-describe.skip('type checking pairs', () => {
+describe('type checking pairs', () => {
   it('happy paths for pair functions', () => {
     const code = `
       const x = pair(3, 4);
@@ -117,7 +117,7 @@ describe.skip('type checking pairs', () => {
   })
 })
 
-describe.skip('type checking for polymorphic builtin functions', () => {
+describe('type checking for polymorphic builtin functions', () => {
   it('works in happy case', () => {
     const code = `
       const x = is_boolean('file') || false;
@@ -134,7 +134,7 @@ describe.skip('type checking for polymorphic builtin functions', () => {
   })
 })
 
-describe.skip('type checking overloaded unary/binary primitives', () => {
+describe('type checking overloaded unary/binary primitives', () => {
   it('works for the happy path', () => {
     const code = `
       function foo(x) {return x + 1;}
@@ -182,7 +182,7 @@ describe.skip('type checking overloaded unary/binary primitives', () => {
   })
 })
 
-describe.skip('type checking functions used in polymorphic fashion', () => {
+describe('type checking functions used in polymorphic fashion', () => {
   it('no errors when fn used in polymorhpic fashion after last const decl', () => {
     const code = `
       function f(x) {return x + x;}

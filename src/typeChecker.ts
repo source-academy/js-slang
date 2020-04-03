@@ -240,8 +240,12 @@ function freshTypeVar(typeVar: Variable): Variable {
 function fresh(monoType: Type, subst: { [typeName: string]: Variable }): Type {
   switch (monoType.kind) {
     case 'primitive':
-    case 'list':
       return monoType
+    case 'list':
+      return {
+        kind: 'list',
+        elementType: fresh(monoType.elementType, subst)
+      }
     case 'pair':
       return {
         kind: 'pair',
@@ -273,8 +277,9 @@ function union(a: Variable[], b: Variable[]): Variable[] {
 function freeTypeVarsInType(type: Type): Variable[] {
   switch (type.kind) {
     case 'primitive':
-    case 'list':
       return []
+    case 'list':
+      return freeTypeVarsInType(type.elementType)
     case 'pair':
       return union(freeTypeVarsInType(type.headType), freeTypeVarsInType(type.tailType))
     case 'variable':
@@ -308,13 +313,6 @@ function extractFreeVariablesAndGenFresh(polyType: ForAll): Type {
 function applyConstraints(type: Type, constraints: Constraint[]): Type {
   const result = __applyConstraints(type, constraints)
   // @ts-ignore
-  if (type.name === '34') {
-    console.log(type)
-    console.log(result)
-    console.log(constraints.find(val => val[0].name === '34'))
-    console.log(constraints.find(val => val[0].name === '37'))
-    console.log(constraints.find(val => val[0].name === '40'))
-  }
   if (isList(result)) {
     const list = result as List
     return {
@@ -328,11 +326,10 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
     if (isPair(_tail)) {
       const tail = _tail as Pair
       if (getListType(tail.tailType) !== null) {
-        // try to unify, just error if it fails
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
         // console.log('normalization triggered')
-        return tail
+        return __applyConstraints(tail, constraints)
       }
     }
   }
@@ -350,12 +347,12 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
     case 'pair': {
       return {
         kind: 'pair',
-        headType: applyConstraints(type.headType, constraints),
-        tailType: applyConstraints(type.tailType, constraints)
+        headType: __applyConstraints(type.headType, constraints),
+        tailType: __applyConstraints(type.tailType, constraints)
       }
     }
     case 'list': {
-      const listType = applyConstraints(type.elementType, constraints)
+      const listType = __applyConstraints(type.elementType, constraints)
       return {
         kind: 'list',
         elementType: listType
@@ -367,7 +364,6 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
         const RHS = constraint[1]
         if (LHS.name === type.name) {
           if (contains(RHS, LHS.name)) {
-            console.log('in the contains')
             if (isPair(RHS) && LHS === (RHS as Pair).tailType) {
               // throw Error('need to unify pair')
               return {
@@ -646,10 +642,6 @@ function infer(
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          // @ts-ignore
-          console.log(declNode.declarations[0].id.name)
-          // @ts-ignore
-          console.log(declNode.declarations[0].init.inferredType)
           newEnv[declNode.declarations[0].id.name] = tForAll(
             applyConstraints(
               (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
@@ -659,10 +651,6 @@ function infer(
           )
         }
       })
-      console.log(newEnv['xs'])
-      console.log(newEnv['xs1'])
-      console.log(newEnv['accumulate'])
-      console.log(newConstraints)
       for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
         // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
         const checkedNode = node.body[i]
