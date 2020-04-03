@@ -307,6 +307,14 @@ function extractFreeVariablesAndGenFresh(polyType: ForAll): Type {
  */
 function applyConstraints(type: Type, constraints: Constraint[]): Type {
   const result = __applyConstraints(type, constraints)
+  // @ts-ignore
+  if (type.name === '34') {
+    console.log(type)
+    console.log(result)
+    console.log(constraints.find(val => val[0].name === '34'))
+    console.log(constraints.find(val => val[0].name === '37'))
+    console.log(constraints.find(val => val[0].name === '40'))
+  }
   if (isList(result)) {
     const list = result as List
     return {
@@ -359,6 +367,7 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
         const RHS = constraint[1]
         if (LHS.name === type.name) {
           if (contains(RHS, LHS.name)) {
+            console.log('in the contains')
             if (isPair(RHS) && LHS === (RHS as Pair).tailType) {
               // throw Error('need to unify pair')
               return {
@@ -637,6 +646,10 @@ function infer(
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
+          // @ts-ignore
+          console.log(declNode.declarations[0].id.name)
+          // @ts-ignore
+          console.log(declNode.declarations[0].init.inferredType)
           newEnv[declNode.declarations[0].id.name] = tForAll(
             applyConstraints(
               (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
@@ -646,6 +659,10 @@ function infer(
           )
         }
       })
+      console.log(newEnv['xs'])
+      console.log(newEnv['xs1'])
+      console.log(newEnv['accumulate'])
+      console.log(newConstraints)
       for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
         // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
         const checkedNode = node.body[i]

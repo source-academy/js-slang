@@ -14,7 +14,7 @@ function parse(code: any, chapter = 1) {
 }
 
 describe('type checking pairs and lists', () => {
-  it('happy paths for list functions', () => {
+  it.skip('happy paths for list functions', () => {
     const code1 = `
       function accumulate(op, init, xs) {
         return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
@@ -36,7 +36,6 @@ describe('type checking pairs and lists', () => {
       // const xs4 = remove(true, xs3);
     `
     const program = typeCheck(parse(code1, 2))
-    // console.log(program.body[0])
     // @ts-ignore
     expect(program.body[2].declarations[0].init.inferredType).toEqual<Type>({
       kind: 'primitive',
@@ -67,7 +66,7 @@ describe('type checking pairs and lists', () => {
   })
 })
 
-describe('type checking functions', () => {
+describe.skip('type checking functions', () => {
   it('happy paths for recursive functions', () => {
     const code1 = `
       function append(xs, ys) {
@@ -87,7 +86,7 @@ describe('type checking functions', () => {
   })
 })
 
-describe('type checking pairs', () => {
+describe.skip('type checking pairs', () => {
   it('happy paths for pair functions', () => {
     const code = `
       const x = pair(3, 4);
@@ -118,7 +117,7 @@ describe('type checking pairs', () => {
   })
 })
 
-describe('type checking for polymorphic builtin functions', () => {
+describe.skip('type checking for polymorphic builtin functions', () => {
   it('works in happy case', () => {
     const code = `
       const x = is_boolean('file') || false;
@@ -135,7 +134,7 @@ describe('type checking for polymorphic builtin functions', () => {
   })
 })
 
-describe('type checking overloaded unary/binary primitives', () => {
+describe.skip('type checking overloaded unary/binary primitives', () => {
   it('works for the happy path', () => {
     const code = `
       function foo(x) {return x + 1;}
@@ -183,7 +182,7 @@ describe('type checking overloaded unary/binary primitives', () => {
   })
 })
 
-describe('type checking functions used in polymorphic fashion', () => {
+describe.skip('type checking functions used in polymorphic fashion', () => {
   it('no errors when fn used in polymorhpic fashion after last const decl', () => {
     const code = `
       function f(x) {return x + x;}
