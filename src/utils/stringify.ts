@@ -1,6 +1,6 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
-import { Value } from '../types'
+import { Value, Type } from '../types'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -123,4 +123,22 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
   }
 
   return stringifyValue(value, 0)
+}
+
+export function typeToString(type: Type): string {
+  switch (type.kind) {
+    case 'primitive':
+    case 'variable':
+      return type.name
+    case 'list':
+      return `List<${typeToString(type.elementType)}>`
+    case 'pair':
+      return `[${typeToString(type.headType)}, ${typeToString(type.tailType)}]`
+    case 'function':
+      let parametersString = type.parameterTypes.map(typeToString).join(', ')
+      if (type.parameterTypes.length !== 1 || type.parameterTypes[0].kind === 'function') {
+        parametersString = `(${parametersString})`
+      }
+      return `${parametersString} -> ${typeToString(type.returnType)}`
+  }
 }

@@ -10,6 +10,8 @@ import {
   FunctionType,
   TypeAnnotatedFuncDecl
 } from './types'
+import { TypeError, InternalTypeError } from './typeErrors'
+import { typeToString } from './utils/stringify'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -26,8 +28,14 @@ let typeIdCounter = 0
 /* tslint:disable cyclomatic-complexity */
 function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) {
   if (constraints && node.typability !== 'Untypable') {
-    node.inferredType = applyConstraints(node.inferredType as Type, constraints)
-    node.typability = 'Typed'
+    try {
+      node.inferredType = applyConstraints(node.inferredType as Type, constraints)
+      node.typability = 'Typed'
+    } catch (e) {
+      if (isInternalTypeError(e)) {
+        typeErrors.push(new TypeError(node, e))
+      }
+    }
   } else {
     node.inferredType = tVar(typeIdCounter)
     typeIdCounter++
@@ -123,48 +131,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
   }
 }
 
-// type NAMED_TYPE = 'bool' | 'number' | 'string' | 'undefined' | 'pair' | 'list'
-// type VAR_TYPE = 'any' | 'addable'
-
-// interface NAMED {
-//   nodeType: 'Named'
-//   name: NAMED_TYPE
-// }
-
-// interface PAIR extends NAMED {
-//   nodeType: 'Named'
-//   name: 'pair'
-//   head: TYPE
-//   tail: TYPE
-// }
-
-// interface LIST extends NAMED {
-//   nodeType: 'Named'
-//   name: 'list'
-//   listName: TYPE
-// }
-
-// interface VAR {
-//   nodeType: 'Var'
-//   name: string
-//   type: VAR_TYPE
-// }
-
-// interface FUNCTION {
-//   nodeType: 'Function'
-//   fromTypes: TYPE[]
-//   toType: TYPE
-// }
-
-// /** Polytype */
-// interface FORALL {
-//   nodeType: 'Forall'
-//   type: TYPE
-// }
-
-// /** Monotypes */
-// type TYPE = NAMED | VAR | FUNCTION | PAIR | LIST
-
 function isPair(type: Type) {
   return type.kind === 'pair'
 }
@@ -181,6 +147,10 @@ function getListType(type: Type): Type | null {
   return null
 }
 
+function isInternalTypeError(error: any) {
+  return error instanceof InternalTypeError
+}
+
 // Type Definitions
 // Our type environment maps variable names to types.
 interface Env {
@@ -194,13 +164,16 @@ function cloneEnv(env: Env) {
 }
 
 type Constraint = [Variable, Type]
-
+let typeErrors: TypeError[] = []
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
  */
-export function typeCheck(program: TypeAnnotatedNode<es.Program>): TypeAnnotatedNode<es.Program> {
+export function typeCheck(
+  program: TypeAnnotatedNode<es.Program>
+): [TypeAnnotatedNode<es.Program>, TypeError[]] {
   typeIdCounter = 0
+  typeErrors = []
   const env: Env = initialEnv
   const constraints: Constraint[] = []
   try {
@@ -210,15 +183,12 @@ export function typeCheck(program: TypeAnnotatedNode<es.Program>): TypeAnnotated
       traverse(program)
       infer(program, env, constraints, true)
       traverse(program, constraints)
-      // @ts-ignore
-      console.log(program.typeVar)
-      return program
+      return [program, typeErrors]
     }
   } catch (e) {
-    console.log(e)
     throw e
   }
-  return program
+  return [program, typeErrors]
 }
 
 /**
@@ -230,7 +200,7 @@ function freshTypeVar(typeVar: Variable): Variable {
   typeIdCounter++
   return {
     ...typeVar,
-    name: `${newVarId}`
+    name: `T${newVarId}`
   }
 }
 
@@ -323,7 +293,6 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
         // try to unify, just error if it fails
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
-        // console.log('normalization triggered')
         return tail
       }
     }
@@ -371,7 +340,7 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
                 elementType: LHS
               }
             }
-            throw Error(
+            throw new InternalTypeError(
               'Contains cyclic reference to itself, where the type being bound to is a function type'
             )
           }
@@ -485,7 +454,10 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
       )
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
-      throw Error(`Expected either a number or a string, got ${JSON.stringify(RHS)} instead.`)
+      // throw Error(`Expected either a number or a string, got ${JSON.stringify(RHS)} instead.`)
+      throw new InternalTypeError(
+        `Expected either a number or a string, got ${typeToString(RHS)} instead.`
+      )
     }
     // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
@@ -506,7 +478,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
   } else {
-    throw Error(`Types do not unify: ${JSON.stringify(LHS)} vs ${JSON.stringify(RHS)}`)
+    // throw Error(`Types do not unify: ${JSON.stringify(LHS)} vs ${JSON.stringify(RHS)}`)
+    throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
   }
 }
 
@@ -532,6 +505,24 @@ function blockStatementHasReturn(node: es.BlockStatement): boolean {
 
 /* tslint:disable cyclomatic-complexity */
 function infer(
+  node: TypeAnnotatedNode<es.Node>,
+  env: Env,
+  constraints: Constraint[],
+  isLastStatementInBlock: boolean = false
+): Constraint[] {
+  try {
+    return _infer(node, env, constraints, isLastStatementInBlock)
+  } catch (e) {
+    if (isInternalTypeError(e)) {
+      typeErrors.push(new TypeError(node, e.message))
+      return constraints
+    }
+    throw e
+  }
+}
+
+/* tslint:disable cyclomatic-complexity */
+function _infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
@@ -777,7 +768,7 @@ function tPrimitive(name: Primitive['name']): Primitive {
 function tVar(name: string | number): Variable {
   return {
     kind: 'variable',
-    name: `${name}`,
+    name: `T${name}`,
     constraint: 'none'
   }
 }
