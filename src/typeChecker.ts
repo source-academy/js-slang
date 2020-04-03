@@ -341,7 +341,6 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
         if (LHS.name === type.name) {
           if (contains(RHS, LHS.name)) {
             if (isPair(RHS) && LHS === (RHS as Pair).tailType) {
-              // throw Error('need to unify pair')
               return {
                 kind: 'list',
                 elementType: (RHS as Pair).headType
@@ -440,11 +439,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
     newConstraints = addToConstraintList(constraints, [LHS.tailType, RHS.tailType])
     return newConstraints
-  } else if (isPair(LHS) && isList(RHS)) {
-    throw Error('dont think i will ever hit this')
-    // return addToConstraintList(constraints, [(LHS as Pair).tailType, getListType(RHS) as Type])
-  } else if (isList(LHS) && isPair(RHS)) {
-    throw Error('dont think i will ever hit this')
   } else if (LHS.kind === 'variable') {
     // case when we have a new constraint like T_1 = T_1
     if (RHS.kind === 'variable' && RHS.name === LHS.name) {
@@ -466,7 +460,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
       )
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
-      // throw Error(`Expected either a number or a string, got ${JSON.stringify(RHS)} instead.`)
       throw new InternalTypeError(
         `Expected either a number or a string, got ${typeToString(RHS)} instead.`
       )
@@ -490,7 +483,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
   } else {
-    // throw Error(`Types do not unify: ${JSON.stringify(LHS)} vs ${JSON.stringify(RHS)}`)
     throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
   }
 }

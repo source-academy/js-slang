@@ -236,7 +236,6 @@ export async function runInContext(
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
-  // typeCheck(program)
   if (!program) {
     return resolvedErrorPromise
   }
