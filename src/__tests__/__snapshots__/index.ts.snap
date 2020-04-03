@@ -669,6 +669,51 @@ Array [
 ]
 `;
 
+exports[`Find scope of a variable declaration with multiple blocks 1`] = `
+Array [
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 4,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 2,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 8,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 6,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 12,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 10,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 5,
+      "line": 15,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 14,
+    },
+  },
+]
+`;
+
 exports[`Find variable declaration in block statement 1`] = `
 SourceLocation {
   "end": Position {

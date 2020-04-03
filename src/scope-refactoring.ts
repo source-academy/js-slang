@@ -231,17 +231,17 @@ export function getScopeHelper(
     .map(child => getChildBlocksWithDefinitions(child, target))
     .reduce((x, y) => [...x, ...y], [])
 
-  const rangeToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
+  const rangesToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
 
-  if (parentRange && rangeToExclude.length === 0) {
+  if (parentRange && rangesToExclude.length === 0) {
     return [parentRange]
   }
 
   const ranges: es.SourceLocation[] = []
-  let prevRange = rangeToExclude.shift()
+  let prevRange = rangesToExclude.shift()
   ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start })
-  rangeToExclude.map(range => {
-    ranges.push({ start: (prevRange as any).end, end: (rangeToExclude.shift() as any).start })
+  rangesToExclude.map(range => {
+    ranges.push({ start: (prevRange as any).end, end: (range as any).start })
     prevRange = range
   })
   ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end })
