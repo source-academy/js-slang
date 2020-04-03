@@ -74,7 +74,6 @@ describe('type checking pairs and lists', () => {
     //   kind: 'primitive',
     //   name: 'number'
     // })
-    // @ts-ignore
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
 "accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
@@ -100,7 +99,13 @@ remove: Couldn't infer type"
       accumulate((x,y)=>x+y,0,xs);
       accumulate((x,y)=>x||y,0,ys);
     `
-    expect(() => typeCheck(parse(code, 2))).not.toThrowError()
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+"accumulate: ((T67, T21) -> T21, T21, [T67, List<T67>]) -> T21
+xs: [number, List<number>]
+ys: [boolean, List<boolean>]"
+`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
   it('Will not work if used in a monomorphic manner', () => {
@@ -114,8 +119,14 @@ remove: Couldn't infer type"
       const b = accumulate((x,y)=>x||y,0,ys);
     `
 
-    // @ts-ignore
-    const [_program, errors] = typeCheck(parse(code, 2))
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+"accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
+xs: [number, List<number>]
+ys: [boolean, List<boolean>]
+a: number
+b: number"
+`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
 "Line 8: Types do not unify: number vs boolean
 Line 8: Types do not unify: boolean vs number"
@@ -143,11 +154,30 @@ describe('type checking functions', () => {
         return foo;
       }
     `
-    expect(() => typeCheck(parse(code, 2))).toThrowError()
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: Couldn't infer type"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 1: Contains cyclic reference to itself, where the type being bound to is a function type
+Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type"
+`)
   })
 })
 
 describe('type checking pairs', () => {
+  it('wrapping pair functions', () => {
+    const code = `
+function foo(x, y) {
+  return pair(x, y);
+}
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T3, T4) -> [T3, T4]"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
   it('happy paths for pair functions', () => {
     const code = `
 const x = pair(3, 4);

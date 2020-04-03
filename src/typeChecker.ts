@@ -111,10 +111,16 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
     case 'FunctionDeclaration': {
       const funcDeclNode = node as TypeAnnotatedFuncDecl
       if (constraints) {
-        funcDeclNode.functionInferredType = applyConstraints(
-          funcDeclNode.functionInferredType as Type,
-          constraints
-        )
+        try {
+          funcDeclNode.functionInferredType = applyConstraints(
+            funcDeclNode.functionInferredType as Type,
+            constraints
+          )
+        } catch (e) {
+          if (isInternalTypeError(e)) {
+            typeErrors.push(new TypeError(node, e))
+          }
+        }
       } else {
         funcDeclNode.functionInferredType = tVar(typeIdCounter)
       }
