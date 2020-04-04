@@ -65,7 +65,7 @@ export const createEmptyContext = <T>(
     contextId: length - 1,
     executionMethod: 'auto',
     evaluationMethod: 'strict',
-    variant: variant
+    variant
   }
 }
 
