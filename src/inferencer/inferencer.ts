@@ -58,13 +58,17 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
     const lhsName = lhs.name
     const lhsVariableId = (lhs.inferredType as Variable).id
-    primitiveMap.set(lhsName, lhsVariableId)
+    if (lhsName !== undefined && lhsVariableId !== undefined) {
+      primitiveMap.set(lhsName, lhsVariableId)
+    }
 
     // step 3. Update typeConstraints
     // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
     const rhs = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
     const rhsVariableId = (rhs.inferredType as Variable).id
-    updateTypeConstraints(lhsVariableId, rhsVariableId)
+    if (lhsVariableId !== undefined && rhsVariableId !== undefined) {
+      updateTypeConstraints(lhsVariableId, rhsVariableId)
+    }
 
     // if manage to pass step 3, means no type error
 
