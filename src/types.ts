@@ -183,16 +183,19 @@ export type TypeAnnotation = Untypable | Typedd | NotYetTyped
 export interface Untypable {
   typability?: 'Untypable'
   inferredType?: Type
+  typeVariable?: Type
 }
 
 export interface NotYetTyped {
   typability?: 'NotYetTyped'
   inferredType?: Type
+  typeVariable?: Type
 }
 
 export interface Typedd {
   typability?: 'Typed'
   inferredType?: Type
+  typeVariable?: Type
 }
 
 export type Type = Primitive | Variable | FunctionType | List
