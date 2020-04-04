@@ -116,7 +116,7 @@ export interface Context<T = any> {
    * Describes the strategy / paradigm to be used for evaluation
    * Examples: lazy, concurrent or non-deterministic
    */
-  variant?: Variant // This will replace evaluationMethod
+  variant: Variant // This will replace evaluationMethod
 }
 
 export interface BlockFrame {
