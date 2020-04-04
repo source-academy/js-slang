@@ -137,11 +137,6 @@ Node {
       "end": 5,
       "expression": Node {
         "end": 4,
-        "inferredType": Object {
-          "id": 4,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -156,6 +151,11 @@ Node {
         "start": 0,
         "typability": "NotYetTyped",
         "type": "Literal",
+        "typeVariable": Object {
+          "id": 4,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "value": true,
       },
       "loc": SourceLocation {
@@ -175,11 +175,6 @@ Node {
       "end": 12,
       "expression": Node {
         "end": 11,
-        "inferredType": Object {
-          "id": 5,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -194,6 +189,11 @@ Node {
         "start": 6,
         "typability": "NotYetTyped",
         "type": "Literal",
+        "typeVariable": Object {
+          "id": 5,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "value": false,
       },
       "loc": SourceLocation {
@@ -213,11 +213,6 @@ Node {
       "end": 18,
       "expression": Node {
         "end": 17,
-        "inferredType": Object {
-          "id": 6,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -232,6 +227,11 @@ Node {
         "start": 13,
         "typability": "NotYetTyped",
         "type": "Literal",
+        "typeVariable": Object {
+          "id": 6,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "value": 1.9,
       },
       "loc": SourceLocation {
@@ -290,6 +290,11 @@ Node {
         "start": 0,
         "typability": "Typed",
         "type": "Literal",
+        "typeVariable": Object {
+          "id": 7,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "value": 1,
       },
       "loc": SourceLocation {
@@ -327,6 +332,11 @@ Node {
         "start": 5,
         "typability": "Typed",
         "type": "Literal",
+        "typeVariable": Object {
+          "id": 8,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
         "value": 0,
       },
       "loc": SourceLocation {

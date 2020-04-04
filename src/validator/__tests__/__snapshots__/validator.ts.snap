@@ -13,11 +13,6 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 64,
-        "inferredType": Object {
-          "id": 16,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
         "left": Node {
           "end": 59,
           "loc": SourceLocation {
@@ -65,11 +60,21 @@ Object {
           "start": 62,
           "typability": "Typed",
           "type": "Literal",
+          "typeVariable": Object {
+            "id": 15,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "value": 10,
         },
         "start": 58,
         "typability": "NotYetTyped",
         "type": "AssignmentExpression",
+        "typeVariable": Object {
+          "id": 16,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
       },
       "severity": "Error",
       "type": "Syntax",
@@ -93,11 +98,6 @@ Object {
     NoAssignmentToForVariable {
       "node": Node {
         "end": 45,
-        "inferredType": Object {
-          "id": 8,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
         "left": Node {
           "end": 40,
           "loc": SourceLocation {
@@ -145,11 +145,21 @@ Object {
           "start": 43,
           "typability": "Typed",
           "type": "Literal",
+          "typeVariable": Object {
+            "id": 7,
+            "isPolymorphic": false,
+            "kind": "variable",
+          },
           "value": 10,
         },
         "start": 39,
         "typability": "NotYetTyped",
         "type": "AssignmentExpression",
+        "typeVariable": Object {
+          "id": 8,
+          "isPolymorphic": false,
+          "kind": "variable",
+        },
       },
       "severity": "Error",
       "type": "Syntax",
