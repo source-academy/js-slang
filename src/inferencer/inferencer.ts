@@ -1,10 +1,23 @@
 import { ancestor } from 'acorn-walk/dist/walk'
-import { TypeAnnotatedNode } from '../types'
+import { TypeAnnotatedNode, Variable } from '../types'
 import { annotateProgram } from './annotator'
+import { primitiveMap } from './typeEnvironment'
 import * as es from 'estree'
 
 // // main function that will infer a program
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
+
+  const typeConstraints = new Map();
+  function updateTypeConstraints(newConstraintLhs, newConstraintRhs) {
+    // step 3a. Add new constraint to typeConstraints map
+    // e.g. T1 = T2, T2 = number
+    typeConstraints.set(newConstraintLhs, newConstraintRhs);
+
+    // step 3b. Attempt to reduce typeConstraints to solved form
+    // If type error found, stop and throw error
+    // .. todo ..
+  }
+
   function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     const valueOfLiteral = literal.value
     if (typeof valueOfLiteral === 'number') {
@@ -41,18 +54,32 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
   
-  // function inferVariableDeclaration(variableDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
-  //   // get variableType
-  //   const variableDeclarator = variableDeclaration.declarations[0]  // variableDeclarator node (todo: should we confirm its type?)
-  //   const variableType = variableDeclarator.init.inferredType.name;
-  //
-  //   // declare
-  //   variableDeclaration.inferredType = {
-  //     kind: 'const',  // Source 1 only has const declaration (otherwise to play safe we could also use the 'kind' value in the VariableDeclaration node)
-  //     name: variableType
-  //   }
-  //   variableDeclaration.typability = 'Typed'
-  // }
+  function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
+    // step 2. Update typeEnvironment
+    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T1 ]
+    const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>;
+    const lhsName = lhs.name;
+    const lhsVariableId = (lhs.inferredType as Variable).id;
+    primitiveMap.set(lhsName, lhsVariableId);
+
+    // step 3. Update typeConstraints
+    // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
+    const rhs = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>; // use es.Node because rhs could be any value/expression
+    const rhsVariableId = (rhs.inferredType as Variable).id;
+    updateTypeConstraints(lhsVariableId, rhsVariableId);
+
+    // if manage to pass step 3, means no type error
+
+    // declare
+    // not necessary since no one is dependent on constantDeclaration's inferredType??
+    // plus not sure what to put in 'kind' and 'name' also
+    // constantDeclaration.inferredType = {
+    //   kind: 'variable',
+    //   name: variableType
+    // }
+    // constantDeclaration.typability = 'Typed'
+  }
+
   // function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
   //   // get result type of binary expression from type environment
   //   // const resultType = ...;
@@ -92,7 +119,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   // visit Literals and type check them
   ancestor(program as es.Node, {
     Literal: inferLiteral,
-    VariableDeclaration: inferVariableDeclaration
+    VariableDeclaration: inferConstantDeclaration // Source 1 only has constant declaration
     // BinaryExpression: inferBinaryExpression
     // FunctionDeclaration: inferFunctionDeclaration
   })
