@@ -38,10 +38,12 @@ export function scopeVariables(
     enclosingLoc: enclosingLoc === undefined ? program.loc : enclosingLoc,
     children: []
   }
-  const definitionStatements = getDeclarationStatements(program.body) as (
-    | es.VariableDeclaration
-    | es.FunctionDeclaration
-  )[]
+
+  if (program.body == null) {
+    return block
+  }
+
+  const definitionStatements = getDefinitionStatements(program.body)
   const blockStatements = getBlockStatements(program.body)
   const forStatements = getForStatements(program.body)
   const ifStatements = getIfStatements(program.body)
@@ -207,6 +209,65 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   return block
 }
 
+/*
+This function finds the list of location ranges
+where a given identifier is in scope.
+ */
+export function getScopeHelper(
+  definitionLocation: es.SourceLocation,
+  program: es.Program,
+  target: string
+): es.SourceLocation[] {
+  const lookupTree = scopeVariables(program)
+
+  // Find closest ancestor of node.
+  const block = getBlockFromLoc(definitionLocation, lookupTree)
+  const parentRange = block.loc
+
+  // Recurse on the children to find other
+  // definitions of the same identifier
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks
+    .map(child => getChildBlocksWithDefinitions(child, target))
+    .reduce((x, y) => [...x, ...y], [])
+
+  const rangesToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
+
+  if (parentRange && rangesToExclude.length === 0) {
+    return [parentRange]
+  }
+
+  const ranges: es.SourceLocation[] = []
+  let prevRange = rangesToExclude.shift()
+  ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start })
+  rangesToExclude.map(range => {
+    ranges.push({ start: (prevRange as any).end, end: (range as any).start })
+    prevRange = range
+  })
+  ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end })
+
+  return ranges
+}
+
+// Returns a list of the definitions of the
+// given identifier in block
+function getChildBlocksWithDefinitions(block: BlockFrame, target: string): BlockFrame[] {
+  const definitionNodes = block.children
+    .filter(isDefinitionNode)
+    .filter(node => node.name === target)
+
+  if (definitionNodes.length !== 0) {
+    return [block]
+  }
+
+  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocksWithDefinitions = childBlocks.map(child =>
+    getChildBlocksWithDefinitions(child, target)
+  )
+
+  return childBlocksWithDefinitions.reduce((x, y) => [...x, ...y], [])
+}
+
 /**
  * Gets all instances of a variable being used in the child scope.
  * Given the definition location on the variable, get the BlockFrame it resides in.
@@ -330,13 +391,13 @@ function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.
   return nodes.filter(statement => statement.type === 'BlockStatement') as es.BlockStatement[]
 }
 
-function getDeclarationStatements(
+function getDefinitionStatements(
   nodes: (es.Statement | es.ModuleDeclaration)[]
-): (es.Statement | es.ModuleDeclaration)[] {
+): (es.FunctionDeclaration | es.VariableDeclaration)[] {
   return nodes.filter(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
-  )
+  ) as (es.FunctionDeclaration | es.VariableDeclaration)[]
 }
 
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {

@@ -7,7 +7,8 @@ import {
   getBlockFromLoc,
   getAllIdentifiers,
   getNodeLocsInCurrentBlockFrame,
-  getBlockFramesInCurrentBlockFrame
+  getBlockFramesInCurrentBlockFrame,
+  getScopeHelper
 } from '../scope-refactoring'
 import { parse } from '../parser/parser'
 /* tslint:disable:max-classes-per-file */
@@ -475,4 +476,44 @@ if (true) {
       []
     ).length
   ).toBe(6)
+})
+
+test('getScopeHelper', () => {
+  const program = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const definitionLocation = {
+    start: { line: 2, column: 10 },
+    end: { line: 2, column: 11 }
+  }
+  expect(getScopeHelper(definitionLocation, parse(program, context, true) as any, 'x').length).toBe(
+    2
+  )
+})
+
+test('getScopeHelperNested', () => {
+  const program = `{
+    const x = 1;
+    {
+        const x = 2;
+        function f(y) {
+            return x + y;
+        }
+    }
+    display(x);
+  }`
+  const definitionLocation = {
+    start: { line: 4, column: 15 },
+    end: { line: 4, column: 16 }
+  }
+  expect(getScopeHelper(definitionLocation, parse(program, context, true) as any, 'x').length).toBe(
+    1
+  )
 })

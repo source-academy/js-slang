@@ -14,7 +14,7 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
-import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -174,6 +174,27 @@ export function findDeclaration(
     return null
   }
   return declarationNode.loc
+}
+
+export function getScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode || declarationNode.loc == null || identifierNode !== declarationNode) {
+    return []
+  }
+
+  return getScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
 export function getAllOccurrencesInScope(
