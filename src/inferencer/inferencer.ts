@@ -6,12 +6,11 @@ import * as es from 'estree'
 
 // // main function that will infer a program
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
-
-  const typeConstraints = new Map();
-  function updateTypeConstraints(newConstraintLhs, newConstraintRhs) {
+  const typeConstraints = new Map()
+  function updateTypeConstraints(newConstraintLhs: number, newConstraintRhs: number | string) {
     // step 3a. Add new constraint to typeConstraints map
     // e.g. T1 = T2, T2 = number
-    typeConstraints.set(newConstraintLhs, newConstraintRhs);
+    typeConstraints.set(newConstraintLhs, newConstraintRhs)
 
     // step 3b. Attempt to reduce typeConstraints to solved form
     // If type error found, stop and throw error
@@ -27,24 +26,21 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
         name: 'number'
       }
       literal.typability = 'Typed'
-    }
-    else if (typeof valueOfLiteral === 'boolean') {
+    } else if (typeof valueOfLiteral === 'boolean') {
       // declare
       literal.inferredType = {
         kind: 'primitive',
         name: 'boolean'
       }
       literal.typability = 'Typed'
-    }
-    else if (typeof valueOfLiteral === 'string') {
+    } else if (typeof valueOfLiteral === 'string') {
       // declare
       literal.inferredType = {
         kind: 'primitive',
         name: 'string'
       }
       literal.typability = 'Typed'
-    }
-    else if (typeof valueOfLiteral === 'undefined') {
+    } else if (typeof valueOfLiteral === 'undefined') {
       // declare
       literal.inferredType = {
         kind: 'primitive',
@@ -53,20 +49,22 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       literal.typability = 'Typed'
     }
   }
-  
-  function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
+
+  function inferConstantDeclaration(
+    constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
+  ) {
     // step 2. Update typeEnvironment
     // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T1 ]
-    const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>;
-    const lhsName = lhs.name;
-    const lhsVariableId = (lhs.inferredType as Variable).id;
-    primitiveMap.set(lhsName, lhsVariableId);
+    const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+    const lhsName = lhs.name
+    const lhsVariableId = (lhs.inferredType as Variable).id
+    primitiveMap.set(lhsName, lhsVariableId)
 
     // step 3. Update typeConstraints
     // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
-    const rhs = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>; // use es.Node because rhs could be any value/expression
-    const rhsVariableId = (rhs.inferredType as Variable).id;
-    updateTypeConstraints(lhsVariableId, rhsVariableId);
+    const rhs = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
+    const rhsVariableId = (rhs.inferredType as Variable).id
+    updateTypeConstraints(lhsVariableId, rhsVariableId)
 
     // if manage to pass step 3, means no type error
 
@@ -112,10 +110,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   //   }
   //   functionDeclaration.typability = 'Typed'
   // }
-  
+
   // annotate program
   program = annotateProgram(program)
-  
+
   // visit Literals and type check them
   ancestor(program as es.Node, {
     Literal: inferLiteral,
@@ -123,7 +121,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // BinaryExpression: inferBinaryExpression
     // FunctionDeclaration: inferFunctionDeclaration
   })
-  
+
   // return the AST with annotated types
   return program
 }
