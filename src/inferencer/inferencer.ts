@@ -23,7 +23,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       // declare
       literal.inferredType = {
         kind: 'primitive',
-        name: 'number'
+        name: 'integer'
       }
       literal.typability = 'Typed'
     } else if (typeof valueOfLiteral === 'boolean') {
