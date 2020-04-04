@@ -4,12 +4,12 @@ import * as es from 'estree'
 
 let typeVariableId = 1
 function notAnnotated(node: TypeAnnotatedNode<es.Node>): boolean {
-  return node.inferredType === undefined
+  return node.typeVariable === undefined
 }
 
 function annotateNode(node: TypeAnnotatedNode<es.Node>, isPolymorphic: boolean = false) {
   if (notAnnotated(node)) {
-    node.inferredType = {
+    node.typeVariable = {
       kind: 'variable',
       id: typeVariableId,
       isPolymorphic
