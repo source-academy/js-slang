@@ -27,7 +27,7 @@ import {
   Finished,
   Result,
   Scheduler,
-  SourceError
+  SourceError,
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
@@ -36,7 +36,7 @@ import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async' | 'non-det'
+  scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
   evaluationMethod: EvaluationMethod
@@ -320,7 +320,7 @@ export async function runInContext(
   } else {
     let it = evaluate(program, context)
     let scheduler: Scheduler
-    if (theOptions.scheduler === 'non-det') {
+    if (context.variant === 'non-det') {
       it = nonDetEvaluate(program, context)
       scheduler = new NonDetScheduler()
     } else if (theOptions.scheduler === 'async') {

@@ -59,9 +59,8 @@ function _run(
 
 function _startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   // use defaults for everything
-  const context = createContext(chapter)
+  const context = createContext(chapter, 'non-det')
   const options: Partial<IOptions> = {
-    scheduler: 'non-det',
     executionMethod: 'interpreter',
     useSubst
   }
@@ -100,10 +99,10 @@ function main() {
       if (err) {
         throw err
       }
-      _startRepl(4.3, false, data)
+      _startRepl(3, false, data)
     })
   } else {
-    const chapter = 4.3
+    const chapter = 3
     const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
     _startRepl(chapter, useSubst)
   }

@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value } from './types'
+import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
@@ -42,6 +42,7 @@ const createGlobalEnvironment = () => ({
 
 export const createEmptyContext = <T>(
   chapter: number,
+  variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -63,7 +64,8 @@ export const createEmptyContext = <T>(
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto',
-    evaluationMethod: 'strict'
+    evaluationMethod: 'strict',
+    variant: variant
   }
 }
 
@@ -207,7 +209,7 @@ function importPrelude(context: Context) {
     prelude += streamPrelude
   }
 
-  if (context.chapter === 4.3) {
+  if (context.variant === 'non-det') {
     prelude += nonDetPrelude
   }
 
@@ -229,11 +231,12 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(
   chapter = 1,
+  variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ) => {
-  const context = createEmptyContext(chapter, externalSymbols, externalContext)
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)

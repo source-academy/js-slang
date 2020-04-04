@@ -383,7 +383,6 @@ test('Block statements', async () => {
 // ---------------------------------- Helper functions  -------------------------------------------
 
 const nonDetTestOptions = {
-  scheduler: 'non-det',
   executionMethod: 'interpreter'
 } as Partial<IOptions>
 
@@ -426,7 +425,7 @@ export async function testNonDeterministicCode(
 }
 
 function makeNonDetContext() {
-  const context = mockContext(4.3)
+  const context = mockContext(3, 'non-det')
   context.executionMethod = 'interpreter'
   return context
 }
