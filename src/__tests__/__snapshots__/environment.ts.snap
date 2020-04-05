@@ -523,6 +523,7 @@ Array [
           ],
           "value": undefined,
         },
+        "variant": "default",
       },
     },
     "thisContext": undefined,
@@ -1004,6 +1005,7 @@ Array [
         ],
         "value": undefined,
       },
+      "variant": "default",
     },
   },
   Object {
