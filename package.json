@@ -1,7 +1,7 @@
 {
   "name": "js-slang",
-  "version": "0.4.20",
-  "description": "Javascript-based interpreter for slang, written in Typescript",
+  "version": "0.4.21",
+  "description": "Javascript-based implementations of Source, written in Typescript",
   "author": {
     "name": "Source Academy",
     "url": "https://github.com/source-academy/"
