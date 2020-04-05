@@ -125,7 +125,7 @@ Options:
   }
 
   const source = await readFileAsync(options.inputFilename, 'utf8')
-  const context = createEmptyContext(options.sourceChapter, [], null)
+  const context = createEmptyContext(options.sourceChapter, 'default', [], null)
   const program = parse(source, context)
 
   let numWarnings = 0
