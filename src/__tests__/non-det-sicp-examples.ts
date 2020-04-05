@@ -25,7 +25,17 @@ test('Pythagorean triple', async () => {
 
 test('Multiple dwelling problem', async () => {
   await testNonDeterministicCode(
-    `function multiple_dwelling() {
+    `
+    function distinct(items) {
+      return is_null(items)
+          ? true
+          : is_null(tail(items))
+          ? true
+          : is_null(member(head(items), tail(items)))
+              ? distinct(tail(items))
+              : false;
+    }
+    function multiple_dwelling() {
             const baker = amb(1, 2, 3, 4, 5);
             const cooper = amb(1, 2, 3, 4, 5);
             const fletcher = amb(1, 2, 3, 4, 5);
