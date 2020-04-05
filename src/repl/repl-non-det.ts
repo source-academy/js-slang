@@ -6,6 +6,8 @@ import { CUT, TRY_AGAIN } from '../constants'
 import { inspect } from 'util'
 import Closure from '../interpreter/closure'
 
+const NO_MORE_VALUES_MESSAGE = 'This world is exhausted, create a new one with amb'
+
 // stores the result obtained when execution is suspended
 let previousResult: Result
 function _handleResult(
@@ -30,6 +32,7 @@ function _resume(
   callback: (err: Error | null, result: any) => void
 ) {
   Promise.resolve(resume(toResume)).then((result: Result) => {
+    if (result.status === 'finished') result.value = NO_MORE_VALUES_MESSAGE
     _handleResult(result, context, callback)
   })
 }
@@ -38,7 +41,7 @@ function _try_again(context: Context, callback: (err: Error | null, result: any)
   if (previousResult && previousResult.status === 'suspended-non-det') {
     _resume(previousResult, context, callback)
   } else {
-    callback(null, undefined)
+    callback(null, NO_MORE_VALUES_MESSAGE)
   }
 }
 
