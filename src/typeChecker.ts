@@ -410,7 +410,6 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   return (
     LHS.constraint === 'addable' &&
     RHS.kind !== 'variable' &&
-    RHS.kind !== 'pair' &&
     // !(RHS.nodeType === 'Named' && (RHS.name === 'string' || RHS.name === 'number' || RHS.name === 'pair'))
     !(RHS.kind === 'primitive' && (RHS.name === 'string' || RHS.name === 'number'))
   )

@@ -201,7 +201,7 @@ z: number"
   it('unhappy paths for pair functions', () => {
     const code = `
       const x = pair(3, 4);
-      const y = x + false;
+      const y = head(x) + false;
       const a = pair(3, pair(4, false));
       const b = tail(tail(a)) + 1;
     `
