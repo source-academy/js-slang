@@ -2,10 +2,10 @@ import * as es from 'estree'
 
 import createContext from '../createContext'
 import Closure from '../interpreter/closure'
-import { Context, Environment } from '../types'
+import { Context, Environment, Variant } from '../types'
 
-export function mockContext(chapter = 1): Context {
-  return createContext(chapter)
+export function mockContext(chapter = 1, variant: Variant = 'default'): Context {
+  return createContext(chapter, variant)
 }
 
 export function mockRuntimeContext(): Context {
