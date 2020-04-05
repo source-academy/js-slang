@@ -84,8 +84,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'ReturnStatement': {
-      // no implicit return undefined allowed in source, unsure if it will ever return null but unlikely, as
-      // a return null; statement will have an argument which is a Literal node which has value null
       const arg = node.argument
       if (arg === undefined || arg === null) {
         return
@@ -137,18 +135,17 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
   }
 }
 
-function isPair(type: Type) {
+function isPair(type: Type): type is Pair {
   return type.kind === 'pair'
 }
 
-function isList(type: Type) {
+function isList(type: Type): type is List {
   return type.kind === 'list'
 }
 
 function getListType(type: Type): Type | null {
   if (isList(type)) {
-    const list = type as List
-    return list.elementType
+    return type.elementType
   }
   return null
 }
@@ -159,14 +156,10 @@ function isInternalTypeError(error: any) {
 
 // Type Definitions
 // Our type environment maps variable names to types.
-interface Env {
-  [name: string]: Type | ForAll
-}
+type Env = Map<string, Type | ForAll>
 
 function cloneEnv(env: Env) {
-  return {
-    ...env
-  }
+  return new Map(env.entries())
 }
 
 type Constraint = [Variable, Type]
@@ -180,21 +173,16 @@ export function typeCheck(
 ): [TypeAnnotatedNode<es.Program>, TypeError[]] {
   typeIdCounter = 0
   typeErrors = []
-  const env: Env = initialEnv
+  const env: Env = new Map(initialEnv)
   const constraints: Constraint[] = []
   try {
-    // dont run type check for predefined functions as they include constructs we can't handle
-    // like lists etc.
-    if (program.body.length < 100) {
-      traverse(program)
-      infer(program, env, constraints, true)
-      traverse(program, constraints)
-      return [program, typeErrors]
-    }
+    traverse(program)
+    infer(program, env, constraints, true)
+    traverse(program, constraints)
+    return [program, typeErrors]
   } catch (e) {
     throw e
   }
-  return [program, typeErrors]
 }
 
 /**
@@ -288,19 +276,18 @@ function extractFreeVariablesAndGenFresh(polyType: ForAll): Type {
  */
 function applyConstraints(type: Type, constraints: Constraint[]): Type {
   const result = __applyConstraints(type, constraints)
-  // @ts-ignore
   if (isList(result)) {
-    const list = result as List
+    const list = result
     return {
       kind: 'pair',
       headType: getListType(list) as Type,
       tailType: list
     }
   } else if (isPair(result)) {
-    const pair = result as Pair
+    const pair = result
     const _tail = pair.tailType
     if (isPair(_tail)) {
-      const tail = _tail as Pair
+      const tail = _tail
       if (getListType(tail.tailType) !== null) {
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
@@ -340,10 +327,10 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
         const RHS = constraint[1]
         if (LHS.name === type.name) {
           if (contains(RHS, LHS.name)) {
-            if (isPair(RHS) && LHS === (RHS as Pair).tailType) {
+            if (isPair(RHS) && LHS === RHS.tailType) {
               return {
                 kind: 'list',
-                elementType: (RHS as Pair).headType
+                elementType: RHS.headType
               }
             } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
               return {
@@ -389,10 +376,10 @@ function contains(type: Type, name: string): boolean {
     case 'variable':
       return type.name === name
     case 'function':
-      const containedInForTypes = type.parameterTypes.reduce((acc, currentType) => {
-        return acc || contains(currentType, name)
-      }, false)
-      return containedInForTypes || contains(type.returnType, name)
+      const containedInParamTypes = type.parameterTypes.some(currentType =>
+        contains(currentType, name)
+      )
+      return containedInParamTypes || contains(type.returnType, name)
   }
 }
 
@@ -444,13 +431,10 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     if (RHS.kind === 'variable' && RHS.name === LHS.name) {
       return constraints
     } else if (contains(RHS, LHS.name)) {
-      if (
-        isPair(RHS) &&
-        (LHS === (RHS as Pair).tailType || LHS === getListType((RHS as Pair).tailType))
-      ) {
+      if (isPair(RHS) && (LHS === RHS.tailType || LHS === getListType(RHS.tailType))) {
         // T1 = Pair<T2, T1> ===> T1 = List<T2>
         // throw Error('need to unify pair')
-        return addToConstraintList(constraints, [LHS, tList((RHS as Pair).headType)])
+        return addToConstraintList(constraints, [LHS, tList(RHS.headType)])
       } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
         constraints.push([LHS, RHS])
         return constraints
@@ -502,6 +486,10 @@ function blockStatementHasReturn(node: es.BlockStatement): boolean {
       if (ifStatementHasReturn(stmt)) {
         return true
       }
+    } else if (stmt.type === 'BlockStatement') {
+      if (blockStatementHasReturn(stmt)) {
+        return true
+      }
     }
   }
   return false
@@ -536,7 +524,7 @@ function _infer(
   switch (node.type) {
     case 'UnaryExpression': {
       const op = node.operator === '-' ? NEGATIVE_OP : node.operator
-      const funcType = env[op] as FunctionType // in either case its a monomorphic type
+      const funcType = env.get(op) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
       return infer(
@@ -547,7 +535,7 @@ function _infer(
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
-      const envType = env[node.operator]
+      const envType = env.get(node.operator)!
       const opType = envType.kind === 'forall' ? extractFreeVariablesAndGenFresh(envType) : envType
       const leftNode = node.left as TypeAnnotatedNode<es.Node>
       const leftType = leftNode.inferredType as Variable
@@ -606,13 +594,15 @@ function _infer(
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
-          newEnv[declNode.id.name] = declNode.functionInferredType as Variable
+          newEnv.set(declNode.id.name, declNode.functionInferredType as Variable)
         } else if (
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          newEnv[declNode.declarations[0].id.name] = (declNode.declarations[0]
-            .init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+          newEnv.set(
+            declNode.declarations[0].id.name,
+            (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+          )
         }
       })
       const lastNode = node.body[lastCheckedNodeIndex] as TypeAnnotatedNode<es.Node>
@@ -625,18 +615,22 @@ function _infer(
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
-          newEnv[declNode.id.name] = tForAll(
-            applyConstraints(declNode.functionInferredType as Variable, newConstraints)
+          newEnv.set(
+            declNode.id.name,
+            tForAll(applyConstraints(declNode.functionInferredType as Variable, newConstraints))
           )
         } else if (
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          newEnv[declNode.declarations[0].id.name] = tForAll(
-            applyConstraints(
-              (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
-                .inferredType as Variable,
-              newConstraints
+          newEnv.set(
+            declNode.declarations[0].id.name,
+            tForAll(
+              applyConstraints(
+                (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
+                  .inferredType as Variable,
+                newConstraints
+              )
             )
           )
         }
@@ -668,8 +662,8 @@ function _infer(
     }
     case 'Identifier': {
       const identifierName = node.name
-      if (env[identifierName]) {
-        const envType = env[identifierName]
+      if (env.has(identifierName)) {
+        const envType = env.get(identifierName)!
         if (envType.kind === 'forall') {
           return addToConstraintList(constraints, [
             storedType,
@@ -711,7 +705,7 @@ function _infer(
       paramTypes.push(bodyNode.inferredType as Variable)
       const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv[paramNode.name] = paramNode.inferredType as Variable
+        newEnv.set(paramNode.name, paramNode.inferredType as Variable)
       })
       return infer(bodyNode, newEnv, newConstraints)
     }
@@ -736,7 +730,7 @@ function _infer(
         tFunc(...paramTypes)
       ])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv[paramNode.name] = paramNode.inferredType as Variable
+        newEnv.set(paramNode.name, paramNode.inferredType as Variable)
       })
       return infer(bodyNode, newEnv, newConstraints)
     }
@@ -822,65 +816,65 @@ function tFunc(...types: Type[]): FunctionType {
   }
 }
 
-const predeclaredNames = {
+const predeclaredNames: [string, Type | ForAll][] = [
   // constants
-  Infinity: tNumber,
-  NaN: tNumber,
-  undefined: tUndef,
-  math_LN2: tNumber,
-  math_LN10: tNumber,
-  math_LOG2E: tNumber,
-  math_LOG10E: tNumber,
-  math_PI: tNumber,
-  math_SQRT1_2: tNumber,
-  math_SQRT2: tNumber,
+  ['Infinity', tNumber],
+  ['NaN', tNumber],
+  ['undefined', tUndef],
+  ['math_LN2', tNumber],
+  ['math_LN10', tNumber],
+  ['math_LOG2E', tNumber],
+  ['math_LOG10E', tNumber],
+  ['math_PI', tNumber],
+  ['math_SQRT1_2', tNumber],
+  ['math_SQRT2', tNumber],
   // is something functions
-  is_boolean: tForAll(tFunc(tVar('T'), tBool)),
-  is_number: tForAll(tFunc(tVar('T'), tBool)),
-  is_string: tForAll(tFunc(tVar('T'), tBool)),
-  is_undefined: tForAll(tFunc(tVar('T'), tBool)),
+  ['is_boolean', tForAll(tFunc(tVar('T'), tBool))],
+  ['is_number', tForAll(tFunc(tVar('T'), tBool))],
+  ['is_string', tForAll(tFunc(tVar('T'), tBool))],
+  ['is_undefined', tForAll(tFunc(tVar('T'), tBool))],
   // math functions
-  math_abs: tFunc(tNumber, tNumber),
-  math_acos: tFunc(tNumber, tNumber),
-  math_acosh: tFunc(tNumber, tNumber),
-  math_asin: tFunc(tNumber, tNumber),
-  math_asinh: tFunc(tNumber, tNumber),
-  math_atan: tFunc(tNumber, tNumber),
-  math_atan2: tFunc(tNumber, tNumber, tNumber),
-  math_atanh: tFunc(tNumber, tNumber),
-  math_cbrt: tFunc(tNumber, tNumber),
-  math_ceil: tFunc(tNumber, tNumber),
-  math_clz32: tFunc(tNumber, tNumber),
-  math_cos: tFunc(tNumber, tNumber),
-  math_cosh: tFunc(tNumber, tNumber),
-  math_exp: tFunc(tNumber, tNumber),
-  math_expm1: tFunc(tNumber, tNumber),
-  math_floor: tFunc(tNumber, tNumber),
-  math_fround: tFunc(tNumber, tNumber),
-  math_hypot: tForAll(tVar('T')),
-  math_imul: tFunc(tNumber, tNumber, tNumber),
-  math_log: tFunc(tNumber, tNumber),
-  math_log1p: tFunc(tNumber, tNumber),
-  math_log2: tFunc(tNumber, tNumber),
-  math_log10: tFunc(tNumber, tNumber),
-  math_max: tForAll(tVar('T')),
-  math_min: tForAll(tVar('T')),
-  math_pow: tFunc(tNumber, tNumber, tNumber),
-  math_random: tFunc(tNumber),
-  math_round: tFunc(tNumber, tNumber),
-  math_sign: tFunc(tNumber, tNumber),
-  math_sin: tFunc(tNumber, tNumber),
-  math_sinh: tFunc(tNumber, tNumber),
-  math_sqrt: tFunc(tNumber, tNumber),
-  math_tan: tFunc(tNumber, tNumber),
-  math_tanh: tFunc(tNumber, tNumber),
-  math_trunc: tFunc(tNumber, tNumber),
+  ['math_abs', tFunc(tNumber, tNumber)],
+  ['math_acos', tFunc(tNumber, tNumber)],
+  ['math_acosh', tFunc(tNumber, tNumber)],
+  ['math_asin', tFunc(tNumber, tNumber)],
+  ['math_asinh', tFunc(tNumber, tNumber)],
+  ['math_atan', tFunc(tNumber, tNumber)],
+  ['math_atan2', tFunc(tNumber, tNumber, tNumber)],
+  ['math_atanh', tFunc(tNumber, tNumber)],
+  ['math_cbrt', tFunc(tNumber, tNumber)],
+  ['math_ceil', tFunc(tNumber, tNumber)],
+  ['math_clz32', tFunc(tNumber, tNumber)],
+  ['math_cos', tFunc(tNumber, tNumber)],
+  ['math_cosh', tFunc(tNumber, tNumber)],
+  ['math_exp', tFunc(tNumber, tNumber)],
+  ['math_expm1', tFunc(tNumber, tNumber)],
+  ['math_floor', tFunc(tNumber, tNumber)],
+  ['math_fround', tFunc(tNumber, tNumber)],
+  ['math_hypot', tForAll(tVar('T'))],
+  ['math_imul', tFunc(tNumber, tNumber, tNumber)],
+  ['math_log', tFunc(tNumber, tNumber)],
+  ['math_log1p', tFunc(tNumber, tNumber)],
+  ['math_log2', tFunc(tNumber, tNumber)],
+  ['math_log10', tFunc(tNumber, tNumber)],
+  ['math_max', tForAll(tVar('T'))],
+  ['math_min', tForAll(tVar('T'))],
+  ['math_pow', tFunc(tNumber, tNumber, tNumber)],
+  ['math_random', tFunc(tNumber)],
+  ['math_round', tFunc(tNumber, tNumber)],
+  ['math_sign', tFunc(tNumber, tNumber)],
+  ['math_sin', tFunc(tNumber, tNumber)],
+  ['math_sinh', tFunc(tNumber, tNumber)],
+  ['math_sqrt', tFunc(tNumber, tNumber)],
+  ['math_tan', tFunc(tNumber, tNumber)],
+  ['math_tanh', tFunc(tNumber, tNumber)],
+  ['math_trunc', tFunc(tNumber, tNumber)],
   // misc functions
-  parse_int: tFunc(tString, tNumber, tNumber),
-  prompt: tFunc(tString, tString),
-  runtime: tFunc(tNumber),
-  stringify: tForAll(tFunc(tVar('T'), tString))
-}
+  ['parse_int', tFunc(tString, tNumber, tNumber)],
+  ['prompt', tFunc(tString, tString)],
+  ['runtime', tFunc(tNumber)],
+  ['stringify', tForAll(tFunc(tVar('T'), tString))]
+]
 
 const headType1 = tVar('headType1')
 const tailType1 = tVar('tailType1')
@@ -891,35 +885,31 @@ const tailType3 = tVar('tailType3')
 const headType4 = tVar('headType4')
 const tailType4 = tVar('tailType4')
 
-const pairFuncs = {
-  pair: tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1))),
-  head: tForAll(tFunc(tPair(headType2, tailType2), headType2)),
-  tail: tForAll(tFunc(tPair(headType3, tailType3), tailType3)),
-  is_pair: tForAll(tFunc(tVar('T'), tBool)),
-  is_null: tForAll(tFunc(tPair(headType4, tailType4), tBool))
-}
+const pairFuncs: [string, Type | ForAll][] = [
+  ['pair', tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1)))],
+  ['head', tForAll(tFunc(tPair(headType2, tailType2), headType2))],
+  ['tail', tForAll(tFunc(tPair(headType3, tailType3), tailType3))],
+  ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
+  ['is_null', tForAll(tFunc(tPair(headType4, tailType4), tBool))]
+]
 
-const primitiveFuncs = {
-  [NEGATIVE_OP]: tFunc(tNumber, tNumber),
-  '!': tFunc(tBool, tBool),
-  '&&': tForAll(tFunc(tBool, tVar('T'), tVar('T'))),
-  '||': tForAll(tFunc(tBool, tVar('T'), tVar('T'))),
+const primitiveFuncs: [string, Type | ForAll][] = [
+  [NEGATIVE_OP, tFunc(tNumber, tNumber)],
+  ['!', tFunc(tBool, tBool)],
+  ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
+  ['||', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
   // NOTE for now just handle for Number === Number
-  '===': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '!==': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '<': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '<=': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '>': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '>=': tForAll(tFunc(tAddable('A'), tAddable('A'), tBool)),
-  '+': tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A'))),
-  '%': tFunc(tNumber, tNumber, tNumber),
-  '-': tFunc(tNumber, tNumber, tNumber),
-  '*': tFunc(tNumber, tNumber, tNumber),
-  '/': tFunc(tNumber, tNumber, tNumber)
-}
+  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['<', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['<=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['>', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['>=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['+', tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A')))],
+  ['%', tFunc(tNumber, tNumber, tNumber)],
+  ['-', tFunc(tNumber, tNumber, tNumber)],
+  ['*', tFunc(tNumber, tNumber, tNumber)],
+  ['/', tFunc(tNumber, tNumber, tNumber)]
+]
 
-const initialEnv = {
-  ...predeclaredNames,
-  ...pairFuncs,
-  ...primitiveFuncs
-}
+const initialEnv = [...predeclaredNames, ...pairFuncs, ...primitiveFuncs]
