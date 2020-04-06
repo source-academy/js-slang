@@ -97,11 +97,12 @@ def process_dir_globals(target):
     with open(outfile, "w") as f:
         json.dump(names, f, indent=2)
 
-
+# Folder names for jsdoc html
 targets = [
     "source_1",
     "source_2",
     "source_3",
+    "source_3_concurrent",
     "source_4",
     "External libraries",
 ]

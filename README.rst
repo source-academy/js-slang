@@ -76,7 +76,7 @@ makes the documentation available in folder and updates the jsons for documentat
 The script `jsdoc` provides an installation command to deploy the documentation via `scp` on a server:
 ``yarn jsdoc install``
 
-To update documentation displayed in autocomplete on the frontend, `js-slang` version needs to be bumped and `cadet-frontend` needs to be updated to use the new version.
+To update documentation displayed in autocomplete on the frontend, `js-slang` version needs to be bumped and `cadet-frontend` needs to be updated to use the new version. To add additional source versions or external libraries, the `targets` specified in `updateAutocompleteDocs.py` as well as the exported object in `src/editors/ace/docTooltip` need to be updated.
 
 Testing
 -------
