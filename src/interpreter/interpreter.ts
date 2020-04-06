@@ -651,7 +651,7 @@ export function* apply(
     } else if (fun instanceof LazyBuiltIn) {
       try {
         let finalArgs = args
-        if (fun.evaluateArgs){
+        if (fun.evaluateArgs) {
           finalArgs = []
           for (const arg of args) {
             finalArgs.push(yield* forceIt(arg, context))

@@ -77,7 +77,7 @@ export function callIfFuncAndRightArgs(
     }
   } else if (candidate instanceof LazyBuiltIn) {
     try {
-      if (candidate.evaluateArgs){
+      if (candidate.evaluateArgs) {
         args = args.map(forceIt)
       }
       return candidate.func(...args)
@@ -90,7 +90,6 @@ export function callIfFuncAndRightArgs(
       }
     }
   } else {
-    console.log("normal")
     throw new CallingNonFunctionValue(candidate, dummy)
   }
 }
@@ -216,12 +215,11 @@ export const callIteratively = (f: any, ...args: any[]) => {
         }
       }
     } else if (f instanceof LazyBuiltIn) {
-      if (f.evaluateArgs){
+      if (f.evaluateArgs) {
         args = args.map(forceIt)
       }
       f = f.func
     } else {
-      console.log("abnormal")
       throw new CallingNonFunctionValue(f, dummy)
     }
     let res

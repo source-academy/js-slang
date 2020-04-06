@@ -16,7 +16,7 @@ import { lazyListPrelude } from './stdlib/lazyList.prelude'
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
-  constructor(func: (...arg0: any) => any,evaluateArgs:boolean) {
+  constructor(func: (...arg0: any) => any, evaluateArgs: boolean) {
     this.func = func
     this.evaluateArgs = evaluateArgs
   }
@@ -114,7 +114,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
-    defineSymbol(context, funName, new LazyBuiltIn(wrapped,value.evaluateArgs))
+    defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs))
   } else {
     defineSymbol(context, name, value)
   }
@@ -172,13 +172,13 @@ export const importBuiltins = (
     // List library
 
     if (lazy) {
-      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair,false))
-      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list,false))
-      defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn (list.is_pair,true))
-      defineBuiltin(context, 'head(xs)', new LazyBuiltIn (list.head,true))
-      defineBuiltin(context, 'tail(xs)', new LazyBuiltIn (list.tail,true))
-      defineBuiltin(context, 'is_null(val)', new LazyBuiltIn (list.is_null,true))
-      defineBuiltin(context, 'draw_data(xs)', new LazyBuiltIn(visualiseList,true))
+      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
+      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false))
+      defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
+      defineBuiltin(context, 'head(xs)', new LazyBuiltIn(list.head, true))
+      defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true))
+      defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true))
+      defineBuiltin(context, 'draw_data(xs)', new LazyBuiltIn(visualiseList, true))
     } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
       defineBuiltin(context, 'is_pair(val)', list.is_pair)
