@@ -49,6 +49,12 @@ You can set additional options:
     -n, --native          use the native execution method
     -l, --lazy            use lazy evaluation
     -e, --eval            don't show REPL, only display output of evaluation
+    
+Hint: In ``bash`` you can take the `[PROGRAM_STRING]` out of a file as follows:
+
+.. code-block::
+
+  $ js-slang -n --chapter=1 -e "$(< my_source_program.js)"
 
 Documentation
 -------------
