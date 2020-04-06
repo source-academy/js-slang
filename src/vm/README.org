@@ -77,7 +77,7 @@ where the primed values are just like normal VM code execution, and the timeout 
 **** Starting =EXECUTE=
 $$\Rule{s(\textit{pc}) = \texttt{EXECUTE n} \qquad \textit{to} > 0}{
 \begin{aligned}
-&((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \langle \rangle, \textit{to})\\
+&((\textit{pc}_1, \textit{e}_1). \cdots .(\textit{pc}_n, \textit{e}_n).\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, \textit{tq}, \textit{to})\\
 \transition &(\textit{os}, \textit{pc}, \textit{e}, \textit{rs}, (\langle \rangle, \textit{pc}_1, \textit{e}_1, \langle \rangle). \cdots .(\langle \rangle, \textit{pc}_n, \textit{e}_n, \langle \rangle), \textit{to}-1)
 \end{aligned}}$$
 Closures representing threads $t_i$ (two-tuples of $\textit{pc}_i$ and $\textit{e}_i$) on the operand stack are converted into threads $t_i$. Thread $t_i$ is a four-tuple of each thread $t_i$'s own $\textit{os}_i$, $\textit{pc}_i$, $\textit{e}_i$, and $\textit{rs}_i$. Initially, thread $t_i$ has empty $\textit{os}_i$ and empty $\textit{rs}_i$.
@@ -85,7 +85,7 @@ The thread that calls =concurrent_execute= also continues to execute concurrentl
 Note: we decrement timeout instead of setting a random timeout, since setting a random timeout makes starvation possible: the thread that only calls =concurrent_execute=, and calls =concurrent_execute= infinitely many times, will always be run.
 
 **** Returning from thread
-$$\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, 0) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}$$
+$$\Rule{s(\textit{pc}_1) = \texttt{RET} \qquad \textit{to} > 0 \qquad \textit{rs}_1 = \langle \rangle}{(\textit{os}_1, \textit{pc}_1, \textit{e}_1, \textit{rs}_1, (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2).\textit{tq}, \textit{to}) \transition (\textit{os}_2, \textit{pc}_2, \textit{e}_2, \textit{rs}_2, \textit{tq}, c)}$$
 If a thread executes the =RET= statement, and the runtime stack is empty, then the thread is not enqueued on the thread queue, and the next thread is dequeued from the thread queue, with a random timeout value $c$.
 
 The above rule assumes there is least one thread in the thread queue. To cover all cases, the rule for zero threads in the thread queue is in the next subsection:
