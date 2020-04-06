@@ -41,27 +41,38 @@ export function createTestContext({
   chapter = 1,
   testBuiltins = {},
   evaluationMethod = 'strict'
-}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins, evaluationMethod?:EvaluationMethod } = {}): TestContext {
+}: {
+  context?: TestContext
+  chapter?: number
+  testBuiltins?: TestBuiltins
+  evaluationMethod?: EvaluationMethod
+} = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, [], undefined, {
-        rawDisplay: (str1, str2, externalContext) => {
-          testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
-          return str1
-        },
-        prompt: (str, externalContext) => {
-          testContext.promptResult.push(str)
-          return null
-        },
-        alert: (str, externalContext) => {
-          testContext.alertResult.push(str)
-        },
-        visualiseList: value => {
-          testContext.visualiseListResult.push(value)
-        }
-      } as CustomBuiltIns,evaluationMethod === 'lazy'),
+      ...createContext(
+        chapter,
+        [],
+        undefined,
+        {
+          rawDisplay: (str1, str2, externalContext) => {
+            testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+            return str1
+          },
+          prompt: (str, externalContext) => {
+            testContext.promptResult.push(str)
+            return null
+          },
+          alert: (str, externalContext) => {
+            testContext.alertResult.push(str)
+          },
+          visualiseList: value => {
+            testContext.visualiseListResult.push(value)
+          }
+        } as CustomBuiltIns,
+        evaluationMethod === 'lazy'
+      ),
       displayResult: [],
       promptResult: [],
       alertResult: [],

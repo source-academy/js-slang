@@ -12,11 +12,13 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-import {lazyListPrelude} from "./stdlib/lazyList.prelude";
+import { lazyListPrelude } from './stdlib/lazyList.prelude'
 export class LazyBuiltIn {
   func: (...arg0: any) => any
-  constructor(func: (...arg0: any) => any) {
+  evaluateArgs: boolean
+  constructor(func: (...arg0: any) => any,evaluateArgs:boolean) {
     this.func = func
+    this.evaluateArgs = evaluateArgs
   }
 }
 const createEmptyRuntime = () => ({
@@ -112,7 +114,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
-    defineSymbol(context, funName, new LazyBuiltIn(wrapped))
+    defineSymbol(context, funName, new LazyBuiltIn(wrapped,value.evaluateArgs))
   } else {
     defineSymbol(context, name, value)
   }
@@ -168,17 +170,23 @@ export const importBuiltins = (
 
   if (context.chapter >= 2) {
     // List library
-    defineBuiltin(context, 'is_pair(val)', list.is_pair)
-    defineBuiltin(context, 'head(xs)', list.head)
-    defineBuiltin(context, 'tail(xs)', list.tail)
-    defineBuiltin(context, 'is_null(val)', list.is_null)
-    defineBuiltin(context, 'draw_data(xs)', visualiseList)
+
     if (lazy) {
-      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair))
-      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list))
+      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair,false))
+      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list,false))
+      defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn (list.is_pair,true))
+      defineBuiltin(context, 'head(xs)', new LazyBuiltIn (list.head,true))
+      defineBuiltin(context, 'tail(xs)', new LazyBuiltIn (list.tail,true))
+      defineBuiltin(context, 'is_null(val)', new LazyBuiltIn (list.is_null,true))
+      defineBuiltin(context, 'draw_data(xs)', new LazyBuiltIn(visualiseList,true))
     } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
+      defineBuiltin(context, 'is_pair(val)', list.is_pair)
+      defineBuiltin(context, 'head(xs)', list.head)
+      defineBuiltin(context, 'tail(xs)', list.tail)
+      defineBuiltin(context, 'is_null(val)', list.is_null)
       defineBuiltin(context, 'list(...values)', list.list)
+      defineBuiltin(context, 'draw_data(xs)', visualiseList)
     }
   }
 
@@ -221,7 +229,7 @@ export const importBuiltins = (
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += context.evaluationMethod === 'strict' ? listPrelude : lazyListPrelude;
+    prelude += context.evaluationMethod === 'strict' ? listPrelude : lazyListPrelude
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude

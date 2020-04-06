@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import {expectParsedError, expectResult} from '../../utils/testing'
+import { expectParsedError, expectResult } from '../../utils/testing'
 
 test('pair creates pair', () => {
   return expectResult(
@@ -125,30 +125,30 @@ test('remove', () => {
 })
 
 test('remove not found', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
     equal (remove(2, list(1)),list(1));
   `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`true`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`true`)
 })
 
 test('remove_all', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
     equal(remove_all(1, list(1, 2, 3, 4, 1, 1, "1", 5, 1, 1, 6)), list(2, 3, 4, "1", 5, 6));
   `,
-        { chapter: 2, native: true, evaluationMethod:'lazy'}
-    ).toMatchInlineSnapshot(`true`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`true`)
 })
 
 test('remove_all not found', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
     equal(remove_all(1, list(2, 3, "1")), list(2, 3, "1"));
   `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`true`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`true`)
 })
 
 test('enum_list', () => {
@@ -179,261 +179,245 @@ test('list_ref', () => {
 })
 
 test('accumulate', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
     accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
-        { chapter: 2, native: true , evaluationMethod: 'lazy'}
-    ).toMatchInlineSnapshot(`10`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`10`)
 })
 
 test('list_to_string', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
     list_to_string(list(1, 2, 3));
   `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
 })
 test('bad number error build_list', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
         build_list('1', x => x);
 `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 45: Expected number on left hand side of operation, got string."`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`"Line 45: Expected number on left hand side of operation, got string."`)
 })
 
 test('bad number error enum_list', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 enum_list('1', '5');
 `,
-        { chapter: 2, native: true, evaluationMethod:'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 139: Expected string on right hand side of operation, got number."`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 139: Expected string on right hand side of operation, got number."`
+  )
 })
 
 test('bad number error enum_list', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 enum_list('1', 5);
 `,
-        { chapter: 2, native: true , evaluationMethod: 'lazy'}
-    ).toMatchInlineSnapshot(
-        `"Line 139: Expected string on right hand side of operation, got number."`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 139: Expected string on right hand side of operation, got number."`
+  )
 })
 
 test('bad number error enum_list', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 enum_list(1, '5');
 `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 140: Expected number on right hand side of operation, got string."`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 140: Expected number on right hand side of operation, got string."`
+  )
 })
 
 test('bad index error list_ref', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 list_ref(list(1, 2, 3), 3);
 `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy'}
-    ).toMatchInlineSnapshot(
-        `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+  )
 })
 
 test('bad index error list_ref', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 list_ref(list(1, 2, 3), -1);
 `,
-        { chapter: 2, native: true, evaluationMethod:'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+  )
 })
 
 test('bad index error list_ref', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 list_ref(list(1, 2, 3), 1.5);
 `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+  )
 })
 
 test('bad index error list_ref', () => {
-    return expectParsedError(
-        stripIndent`
+  return expectParsedError(
+    stripIndent`
 list_ref(list(1, 2, 3), '1');
 `,
-        { chapter: 2, native: true, evaluationMethod : 'lazy' }
-    ).toMatchInlineSnapshot(
-        `"Line 149: Expected number on left hand side of operation, got string."`
-    )
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`"Line 149: Expected number on left hand side of operation, got string."`)
 })
 
 test('arguments are not evaluated for pair', () => {
   return expectResult(
-      stripIndent`
+    stripIndent`
     head(pair(1,head(null)));
   `,
-      { chapter: 2, native: true, evaluationMethod: 'lazy' }
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
   ).toMatchInlineSnapshot(`1`)
 })
 test('arguments are not evaluated for list', () => {
   return expectResult(
-      stripIndent`
+    stripIndent`
      head(list(1,head(null)));
  `,
-      { chapter: 2, native: true, evaluationMethod: 'lazy' }
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
   ).toMatchInlineSnapshot(`1`)
 })
 
 test('recursive pair definitions are possible (tail)', () => {
   return expectResult(
-      stripIndent`
+    stripIndent`
      const a = pair (1,a);
      head(a) + head(tail(a));
  `,
-      { chapter: 2, native: true, evaluationMethod: 'lazy' }
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
   ).toMatchInlineSnapshot(`2`)
 })
 
 test('recursive pair definitions are possible (head)', () => {
   return expectResult(
-      stripIndent`
+    stripIndent`
      const a = pair (a,1);
      tail(a) + tail(head(a));
  `,
-      { chapter: 2, native: true, evaluationMethod: 'lazy' }
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
   ).toMatchInlineSnapshot(`2`)
 })
 
 test('recursive list definitions are possible (head)', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = list (1,a);
      head(a) + head(head(tail(a)));
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`2`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`2`)
 })
 
 test('is_list on infinite lists works', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = list(1,a);
      is_list(a);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`true`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`true`)
 })
 test('list_ref on infinite lists', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      list_ref(a,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`1`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`1`)
 })
 
-
-
 test('map on infinite lists works', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      const b = map(x => 2 * x, a);
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`2`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`2`)
 })
 
 test('map on infinite lists works', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      const b = map(x => 2 * x, a);
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`2`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`2`)
 })
 
 test('append left list is infinite', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      const b = append(a, list(3,4));
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`1`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`1`)
 })
 
 test('append right list is infinite', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      const b = append(list(3,4),a);
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`1`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`1`)
 })
 
 test('remove on infinite list', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,a);
      const b = remove(1,a);
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`1`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`1`)
 })
 
 test('remove all ones on infinite list of ones and twos', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,pair(2,a));
      const b = remove_all(1,a);
      list_ref(b,200);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`2`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`2`)
 })
 
-
 test('filter on infinite lists', () => {
-    return expectResult(
-        stripIndent`
+  return expectResult(
+    stripIndent`
      const a = pair(1,pair(2,a));
      const b = filter(x => x % 2 === 0,a);
      list_ref(b,1);
  `,
-        { chapter: 2, native: true, evaluationMethod: 'lazy' }
-    ).toMatchInlineSnapshot(`2`)
+    { chapter: 2, native: true, evaluationMethod: 'lazy' }
+  ).toMatchInlineSnapshot(`2`)
 })
-
-
-
-
-
-
-
-
-
