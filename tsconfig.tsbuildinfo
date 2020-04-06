@@ -486,8 +486,8 @@
         "signature": "3d34bec79608f2aaf70454d744f172dc2ce6c981db1a063c854f4c8c9bae849e"
       },
       "./src/transpiler/transpiler.ts": {
-        "version": "36bc892537defa942750046b433ff0c17b1854c1f000eb654f62e37f7442027f",
-        "signature": "defb95eb9bfc044d654745c961690a9cfad2eaa1e53e489faa95446707de18da"
+        "version": "7d1e9f4a705cbaf6e8289344e7130eb37b90a5c636426f136c6e8ccfd7b53d25",
+        "signature": "e847516db502830b71ef36888f65795bca932cfb31dd15f2f04bc03248402a37"
       },
       "./src/errors/validityerrors.ts": {
         "version": "983cb974a187ea91a990a02f2efaddfacd4f6bfbdb4c7ddfe6cf3958cda4b443",
@@ -1722,7 +1722,6 @@
       ],
       "./src/transpiler/transpiler.ts": [
         "./src/typings/acorn-walk.d.ts",
-        "./node_modules/acorn/dist/acorn.d.ts",
         "./src/typings/astring.d.ts",
         "./node_modules/@types/estree/index.d.ts",
         "./node_modules/source-map/source-map.d.ts",

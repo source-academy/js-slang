@@ -1,5 +1,4 @@
 import { ancestor, simple } from 'acorn-walk/dist/walk'
-import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
@@ -62,15 +61,23 @@ const globalIds = {
 }
 let contextId: number
 
+function prefixModule(program: es.Program): string {
+  let moduleCounter = 0
+  let prefix = ''
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break;
+    }
+    const moduleText = loadIIFEModuleText(node.source.value as string)
+    prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
+    moduleCounter++
+  }
+  return prefix
+}
+
 function transformSingleImportDeclaration(moduleCounter: number, node: es.ImportDeclaration) {
   const result = []
-  const moduleNode = (parse(
-    loadIIFEModuleText(node.source.value as string)
-  ) as unknown) as es.Program
-  const moduleExpr = (moduleNode.body[0] as unknown) as es.Expression
   const tempNamespace = `__MODULE_${moduleCounter}__`
-  // const __MODULE_xxx__ = ...;
-  result.push(create.constantDeclaration(tempNamespace, moduleExpr))
   // const yyy = __MODULE_xxx__.yyy;
   const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
   for (const symbol of neededSymbols) {
@@ -705,6 +712,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
+  const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
   const statements = program.body as es.Statement[]
@@ -724,7 +732,7 @@ export function transpile(program: es.Program, id: number, skipUndefinedVariable
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
   const map = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap: map })
+  const transpiled = modulePrefix + generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }
 }
