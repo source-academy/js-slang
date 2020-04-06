@@ -62,7 +62,7 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
   const res: any = {}
   nameQueue
     .map(node => getNames(node, (n: es.Node) => !inNode(n.loc)))
-    .reduce((prev, cur) => prev.concat(cur)) // no flatmap feelsbad
+    .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
     .forEach(decl => {
       res[decl.name] = decl
     }) // Deduplicate, ensure deeper declarations overwrite
