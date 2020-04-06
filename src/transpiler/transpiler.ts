@@ -66,7 +66,7 @@ function prefixModule(program: es.Program): string {
   let prefix = ''
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') {
-      break;
+      break
     }
     const moduleText = loadIIFEModuleText(node.source.value as string)
     prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
