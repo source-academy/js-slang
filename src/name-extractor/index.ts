@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-interface NameDeclaration {
+export interface NameDeclaration {
   name: string
   meta: string
 }
