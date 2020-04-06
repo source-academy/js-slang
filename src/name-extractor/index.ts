@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-interface NameDeclaration {
+export interface NameDeclaration {
   name: string
   meta: string
 }
@@ -50,6 +50,7 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
         // This is the only time we want to process raw identifiers
         nameQueue.push(...(node as any).params)
       }
+
       const body = getNodeChildren(node)
       if (body) {
         for (const child of body) {
@@ -62,7 +63,7 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
   const res: any = {}
   nameQueue
     .map(node => getNames(node, (n: es.Node) => !inNode(n.loc)))
-    .reduce((prev, cur) => prev.concat(cur)) // no flatmap feelsbad
+    .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
     .forEach(decl => {
       res[decl.name] = decl
     }) // Deduplicate, ensure deeper declarations overwrite
@@ -78,7 +79,9 @@ function getNodeChildren(node: es.Node): es.Node[] {
     case 'WhileStatement':
       return [node.test, node.body]
     case 'ForStatement':
-      return [node.body]
+      return [node.init, node.test, node.update, node.body].filter(
+        n => n !== undefined && n !== null
+      ) as es.Node[]
     case 'ExpressionStatement':
       return [node.expression]
     case 'IfStatement':
