@@ -1869,6 +1869,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -3370,6 +3371,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -3849,6 +3851,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -4212,6 +4215,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": 10,
@@ -5305,6 +5309,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -6166,6 +6171,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -8121,6 +8127,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -22952,6 +22959,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -24479,6 +24487,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -26006,6 +26015,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -27533,6 +27543,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -29060,6 +29071,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -29421,6 +29433,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": undefined,
@@ -30129,6 +30142,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -31055,6 +31069,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -31418,6 +31433,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": 40,
@@ -32059,6 +32075,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -33215,6 +33232,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -34371,6 +34389,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -35527,6 +35546,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -36700,6 +36720,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -37063,6 +37084,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": 0,
@@ -38232,6 +38254,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -39404,6 +39427,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -39767,6 +39791,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": 0,
@@ -40905,6 +40930,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -42176,6 +42202,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -43317,6 +43344,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -44588,6 +44616,7 @@ Object {
       ],
       "value": undefined,
     },
+    "variant": "default",
   },
   "it": Object {},
   "scheduler": PreemptiveScheduler {
@@ -44951,6 +44980,7 @@ Object {
       "nodes": Array [],
       "value": undefined,
     },
+    "variant": "default",
   },
   "status": "finished",
   "value": 3,

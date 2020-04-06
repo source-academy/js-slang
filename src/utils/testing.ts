@@ -45,7 +45,7 @@ export function createTestContext({
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, [], undefined, {
+      ...createContext(chapter, 'default', [], undefined, {
         rawDisplay: (str1, str2, externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
