@@ -74,44 +74,38 @@ test('operator syntax type error', () => {
   expect(expectedBool(token3, CATEGORY.forbidden)).toBe(true)
 })
 
-
-
 test('forbidden keywords', () => {
-  const code = 'let x = 3; \nwhile (x > 0) { x = x - 1; }';
+  const code = 'let x = 3; \nwhile (x > 0) { x = x - 1; }'
 
   // not allowed in source 1
-  setSession(1, code);
+  setSession(1, code)
 
-  const token1 = session.getTokenAt(0, 1);
-  expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true);
+  const token1 = session.getTokenAt(0, 1)
+  expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true)
 
-  const token2 = session.getTokenAt(1, 1);
-  expect(expectedBool(token2, CATEGORY.forbidden)).toBe(true);
-
+  const token2 = session.getTokenAt(1, 1)
+  expect(expectedBool(token2, CATEGORY.forbidden)).toBe(true)
 
   // allowed in source 4
-  setSession(4, code);
-  const newToken1 = session.getTokenAt(0, 1);
-  expect(expectedBool(newToken1, CATEGORY.types)).toBe(true);
+  setSession(4, code)
+  const newToken1 = session.getTokenAt(0, 1)
+  expect(expectedBool(newToken1, CATEGORY.types)).toBe(true)
 
-  const newToken2 = session.getTokenAt(1, 1);
-  expect(expectedBool(newToken2, CATEGORY.keywords)).toBe(true);
+  const newToken2 = session.getTokenAt(1, 1)
+  expect(expectedBool(newToken2, CATEGORY.keywords)).toBe(true)
 })
 
-
-
-
 test('forbidden JavaScript reserved words', () => {
-  const code = `private \nArray \nthis`;
+  const code = `private \nArray \nthis`
 
-  setSession(4, code);
+  setSession(4, code)
 
-  const token1 = session.getTokenAt(0, 1);
-  expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true);
+  const token1 = session.getTokenAt(0, 1)
+  expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true)
 
-  const token2 = session.getTokenAt(1, 1);
-  expect(expectedBool(token2, CATEGORY.forbidden)).toBe(true);
+  const token2 = session.getTokenAt(1, 1)
+  expect(expectedBool(token2, CATEGORY.forbidden)).toBe(true)
 
-  const token3 = session.getTokenAt(2, 1);
-  expect(expectedBool(token3, CATEGORY.forbidden)).toBe(true);
+  const token3 = session.getTokenAt(2, 1)
+  expect(expectedBool(token3, CATEGORY.forbidden)).toBe(true)
 })
