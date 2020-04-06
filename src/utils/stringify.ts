@@ -1,6 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
 import { Value } from '../types'
+import {forceIt} from "./operators";
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -30,6 +31,7 @@ export const stringify = (
 ): string => {
   // Used to check if there are any cyclic structures
   const ancestors = new Set()
+  value = forceIt(value);
 
   // Precompute useful strings
   const indentString = makeIndent(indent)

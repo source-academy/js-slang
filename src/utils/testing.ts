@@ -39,8 +39,9 @@ interface TestOptions {
 export function createTestContext({
   context,
   chapter = 1,
-  testBuiltins = {}
-}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
+  testBuiltins = {},
+  evaluationMethod = 'strict'
+}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins, evaluationMethod?:EvaluationMethod } = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
@@ -60,13 +61,12 @@ export function createTestContext({
         visualiseList: value => {
           testContext.visualiseListResult.push(value)
         }
-      } as CustomBuiltIns),
+      } as CustomBuiltIns,evaluationMethod === 'lazy'),
       displayResult: [],
       promptResult: [],
       alertResult: [],
       visualiseListResult: []
     }
-
     Object.entries(testBuiltins).forEach(([key, value]) => defineBuiltin(testContext, key, value))
 
     return testContext

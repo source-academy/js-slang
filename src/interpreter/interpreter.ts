@@ -650,19 +650,8 @@ export function* apply(
       }
     } else if (fun instanceof LazyBuiltIn) {
       try {
-        let finalArgs = args
-        if (fun.evaluateArgs) {
-          const forcedArgs = []
-          for (const arg of args) {
-            forcedArgs.push(yield* forceIt(arg, context))
-          }
-          finalArgs = forcedArgs
-        }
-        result = fun.func.apply(thisContext, finalArgs)
-        if (fun.forceResult) {
-          result = yield* forceIt(result, context)
-        }
-        break
+        result = fun.func.apply(thisContext, args)
+        break;
       } catch (e) {
         // Recover from exception
         context.runtime.environments = context.runtime.environments.slice(

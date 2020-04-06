@@ -14,6 +14,7 @@ import {
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
+import {LazyBuiltIn} from "../createContext";
 
 export function throwIfTimeout(start: number, current: number, line: number, column: number) {
   if (current - start > JSSLANG_PROPERTIES.maxExecTime) {
@@ -74,7 +75,18 @@ export function callIfFuncAndRightArgs(
       }
       return candidate(...args)
     }
-  } else {
+  } else if (candidate instanceof LazyBuiltIn){
+      try {
+        return candidate.func(...args)
+      } catch (error) {
+        // if we already handled the error, simply pass it on
+        if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+          throw new ExceptionError(error, dummy.loc!)
+        } else {
+          throw error
+        }
+      }
+  }else{
     throw new CallingNonFunctionValue(candidate, dummy)
   }
 }
@@ -181,23 +193,29 @@ export const callIteratively = (f: any, ...args: any[]) => {
     const dummy = locationDummyNode(line, column)
     if (Date.now() - startTime > MAX_TIME) {
       throw new PotentialInfiniteRecursionError(dummy, pastCalls)
-    } else if (typeof f !== 'function') {
-      throw new CallingNonFunctionValue(f, dummy)
     }
-    if (f.transformedFunction! !== undefined) {
-      f = f.transformedFunction
-      const expectedLength = f.length
-      const receivedLength = args.length
-      if (expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(
-          callExpression(locationDummyNode(line, column), args, {
-            start: { line, column },
-            end: { line, column }
-          }),
-          expectedLength,
-          receivedLength
-        )
+    if (typeof f === "function") {
+      if (f.transformedFunction! !== undefined) {
+        f = f.transformedFunction
+        const expectedLength = f.length
+        const receivedLength = args.length
+        if (expectedLength !== receivedLength) {
+          throw new InvalidNumberOfArguments(
+              callExpression(locationDummyNode(line, column), args, {
+                start: {line, column},
+                end: {line, column}
+              }),
+              expectedLength,
+              receivedLength
+          )
+        }
+      }else {
+        args = args.map(forceIt)
       }
+    }else if (f instanceof LazyBuiltIn){
+      f = f.func
+    }else {
+      throw new CallingNonFunctionValue(f, dummy)
     }
     let res
     try {

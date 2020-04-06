@@ -12,14 +12,11 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import {lazyListPrelude} from "./stdlib/lazyList.prelude";
 export class LazyBuiltIn {
   func: (...arg0: any) => any
-  evaluateArgs: boolean
-  forceResult: boolean
-  constructor(func: (...arg0: any) => any, evaluateArgs: boolean, forceResult: boolean) {
+  constructor(func: (...arg0: any) => any) {
     this.func = func
-    this.evaluateArgs = evaluateArgs
-    this.forceResult = forceResult
   }
 }
 const createEmptyRuntime = () => ({
@@ -115,7 +112,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
-    defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs, value.forceResult))
+    defineSymbol(context, funName, new LazyBuiltIn(wrapped))
   } else {
     defineSymbol(context, name, value)
   }
@@ -132,7 +129,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns,lazy:boolean = false) => {
+export const importBuiltins = (
+  context: Context,
+  externalBuiltIns: CustomBuiltIns,
+  lazy: boolean = false
+) => {
   ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value, s: string) =>
@@ -167,24 +168,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
+    defineBuiltin(context, 'is_pair(val)', list.is_pair)
+    defineBuiltin(context, 'head(xs)', list.head)
+    defineBuiltin(context, 'tail(xs)', list.tail)
+    defineBuiltin(context, 'is_null(val)', list.is_null)
+    defineBuiltin(context, 'draw_data(xs)', visualiseList)
     if (lazy) {
-      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false, false))
-      defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true, false))
-      defineBuiltin(context, 'head(xs)', new LazyBuiltIn(list.head, true, true))
-      defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true, true))
-      defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true, false))
-      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false, false))
-      defineBuiltin(context, 'draw_data(xs)', new LazyBuiltIn(visualiseList, true, false))
-    }else {
+      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair))
+      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list))
+    } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
-      defineBuiltin(context, 'is_pair(val)', list.is_pair)
-      defineBuiltin(context, 'head(xs)', list.head)
-      defineBuiltin(context, 'tail(xs)', list.tail)
-      defineBuiltin(context, 'is_null(val)', list.is_null)
       defineBuiltin(context, 'list(...values)', list.list)
-      defineBuiltin(context, 'draw_data(xs)', visualiseList)
     }
-   }
+  }
 
   if (context.chapter >= 3) {
     defineBuiltin(context, 'set_head(xs, val)', list.set_head)
@@ -225,7 +221,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += listPrelude
+    prelude += context.evaluationMethod === 'strict' ? listPrelude : lazyListPrelude;
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
@@ -254,8 +250,8 @@ const createContext = <T>(
   lazy: boolean = false
 ) => {
   const context = createEmptyContext(chapter, externalSymbols, externalContext)
-
-  importBuiltins(context, externalBuiltIns,lazy)
+  context.evaluationMethod = lazy ? 'lazy' : 'strict'
+  importBuiltins(context, externalBuiltIns, lazy)
   importPrelude(context)
   importExternalSymbols(context, externalSymbols)
 
