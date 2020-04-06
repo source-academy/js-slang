@@ -13,8 +13,8 @@ import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
+import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -29,6 +29,7 @@ import {
   Scheduler,
   SourceError
 } from './types'
+import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
@@ -175,6 +176,27 @@ export function findDeclaration(
   return declarationNode.loc
 }
 
+export function getScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode || declarationNode.loc == null || identifierNode !== declarationNode) {
+    return []
+  }
+
+  return getScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
 export function getAllOccurrencesInScope(
   code: string,
   context: Context,
@@ -317,9 +339,12 @@ export async function runInContext(
       )
     }
   } else {
-    const it = evaluate(program, context)
+    let it = evaluate(program, context)
     let scheduler: Scheduler
-    if (theOptions.scheduler === 'async') {
+    if (context.variant === 'non-det') {
+      it = nonDetEvaluate(program, context)
+      scheduler = new NonDetScheduler()
+    } else if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
     } else {
       scheduler = new PreemptiveScheduler(theOptions.steps)
