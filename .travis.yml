@@ -6,7 +6,8 @@ branches:
   except:
     - /^no-ci.*$/
 script:
-  - yarn build
+  - yarn jsdoc
+  - yarn autocomplete
   - yarn format:ci
   - yarn tslint
   - yarn test
