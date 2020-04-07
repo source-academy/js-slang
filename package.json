@@ -28,14 +28,14 @@
   },
   "scripts": {
     "ci": "yarn format:ci && yarn tslint && yarn test",
-    "build": "yarn jsdoc && yarn tsc",
+    "build": "python3 ./scripts/updateAutocompleteDocs.py && yarn tsc",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
-    "jsdoc": "./scripts/jsdoc.sh && python3 ./scripts/updateAutocompleteDocs.py"
+    "jsdoc": "./scripts/jsdoc.sh"
   },
   "repository": {
     "type": "git",
