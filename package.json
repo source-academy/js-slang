@@ -30,7 +30,7 @@
   },
   "scripts": {
     "ci": "yarn format:ci && yarn tslint && yarn test",
-    "build": "python3 ./scripts/updateAutocompleteDocs.py && yarn tsc",
+    "build": "yarn jsdoc && python3 ./scripts/updateAutocompleteDocs.py && yarn tsc",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
