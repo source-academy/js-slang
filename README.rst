@@ -75,8 +75,8 @@ To build the documentation, run
 Documentation on the Source libraries are generated from inline documentation
 in the library sources. The libraries are in repository ``cadet-frontend``, which
 is assumed to be located in ``../cadet-frontend``, from the root of this repo.
-The command ``yarn jsdoc`` makes the documentation available in folder ``doc/jsdoc/libraries/``.
-The script `jsdoc` provides an installation command to deploy the documentation via `scp` on a server:
+The command ``yarn jsdoc`` makes the documentation available in folder ``docs/source``.
+The script `jsdoc` provides an installation command to deploy the documentation via `scp` to a web server:
 ``yarn jsdoc install``
 
 Documentation of libraries is displayed in autocomplete in the frontend. 
