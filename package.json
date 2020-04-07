@@ -28,7 +28,7 @@
   },
   "scripts": {
     "ci": "yarn format:ci && yarn tslint && yarn test",
-    "build": "yarn jsdoc & yarn tsc",
+    "build": "yarn jsdoc && yarn tsc",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
