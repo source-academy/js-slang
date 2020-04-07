@@ -40,7 +40,9 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
 
-  function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
+  function inferConstantDeclaration(
+    constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
+  ) {
     // step 2. Update typeEnvironment
     // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T1 ]
     const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
