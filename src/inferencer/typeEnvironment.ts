@@ -1,4 +1,29 @@
+import { ancestor } from 'acorn-walk/dist/walk'
+import { TypeAnnotatedNode, Variable } from '../types'
+import * as es from 'estree'
+
+// The Type Environment
 export const primitiveMap = new Map()
+
+// Main function that will update the type environment e.g. for declarations
+export function updateTypeEnvironment(program: es.Program) {
+  function updateForConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
+    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T1 ]
+    const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+    const lhsName = lhs.name
+    const lhsVariableId = (lhs.typeVariable as Variable).id
+    if (lhsName !== undefined && lhsVariableId !== undefined) {
+      primitiveMap.set(lhsName, lhsVariableId)
+    }
+  }
+
+  ancestor(program as es.Node, {
+    VariableDeclaration: updateForConstantDeclaration // Source 1 only has constant declaration
+    // FunctionDeclaration: updateForFunctionDeclaration
+  })
+}
+
+// Initiatize Type Environment
 primitiveMap.set('-', {
   types: [
     { argumentTypes: ['number', 'number'], resultType: 'number' },

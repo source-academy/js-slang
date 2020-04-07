@@ -205,6 +205,7 @@ export interface Primitive {
   name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
 }
 
+// As in Type Variable
 export interface Variable {
   kind: 'variable'
   id?: number
