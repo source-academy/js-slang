@@ -2,29 +2,19 @@ import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode, Variable } from '../types'
 import { annotateProgram } from './annotator'
 import { primitiveMap } from './typeEnvironment'
+import { updateTypeConstraints } from './constraintStore'
 import * as es from 'estree'
 import { printTypeConstraints, printTypeEnvironment } from '../utils/inferencerUtils'
 
 // // main function that will infer a program
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
-  const typeConstraints = new Map()
-  function updateTypeConstraints(newConstraintLhs: number, newConstraintRhs: number | string) {
-    // step 3a. Add new constraint to typeConstraints map
-    // e.g. T1 = T2, T2 = number
-    typeConstraints.set(newConstraintLhs, newConstraintRhs)
-
-    // step 3b. Attempt to reduce typeConstraints to solved form
-    // If type error found, stop and throw error
-    // .. todo ..
-  }
-
   function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     const valueOfLiteral = literal.value
     if (typeof valueOfLiteral === 'number') {
       // declare
       literal.inferredType = {
         kind: 'primitive',
-        name: 'integer'
+        name: 'number'
       }
       literal.typability = 'Typed'
     } else if (typeof valueOfLiteral === 'boolean') {
@@ -63,7 +53,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       primitiveMap.set(lhsName, lhsVariableId)
     }
 
-    // step 3. Update typeConstraints
+    // step 3. Update type constraints in constraintStore
     // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
     const rhs = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
     const rhsVariableId = (rhs.typeVariable as Variable).id
