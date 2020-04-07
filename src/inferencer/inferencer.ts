@@ -3,6 +3,7 @@ import { TypeAnnotatedNode, Variable } from '../types'
 import { annotateProgram } from './annotator'
 import { primitiveMap } from './typeEnvironment'
 import * as es from 'estree'
+import { printTypeConstraints, printTypeEnvironment } from '../utils/inferencerUtils'
 
 // // main function that will infer a program
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
@@ -126,6 +127,9 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
+  // for Debugging output
+  printTypeConstraints(typeConstraints)
+  printTypeEnvironment(primitiveMap)
   // return the AST with annotated types
   return program
 }
