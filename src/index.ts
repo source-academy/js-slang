@@ -34,6 +34,8 @@ import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
+export { SourceDocumentation } from './editors/ace/docTooltip'
+import { getProgramNames } from './name-extractor'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -215,6 +217,16 @@ export function getAllOccurrencesInScope(
     return []
   }
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
+export async function getNames(code: string, line: number, col: number): Promise<any> {
+  const program = parse(code, createContext(), true)
+
+  if (!program) {
+    return []
+  }
+
+  return getProgramNames(program, { line, column: col })
 }
 
 export async function runInContext(
