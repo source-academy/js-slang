@@ -73,7 +73,7 @@ const predefined = new Set([
 
 export function printTypeConstraints(typeContraints: Map<number, number | string>) {
   console.log('Printing Type Constraints')
-  for (let [key, value] of typeContraints) {
+  for (const [key, value] of typeContraints) {
     console.log(`T${key} = T${value}`)
   }
 }
