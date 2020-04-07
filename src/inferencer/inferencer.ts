@@ -2,7 +2,7 @@ import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode, Variable } from '../types'
 import { annotateProgram } from './annotator'
 import { primitiveMap } from './typeEnvironment'
-import { updateTypeConstraints } from './constraintStore'
+import { constraintStore, updateTypeConstraints } from './constraintStore'
 import * as es from 'estree'
 import { printTypeConstraints, printTypeEnvironment } from '../utils/inferencerUtils'
 
@@ -118,7 +118,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   })
 
   // for Debugging output
-  printTypeConstraints(typeConstraints)
+  printTypeConstraints(constraintStore)
   printTypeEnvironment(primitiveMap)
   // return the AST with annotated types
   return program
