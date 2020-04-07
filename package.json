@@ -30,8 +30,8 @@
   "bin": {
     "js-slang": "dist/repl/repl.js"
   },
-  "scripts": {
-    "ci": "yarn build && yarn format:ci && yarn tslint && yarn test",
+  "scripts": { 
+    "ci": "yarn jsdoc && yarn autocomplete && yarn format:ci && yarn tslint && yarn test",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
