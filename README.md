@@ -1,11 +1,3 @@
----
-title: 'js-slang'
----
-
-[![image](https://travis-ci.org/source-academy/js-slang.svg?branch=master)](https://travis-ci.org/source-academy/js-slang)
-
-[![image](https://coveralls.io/repos/github/source-academy/js-slang/badge.svg?branch=master)](https://coveralls.io/github/source-academy/js-slang?branch=master)
-
 Open-source implementations of the programming language *Source*. Source
 is a series of small subsets of JavaScript, designed for teaching
 university-level programming courses for computer science majors,
