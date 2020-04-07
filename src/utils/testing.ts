@@ -187,9 +187,13 @@ export function snapshot(arg1?: any, arg2?: any): (testResult: TestResult) => Te
       expect(testResult).toMatchSnapshot(arg1!, arg2)
       return testResult
     }
-  } else {
+  } else if (arg1) {
     return testResult => {
       expect(testResult).toMatchSnapshot(arg1!)
+      return testResult
+    }
+  } else {
+    return testResult => {
       return testResult
     }
   }

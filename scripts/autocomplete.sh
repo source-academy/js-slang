@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from lxml import etree, html
 from pathlib import Path
 import os
@@ -116,3 +118,4 @@ for target in targets:
         exit(1)
 
     process_dir_globals(target)
+

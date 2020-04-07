@@ -70,19 +70,6 @@ display(NaN);",
 }
 `;
 
-exports[`primitive opcodes nullary handler 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "runtime();",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": undefined,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`primitive opcodes self-implemented ARRAY_LEN works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -864,38 +851,6 @@ display('after BR');",
     "\\"after POPENV\\"",
     "\\"after BR\\"",
   ],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": undefined,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`standard program execution && operator shortcircuit works 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f() {
-  f();
-}
-false && f();",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": undefined,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`standard program execution || operator shortcircuit works 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f() {
-  f();
-}
-true || f();",
-  "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
   "result": undefined,
