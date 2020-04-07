@@ -7,3 +7,7 @@ dist/
 # emacs backup files
 
 *~
+
+# For type inferencer
+src/repl/repl.ts
+tsconfig.tsbuildinfo
