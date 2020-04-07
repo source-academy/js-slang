@@ -40,7 +40,9 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
   const nameQueue: es.Node[] = []
 
   while (queue.length > 0) {
-    const node = queue.pop()!
+    // Workaround due to minification problem
+    // tslint:disable-next-line
+    let node = queue.pop()!
     if (isDeclaration(node)) {
       nameQueue.push(node)
     }
