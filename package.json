@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.23",
+  "version": "0.4.24",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords" : ["JavaScript", "interpreter", "compiler", "Source", "SICP"],
   "author": {
@@ -36,8 +36,9 @@
     "test": "jest",
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
+    "jsdoc": "./scripts/jsdoc.sh",
     "autocomplete": "python3 ./scripts/updateAutocompleteDocs.py",
-    "docs": "./scripts/jsdoc.sh && yarn autocomplete",
+    "docs": "yarn jsdoc && yarn autocomplete",
     "build": "yarn docs && yarn tsc"
   },
   "repository": {
