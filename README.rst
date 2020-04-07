@@ -67,9 +67,10 @@ To build the documentation, run
 
   $ git clone https://github.com/source-academy/js-slang.git
   $ cd js-slang
-  $ npm install # If additional permissions are required, run sudo npm install
-  $ yarn jsdoc  # to make the web pages in js-slang/doc/source
-  $ cd doc
+  $ yarn
+  $ yarn install 
+  $ yarn jsdoc  # to make the web pages in js-slang/docs/source
+  $ cd docs/source_language_specs 
   $ make        # to make the PDF documents using LaTeX
 
 Documentation on the Source libraries are generated from inline documentation
