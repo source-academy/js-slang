@@ -29,7 +29,7 @@
     "js-slang": "dist/repl/repl.js"
   },
   "scripts": {
-    "ci": "yarn format:ci && yarn tslint && yarn test",
+    "ci": "yarn build && yarn format:ci && yarn tslint && yarn test",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
