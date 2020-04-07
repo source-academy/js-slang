@@ -37,7 +37,7 @@
     "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
     "jsdoc": "./scripts/jsdoc.sh",
-    "autocomplete": "python3 ./scripts/updateAutocompleteDocs.py",
+    "autocomplete": "./scripts/autocomplete.sh",
     "docs": "yarn jsdoc && yarn autocomplete",
     "build": "yarn docs && yarn tsc"
   },
