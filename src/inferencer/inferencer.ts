@@ -20,7 +20,6 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
       // e.g. Given: 1^T2, Set: T2 = number
       addTypeConstraintForLiteralPrimitive(literal)
-
     } else if (typeof valueOfLiteral === 'boolean') {
       // declare
       literal.inferredType = {
@@ -31,7 +30,6 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
       // e.g. Given: true^T2, Set: T2 = boolean
       addTypeConstraintForLiteralPrimitive(literal)
-
     } else if (typeof valueOfLiteral === 'string') {
       // declare
       literal.inferredType = {
@@ -42,7 +40,6 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
       // e.g. Given: 'hi'^T2, Set: T2 = string
       addTypeConstraintForLiteralPrimitive(literal)
-
     } else if (typeof valueOfLiteral === 'undefined') {
       // declare
       literal.inferredType = {
@@ -52,7 +49,6 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       literal.typability = 'Typed'
 
       addTypeConstraintForLiteralPrimitive(literal) // todo: undefined gives an object in type environment, handle properly
-
     }
   }
 
@@ -66,7 +62,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       updateTypeConstraints(lhsVariableId, rhsTypeEnvValue)
     }
 
-    // declare 
+    // declare
     // - not necessary since it itself is 'not a type'? e.g. 'x;' -> there's no type to x? - TBC
     // identifier.inferredType = {
     //   kind: '??',
@@ -92,7 +88,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     // if manage to pass step 3, means no type error
 
-    // declare 
+    // declare
     // - not necessary since no one is dependent on constantDeclaration's inferredType?? - TBC
     // - plus not sure what to put in 'kind' and 'name' also
     // constantDeclaration.inferredType = {
@@ -140,7 +136,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // e.g. Given: 1^T2, Set: T2 = number
     const lhsVariableId = (literal.typeVariable as Variable).id
     const rhsType = (literal.inferredType as Primitive).name
-    
+
     if (lhsVariableId !== undefined && rhsType !== undefined) {
       updateTypeConstraints(lhsVariableId, rhsType)
     }
