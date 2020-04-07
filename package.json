@@ -1,7 +1,8 @@
 {
   "name": "js-slang",
-  "version": "0.4.22",
+  "version": "0.4.23",
   "description": "Javascript-based implementations of Source, written in Typescript",
+  "keywords" : ["JavaScript", "interpreter", "compiler", "Source", "SICP"],
   "author": {
     "name": "Source Academy",
     "url": "https://github.com/source-academy/"
@@ -16,7 +17,8 @@
     "source-map": "^0.7.3",
     "jest-html-reporter": "^2.8.2",
     "@types/lodash.assignin": "^4.2.6",
-    "@types/lodash.clonedeep": "^4.5.6"
+    "@types/lodash.clonedeep": "^4.5.6",
+    "lodash": "^4.17.13"      
   },
   "main": "dist/index",
   "types": "dist/index",
