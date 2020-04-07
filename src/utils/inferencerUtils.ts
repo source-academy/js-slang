@@ -1,3 +1,7 @@
+import { TypeAnnotatedNode, Variable } from '../types'
+import * as es from 'estree'
+import { ancestor } from 'acorn-walk/dist/walk'
+
 const predefined = new Set([
   '-',
   '*',
@@ -89,4 +93,73 @@ export function printTypeEnvironment(typeEnvironment: Map<any, any>) {
     }
     console.log(`${key} = T${value}`)
   }
+}
+
+export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
+  function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
+    return `T${(node.typeVariable as Variable).id}`
+  }
+
+  function getExpressionString(node: TypeAnnotatedNode<es.Node>): string {
+    switch (node.type) {
+      case "Literal": {
+        return `${(node as es.Literal).raw}`
+      }
+      case "Identifier":
+        return (node as es.Identifier).name
+      case "BinaryExpression": {
+        node = node as es.BinaryExpression
+        const left = getExpressionString(node.left)
+        const right = getExpressionString(node.right)
+        const operator = node.operator
+        return `${left} ${operator} ${right}`
+      }
+      case "UnaryExpression": {
+        node = node as es.UnaryExpression
+        const operator = node.operator
+        const argument = getExpressionString(node.argument)
+        return `${operator}${argument}`
+      }
+      case "ArrowFunctionExpression": {
+        // TODO: figure out how to print annotation for arrow functions
+        // let res = "("
+        // for (const param in (node as es.ArrowFunctionExpression).params) {
+        //   res += getExpressionString(param)
+        // }
+          return ''
+      }
+      case "FunctionDeclaration": {
+
+      }
+      case "FunctionExpression": {
+
+      }
+      case "Identifier": {
+
+      }
+      case "LogicalExpression": {
+        
+      }
+      default:
+        return "This node type is not in Source !"
+    }
+  }
+
+  function printLiteral(literal: TypeAnnotatedNode<es.Literal>) {
+    console.log(`${getExpressionString(literal)}: T${getTypeVariableId(literal)}`)
+  }
+
+  function printConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
+    const id: TypeAnnotatedNode<es.Pattern> = declaration.id
+    console.log(`${(id as es.Identifier).name}: T${getTypeVariableId(id)}`)
+
+    if (declaration.init !== null && declaration.init !== undefined) {
+      const init: TypeAnnotatedNode<es.Expression> = declaration.init
+      console.log(`${(init}: T${getTypeVariableId(id)}`)
+    }
+  }
+  ancestor(program as es.Node, {
+    Literal: printLiteral,
+    VariableDeclarator: printConstantDeclaration,
+  })
 }

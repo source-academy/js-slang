@@ -44,7 +44,7 @@ function main() {
       if (err) {
         throw err
       }
-      startRepl(4, false, data)
+      startRepl(1, false, data)
     })
   } else {
     const chapter = process.argv.length > 2 ? parseInt(firstArg, 10) : 1
