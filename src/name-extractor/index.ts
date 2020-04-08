@@ -6,7 +6,8 @@ export interface NameDeclaration {
 }
 
 const KIND_FUNCTION = 'func'
-const KIND_LET = 'let'
+// const KIND_LET = 'let'
+const KIND_PARAM = 'param'
 
 function isDeclaration(node: es.Node): boolean {
   return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
@@ -199,8 +200,8 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
       return node.id && !isDummyName(node.id.name)
         ? [{ name: node.id.name, meta: KIND_FUNCTION }]
         : []
-    case 'Identifier':
-      return !isDummyName(node.name) ? [{ name: node.name, meta: KIND_LET }] : []
+    case 'Identifier': // Function/Arrow function param
+      return !isDummyName(node.name) ? [{ name: node.name, meta: KIND_PARAM }] : []
     default:
       return []
   }

@@ -164,8 +164,8 @@ test('Test accessing parameter names inside function', async () => {
   const expectedNames: NameDeclaration[] = [
     { name: 'foo2', meta: 'func' },
     { name: 'foo1', meta: 'func' },
-    { name: 'bar1', meta: 'let' },
-    { name: 'baz1', meta: 'let' }
+    { name: 'bar1', meta: 'param' },
+    { name: 'baz1', meta: 'param' }
   ]
   expect(extractedNames).toMatchObject(expectedNames)
   expect(extractedNames).not.toContain({ name: 'baz2', meta: 'const' })
@@ -313,7 +313,7 @@ test('Test that variable in if cannot be accessed outside if-statement', async (
   const [extractedNames] = await getNames(code, line, col)
   const expectedNames: NameDeclaration[] = [
     { name: 'foo', meta: 'func' },
-    { name: 'baz', meta: 'let' }
+    { name: 'baz', meta: 'param' }
   ]
   expect(extractedNames).toMatchObject(expectedNames)
 })
@@ -386,8 +386,8 @@ test('Test that declaration inside anonymous functions can be accessed in body',
   const col = 2
   const expectedNames: NameDeclaration[] = [
     { name: 'foo', meta: 'let' },
-    { name: 'bar1', meta: 'let' },
-    { name: 'bar2', meta: 'let' },
+    { name: 'bar1', meta: 'param' },
+    { name: 'bar2', meta: 'param' },
     { name: 'baz', meta: 'let' }
   ]
   const [extractedNames] = await getNames(code, line, col)
