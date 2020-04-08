@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt } from './parser/parser'
+import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -220,13 +220,12 @@ export function getAllOccurrencesInScope(
 }
 
 export async function getNames(code: string, line: number, col: number): Promise<any> {
-  const program = parse(code, createContext(), true)
+  const [program, comments] = parseForNames(code)
 
   if (!program) {
     return []
   }
-
-  return getProgramNames(program, { line, column: col })
+  return getProgramNames(program, comments, { line, column: col })
 }
 
 export async function runInContext(
