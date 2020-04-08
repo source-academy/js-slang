@@ -431,24 +431,17 @@ const ENV_TAG = -102
 const PREVIOUS_ENV_SLOT = 4
 const NIL = -1
 
-// expects number of env entries in A, previous env in D
+// expects number of env entries in A, previous env in B
 // changes A, B, C
 function NEW_ENVIRONMENT() {
   C = A
+  D = B
   A = ENV_TAG
   B = C + 5
   NEW()
   HEAP[RES + FIRST_CHILD_SLOT] = 5
   HEAP[RES + LAST_CHILD_SLOT] = 4 + C
   HEAP[RES + PREVIOUS_ENV_SLOT] = D
-}
-
-// expects env in A, by-how-many in B
-// changes A, B, C, D
-function EXTEND() {
-  D = A
-  A = B
-  NEW_ENVIRONMENT()
 }
 
 // expect operands to check equality for in C and D
@@ -502,16 +495,16 @@ function FUNCTION_CALL() {
     }
     INTERNAL_FUNCTION_CALL()
   } else {
-    // prep for EXTEND
-    A = HEAP[F + CLOSURE_ENV_SLOT]
+    // prep for new environment
+    B = HEAP[F + CLOSURE_ENV_SLOT]
     // A is now env to be extended
     H = HEAP[F + CLOSURE_FUNC_INDEX_SLOT]
     H = FUNC[H]
     // H is now the function header of the function to call
     I = H[FUNC_NUM_ARGS_OFFSET]
-    B = H[FUNC_ENV_SIZE_OFFSET]
-    // B is now the environment extension count
-    EXTEND() // after this, RES is new env
+    A = H[FUNC_ENV_SIZE_OFFSET]
+    // A is now the environment extension count
+    NEW_ENVIRONMENT() // after this, RES is new env
     E = RES
 
     // for varargs (-1), put all elements into an array. hacky implementation
@@ -582,7 +575,7 @@ function INTERNAL_FUNCTION_CALL() {
 }
 
 function SET_TO() {
-  TO = Math.ceil(Math.random() * TO_MAX)
+  TO = Math.ceil((0.5 + Math.random() * 0.5) * TO_MAX)
 }
 
 // debugging: show current heap
@@ -1086,9 +1079,9 @@ M[OpCodes.DUP] = () => {
 }
 
 M[OpCodes.NEWENV] = () => {
-  A = ENV
-  B = P[PC][NEWENV_NUM_ARGS_OFFSET] // lets keep number of arguments in G
-  EXTEND() // after this, RES is new env
+  B = ENV
+  A = P[PC][NEWENV_NUM_ARGS_OFFSET] // lets keep number of arguments in A
+  NEW_ENVIRONMENT() // after this, RES is new env
   ENV = RES
   PC = PC + 1
 }
@@ -1278,6 +1271,7 @@ M[OpCodes.EXECUTE] = () => {
     NEW_ENVIRONMENT()
     ENV = RES
     P = F[FUNC_CODE_OFFSET]
+    // enqueue to thread queue
     TQ.push([OS, ENV, 0, P, RTS, TOP_RTS])
   }
   ;[OS, ENV, PC, P, RTS, TOP_RTS] = G // restore state
@@ -1319,16 +1313,11 @@ function INITIALIZE() {
 
 // called during concurrent execution
 function RUN_INSTRUCTION() {
-  if (P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
+  if (TOP_RTS > -1 || P[PC][INS_OPCODE_OFFSET] !== OpCodes.RETG) {
     // execute normally
     if (M[P[PC][INS_OPCODE_OFFSET]] === undefined) {
       throw Error('unknown op-code: ' + P[PC][INS_OPCODE_OFFSET])
     }
-    M[P[PC][INS_OPCODE_OFFSET]]()
-    TO = TO - 1
-  } else if (TOP_RTS > -1) {
-    // Intercept RETG
-    // return from function
     M[P[PC][INS_OPCODE_OFFSET]]()
     TO = TO - 1
   } else if (TQ.length === 0) {
@@ -1347,12 +1336,14 @@ function TIMEOUT_THREAD() {
     SET_TO()
   } else {
     // timeout only if no other threads
+    // enqueue to thread queue
     TQ.push([OS, ENV, PC, P, RTS, TOP_RTS])
     SETUP_THREAD()
   }
 }
 
 function SETUP_THREAD() {
+  // dequeue from thread queue
   G = TQ.shift()
   ;[OS, ENV, PC, P, RTS, TOP_RTS] = G
   SET_TO()
