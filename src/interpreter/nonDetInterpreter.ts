@@ -12,11 +12,9 @@ import Closure from './closure'
 import RuntimeError = WebAssembly.RuntimeError
 import * as _ from 'lodash'
 
-
 class ReturnValue {
   constructor(public value: Value) {}
 }
-
 
 const createEnvironment = (
   closure: Closure,
@@ -119,7 +117,6 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
-
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const replaceEnvironment = (context: Context, environment: Environment) =>
   (context.runtime.environments[0] = environment)
@@ -198,15 +195,13 @@ function* getArgs(context: Context, call: es.CallExpression) {
   yield args
 }
 
-
 function* ambChoices(context: Context, call: es.CallExpression) {
   const contextSnapshot = _.cloneDeep(context)
-  for(const arg of call.arguments){
-    yield* evaluateNonDet(arg,context)
-    _.assignIn(context,_.cloneDeep(contextSnapshot))
+  for (const arg of call.arguments) {
+    yield* evaluateNonDet(arg, context)
+    _.assignIn(context, _.cloneDeep(contextSnapshot))
   }
 }
-
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
@@ -248,18 +243,17 @@ function* evaluateSequence(context: Context, sequence: es.Statement[]): Iterable
   } else {
     sequence.shift()
     for (const sequenceValue of sequenceValGenerator) {
-      console.log("evaluateSequence sequenceValue = "+sequenceValue)
+      console.log('evaluateSequence sequenceValue = ' + sequenceValue)
       if (sequenceValue instanceof ReturnValue) {
-        console.log("sequenceValue instanceof ReturnValue")
+        console.log('sequenceValue instanceof ReturnValue')
         yield sequenceValue
         continue
       }
       yield* evaluateSequence(context, sequence)
     }
-  sequence.unshift(statement) // restore the statement
+    sequence.unshift(statement) // restore the statement
   }
 }
-
 
 /**
  * WARNING: Do not use object literal shorthands, e.g.
@@ -455,6 +449,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 export function* evaluateNonDet(node: es.Node, context: Context) {
   // yield* visit(context, node)
+  if(!node){
+    return undefined
+  }
   const result = yield* evaluators[node.type](node, context)
   // yield* leave(context)
   return result

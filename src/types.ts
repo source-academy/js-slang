@@ -158,7 +158,7 @@ export interface Suspended {
   status: 'suspended'
   it: IterableIterator<Value>
   scheduler: Scheduler
-  context: Context,
+  context: Context
   value?: any
 }
 
