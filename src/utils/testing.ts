@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, EvaluationMethod, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -33,6 +33,7 @@ interface TestOptions {
   chapter?: number
   testBuiltins?: TestBuiltins
   native?: boolean
+  evaluationMethod?: EvaluationMethod
 }
 
 export function createTestContext({
@@ -44,7 +45,7 @@ export function createTestContext({
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, [], undefined, {
+      ...createContext(chapter, 'default', [], undefined, {
         rawDisplay: (str1, str2, externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
@@ -89,7 +90,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: 'interpreter'
+      executionMethod: 'interpreter',
+      evaluationMethod: options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
     })
   )
   if (options.native) {
@@ -97,7 +99,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(parsed, nativeTestContext.contextId, true).transpiled
+      transpiled = transpile(
+        parsed,
+        nativeTestContext.contextId,
+        true,
+        options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
+      ).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments
@@ -116,7 +123,9 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       nativeTestContext,
       await runInContext(code, nativeTestContext, {
         scheduler,
-        executionMethod: 'native'
+        executionMethod: 'native',
+        evaluationMethod:
+          options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
       })
     )
     const propertiesThatShouldBeEqual = [
@@ -178,9 +187,13 @@ export function snapshot(arg1?: any, arg2?: any): (testResult: TestResult) => Te
       expect(testResult).toMatchSnapshot(arg1!, arg2)
       return testResult
     }
-  } else {
+  } else if (arg1) {
     return testResult => {
       expect(testResult).toMatchSnapshot(arg1!)
+      return testResult
+    }
+  } else {
+    return testResult => {
       return testResult
     }
   }
@@ -204,6 +217,11 @@ export function expectDisplayResult(code: string, options: TestOptions = {}) {
       .then(snapshot('expectDisplayResult'))
       .then(testResult => testResult.displayResult!)
   ).resolves
+}
+
+// for use in concurrent testing
+export async function getDisplayResult(code: string, options: TestOptions = {}) {
+  return await testSuccess(code, options).then(testResult => testResult.displayResult!)
 }
 
 export function expectResult(code: string, options: TestOptions = {}) {

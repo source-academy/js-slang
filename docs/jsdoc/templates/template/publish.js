@@ -1,4 +1,5 @@
 // changed from default template by MH on 1/7/2019, see "MH" below
+// changed from previous template by JC on 29/3/2020, see "JC" below
 
 const doop = require('jsdoc/util/doop');
 const env = require('jsdoc/env');
@@ -386,7 +387,10 @@ function buildNav(members) {
             // turn the heading into a link so you can actually get to the global page
 	    // MH: 9/7/19: use the basename of the folder as heading
 	    // MH: 13/7/19: we turn "_" into " §", in order to have nice headings
-	    const displayName = path.basename(outdir).replace(/_/g, " §");
+	    // JC: 29/3/20: restrict above transformation to first "_"
+	    const symbolReplacedName = path.basename(outdir).replace(/_/, " §");
+	    // JC: 29/3/20: change all remaining "_" to " "
+	    const displayName = symbolReplacedName.replace(/_/g, " ");
 	    const link = `<a href=".">${displayName}</a>`;
             nav += `<h3>${linkto('global', 'Predeclared in '+ link)}</h3>`;
         }
@@ -617,10 +621,14 @@ exports.publish = (taffyData, opts, tutorials) => {
 
     // MH: 9/7/19: use the basename of the folder as heading
     let baseName = path.basename(outdir);
-    // MH: 9/7/19: print "Source..." if the folder is "source..." 
-    let capName = baseName.replace(/source/g, "Source");
     // MH: 13/7/19: turn "_" into " §", in order to have nice headings
-    const displayName = capName.replace(/_/g, " §");
+    // JC: 29/3/20: restrict above transformation to first "_"
+    const symbolReplacedName = baseName.replace(/_/, " §");
+    // JC: 29/3/20: change all remaining "_" to " ", then capitalize each word
+    const spacedName = symbolReplacedName.replace(/_/g, " ");
+    const displayName = spacedName.split(" ")
+                                  .map(s => s[0].toUpperCase() + s.slice(1))
+                                  .join(" ")
     const link = `<a href=".">${displayName}</a>`;    
     
     if (members.globals.length) { generate('Predeclared in '+ link, [{kind: 'globalobj'}], globalUrl); }

@@ -108,3 +108,7 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
 }
+
+export const isIdentifier = (node: any): node is es.Identifier => {
+  return (node as es.Identifier).name !== undefined
+}
