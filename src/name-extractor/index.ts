@@ -20,22 +20,37 @@ function isFunction(node: es.Node): boolean {
   )
 }
 
+// Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
   return name === '✖'
 }
 
-export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
+// Returns [suggestions, shouldPrompt].
+// Don't prompt if user is typing comments, declaring a variable or declaring function arguments
+export function getProgramNames(
+  prog: es.Node,
+  comments: acorn.Comment[],
+  cursorLoc: es.Position
+): [NameDeclaration[], boolean] {
   function before(first: es.Position, second: es.Position) {
     return first.line < second.line || (first.line === second.line && first.column <= second.column)
   }
 
-  function inNode(nodeLoc: es.SourceLocation | null | undefined) {
+  function cursorInLoc(nodeLoc: es.SourceLocation | null | undefined) {
     if (nodeLoc === null || nodeLoc === undefined) {
       return false
     }
     return before(nodeLoc.start, cursorLoc) && before(cursorLoc, nodeLoc.end)
   }
 
+  for (const comment of comments) {
+    if (cursorInLoc(comment.loc)) {
+      // User is typing comments
+      return [[], false]
+    }
+  }
+
+  // BFS to get names
   const queue: es.Node[] = [prog]
   const nameQueue: es.Node[] = []
 
@@ -47,7 +62,7 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
       nameQueue.push(node)
     }
 
-    if (inNode(node.loc)) {
+    if (cursorInLoc(node.loc)) {
       if (isFunction(node)) {
         // This is the only time we want to process raw identifiers
         nameQueue.push(...(node as any).params)
@@ -62,14 +77,21 @@ export function getProgramNames(prog: es.Node, cursorLoc: es.Position) {
     }
   }
 
+  for (const nameNode of nameQueue) {
+    if (cursorInIdentifier(nameNode, n => cursorInLoc(n.loc))) {
+      // User is declaring something
+      return [[], false]
+    }
+  }
+
   const res: any = {}
   nameQueue
-    .map(node => getNames(node, (n: es.Node) => !inNode(n.loc)))
+    .map(node => getNames(node, n => cursorInLoc(n.loc)))
     .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
     .forEach(decl => {
       res[decl.name] = decl
     }) // Deduplicate, ensure deeper declarations overwrite
-  return Object.values(res)
+  return [Object.values(res), true]
 }
 
 function getNodeChildren(node: es.Node): es.Node[] {
@@ -138,25 +160,47 @@ function getNodeChildren(node: es.Node): es.Node[] {
   }
 }
 
-function getNames(node: es.Node, test: (node: es.Node) => boolean): NameDeclaration[] {
+function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean): boolean {
+  switch (node.type) {
+    case 'VariableDeclaration':
+      for (const decl of node.declarations) {
+        if (locTest(decl.id)) {
+          return true
+        }
+      }
+      return false
+    case 'FunctionDeclaration':
+      return node.id ? locTest(node.id) : false
+    case 'Identifier':
+      return locTest(node)
+  }
+  return false
+}
+
+// locTest is a callback that returns whether cursor is in location of node
+function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
   switch (node.type) {
     case 'VariableDeclaration':
       const delcarations: NameDeclaration[] = []
       for (const decl of node.declarations) {
         const id = decl.id
         const name = (id as es.Identifier).name
-        if (!test(id) || !name || isDummyName(name)) {
+        if (
+          !name ||
+          isDummyName(name) ||
+          (decl.init && !isFunction(decl.init) && locTest(decl.init)) // Avoid suggesting `let foo = foo`, but suggest recursion with arrow functions
+        ) {
           continue
         }
         delcarations.push({ name, meta: node.kind })
       }
       return delcarations
     case 'FunctionDeclaration':
-      return node.id && test(node.id) && !isDummyName(node.id.name)
+      return node.id && !isDummyName(node.id.name)
         ? [{ name: node.id.name, meta: KIND_FUNCTION }]
         : []
     case 'Identifier':
-      return test(node) && !isDummyName(node.name) ? [{ name: node.name, meta: KIND_LET }] : []
+      return !isDummyName(node.name) ? [{ name: node.name, meta: KIND_LET }] : []
     default:
       return []
   }
