@@ -99,44 +99,29 @@ function prompt(s) {
 }
 
 /**
- * Displays the value <CODE>v</CODE> in the console. The notation used for the display of values 
- * is consistent with <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, but also displays <CODE>undefined</CODE> and function objects.
- * See also <a href="https://sicp.comp.nus.edu.sg/chapters/17#footnote-6">textbook example</a>.
- * @param {value} v to be displayed
- * @returns {value} v, the argument value
- */
-function display(v) {
-}
-
-/**
- * Displays the given string <CODE>s</CODE>, followed by a space character, followed by the
- * value <CODE>v</CODE> in the console. The notation used for the display of values 
+ * Optional second argument. If present, 
+ * displays the given string <CODE>s</CODE>, followed by a space character, followed by the
+ * value <CODE>v</CODE> in the console. 
+ * If second argument not present, 
+ * just displays the value <CODE>v</CODE> in the console.
+ * The notation used for the display of values 
  * is consistent with 
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
  * but also displays <CODE>undefined</CODE> and function objects.
  * @param {value} v to be displayed
- * @param {string} s to be displayed, preceding <CODE>v</CODE>
+ * @param {string} s to be displayed, preceding <CODE>v</CODE>, optional argument
  * @returns {value} v, the first argument value
  */
 function display(v, s) {
 }
 
 /**
- * Displays the value <CODE>v</CODE> in the console with error flag. 
- * The evaluation
- * of any call of <CODE>error</CODE> aborts the running program immediately.
- * The notation used for the display of values 
- * is consistent with <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, but also displays <CODE>undefined</CODE> and function objects.
- * See also <a href="https://sicp.comp.nus.edu.sg/chapters/21#footnote-3">textbook example</a>.
- * @param {value} v to be displayed
- * @returns {value} v, the argument value
- */
-function error(v) {
-}
-
-/**
- * Displays the given string <CODE>s</CODE>, followed by a space character, followed by the
+ * Optional second argument.
+ * If present, 
+ * displays the given string <CODE>s</CODE>, followed by a space character, followed by the
  * value <CODE>v</CODE> in the console with error flag. 
+ * If second argument not present, 
+ * just displays the value <CODE>v</CODE> in the console with error flag.
  * The evaluation
  * of any call of <CODE>error</CODE> aborts the running program immediately.
  * The notation used for the display of values 
