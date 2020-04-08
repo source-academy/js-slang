@@ -990,16 +990,16 @@ function transformForLoopsToWhileLoops(program: es.Program) {
         const innerBlock = create.blockStatement([
           create.constantDeclaration(
             loopVarName,
-            create.identifier('_copy_of_loop_control_var') // purposely long to reduce unintentional clash
+            create.identifier('copy-of-loop-control-var') // purposely long to reduce unintentional clash
           ),
           body
         ])
         // rename the loop control variable to access it from the for loop expressions
-        renameLoopControlVar(node as es.ForStatement, loopVarName, '_loop_control_var')
+        renameLoopControlVar(node as es.ForStatement, loopVarName, 'loop-control-var')
         forLoopBody = create.blockStatement([
           create.constantDeclaration(
-            '_copy_of_loop_control_var',
-            create.identifier('_loop_control_var')
+            'copy-of-loop-control-var',
+            create.identifier('loop-control-var')
           ),
           innerBlock
         ])
