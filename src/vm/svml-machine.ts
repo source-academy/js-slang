@@ -1112,7 +1112,7 @@ M[OpCodes.NEWCV] = () => {
   PC = PC + 1
 }
 
-// all opcodes from here onwards are custom to this implementation (3.4)
+// all opcodes from here onwards are custom to this implementation (3 Concurrent)
 M[OpCodes.ARRAY_LEN] = () => {
   POP_OS()
   A = HEAP[RES + ARRAY_SIZE_SLOT]
@@ -1267,7 +1267,7 @@ M[OpCodes.EXECUTE] = () => {
     NEW_OS()
     OS = RES
     A = F[FUNC_ENV_SIZE_OFFSET]
-    D = HEAP[H + CLOSURE_ENV_SLOT]
+    B = HEAP[H + CLOSURE_ENV_SLOT]
     NEW_ENVIRONMENT()
     ENV = RES
     P = F[FUNC_CODE_OFFSET]
@@ -1304,7 +1304,7 @@ function INITIALIZE() {
   NEW_OS()
   OS = RES
   A = D[FUNC_ENV_SIZE_OFFSET]
-  D = NIL
+  B = NIL
   NEW_ENVIRONMENT()
   ENV = RES
   GLOBAL_ENV = ENV
@@ -1332,7 +1332,7 @@ function RUN_INSTRUCTION() {
 function TIMEOUT_THREAD() {
   if (TQ.length === 0) {
     // if no other threads, no need to timeout
-    // differ from 3.4 spec: to reduce overhead
+    // differ from Source 3 Concurrent spec: to reduce overhead
     SET_TO()
   } else {
     // timeout only if no other threads
@@ -1383,7 +1383,7 @@ function run(): any {
   POP_OS()
   // show_heap_value(RES)
   // return convertToJsFormat(RES)
-  // Source 3.4 programs do not return anything.
+  // Source 3 Concurrent programs do not return anything.
   return undefined
 }
 

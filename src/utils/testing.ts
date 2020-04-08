@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, EvaluationMethod, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, EvaluationMethod, SourceError, Value, Variant } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -31,6 +31,7 @@ interface TestResult {
 interface TestOptions {
   context?: TestContext
   chapter?: number
+  variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
   evaluationMethod?: EvaluationMethod
@@ -39,13 +40,19 @@ interface TestOptions {
 export function createTestContext({
   context,
   chapter = 1,
+  variant = 'default',
   testBuiltins = {}
-}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
+}: {
+  context?: TestContext
+  chapter?: number
+  variant?: Variant
+  testBuiltins?: TestBuiltins
+} = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, 'default', [], undefined, {
+      ...createContext(chapter, variant, [], undefined, {
         rawDisplay: (str1, str2, externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1

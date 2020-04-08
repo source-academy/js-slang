@@ -9,7 +9,7 @@ import {
   CONSTANT_PRIMITIVES,
   INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
-import { Context } from '../types'
+import { Context, Variant } from '../types'
 import { parse } from '../parser/parser'
 import OpCodes from './opcodes'
 
@@ -53,7 +53,7 @@ export type Program = [
   SVMFunction[]
 ]
 
-let chapter = 3
+let variant = 'default'
 
 // Array of function headers in the compiled program
 let SVMFunctions: SVMFunction[] = []
@@ -135,7 +135,7 @@ function makeIndexTableWithPrimitivesAndInternals(): Map<string, EnvEntry>[] {
     const name = PRIMITIVE_FUNCTION_NAMES[i]
     names.set(name, { index: i, isVar: false, type: 'primitive' })
   }
-  if (chapter === 3.4) {
+  if (variant === 'concurrent') {
     for (let i = 0; i < INTERNAL_FUNCTIONS.length; i++) {
       const name = INTERNAL_FUNCTIONS[i][0]
       names.set(name, { index: i, isVar: false, type: 'internal' })
@@ -531,8 +531,8 @@ const compilers = {
   },
 
   // Three types of calls, normal function calls declared by the Source program,
-  // primitive function calls that are predefined, and concurrent constructs only available in
-  // Source 3.4. We differentiate them with callType.
+  // primitive function calls that are predefined, and internal calls.
+  // We differentiate them with callType.
   CallExpression(
     node: es.Node,
     indexTable: Map<string, EnvEntry>[],
@@ -929,12 +929,12 @@ export function compileWithPrelude(program: es.Program, context: Context) {
   const prelude = compileToIns(parse(vmPrelude, context)!)
   generatePrimitiveFunctionCode(prelude)
 
-  return compileToIns(program, context.chapter, prelude)
+  return compileToIns(program, context.variant, prelude)
 }
 
 export function compileToIns(
   program: es.Program,
-  runChapter: number = 3,
+  runVariant: Variant = 'default',
   prelude?: Program
 ): Program {
   // reset variables
@@ -943,7 +943,7 @@ export function compileToIns(
   toCompile = []
   loopTracker = []
   toplevel = true
-  chapter = runChapter
+  variant = runVariant
 
   transformForLoopsToWhileLoops(program)
   const locals = extractAndRenameNames(program, new Map<string, EnvEntry>())
