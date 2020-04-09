@@ -80,6 +80,7 @@ export function annotateProgram(program: es.Program): es.Program {
 
   function annotateFunctionApplication(functionApplication: TypeAnnotatedNode<es.CallExpression>) {
     functionApplication.arguments.forEach(argument => annotateNode(argument, true))
+    annotateNode(functionApplication.callee)
     annotateNode(functionApplication)
   }
 
