@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
-import { createContext, IOptions, parseError, runInContext } from '../index'
+import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
 import { EvaluationMethod, ExecutionMethod } from '../types'
 import Closure from '../interpreter/closure'
 
@@ -14,25 +14,25 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
-
-  let context: any;
-  let options: Partial<IOptions>;
+  let lastResult: Result;
+  let context: any
+  let options: Partial<IOptions>
   if (chapter === 43) {
-    context = createContext(2);
+    context = createContext(2)
     options = {
       scheduler: 'nondet',
       executionMethod,
       evaluationMethod,
       useSubst
-    };
+    }
   } else {
-    context = createContext(chapter);
+    context = createContext(chapter)
     options = {
       scheduler: 'preemptive',
       executionMethod,
       evaluationMethod,
       useSubst
-    };
+    }
   }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
@@ -44,13 +44,24 @@ function startRepl(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
-            runInContext(cmd, context, options).then(obj => {
-              if (obj.status === 'finished' || obj.status === 'suspend-nondet') {
-                callback(null, obj.value)
-              } else {
-                callback(new Error(parseError(context.errors)), undefined)
-              }
-            })
+            if(cmd.trim() === 'try_again();') {
+              (resume(lastResult) as Promise<Result>).then(obj2 => {
+                if (obj2.status === 'finished' || obj2.status === 'suspend-nondet') {
+                  callback(null, obj2.value)
+                } else {
+                  callback(new Error(parseError(context.errors)), undefined)
+                }
+              });
+            } else{
+              runInContext(cmd, context, options).then(obj => {
+                if (obj.status === 'finished' || obj.status === 'suspend-nondet') {
+                  lastResult = obj;
+                  callback(null, obj.value)
+                } else {
+                  callback(new Error(parseError(context.errors)), undefined)
+                }
+              })
+            }
           },
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash

@@ -449,7 +449,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 export function* evaluateNonDet(node: es.Node, context: Context) {
   // yield* visit(context, node)
-  if(!node){
+  if (!node) {
     return undefined
   }
   const result = yield* evaluators[node.type](node, context)
