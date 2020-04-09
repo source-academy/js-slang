@@ -1,3 +1,7 @@
+import { TypeAnnotatedNode, Variable } from '../types'
+import * as es from 'estree'
+import { ancestor } from 'acorn-walk/dist/walk'
+
 const predefined = new Set([
   '-',
   '*',
@@ -76,6 +80,7 @@ export function printTypeConstraints(typeContraints: Map<number, number | string
   for (const [key, value] of typeContraints) {
     console.log(`T${key} = T${value}`)
   }
+  console.log("\n");
 }
 
 export function printTypeEnvironment(typeEnvironment: Map<any, any>) {
@@ -89,4 +94,126 @@ export function printTypeEnvironment(typeEnvironment: Map<any, any>) {
     }
     console.log(`${key} = T${value}`)
   }
+}
+
+export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
+  function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
+    return `T${(node.typeVariable as Variable).id}`
+  }
+
+  function getExpressionString(node: TypeAnnotatedNode<es.Node>): string {
+    switch (node.type) {
+      case "Literal": {
+        return `${(node as es.Literal).raw}`
+      }
+      case "Identifier": {
+        return (node as es.Identifier).name
+      }
+      case "BinaryExpression": {
+        node = node as es.BinaryExpression
+        const left = getExpressionString(node.left)
+        const right = getExpressionString(node.right)
+        const operator = node.operator
+        return `${left} ${operator} ${right}`
+      }
+      case "UnaryExpression": {
+        node = node as es.UnaryExpression
+        const operator = node.operator
+        const argument = getExpressionString(node.argument)
+        return `${operator}${argument}`
+      }
+      case "ArrowFunctionExpression": {
+        // Arrow function expressions may not always have an identifier, so they are represented by a type variable
+        return getTypeVariableId(node)
+      }
+      case "FunctionDeclaration": {
+        return getExpressionString(node.id as es.Identifier)
+      }
+      case "LogicalExpression": {
+        node = node as es.LogicalExpression
+        const left = getExpressionString(node.left)
+        const right = getExpressionString(node.right)
+        const operator = node.operator
+        return `${left} ${operator} ${right}`
+      }
+      case "CallExpression": {
+        node = node as es.CallExpression
+        const callee = getExpressionString(node.callee)
+        let params = "("
+        for (const argument of node.arguments) {
+          params += getExpressionString(argument) + ", "
+        }
+        // remove last comma
+        params = params.replace(/,\s*$/, "");
+        params += ")"
+        return `${callee}${params}`
+      }
+      default:
+        return "This node type is not in Source 1"
+    }
+  }
+
+  function printLiteral(literal: TypeAnnotatedNode<es.Literal>) {
+    console.log(`${getExpressionString(literal)}: ${getTypeVariableId(literal)}`)
+  }
+
+  function printConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
+    const id: TypeAnnotatedNode<es.Pattern> = declaration.id
+    console.log(`${(id as es.Identifier).name}: ${getTypeVariableId(id)}`)
+  }
+
+  function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
+    console.log(`${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}`)
+  }
+
+  function printFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
+    let res = "("
+    for (const param of (functionDeclaration as es.FunctionDeclaration).params) {
+      res += getTypeVariableId(param) + ", "
+    }
+    // remove last comma
+    res = res.replace(/,\s*$/, "");
+    res += ") => "
+    const result = (functionDeclaration as es.FunctionDeclaration).body
+    res += getTypeVariableId(result)
+    console.log(`${getExpressionString(functionDeclaration)}: ${res}`)
+  }
+
+  function printFunctionDefinition(functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>) {
+    let res = "("
+    for (const param of (functionDefinition as es.ArrowFunctionExpression).params) {
+      res += getTypeVariableId(param) + ", "
+    }
+    // remove last comma
+    res = res.replace(/,\s*$/, "");
+    res += ") => "
+    const result = (functionDefinition as es.ArrowFunctionExpression).body
+    res += getTypeVariableId(result)
+    console.log(`${getTypeVariableId(functionDefinition)}: ${res}`)
+  }
+
+  function printBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
+    console.log(`${getExpressionString(binaryExpression)}: ${getTypeVariableId(binaryExpression)}`)
+  }
+
+  function printLogicalExpression(logicalExpression: TypeAnnotatedNode<es.LogicalExpression>) {
+    console.log(`${getExpressionString(logicalExpression)}: ${getTypeVariableId(logicalExpression)}`)
+  }
+
+  function printFunctionCalls(functionCall: TypeAnnotatedNode<es.CallExpression>) {
+    console.log(`${getExpressionString(functionCall)}: ${getTypeVariableId(functionCall)}`)
+  }
+
+  console.log("Initial Type Annotations:")
+  ancestor(program as es.Node, {
+    Literal: printLiteral,
+    VariableDeclarator: printConstantDeclaration,
+    UnaryExpression: printUnaryExpression,
+    BinaryExpression: printBinaryExpression,
+    LogicalExpression: printLogicalExpression,
+    FunctionDeclaration: printFunctionDeclaration,
+    ArrowFunctionExpression: printFunctionDefinition,
+    CallExpression: printFunctionCalls,
+  })
+  console.log("\n");
 }
