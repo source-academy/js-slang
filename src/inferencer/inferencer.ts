@@ -113,10 +113,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     // Update type constraints in constraintStore
     // e.g. Given: (x^T1 * 1^T2)^T3, Set: T1 = number, T2 = number, T3 = number
-    const arg1 = binaryExpression.left  as TypeAnnotatedNode<es.Node>  // can be identifier or literal or something else?
-    const arg1VariableId = (arg1.typeVariable  as Variable).id
-    const arg2 = binaryExpression.right  as TypeAnnotatedNode<es.Node>  // can be identifier or literal or something else?
-    const arg2VariableId = (arg2.typeVariable  as Variable).id
+    const arg1 = binaryExpression.left as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
+    const arg1VariableId = (arg1.typeVariable as Variable).id
+    const arg2 = binaryExpression.right as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
+    const arg2VariableId = (arg2.typeVariable as Variable).id
     const resultVariableId = (binaryExpression.typeVariable as Variable).id
 
     if (arg1VariableId !== undefined && argType1 !== undefined) {
@@ -130,7 +130,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (resultVariableId !== undefined && resultType !== undefined) {
       updateTypeConstraints(resultVariableId, resultType)
     }
-  
+
     // declare
     // binaryExpression.inferredType = {
     //   kind : 'primitive',
