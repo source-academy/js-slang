@@ -82,6 +82,12 @@ export function annotateProgram(program: es.Program): es.Program {
     functionApplication.arguments.forEach(argument => annotateNode(argument, true))
   }
 
+  function annotateReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatement>) {
+    if (returnStatement.argument !== undefined) {
+      annotateNode((returnStatement.argument as TypeAnnotatedNode<es.Node>))
+    }
+  }
+
   ancestor(program as es.Node, {
     Literal: annotateLiteral,
     VariableDeclarator: annotateConstantDeclaration,
@@ -91,8 +97,8 @@ export function annotateProgram(program: es.Program): es.Program {
     UnaryExpression: annotateUnaryExpression,
     FunctionDeclaration: annotateFunctionDeclaration,
     ArrowFunctionExpression: annotateFunctionDefinitions,
-    CallExpression: annotateFunctionApplication
+    CallExpression: annotateFunctionApplication,
+    ReturnStatement: annotateReturnStatement,
   })
-
   return program
 }
