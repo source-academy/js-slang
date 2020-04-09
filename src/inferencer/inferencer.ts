@@ -57,8 +57,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // e.g. Given: x^T2, Set: T2 = Γ[x]
     const lhsVariableId = (identifier.typeVariable as Variable).id
     const lhsName = identifier.name
+    console.log('-- Processing: ' + lhsName + '^' + lhsVariableId)
     const rhsTypeEnvValue = primitiveMap.get(lhsName)
     if (lhsVariableId !== undefined && rhsTypeEnvValue !== undefined) {
+      console.log('-- Adding constraint: ' + lhsVariableId + ' = ' + rhsTypeEnvValue)
       updateTypeConstraints(lhsVariableId, rhsTypeEnvValue)
     }
 
@@ -98,17 +100,45 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // constantDeclaration.typability = 'Typed'
   }
 
-  // function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
-  //   // get result type of binary expression from type environment
-  //   // const resultType = ...;
-  //
-  //   // declare
-  //   binaryExpression.inferredType = {
-  //     kind : 'primitive',
-  //     name: resultType
-  //   }
-  //   binaryExpression.typability = 'Typed'
-  // }
+  function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
+    // Given operator, get arg and result types of binary expression from type env
+    const operator = binaryExpression.operator
+    const typeEnvObj = primitiveMap.get(operator)
+    const argType1 = typeEnvObj.types[0].argumentTypes[0]
+    const argType2 = typeEnvObj.types[0].argumentTypes[2]
+    const resultType = typeEnvObj.types[0].resultType
+
+    // Todo
+    // Note special cases: + (and -?) and others?
+
+    // Update type constraints in constraintStore
+    // e.g. Given: (x^T1 * 1^T2)^T3, Set: T1 = number, T2 = number, T3 = number
+    const arg1 = binaryExpression.left  as TypeAnnotatedNode<es.Node>  // can be identifier or literal or something else?
+    const arg1VariableId = (arg1.typeVariable  as Variable).id
+    const arg2 = binaryExpression.right  as TypeAnnotatedNode<es.Node>  // can be identifier or literal or something else?
+    const arg2VariableId = (arg2.typeVariable  as Variable).id
+    const resultVariableId = (binaryExpression.typeVariable as Variable).id
+
+    if (arg1VariableId !== undefined && argType1 !== undefined) {
+      updateTypeConstraints(arg1VariableId, argType1)
+    }
+
+    if (arg2VariableId !== undefined && argType2 !== undefined) {
+      updateTypeConstraints(arg2VariableId, argType2)
+    }
+
+    if (resultVariableId !== undefined && resultType !== undefined) {
+      updateTypeConstraints(resultVariableId, resultType)
+    }
+  
+    // declare
+    // binaryExpression.inferredType = {
+    //   kind : 'primitive',
+    //   name: resultType
+    // }
+    // binaryExpression.typability = 'Typed'
+  }
+
   // function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
   //   // get argumentTypes
   //   var argumentTypes = [];
@@ -156,8 +186,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   ancestor(program as es.Node, {
     Literal: inferLiteral,
     Identifier: inferIdentifier,
-    VariableDeclaration: inferConstantDeclaration // Source 1 only has constant declaration
-    // BinaryExpression: inferBinaryExpression
+    VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
+    BinaryExpression: inferBinaryExpression
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
