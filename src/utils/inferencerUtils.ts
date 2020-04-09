@@ -141,8 +141,10 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         const callee = getExpressionString(node.callee)
         let params = "("
         for (const argument of node.arguments) {
-          params += getExpressionString(argument)
+          params += getExpressionString(argument) + ", "
         }
+        // remove last comma
+        params = params.replace(/,\s*$/, "");
         params += ")"
         return `${callee}${params}`
       }
@@ -167,8 +169,10 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   function printFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
     let res = "("
     for (const param of (functionDeclaration as es.FunctionDeclaration).params) {
-      res += getTypeVariableId(param)
+      res += getTypeVariableId(param) + ", "
     }
+    // remove last comma
+    res = res.replace(/,\s*$/, "");
     res += ") => "
     const result = (functionDeclaration as es.FunctionDeclaration).body
     res += getTypeVariableId(result)
@@ -178,8 +182,10 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   function printFunctionDefinition(functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>) {
     let res = "("
     for (const param of (functionDefinition as es.ArrowFunctionExpression).params) {
-      res += getTypeVariableId(param)
+      res += getTypeVariableId(param) + ", "
     }
+    // remove last comma
+    res = res.replace(/,\s*$/, "");
     res += ") => "
     const result = (functionDefinition as es.ArrowFunctionExpression).body
     res += getTypeVariableId(result)
