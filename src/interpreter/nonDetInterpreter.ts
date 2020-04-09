@@ -243,9 +243,9 @@ function* evaluateSequence(context: Context, sequence: es.Statement[]): Iterable
   } else {
     sequence.shift()
     for (const sequenceValue of sequenceValGenerator) {
-      console.log('evaluateSequence sequenceValue = ' + sequenceValue)
+      // console.log('evaluateSequence sequenceValue = ' + sequenceValue)
       if (sequenceValue instanceof ReturnValue) {
-        console.log('sequenceValue instanceof ReturnValue')
+        // console.log('sequenceValue instanceof ReturnValue')
         yield sequenceValue
         continue
       }

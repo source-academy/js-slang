@@ -14,12 +14,25 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
-  const context = createContext(chapter)
-  const options: Partial<IOptions> = {
-    scheduler: 'preemptive',
-    executionMethod,
-    evaluationMethod,
-    useSubst
+
+  let context: any;
+  let options: Partial<IOptions>;
+  if (chapter === 43) {
+    context = createContext(2);
+    options = {
+      scheduler: 'nondet',
+      executionMethod,
+      evaluationMethod,
+      useSubst
+    };
+  } else {
+    context = createContext(chapter);
+    options = {
+      scheduler: 'preemptive',
+      executionMethod,
+      evaluationMethod,
+      useSubst
+    };
   }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
@@ -32,7 +45,7 @@ function startRepl(
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
             runInContext(cmd, context, options).then(obj => {
-              if (obj.status === 'finished') {
+              if (obj.status === 'finished' || obj.status === 'suspend-nondet') {
                 callback(null, obj.value)
               } else {
                 callback(new Error(parseError(context.errors)), undefined)

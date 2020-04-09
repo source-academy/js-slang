@@ -41,12 +41,12 @@ export class NonDetScheduler implements Scheduler {
       context.runtime.isRunning = true
       try {
         const itValue = it.next()
-        console.log('it value = ', itValue.value)
+        // console.log('it value = ', itValue.value)
         if (itValue.done) {
           resolve({ status: 'finished', context, value: itValue.value })
         } else {
           resolve({
-            status: 'suspended',
+            status: 'suspend-nondet',
             it,
             scheduler: this,
             context,

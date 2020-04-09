@@ -161,8 +161,15 @@ export interface Suspended {
   context: Context
   value?: any
 }
+export interface SuspendedNonDet {
+  status: 'suspend-nondet'
+  it: IterableIterator<Value>
+  scheduler: Scheduler
+  context: Context
+  value?: any
+}
 
-export type Result = Suspended | Finished | Error
+export type Result = Suspended | Finished | Error | SuspendedNonDet
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
