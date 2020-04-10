@@ -75,10 +75,30 @@ const predefined = new Set([
   'undefined'
 ])
 
-export function printTypeConstraints(typeContraints: Map<number, number | string>) {
+function printType(type: Type): string {
+  switch (type.kind) {
+    case "primitive":
+      return type.name
+    case "variable":
+      return `T${type.id}`
+    case "function":
+      let params = ""
+      for (const argument of type.parameterTypes) {
+        params += printType(argument) + ", "
+      }
+      // remove last comma
+      params = params.replace(/,\s*$/, "");
+      const returnType = printType(type.returnType)
+      return `(${params}) => ${returnType}`
+    default:
+      return "Not included in Source 1!"
+  }
+}
+
+export function printTypeConstraints(typeContraints: Map<number, Type>) {
   console.log('Printing Type Constraints')
   for (const [key, value] of typeContraints) {
-    console.log(`T${key} = T${value}`)
+    console.log(`T${key} = ${printType(value)}`)
   }
   console.log("\n");
 }
