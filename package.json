@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.26",
+  "version": "0.4.27",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords" : ["JavaScript", "interpreter", "compiler", "Source", "SICP"],
   "author": {
@@ -56,7 +56,7 @@
     "@types/node": "^13.7.0",
     "coveralls": "^3.0.2",
     "escodegen": "^1.14.1",
-    "husky": "^2.3.0",
+    "husky": "^4.2.5",
     "jsdoc": "3.6.3",
     "jest": "^25.2.7",
     "jest-html-reporter": "^2.8.2",
