@@ -255,7 +255,7 @@ export async function runInContext(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-  if (context.chapter === 3.4) {
+  if (context.variant === 'concurrent') {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
