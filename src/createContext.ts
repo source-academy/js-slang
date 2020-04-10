@@ -64,7 +64,6 @@ export const createEmptyContext = <T>(
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto',
-    evaluationMethod: 'strict',
     variant
   }
 }
