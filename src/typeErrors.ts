@@ -1,5 +1,6 @@
+// TODO delete this
 import * as es from 'estree'
-import { TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from './types'
+import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from './types'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
@@ -31,5 +32,11 @@ export class InternalTypeError extends Error {
   // }
   constructor(public message: string) {
     super()
+  }
+}
+
+export class UnifyError extends InternalTypeError {
+  constructor(public LHS: Type, public RHS: Type) {
+    super('Failed to unify types')
   }
 }

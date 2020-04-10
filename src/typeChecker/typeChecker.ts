@@ -8,10 +8,12 @@ import {
   ForAll,
   Type,
   FunctionType,
-  TypeAnnotatedFuncDecl
+  TypeAnnotatedFuncDecl,
+  SourceError
 } from '../types'
-import { TypeError, InternalTypeError } from '../typeErrors'
+import { TypeError, InternalTypeError, UnifyError } from '../typeErrors'
 import { typeToString } from '../utils/stringify'
+import { ConsequentAlternateMismatchError, InvalidTestConditionError } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -163,14 +165,14 @@ function cloneEnv(env: Env) {
 }
 
 type Constraint = [Variable, Type]
-let typeErrors: TypeError[] = []
+let typeErrors: SourceError[] = []
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
  */
 export function typeCheck(
   program: TypeAnnotatedNode<es.Program>
-): [TypeAnnotatedNode<es.Program>, TypeError[]] {
+): [TypeAnnotatedNode<es.Program>, SourceError[]] {
   typeIdCounter = 0
   typeErrors = []
   const env: Env = new Map(initialEnv)
@@ -465,7 +467,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
   } else {
-    throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
+    // throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
+    throw new UnifyError(LHS, RHS)
   }
 }
 
@@ -503,10 +506,10 @@ function infer(
   try {
     return _infer(node, env, constraints, isLastStatementInBlock)
   } catch (e) {
-    if (isInternalTypeError(e)) {
-      typeErrors.push(new TypeError(node, e.message))
-      return constraints
-    }
+    // if (isInternalTypeError(e)) {
+    //   typeErrors.push(new TypeError(node, e.message))
+    //   return constraints
+    // }
     throw e
   }
 }
@@ -677,19 +680,31 @@ function _infer(
     case 'IfStatement': {
       const testNode = node.test as TypeAnnotatedNode<es.Node>
       const testType = testNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [testType, tBool])
       const consNode = node.consequent as TypeAnnotatedNode<es.Node>
       const consType = consNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [testType, tBool])
       newConstraints = addToConstraintList(newConstraints, [storedType, consType])
       const altNode = node.alternate as TypeAnnotatedNode<es.Node>
       if (altNode) {
         const altType = altNode.inferredType as Variable
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       }
-      newConstraints = infer(testNode, env, newConstraints)
+      try {
+        newConstraints = infer(testNode, env, newConstraints)
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+        }
+      }
       newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
       if (altNode) {
-        newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
+        try {
+          newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
+          }
+        }
       }
       return newConstraints
     }

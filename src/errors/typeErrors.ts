@@ -145,4 +145,3 @@ export class ConsequentAlternateMismatchError implements SourceError {
     return this.explain()
   }
 }
-
