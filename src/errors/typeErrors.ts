@@ -6,6 +6,30 @@ import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
 
+
+export class DifferentNumberArgumentsError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.Node>,
+    public numExpectedArgs: number,
+    public numReceived: number
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+      return `Function expected ${this.numExpectedArgs} args, but got ${this.numReceived}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+
+}
 export class InvalidArgumentTypesError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
@@ -85,6 +109,8 @@ function formatIf(node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpress
   }
   return { ifString, type }
 }
+
+
 
 export class InvalidTestConditionError implements SourceError {
   public type = ErrorType.TYPE

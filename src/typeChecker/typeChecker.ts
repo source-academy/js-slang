@@ -11,9 +11,9 @@ import {
   TypeAnnotatedFuncDecl,
   SourceError
 } from '../types'
-import { TypeError, InternalTypeError, UnifyError } from '../typeErrors'
+import { TypeError, InternalTypeError, UnifyError, InternalDifferentNumberArgumentsError } from '../typeErrors'
 import { typeToString } from '../utils/stringify'
-import { ConsequentAlternateMismatchError, InvalidTestConditionError } from '../errors/typeErrors'
+import { ConsequentAlternateMismatchError, InvalidTestConditionError, DifferentNumberArgumentsError } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -455,7 +455,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
-      throw Error(`Expected ${LHS.parameterTypes.length} args, got ${RHS.parameterTypes.length}`)
+      // throw Error(`Expected ${LHS.parameterTypes.length} args, got ${RHS.parameterTypes.length}`)
+      throw new InternalDifferentNumberArgumentsError(LHS.parameterTypes.length, RHS.parameterTypes.length)
     }
     let newConstraints = constraints
     for (let i = 0; i < LHS.parameterTypes.length; i++) {
@@ -753,8 +754,15 @@ function _infer(
       const argNodes = node.arguments as TypeAnnotatedNode<es.Node>[]
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
-      let newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
-      newConstraints = infer(calleeNode, env, newConstraints)
+      let newConstraints = constraints
+      newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
+      try {
+        newConstraints = infer(calleeNode, env, newConstraints)
+      } catch(e) {
+        if (e instanceof InternalDifferentNumberArgumentsError) {
+          typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
+        }
+      }
       argNodes.forEach(argNode => {
         newConstraints = infer(argNode, env, newConstraints)
       })

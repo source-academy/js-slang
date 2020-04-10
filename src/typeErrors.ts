@@ -40,3 +40,15 @@ export class UnifyError extends InternalTypeError {
     super('Failed to unify types')
   }
 }
+
+export class InternalDifferentNumberArgumentsError extends InternalTypeError {
+  constructor(public numExpectedArgs: number, public numReceived: number) {
+    super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
+  }
+}
+
+export class InternalInvalidArgumentTypesError extends InternalTypeError {
+  constructor(public expectedTypes: Type[], receivedTypes: Type[]) {
+    super('Failed to unify types')
+  }
+}
