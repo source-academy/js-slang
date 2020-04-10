@@ -163,6 +163,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   }
 
   function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
+    console.log(`${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(unaryExpression.argument)}`)
     console.log(`${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}`)
   }
 
