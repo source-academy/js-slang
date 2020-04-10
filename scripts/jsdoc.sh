@@ -2,7 +2,7 @@
 
 JSDOC="node_modules/.bin/jsdoc"
 TMPL="docs/jsdoc/templates/template"
-SRC="../cadet-frontend/public"
+SRC="docs/lib"
 DST="docs/source/"
 PDFSPECS="source_1.pdf source_2.pdf source_3.pdf source_4.pdf source_styleguide.pdf"
 
@@ -160,25 +160,25 @@ run() {
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -d ${DST}/RUNES/ \
-	     -R ${SRC}/externalLibs/graphics/RUNES_README.md \
-	     ${SRC}/externalLibs/graphics/webGLrune.js
+	     -R ${SRC}/RUNES_README.md \
+	     ${SRC}/webGLrune.js
 
     # CURVES
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -d ${DST}/CURVES/ \
-	     -R ${SRC}/externalLibs/graphics/CURVES_README.md \
-	     ${SRC}/externalLibs/graphics/webGLcurve.js \
-	     ${SRC}/externalLibs/graphics/webGLhi_graph.js
+	     -R ${SRC}/CURVES_README.md \
+	     ${SRC}/webGLcurve.js \
+	     ${SRC}/webGLhi_graph.js
 
      # SOUNDS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -d ${DST}/SOUNDS/ \
-	     -R ${SRC}/externalLibs/sound/README.md \
-	     ${SRC}/externalLibs/sound
+	     -R ${SRC}/SOUNDS_README.md \
+	     ${SRC}/sound
 
     # BINARYTREES
     
@@ -186,15 +186,15 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${DST}/README_BINARYTREES.md \
 	     -d ${DST}/BINARYTREES \
-	     ${SRC}/externalLibs/tree.js
+	     ${SRC}/tree.js
 
    # PIX&FLIX
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -d "${DST}/PIX&FLIX/" \
-	     -R ${SRC}/externalLibs/video/README.md \
-	     ${SRC}/externalLibs/video/video_lib.js 
+	     -R ${SRC}/VIDEO_README.md \
+	     ${SRC}/video_lib.js 
     
     # External
     
@@ -202,11 +202,11 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${DST}/README_EXTERNAL.md \
 	     -d ${DST}/"External libraries"/ \
-	     ${SRC}/externalLibs/graphics/webGLrune.js \
-	     ${SRC}/externalLibs/graphics/webGLcurve.js \
-	     ${SRC}/externalLibs/graphics/webGLhi_graph.js \
-	     ${SRC}/externalLibs/video/video_lib.js \
-	     ${SRC}/externalLibs/sound
+	     ${SRC}/webGLrune.js \
+	     ${SRC}/webGLcurve.js \
+	     ${SRC}/webGLhi_graph.js \
+	     ${SRC}/video_lib.js \
+	     ${SRC}/sound
     
 }
 

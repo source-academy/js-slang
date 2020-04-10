@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt } from './parser/parser'
+import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -34,6 +34,8 @@ import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
+export { SourceDocumentation } from './editors/ace/docTooltip'
+import { getProgramNames } from './name-extractor'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -217,6 +219,15 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export async function getNames(code: string, line: number, col: number): Promise<any> {
+  const [program, comments] = parseForNames(code)
+
+  if (!program) {
+    return []
+  }
+  return getProgramNames(program, comments, { line, column: col })
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -244,7 +255,7 @@ export async function runInContext(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-  if (context.chapter === 3.4) {
+  if (context.variant === 'concurrent') {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {

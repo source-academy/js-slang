@@ -73,7 +73,7 @@ function main() {
 
   const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
   const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict'
-  const chapter = parseFloat(opt.options.chapter)
+  const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
