@@ -9,7 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { infiniteLoopFunctionAnalysis, checkInfiniteLoop } from '../infiniteLoops/infiniteLoops'
+import { checkInfiniteLoop } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
 
@@ -23,11 +23,6 @@ class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
 
-const createEmptyInfiniteLoopDetection = () => ({
-  transitionSet: new Map(),
-  checkers: []
-})
-
 const createEnvironment = (
   closure: Closure,
   args: Value[],
@@ -36,8 +31,7 @@ const createEnvironment = (
   const environment: Environment = {
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
-    head: {},
-    infiniteLoopDetection: createEmptyInfiniteLoopDetection()
+    head: {}
   }
   if (callExpression) {
     environment.callExpression = {
@@ -61,7 +55,6 @@ const createBlockEnvironment = (
     name,
     tail: currentEnvironment(context),
     head,
-    infiniteLoopDetection: createEmptyInfiniteLoopDetection(),
     thisContext: context
   }
 }
@@ -310,16 +303,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (node.callee.type === 'MemberExpression') {
       thisContext = yield* evaluate(node.callee.object, context)
     }
-
-    const envs = context.runtime.environments
-    const error = checkInfiniteLoop(node, args, envs)
-    if(error) {
-      handleRuntimeError(context, error)
-    }
-
     const result = yield* apply(context, callee, args, node, thisContext)
     return result
   },
+
 
   NewExpression: function*(node: es.NewExpression, context: Context) {
     const callee = yield* evaluate(node.callee, context)
@@ -502,7 +489,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
     const id = node.id as es.Identifier
     // tslint:disable-next-line:no-any
-    infiniteLoopFunctionAnalysis(node, currentEnvironment(context).infiniteLoopDetection, currentEnvironment(context));
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     return undefined
@@ -610,6 +596,11 @@ export function* apply(
 
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
+      const error = checkInfiniteLoop(node, args, context)
+      if(error) {
+        handleRuntimeError(context, error)
+      }
+      
       checkNumberOfArguments(context, fun, args, node!)
       const environment = createEnvironment(fun, args, node)
       environment.thisContext = thisContext

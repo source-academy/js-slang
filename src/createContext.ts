@@ -33,16 +33,10 @@ const createEmptyDebugger = () => ({
   }
 })
 
-const createEmptyInfiniteLoopDetection = () => ({
-  transitionSet: new Map(),
-  checkers: []
-})
-
 const createGlobalEnvironment = () => ({
   tail: null,
   name: 'global',
-  head: {},
-  infiniteLoopDetection: createEmptyInfiniteLoopDetection()
+  head: {}
 })
 
 export const createEmptyContext = <T>(
