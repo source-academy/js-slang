@@ -13,10 +13,10 @@ export function updateTypeEnvironment(program: es.Program) {
     // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
     const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
     const idenName = iden.name
-    
+
     const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
-    const valueTypeVariable = (value.typeVariable as Variable)
-    
+    const valueTypeVariable = value.typeVariable as Variable
+
     if (idenName !== undefined && valueTypeVariable !== undefined) {
       primitiveMap.set(idenName, valueTypeVariable)
     }

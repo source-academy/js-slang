@@ -4,8 +4,11 @@ import { annotateProgram } from './annotator'
 import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { constraintStore, updateTypeConstraints } from './constraintStore'
 import * as es from 'estree'
-import { printTypeAnnotation, printTypeConstraints, printTypeEnvironment } from '../utils/inferencerUtils'
-
+import {
+  printTypeAnnotation,
+  printTypeConstraints,
+  printTypeEnvironment
+} from '../utils/inferencerUtils'
 
 // // main function that will infer a program
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
@@ -56,7 +59,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
     // Update type constraints in constraintStore
     // e.g. Given: x^T2, Set: T2 = Γ[x]
-    const idenTypeVariable = (identifier.typeVariable as Variable)
+    const idenTypeVariable = identifier.typeVariable as Variable
 
     const idenName = identifier.name
     const idenTypeEnvType = primitiveMap.get(idenName) // Type obj
@@ -80,10 +83,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // Update type constraints in constraintStore
     // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
     const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
-    const idenTypeVariable = (iden.typeVariable as Variable)
+    const idenTypeVariable = iden.typeVariable as Variable
 
     const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
-    const valueTypeVariable = (value.typeVariable as Variable)
+    const valueTypeVariable = value.typeVariable as Variable
 
     if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
       updateTypeConstraints(idenTypeVariable, valueTypeVariable)
@@ -106,7 +109,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const typeEnvObj = primitiveMap.get(binaryExpression.operator)
     const arg1TypeEnvType = typeEnvObj.types[0].argumentTypes[0] // Type obj
     const arg2TypeEnvType = typeEnvObj.types[0].argumentTypes[1] // Type obj
-    const resultTypeEnvType = typeEnvObj.types[0].resultType     // Type obj
+    const resultTypeEnvType = typeEnvObj.types[0].resultType // Type obj
 
     // Todo
     // Note special cases: + (and -?) and others?
@@ -115,14 +118,14 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // e.g. Given: (x^T1 * 1^T2)^T3, Set: T1 = number, T2 = number, T3 = number
     const arg1 = binaryExpression.left as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
     // const arg1VariableId = (arg1.typeVariable as Variable).id
-    const arg1TypeVariable = (arg1.typeVariable as Variable)
+    const arg1TypeVariable = arg1.typeVariable as Variable
 
     const arg2 = binaryExpression.right as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
     // const arg2VariableId = (arg2.typeVariable as Variable).id
-    const arg2TypeVariable = (arg2.typeVariable as Variable)
+    const arg2TypeVariable = arg2.typeVariable as Variable
 
     // const resultVariableId = (binaryExpression.typeVariable as Variable).id
-    const resultTypeVariable = (binaryExpression.typeVariable as Variable)
+    const resultTypeVariable = binaryExpression.typeVariable as Variable
 
     if (arg1TypeVariable !== undefined && arg1TypeEnvType !== undefined) {
       updateTypeConstraints(arg1TypeVariable, arg1TypeEnvType)
@@ -170,9 +173,9 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // Update type constraints in constraintStore
     // e.g. Given: 1^T2, Set: T2 = number
     // const lhsVariableId = (literal.typeVariable as Variable).id
-    const literalTypeVariable = (literal.typeVariable as Variable)
+    const literalTypeVariable = literal.typeVariable as Variable
     // const rhsType = (literal.inferredType as Primitive).name
-    const literalType = (literal.inferredType as Primitive)
+    const literalType = literal.inferredType as Primitive
 
     if (literalTypeVariable !== undefined && literalType !== undefined) {
       updateTypeConstraints(literalTypeVariable, literalType)
