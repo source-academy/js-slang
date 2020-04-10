@@ -99,7 +99,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn format && yarn tslint",
+      "pre-commit": "yarn tslint --fix && yarn format && yarn tslint",
       "pre-push": "yarn ci"
     }
   }
