@@ -90,6 +90,13 @@ export function annotateProgram(program: es.Program): es.Program {
     }
   }
 
+  function annotateConditionalExpressions(conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>) {
+    annotateNode(conditionalExpression.test)
+    annotateNode(conditionalExpression.consequent)
+    annotateNode(conditionalExpression.alternate)
+    annotateNode(conditionalExpression)
+  }
+
   ancestor(program as es.Node, {
     Literal: annotateLiteral,
     VariableDeclarator: annotateConstantDeclaration,
@@ -101,6 +108,7 @@ export function annotateProgram(program: es.Program): es.Program {
     ArrowFunctionExpression: annotateFunctionDefinitions,
     CallExpression: annotateFunctionApplication,
     ReturnStatement: annotateReturnStatement,
+    ConditionalExpression: annotateConditionalExpressions,
   })
   return program
 }

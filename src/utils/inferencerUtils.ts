@@ -148,13 +148,16 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         params += ")"
         return `${callee}${params}`
       }
+      case "ConditionalExpression": {
+        node = node as es.ConditionalExpression
+        const test = getExpressionString(node.test)
+        const alternate = getExpressionString(node.alternate)
+        const consequent = getExpressionString(node.consequent)
+        return `${test} ? ${alternate} : ${consequent}`
+      }
       default:
         return "This node type is not in Source 1"
     }
-  }
-
-  function printLiteral(literal: TypeAnnotatedNode<es.Literal>) {
-    console.log(`${getExpressionString(literal)}: ${getTypeVariableId(literal)}`)
   }
 
   function printConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
@@ -193,28 +196,22 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     console.log(`${getTypeVariableId(functionDefinition)}: ${res}`)
   }
 
-  function printBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
-    console.log(`${getExpressionString(binaryExpression)}: ${getTypeVariableId(binaryExpression)}`)
-  }
-
-  function printLogicalExpression(logicalExpression: TypeAnnotatedNode<es.LogicalExpression>) {
-    console.log(`${getExpressionString(logicalExpression)}: ${getTypeVariableId(logicalExpression)}`)
-  }
-
-  function printFunctionCalls(functionCall: TypeAnnotatedNode<es.CallExpression>) {
-    console.log(`${getExpressionString(functionCall)}: ${getTypeVariableId(functionCall)}`)
+  // generic function to print
+  function printExpression(node: TypeAnnotatedNode<es.Node>) {
+    console.log(`${getExpressionString(node)}: ${getTypeVariableId(node)}`)
   }
 
   console.log("Initial Type Annotations:")
   ancestor(program as es.Node, {
-    Literal: printLiteral,
+    Literal: printExpression,
     VariableDeclarator: printConstantDeclaration,
     UnaryExpression: printUnaryExpression,
-    BinaryExpression: printBinaryExpression,
-    LogicalExpression: printLogicalExpression,
+    BinaryExpression: printExpression,
+    LogicalExpression: printExpression,
     FunctionDeclaration: printFunctionDeclaration,
     ArrowFunctionExpression: printFunctionDefinition,
-    CallExpression: printFunctionCalls,
+    CallExpression: printExpression,
+    ConditionalExpression: printExpression,
   })
   console.log("\n");
 }
