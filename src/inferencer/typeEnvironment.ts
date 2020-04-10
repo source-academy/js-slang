@@ -1,5 +1,5 @@
 import { ancestor } from 'acorn-walk/dist/walk'
-import { TypeAnnotatedNode, Variable } from '../types'
+import { TypeAnnotatedNode, Variable, Type } from '../types'
 import * as es from 'estree'
 
 // The Type Environment
@@ -10,12 +10,15 @@ export function updateTypeEnvironment(program: es.Program) {
   function updateForConstantDeclaration(
     constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
   ) {
-    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T1 ]
-    const lhs = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
-    const lhsName = lhs.name
-    const lhsVariableId = (lhs.typeVariable as Variable).id
-    if (lhsName !== undefined && lhsVariableId !== undefined) {
-      primitiveMap.set(lhsName, lhsVariableId)
+    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
+    const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+    const idenName = iden.name
+    
+    const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
+    const valueTypeVariable = (value.typeVariable as Variable)
+    
+    if (idenName !== undefined && valueTypeVariable !== undefined) {
+      primitiveMap.set(idenName, valueTypeVariable)
     }
   }
 
@@ -25,340 +28,358 @@ export function updateTypeEnvironment(program: es.Program) {
   })
 }
 
+// Create Type objects for use later
+const numberType: Type = {
+  kind: 'primitive',
+  name: 'number'
+}
+const booleanType: Type = {
+  kind: 'primitive',
+  name: 'boolean'
+}
+const stringType: Type = {
+  kind: 'primitive',
+  name: 'string'
+}
+const undefinedType: Type = {
+  kind: 'primitive',
+  name: 'undefined'
+}
+
 // Initiatize Type Environment
 primitiveMap.set('-', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'number' },
-    { argumentTypes: ['number'], resultType: 'number' }
+    { argumentTypes: [numberType, numberType], resultType: numberType },
+    { argumentTypes: [numberType], resultType: numberType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('*', {
-  types: [{ argumentTypes: ['number', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('/', {
-  types: [{ argumentTypes: ['number', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('%', {
-  types: [{ argumentTypes: ['number', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('&&', {
-  types: [{ argumentTypes: ['boolean', 'any'], resultType: 'any' }],
+  types: [{ argumentTypes: [booleanType, 'any'], resultType: 'any' }],
   isPolymorphic: false
 })
 primitiveMap.set('||', {
-  types: [{ argumentTypes: ['boolean', 'any'], resultType: 'any' }],
+  types: [{ argumentTypes: [booleanType, 'any'], resultType: 'any' }],
   isPolymorphic: false
 })
 primitiveMap.set('!', {
-  types: [{ argumentTypes: ['boolean'], resultType: 'boolean' }],
+  types: [{ argumentTypes: [booleanType], resultType: booleanType }],
   isPolymorphic: false
 })
 
 primitiveMap.set('+', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'number' },
-    { argumentTypes: ['string', 'string'], resultType: 'string' }
+    { argumentTypes: [numberType, numberType], resultType: numberType },
+    { argumentTypes: [stringType, stringType], resultType: stringType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('===', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('!==', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('>', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('>=', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('<', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 primitiveMap.set('<=', {
   types: [
-    { argumentTypes: ['number', 'number'], resultType: 'boolean' },
-    { argumentTypes: ['string', 'string'], resultType: 'boolean' }
+    { argumentTypes: [numberType, numberType], resultType: booleanType },
+    { argumentTypes: [stringType, stringType], resultType: booleanType }
   ],
   isPolymorphic: true
 })
 
 primitiveMap.set('display', {
   types: [
-    { argumentTypes: ['number'], resultType: '' },
-    { argumentTypes: ['string'], resultType: '' }
+    { argumentTypes: [numberType], resultType: undefined },
+    { argumentTypes: [stringType], resultType: undefined }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('error', {
   types: [
-    { argumentTypes: ['number'], resultType: '' },
-    { argumentTypes: ['string'], resultType: '' }
+    { argumentTypes: [numberType], resultType: undefined },
+    { argumentTypes: [stringType], resultType: undefined }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('Infinity', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('is_boolean', {
   types: [
-    { argumentTypes: ['number'], resultType: 'boolean' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: booleanType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('is_function', {
   types: [
-    { argumentTypes: ['number'], resultType: 'boolean' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: booleanType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('is_number', {
   types: [
-    { argumentTypes: ['number'], resultType: 'boolean' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: booleanType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('is_string', {
   types: [
-    { argumentTypes: ['number'], resultType: 'boolean' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: booleanType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('is_undefined', {
   types: [
-    { argumentTypes: ['number'], resultType: 'boolean' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: booleanType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('math_abs', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_acos', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_acosh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_asin', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_asinh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_atan', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_atan2', {
-  types: [{ argumentTypes: ['number', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_atanh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_cbrt', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_ceil', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_clz32', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_cos', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_cosh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_exp', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_expml', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_floor', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_fround', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_hypot', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_imul', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_LN2', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_LN10', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_log', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_log1p', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_log2', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_LOG2E', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_log10', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_LOG10E', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_max', {
   types: [
-    { argumentTypes: ['number'], resultType: '' },
-    { argumentTypes: ['string'], resultType: '' }
+    { argumentTypes: [numberType], resultType: undefined },
+    { argumentTypes: [stringType], resultType: undefined }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('math_min', {
   types: [
-    { argumentTypes: ['number'], resultType: '' },
-    { argumentTypes: ['string'], resultType: '' }
+    { argumentTypes: [numberType], resultType: undefined },
+    { argumentTypes: [stringType], resultType: undefined }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('math_PI', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_pow', {
-  types: [{ argumentTypes: ['number', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_random', {
-  types: [{ argumentTypes: [], resultType: 'number' }],
+  types: [{ argumentTypes: [], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_round', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_sign', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_sin', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_sinh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_sqrt', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_SQRT1_2', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_SQRT2', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('math_tan', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_tanh', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('math_trunc', {
-  types: [{ argumentTypes: ['number'], resultType: 'number' }],
+  types: [{ argumentTypes: [numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('NaN', {
-  types: [{ argumentTypes: ['number'], resultType: '' }],
+  types: [{ argumentTypes: [numberType], resultType: undefined }],
   isPolymorphic: false
 })
 primitiveMap.set('parse_int', {
-  types: [{ argumentTypes: ['string', 'number'], resultType: 'number' }],
+  types: [{ argumentTypes: [stringType, numberType], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('prompt', {
-  types: [{ argumentTypes: ['string'], resultType: 'string' }],
+  types: [{ argumentTypes: [stringType], resultType: stringType }],
   isPolymorphic: false
 })
 primitiveMap.set('runtime', {
-  types: [{ argumentTypes: [], resultType: 'number' }],
+  types: [{ argumentTypes: [], resultType: numberType }],
   isPolymorphic: false
 })
 primitiveMap.set('stringify', {
   types: [
-    { argumentTypes: ['number'], resultType: 'string' },
-    { argumentTypes: ['string'], resultType: 'string' }
+    { argumentTypes: [numberType], resultType: stringType },
+    { argumentTypes: [stringType], resultType: stringType }
   ],
   isPolymorphic: false
 })
 primitiveMap.set('undefined', {
-  types: [{ argumentTypes: ['undefined'], resultType: '' }],
+  types: [{ argumentTypes: [undefinedType], resultType: undefined }],
   isPolymorphic: false
 })
