@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
-import { AllowedDeclarations, EvaluationMethod, Value } from '../types'
+import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import * as create from '../utils/astCreator'
 
@@ -211,10 +211,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(
-  program: es.Program,
-  evaluationMethod: EvaluationMethod
-) {
+function transformReturnStatementsToAllowProperTailCalls(program: es.Program, variant: Variant) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -236,9 +233,9 @@ function transformReturnStatementsToAllowProperTailCalls(
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
-        const args = evaluationMethod === 'strict' ? expression.arguments : ([] as es.Expression[])
+        const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
 
-        if (evaluationMethod === 'lazy') {
+        if (variant === 'lazy') {
           for (const arg of expression.arguments) {
             args.push(delayIt(arg as es.Expression))
           }
@@ -288,16 +285,13 @@ function delayIt(expr: es.Expression) {
   return obj
 }
 
-function transformCallExpressionsToCheckIfFunction(
-  program: es.Program,
-  evaluationMethod: EvaluationMethod
-) {
+function transformCallExpressionsToCheckIfFunction(program: es.Program, variant: Variant) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
-      const args = evaluationMethod === 'strict' ? node.arguments : ([] as es.Expression[])
+      const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
 
-      if (evaluationMethod === 'lazy') {
+      if (variant === 'lazy') {
         for (const arg of node.arguments) {
           args.push(delayIt(arg as es.Expression))
         }
@@ -675,7 +669,7 @@ export function transpile(
   program: es.Program,
   id: number,
   skipUndefinedVariableErrors = false,
-  evaluationMethod: EvaluationMethod = 'strict'
+  variant: Variant = 'default'
 ) {
   contextId = id
   refreshLatestIdentifiers(program)
@@ -687,8 +681,8 @@ export function transpile(
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
-  transformReturnStatementsToAllowProperTailCalls(program, evaluationMethod)
-  transformCallExpressionsToCheckIfFunction(program, evaluationMethod)
+  transformReturnStatementsToAllowProperTailCalls(program, variant)
+  transformCallExpressionsToCheckIfFunction(program, variant)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)

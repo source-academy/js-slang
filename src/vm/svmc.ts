@@ -9,7 +9,8 @@ import { stringifyProgram } from './util'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
-  sourceChapter: 1 | 2 | 3 | 3.4
+  sourceChapter: 1 | 2 | 3
+  sourceVariant: 'default' | 'concurrent' // does not support other variants
   inputFilename: string
   outputFilename: string | null
 }
@@ -24,6 +25,7 @@ function parseOptions(): CliOptions | null {
   const ret: CliOptions = {
     compileTo: 'binary',
     sourceChapter: 3,
+    sourceVariant: 'default',
     inputFilename: '',
     outputFilename: null
   }
@@ -59,15 +61,27 @@ function parseOptions(): CliOptions | null {
           break
         case '--chapter':
         case '-c':
-          const argFloat = parseFloat(argument)
-          if (argFloat === 1 || argFloat === 2 || argFloat === 3 || argFloat === 3.4) {
-            ret.sourceChapter = argFloat
+          const argInt = parseInt(argument, 10)
+          if (argInt === 1 || argInt === 2 || argInt === 3) {
+            ret.sourceChapter = argInt
           } else {
-            console.error('Invalid Source chapter: %d', argFloat)
+            console.error('Invalid Source chapter: %d', argInt)
             error = true
           }
           args.splice(0, argShiftNumber)
           break
+        case '--variant':
+        case '-v':
+          switch (argument) {
+            case 'default':
+            case 'concurrent':
+              ret.sourceVariant = argument
+              break
+            default:
+              console.error('Invalid/Unsupported Source Variant: %s', argument)
+              error = true
+              break
+          }
         case '--out':
         case '-o':
           ret.outputFilename = argument
@@ -114,7 +128,10 @@ Options:
   debug: Compile and pretty-print the compiler output. For debugging the compiler.
   ast: Parse and pretty-print the AST. For debugging the parser.
 -c, --chapter <chapter>: [3]
-  1, 2, 3, or 3.4 (Source 3 Concurrent). Sets the Source chapter.
+  1, 2, 3. Sets the Source chapter.
+-v, --variant <variant>: [default]
+  default: Normal Source
+  concurrent: Concurrent Source (Assumes and overwrites chosen chapter with 3)
 -o, --out <filename>: [see below]
   Sets the output filename.
   Defaults to the input filename, minus any '.js' extension, plus '.svm'.
@@ -125,7 +142,7 @@ Options:
   }
 
   const source = await readFileAsync(options.inputFilename, 'utf8')
-  const context = createEmptyContext(options.sourceChapter, 'default', [], null)
+  const context = createEmptyContext(options.sourceChapter, options.sourceVariant, [], null)
   const program = parse(source, context)
 
   let numWarnings = 0
@@ -163,7 +180,7 @@ Options:
   }
 
   // the current compiler does not differentiate between chapters 1,2 or 3
-  const compiled = compileToIns(program, options.sourceChapter)
+  const compiled = compileToIns(program, options.sourceVariant)
 
   if (options.compileTo === 'debug') {
     console.log(stringifyProgram(compiled).trimRight())

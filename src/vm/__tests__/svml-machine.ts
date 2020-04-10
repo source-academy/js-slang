@@ -13,7 +13,8 @@ import { stripIndent } from '../../utils/formatters'
 // comments mention additional opcodes tested by test code
 describe('standard opcodes', () => {
   test('LGCI works', () => {
-    return expectDisplayResult(`display(123);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(123);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "123",
 ]
@@ -21,7 +22,8 @@ Array [
   })
 
   test('LGCF64 works', () => {
-    return expectDisplayResult(`display(1.5);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(1.5);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "1.5",
 ]
@@ -29,7 +31,8 @@ Array [
   })
 
   test('LGCB0 works', () => {
-    return expectDisplayResult(`display(false);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(false);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "false",
 ]
@@ -37,7 +40,8 @@ Array [
   })
 
   test('LGCB1 works', () => {
-    return expectDisplayResult(`display(true);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(true);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "true",
 ]
@@ -45,7 +49,8 @@ Array [
   })
 
   test('LGCU works', () => {
-    return expectDisplayResult(`display(undefined);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(undefined);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "undefined",
 ]
@@ -53,7 +58,8 @@ Array [
   })
 
   test('LGCN works', () => {
-    return expectDisplayResult(`display(null);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(null);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "null",
 ]
@@ -61,7 +67,8 @@ Array [
   })
 
   test('LGCS works', () => {
-    return expectDisplayResult(`display("test string");`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`display("test string");`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "\\"test string\\"",
 ]
@@ -69,7 +76,8 @@ Array [
   })
 
   test('ADDG works for numbers', () => {
-    return expectDisplayResult('display(-1+1);', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult('display(-1+1);', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "0",
 ]
@@ -77,7 +85,7 @@ Array [
   })
 
   test('ADDG works for strings', () => {
-    return expectDisplayResult('display("first"+"second");', { chapter: 3.4 })
+    return expectDisplayResult('display("first"+"second");', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
 Array [
   "\\"firstsecond\\"",
@@ -86,13 +94,15 @@ Array [
   })
 
   test('ADDG fails for ill-typed operands', () => {
-    return expectParsedError('1+undefined;', { chapter: 3.4 }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: types of operands do not match"`
-    )
+    return expectParsedError('1+undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   test('SUBG works for numbers', () => {
-    return expectDisplayResult('display(123-124);', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult('display(123-124);', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "-1",
 ]
@@ -100,7 +110,8 @@ Array [
   })
 
   test('MULG works for numbers', () => {
-    return expectDisplayResult('display(123*2);', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult('display(123*2);', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "246",
 ]
@@ -108,7 +119,8 @@ Array [
   })
 
   test('DIVG works for numbers', () => {
-    return expectDisplayResult('display(128/32);', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult('display(128/32);', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "4",
 ]
@@ -116,13 +128,14 @@ Array [
   })
 
   test('DIVG fails for division by 0', () => {
-    return expectParsedError('128/0;', { chapter: 3.4 }).toMatchInlineSnapshot(
+    return expectParsedError('128/0;', { chapter: 3, variant: 'concurrent' }).toMatchInlineSnapshot(
       `"Line -1: Error: execution aborted: division by 0"`
     )
   })
 
   test('MODG works for numbers', () => {
-    return expectDisplayResult('display(128%31);', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult('display(128%31);', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "4",
 ]
@@ -130,8 +143,10 @@ Array [
   })
 
   test('NOTG works', () => {
-    return expectDisplayResult('display(!false);display(!true);', { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(!false);display(!true);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
 Array [
   "true",
   "false",
@@ -140,8 +155,10 @@ Array [
   })
 
   test('LTG works for numbers', () => {
-    return expectDisplayResult('display(5 < 10); display(10 < 5);', { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(5 < 10); display(10 < 5);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
 Array [
   "true",
   "false",
@@ -150,8 +167,10 @@ Array [
   })
 
   test('LTG works for strings', () => {
-    return expectDisplayResult('display("abc" < "bcd"); display("bcd" < "abc");', { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display("abc" < "bcd"); display("bcd" < "abc");', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
 Array [
   "true",
   "false",
@@ -160,8 +179,10 @@ Array [
   })
 
   test('GTG works for numbers', () => {
-    return expectDisplayResult('display(5 > 10); display(10 > 5);', { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(5 > 10); display(10 > 5);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
 Array [
   "false",
   "true",
@@ -170,8 +191,10 @@ Array [
   })
 
   test('GTG works for strings', () => {
-    return expectDisplayResult('display("abc" > "bcd"); display("bcd" > "abc");', { chapter: 3.4 })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display("abc" > "bcd"); display("bcd" > "abc");', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
 Array [
   "false",
   "true",
@@ -187,7 +210,8 @@ Array [
         display(10 <= 5);
         `,
       {
-        chapter: 3.4
+        chapter: 3,
+        variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
 Array [
@@ -206,7 +230,8 @@ Array [
         display('bcd' <= 'abc');
         `,
       {
-        chapter: 3.4
+        chapter: 3,
+        variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
 Array [
@@ -225,7 +250,8 @@ Array [
         display(10 >= 5);
         `,
       {
-        chapter: 3.4
+        chapter: 3,
+        variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
 Array [
@@ -244,7 +270,8 @@ Array [
         display('bcd' >= 'abc');
         `,
       {
-        chapter: 3.4
+        chapter: 3,
+        variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
 Array [
@@ -266,7 +293,7 @@ Array [
         display(f(3));
         display(f);
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "3",
@@ -277,7 +304,8 @@ Array [
   })
 
   test('STLG and LDLG works', () => {
-    return expectDisplayResult(`const x = 1; display(x);`, { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectDisplayResult(`const x = 1; display(x);`, { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 Array [
   "1",
 ]
@@ -287,7 +315,8 @@ Array [
   // NEWA, LDAG, STAG, DUP
   test('array opcodes work', () => {
     return expectDisplayResult(`const x = [1,2,,1]; display(x[1]); display(x[8]);`, {
-      chapter: 3.4
+      chapter: 3,
+      variant: 'concurrent'
     }).toMatchInlineSnapshot(`
 Array [
   "2",
@@ -323,7 +352,7 @@ Array [
           y === test_and_set &&
           0 !== "0");
           `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -342,7 +371,7 @@ Array [
         f();
         display(x);
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "1",
@@ -361,7 +390,7 @@ Array [
           display('BRF');
         }
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "\\"did not BRF\\"",
@@ -386,7 +415,7 @@ Array [
         display('after POPENV');
         display('after BR');
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "\\"before NEWENV\\"",
@@ -413,7 +442,7 @@ describe('primitive opcodes', () => {
           display(array_length(arr));
           display(array_length(p));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "0",
@@ -425,9 +454,10 @@ Array [
     })
 
     test('ERROR works', () => {
-      return expectParsedError('error(123);', { chapter: 3.4 }).toMatchInlineSnapshot(
-        `"Line -1: Error: 123"`
-      )
+      return expectParsedError('error(123);', {
+        chapter: 3,
+        variant: 'concurrent'
+      }).toMatchInlineSnapshot(`"Line -1: Error: 123"`)
     })
 
     test('IS_ARRAY works', () => {
@@ -437,7 +467,8 @@ Array [
           display(is_array(1));
         `,
         {
-          chapter: 3.4
+          chapter: 3,
+          variant: 'concurrent'
         }
       ).toMatchInlineSnapshot(`
 Array [
@@ -454,7 +485,8 @@ Array [
           display(is_boolean(1));
         `,
         {
-          chapter: 3.4
+          chapter: 3,
+          variant: 'concurrent'
         }
       ).toMatchInlineSnapshot(`
 Array [
@@ -470,7 +502,7 @@ Array [
           display(is_function(() => {}));
           display(is_function(1));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -485,7 +517,7 @@ Array [
           display(is_null(null));
           display(is_null(1));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -500,7 +532,7 @@ Array [
           display(is_number(1));
           display(is_number(false));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -515,7 +547,7 @@ Array [
           display(is_string("string"));
           display(is_string(1));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -530,7 +562,7 @@ Array [
           display(is_undefined(undefined));
           display(is_undefined(1));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -545,7 +577,7 @@ Array [
         stripIndent`
           display(math_hypot(3,4));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "5",
@@ -559,7 +591,7 @@ Array [
         stripIndent`
           display(list(1,2,3,4));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "[1, [2, [3, [4, null]]]]",
@@ -569,7 +601,7 @@ Array [
   })
 
   test('nullary handler', () => {
-    return snapshotSuccess('runtime();', { chapter: 3.4 })
+    return snapshotSuccess('runtime();', { chapter: 3, variant: 'concurrent' })
   })
 
   test('unary handler', () => {
@@ -577,7 +609,7 @@ Array [
       stripIndent`
           display(math_abs(-1));
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "1",
@@ -590,7 +622,7 @@ Array [
       stripIndent`
           display(math_pow(2,3));
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "8",
@@ -604,7 +636,7 @@ Array [
           display(Infinity);
           display(NaN);
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "Infinity",
@@ -622,7 +654,7 @@ Array [
           test_and_set(x);
           display(head(x));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "false",
@@ -639,7 +671,7 @@ Array [
           clear(x);
           display(head(x));
         `,
-        { chapter: 3.4 }
+        { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -652,7 +684,7 @@ Array [
 
 describe('standard program execution', () => {
   test('program always returns undefined', () => {
-    return expectResult('1 + 1;', { chapter: 3.4 }).toBe(undefined)
+    return expectResult('1 + 1;', { chapter: 3, variant: 'concurrent' }).toBe(undefined)
   })
 
   test('arrow function definitions work', () => {
@@ -666,7 +698,7 @@ describe('standard program execution', () => {
         f(3);
         g(true);
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "3",
@@ -677,7 +709,8 @@ Array [
 
   test('logical operators work', () => {
     return expectDisplayResult('display(!(true && (false || (true && !false))));', {
-      chapter: 3.4
+      chapter: 3,
+      variant: 'concurrent'
     }).toMatchInlineSnapshot(`
 Array [
   "false",
@@ -693,7 +726,7 @@ Array [
         }
         false && f();
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     )
   })
 
@@ -705,7 +738,7 @@ Array [
         }
         true || f();
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     )
   })
 
@@ -724,7 +757,7 @@ Array [
 
       display(permutations(list(1,2,3)));
     `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "[ [1, [2, [3, null]]],
@@ -760,7 +793,7 @@ Array [
         const s = stream_pairs(ints);
         display(eval_stream(s, 10));
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "[ [1, 2],
@@ -772,7 +805,8 @@ Array [
   })
 
   test('program times out', () => {
-    return expectParsedError('while(true) {}', { chapter: 3.4 }).toMatchInlineSnapshot(`
+    return expectParsedError('while(true) {}', { chapter: 3, variant: 'concurrent' })
+      .toMatchInlineSnapshot(`
 "Line -1: Potential infinite loop detected.
     If you are certain your program is correct, press run again without editing your program.
       The time limit will be increased from 1 to 10 seconds.
@@ -806,7 +840,7 @@ Array [
         }
         display(x);
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "3",
@@ -827,7 +861,7 @@ Array [
           }
           f();
         `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`"Line -1: Error: return not allowed in loops"`)
   })
 
@@ -847,7 +881,7 @@ Array [
           }
         }
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "0",
@@ -861,7 +895,7 @@ Array [
         const x = 1;
         x = 2;
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`"Line 2: Cannot assign new value to constant x."`)
   })
 
@@ -871,7 +905,7 @@ Array [
         const x = list;
         display(x(1,2));
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "[1, [2, null]]",
@@ -886,7 +920,7 @@ Array [
         const xs = list(false);
         display(x(xs));
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "false",
@@ -900,7 +934,7 @@ Array [
         const x = list(false);
         test_and_set(x, 1);
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(
       `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
     )
@@ -914,7 +948,7 @@ Array [
         }
         display(f());
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "true",
@@ -934,7 +968,7 @@ Array [
         }
         f();
       `,
-      { chapter: 3.4 }
+      { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
 Array [
   "3",
@@ -961,7 +995,7 @@ test('concurrent program execution interleaves', () => {
       display('main');
     }
   `
-  return getDisplayResult(code, { chapter: 3.4 }).then(displayResult => {
+  return getDisplayResult(code, { chapter: 3, variant: 'concurrent' }).then(displayResult => {
     // check for interleaving displays of main, t1 and t2
     // done by looking for 't1' and 't2' somewhere between two 'main' displays
     let firstMain = -1

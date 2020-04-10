@@ -2,7 +2,7 @@ import { expectResult } from '../utils/testing'
 
 test('Unused arguments are not evaluated', () => {
   return expectResult('function test(a, b) { return a === 1 ? a : b; } test(1, head(null));', {
-    evaluationMethod: 'lazy',
+    variant: 'lazy',
     chapter: 2,
     native: true
   }).toBe(1)
@@ -10,7 +10,7 @@ test('Unused arguments are not evaluated', () => {
 
 test('Unary operations force argument', () => {
   return expectResult('function neg(b) { return !b; } neg(((x) => x)(false)); ', {
-    evaluationMethod: 'lazy',
+    variant: 'lazy',
     native: true
   }).toBe(true)
 })
@@ -18,7 +18,7 @@ test('Unary operations force argument', () => {
 test('Binary operations force arguments', () => {
   return expectResult(
     'function add(x, y) { return x + y; } add(((x) => x)(5), ((x) => x + 1)(9)); ',
-    { evaluationMethod: 'lazy', native: true }
+    { variant: 'lazy', native: true }
   ).toBe(15)
 })
 
@@ -31,7 +31,7 @@ function f(a, b) {
 
 f(((b) => b)(true), ((b) => !b)(true));
 `,
-    { evaluationMethod: 'lazy', chapter: 2, native: true }
+    { variant: 'lazy', chapter: 2, native: true }
   ).toBe(true)
 })
 
@@ -50,7 +50,7 @@ function square(n) {
 }
 
 square(incX());`,
-    { evaluationMethod: 'lazy', chapter: 3, native: true }
+    { variant: 'lazy', chapter: 3, native: true }
   ).toBe(4)
 })
 
@@ -66,7 +66,7 @@ const addSome2 = addSome(2);
 
 addSome2(3);
 `,
-    { evaluationMethod: 'lazy', native: true }
+    { variant: 'lazy', native: true }
   ).toBe(6)
 })
 
@@ -79,6 +79,6 @@ function test2(a) { return test(a, head(null)); }
 
 test2(1);
 `,
-    { evaluationMethod: 'lazy', chapter: 2, native: true }
+    { variant: 'lazy', chapter: 2, native: true }
   ).toBe(1)
 })
