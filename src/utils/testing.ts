@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, EvaluationMethod, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, Variant, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -33,7 +33,7 @@ interface TestOptions {
   chapter?: number
   testBuiltins?: TestBuiltins
   native?: boolean
-  evaluationMethod?: EvaluationMethod
+  variant?: Variant
 }
 
 export function createTestContext({
@@ -91,7 +91,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     await runInContext(code, interpretedTestContext, {
       scheduler,
       executionMethod: 'interpreter',
-      evaluationMethod: options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
+      variant: options.variant
     })
   )
   if (options.native) {
@@ -99,12 +99,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(
-        parsed,
-        nativeTestContext.contextId,
-        true,
-        options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
-      ).transpiled
+      transpiled = transpile(parsed, nativeTestContext.contextId, true, options.variant).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments
@@ -124,8 +119,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       await runInContext(code, nativeTestContext, {
         scheduler,
         executionMethod: 'native',
-        evaluationMethod:
-          options.evaluationMethod === undefined ? 'strict' : options.evaluationMethod
+        variant: options.variant
       })
     )
     const propertiesThatShouldBeEqual = [

@@ -22,12 +22,12 @@ import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
-  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
   Scheduler,
-  SourceError
+  SourceError,
+  Variant
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
@@ -41,7 +41,7 @@ export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
-  evaluationMethod: EvaluationMethod
+  variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -50,7 +50,7 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
-  evaluationMethod: 'strict',
+  variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false
 }
@@ -243,7 +243,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.evaluationMethod = theOptions.evaluationMethod
+  context.variant = determineVariant(context, options)
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -301,7 +301,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
+      const temp = transpile(program, context.contextId, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
@@ -361,6 +361,26 @@ export async function runInContext(
       scheduler = new PreemptiveScheduler(theOptions.steps)
     }
     return scheduler.run(it, context)
+  }
+}
+
+/**
+ * Small function to determine the variant to be used
+ * by a program, as both context and options can have
+ * a variant. The variant provided in options will
+ * have precedence over the variant provided in context.
+ *
+ * @param context The context of the program.
+ * @param options Options to be used when
+ *                running the program.
+ *
+ * @returns The variant that the program is to be run in
+ */
+function determineVariant(context: Context, options: Partial<IOptions>): Variant {
+  if (options.variant) {
+    return options.variant
+  } else {
+    return context.variant
   }
 }
 

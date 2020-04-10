@@ -57,8 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type EvaluationMethod = 'strict' | 'lazy'
-export type Variant = 'lazy' | 'non-det' | 'default' // this might replace EvaluationMethod
+export type Variant = 'lazy' | 'non-det' | 'default'
 
 export interface Context<T = any> {
   /** The source version used */
@@ -110,13 +109,11 @@ export interface Context<T = any> {
    */
   executionMethod: ExecutionMethod
 
-  evaluationMethod: EvaluationMethod
-
   /**
    * Describes the strategy / paradigm to be used for evaluation
    * Examples: lazy, concurrent or non-deterministic
    */
-  variant: Variant // This will replace evaluationMethod
+  variant: Variant
 }
 
 export interface BlockFrame {

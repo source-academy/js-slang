@@ -232,7 +232,7 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    if (context.evaluationMethod !== 'lazy') {
+    if (context.variant !== 'lazy') {
       args.push(yield* actualValue(arg, context))
     } else {
       args.push(delayIt(arg, currentEnvironment(context)))
@@ -549,7 +549,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression' && context.evaluationMethod === 'strict') {
+    if (returnExpression.type === 'CallExpression' && context.variant !== 'lazy') {
       const callee = yield* actualValue(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
