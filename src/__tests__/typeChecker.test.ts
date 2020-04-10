@@ -51,21 +51,20 @@ describe('type checking pairs and lists', () => {
       function accumulate(op, init, xs) {
         return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
       }
-      const xs = pair(1, pair(2, null));
-      const y = accumulate((x,y)=>x+y,0,xs);
       function map(f, xs) {
         return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
       }
-      const xs1 = map(x => x<4 ? true : false, xs);
-      const xs2 = map(x => x>4 ? true : false, xs);
       function append(xs, ys) {
-          return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+        return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
       }
-      const xs3 = append(xs1, xs2);
       function remove(v, xs) {
         return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
       }
-      // const xs4 = remove(true, xs3);
+      const xs = pair(1, pair(2, null));
+      const y = accumulate((x,y)=>x+y,0,xs);
+      const xs1 = map(x => x<4 ? true : false, xs);
+      const xs2 = map(x => x>4 ? true : false, xs);
+      const xs3 = append(xs1, xs2);
     `
     // TODO redo how we test for this
     // const program = typeCheck(parse(code1, 2))
@@ -77,14 +76,14 @@ describe('type checking pairs and lists', () => {
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
 "accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
+map: (number -> boolean, [number, List<number>]) -> [boolean, List<boolean>]
+append: ([boolean, List<boolean>], [boolean, List<boolean>]) -> [boolean, List<boolean>]
+remove: (T185, [T185, List<T185>]) -> [T185, List<T185>]
 xs: [number, List<number>]
 y: number
-map: Couldn't infer type
 xs1: [boolean, List<boolean>]
 xs2: [boolean, List<boolean>]
-append: Couldn't infer type
-xs3: [boolean, List<boolean>]
-remove: Couldn't infer type"
+xs3: [boolean, List<boolean>]"
 `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -180,18 +179,18 @@ function foo(x, y) {
 
   it('happy paths for pair functions', () => {
     const code = `
-const x = pair(3, 4);
-head(x) + 56;
 function foo(x, y) {
   return pair(x, y);
 }
+const x = pair(3, 4);
 const y = foo(1, 2);
 const z = head(x) + 34;
+head(x) + 56;
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
-"x: [number, number]
-foo: Couldn't infer type
+"foo: (number, number) -> [number, number]
+x: [number, number]
 y: [number, number]
 z: number"
 `)
