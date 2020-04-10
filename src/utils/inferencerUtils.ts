@@ -1,4 +1,4 @@
-import { TypeAnnotatedNode, Variable } from '../types'
+import { TypeAnnotatedNode, Variable, Type } from '../types'
 import * as es from 'estree'
 import { ancestor } from 'acorn-walk/dist/walk'
 
@@ -103,16 +103,13 @@ export function printTypeConstraints(typeContraints: Map<number, Type>) {
   console.log("\n");
 }
 
-export function printTypeEnvironment(typeEnvironment: Map<any, any>) {
+export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
   console.log('Printing Type Environment')
   for (let [key, value] of typeEnvironment) {
     if (predefined.has(key)) {
       continue
     }
-    if (typeof value === 'object') {
-      value = JSON.stringify(value)
-    }
-    console.log(`${key} = T${value}`)
+    console.log(`${key} = ${printType(value.types[0])}`)
   }
 }
 
