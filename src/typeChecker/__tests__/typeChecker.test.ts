@@ -66,13 +66,6 @@ describe('type checking pairs and lists', () => {
       const xs2 = map(x => x>4 ? true : false, xs);
       const xs3 = append(xs1, xs2);
     `
-    // TODO redo how we test for this
-    // const program = typeCheck(parse(code1, 2))
-    // // @ts-ignore
-    // expect(program.body[2].declarations[0].init.inferredType).toEqual<Type>({
-    //   kind: 'primitive',
-    //   name: 'number'
-    // })
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
 "accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
