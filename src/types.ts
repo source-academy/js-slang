@@ -57,7 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'lazy' | 'non-det' | 'default'
+export type Variant = 'lazy' | 'non-det' | 'concurrent' | 'default' // this might replace EvaluationMethod
 
 export interface Context<T = any> {
   /** The source version used */

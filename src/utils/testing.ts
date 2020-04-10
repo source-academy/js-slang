@@ -31,6 +31,7 @@ interface TestResult {
 interface TestOptions {
   context?: TestContext
   chapter?: number
+  variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
   variant?: Variant
@@ -39,13 +40,19 @@ interface TestOptions {
 export function createTestContext({
   context,
   chapter = 1,
+  variant = 'default',
   testBuiltins = {}
-}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins } = {}): TestContext {
+}: {
+  context?: TestContext
+  chapter?: number
+  variant?: Variant
+  testBuiltins?: TestBuiltins
+} = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, 'default', [], undefined, {
+      ...createContext(chapter, variant, [], undefined, {
         rawDisplay: (str1, str2, externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
