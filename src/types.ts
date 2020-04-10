@@ -209,7 +209,13 @@ export type substituterNodes = es.Node | BlockExpression
 
 export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
-export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+export type TypeAnnotatedFuncDecl = TypeAnnotatedNode<es.FunctionDeclaration> & TypedFuncDecl
+
+export type TypeAnnotation = Untypable | Typed | NotYetTyped
+
+export interface TypedFuncDecl {
+  functionInferredType?: Type
+}
 
 export interface Untypable {
   typability?: 'Untypable'
@@ -221,21 +227,23 @@ export interface NotYetTyped {
   inferredType?: Type
 }
 
-export interface Typedd {
+export interface Typed {
   typability?: 'Typed'
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List
+export type Type = Primitive | Variable | FunctionType | List | Pair
+export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
   kind: 'primitive'
-  name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
+  name: 'number' | 'boolean' | 'string' | 'undefined'
 }
 
 export interface Variable {
   kind: 'variable'
   name: string
+  constraint: Constraint
 }
 
 // cannot name Function, conflicts with TS
@@ -248,4 +256,15 @@ export interface FunctionType {
 export interface List {
   kind: 'list'
   elementType: Type
+}
+
+export interface Pair {
+  kind: 'pair'
+  headType: Type
+  tailType: Type
+}
+
+export interface ForAll {
+  kind: 'forall'
+  polyType: Type
 }
