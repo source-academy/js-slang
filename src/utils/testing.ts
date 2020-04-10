@@ -34,7 +34,6 @@ interface TestOptions {
   variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
-  variant?: Variant
 }
 
 export function createTestContext({
