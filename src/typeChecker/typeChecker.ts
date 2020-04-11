@@ -35,8 +35,8 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.typability = 'Typed'
     } catch (e) {
       // ignore if InternalCyclicReferenceError
-      if (e instanceof InternalCyclicReferenceError) {}
-      else if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
+      // if (e instanceof InternalCyclicReferenceError) {}
+      if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
         typeErrors.push(new TypeError(node, e))
       }
     }
@@ -562,11 +562,10 @@ function _infer(
       }
       try {
         newConstraints = infer(rightNode, env, newConstraints)
-        recievedTypes[0] = applyConstraints(leftNode.inferredType!, newConstraints)
+        recievedTypes[1] = applyConstraints(rightNode.inferredType!, newConstraints)
       } catch (e) {
         if (e instanceof UnifyError) {
           haveInvalidArgTypes = true
-          console.log(e.RHS)
           recievedTypes[1] = e.LHS // NOTE wrong if not primitive type, let that be for now
         }
       }
@@ -791,16 +790,12 @@ function _infer(
       let haveInvalidArgTypes = false
       const calledFunctionType = applyConstraints((calleeNode as TypeAnnotatedNode<es.Node>).inferredType!, newConstraints)
       const recievedTypes: Type[] = []
-      // @ts-ignore
-      if (argNodes[0].inferredType.name === 'T34') debugger
       argNodes.forEach(argNode => {
         try {
           newConstraints = infer(argNode, env, newConstraints)
           recievedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
         } catch (e) {
           if (e instanceof UnifyError) {
-            debugger
-            console.log(`LHS: ${JSON.stringify(e.LHS)}, RHS: ${JSON.stringify(e.RHS)}`)
             recievedTypes.push(e.LHS) // will be the wrong type if not primitive
             haveInvalidArgTypes = true
           }

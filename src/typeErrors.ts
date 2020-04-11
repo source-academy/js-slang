@@ -55,6 +55,6 @@ export class InternalInvalidArgumentTypesError extends InternalTypeError {
 
 export class InternalCyclicReferenceError extends InternalTypeError {
   constructor(public name: string) {
-    super(`contains a cyclic reference to itself`) 
+    super(`contains a cyclic reference to itself`)
   }
 }
