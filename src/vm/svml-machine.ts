@@ -519,13 +519,16 @@ function FUNCTION_CALL() {
       HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
       D = E + HEAP[E + FIRST_CHILD_SLOT]
       HEAP[D] = I
-    } else {
+    } else if (I === G) {
       D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
       // D is now address where last argument goes in new env
       for (C = D; C > D - G; C = C - 1) {
         POP_OS() // now RES has the address of the next arg
         HEAP[C] = RES // copy argument into new env
       }
+    } else {
+      STATE = NUM_ARGS_ERROR
+      RUNNING = false
     }
 
     if (J === NORMAL_CALL || J === TAIL_CALL) {
