@@ -11,9 +11,21 @@ import {
   TypeAnnotatedFuncDecl,
   SourceError
 } from '../types'
-import { TypeError, InternalTypeError, UnifyError, InternalDifferentNumberArgumentsError, InternalCyclicReferenceError } from '../typeErrors'
+import {
+  TypeError,
+  InternalTypeError,
+  UnifyError,
+  InternalDifferentNumberArgumentsError,
+  InternalCyclicReferenceError
+} from '../typeErrors'
 import { typeToString } from '../utils/stringify'
-import { ConsequentAlternateMismatchError, InvalidTestConditionError, DifferentNumberArgumentsError, InvalidArgumentTypesError, CyclicReferenceError } from '../errors/typeErrors'
+import {
+  ConsequentAlternateMismatchError,
+  InvalidTestConditionError,
+  DifferentNumberArgumentsError,
+  InvalidArgumentTypesError,
+  CyclicReferenceError
+} from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -119,11 +131,10 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
             constraints
           )
         } catch (e) {
-          if(e instanceof InternalCyclicReferenceError) {
+          if (e instanceof InternalCyclicReferenceError) {
             // console.log('added in function declaration')
             typeErrors.push(new CyclicReferenceError(node))
-          }
-          else if (isInternalTypeError(e)) {
+          } else if (isInternalTypeError(e)) {
             typeErrors.push(new TypeError(node, e))
           }
         }
@@ -456,7 +467,10 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
-      throw new InternalDifferentNumberArgumentsError(LHS.parameterTypes.length, RHS.parameterTypes.length)
+      throw new InternalDifferentNumberArgumentsError(
+        LHS.parameterTypes.length,
+        RHS.parameterTypes.length
+      )
     }
     let newConstraints = constraints
     for (let i = 0; i < LHS.parameterTypes.length; i++) {
@@ -570,7 +584,9 @@ function _infer(
         }
       }
       if (haveInvalidArgTypes) {
-        typeErrors.push(new InvalidArgumentTypesError(node, [leftNode, rightNode], expectedTypes, recievedTypes))
+        typeErrors.push(
+          new InvalidArgumentTypesError(node, [leftNode, rightNode], expectedTypes, recievedTypes)
+        )
       }
       return newConstraints
     }
@@ -782,13 +798,16 @@ function _infer(
       newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
       try {
         newConstraints = infer(calleeNode, env, newConstraints)
-      } catch(e) {
+      } catch (e) {
         if (e instanceof InternalDifferentNumberArgumentsError) {
           typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
       }
       let haveInvalidArgTypes = false
-      const calledFunctionType = applyConstraints((calleeNode as TypeAnnotatedNode<es.Node>).inferredType!, newConstraints)
+      const calledFunctionType = applyConstraints(
+        (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
+        newConstraints
+      )
       const recievedTypes: Type[] = []
       argNodes.forEach(argNode => {
         try {
