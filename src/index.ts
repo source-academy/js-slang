@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt } from './parser/parser'
+import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -22,24 +22,26 @@ import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
-  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
   Scheduler,
-  SourceError
+  SourceError,
+  Variant
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
+export { SourceDocumentation } from './editors/ace/docTooltip'
+import { getProgramNames } from './name-extractor'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   executionMethod: ExecutionMethod
-  evaluationMethod: EvaluationMethod
+  variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -48,7 +50,7 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
-  evaluationMethod: 'strict',
+  variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false
 }
@@ -217,6 +219,15 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export async function getNames(code: string, line: number, col: number): Promise<any> {
+  const [program, comments] = parseForNames(code)
+
+  if (!program) {
+    return []
+  }
+  return getProgramNames(program, comments, { line, column: col })
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -232,7 +243,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.evaluationMethod = theOptions.evaluationMethod
+  context.variant = determineVariant(context, options)
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -244,7 +255,7 @@ export async function runInContext(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-  if (context.chapter === 3.4) {
+  if (context.variant === 'concurrent') {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
@@ -290,7 +301,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
+      const temp = transpile(program, context.contextId, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
@@ -350,6 +361,26 @@ export async function runInContext(
       scheduler = new PreemptiveScheduler(theOptions.steps)
     }
     return scheduler.run(it, context)
+  }
+}
+
+/**
+ * Small function to determine the variant to be used
+ * by a program, as both context and options can have
+ * a variant. The variant provided in options will
+ * have precedence over the variant provided in context.
+ *
+ * @param context The context of the program.
+ * @param options Options to be used when
+ *                running the program.
+ *
+ * @returns The variant that the program is to be run in
+ */
+function determineVariant(context: Context, options: Partial<IOptions>): Variant {
+  if (options.variant) {
+    return options.variant
+  } else {
+    return context.variant
   }
 }
 
