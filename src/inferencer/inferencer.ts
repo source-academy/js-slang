@@ -2,7 +2,7 @@ import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode, Primitive, Variable } from '../types'
 import { annotateProgram } from './annotator'
 import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
-import { constraintStore, updateTypeConstraints } from './constraintStore'
+import { updateTypeConstraints } from './constraintStore'
 import * as es from 'estree'
 import {
   printTypeAnnotation,
@@ -147,6 +147,29 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // binaryExpression.typability = 'Typed'
   }
 
+  function inferConditionalExpressions(conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>) {
+    const test = conditionalExpression.test as TypeAnnotatedNode<es.Expression>
+    const consequent = conditionalExpression.consequent as TypeAnnotatedNode<es.Expression>
+    const alternate = conditionalExpression.alternate as TypeAnnotatedNode<es.Expression>
+
+    // check that the type of the test expression is boolean
+    const testTypeVariable = (test.typeVariable as Variable).id
+    if (testTypeVariable !== undefined) {
+      updateTypeConstraints(testTypeVariable, {
+        kind: "primitive",
+        name: "boolean",
+      })
+    }
+
+    // check that the types of the test expressions are the same
+    const consequentTypeVariable = (consequent.typeVariable as Variable).id
+    const alternateTypeVariable = (alternate.typeVariable as Variable).id
+
+    if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
+      updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
+    }
+  }
+
   // function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
   //   // get parameterTypes
   //   var parameterTypes = [];
@@ -197,13 +220,14 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Literal: inferLiteral,
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
-    BinaryExpression: inferBinaryExpression
+    BinaryExpression: inferBinaryExpression,
+    ConditionalExpression: inferConditionalExpressions,
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
   // for Debugging output
   printTypeAnnotation(program)
-  printTypeConstraints(constraintStore)
+  // printTypeConstraints(constraintStore)
   printTypeEnvironment(primitiveMap)
   // return the AST with annotated types
   return program
