@@ -15,7 +15,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
     // do nothing
   }
   // check if key is not a type variable and value is a type variable (Rule 2)
-  else if (is_base_type(constraintLhs) && is_type_variable(constraintRhs)) {
+  else if (!is_type_variable(constraintLhs) && is_type_variable(constraintRhs)) {
     constraintStore.set(constraintRhs, constraintLhs)
   }
   // Rule 3
