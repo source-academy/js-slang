@@ -1128,8 +1128,7 @@ M[OpCodes.DISPLAY] = () => {
   POP_OS()
   D = RES
   externalFunctions.get(OpCodes.DISPLAY)(convertToJsFormat(D), convertToJsFormat(C))
-  NEW_UNDEFINED()
-  A = RES
+  A = D
   PUSH_OS()
   PC = PC + 1
 }
@@ -1138,7 +1137,6 @@ M[OpCodes.DISPLAY] = () => {
 M[OpCodes.DRAW_DATA] = () => {
   POP_OS()
   externalFunctions.get(OpCodes.DRAW_DATA)(convertToJsFormat(RES))
-  NEW_UNDEFINED()
   A = RES
   PUSH_OS()
   PC = PC + 1
@@ -1150,7 +1148,10 @@ M[OpCodes.ERROR] = () => {
   POP_OS()
   D = RES
   externalFunctions.get(OpCodes.ERROR)(convertToJsFormat(D), convertToJsFormat(C))
-  // terminates
+  // terminates so don't do anything else
+  // A = D
+  // PUSH_OS()
+  // PC = PC + 1
 }
 
 M[OpCodes.IS_ARRAY] = () => {
@@ -1384,7 +1385,7 @@ function run(): any {
   // show_heap_value(RES)
   // return convertToJsFormat(RES)
   // Source 3 Concurrent programs do not return anything.
-  return undefined
+  return 'all threads terminated'
 }
 
 function getErrorType(): string {

@@ -683,8 +683,10 @@ Array [
 })
 
 describe('standard program execution', () => {
-  test('program always returns undefined', () => {
-    return expectResult('1 + 1;', { chapter: 3, variant: 'concurrent' }).toBe(undefined)
+  test('program always returns all threads terminated', () => {
+    return expectResult('1 + 1;', { chapter: 3, variant: 'concurrent' }).toBe(
+      'all threads terminated'
+    )
   })
 
   test('arrow function definitions work', () => {

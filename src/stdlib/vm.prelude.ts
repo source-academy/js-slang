@@ -47,7 +47,7 @@ function _build_stream(n, fun) {
 function _display(args) {
   // display(args[0], args[1]);
   // compile this instead for easier replacing
-  args[0] % args[1];
+  return args[0] % args[1];
 }
 
 // 6 placeholder
@@ -77,7 +77,7 @@ function _equal(x, y) {
 function _error(args) {
   // error(args[0], args[1]);
   // compile this instead for easier replacing
-  args[0] % args[1];
+  return args[0] % args[1];
 }
 
 // 11
@@ -706,7 +706,14 @@ export const EXTERNAL_PRIMITIVES: [string, number][] = [
 export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['undefined', undefined],
   ['Infinity', Infinity],
-  ['NaN', NaN]
+  ['NaN', NaN],
+  ['math_LN2', Math.LN2],
+  ['math_LN10', Math.LN10],
+  ['math_LOG2E', Math.LOG2E],
+  ['math_LOG10E', Math.LOG10E],
+  ['math_PI', Math.PI],
+  ['math_SQRT1_2', Math.SQRT1_2],
+  ['math_SQRT2', Math.SQRT2]
 ]
 
 // helper functions to generate machine code
