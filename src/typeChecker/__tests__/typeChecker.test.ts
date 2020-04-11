@@ -161,7 +161,7 @@ describe('type checking functions', () => {
     const code = `
       function foo(x) { return x + 1; }
       function goo(x) { return x || false; }
-      
+
       function bar(f) { return f(5) + 1; }
       bar(foo); // okay
       bar(goo); // error
