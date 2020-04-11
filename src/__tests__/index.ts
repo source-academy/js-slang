@@ -201,7 +201,9 @@ test('Function infinite recursion with different args represents CallExpression 
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(
-    expect.stringMatching(/^Line 1: Error: \"Infinite loop detected. Did you forget your base case\?\"/)
+    expect.stringMatching(
+      /^Line 1: Error: \"Infinite loop detected. Did you forget your base case\?\"/
+    )
   )
 }, 30000)
 
