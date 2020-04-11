@@ -95,10 +95,10 @@ function printType(type: Type): string {
   }
 }
 
-export function printTypeConstraints(typeContraints: Map<number, Type>) {
+export function printTypeConstraints(typeContraints: Map<Type, Type>) {
   console.log('Printing Type Constraints')
   for (const [key, value] of typeContraints) {
-    console.log(`T${key} = ${printType(value)}`)
+    console.log(`${printType(key)} = ${printType(value)}`)
   }
   console.log("\n");
 }
@@ -117,7 +117,6 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
     return `T${(node.typeVariable as Variable).id}`
   }
-
   function getExpressionString(node: TypeAnnotatedNode<es.Node>): string {
     switch (node.type) {
       case "Literal": {
