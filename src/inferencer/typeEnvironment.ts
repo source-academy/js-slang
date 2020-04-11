@@ -18,7 +18,9 @@ export function updateTypeEnvironment(program: es.Program) {
     const valueTypeVariable = value.typeVariable as Variable
 
     if (idenName !== undefined && valueTypeVariable !== undefined) {
-      primitiveMap.set(idenName, valueTypeVariable)
+      primitiveMap.set(idenName, {
+        types: [{ argumentTypes: [valueTypeVariable], resultType: undefined }]
+      })
     }
   }
 
