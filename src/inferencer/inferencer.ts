@@ -107,8 +107,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
     // Given operator, get arg and result types of binary expression from type env
     const typeEnvObj = primitiveMap.get(binaryExpression.operator)
-    const arg1TypeEnvType = typeEnvObj.types[0].argumentTypes[0] // Type obj
-    const arg2TypeEnvType = typeEnvObj.types[0].argumentTypes[1] // Type obj
+    const arg1TypeEnvType = typeEnvObj.types[0].parameterTypes[0] // Type obj
+    const arg2TypeEnvType = typeEnvObj.types[0].parameterTypes[1] // Type obj
     const resultTypeEnvType = typeEnvObj.types[0].resultType // Type obj
 
     // Todo
@@ -148,8 +148,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   }
 
   // function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
-  //   // get argumentTypes
-  //   var argumentTypes = [];
+  //   // get parameterTypes
+  //   var parameterTypes = [];
   //
   //   // get resultType
   //   const bodyNodes = functionDeclaration.body.body;
@@ -163,7 +163,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   //   // declare
   //   functionDeclaration.inferredType = {
   //     kind : 'function',
-  //     argumentTypes : argumentTypes,
+  //     parameterTypes : parameterTypes,
   //     resultType :  resultType
   //   }
   //   functionDeclaration.typability = 'Typed'

@@ -198,7 +198,8 @@ export interface Typedd {
   typeVariable?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List
+// Added null to be used for functions w no returnType
+export type Type = Primitive | Variable | FunctionType | List | null
 
 export interface Primitive {
   kind: 'primitive'
