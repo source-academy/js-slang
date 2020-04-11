@@ -27,7 +27,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
     is_type_variable(constraintLhs) &&
     constraintStore.get(constraintRhs) !== undefined &&
     is_type_variable(constraintStore.get(constraintRhs)) &&
-    constraintStore.get(constraintRhs) === constraintLhs
+    (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id
   ) {
     // do nothing
   }
