@@ -11,7 +11,7 @@ Source \S 3 Concurrent is a concurrent extension of Source \S 3.
 
 \section*{Changes}
 
-Compared to Source \S 3, Source \S 3 Concurrent has the following changes:
+Source \S 3 Concurrent modifies Sourc \S 3 in the following ways:
 \begin{itemize}
 \item Concurrency support functions are added, see Section~\textbf{Concurrency Support} on page \pageref{conc_supp}.
 \item The given program starts in a thread that runs concurrently with any
@@ -32,11 +32,11 @@ of Computer Programs}, JavaScript Adaptation}.
 \section*{Concurrency}
 
 We specify \emph{interleaving semantics} for Source \S 3 Concurrent.
-The effect of executing a concurrent program
+The effect of executing a Source \S 3 Concurrent program
 should be explainable as a single sequence of atomic actions. Each thread
-specifies its own sequence as a total order among its actions,
+specifies a particular sequence of actions in a specific order,
 and the implementation is free to interleave the sequences of the threads
-as long as the following conditions are met:
+into a single sequence, as long as the following conditions are met:
 \begin{enumerate}
 \item The order of actions within each thread is respected (sequential
   threads).
@@ -46,7 +46,9 @@ as long as the following conditions are met:
 \noindent
 The atomic actions are primitive steps such as accessing the value of a name,
 accessing a data structure, reducing a conditional expression or statement,
-carrying out a primitive operation or calling a function.
+carrying out a primitive operation or calling a function. Such atomic actions
+are considered \emph{uninterruptible}; they specify the \emph{granularity}
+of the concurrency.
 
 \input source_bnf.tex
 
