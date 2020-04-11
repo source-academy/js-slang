@@ -6,12 +6,15 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
   console.log('updateTypeConstraints')
   console.log(newConstraintLhs + ' ' + newConstraintRhs)
   solveConstraint(newConstraintLhs, newConstraintRhs)
-  if (detectError(constraintStore)) console.log('Error! Rule 9')
 }
 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
-  // check if both key and value are base types (Rule 1)
-  if (is_base_type(constraintLhs) && is_base_type(constraintRhs)) {
+  // check if both key and value are base types and of the same kind (Rule 1)
+  if (
+    is_base_type(constraintLhs) &&
+    is_base_type(constraintRhs) &&
+    (constraintLhs as Primitive).name === (constraintRhs as Primitive).name
+  ) {
     // do nothing
   }
   // check if key is not a type variable and value is a type variable (Rule 2)
@@ -24,7 +27,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
     is_type_variable(constraintLhs) &&
     constraintStore.get(constraintRhs) !== undefined &&
     is_type_variable(constraintStore.get(constraintRhs)) &&
-      constraintStore.get(constraintRhs) === constraintLhs
+    constraintStore.get(constraintRhs) === constraintLhs
   ) {
     // do nothing
   }
@@ -57,10 +60,17 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
   ) {
     solveConstraint(constraintLhs, constraintStore.get(constraintRhs))
     // constraintStore.set(constraintLhs, constraintStore.get(constraintRhs))
+  }
+  // Rule 9
+  else if (
+    is_base_type(constraintLhs) &&
+    is_base_type(constraintRhs) &&
+    (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name
+  ) {
+    console.log('Error! Rule 9')
   } else {
     constraintStore.set(constraintLhs, constraintRhs)
   }
-
   // console.log('After solving')
   // constraintStore.forEach((value, key) => console.log(key, value))
 }
@@ -76,15 +86,3 @@ function is_type_variable(type: Type) {
 // function is_function_type(type: Type) {
 //     return type.kind === 'function'
 // }
-
-// Rule 9
-// base_type !== base_type will result in an error
-function detectError(typeContraints: Map<Type, Type>) {
-  let errorExist = false
-  typeContraints.forEach((value, key) => {
-    if (is_base_type(key) && is_base_type(value) && key !== value) {
-      errorExist = true
-    }
-  })
-  return errorExist
-}
