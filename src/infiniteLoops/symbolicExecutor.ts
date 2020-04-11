@@ -117,9 +117,9 @@ function getFromStore(name: string, store: Map<string, stype.SSymbol>[]) {
 }
 
 function ifNullWrapDummyLoc(loc: es.SourceLocation | undefined | null) {
-  const pos = {line:10,column:1} as es.Position
-  const dummy = {source:null, start:pos, end:pos} as es.SourceLocation
-  return loc? loc : dummy
+  const pos = { line: 10, column: 1 } as es.Position
+  const dummy = { source: null, start: pos, end: pos } as es.SourceLocation
+  return loc ? loc : dummy
 }
 
 export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol {
@@ -266,7 +266,7 @@ function makeStore(
 ): Map<string, stype.SSymbol>[] {
   const store = [new Map()]
 
-  for (const [name,val] of constants) {
+  for (const [name, val] of constants) {
     store[0].set(name, stype.makeLiteralValueSymbol(val))
   }
 
@@ -283,4 +283,3 @@ export function symbolicExecute(node: es.FunctionDeclaration, constants: [string
   const store = makeStore(firstCall, constants)
   return symEx(node.body, store)
 }
-

@@ -306,7 +306,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return result
   },
 
-
   NewExpression: function*(node: es.NewExpression, context: Context) {
     const callee = yield* evaluate(node.callee, context)
     const args = []

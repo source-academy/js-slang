@@ -161,6 +161,16 @@ export interface InfiniteLoopChecker {
   loc: es.SourceLocation
 }
 
-export function makeLoopChecker(functionName: string, message: string, condition:BooleanSymbol | null, loc: es.SourceLocation) {
-  return { functionName:functionName, message:"Infinite loop detected. " + message, condition:condition, loc:loc} as InfiniteLoopChecker
+export function makeLoopChecker(
+  functionName: string,
+  message: string,
+  condition: BooleanSymbol | null,
+  loc: es.SourceLocation
+) {
+  return {
+    functionName,
+    message: 'Infinite loop detected. ' + message,
+    condition,
+    loc
+  } as InfiniteLoopChecker
 }

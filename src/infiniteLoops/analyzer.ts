@@ -57,7 +57,12 @@ function checkMLinearDiv(tset: stype.TransitionSet): stype.InfiniteLoopChecker[]
         if (idx !== -1) {
           const arg = callee.args[idx] as stype.NumberSymbol
           if (arg?.isPositive && arg.constant * cond.direction > 0) {
-            return stype.makeLoopChecker(caller.name, 'Did you call a value that is outside the range of your function?', cond, callee.loc)
+            return stype.makeLoopChecker(
+              caller.name,
+              'Did you call a value that is outside the range of your function?',
+              cond,
+              callee.loc
+            )
           }
         }
       }
@@ -104,7 +109,12 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
         const name = transition.caller.name
         if (transition.condition && transition.condition.type !== 'SkipSymbol') {
           const callee = transition.callee as stype.FunctionSymbol
-          const checker = stype.makeLoopChecker(name, 'Check your function calls.', transition.condition, callee.loc)
+          const checker = stype.makeLoopChecker(
+            name,
+            'Check your function calls.',
+            transition.condition,
+            callee.loc
+          )
           checkers.push(checker)
         }
       }

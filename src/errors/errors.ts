@@ -233,19 +233,3 @@ export class SetPropertyError extends RuntimeSourceError {
     return 'TODO'
   }
 }
-
-export class InfiniteLoopError extends RuntimeSourceError {
-  private message: string
-  constructor(node: es.Node, message: string) {
-    super(node)
-    this.message = message
-  }
-
-  public explain() {
-    return `Infinite loop detected.${this.message}`
-  }
-
-  public elaborate() {
-    return 'TODO'
-  }
-}
