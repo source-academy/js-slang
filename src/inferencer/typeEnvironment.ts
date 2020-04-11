@@ -65,8 +65,8 @@ const addableType: Type = {
 function generateFunctionType(parameterTypes: Type[], returnType: Type) {
   const functionType: Type = {
     kind: 'function',
-    parameterTypes: parameterTypes,
-    returnType: returnType
+    parameterTypes,
+    returnType
   }
   return functionType
 }
@@ -77,7 +77,7 @@ primitiveMap.set('-', {
     // { argumentTypes: [numberType, numberType], resultType: numberType },
     // { argumentTypes: [numberType], resultType: numberType }
     generateFunctionType([numberType, numberType], numberType),
-    generateFunctionType([numberType], numberType),
+    generateFunctionType([numberType], numberType)
   ],
   isPolymorphic: false
 })
