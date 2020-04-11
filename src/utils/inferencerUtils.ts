@@ -76,23 +76,23 @@ const predefined = new Set([
 ])
 
 function printType(type: Type): string {
-  if (type === null)  return 'null'
+  if (type === null) return 'null'
   switch (type.kind) {
-    case "primitive":
+    case 'primitive':
       return type.name
-    case "variable":
+    case 'variable':
       return `T${type.id}`
-    case "function":
-      let params = ""
+    case 'function':
+      let params = ''
       for (const argument of type.parameterTypes) {
-        params += printType(argument) + ", "
+        params += printType(argument) + ', '
       }
       // remove last comma
-      params = params.replace(/,\s*$/, "");
+      params = params.replace(/,\s*$/, '')
       const returnType = printType(type.returnType)
       return `(${params}) => ${returnType}`
     default:
-      return "Not included in Source 1!"
+      return 'Not included in Source 1!'
   }
 }
 
@@ -101,7 +101,7 @@ export function printTypeConstraints(typeContraints: Map<Type, Type>) {
   for (const [key, value] of typeContraints) {
     console.log(`${printType(key)} = ${printType(value)}`)
   }
-  console.log("\n");
+  console.log('\n')
 }
 
 export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
@@ -112,7 +112,7 @@ export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
     }
     console.log(`${key} = ${printType(value.types[0])}`)
   }
-  console.log("\n");
+  console.log('\n')
 }
 
 export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
@@ -121,52 +121,52 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   }
   function getExpressionString(node: TypeAnnotatedNode<es.Node>): string {
     switch (node.type) {
-      case "Literal": {
+      case 'Literal': {
         return `${(node as es.Literal).raw}`
       }
-      case "Identifier": {
+      case 'Identifier': {
         return (node as es.Identifier).name
       }
-      case "BinaryExpression": {
+      case 'BinaryExpression': {
         node = node as es.BinaryExpression
         const left = getExpressionString(node.left)
         const right = getExpressionString(node.right)
         const operator = node.operator
         return `${left} ${operator} ${right}`
       }
-      case "UnaryExpression": {
+      case 'UnaryExpression': {
         node = node as es.UnaryExpression
         const operator = node.operator
         const argument = getExpressionString(node.argument)
         return `${operator}${argument}`
       }
-      case "ArrowFunctionExpression": {
+      case 'ArrowFunctionExpression': {
         // Arrow function expressions may not always have an identifier, so they are represented by a type variable
         return getTypeVariableId(node)
       }
-      case "FunctionDeclaration": {
+      case 'FunctionDeclaration': {
         return getExpressionString(node.id as es.Identifier)
       }
-      case "LogicalExpression": {
+      case 'LogicalExpression': {
         node = node as es.LogicalExpression
         const left = getExpressionString(node.left)
         const right = getExpressionString(node.right)
         const operator = node.operator
         return `${left} ${operator} ${right}`
       }
-      case "CallExpression": {
+      case 'CallExpression': {
         node = node as es.CallExpression
         const callee = getExpressionString(node.callee)
-        let params = "("
+        let params = '('
         for (const argument of node.arguments) {
-          params += getExpressionString(argument) + ", "
+          params += getExpressionString(argument) + ', '
         }
         // remove last comma
-        params = params.replace(/,\s*$/, "");
-        params += ")"
+        params = params.replace(/,\s*$/, '')
+        params += ')'
         return `${callee}${params}`
       }
-      case "ConditionalExpression": {
+      case 'ConditionalExpression': {
         node = node as es.ConditionalExpression
         const test = getExpressionString(node.test)
         const alternate = getExpressionString(node.alternate)
@@ -174,7 +174,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         return `${test} ? ${alternate} : ${consequent}`
       }
       default:
-        return "This node type is not in Source 1"
+        return 'This node type is not in Source 1'
     }
   }
 
@@ -189,31 +189,39 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   }
 
   function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
-    console.log(`${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(unaryExpression.argument)}`)
+    console.log(
+      `${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(
+        unaryExpression.argument
+      )}`
+    )
     console.log(`${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}`)
   }
 
-  function printFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
-    let res = "("
+  function printFunctionDeclaration(
+    functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
+  ) {
+    let res = '('
     for (const param of (functionDeclaration as es.FunctionDeclaration).params) {
-      res += getTypeVariableId(param) + ", "
+      res += getTypeVariableId(param) + ', '
     }
     // remove last comma
-    res = res.replace(/,\s*$/, "");
-    res += ") => "
+    res = res.replace(/,\s*$/, '')
+    res += ') => '
     const result = (functionDeclaration as es.FunctionDeclaration).body
     res += getTypeVariableId(result)
     console.log(`${getExpressionString(functionDeclaration)}: ${res}`)
   }
 
-  function printFunctionDefinition(functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>) {
-    let res = "("
+  function printFunctionDefinition(
+    functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>
+  ) {
+    let res = '('
     for (const param of (functionDefinition as es.ArrowFunctionExpression).params) {
-      res += getTypeVariableId(param) + ", "
+      res += getTypeVariableId(param) + ', '
     }
     // remove last comma
-    res = res.replace(/,\s*$/, "");
-    res += ") => "
+    res = res.replace(/,\s*$/, '')
+    res += ') => '
     const result = (functionDefinition as es.ArrowFunctionExpression).body
     res += getTypeVariableId(result)
     console.log(`${getTypeVariableId(functionDefinition)}: ${res}`)
@@ -224,7 +232,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     console.log(`${getExpressionString(node)}: ${getTypeVariableId(node)}`)
   }
 
-  console.log("Initial Type Annotations:")
+  console.log('Initial Type Annotations:')
   ancestor(program as es.Node, {
     Literal: printExpression,
     VariableDeclarator: printConstantDeclaration,
@@ -237,5 +245,5 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     CallExpression: printExpression,
     ConditionalExpression: printExpression
   })
-  console.log("\n");
+  console.log('\n')
 }

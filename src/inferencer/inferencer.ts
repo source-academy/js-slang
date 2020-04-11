@@ -1,5 +1,13 @@
 import { ancestor } from 'acorn-walk/dist/walk'
-import { TypeAnnotatedNode, Type, Primitive, Variable, FunctionType, isTypeVariable, isFunctionType } from '../types'
+import {
+  TypeAnnotatedNode,
+  Type,
+  Primitive,
+  Variable,
+  FunctionType,
+  isTypeVariable,
+  isFunctionType
+} from '../types'
 import { annotateProgram, fresh } from './annotator'
 import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
@@ -67,7 +75,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
       if (result === -1) {
-        displayErrorAndTerminate('WARNING: There should not be a type error here in `inferIdentifier()` - pls debug', identifier.loc)
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferIdentifier()` - pls debug',
+          identifier.loc
+        )
       }
     }
 
@@ -94,7 +105,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
       if (result === -1) {
-        displayErrorAndTerminate('WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug', constantDeclaration.loc)
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
+          constantDeclaration.loc
+        )
       }
     }
 
@@ -126,7 +140,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // E.g. `A1, A1 -> A1`
     // Becomes `A10, A10 -> A10` after generating fresh type variables
     if (functionType.isPolymorphic) {
-      const tmpMap = new Map()  // tracks old TVariable, new TVariable
+      const tmpMap = new Map() // tracks old TVariable, new TVariable
       replaceTypeVariablesWithFreshTypeVariables(functionType, tmpMap)
     }
 
@@ -147,7 +161,15 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (param1TypeVariable !== undefined && param1Type !== undefined) {
       const result = updateTypeConstraints(param1TypeVariable, param1Type)
       if (result !== undefined && result.constraintRhs) {
-        if (!functionType.isPolymorphic) displayErrorAndTerminate('Expecting type `' + param1Type.name + '` but got `' + result.constraintRhs.name + '` instead', param1.loc)
+        if (!functionType.isPolymorphic)
+          displayErrorAndTerminate(
+            'Expecting type `' +
+              param1Type.name +
+              '` but got `' +
+              result.constraintRhs.name +
+              '` instead',
+            param1.loc
+          )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param1.loc)
       }
     }
@@ -155,7 +177,15 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (param2TypeVariable !== undefined && param2Type !== undefined) {
       const result = updateTypeConstraints(param2TypeVariable, param2Type)
       if (result !== undefined && result.constraintRhs) {
-        if (!functionType.isPolymorphic) displayErrorAndTerminate('Expecting type `' + param2Type.name + '` but got `' + result.constraintRhs.name + '` instead', param2.loc)
+        if (!functionType.isPolymorphic)
+          displayErrorAndTerminate(
+            'Expecting type `' +
+              param2Type.name +
+              '` but got `' +
+              result.constraintRhs.name +
+              '` instead',
+            param2.loc
+          )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param2.loc)
       }
     }
@@ -163,7 +193,15 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (resultTypeVariable !== undefined && returnType !== undefined) {
       const result = updateTypeConstraints(resultTypeVariable, returnType)
       if (result !== undefined && result.constraintRhs) {
-        if (!functionType.isPolymorphic) displayErrorAndTerminate('Expecting type `' + returnType.name + '` but got `' + result.constraintRhs.name + '` instead', binaryExpression.loc)
+        if (!functionType.isPolymorphic)
+          displayErrorAndTerminate(
+            'Expecting type `' +
+              returnType.name +
+              '` but got `' +
+              result.constraintRhs.name +
+              '` instead',
+            binaryExpression.loc
+          )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', binaryExpression.loc)
       }
     }
@@ -176,7 +214,9 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // binaryExpression.typability = 'Typed'
   }
 
-  function inferConditionalExpressions(conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>) {
+  function inferConditionalExpressions(
+    conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>
+  ) {
     const test = conditionalExpression.test as TypeAnnotatedNode<es.Expression>
     const consequent = conditionalExpression.consequent as TypeAnnotatedNode<es.Expression>
     const alternate = conditionalExpression.alternate as TypeAnnotatedNode<es.Expression>
@@ -186,11 +226,14 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const testTypeVariable = test.typeVariable as Variable
     if (testTypeVariable !== undefined) {
       const result = updateTypeConstraints(testTypeVariable, {
-        kind: "primitive",
-        name: "boolean",
+        kind: 'primitive',
+        name: 'boolean'
       })
       if (result === -1) {
-        displayErrorAndTerminate('Expecting type `boolean` but got `' + testTypeVariable.kind + '` instead', test.loc)
+        displayErrorAndTerminate(
+          'Expecting type `boolean` but got `' + testTypeVariable.kind + '` instead',
+          test.loc
+        )
       }
     }
 
@@ -203,7 +246,14 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
       const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
       if (result === -1) {
-        displayErrorAndTerminate('Expecting type `' + consequentTypeVariable.kind + '` and `' + alternateTypeVariable.kind + '` to be the same, but got different', consequent.loc)
+        displayErrorAndTerminate(
+          'Expecting type `' +
+            consequentTypeVariable.kind +
+            '` and `' +
+            alternateTypeVariable.kind +
+            '` to be the same, but got different',
+          consequent.loc
+        )
       }
     }
   }
@@ -241,7 +291,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     if (literalTypeVariable !== undefined && literalType !== undefined) {
       const result = updateTypeConstraints(literalTypeVariable, literalType)
       if (result === -1) {
-        displayErrorAndTerminate('WARNING: There should not be a type error here in `addTypeConstraintForLiteralPrimitive()` - pls debug', literal.loc)
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `addTypeConstraintForLiteralPrimitive()` - pls debug',
+          literal.loc
+        )
       }
     }
   }
@@ -255,7 +308,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
           let freshTypeVariable
           if (tmpMap.get(p.parameterTypes[i]) === undefined) {
             freshTypeVariable = fresh(p.parameterTypes[i] as Variable)
-            tmpMap.set(p.parameterTypes[i], freshTypeVariable)  // track mapping for repeated use
+            tmpMap.set(p.parameterTypes[i], freshTypeVariable) // track mapping for repeated use
           } else {
             freshTypeVariable = tmpMap.get(p.parameterTypes[i])
           }
@@ -268,7 +321,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
         let freshTypeVariable
         if (tmpMap.get(p.returnType) === undefined) {
           freshTypeVariable = fresh(p.returnType as Variable)
-          tmpMap.set(p.returnType, freshTypeVariable)  // track mapping for repeated use
+          tmpMap.set(p.returnType, freshTypeVariable) // track mapping for repeated use
         } else {
           freshTypeVariable = tmpMap.get(p.returnType)
         }
@@ -282,7 +335,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     console.log('!!! Type check error !!!')
 
     // Print error msg with optional location (if exists)
-    if (loc) console.log(errorMsg + ' (line: ' + loc.start.line + ', char: ' +  loc.start.column + ')')
+    if (loc)
+      console.log(errorMsg + ' (line: ' + loc.start.line + ', char: ' + loc.start.column + ')')
     else console.log(errorMsg)
 
     console.log('\nTerminating program..')
@@ -313,7 +367,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
-    ConditionalExpression: inferConditionalExpressions,
+    ConditionalExpression: inferConditionalExpressions
     // FunctionDeclaration: inferFunctionDeclaration
   })
 

@@ -228,13 +228,13 @@ export interface List {
 }
 
 export function isBaseType(type: Type) {
-  return (type && type.kind === 'primitive')
+  return type && type.kind === 'primitive'
 }
 
 export function isTypeVariable(type: Type) {
-  return (type && type.kind === 'variable')
+  return type && type.kind === 'variable'
 }
 
 export function isFunctionType(type: Type) {
-  return (type && type.kind === 'function')
+  return type && type.kind === 'function'
 }

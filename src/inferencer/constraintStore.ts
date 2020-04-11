@@ -12,12 +12,14 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefined {
   // temp logging for debug
   let toPrint = '> Trying to add: '
-  if (constraintLhs === null)  toPrint += 'null'
-  else if (constraintLhs.kind === 'variable') toPrint += ((constraintLhs.isAddable? 'A' : 'T') + constraintLhs.id)
+  if (constraintLhs === null) toPrint += 'null'
+  else if (constraintLhs.kind === 'variable')
+    toPrint += (constraintLhs.isAddable ? 'A' : 'T') + constraintLhs.id
   else if (constraintLhs.kind === 'primitive') toPrint += constraintLhs.name
   toPrint += ' = '
-  if (constraintRhs === null)  toPrint += 'null'
-  else if (constraintRhs.kind === 'variable') toPrint += ((constraintRhs.isAddable? 'A' : 'T') + constraintRhs.id)
+  if (constraintRhs === null) toPrint += 'null'
+  else if (constraintRhs.kind === 'variable')
+    toPrint += (constraintRhs.isAddable ? 'A' : 'T') + constraintRhs.id
   else if (constraintRhs.kind === 'primitive') toPrint += constraintRhs.name
   console.log(toPrint)
   // logging - end
@@ -61,7 +63,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
       (constraintRhs as Primitive).name !== 'string')
   ) {
     console.log('[debug] Error in Rule 5')
-    return {constraintLhs, constraintRhs} // for error logging
+    return { constraintLhs, constraintRhs } // for error logging
   }
   // Rule 6
   else if (isTypeVariable(constraintLhs) && constraintStore.get(constraintLhs) !== undefined) {
@@ -82,7 +84,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name
   ) {
     console.log('[debug] Error in Rule 9')
-    return {constraintLhs, constraintRhs} // for error logging
+    return { constraintLhs, constraintRhs } // for error logging
   } else {
     constraintStore.set(constraintLhs, constraintRhs)
     return

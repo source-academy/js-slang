@@ -20,7 +20,10 @@ function annotateNode(node: TypeAnnotatedNode<es.Node>, isPolymorphic: boolean =
   }
 }
 
-export function generateTypeVariable(isPolymorphic: boolean = false, isAddable: boolean = false): Variable {
+export function generateTypeVariable(
+  isPolymorphic: boolean = false,
+  isAddable: boolean = false
+): Variable {
   const typeVariable: Variable = {
     kind: 'variable',
     id: typeVariableId,
@@ -102,11 +105,13 @@ export function annotateProgram(program: es.Program): es.Program {
 
   function annotateReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatement>) {
     if (returnStatement.argument !== undefined) {
-      annotateNode((returnStatement.argument as TypeAnnotatedNode<es.Node>))
+      annotateNode(returnStatement.argument as TypeAnnotatedNode<es.Node>)
     }
   }
 
-  function annotateConditionalExpressions(conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>) {
+  function annotateConditionalExpressions(
+    conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>
+  ) {
     annotateNode(conditionalExpression.test)
     annotateNode(conditionalExpression.consequent)
     annotateNode(conditionalExpression.alternate)
@@ -124,7 +129,7 @@ export function annotateProgram(program: es.Program): es.Program {
     ArrowFunctionExpression: annotateFunctionDefinitions,
     CallExpression: annotateFunctionApplication,
     ReturnStatement: annotateReturnStatement,
-    ConditionalExpression: annotateConditionalExpressions,
+    ConditionalExpression: annotateConditionalExpressions
   })
   return program
 }
