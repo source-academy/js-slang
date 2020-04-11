@@ -30,7 +30,7 @@ export class CyclicReferenceError implements SourceError {
 }
 
 function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
-    return  ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type) 
+    return  ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type)
     ? node.type === 'VariableDeclaration'
         ? (node.declarations[0].id as es.Identifier).name
         : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!

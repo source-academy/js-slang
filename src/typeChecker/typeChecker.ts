@@ -510,9 +510,6 @@ function infer(
       // cyclic reference errors only happen in function declarations
       // which would have been caught when inferring it
       return constraints
-    } else if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
-      typeErrors.push(new TypeError(node, e.message))
-      return constraints
     }
     throw e
   }
@@ -550,8 +547,33 @@ function _infer(
         tFunc(leftType, rightType, storedType),
         opType
       ])
-      newConstraints = infer(leftNode, env, newConstraints)
-      return infer(rightNode, env, newConstraints)
+      const expectedTypes = (opType as FunctionType).parameterTypes
+      const recievedTypes: Type[] = []
+      let haveInvalidArgTypes = false
+
+      try {
+        newConstraints = infer(leftNode, env, newConstraints)
+        recievedTypes[0] = applyConstraints(leftNode.inferredType!, newConstraints)
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          haveInvalidArgTypes = true
+          recievedTypes[0] = e.LHS // NOTE wrong if not primitive type, let that be for now
+        }
+      }
+      try {
+        newConstraints = infer(rightNode, env, newConstraints)
+        recievedTypes[0] = applyConstraints(leftNode.inferredType!, newConstraints)
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          haveInvalidArgTypes = true
+          console.log(e.RHS)
+          recievedTypes[1] = e.LHS // NOTE wrong if not primitive type, let that be for now
+        }
+      }
+      if (haveInvalidArgTypes) {
+        typeErrors.push(new InvalidArgumentTypesError(node, [leftNode, rightNode], expectedTypes, recievedTypes))
+      }
+      return newConstraints
     }
     case 'ExpressionStatement': {
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
@@ -768,20 +790,24 @@ function _infer(
       }
       let haveInvalidArgTypes = false
       const calledFunctionType = applyConstraints((calleeNode as TypeAnnotatedNode<es.Node>).inferredType!, newConstraints)
-      const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
-      let recievedTypes: Type[] = []
-      argNodes.forEach((argNode, idx) => {
+      const recievedTypes: Type[] = []
+      // @ts-ignore
+      if (argNodes[0].inferredType.name === 'T34') debugger
+      argNodes.forEach(argNode => {
         try {
           newConstraints = infer(argNode, env, newConstraints)
-          recievedTypes.push(expectedTypes[idx])
+          recievedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
         } catch (e) {
           if (e instanceof UnifyError) {
-            recievedTypes.push(e.LHS)
+            debugger
+            console.log(`LHS: ${JSON.stringify(e.LHS)}, RHS: ${JSON.stringify(e.RHS)}`)
+            recievedTypes.push(e.LHS) // will be the wrong type if not primitive
             haveInvalidArgTypes = true
           }
         }
       })
       if (haveInvalidArgTypes) {
+        const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
         typeErrors.push(new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes))
       }
       return newConstraints

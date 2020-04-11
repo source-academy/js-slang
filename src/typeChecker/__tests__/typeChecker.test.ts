@@ -126,178 +126,178 @@ Line 8: Types do not unify: boolean vs number"
   })
 })
 
-describe('type checking functions', () => {
-  it('happy paths for recursive functions', () => {
-    const code1 = `
-      function append(xs, ys) {
-        return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
-      }
-    `
-    const [program, errors] = typeCheck(parse(code1, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"append: ([T29, List<T29>], [T29, List<T29>]) -> [T29, List<T29>]"`
-    )
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-  })
+// describe('type checking functions', () => {
+//   it('happy paths for recursive functions', () => {
+//     const code1 = `
+//       function append(xs, ys) {
+//         return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+//       }
+//     `
+//     const [program, errors] = typeCheck(parse(code1, 2))
+//     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
+//       `"append: ([T29, List<T29>], [T29, List<T29>]) -> [T29, List<T29>]"`
+//     )
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//   })
 
-  it('unhappy paths for recursive functions', () => {
-    const code = `
-      function foo(f) {
-        return foo;
-      }
-    `
-    const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: Couldn't infer type"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 1: Contains cyclic reference to itself, where the type being bound to is a function type
-Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
-Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
-Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type
-Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type"
-`)
-  })
-})
+//   it('unhappy paths for recursive functions', () => {
+//     const code = `
+//       function foo(f) {
+//         return foo;
+//       }
+//     `
+//     const [program, errors] = typeCheck(parse(code, 2))
+//     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: Couldn't infer type"`)
+//     expect(parseError(errors)).toMatchInlineSnapshot(`
+// "Line 1: Contains cyclic reference to itself, where the type being bound to is a function type
+// Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+// Line 2: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+// Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type
+// Line 3: Error: Contains cyclic reference to itself, where the type being bound to is a function type"
+// `)
+//   })
+// })
 
-describe('type checking pairs', () => {
-  it('wrapping pair functions', () => {
-    const code = `
-function foo(x, y) {
-  return pair(x, y);
-}
-    `
-    const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T3, T4) -> [T3, T4]"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-  })
+// describe('type checking pairs', () => {
+//   it('wrapping pair functions', () => {
+//     const code = `
+// function foo(x, y) {
+//   return pair(x, y);
+// }
+//     `
+//     const [program, errors] = typeCheck(parse(code, 2))
+//     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T3, T4) -> [T3, T4]"`)
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//   })
 
-  it('happy paths for pair functions', () => {
-    const code = `
-function foo(x, y) {
-  return pair(x, y);
-}
-const x = pair(3, 4);
-const y = foo(1, 2);
-const z = head(x) + 34;
-head(x) + 56;
-    `
-    const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
-"foo: (number, number) -> [number, number]
-x: [number, number]
-y: [number, number]
-z: number"
-`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-  })
+//   it('happy paths for pair functions', () => {
+//     const code = `
+// function foo(x, y) {
+//   return pair(x, y);
+// }
+// const x = pair(3, 4);
+// const y = foo(1, 2);
+// const z = head(x) + 34;
+// head(x) + 56;
+//     `
+//     const [program, errors] = typeCheck(parse(code, 2))
+//     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+// "foo: (number, number) -> [number, number]
+// x: [number, number]
+// y: [number, number]
+// z: number"
+// `)
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//   })
 
-  it('unhappy paths for pair functions', () => {
-    const code = `
-      const x = pair(3, 4);
-      const y = head(x) + false;
-      const a = pair(3, pair(4, false));
-      const b = tail(tail(a)) + 1;
-    `
-    // @ts-ignore
-    const [_program, errors] = typeCheck(parse(code, 2))
-    expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: Expected either a number or a string, got boolean instead.
-Line 5: Expected either a number or a string, got boolean instead."
-`)
-  })
-})
+//   it('unhappy paths for pair functions', () => {
+//     const code = `
+//       const x = pair(3, 4);
+//       const y = head(x) + false;
+//       const a = pair(3, pair(4, false));
+//       const b = tail(tail(a)) + 1;
+//     `
+//     // @ts-ignore
+//     const [_program, errors] = typeCheck(parse(code, 2))
+//     expect(parseError(errors)).toMatchInlineSnapshot(`
+// "Line 3: Expected either a number or a string, got boolean instead.
+// Line 5: Expected either a number or a string, got boolean instead."
+// `)
+//   })
+// })
 
-describe('type checking for polymorphic builtin functions', () => {
-  it('works in happy case', () => {
-    const code = `
-      const x = is_boolean('file') || false;
-    `
-    const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: boolean"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-  })
+// describe('type checking for polymorphic builtin functions', () => {
+//   it('works in happy case', () => {
+//     const code = `
+//       const x = is_boolean('file') || false;
+//     `
+//     const [program, errors] = typeCheck(parse(code, 2))
+//     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: boolean"`)
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//   })
 
-  it('errors in unhappy path', () => {
-    const code = `
-      const x = is_boolean(5) + 5;
-    `
-    // @ts-ignore
-    const [_program, errors] = typeCheck(parse(code, 1))
-    expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 2: Expected either a number or a string, got boolean instead."`
-    )
-  })
-})
+//   it('errors in unhappy path', () => {
+//     const code = `
+//       const x = is_boolean(5) + 5;
+//     `
+//     // @ts-ignore
+//     const [_program, errors] = typeCheck(parse(code, 1))
+//     expect(parseError(errors)).toMatchInlineSnapshot(
+//       `"Line 2: Expected either a number or a string, got boolean instead."`
+//     )
+//   })
+// })
 
-describe('type checking overloaded unary/binary primitives', () => {
-  it('works for the happy path', () => {
-    const code = `
-      function foo(x) {return x + 1;}
-      function bar(x, y) {return x + y;}
-      const a = 5;
-      const b = 3;
-      const c = foo(a) + bar(1, b);
-      3 + 4;
-      const x = !false;
-      const y = x || true;
-    `
-    const [program, errors] = typeCheck(parse(code, 1))
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(
-      `
-"foo: number -> number
-bar: (number, number) -> number
-a: number
-b: number
-c: number
-x: boolean
-y: boolean"
-`
-    )
-  })
+// describe('type checking overloaded unary/binary primitives', () => {
+//   it('works for the happy path', () => {
+//     const code = `
+//       function foo(x) {return x + 1;}
+//       function bar(x, y) {return x + y;}
+//       const a = 5;
+//       const b = 3;
+//       const c = foo(a) + bar(1, b);
+//       3 + 4;
+//       const x = !false;
+//       const y = x || true;
+//     `
+//     const [program, errors] = typeCheck(parse(code, 1))
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(
+//       `
+// "foo: number -> number
+// bar: (number, number) -> number
+// a: number
+// b: number
+// c: number
+// x: boolean
+// y: boolean"
+// `
+//     )
+//   })
 
-  it('errors for unhappy path', () => {
-    const code = `
-      const a = 4;
-      const b = false;
-      a + b;
-      function foo(x) {return x +1;}
-      function bar(x, y) {return x + y;}
-      const y = foo(false);
-      const c = foo(a) + bar(1, false);
-    `
-    // @ts-ignore
-    const [_program, errors] = typeCheck(parse(code, 1))
-    expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 4: Expected either a number or a string, got boolean instead.
-Line 7: Types do not unify: boolean vs number
-Line 8: Expected either a number or a string, got boolean instead."
-`)
-  })
-})
+//   it('errors for unhappy path', () => {
+//     const code = `
+//       const a = 4;
+//       const b = false;
+//       a + b;
+//       function foo(x) {return x +1;}
+//       function bar(x, y) {return x + y;}
+//       const y = foo(false);
+//       const c = foo(a) + bar(1, false);
+//     `
+//     // @ts-ignore
+//     const [_program, errors] = typeCheck(parse(code, 1))
+//     expect(parseError(errors)).toMatchInlineSnapshot(`
+// "Line 4: Expected either a number or a string, got boolean instead.
+// Line 7: Types do not unify: boolean vs number
+// Line 8: Expected either a number or a string, got boolean instead."
+// `)
+//   })
+// })
 
-describe('type checking functions used in polymorphic fashion', () => {
-  it('no errors when fn used in polymorhpic fashion after last const decl', () => {
-    const code = `
-      function f(x) {return x + x;}
-      3 + f(4);
-      'a' + f('b');
-    `
+// describe('type checking functions used in polymorphic fashion', () => {
+//   it('no errors when fn used in polymorhpic fashion after last const decl', () => {
+//     const code = `
+//       function f(x) {return x + x;}
+//       3 + f(4);
+//       'a' + f('b');
+//     `
 
-    const [program, errors] = typeCheck(parse(code, 1))
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"f: T21 -> T21"`)
-  })
-  it('errors when fn used in polymorhpic fashion before last const decl', () => {
-    const code = `
-      function f(x) {return x + x;}
-      const x = 3 + f(4);
-      const y = 'a' + f('b');
-    `
-    // @ts-ignore
-    const [_program, errors] = typeCheck(parse(code, 1))
-    expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 4: Types do not unify: number vs string
-Line 4: Types do not unify: string vs number"
-`)
-  })
-})
+//     const [program, errors] = typeCheck(parse(code, 1))
+//     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+//     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"f: T21 -> T21"`)
+//   })
+//   it('errors when fn used in polymorhpic fashion before last const decl', () => {
+//     const code = `
+//       function f(x) {return x + x;}
+//       const x = 3 + f(4);
+//       const y = 'a' + f('b');
+//     `
+//     // @ts-ignore
+//     const [_program, errors] = typeCheck(parse(code, 1))
+//     expect(parseError(errors)).toMatchInlineSnapshot(`
+// "Line 4: Types do not unify: number vs string
+// Line 4: Types do not unify: string vs number"
+// `)
+//   })
+// })

@@ -128,8 +128,9 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
 export function typeToString(type: Type): string {
   switch (type.kind) {
     case 'primitive':
-    case 'variable':
       return type.name
+    case 'variable':
+      return type.constraint || type.name
     case 'list':
       return `List<${typeToString(type.elementType)}>`
     case 'pair':
