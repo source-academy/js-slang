@@ -140,6 +140,7 @@ const NORMAL = 0
 const DIV_ERROR = 1
 const TYPE_ERROR = 2
 const NUM_ARGS_ERROR = 3
+const CALL_NON_FUNCTION_ERROR = 4
 
 let STATE = NORMAL
 
@@ -760,117 +761,202 @@ M[OpCodes.ADDG] = () => {
 
 M[OpCodes.SUBG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] - A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] - A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.MULG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] * A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] * A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.DIVG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  E = A
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] / A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  F = A
+  A = HEAP[E + NUMBER_VALUE_SLOT] / A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
-  E = E === 0
-  if (E) {
-    STATE = DIV_ERROR
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
   }
-  if (E) {
+
+  F = G && F === 0
+  if (F) {
+    STATE = DIV_ERROR
     RUNNING = false
   }
 }
 
 M[OpCodes.MODG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] % A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] % A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = E && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.NEGG] = () => {
   POP_OS()
-  A = -HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
+  A = -HEAP[D + NUMBER_VALUE_SLOT]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.NOTG] = () => {
   POP_OS()
-  A = !HEAP[RES + BOOL_VALUE_SLOT]
+  D = RES
+  A = !HEAP[D + BOOL_VALUE_SLOT]
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === BOOL_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 // for comparisons, assume both string or both nums
 M[OpCodes.LTG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] < A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] < A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.GTG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] > A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] > A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.LEG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] <= A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] <= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.GEG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] >= A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] >= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 // check type here as undefined and null need to be differentiated by nodes
@@ -1011,8 +1097,14 @@ M[OpCodes.CALL] = () => {
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
 
-  J = NORMAL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = NORMAL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLT] = () => {
@@ -1020,8 +1112,14 @@ M[OpCodes.CALLT] = () => {
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
 
-  J = TAIL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLP] = () => {
@@ -1029,8 +1127,14 @@ M[OpCodes.CALLP] = () => {
   F = P[PC][CALLP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
 
-  J = PRIMITIVE_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = PRIMITIVE_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLTP] = () => {
@@ -1038,24 +1142,42 @@ M[OpCodes.CALLTP] = () => {
   F = P[PC][CALLTP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
 
-  J = PRIMITIVE_TAIL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = PRIMITIVE_TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLV] = () => {
   G = P[PC][CALLV_NUM_ARGS_OFFSET]
   F = P[PC][CALLV_ID_OFFSET]
 
-  J = INTERNAL_CALL
-  FUNCTION_CALL()
+  E = F < INTERNAL_FUNCTIONS.length
+  if (E) {
+    J = INTERNAL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLTV] = () => {
   G = P[PC][CALLTV_NUM_ARGS_OFFSET]
   F = P[PC][CALLTV_ID_OFFSET]
 
-  J = INTERNAL_TAIL_CALL
-  FUNCTION_CALL()
+  E = F < INTERNAL_FUNCTIONS.length
+  if (E) {
+    J = INTERNAL_TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.RETG] = () => {
@@ -1115,11 +1237,18 @@ M[OpCodes.NEWCV] = () => {
 // all opcodes from here onwards are custom to this implementation (3 Concurrent)
 M[OpCodes.ARRAY_LEN] = () => {
   POP_OS()
-  A = HEAP[RES + ARRAY_SIZE_SLOT]
+  D = RES
+  A = HEAP[D + ARRAY_SIZE_SLOT]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.DISPLAY] = () => {
@@ -1287,6 +1416,12 @@ M[OpCodes.TEST_AND_SET] = () => {
   HEAP[D + ARRAY_VALUE_SLOT][0] = RES
   A = E
   PUSH_OS() // push old value to os
+
+  E = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!E) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CLEAR] = () => {
@@ -1295,6 +1430,12 @@ M[OpCodes.CLEAR] = () => {
   A = false
   NEW_BOOL()
   HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+
+  E = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!E) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 // called whenever the machine is first run
@@ -1396,6 +1537,8 @@ function getErrorType(): string {
       return 'types of operands do not match'
     case NUM_ARGS_ERROR:
       return 'incorrect number of arguments encountered for function call'
+    case CALL_NON_FUNCTION_ERROR:
+      return 'calling non-function value'
     default:
       throw Error('invalid error type')
   }
