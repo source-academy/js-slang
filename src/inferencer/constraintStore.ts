@@ -3,10 +3,10 @@ import { Type, Variable, Primitive } from '../types'
 export const constraintStore = new Map()
 
 export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: Type) {
-  // console.log('updateTypeConstraints')
-  // console.log(newConstraintLhs + ' ' + newConstraintRhs)
+  console.log('updateTypeConstraints')
+  console.log(newConstraintLhs + ' ' + newConstraintRhs)
   solveConstraint(newConstraintLhs, newConstraintRhs)
-  // if (detectError(constraintStore)) console.log('Error! Rule 9')
+  if (detectError(constraintStore)) console.log('Error! Rule 9')
 }
 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
@@ -16,14 +16,15 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
   }
   // check if key is not a type variable and value is a type variable (Rule 2)
   else if (!is_type_variable(constraintLhs) && is_type_variable(constraintRhs)) {
-    constraintStore.set(constraintRhs, constraintLhs)
+    solveConstraint(constraintRhs, constraintLhs)
+    // constraintStore.set(constraintRhs, constraintLhs)
   }
   // Rule 3
   else if (
     is_type_variable(constraintLhs) &&
     constraintStore.get(constraintRhs) !== undefined &&
     is_type_variable(constraintStore.get(constraintRhs)) &&
-    constraintStore.get(constraintRhs) === constraintLhs
+      constraintStore.get(constraintRhs) === constraintLhs
   ) {
     // do nothing
   }
@@ -41,11 +42,12 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
     ((constraintRhs as Primitive).name !== 'number' ||
       (constraintRhs as Primitive).name !== 'string')
   ) {
-    // console.log('Error! Rule 5')
+    console.log('Error! Rule 5')
   }
   // Rule 6
   else if (is_type_variable(constraintLhs) && constraintStore.get(constraintLhs) !== undefined) {
-    constraintStore.set(constraintRhs, constraintStore.get(constraintLhs))
+    solveConstraint(constraintRhs, constraintStore.get(constraintLhs))
+    // constraintStore.set(constraintRhs, constraintStore.get(constraintLhs))
   }
   // Rule 7
   else if (
@@ -53,7 +55,8 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
     constraintStore.get(constraintLhs) === undefined &&
     constraintStore.get(constraintRhs) !== undefined
   ) {
-    constraintStore.set(constraintLhs, constraintStore.get(constraintRhs))
+    solveConstraint(constraintLhs, constraintStore.get(constraintRhs))
+    // constraintStore.set(constraintLhs, constraintStore.get(constraintRhs))
   } else {
     constraintStore.set(constraintLhs, constraintRhs)
   }
@@ -76,12 +79,12 @@ function is_type_variable(type: Type) {
 
 // Rule 9
 // base_type !== base_type will result in an error
-// function detectError(typeContraints: Map<Type, Type>) {
-//   let errorExist = false
-//   typeContraints.forEach((value, key) => {
-//     if (is_base_type(key) && is_base_type(value) && key !== value) {
-//       errorExist = true
-//     }
-//   })
-//   return errorExist
-// }
+function detectError(typeContraints: Map<Type, Type>) {
+  let errorExist = false
+  typeContraints.forEach((value, key) => {
+    if (is_base_type(key) && is_base_type(value) && key !== value) {
+      errorExist = true
+    }
+  })
+  return errorExist
+}
