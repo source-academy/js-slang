@@ -362,3 +362,7 @@ primitiveMap.set('undefined', {
   types: [{ argumentTypes: ['undefined'], resultType: '' }],
   isPolymorphic: false
 })
+
+export function isOverLoaded(operator: string): boolean {
+  return operator === '-'
+}

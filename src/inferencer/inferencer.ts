@@ -1,8 +1,13 @@
 import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode, Primitive, Variable } from '../types'
 import { annotateProgram } from './annotator'
+<<<<<<< HEAD
 import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { updateTypeConstraints } from './constraintStore'
+=======
+import { primitiveMap, updateTypeEnvironment, isOverLoaded } from './typeEnvironment'
+import { constraintStore, updateTypeConstraints } from './constraintStore'
+>>>>>>> 06120f3... Infer unary functions
 import * as es from 'estree'
 import { printTypeAnnotation, printTypeEnvironment } from '../utils/inferencerUtils'
 
@@ -100,13 +105,40 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // constantDeclaration.typability = 'Typed'
   }
 
+  function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
+    // get data about unary expression from type environment
+    const operator = unaryExpression.operator
+    // retrieves function type of unary '-'
+    const typeOfOperator = isOverLoaded(operator)
+      ? primitiveMap.get(operator).types[1]
+      : primitiveMap.get(operator).types[0]
+    const operatorArgType = typeOfOperator.argumentTypes[0]
+    const operatorResultType = typeOfOperator.resultType
+
+    // get data about arguments
+    const argument = unaryExpression.argument as TypeAnnotatedNode<es.UnaryExpression>
+    const argumentTypeVariable = (argument.typeVariable as Variable).id
+    const resultTypeVariable = (unaryExpression.typeVariable as Variable).id
+
+    if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
+      updateTypeConstraints(argumentTypeVariable, operatorArgType)
+    }
+
+    if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
+      updateTypeConstraints(resultTypeVariable, operatorResultType)
+    }
+  }
+
   function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
     // Given operator, get arg and result types of binary expression from type env
     const operator = binaryExpression.operator
-    const typeEnvObj = primitiveMap.get(operator)
-    const argType1 = typeEnvObj.types[0].argumentTypes[0]
-    const argType2 = typeEnvObj.types[0].argumentTypes[2]
-    const resultType = typeEnvObj.types[0].resultType
+    // retrieves function type of binary '-'
+    const typeEnvObj = isOverLoaded(operator)
+      ? primitiveMap.get(operator).types[1]
+      : primitiveMap.get(operator).types[0]
+    const argType1 = typeEnvObj.argumentTypes[0]
+    const argType2 = typeEnvObj.argumentTypes[2]
+    const resultType = typeEnvObj.resultType
 
     // Todo
     // Note special cases: + (and -?) and others?
@@ -211,7 +243,11 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
+<<<<<<< HEAD
     ConditionalExpression: inferConditionalExpressions,
+=======
+    UnaryExpression: inferUnaryExpression,
+>>>>>>> 06120f3... Infer unary functions
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
