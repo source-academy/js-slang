@@ -1,4 +1,4 @@
-import { TypeAnnotatedNode, Variable } from '../types'
+import { TypeAnnotatedNode, Variable, Type } from '../types'
 import * as es from 'estree'
 import { ancestor } from 'acorn-walk/dist/walk'
 
@@ -75,24 +75,41 @@ const predefined = new Set([
   'undefined'
 ])
 
-export function printTypeConstraints(typeContraints: Map<number, number | string>) {
+function printType(type: Type): string {
+  switch (type.kind) {
+    case "primitive":
+      return type.name
+    case "variable":
+      return `T${type.id}`
+    case "function":
+      let params = ""
+      for (const argument of type.parameterTypes) {
+        params += printType(argument) + ", "
+      }
+      // remove last comma
+      params = params.replace(/,\s*$/, "");
+      const returnType = printType(type.returnType)
+      return `(${params}) => ${returnType}`
+    default:
+      return "Not included in Source 1!"
+  }
+}
+
+export function printTypeConstraints(typeContraints: Map<Type, Type>) {
   console.log('Printing Type Constraints')
   for (const [key, value] of typeContraints) {
-    console.log(`T${key} = T${value}`)
+    console.log(`${printType(key)} = ${printType(value)}`)
   }
   console.log("\n");
 }
 
-export function printTypeEnvironment(typeEnvironment: Map<any, any>) {
+export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
   console.log('Printing Type Environment')
   for (let [key, value] of typeEnvironment) {
     if (predefined.has(key)) {
       continue
     }
-    if (typeof value === 'object') {
-      value = JSON.stringify(value)
-    }
-    console.log(`${key} = T${value}`)
+    console.log(`${key} = ${printType(value.types[0])}`)
   }
 }
 
@@ -100,7 +117,6 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
     return `T${(node.typeVariable as Variable).id}`
   }
-
   function getExpressionString(node: TypeAnnotatedNode<es.Node>): string {
     switch (node.type) {
       case "Literal": {
@@ -148,13 +164,16 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         params += ")"
         return `${callee}${params}`
       }
+      case "ConditionalExpression": {
+        node = node as es.ConditionalExpression
+        const test = getExpressionString(node.test)
+        const alternate = getExpressionString(node.alternate)
+        const consequent = getExpressionString(node.consequent)
+        return `${test} ? ${alternate} : ${consequent}`
+      }
       default:
         return "This node type is not in Source 1"
     }
-  }
-
-  function printLiteral(literal: TypeAnnotatedNode<es.Literal>) {
-    console.log(`${getExpressionString(literal)}: ${getTypeVariableId(literal)}`)
   }
 
   function printConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
@@ -193,28 +212,22 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     console.log(`${getTypeVariableId(functionDefinition)}: ${res}`)
   }
 
-  function printBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
-    console.log(`${getExpressionString(binaryExpression)}: ${getTypeVariableId(binaryExpression)}`)
-  }
-
-  function printLogicalExpression(logicalExpression: TypeAnnotatedNode<es.LogicalExpression>) {
-    console.log(`${getExpressionString(logicalExpression)}: ${getTypeVariableId(logicalExpression)}`)
-  }
-
-  function printFunctionCalls(functionCall: TypeAnnotatedNode<es.CallExpression>) {
-    console.log(`${getExpressionString(functionCall)}: ${getTypeVariableId(functionCall)}`)
+  // generic function to print
+  function printExpression(node: TypeAnnotatedNode<es.Node>) {
+    console.log(`${getExpressionString(node)}: ${getTypeVariableId(node)}`)
   }
 
   console.log("Initial Type Annotations:")
   ancestor(program as es.Node, {
-    Literal: printLiteral,
+    Literal: printExpression,
     VariableDeclarator: printConstantDeclaration,
     UnaryExpression: printUnaryExpression,
-    BinaryExpression: printBinaryExpression,
-    LogicalExpression: printLogicalExpression,
+    BinaryExpression: printExpression,
+    LogicalExpression: printExpression,
     FunctionDeclaration: printFunctionDeclaration,
     ArrowFunctionExpression: printFunctionDefinition,
-    CallExpression: printFunctionCalls,
+    CallExpression: printExpression,
+    ConditionalExpression: printExpression,
   })
   console.log("\n");
 }
