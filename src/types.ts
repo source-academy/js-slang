@@ -219,9 +219,22 @@ export interface FunctionType {
   kind: 'function'
   parameterTypes: Type[]
   returnType: Type
+  isPolymorphic?: boolean
 }
 
 export interface List {
   kind: 'list'
   elementType: Type
+}
+
+export function isBaseType(type: Type) {
+  return (type && type.kind === 'primitive')
+}
+
+export function isTypeVariable(type: Type) {
+  return (type && type.kind === 'variable')
+}
+
+export function isFunctionType(type: Type) {
+  return (type && type.kind === 'function')
 }

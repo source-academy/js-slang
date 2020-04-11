@@ -76,6 +76,7 @@ const predefined = new Set([
 ])
 
 function printType(type: Type): string {
+  if (type === null)  return 'null'
   switch (type.kind) {
     case "primitive":
       return type.name
@@ -105,12 +106,13 @@ export function printTypeConstraints(typeContraints: Map<Type, Type>) {
 
 export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
   console.log('Printing Type Environment')
-  for (let [key, value] of typeEnvironment) {
+  for (const [key, value] of typeEnvironment) {
     if (predefined.has(key)) {
       continue
     }
     console.log(`${key} = ${printType(value.types[0])}`)
   }
+  console.log("\n");
 }
 
 export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
@@ -181,6 +183,11 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     console.log(`${(id as es.Identifier).name}: ${getTypeVariableId(id)}`)
   }
 
+  // Q: Why does printIdentifier only handle usage `x^T4` but not declaration `const x^T2` even tho there is an Identifier node in VariableDeclarator
+  function printIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
+    console.log(`${identifier.name}: ${getTypeVariableId(identifier)}`)
+  }
+
   function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
     console.log(`${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(unaryExpression.argument)}`)
     console.log(`${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}`)
@@ -221,13 +228,14 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   ancestor(program as es.Node, {
     Literal: printExpression,
     VariableDeclarator: printConstantDeclaration,
+    Identifier: printIdentifier,
     UnaryExpression: printUnaryExpression,
     BinaryExpression: printExpression,
     LogicalExpression: printExpression,
     FunctionDeclaration: printFunctionDeclaration,
     ArrowFunctionExpression: printFunctionDefinition,
     CallExpression: printExpression,
-    ConditionalExpression: printExpression,
+    ConditionalExpression: printExpression
   })
   console.log("\n");
 }

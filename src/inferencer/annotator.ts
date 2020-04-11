@@ -1,5 +1,5 @@
 import { ancestor } from 'acorn-walk/dist/walk'
-import { TypeAnnotatedNode } from '../types'
+import { TypeAnnotatedNode, Variable } from '../types'
 import * as es from 'estree'
 
 let typeVariableId = 1
@@ -9,14 +9,30 @@ function notAnnotated(node: TypeAnnotatedNode<es.Node>): boolean {
 
 function annotateNode(node: TypeAnnotatedNode<es.Node>, isPolymorphic: boolean = false) {
   if (notAnnotated(node)) {
-    node.typeVariable = {
-      kind: 'variable',
-      id: typeVariableId,
-      isPolymorphic
-    }
+    // node.typeVariable = {
+    //   kind: 'variable',
+    //   id: typeVariableId,
+    //   isPolymorphic
+    // }
+    node.typeVariable = generateTypeVariable(isPolymorphic, false)
     node.typability = 'NotYetTyped'
-    typeVariableId += 1
+    // typeVariableId += 1
   }
+}
+
+export function generateTypeVariable(isPolymorphic: boolean = false, isAddable: boolean = false): Variable {
+  const typeVariable: Variable = {
+    kind: 'variable',
+    id: typeVariableId,
+    isAddable,
+    isPolymorphic
+  }
+  typeVariableId += 1
+  return typeVariable
+}
+
+export function fresh(variable: Variable): Variable {
+  return generateTypeVariable(variable.isPolymorphic, variable.isAddable)
 }
 
 // main function that will annotate an AST with type variables
