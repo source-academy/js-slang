@@ -3,10 +3,10 @@ import { Type, Variable, Primitive } from '../types'
 export const constraintStore = new Map()
 
 export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: Type) {
-  console.log('updateTypeConstraints')
-  console.log(newConstraintLhs + ' ' + newConstraintRhs)
+  // console.log('updateTypeConstraints')
+  // console.log(newConstraintLhs + ' ' + newConstraintRhs)
   solveConstraint(newConstraintLhs, newConstraintRhs)
-  if (detectError(constraintStore)) console.log('Error! Rule 9')
+  // if (detectError(constraintStore)) console.log('Error! Rule 9')
 }
 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
@@ -39,7 +39,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
       ((constraintRhs as Primitive).name !== 'number' ||
         (constraintRhs as Primitive).name !== 'string')
     ) {
-      console.log('Error! Rule 5')
+      // console.log('Error! Rule 5')
     }
     // Rule 6
     else if (is_type_variable(constraintLhs) && constraintStore.get(constraintLhs) !== undefined) {
@@ -56,8 +56,8 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
       constraintStore.set(constraintLhs, constraintRhs)
     }
   }
-  console.log('After solving')
-  constraintStore.forEach((value, key) => console.log(key, value))
+  // console.log('After solving')
+  // constraintStore.forEach((value, key) => console.log(key, value))
 }
 
 function is_base_type(type: Type) {
@@ -79,12 +79,12 @@ function is_type_variable(type: Type) {
 
 // Rule 9
 // base_type !== base_type will result in an error
-function detectError(typeContraints: Map<Type, Type>) {
-  let errorExist = false
-  typeContraints.forEach((value, key) => {
-    if (is_base_type(key) && is_base_type(value) && key !== value) {
-      errorExist = true
-    }
-  })
-  return errorExist
-}
+// function detectError(typeContraints: Map<Type, Type>) {
+//   let errorExist = false
+//   typeContraints.forEach((value, key) => {
+//     if (is_base_type(key) && is_base_type(value) && key !== value) {
+//       errorExist = true
+//     }
+//   })
+//   return errorExist
+// }
