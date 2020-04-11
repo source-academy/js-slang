@@ -109,6 +109,13 @@ Array [
 `)
   })
 
+  test('SUBG fails for ill-typed operands', () => {
+    return expectParsedError('1-undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+  })
+
   test('MULG works for numbers', () => {
     return expectDisplayResult('display(123*2);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
@@ -116,6 +123,13 @@ Array [
   "246",
 ]
 `)
+  })
+
+  test('MULG fails for ill-typed operands', () => {
+    return expectParsedError('1*undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   test('DIVG works for numbers', () => {
@@ -133,6 +147,13 @@ Array [
     )
   })
 
+  test('DIVG fails for ill-typed operands', () => {
+    return expectParsedError('1/undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+  })
+
   test('MODG works for numbers', () => {
     return expectDisplayResult('display(128%31);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
@@ -140,6 +161,32 @@ Array [
   "4",
 ]
 `)
+  })
+
+  test('MODG fails for ill-typed operands', () => {
+    return expectParsedError('1%undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+  })
+
+  test('NEGG works', () => {
+    return expectDisplayResult('display(-1);display(-(-1));', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`
+Array [
+  "-1",
+  "1",
+]
+`)
+  })
+
+  test('NEGG fails for ill-typed operands', () => {
+    return expectParsedError('-"hi";', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   test('NOTG works', () => {
@@ -152,6 +199,13 @@ Array [
   "false",
 ]
 `)
+  })
+
+  test('NOTG fails for ill-typed operands', () => {
+    return expectParsedError('!1;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   test('LTG works for numbers', () => {
@@ -178,6 +232,13 @@ Array [
 `)
   })
 
+  test('LTG fails for ill-typed operands', () => {
+    return expectParsedError('1<undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+  })
+
   test('GTG works for numbers', () => {
     return expectDisplayResult('display(5 > 10); display(10 > 5);', {
       chapter: 3,
@@ -200,6 +261,13 @@ Array [
   "true",
 ]
 `)
+  })
+
+  test('GTG fails for ill-typed operands', () => {
+    return expectParsedError('1>undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   test('LEG works for numbers', () => {
@@ -242,6 +310,13 @@ Array [
 `)
   })
 
+  test('LEG fails for ill-typed operands', () => {
+    return expectParsedError('1<=undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+  })
+
   test('GEG works for numbers', () => {
     return expectDisplayResult(
       stripIndent`
@@ -280,6 +355,13 @@ Array [
   "true",
 ]
 `)
+  })
+
+  test('GEG fails for ill-typed operands', () => {
+    return expectParsedError('1>=undefined;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
   })
 
   // NEWC, CALL, RETG
@@ -836,7 +918,7 @@ Array [
               error('should not reach here');
             }
             display(x);
-            f();
+            f(1);
           }
           display(x);
         }
@@ -853,6 +935,7 @@ Array [
 ]
 `)
   })
+
   test('return in loop throws error', () => {
     return expectParsedError(
       stripIndent`
@@ -940,6 +1023,31 @@ Array [
     ).toMatchInlineSnapshot(
       `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
     )
+  })
+
+  test('wrong number of arguments for normal functions throws error', () => {
+    return expectParsedError('((x, y) => 1)(1);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
+    )
+  })
+
+  test('wrong number of arguments for primitive functions throws error', () => {
+    return expectParsedError('math_sin(1,2);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
+    )
+  })
+
+  test('call non function value throws error', () => {
+    return expectParsedError('let x = 0; x(1,2);', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: calling non-function value"`)
   })
 
   test('tail call for internal functions work', () => {

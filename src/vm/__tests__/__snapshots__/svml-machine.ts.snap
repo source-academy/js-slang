@@ -397,6 +397,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes DIVG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1/undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes DIVG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -449,6 +478,35 @@ y === test_and_set &&
 }
 `;
 
+exports[`standard opcodes GEG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1>=undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes GEG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -483,6 +541,35 @@ display('bcd' >= 'abc');",
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes GTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1>undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -537,6 +624,35 @@ display(x);",
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes LEG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1<=undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -684,6 +800,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes LTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1<undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes LTG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -716,6 +861,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes MODG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1%undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes MODG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -731,6 +905,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes MULG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1*undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes MULG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -742,6 +945,80 @@ Object {
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NEGG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "-\\"hi\\";",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NEGG works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(-1);display(-(-1));",
+  "displayResult": Array [
+    "-1",
+    "1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NOTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "!1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -773,6 +1050,35 @@ Object {
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes SUBG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1-undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: types of operands do not match],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -901,7 +1207,7 @@ function f(y) {
       error('should not reach here');
     }
     display(x);
-    f();
+    f(1);
   }
   display(x);
 }
@@ -917,6 +1223,35 @@ display(x);",
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution call non function value throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = 0; x(1,2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: calling non-function value],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: calling non-function value",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -1213,6 +1548,64 @@ Object {
   "alertResult": Array [],
   "code": "const x = list(false);
 test_and_set(x, 1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution wrong number of arguments for normal functions throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "((x, y) => 1)(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution wrong number of arguments for primitive functions throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_sin(1,2);",
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
