@@ -108,9 +108,13 @@ function _for_each(fun, xs) {
   }
 }
 
-// 14 unlike Source version, does not fail gracefully
+// 14
 function _head(xs) {
-  return xs[0];
+  if (!is_pair(xs)) {
+    error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    return xs[0];
+  }
 }
 
 // 15
@@ -377,12 +381,20 @@ function _runtime(x) {}
 
 // 74 unlike Source version, does not fail gracefully
 function _set_head(xs,x) {
-  xs[0] = x;
+  if (!is_pair(xs)) {
+    error('set_head(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    xs[0] = x;
+  }
 }
 
 // 75 unlike Source version, does not fail gracefully
 function _set_tail(xs, x) {
-  xs[1] = x;
+  if (!is_pair(xs)) {
+    error('set_tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    xs[1] = x;
+  }
 }
 
 // 76 custom
@@ -486,9 +498,16 @@ function _stream_reverse(xs) {
   return rev(xs, null);
 }
 
-// 87 unlike Source version, does not fail gracefully
+// 87
 function _stream_tail(xs) {
+  if (!is_pair(xs)) {
+    error('stream_tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else if (!is_function(xs[1])) {
+    error('stream_tail(xs) expects a function as the tail of the argument pair xs, ' +
+      'but encountered ' + stringify(xs[1]));
+  } else {
     return xs[1]();
+  }
 }
 
 // 88
@@ -500,7 +519,11 @@ function _stream_to_list(xs) {
 
 // 89 unlike Source version, does not fail gracefully
 function _tail(xs) {
-  return xs[1];
+  if (!is_pair(xs)) {
+    error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    return xs[1];
+  }
 }
 
 // 90 placeholder

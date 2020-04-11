@@ -142,6 +142,8 @@ const TYPE_ERROR = 2
 const NUM_ARGS_ERROR = 3
 const CALL_NON_FUNCTION_ERROR = 4
 
+let ERROR_MSG_ARGS: any[] = []
+
 let STATE = NORMAL
 
 // general node layout
@@ -528,6 +530,8 @@ function FUNCTION_CALL() {
       }
     } else {
       STATE = NUM_ARGS_ERROR
+      ERROR_MSG_ARGS[0] = I
+      ERROR_MSG_ARGS[1] = G
       RUNNING = false
     }
 
@@ -557,6 +561,8 @@ function INTERNAL_FUNCTION_CALL() {
   K = F // save the internal function
   if (K[INTERNAL_NUM_ARGS_SLOT] !== VARARGS_NUM_ARGS && K[INTERNAL_NUM_ARGS_SLOT] !== G) {
     STATE = NUM_ARGS_ERROR
+    ERROR_MSG_ARGS[0] = K[INTERNAL_NUM_ARGS_SLOT]
+    ERROR_MSG_ARGS[1] = G
     RUNNING = false
   } else {
     M[K[INTERNAL_OPCODE_SLOT]]() // call subroutine directly
@@ -590,7 +596,7 @@ function node_kind(x: number) {
   return x === NUMBER_TAG
     ? 'number'
     : x === BOOL_TAG
-    ? 'bool'
+    ? 'boolean'
     : x === CLOSURE_TAG
     ? 'closure'
     : x === RTS_FRAME_TAG
@@ -754,10 +760,13 @@ M[OpCodes.ADDG] = () => {
   A = RES
   PUSH_OS()
   PC = PC + 1
-  G = D || E
-  G = !(G && H)
-  if (G) {
+  J = D || E
+  J = !(J && H)
+  if (J) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[G + TAG_SLOT])} and ${node_kind(HEAP[I + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '+'
     RUNNING = false
   }
 }
@@ -778,6 +787,9 @@ M[OpCodes.SUBG] = () => {
   G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '-'
     RUNNING = false
   }
 }
@@ -798,6 +810,9 @@ M[OpCodes.MULG] = () => {
   G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '*'
     RUNNING = false
   }
 }
@@ -819,6 +834,9 @@ M[OpCodes.DIVG] = () => {
   G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '/'
     RUNNING = false
   }
 
@@ -861,6 +879,9 @@ M[OpCodes.NEGG] = () => {
   G = HEAP[D + TAG_SLOT] === NUMBER_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '-'
     RUNNING = false
   }
 }
@@ -877,6 +898,9 @@ M[OpCodes.NOTG] = () => {
   G = HEAP[D + TAG_SLOT] === BOOL_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'boolean'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '!'
     RUNNING = false
   }
 }
@@ -898,6 +922,9 @@ M[OpCodes.LTG] = () => {
   G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '<'
     RUNNING = false
   }
 }
@@ -918,6 +945,9 @@ M[OpCodes.GTG] = () => {
   G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '>'
     RUNNING = false
   }
 }
@@ -938,6 +968,9 @@ M[OpCodes.LEG] = () => {
   G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '<='
     RUNNING = false
   }
 }
@@ -958,6 +991,9 @@ M[OpCodes.GEG] = () => {
   G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '>='
     RUNNING = false
   }
 }
@@ -1043,32 +1079,71 @@ M[OpCodes.STPG] = () => {
 
 M[OpCodes.LDAG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + ARRAY_VALUE_SLOT][A]
+  E = RES
+  G = HEAP[E + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array access'
+    return
+  }
+
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + ARRAY_VALUE_SLOT][A]
   if (A === undefined) {
     NEW_UNDEFINED()
     A = RES
   }
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array index'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.STAG] = () => {
   POP_OS()
   D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] // index
+  E = RES
+  A = HEAP[E + NUMBER_VALUE_SLOT] // index
   POP_OS()
-  HEAP[RES + ARRAY_VALUE_SLOT][A] = D
+  F = RES
+  G = HEAP[F + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[F + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array access'
+    return
+  }
+  HEAP[F + ARRAY_VALUE_SLOT][A] = D
 
   // update array size
-  D = HEAP[RES + ARRAY_SIZE_SLOT]
+  D = HEAP[F + ARRAY_SIZE_SLOT]
   if (D < A + 1) {
     D = A + 1
   }
-  HEAP[RES + ARRAY_SIZE_SLOT] = D
+  HEAP[F + ARRAY_SIZE_SLOT] = D
   PC = PC + 1
+
+  G = HEAP[E + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array index'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.BRT] = () => {
@@ -1106,6 +1181,7 @@ M[OpCodes.CALL] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1121,6 +1197,7 @@ M[OpCodes.CALLT] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1136,6 +1213,7 @@ M[OpCodes.CALLP] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1151,6 +1229,7 @@ M[OpCodes.CALLTP] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1165,6 +1244,7 @@ M[OpCodes.CALLV] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1179,6 +1259,7 @@ M[OpCodes.CALLTV] = () => {
     FUNCTION_CALL()
   } else {
     STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
     RUNNING = false
   }
 }
@@ -1250,6 +1331,9 @@ M[OpCodes.ARRAY_LEN] = () => {
   G = HEAP[D + TAG_SLOT] === ARRAY_TAG
   if (!G) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array_length'
     RUNNING = false
   }
 }
@@ -1413,31 +1497,37 @@ M[OpCodes.EXECUTE] = () => {
 M[OpCodes.TEST_AND_SET] = () => {
   POP_OS()
   D = RES // array
-  E = HEAP[D + ARRAY_VALUE_SLOT][0] // get old boolean value
-  A = true
-  NEW_BOOL()
-  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
-  A = E
-  PUSH_OS() // push old value to os
-
   E = HEAP[D + TAG_SLOT] === ARRAY_TAG
   if (!E) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'test_and_set'
     RUNNING = false
+  } else {
+    E = HEAP[D + ARRAY_VALUE_SLOT][0] // get old boolean value
+    A = true
+    NEW_BOOL()
+    HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+    A = E
+    PUSH_OS() // push old value to os
   }
 }
 
 M[OpCodes.CLEAR] = () => {
   POP_OS()
   D = RES // array
-  A = false
-  NEW_BOOL()
-  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
-
   E = HEAP[D + TAG_SLOT] === ARRAY_TAG
   if (!E) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'clear'
     RUNNING = false
+  } else {
+    A = false
+    NEW_BOOL()
+    HEAP[D + ARRAY_VALUE_SLOT][0] = RES
   }
 }
 
@@ -1537,11 +1627,14 @@ function getErrorType(): string {
     case DIV_ERROR:
       return 'division by 0'
     case TYPE_ERROR:
-      return 'types of operands do not match'
+      // 0: expected types
+      // 1: received types
+      // 2: operator
+      return `Expected ${ERROR_MSG_ARGS[0]}, got ${ERROR_MSG_ARGS[1]} for ${ERROR_MSG_ARGS[2]}.`
     case NUM_ARGS_ERROR:
-      return 'incorrect number of arguments encountered for function call'
+      return `Expected ${ERROR_MSG_ARGS[0]} arguments, but got ${ERROR_MSG_ARGS[1]}.`
     case CALL_NON_FUNCTION_ERROR:
-      return 'calling non-function value'
+      return `calling non-function value ${ERROR_MSG_ARGS[0]}.`
     default:
       throw Error('invalid error type')
   }
@@ -1558,7 +1651,7 @@ function convertToJsFormat(node: number): any {
 
     case 'number':
     case 'string':
-    case 'bool':
+    case 'boolean':
       return HEAP[node + BOXED_VALUE_SLOT]
 
     case 'array': {
@@ -1597,6 +1690,7 @@ export function runWithProgram(p: Program, context: Context): any {
   TOP_RTS = -1
   STATE = NORMAL
   RUNNING = true
+  ERROR_MSG_ARGS = []
 
   A = 0
   B = 0

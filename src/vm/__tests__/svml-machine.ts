@@ -15,130 +15,136 @@ describe('standard opcodes', () => {
   test('LGCI works', () => {
     return expectDisplayResult(`display(123);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "123",
-]
-`)
+              Array [
+                "123",
+              ]
+            `)
   })
 
   test('LGCF64 works', () => {
     return expectDisplayResult(`display(1.5);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "1.5",
-]
-`)
+              Array [
+                "1.5",
+              ]
+            `)
   })
 
   test('LGCB0 works', () => {
     return expectDisplayResult(`display(false);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "false",
-]
-`)
+              Array [
+                "false",
+              ]
+            `)
   })
 
   test('LGCB1 works', () => {
     return expectDisplayResult(`display(true);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "true",
-]
-`)
+              Array [
+                "true",
+              ]
+            `)
   })
 
   test('LGCU works', () => {
     return expectDisplayResult(`display(undefined);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "undefined",
-]
-`)
+              Array [
+                "undefined",
+              ]
+            `)
   })
 
   test('LGCN works', () => {
     return expectDisplayResult(`display(null);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "null",
-]
-`)
+              Array [
+                "null",
+              ]
+            `)
   })
 
   test('LGCS works', () => {
     return expectDisplayResult(`display("test string");`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "\\"test string\\"",
-]
-`)
+              Array [
+                "\\"test string\\"",
+              ]
+            `)
   })
 
   test('ADDG works for numbers', () => {
     return expectDisplayResult('display(-1+1);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "0",
-]
-`)
+              Array [
+                "0",
+              ]
+            `)
   })
 
   test('ADDG works for strings', () => {
     return expectDisplayResult('display("first"+"second");', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "\\"firstsecond\\"",
-]
-`)
+              Array [
+                "\\"firstsecond\\"",
+              ]
+            `)
   })
 
   test('ADDG fails for ill-typed operands', () => {
     return expectParsedError('1+undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for +."`
+    )
   })
 
   test('SUBG works for numbers', () => {
     return expectDisplayResult('display(123-124);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "-1",
-]
-`)
+              Array [
+                "-1",
+              ]
+            `)
   })
 
   test('SUBG fails for ill-typed operands', () => {
     return expectParsedError('1-undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for -."`
+    )
   })
 
   test('MULG works for numbers', () => {
     return expectDisplayResult('display(123*2);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "246",
-]
-`)
+              Array [
+                "246",
+              ]
+            `)
   })
 
   test('MULG fails for ill-typed operands', () => {
     return expectParsedError('1*undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for *."`
+    )
   })
 
   test('DIVG works for numbers', () => {
     return expectDisplayResult('display(128/32);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "4",
-]
-`)
+              Array [
+                "4",
+              ]
+            `)
   })
 
   test('DIVG fails for division by 0', () => {
@@ -151,23 +157,27 @@ Array [
     return expectParsedError('1/undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for /."`
+    )
   })
 
   test('MODG works for numbers', () => {
     return expectDisplayResult('display(128%31);', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "4",
-]
-`)
+              Array [
+                "4",
+              ]
+            `)
   })
 
   test('MODG fails for ill-typed operands', () => {
     return expectParsedError('1%undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected undefined, got undefined for undefined."`
+    )
   })
 
   test('NEGG works', () => {
@@ -175,18 +185,20 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "-1",
-  "1",
-]
-`)
+              Array [
+                "-1",
+                "1",
+              ]
+            `)
   })
 
   test('NEGG fails for ill-typed operands', () => {
     return expectParsedError('-"hi";', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number, got string for -."`
+    )
   })
 
   test('NOTG works', () => {
@@ -194,18 +206,20 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+              Array [
+                "true",
+                "false",
+              ]
+            `)
   })
 
   test('NOTG fails for ill-typed operands', () => {
     return expectParsedError('!1;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected boolean, got number for !."`
+    )
   })
 
   test('LTG works for numbers', () => {
@@ -213,11 +227,11 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+              Array [
+                "true",
+                "false",
+              ]
+            `)
   })
 
   test('LTG works for strings', () => {
@@ -225,18 +239,20 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+              Array [
+                "true",
+                "false",
+              ]
+            `)
   })
 
   test('LTG fails for ill-typed operands', () => {
     return expectParsedError('1<undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <."`
+    )
   })
 
   test('GTG works for numbers', () => {
@@ -244,11 +260,11 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "false",
-  "true",
-]
-`)
+              Array [
+                "false",
+                "true",
+              ]
+            `)
   })
 
   test('GTG works for strings', () => {
@@ -256,18 +272,20 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "false",
-  "true",
-]
-`)
+              Array [
+                "false",
+                "true",
+              ]
+            `)
   })
 
   test('GTG fails for ill-typed operands', () => {
     return expectParsedError('1>undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >."`
+    )
   })
 
   test('LEG works for numbers', () => {
@@ -282,12 +300,12 @@ Array [
         variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "true",
-  "false",
-]
-`)
+              Array [
+                "true",
+                "true",
+                "false",
+              ]
+            `)
   })
 
   test('LEG works for strings', () => {
@@ -302,19 +320,21 @@ Array [
         variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "true",
-  "false",
-]
-`)
+              Array [
+                "true",
+                "true",
+                "false",
+              ]
+            `)
   })
 
   test('LEG fails for ill-typed operands', () => {
     return expectParsedError('1<=undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <=."`
+    )
   })
 
   test('GEG works for numbers', () => {
@@ -329,12 +349,12 @@ Array [
         variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
-Array [
-  "false",
-  "true",
-  "true",
-]
-`)
+              Array [
+                "false",
+                "true",
+                "true",
+              ]
+            `)
   })
 
   test('GEG works for numbers', () => {
@@ -349,19 +369,21 @@ Array [
         variant: 'concurrent'
       }
     ).toMatchInlineSnapshot(`
-Array [
-  "false",
-  "true",
-  "true",
-]
-`)
+              Array [
+                "false",
+                "true",
+                "true",
+              ]
+            `)
   })
 
   test('GEG fails for ill-typed operands', () => {
     return expectParsedError('1>=undefined;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: types of operands do not match"`)
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >=."`
+    )
   })
 
   // NEWC, CALL, RETG
@@ -377,21 +399,21 @@ Array [
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "3",
-  "1",
-  "\\"<Function>\\"",
-]
-`)
+              Array [
+                "3",
+                "1",
+                "\\"<Function>\\"",
+              ]
+            `)
   })
 
   test('STLG and LDLG works', () => {
     return expectDisplayResult(`const x = 1; display(x);`, { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-Array [
-  "1",
-]
-`)
+              Array [
+                "1",
+              ]
+            `)
   })
 
   // NEWA, LDAG, STAG, DUP
@@ -400,11 +422,29 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "2",
-  "undefined",
-]
-`)
+              Array [
+                "2",
+                "undefined",
+              ]
+            `)
+  })
+
+  test('LDAG fails for ill-typed argument', () => {
+    return expectParsedError('const arr = []; arr["hi"];', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number, got string for array index."`
+    )
+  })
+
+  test('STAG fails for ill-typed argument', () => {
+    return expectParsedError('const arr = []; arr["hi"] = 1;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected number, got string for array index."`
+    )
   })
 
   test('EQG works', () => {
@@ -436,10 +476,10 @@ Array [
           `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "true",
-]
-`)
+              Array [
+                "true",
+              ]
+            `)
   })
 
   test('LDPG and STPG work', () => {
@@ -455,11 +495,11 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "1",
-  "3",
-]
-`)
+              Array [
+                "1",
+                "3",
+              ]
+            `)
   })
 
   test('BRF works', () => {
@@ -474,11 +514,11 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "\\"did not BRF\\"",
-  "\\"BRF\\"",
-]
-`)
+              Array [
+                "\\"did not BRF\\"",
+                "\\"BRF\\"",
+              ]
+            `)
   })
 
   // BR, NEWENV, POPENV
@@ -499,14 +539,14 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "\\"before NEWENV\\"",
-  "\\"after NEWENV\\"",
-  "\\"before BR\\"",
-  "\\"after POPENV\\"",
-  "\\"after BR\\"",
-]
-`)
+              Array [
+                "\\"before NEWENV\\"",
+                "\\"after NEWENV\\"",
+                "\\"before BR\\"",
+                "\\"after POPENV\\"",
+                "\\"after BR\\"",
+              ]
+            `)
   })
 })
 
@@ -526,13 +566,22 @@ describe('primitive opcodes', () => {
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "0",
-  "3",
-  "101",
-  "2",
-]
-`)
+                Array [
+                  "0",
+                  "3",
+                  "101",
+                  "2",
+                ]
+              `)
+    })
+
+    test('ARRAY_LEN fails for ill-typed argument', () => {
+      return expectParsedError('array_length(1);', {
+        chapter: 3,
+        variant: 'concurrent'
+      }).toMatchInlineSnapshot(
+        `"Line -1: Error: execution aborted: Expected array, got number for array_length."`
+      )
     })
 
     test('ERROR works', () => {
@@ -553,11 +602,11 @@ Array [
           variant: 'concurrent'
         }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_BOOL works', () => {
@@ -571,11 +620,11 @@ Array [
           variant: 'concurrent'
         }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_FUNC works', () => {
@@ -586,11 +635,11 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_NULL works', () => {
@@ -601,11 +650,11 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_NUMBER works', () => {
@@ -616,11 +665,11 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_STRING works', () => {
@@ -631,11 +680,11 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     test('IS_UNDEFINED works', () => {
@@ -646,11 +695,11 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
     })
 
     // variadic test as well
@@ -661,10 +710,10 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "5",
-]
-`)
+                Array [
+                  "5",
+                ]
+              `)
     })
 
     // variadic test
@@ -675,10 +724,21 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "[1, [2, [3, [4, null]]]]",
-]
-`)
+                Array [
+                  "[1, [2, [3, [4, null]]]]",
+                ]
+              `)
+    })
+
+    test('stream_tail fails for ill-typed arguments', () => {
+      return expectParsedError(
+        stripIndent`
+        stream_tail(1);
+      `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(
+        `"Line -1: Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\""`
+      )
     })
   })
 
@@ -693,10 +753,10 @@ Array [
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "1",
-]
-`)
+              Array [
+                "1",
+              ]
+            `)
   })
 
   test('binary handler', () => {
@@ -706,10 +766,10 @@ Array [
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "8",
-]
-`)
+              Array [
+                "8",
+              ]
+            `)
   })
 
   test('math constants', () => {
@@ -720,11 +780,11 @@ Array [
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "Infinity",
-  "NaN",
-]
-`)
+              Array [
+                "Infinity",
+                "NaN",
+              ]
+            `)
   })
 
   describe('concurrent', () => {
@@ -738,11 +798,22 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "false",
-  "true",
-]
-`)
+                Array [
+                  "false",
+                  "true",
+                ]
+              `)
+    })
+
+    test('TEST_AND_SET fails for ill-typed arguments', () => {
+      return expectParsedError(
+        stripIndent`
+        test_and_set(1);
+      `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(
+        `"Line -1: Error: execution aborted: Expected array, got number for test_and_set."`
+      )
     })
 
     test('CLEAR works', () => {
@@ -755,11 +826,22 @@ Array [
         `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(`
-Array [
-  "true",
-  "false",
-]
-`)
+                Array [
+                  "true",
+                  "false",
+                ]
+              `)
+    })
+
+    test('CLEAR fails for ill-typed arguments', () => {
+      return expectParsedError(
+        stripIndent`
+        clear(1);
+      `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(
+        `"Line -1: Error: execution aborted: Expected array, got number for clear."`
+      )
     })
   })
 })
@@ -784,11 +866,11 @@ describe('standard program execution', () => {
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "3",
-  "true",
-]
-`)
+              Array [
+                "3",
+                "true",
+              ]
+            `)
   })
 
   test('logical operators work', () => {
@@ -796,10 +878,10 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
-Array [
-  "false",
-]
-`)
+              Array [
+                "false",
+              ]
+            `)
   })
 
   test('&& operator shortcircuit works', () => {
@@ -843,13 +925,13 @@ Array [
     `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "[ [1, [2, [3, null]]],
-[ [1, [3, [2, null]]],
-[ [2, [1, [3, null]]],
-[[2, [3, [1, null]]], [[3, [1, [2, null]]], [[3, [2, [1, null]]], null]]] ] ] ]",
-]
-`)
+              Array [
+                "[ [1, [2, [3, null]]],
+              [ [1, [3, [2, null]]],
+              [ [2, [1, [3, null]]],
+              [[2, [3, [1, null]]], [[3, [1, [2, null]]], [[3, [2, [1, null]]], null]]] ] ] ]",
+              ]
+            `)
   })
 
   // taken from Studio 11
@@ -879,23 +961,23 @@ Array [
         `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "[ [1, 2],
-[ [1, 3],
-[ [2, 3],
-[[1, 4], [[2, 4], [[1, 5], [[3, 4], [[1, 6], [[2, 5], [[1, 7], null]]]]]]] ] ] ]",
-]
-`)
+              Array [
+                "[ [1, 2],
+              [ [1, 3],
+              [ [2, 3],
+              [[1, 4], [[2, 4], [[1, 5], [[3, 4], [[1, 6], [[2, 5], [[1, 7], null]]]]]]] ] ] ]",
+              ]
+            `)
   })
 
   test('program times out', () => {
     return expectParsedError('while(true) {}', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-"Line -1: Potential infinite loop detected.
-    If you are certain your program is correct, press run again without editing your program.
-      The time limit will be increased from 1 to 10 seconds.
-      This page may be unresponsive for up to 10 seconds if you do so."
-`)
+              "Line -1: Potential infinite loop detected.
+                  If you are certain your program is correct, press run again without editing your program.
+                    The time limit will be increased from 1 to 10 seconds.
+                    This page may be unresponsive for up to 10 seconds if you do so."
+            `)
   })
 
   test('block scoping works', () => {
@@ -926,14 +1008,14 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "3",
-  "3",
-  "-2",
-  "2",
-  "1",
-]
-`)
+              Array [
+                "3",
+                "3",
+                "-2",
+                "2",
+                "1",
+              ]
+            `)
   })
 
   test('return in loop throws error', () => {
@@ -968,10 +1050,10 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "0",
-]
-`)
+              Array [
+                "0",
+              ]
+            `)
   })
 
   test('const assignment throws error', () => {
@@ -992,10 +1074,10 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "[1, [2, null]]",
-]
-`)
+              Array [
+                "[1, [2, null]]",
+              ]
+            `)
   })
 
   test('treat internal functions as first-class', () => {
@@ -1007,10 +1089,10 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "false",
-]
-`)
+              Array [
+                "false",
+              ]
+            `)
   })
 
   test('wrong number of arguments for internal functions throws error', () => {
@@ -1020,9 +1102,7 @@ Array [
         test_and_set(x, 1);
       `,
       { chapter: 3, variant: 'concurrent' }
-    ).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
-    )
+    ).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: Expected 1 arguments, but got 2."`)
   })
 
   test('wrong number of arguments for normal functions throws error', () => {
@@ -1030,7 +1110,7 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
+      `"Line -1: Error: execution aborted: Expected 2 arguments, but got 1."`
     )
   })
 
@@ -1039,7 +1119,7 @@ Array [
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: incorrect number of arguments encountered for function call"`
+      `"Line -1: Error: execution aborted: Expected 1 arguments, but got 2."`
     )
   })
 
@@ -1047,7 +1127,7 @@ Array [
     return expectParsedError('let x = 0; x(1,2);', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: calling non-function value"`)
+    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: calling non-function value 0."`)
   })
 
   test('tail call for internal functions work', () => {
@@ -1060,10 +1140,10 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "true",
-]
-`)
+              Array [
+                "true",
+              ]
+            `)
   })
 
   test('closures declared in for loops work', () => {
@@ -1080,10 +1160,10 @@ Array [
       `,
       { chapter: 3, variant: 'concurrent' }
     ).toMatchInlineSnapshot(`
-Array [
-  "3",
-]
-`)
+              Array [
+                "3",
+              ]
+            `)
   })
 })
 

@@ -15,6 +15,35 @@ Object {
 }
 `;
 
+exports[`primitive opcodes concurrent CLEAR fails for ill-typed arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "clear(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for clear.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for clear.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes concurrent CLEAR works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -30,6 +59,35 @@ display(head(x));",
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes concurrent TEST_AND_SET fails for ill-typed arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "test_and_set(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for test_and_set.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for test_and_set.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -66,6 +124,35 @@ display(NaN);",
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes self-implemented ARRAY_LEN fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "array_length(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array_length.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array_length.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -273,6 +360,35 @@ Object {
 }
 `;
 
+exports[`primitive opcodes self-implemented stream_tail fails for ill-typed arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stream_tail(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "stream_tail(xs) expects a pair as argument xs, but encountered 1"],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes unary handler: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -295,7 +411,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for +.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -310,7 +426,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for +.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -404,7 +520,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for /.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -419,7 +535,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for /.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -485,7 +601,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for >=.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -500,7 +616,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >=.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -552,7 +668,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for >.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -567,7 +683,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -606,6 +722,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes LDAG fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const arr = []; arr[\\"hi\\"];",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number, got string for array index.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for array index.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes LDPG and STPG work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -635,7 +780,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for <=.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -650,7 +795,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <=.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -807,7 +952,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for <.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -822,7 +967,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -868,7 +1013,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected undefined, got undefined for undefined.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -883,7 +1028,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected undefined, got undefined for undefined.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -912,7 +1057,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for *.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -927,7 +1072,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for *.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -956,7 +1101,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected number, got string for -.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -971,7 +1116,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for -.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1001,7 +1146,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected boolean, got number for !.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1016,7 +1161,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected boolean, got number for !.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1035,6 +1180,35 @@ Object {
   "parsedErrors": "",
   "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes STAG fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const arr = []; arr[\\"hi\\"] = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number, got string for array index.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for array index.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -1061,7 +1235,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for -.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1076,7 +1250,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for -.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1234,7 +1408,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: calling non-function value],
+      "error": [Error: execution aborted: calling non-function value 0.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1249,7 +1423,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: calling non-function value",
+  "parsedErrors": "Line -1: Error: execution aborted: calling non-function value 0.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1551,7 +1725,7 @@ test_and_set(x, 1);",
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "error": [Error: execution aborted: Expected 1 arguments, but got 2.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1566,7 +1740,7 @@ test_and_set(x, 1);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1580,7 +1754,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "error": [Error: execution aborted: Expected 2 arguments, but got 1.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1595,7 +1769,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 2 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1609,7 +1783,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "error": [Error: execution aborted: Expected 1 arguments, but got 2.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1624,7 +1798,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
