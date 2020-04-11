@@ -61,20 +61,15 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type) {
 }
 
 function is_base_type(type: Type) {
-  if (type.kind === 'primitive') return true
-  else return false
+    return type.kind === 'primitive'
 }
 
 function is_type_variable(type: Type) {
-  if (type.kind === 'variable') return true
-  else return false
+    return type.kind === 'variable'
 }
 
 // function is_function_type(type: Type) {
-//     if (type.kind === 'function')
-//         return true
-//     else
-//         return false
+//     return type.kind === 'function'
 // }
 
 // Rule 9
