@@ -9,7 +9,6 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { checkInfiniteLoop } from '../infiniteLoops/infiniteLoops'
 
 class BreakValue {}
 
@@ -596,11 +595,6 @@ export function* apply(
 
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
-      const error = checkInfiniteLoop(node, args, context)
-      if(error) {
-        handleRuntimeError(context, error)
-      }
-      
       checkNumberOfArguments(context, fun, args, node!)
       const environment = createEnvironment(fun, args, node)
       environment.thisContext = thisContext

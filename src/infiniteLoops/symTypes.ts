@@ -66,9 +66,10 @@ export interface FunctionSymbol {
   type: 'FunctionSymbol'
   name: string
   args: SSymbol[]
+  loc: es.SourceLocation
 }
-export function makeFunctionSymbol(name: string, args: SSymbol[]) {
-  return { type: 'FunctionSymbol', name, args } as FunctionSymbol
+export function makeFunctionSymbol(name: string, args: SSymbol[], loc: es.SourceLocation) {
+  return { type: 'FunctionSymbol', name, args, loc } as FunctionSymbol
 }
 export interface BranchSymbol {
   type: 'BranchSymbol'
@@ -154,11 +155,12 @@ export function makeTransition(
 export type TransitionSet = Map<string, Transition[]>
 
 export interface InfiniteLoopChecker {
-  id: number
   functionName: string
-  checkerArgs: any[]
+  message: string
+  condition: BooleanSymbol
+  loc: es.SourceLocation
 }
 
-export function makeLoopChecker(id: number, functionName: string, checkerArgs: any[]) {
-  return { id, functionName, checkerArgs } as InfiniteLoopChecker
+export function makeLoopChecker(functionName: string, message: string, condition:BooleanSymbol | null, loc: es.SourceLocation) {
+  return { functionName:functionName, message:"Infinite loop detected. " + message, condition:condition, loc:loc} as InfiniteLoopChecker
 }

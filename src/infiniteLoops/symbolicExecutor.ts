@@ -1,6 +1,5 @@
 import * as es from 'estree'
 import * as stype from './symTypes'
-import { Environment } from '../types'
 
 function execBinarySymbol(
   node1: stype.SymbolicExecutable,
@@ -117,6 +116,12 @@ function getFromStore(name: string, store: Map<string, stype.SSymbol>[]) {
   return undefined
 }
 
+function ifNullWrapDummyLoc(loc: es.SourceLocation | undefined | null) {
+  const pos = {line:10,column:1} as es.Position
+  const dummy = {source:null, start:pos, end:pos} as es.SourceLocation
+  return loc? loc : dummy
+}
+
 export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol {
   function doParam(param: es.Node) {
     if (param.type === 'Identifier') {
@@ -126,33 +131,7 @@ export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol
   }
   const id = node.id as es.Identifier
   const args = node.params.map(doParam)
-  return stype.makeFunctionSymbol(id.name, args)
-}
-
-function makeStore(
-  firstCall: stype.FunctionSymbol,
-  env: Environment
-): Map<string, stype.SSymbol>[] {
-  const store = [new Map()]
-
-  let environment: Environment | null = env
-  while (environment) {
-    const frame = environment.head
-    const descriptors = Object.getOwnPropertyDescriptors(frame)
-    for (const v in frame) {
-      if (frame.hasOwnProperty(v) && typeof frame[v] === 'number' && !descriptors[v].writable) {
-        store[0].set(v, stype.makeNumberSymbol(v, frame[v]))
-      }
-    }
-    environment = (environment as Environment).tail
-  }
-
-  for (const v of firstCall.args) {
-    if (v.type === 'NumberSymbol') {
-      store[0].set(v.name, v)
-    }
-  }
-  return store
+  return stype.makeFunctionSymbol(id.name, args, ifNullWrapDummyLoc(node.loc))
 }
 
 type Executor = (node: es.Node, store: Map<string, stype.SSymbol>[]) => stype.SSymbol
@@ -237,7 +216,8 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     if (node.callee.type === 'Identifier') {
       return stype.makeFunctionSymbol(
         node.callee.name,
-        node.arguments.map(x => symEx(x, store))
+        node.arguments.map(x => symEx(x, store)),
+        ifNullWrapDummyLoc(node.loc)
       )
     }
     return stype.skipSymbol
@@ -280,8 +260,27 @@ function symEx(node: stype.SymbolicExecutable, store: Map<string, stype.SSymbol>
   return stype.skipSymbol
 }
 
-export function symbolicExecute(node: es.FunctionDeclaration, env: Environment) {
+function makeStore(
+  firstCall: stype.FunctionSymbol,
+  constants: [string, number][]
+): Map<string, stype.SSymbol>[] {
+  const store = [new Map()]
+
+  for (const [name,val] of constants) {
+    store[0].set(name, stype.makeLiteralValueSymbol(val))
+  }
+
+  for (const v of firstCall.args) {
+    if (v.type === 'NumberSymbol') {
+      store[0].set(v.name, v)
+    }
+  }
+  return store
+}
+
+export function symbolicExecute(node: es.FunctionDeclaration, constants: [string, number][]) {
   const firstCall = getFirstCall(node)
-  const store = makeStore(firstCall, env)
+  const store = makeStore(firstCall, constants)
   return symEx(node.body, store)
 }
+

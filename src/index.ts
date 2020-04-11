@@ -28,6 +28,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -40,7 +41,7 @@ export interface IOptions {
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  executionMethod: 'interpreter',
+  executionMethod: 'auto',
   originalMaxExecTime: 1000,
   useSubst: false
 }
@@ -178,6 +179,11 @@ export async function runInContext(
       value: steps.map(codify)
     } as Result)
   }
+
+  if (context.chapter <= 2) {
+    addInfiniteLoopProtection(program)
+  }
+
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude

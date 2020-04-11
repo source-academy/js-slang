@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`infinite loop detected fib function 1`] = `"Line 6: Infinite loop detected. Did you call a value that is outside the range of your function?"`;
+exports[`infinite loop detected fib function 1`] = `"Line 6: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\""`;
 
 exports[`infinite loop detected fib function: expectParsedError 1`] = `
 Object {
@@ -17,30 +17,30 @@ Object {
       ",
   "displayResult": Array [],
   "errors": Array [
-    InfiniteLoopError {
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Did you call a value that is outside the range of your function?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 33,
+          "column": 44,
           "line": 6,
         },
         "start": Position {
-          "column": 25,
+          "column": 36,
           "line": 6,
         },
       },
-      "message": " Did you call a value that is outside the range of your function?",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 6: Infinite loop detected. Did you call a value that is outside the range of your function?",
+  "parsedErrors": "Line 6: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`infinite loop detected no base case 1`] = `"Line 5: Infinite loop detected. Did you forget your base case?"`;
+exports[`infinite loop detected no base case 1`] = `"Line 2: Error: \\"Infinite loop detected. Did you forget your base case?\\""`;
 
 exports[`infinite loop detected no base case: expectParsedError 1`] = `
 Object {
@@ -53,30 +53,30 @@ Object {
       ",
   "displayResult": Array [],
   "errors": Array [
-    InfiniteLoopError {
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Did you forget your base case?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 16,
-          "line": 5,
+          "column": 11,
+          "line": 4,
         },
         "start": Position {
           "column": 10,
-          "line": 5,
+          "line": 2,
         },
       },
-      "message": " Did you forget your base case?",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 5: Infinite loop detected. Did you forget your base case?",
+  "parsedErrors": "Line 2: Error: \\"Infinite loop detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`infinite loop detected no state change 1`] = `"Line 9: Infinite loop detected. Check your function calls."`;
+exports[`infinite loop detected no state change 1`] = `"Line 6: Error: \\"Infinite loop detected. Check your function calls.\\""`;
 
 exports[`infinite loop detected no state change: expectParsedError 1`] = `
 Object {
@@ -93,30 +93,30 @@ Object {
       ",
   "displayResult": Array [],
   "errors": Array [
-    InfiniteLoopError {
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Check your function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 14,
-          "line": 9,
+          "column": 29,
+          "line": 6,
         },
         "start": Position {
-          "column": 8,
-          "line": 9,
+          "column": 23,
+          "line": 6,
         },
       },
-      "message": " Check your function calls.",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 9: Infinite loop detected. Check your function calls.",
+  "parsedErrors": "Line 6: Error: \\"Infinite loop detected. Check your function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`infinite loop state change with conditionals detected 1`] = `"Line 5: Infinite loop detected. Check your function calls."`;
+exports[`infinite loop state change with conditionals detected 1`] = `"Line 3: Error: \\"Infinite loop detected. Check your function calls.\\""`;
 
 exports[`infinite loop state change with conditionals detected: expectParsedError 1`] = `
 Object {
@@ -129,23 +129,23 @@ Object {
       ",
   "displayResult": Array [],
   "errors": Array [
-    InfiniteLoopError {
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Check your function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 12,
-          "line": 5,
+          "column": 35,
+          "line": 3,
         },
         "start": Position {
-          "column": 8,
-          "line": 5,
+          "column": 31,
+          "line": 3,
         },
       },
-      "message": " Check your function calls.",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 5: Infinite loop detected. Check your function calls.",
+  "parsedErrors": "Line 3: Error: \\"Infinite loop detected. Check your function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
