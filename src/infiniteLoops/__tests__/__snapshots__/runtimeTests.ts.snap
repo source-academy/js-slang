@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`infinite loop detected fib function 1`] = `"Line 6: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected fib function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+          function fib(x) {
+              if (x===0 || x===1) {
+                  return 1;
+              } else {
+                  return fib(x-1) + fib(x-2);
+              }
+          }
+          fib(-1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 44,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 36,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected no base case 1`] = `"Line 2: Error: \\"Infinite loop detected. Did you forget your base case?\\""`;
+
+exports[`infinite loop detected no base case: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+          function fib(x) {
+              return fib(x-1) + fib(x-2);
+          }
+          fib(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Did you forget your base case?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 11,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite loop detected. Did you forget your base case?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected no state change 1`] = `"Line 6: Error: \\"Infinite loop detected. Check your function calls.\\""`;
+
+exports[`infinite loop detected no state change: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+        function fib(x) {
+            if (x===0 || x===1) {
+                return 1;
+            } else {
+                return fib(x);
+            }
+        }
+        fib(5);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Check your function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 23,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite loop detected. Check your function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop state change with conditionals detected 1`] = `"Line 3: Error: \\"Infinite loop detected. Check your function calls.\\""`;
+
+exports[`infinite loop state change with conditionals detected: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+        function f(x) {
+          return x<0 || x>5? 0:f(x);
+        }
+        f(2);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite loop detected. Check your function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 35,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 31,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Error: \\"Infinite loop detected. Check your function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop state change with conditionals terminates 1`] = `0`;
+
+exports[`infinite loop state change with conditionals terminates: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+          function f(x) {
+            return x<0 || x>5? 0:f(x);
+          }
+          f(6);
+        ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no infinite loops detected 1`] = `5`;
+
+exports[`no infinite loops detected: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+          function fib(x) {
+              if (x===0 || x===1) {
+                  return 1;
+              } else {
+                  return fib(x-1) + fib(x-2);
+              }
+          }
+          fib(4);
+      ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
