@@ -3,7 +3,11 @@ node_modules
 !*.prelude.js
 *.map
 dist/
+.idea/
 
 # emacs backup files
-
 *~
+
+.vscode/
+tsconfig.tsbuildinfo
+test-report.html

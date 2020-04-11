@@ -1,0 +1,475 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Binary operations force arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function add(x, y) { return x + y; } add(((x) => x)(5), ((x) => x + 1)(9)); ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 15,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const add = wrap((x, y) => {
+          return {
+            isTail: false,
+            value: binaryOp(\\"+\\", x, y, 1, 28)
+          };
+        }, \\"function add(x, y) {\\\\n  return x + y;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(add, 1, 37, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\"), 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", x, 1, 1, 64)     }), \\\\\\"x => x + 1\\\\\\"), 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     });   } });\\");
+        globals.variables.set(\\"add\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return add;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Conditionals force test: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+function f(a, b) {
+  return (a ? true : head(null)) && (!b ? true : head(null));
+}
+
+f(((b) => b)(true), ((b) => !b)(true));
+",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const f = wrap((a, b) => {
+          return boolOrErr(boolOrErr(a, 3, 10) ? true : callIfFuncAndRightArgs(head, 3, 21, {
+            isThunk: true,
+            memoizedValue: 0,
+            isMemoized: false,
+            expr: () => {
+              return null;
+            }
+          }), 3, 9) && (boolOrErr(unaryOp(\\"!\\", b, 3, 37), 3, 37) ? {
+            isTail: false,
+            value: true
+          } : {
+            isTail: true,
+            function: head,
+            functionName: \\"head\\",
+            arguments: [{
+              isThunk: true,
+              memoizedValue: 0,
+              isMemoized: false,
+              expr: () => {
+                return null;
+              }
+            }],
+            line: 3,
+            column: 49
+          });
+        }, \\"function f(a, b) {\\\\n  return (a ? true : head(null)) && (!b ? true : head(null));\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 6, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: b     }), \\\\\\"b => b\\\\\\"), 6, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: unaryOp(\\\\\\"!\\\\\\", b, 6, 28)     }), \\\\\\"b => !b\\\\\\"), 6, 20, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } });\\");
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail calls work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+function test(a, b) { return a === 1 ? a : b; }
+
+function test2(a) { return test(a, head(null)); }
+
+test2(1);
+",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const test = wrap((a, b) => {
+          return boolOrErr(binaryOp(\\"===\\", a, 1, 2, 29), 2, 29) ? {
+            isTail: false,
+            value: a
+          } : {
+            isTail: false,
+            value: b
+          };
+        }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\");
+        const test2 = wrap(a => {
+          return {
+            isTail: true,
+            function: test,
+            functionName: \\"test\\",
+            arguments: [{
+              isThunk: true,
+              memoizedValue: 0,
+              isMemoized: false,
+              expr: () => {
+                return a;
+              }
+            }, {
+              isThunk: true,
+              memoizedValue: 0,
+              isMemoized: false,
+              expr: () => {
+                return callIfFuncAndRightArgs(head, 4, 35, {
+                  isThunk: true,
+                  memoizedValue: 0,
+                  isMemoized: false,
+                  expr: () => {
+                    return null;
+                  }
+                });
+              }
+            }],
+            line: 4,
+            column: 27
+          };
+        }, \\"function test2(a) {\\\\n  return test(a, head(null));\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test2, 6, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } });\\");
+        globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return test;
+          }
+        });
+        globals.variables.set(\\"test2\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return test2;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Thunks are memoized: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+let x = 1;
+
+function incX() {
+  x = x + 1;
+  return x;
+}
+
+function square(n) {
+  return n * n;
+}
+
+square(incX());",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        let x = 1;
+        const incX = wrap(() => {
+          x = binaryOp(\\"+\\", x, 1, 5, 6);
+          return {
+            isTail: false,
+            value: x
+          };
+        }, \\"function incX() {\\\\n  x = x + 1;\\\\n  return x;\\\\n}\\");
+        const square = wrap(n => {
+          return {
+            isTail: false,
+            value: binaryOp(\\"*\\", n, n, 10, 9)
+          };
+        }, \\"function square(n) {\\\\n  return n * n;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(square, 13, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(incX, 13, 7);   } });\\");
+        globals.variables.set(\\"x\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return x;
+          },
+          assignNewValue: function (unique) {
+            return x = unique;
+          }
+        });
+        globals.variables.set(\\"incX\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return incX;
+          }
+        });
+        globals.variables.set(\\"square\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return square;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Thunks capture local environment: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+function addSome(x) {
+  const y = x + 1;
+  return z => y + z;
+}
+
+const addSome2 = addSome(2);
+
+addSome2(3);
+",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 6,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const addSome = wrap(x => {
+          const y = binaryOp(\\"+\\", x, 1, 3, 12);
+          return {
+            isTail: false,
+            value: wrap(z => ({
+              isTail: false,
+              value: binaryOp(\\"+\\", y, z, 4, 14)
+            }), \\"z => y + z\\")
+          };
+        }, \\"function addSome(x) {\\\\n  const y = x + 1;\\\\n  return z => y + z;\\\\n}\\");
+        const addSome2 = callIfFuncAndRightArgs(addSome, 7, 17, {
+          isThunk: true,
+          memoizedValue: 0,
+          isMemoized: false,
+          expr: () => {
+            return 2;
+          }
+        });
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(addSome2, 9, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 3;   } });\\");
+        globals.variables.set(\\"addSome\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return addSome;
+          }
+        });
+        globals.variables.set(\\"addSome2\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return addSome2;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Unary operations force argument: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function neg(b) { return !b; } neg(((x) => x)(false)); ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const neg = wrap(b => {
+          return {
+            isTail: false,
+            value: unaryOp(\\"!\\", b, 1, 25)
+          };
+        }, \\"function neg(b) {\\\\n  return !b;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(neg, 1, 31, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\"), 1, 35, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return false;       }     });   } });\\");
+        globals.variables.set(\\"neg\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return neg;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Unused arguments are not evaluated: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(a, b) { return a === 1 ? a : b; } test(1, head(null));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $NATIVE_STORAGE.globals;
+(( <globals redacted> ) => {
+  return (() => {
+    {
+      {
+        const test = wrap((a, b) => {
+          return boolOrErr(binaryOp(\\"===\\", a, 1, 1, 29), 1, 29) ? {
+            isTail: false,
+            value: a
+          } : {
+            isTail: false,
+            value: b
+          };
+        }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 1, 48, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     });   } });\\");
+        globals.variables.set(\\"test\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return test;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+  "visualiseListResult": Array [],
+}
+`;

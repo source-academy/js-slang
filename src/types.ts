@@ -57,6 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type Variant = 'lazy' | 'non-det' | 'concurrent' | 'default' // this might replace EvaluationMethod
 
 export interface Context<T = any> {
   /** The source version used */
@@ -103,7 +104,33 @@ export interface Context<T = any> {
    */
   contextId: number
 
+  /**
+   * Describes the language processor to be used for evaluation
+   */
   executionMethod: ExecutionMethod
+
+  /**
+   * Describes the strategy / paradigm to be used for evaluation
+   * Examples: lazy, concurrent or non-deterministic
+   */
+  variant: Variant
+}
+
+export interface BlockFrame {
+  type: string
+  // loc refers to the block defined by every pair of curly braces
+  loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
+  enclosingLoc?: es.SourceLocation | null
+  children: (DefinitionNode | BlockFrame)[]
+}
+
+export interface DefinitionNode {
+  name: string
+  type: string
+  loc?: es.SourceLocation | null
 }
 
 // tslint:disable:no-any
@@ -140,7 +167,11 @@ export interface Suspended {
   context: Context
 }
 
-export type Result = Suspended | Finished | Error
+export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
+  value: Value
+}
+
+export type Result = Suspended | SuspendedNonDet | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -178,7 +209,13 @@ export type substituterNodes = es.Node | BlockExpression
 
 export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
-export type TypeAnnotation = Untypable | Typedd | NotYetTyped
+export type TypeAnnotatedFuncDecl = TypeAnnotatedNode<es.FunctionDeclaration> & TypedFuncDecl
+
+export type TypeAnnotation = Untypable | Typed | NotYetTyped
+
+export interface TypedFuncDecl {
+  functionInferredType?: Type
+}
 
 export interface Untypable {
   typability?: 'Untypable'
@@ -190,21 +227,23 @@ export interface NotYetTyped {
   inferredType?: Type
 }
 
-export interface Typedd {
+export interface Typed {
   typability?: 'Typed'
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List
+export type Type = Primitive | Variable | FunctionType | List | Pair
+export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
   kind: 'primitive'
-  name: 'number' | 'boolean' | 'string' | 'null' | 'integer' | 'undefined'
+  name: 'number' | 'boolean' | 'string' | 'undefined'
 }
 
 export interface Variable {
   kind: 'variable'
   name: string
+  constraint: Constraint
 }
 
 // cannot name Function, conflicts with TS
@@ -217,4 +256,15 @@ export interface FunctionType {
 export interface List {
   kind: 'list'
   elementType: Type
+}
+
+export interface Pair {
+  kind: 'pair'
+  headType: Type
+  tailType: Type
+}
+
+export interface ForAll {
+  kind: 'forall'
+  polyType: Type
 }
