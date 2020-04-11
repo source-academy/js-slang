@@ -7,6 +7,36 @@ import { generate } from 'astring'
 // tslint:disable:max-classes-per-file
 
 
+export class CyclicReferenceError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.Node>,
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+      return `${stringifyNode(this.node)} contains cyclic reference to itself`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+
+}
+
+function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
+    return  ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type) 
+    ? node.type === 'VariableDeclaration'
+        ? (node.declarations[0].id as es.Identifier).name
+        : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
+    : JSON.stringify(node) // might not be a good idea
+}
+
 export class DifferentNumberArgumentsError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
@@ -86,7 +116,7 @@ export class InvalidArgumentTypesError implements SourceError {
     }
     return stripIndent`
     A type mismatch was detected in the function call:
-      ${functionString}(${argStrings.join(', ')})
+      ${functionString}
     The function expected ${formatPhrasing(this.expectedTypes)}
     but instead received ${formatPhrasing(this.receivedTypes)}
     `

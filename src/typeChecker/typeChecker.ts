@@ -11,9 +11,9 @@ import {
   TypeAnnotatedFuncDecl,
   SourceError
 } from '../types'
-import { TypeError, InternalTypeError, UnifyError, InternalDifferentNumberArgumentsError } from '../typeErrors'
+import { TypeError, InternalTypeError, UnifyError, InternalDifferentNumberArgumentsError, InternalCyclicReferenceError } from '../typeErrors'
 import { typeToString } from '../utils/stringify'
-import { ConsequentAlternateMismatchError, InvalidTestConditionError, DifferentNumberArgumentsError } from '../errors/typeErrors'
+import { ConsequentAlternateMismatchError, InvalidTestConditionError, DifferentNumberArgumentsError, InvalidArgumentTypesError, CyclicReferenceError } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -34,7 +34,9 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
       node.typability = 'Typed'
     } catch (e) {
-      if (isInternalTypeError(e)) {
+      // ignore if InternalCyclicReferenceError
+      if (e instanceof InternalCyclicReferenceError) {}
+      else if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
         typeErrors.push(new TypeError(node, e))
       }
     }
@@ -117,7 +119,11 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
             constraints
           )
         } catch (e) {
-          if (isInternalTypeError(e)) {
+          if(e instanceof InternalCyclicReferenceError) {
+            // console.log('added in function declaration')
+            typeErrors.push(new CyclicReferenceError(node))
+          }
+          else if (isInternalTypeError(e)) {
             typeErrors.push(new TypeError(node, e))
           }
         }
@@ -340,9 +346,7 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
                 elementType: LHS
               }
             }
-            throw new InternalTypeError(
-              'Contains cyclic reference to itself, where the type being bound to is a function type'
-            )
+            throw new InternalCyclicReferenceError(type.name)
           }
           return applyConstraints(constraint[1], constraints)
         }
@@ -433,15 +437,12 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     } else if (contains(RHS, LHS.name)) {
       if (isPair(RHS) && (LHS === RHS.tailType || LHS === getListType(RHS.tailType))) {
         // T1 = Pair<T2, T1> ===> T1 = List<T2>
-        // throw Error('need to unify pair')
         return addToConstraintList(constraints, [LHS, tList(RHS.headType)])
       } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
         constraints.push([LHS, RHS])
         return constraints
       }
-      throw Error(
-        'Contains cyclic reference to itself, where the type being bound to is a function type'
-      )
+      throw new InternalCyclicReferenceError(LHS.name)
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
       throw new InternalTypeError(
@@ -455,7 +456,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
-      // throw Error(`Expected ${LHS.parameterTypes.length} args, got ${RHS.parameterTypes.length}`)
       throw new InternalDifferentNumberArgumentsError(LHS.parameterTypes.length, RHS.parameterTypes.length)
     }
     let newConstraints = constraints
@@ -468,7 +468,6 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
   } else {
-    // throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
     throw new UnifyError(LHS, RHS)
   }
 }
@@ -507,10 +506,14 @@ function infer(
   try {
     return _infer(node, env, constraints, isLastStatementInBlock)
   } catch (e) {
-    // if (isInternalTypeError(e)) {
-    //   typeErrors.push(new TypeError(node, e.message))
-    //   return constraints
-    // }
+    if (e instanceof InternalCyclicReferenceError) {
+      // cyclic reference errors only happen in function declarations
+      // which would have been caught when inferring it
+      return constraints
+    } else if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
+      typeErrors.push(new TypeError(node, e.message))
+      return constraints
+    }
     throw e
   }
 }
@@ -763,9 +766,24 @@ function _infer(
           typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
       }
-      argNodes.forEach(argNode => {
-        newConstraints = infer(argNode, env, newConstraints)
+      let haveInvalidArgTypes = false
+      const calledFunctionType = applyConstraints((calleeNode as TypeAnnotatedNode<es.Node>).inferredType!, newConstraints)
+      const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
+      let recievedTypes: Type[] = []
+      argNodes.forEach((argNode, idx) => {
+        try {
+          newConstraints = infer(argNode, env, newConstraints)
+          recievedTypes.push(expectedTypes[idx])
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            recievedTypes.push(e.LHS)
+            haveInvalidArgTypes = true
+          }
+        }
       })
+      if (haveInvalidArgTypes) {
+        typeErrors.push(new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes))
+      }
       return newConstraints
     }
     default:

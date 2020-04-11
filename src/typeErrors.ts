@@ -52,3 +52,9 @@ export class InternalInvalidArgumentTypesError extends InternalTypeError {
     super('Failed to unify types')
   }
 }
+
+export class InternalCyclicReferenceError extends InternalTypeError {
+  constructor(public name: string) {
+    super(`contains a cyclic reference to itself`) 
+  }
+}
