@@ -795,7 +795,6 @@ function _infer(
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
       let newConstraints = constraints
-      newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
       try {
         newConstraints = infer(calleeNode, env, newConstraints)
       } catch (e) {
@@ -803,26 +802,24 @@ function _infer(
           typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
       }
-      let haveInvalidArgTypes = false
       const calledFunctionType = applyConstraints(
         (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
         newConstraints
       )
       const recievedTypes: Type[] = []
       argNodes.forEach(argNode => {
-        try {
-          newConstraints = infer(argNode, env, newConstraints)
-          recievedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
-        } catch (e) {
-          if (e instanceof UnifyError) {
-            recievedTypes.push(e.LHS) // will be the wrong type if not primitive
-            haveInvalidArgTypes = true
-          }
-        }
+        newConstraints = infer(argNode, env, newConstraints)
+        recievedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
       })
-      if (haveInvalidArgTypes) {
-        const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
-        typeErrors.push(new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes))
+      try {
+        newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes)
+          )
+        }
       }
       return newConstraints
     }
