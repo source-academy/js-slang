@@ -1088,6 +1088,7 @@ M[OpCodes.LDAG] = () => {
     ERROR_MSG_ARGS[0] = 'array'
     ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])}`
     ERROR_MSG_ARGS[2] = 'array access'
+    RUNNING = false
     return
   }
 
@@ -1124,6 +1125,7 @@ M[OpCodes.STAG] = () => {
     ERROR_MSG_ARGS[0] = 'array'
     ERROR_MSG_ARGS[1] = `${node_kind(HEAP[F + TAG_SLOT])}`
     ERROR_MSG_ARGS[2] = 'array access'
+    RUNNING = false
     return
   }
   HEAP[F + ARRAY_VALUE_SLOT][A] = D

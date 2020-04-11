@@ -751,6 +751,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes LDAG fails for non-array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1[0];",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array access.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array access.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes LDPG and STPG work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -1207,6 +1236,35 @@ Object {
     },
   ],
   "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for array index.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes STAG fails for non-array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "0[1] = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array access.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array access.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

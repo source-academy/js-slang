@@ -429,12 +429,30 @@ describe('standard opcodes', () => {
             `)
   })
 
+  test('LDAG fails for non-array', () => {
+    return expectParsedError('1[0];', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected array, got number for array access."`
+    )
+  })
+
   test('LDAG fails for ill-typed argument', () => {
     return expectParsedError('const arr = []; arr["hi"];', {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
       `"Line -1: Error: execution aborted: Expected number, got string for array index."`
+    )
+  })
+
+  test('STAG fails for non-array', () => {
+    return expectParsedError('0[1] = 1;', {
+      chapter: 3,
+      variant: 'concurrent'
+    }).toMatchInlineSnapshot(
+      `"Line -1: Error: execution aborted: Expected array, got number for array access."`
     )
   })
 
