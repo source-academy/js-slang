@@ -28,6 +28,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -94,6 +95,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -156,6 +158,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -214,6 +217,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -279,6 +283,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -339,6 +344,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -399,6 +405,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -460,6 +467,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
@@ -544,6 +552,7 @@ const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = $NATIVE_STORAGE.globals;
+const __createKernel = native.gpu.get(\\"__createKernel\\");
 (( <globals redacted> ) => {
   return (() => {
     {
