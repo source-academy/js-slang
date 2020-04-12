@@ -9,7 +9,7 @@ import {
   isFunctionType
 } from '../types'
 import { annotateProgram, fresh } from './annotator'
-import { isOverLoaded, primitiveMap, updateTypeEnvironment } from './typeEnvironment'
+import { booleanType, isOverLoaded, primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
@@ -241,6 +241,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   function inferConditionalExpressions(
     conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>
   ) {
+    const expressionTypeVariable = conditionalExpression.typeVariable as Variable
     const test = conditionalExpression.test as TypeAnnotatedNode<es.Expression>
     const consequent = conditionalExpression.consequent as TypeAnnotatedNode<es.Expression>
     const alternate = conditionalExpression.alternate as TypeAnnotatedNode<es.Expression>
@@ -249,10 +250,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // const testTypeVariable = (test.typeVariable as Variable).id
     const testTypeVariable = test.typeVariable as Variable
     if (testTypeVariable !== undefined) {
-      const result = updateTypeConstraints(testTypeVariable, {
-        kind: 'primitive',
-        name: 'boolean'
-      })
+      const result = updateTypeConstraints(testTypeVariable, booleanType)
       if (result === -1) {
         displayErrorAndTerminate(
           'Expecting type `boolean` but got `' + testTypeVariable.kind + '` instead',
@@ -262,11 +260,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
 
     // check that the types of the test expressions are the same
-    // const consequentTypeVariable = (consequent.typeVariable as Variable).id
-    // const alternateTypeVariable = (alternate.typeVariable as Variable).id
     const consequentTypeVariable = consequent.typeVariable as Variable
     const alternateTypeVariable = alternate.typeVariable as Variable
-
     if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
       const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
       if (result === -1) {
@@ -278,6 +273,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
             '` to be the same, but got different',
           consequent.loc
         )
+      } else {
+        updateTypeConstraints(expressionTypeVariable, consequentTypeVariable)
       }
     }
   }
