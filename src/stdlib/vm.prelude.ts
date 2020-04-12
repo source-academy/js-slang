@@ -379,7 +379,7 @@ function _reverse(xs) {
 // 73 placeholder
 function _runtime(x) {}
 
-// 74 unlike Source version, does not fail gracefully
+// 74
 function _set_head(xs,x) {
   if (!is_pair(xs)) {
     error('set_head(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
@@ -388,7 +388,7 @@ function _set_head(xs,x) {
   }
 }
 
-// 75 unlike Source version, does not fail gracefully
+// 75
 function _set_tail(xs, x) {
   if (!is_pair(xs)) {
     error('set_tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
@@ -517,7 +517,7 @@ function _stream_to_list(xs) {
     : pair(head(xs), stream_to_list(stream_tail(xs)));
 }
 
-// 89 unlike Source version, does not fail gracefully
+// 89
 function _tail(xs) {
   if (!is_pair(xs)) {
     error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
