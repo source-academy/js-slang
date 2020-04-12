@@ -468,8 +468,8 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
       throw new InternalDifferentNumberArgumentsError(
-        LHS.parameterTypes.length,
-        RHS.parameterTypes.length
+        RHS.parameterTypes.length,
+        LHS.parameterTypes.length
       )
     }
     let newConstraints = constraints
@@ -795,13 +795,7 @@ function _infer(
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
       let newConstraints = constraints
-      try {
-        newConstraints = infer(calleeNode, env, newConstraints)
-      } catch (e) {
-        if (e instanceof InternalDifferentNumberArgumentsError) {
-          typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
-        }
-      }
+      newConstraints = infer(calleeNode, env, newConstraints)
       const calledFunctionType = applyConstraints(
         (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
         newConstraints
@@ -819,6 +813,8 @@ function _infer(
           typeErrors.push(
             new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes)
           )
+        } else if (e instanceof InternalDifferentNumberArgumentsError) {
+          typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
       }
       return newConstraints

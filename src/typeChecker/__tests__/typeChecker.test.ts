@@ -157,6 +157,28 @@ describe('type checking functions', () => {
     )
   })
 
+  it('fails with correct error msg when wrong number of args passed in', () => {
+    const code = `
+      function foo(x) { return x + 1; }
+      function goo(x) { return x === 0 ? 1 : goo(x - 1, x - 1); }
+      function bar(f) { return f; }
+      foo(1, 2);
+      bar(foo)(3, 4, 5);
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+"foo: number -> number
+goo: number -> number
+bar: none -> none"
+`)
+
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 3: Function expected 1 args, but got 2
+Line 5: Function expected 1 args, but got 2
+Line 6: Function expected 1 args, but got 3"
+`)
+  })
+
   it('when function used as a parameter fails if wrong function type is passed in', () => {
     const code = `
       function foo(x) { return x + 1; }
