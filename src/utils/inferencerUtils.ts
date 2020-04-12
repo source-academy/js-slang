@@ -76,7 +76,7 @@ const predefined = new Set([
 ])
 
 function printType(type: Type): string {
-  if (type === null) return 'null'
+  // if (type === null) return 'null'
   switch (type.kind) {
     case 'primitive':
       return type.name
