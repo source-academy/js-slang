@@ -9,7 +9,7 @@ import {
   isFunctionType
 } from '../types'
 import { annotateProgram, fresh } from './annotator'
-import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
+import { isOverLoaded, primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
@@ -122,6 +122,30 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     //   name: variableType
     // }
     // constantDeclaration.typability = 'Typed'
+  }
+
+  function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
+    // get data about unary expression from type environment
+    const operator = unaryExpression.operator
+    // retrieves function type of unary '-'
+    const typeOfOperator = isOverLoaded(operator)
+      ? primitiveMap.get(operator).types[1]
+      : primitiveMap.get(operator).types[0]
+    const operatorArgType = typeOfOperator.parameterTypes[0]
+    const operatorResultType = typeOfOperator.returnType
+
+    // get data about arguments
+    const argument = unaryExpression.argument as TypeAnnotatedNode<es.UnaryExpression>
+    const argumentTypeVariable = argument.typeVariable as Variable
+    const resultTypeVariable = unaryExpression.typeVariable as Variable
+
+    if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
+      updateTypeConstraints(argumentTypeVariable, operatorArgType)
+    }
+
+    if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
+      updateTypeConstraints(resultTypeVariable, operatorResultType)
+    }
   }
 
   function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
@@ -367,7 +391,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
-    ConditionalExpression: inferConditionalExpressions
+    ConditionalExpression: inferConditionalExpressions,
+    UnaryExpression: inferUnaryExpression,
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
