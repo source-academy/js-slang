@@ -18,7 +18,6 @@ import {
   InternalDifferentNumberArgumentsError,
   InternalCyclicReferenceError
 } from '../typeErrors'
-import { typeToString } from '../utils/stringify'
 import {
   ConsequentAlternateMismatchError,
   InvalidTestConditionError,
@@ -132,7 +131,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
           )
         } catch (e) {
           if (e instanceof InternalCyclicReferenceError) {
-            // console.log('added in function declaration')
             typeErrors.push(new CyclicReferenceError(node))
           } else if (isInternalTypeError(e)) {
             typeErrors.push(new TypeError(node, e))
@@ -310,7 +308,6 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
       if (getListType(tail.tailType) !== null) {
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
-        // console.log('normalization triggered')
         return __applyConstraints(tail, constraints)
       }
     }
@@ -456,9 +453,7 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
       throw new InternalCyclicReferenceError(LHS.name)
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
-      throw new InternalTypeError(
-        `Expected either a number or a string, got ${typeToString(RHS)} instead.`
-      )
+      throw new UnifyError(LHS, RHS)
     }
     // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
@@ -543,11 +538,21 @@ function _infer(
       const funcType = env.get(op) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
-      return infer(
-        argNode,
-        env,
-        addToConstraintList(constraints, [tFunc(argType, storedType), funcType])
-      )
+      let newConstraints = constraints
+      const receivedTypes: Type[] = []
+      newConstraints = infer(argNode, env, newConstraints)
+      receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
+      try {
+        newConstraints = addToConstraintList(newConstraints, [tFunc(argType, storedType), funcType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          const expectedTypes = funcType.parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes)
+          )
+        }
+      }
+      return newConstraints
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
@@ -557,36 +562,26 @@ function _infer(
       const leftType = leftNode.inferredType as Variable
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
       const rightType = rightNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [
-        tFunc(leftType, rightType, storedType),
-        opType
-      ])
-      const expectedTypes = (opType as FunctionType).parameterTypes
-      const recievedTypes: Type[] = []
-      let haveInvalidArgTypes = false
 
+      const argNodes = [leftNode, rightNode]
+      let newConstraints = constraints
+      const receivedTypes: Type[] = []
+      argNodes.forEach(argNode => {
+        newConstraints = infer(argNode, env, newConstraints)
+        receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
+      })
       try {
-        newConstraints = infer(leftNode, env, newConstraints)
-        recievedTypes[0] = applyConstraints(leftNode.inferredType!, newConstraints)
-      } catch (e) {
+        newConstraints = addToConstraintList(constraints, [
+          tFunc(leftType, rightType, storedType),
+          opType
+        ])
+      } catch(e) {
         if (e instanceof UnifyError) {
-          haveInvalidArgTypes = true
-          recievedTypes[0] = e.LHS // NOTE wrong if not primitive type, let that be for now
+          const expectedTypes = (opType as FunctionType).parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
+          )
         }
-      }
-      try {
-        newConstraints = infer(rightNode, env, newConstraints)
-        recievedTypes[1] = applyConstraints(rightNode.inferredType!, newConstraints)
-      } catch (e) {
-        if (e instanceof UnifyError) {
-          haveInvalidArgTypes = true
-          recievedTypes[1] = e.LHS // NOTE wrong if not primitive type, let that be for now
-        }
-      }
-      if (haveInvalidArgTypes) {
-        typeErrors.push(
-          new InvalidArgumentTypesError(node, [leftNode, rightNode], expectedTypes, recievedTypes)
-        )
       }
       return newConstraints
     }
@@ -800,10 +795,10 @@ function _infer(
         (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
         newConstraints
       )
-      const recievedTypes: Type[] = []
+      const receivedTypes: Type[] = []
       argNodes.forEach(argNode => {
         newConstraints = infer(argNode, env, newConstraints)
-        recievedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
+        receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
       })
       try {
         newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
@@ -811,7 +806,7 @@ function _infer(
         if (e instanceof UnifyError) {
           const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
           typeErrors.push(
-            new InvalidArgumentTypesError(node, argNodes, expectedTypes, recievedTypes)
+            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
           )
         } else if (e instanceof InternalDifferentNumberArgumentsError) {
           typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))

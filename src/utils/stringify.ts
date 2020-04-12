@@ -130,7 +130,9 @@ export function typeToString(type: Type): string {
     case 'primitive':
       return type.name
     case 'variable':
-      return type.constraint || type.name
+      return type.constraint 
+        ? type.constraint === 'none' ? type.name : type.constraint
+        : type.name
     case 'list':
       return `List<${typeToString(type.elementType)}>`
     case 'pair':
@@ -141,5 +143,7 @@ export function typeToString(type: Type): string {
         parametersString = `(${parametersString})`
       }
       return `${parametersString} -> ${typeToString(type.returnType)}`
+    default:
+      return 'Unable to infer type'
   }
 }
