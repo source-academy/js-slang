@@ -11,7 +11,6 @@ normal order reduction called <EM>lazy evaluation</EM>.
 In most programming languages, the arguments of primitive operations
 or functions are fully evaluated before the operation or the 
 the function is applied. This is called <EM>applicative order reduction</EM>.
-Section 
 <a href="https://sicp.comp.nus.edu.sg/chapters/84">Section 1.1.5</a>
 of Structure and Interpretation of Computer Programs, JavaScript Adaptation
 (SICP JS), introduces an alternative, called normal order reduction. In

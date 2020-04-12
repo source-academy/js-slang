@@ -11,7 +11,6 @@ normal order reduction called <EM>lazy evaluation</EM>.
 In most programming languages, the arguments of primitive operations
 or functions are fully evaluated before the operation or the 
 the function is applied. This is called <EM>applicative order reduction</EM>.
-Section 
 <a href="https://sicp.comp.nus.edu.sg/chapters/84">Section 1.1.5</a>
 of Structure and Interpretation of Computer Programs, JavaScript Adaptation
 (SICP JS), introduces an alternative, called normal order reduction. In
@@ -30,7 +29,6 @@ whenever it is required again.
 You can use all features of
 <a href="../source_1/">Source §1</a>, but with the added
 benefit of lazy evaluation. For example, lists in
-https://sicp.comp.nus.edu.sg/chapters/84
 Source §1 Lazy are lazy: They can be infinite, as shown
 in 
 <a href="https://sicp.comp.nus.edu.sg/chapters/84">Section 4.2.3</a>
