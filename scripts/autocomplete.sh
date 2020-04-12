@@ -102,7 +102,9 @@ def process_dir_globals(target):
 # Folder names for jsdoc html
 targets = [
     "source_1",
+    "source_1_lazy",
     "source_2",
+    "source_2_lazy",
     "source_3",
     "source_3_concurrent",
     "source_4",
