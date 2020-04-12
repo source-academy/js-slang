@@ -7,6 +7,7 @@ import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
+import { transpileToGPU, getInternalFunctions } from '../gpu/gpu'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -741,6 +742,7 @@ export function transpile(
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
+  transpileToGPU(program)
   transformReturnStatementsToAllowProperTailCalls(program, variant)
   transformCallExpressionsToCheckIfFunction(program, variant)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
@@ -773,7 +775,12 @@ export function transpile(
       create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
     )
   ])
-  program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
+  program.body = [
+    ...getDeclarationsToAccessTranspilerInternals(),
+    ...getInternalFunctions(globalIds, contextId),
+    wrapped
+  ]
+  console.log(program.body)
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
