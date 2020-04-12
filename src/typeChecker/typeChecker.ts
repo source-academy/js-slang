@@ -23,7 +23,8 @@ import {
   InvalidTestConditionError,
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
-  CyclicReferenceError
+  CyclicReferenceError,
+  DifferentAssignmentError
 } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
@@ -45,8 +46,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
       node.typability = 'Typed'
     } catch (e) {
-      // ignore if InternalCyclicReferenceError
-      // if (e instanceof InternalCyclicReferenceError) {}
       if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
         typeErrors.push(new TypeError(node, e))
       }
@@ -144,7 +143,11 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
         traverse(param, constraints)
       })
       traverse(funcDeclNode.body, constraints)
+      break
     }
+    case 'AssignmentExpression':
+      traverse(node.right, constraints)
+      break
     case 'Literal':
     case 'Identifier':
     default:
@@ -538,9 +541,8 @@ function _infer(
       const funcType = env.get(op) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
-      let newConstraints = constraints
       const receivedTypes: Type[] = []
-      newConstraints = infer(argNode, env, newConstraints)
+      let newConstraints = infer(argNode, env, constraints)
       receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
       try {
         newConstraints = addToConstraintList(newConstraints, [tFunc(argType, storedType), funcType])
@@ -550,6 +552,7 @@ function _infer(
           typeErrors.push(
             new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes)
           )
+          return newConstraints
         }
       }
       return newConstraints
@@ -813,6 +816,26 @@ function _infer(
         }
       }
       return newConstraints
+    }
+    case 'AssignmentExpression': {
+      const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const newConstraints = infer(rightNode, env, constraints)
+      const expectedType = extractFreeVariablesAndGenFresh(env.get(leftNode.name) as ForAll)
+      try {
+        return addToConstraintList(newConstraints, [rightNode.inferredType!, expectedType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(
+            new DifferentAssignmentError(
+              node,
+              expectedType,
+              applyConstraints(rightNode.inferredType!, newConstraints)
+            )
+          )
+          return newConstraints
+        }
+      }
     }
     default:
       return constraints

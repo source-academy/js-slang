@@ -450,3 +450,46 @@ describe('type checking functions used in polymorphic fashion', () => {
     `)
   })
 })
+
+describe('Type checking reassignment for Source 3', () => {
+  it('errors when trying to reassign a different type', () => {
+    const code1 = `
+      let z = 4;
+      let f = x => x +1;
+      let xs = pair(1, pair(1, null));
+
+      z = false || true; // error
+      f = x => x || false; // error
+      xs = pair(1, pair(1, null)); // okay
+      xs = pair(1, null); // okay
+      xs = pair(false, pair(false, null)); // not okay
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(errors.length).toEqual(3)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "z: number
+      f: number -> number
+      xs: List<number>"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 6: Expected reassignment of z:
+        false || true
+      to be of type:
+        number
+      but got:
+        boolean
+      Line 7: Expected reassignment of f:
+        x => x || fals ... e
+      to be of type:
+        number -> number
+      but got:
+        boolean -> boolean
+      Line 10: Expected reassignment of xs:
+        pair(false, pa ... ir(false, null))
+      to be of type:
+        List<number>
+      but got:
+        List<boolean>"
+    `)
+  })
+})

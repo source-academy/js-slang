@@ -6,6 +6,43 @@ import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
 
+export class DifferentAssignmentError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.AssignmentExpression>,
+    public expectedType: Type,
+    public receivedType: Type
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const [varName, assignmentStr] = formatAssignment(this.node)
+    return stripIndent`
+    Expected reassignment of ${varName}:
+      ${assignmentStr}
+    to be of type:
+      ${typeToString(this.expectedType)}
+    but got:
+      ${typeToString(this.receivedType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+function formatAssignment(node: TypeAnnotatedNode<es.AssignmentExpression>): [string, string] {
+  const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+  const assignmentStr = simplify(generate(node.right))
+  return [leftNode.name, assignmentStr]
+}
+
 export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
