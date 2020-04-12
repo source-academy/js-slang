@@ -32,24 +32,24 @@ export function updateTypeEnvironment(program: es.Program) {
 }
 
 // Create Type objects for use later
-const numberType: Type = {
+export const numberType: Type = {
   kind: 'primitive',
   name: 'number'
 }
-const booleanType: Type = {
+export const booleanType: Type = {
   kind: 'primitive',
   name: 'boolean'
 }
-const stringType: Type = {
+export const stringType: Type = {
   kind: 'primitive',
   name: 'string'
 }
-const undefinedType: Type = {
+export const undefinedType: Type = {
   kind: 'primitive',
   name: 'undefined'
 }
 
-const variableType: Type = {
+export const variableType: Type = {
   kind: 'variable',
   // id?: number
   // isAddable?: boolean
@@ -138,7 +138,7 @@ primitiveMap.set('===', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
@@ -148,7 +148,7 @@ primitiveMap.set('!==', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
@@ -158,7 +158,7 @@ primitiveMap.set('>', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
@@ -168,7 +168,7 @@ primitiveMap.set('>=', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
@@ -178,7 +178,7 @@ primitiveMap.set('<', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
@@ -188,7 +188,7 @@ primitiveMap.set('<=', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
+    generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
 
