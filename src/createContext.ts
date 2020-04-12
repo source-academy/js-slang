@@ -12,6 +12,7 @@ import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
+import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 
 const createEmptyRuntime = () => ({
@@ -51,7 +52,8 @@ export const createEmptyContext = <T>(
   }
   const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
     globals: { variables: new Map(), previousScope: null },
-    operators: new Map(Object.entries(operators))
+    operators: new Map(Object.entries(operators)),
+    gpu: new Map(Object.entries(gpu_lib))
   })
   return {
     chapter,
