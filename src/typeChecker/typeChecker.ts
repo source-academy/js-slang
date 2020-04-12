@@ -17,7 +17,7 @@ import {
   UnifyError,
   InternalDifferentNumberArgumentsError,
   InternalCyclicReferenceError
-} from '../typeErrors'
+} from './internalTypeErrors'
 import {
   ConsequentAlternateMismatchError,
   InvalidTestConditionError,
@@ -942,7 +942,7 @@ const predeclaredNames: [string, Type | ForAll][] = [
   ['runtime', tFunc(tNumber)],
   ['stringify', tForAll(tFunc(tVar('T'), tString))],
   ['display', tForAll(tVar('T'))],
-  ['error', tForAll(tVar('T'))],
+  ['error', tForAll(tVar('T'))]
 ]
 
 const headType = tVar('headType')
@@ -956,9 +956,7 @@ const pairFuncs: [string, Type | ForAll][] = [
   ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
 ]
 
-const listFuncs: [string, Type | ForAll][] = [
-  ['list', tForAll(tVar('T1'))]
-]
+const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
 
 const primitiveFuncs: [string, Type | ForAll][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],

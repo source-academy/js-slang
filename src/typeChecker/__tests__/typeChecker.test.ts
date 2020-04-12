@@ -347,6 +347,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       pair(4);
       foo(4, false);
       !3;
+      !(3+4);
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
@@ -370,7 +371,19 @@ describe('type checking overloaded unary/binary primitives', () => {
       The function expected 2 arguments of types:
         number, number
       but instead received 2 arguments of types:
-        number, boolean"
+        number, boolean
+      Line 9: A type mismatch was detected in the unary expression:
+        ! 3
+      The unary operator (!) expected its operand to be of type:
+        boolean
+      but instead it received an operand of type:
+        number
+      Line 10: A type mismatch was detected in the unary expression:
+        ! 3 + 4
+      The unary operator (!) expected its operand to be of type:
+        boolean
+      but instead it received an operand of type:
+        number"
     `)
   })
 

@@ -1,6 +1,6 @@
 // TODO delete this
 import * as es from 'estree'
-import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from './types'
+import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from '../types'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
