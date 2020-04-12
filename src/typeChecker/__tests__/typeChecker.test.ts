@@ -346,6 +346,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       false ? 1 : false;
       pair(4);
       foo(4, false);
+      !3;
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
