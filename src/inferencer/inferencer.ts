@@ -1,13 +1,8 @@
 import { ancestor } from 'acorn-walk/dist/walk'
 import { TypeAnnotatedNode, Primitive, Variable } from '../types'
 import { annotateProgram } from './annotator'
-<<<<<<< HEAD
-import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
-import { updateTypeConstraints } from './constraintStore'
-=======
 import { primitiveMap, updateTypeEnvironment, isOverLoaded } from './typeEnvironment'
 import { constraintStore, updateTypeConstraints } from './constraintStore'
->>>>>>> 06120f3... Infer unary functions
 import * as es from 'estree'
 import { printTypeAnnotation, printTypeEnvironment } from '../utils/inferencerUtils'
 
@@ -243,11 +238,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
-<<<<<<< HEAD
     ConditionalExpression: inferConditionalExpressions,
-=======
     UnaryExpression: inferUnaryExpression,
->>>>>>> 06120f3... Infer unary functions
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
