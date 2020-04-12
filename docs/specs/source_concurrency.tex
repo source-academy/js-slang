@@ -1,0 +1,9 @@
+\subsection*{Concurrency Support}
+\label{conc_supp}
+The following concurrency support is provided:
+
+\begin{itemize}
+\item \(\texttt{concurrent\_execute(}\texttt{f}_\texttt{1}, \cdots \texttt{f}_\texttt{n}\texttt{)}\): \(\textit{primitive}\), setup multiple threads for concurrent execution. For each nullary function \(\texttt{f}_\texttt{i}\) that returns \texttt{undefined}, setup a thread \(\texttt{t}_\texttt{i}\) that executes the code in the body of \(\texttt{f}_\texttt{i}\). The thread that called \texttt{concurrent\_execute} also executes concurrently with all \(\texttt{t}_\texttt{i}\). Returns \texttt{undefined}. This is an atomic operation.
+\item \texttt{test\_and\_set(p)}: \(\textit{primitive}\), assumes the head of pair \texttt{p} is a boolean \(b\). Sets the head of \texttt{p} to \texttt{true}. Returns \(b\). This is an atomic operation.
+\item \texttt{clear(p)}: \(\textit{primitive}\), sets the head of pair \texttt{p} to \texttt{false}. Returns \texttt{undefined}. This is an atomic operation.
+\end{itemize}

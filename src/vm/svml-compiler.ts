@@ -247,11 +247,17 @@ function extractAndRenameNames(
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
       extractAndRenameNames(node, names)
-    } else if (stmt.type === 'IfStatement') {
-      const { consequent, alternate } = stmt as es.IfStatement
-      extractAndRenameNames(consequent as es.BlockStatement, names)
-      // Source spec must have alternate
-      extractAndRenameNames(alternate! as es.BlockStatement, names)
+    }
+    if (stmt.type === 'IfStatement') {
+      let nextAlt = stmt as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
+        // if else if...
+        const { consequent, alternate } = nextAlt as es.IfStatement
+        extractAndRenameNames(consequent as es.BlockStatement, names)
+        // Source spec must have alternate
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
+      }
+      extractAndRenameNames(nextAlt as es.BlockStatement, names)
     }
   }
   return names
@@ -323,9 +329,13 @@ function renameVariables(
       }
     },
     IfStatement(node: es.IfStatement, inactive, c) {
-      const { consequent, alternate } = node
-      recurseBlock(consequent as es.BlockStatement, inactive, c)
-      recurseBlock(alternate! as es.BlockStatement, inactive, c)
+      let nextAlt = node as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
+        const { consequent, alternate } = node
+        recurseBlock(consequent as es.BlockStatement, inactive, c)
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
+      }
+      recurseBlock(nextAlt! as es.BlockStatement, inactive, c)
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
@@ -637,7 +647,7 @@ const compilers = {
     insertFlag: boolean,
     isTailCallPosition: boolean = false
   ) {
-    const { test, consequent, alternate } = node as es.IfStatement
+    const { test, consequent, alternate } = node as es.ConditionalExpression
     const { maxStackSize: m1 } = compile(test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
