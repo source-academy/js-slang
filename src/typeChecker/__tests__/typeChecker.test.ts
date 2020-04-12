@@ -295,6 +295,23 @@ describe('type checking for polymorphic builtin functions', () => {
   })
 })
 
+describe('type checking of functions with variable number of arguments', () => {
+  it('returns an any type', () => {
+    const code = `
+      const xs = list(1,3,4,4);
+      const xs1 = list(false);
+      display(1+1);
+      display(true, 'hello');
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+      "xs: T2
+      xs1: T9"
+    `)
+  })
+})
+
 describe('type checking overloaded unary/binary primitives', () => {
   it('works for the happy path', () => {
     const code = `

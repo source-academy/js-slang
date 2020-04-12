@@ -940,24 +940,24 @@ const predeclaredNames: [string, Type | ForAll][] = [
   ['parse_int', tFunc(tString, tNumber, tNumber)],
   ['prompt', tFunc(tString, tString)],
   ['runtime', tFunc(tNumber)],
-  ['stringify', tForAll(tFunc(tVar('T'), tString))]
+  ['stringify', tForAll(tFunc(tVar('T'), tString))],
+  ['display', tForAll(tVar('T'))],
+  ['error', tForAll(tVar('T'))],
 ]
 
-const headType1 = tVar('headType1')
-const tailType1 = tVar('tailType1')
-const headType2 = tVar('headType2')
-const tailType2 = tVar('tailType2')
-const headType3 = tVar('headType3')
-const tailType3 = tVar('tailType3')
-const headType4 = tVar('headType4')
-const tailType4 = tVar('tailType4')
+const headType = tVar('headType')
+const tailType = tVar('tailType')
 
 const pairFuncs: [string, Type | ForAll][] = [
-  ['pair', tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1)))],
-  ['head', tForAll(tFunc(tPair(headType2, tailType2), headType2))],
-  ['tail', tForAll(tFunc(tPair(headType3, tailType3), tailType3))],
+  ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
+  ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
+  ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType4, tailType4), tBool))]
+  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
+]
+
+const listFuncs: [string, Type | ForAll][] = [
+  ['list', tForAll(tVar('T1'))]
 ]
 
 const primitiveFuncs: [string, Type | ForAll][] = [
@@ -979,4 +979,4 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['/', tFunc(tNumber, tNumber, tNumber)]
 ]
 
-const initialEnv = [...predeclaredNames, ...pairFuncs, ...primitiveFuncs]
+const initialEnv = [...predeclaredNames, ...pairFuncs, ...listFuncs, ...primitiveFuncs]
