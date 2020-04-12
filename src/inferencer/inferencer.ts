@@ -9,7 +9,7 @@ import {
   isFunctionType
 } from '../types'
 import { annotateProgram, fresh } from './annotator'
-import { primitiveMap, updateTypeEnvironment } from './typeEnvironment'
+import { isOverLoaded, primitiveMap, updateTypeEnvironment } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
@@ -131,13 +131,13 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const typeOfOperator = isOverLoaded(operator)
       ? primitiveMap.get(operator).types[1]
       : primitiveMap.get(operator).types[0]
-    const operatorArgType = typeOfOperator.argumentTypes[0]
-    const operatorResultType = typeOfOperator.resultType
+    const operatorArgType = typeOfOperator.parameterTypes[0]
+    const operatorResultType = typeOfOperator.returnType
 
     // get data about arguments
     const argument = unaryExpression.argument as TypeAnnotatedNode<es.UnaryExpression>
-    const argumentTypeVariable = (argument.typeVariable as Variable).id
-    const resultTypeVariable = (unaryExpression.typeVariable as Variable).id
+    const argumentTypeVariable = argument.typeVariable as Variable
+    const resultTypeVariable = unaryExpression.typeVariable as Variable
 
     if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
       updateTypeConstraints(argumentTypeVariable, operatorArgType)
