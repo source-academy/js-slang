@@ -11,20 +11,20 @@
 function concurrent_execute() {}
 
 /**
- * Returns the head of the array <CODE>x</CODE>, and sets the
- * head of <CODE>x</CODE> to <CODE>true</CODE>. Assumes the
- * head of the array <CODE>x</CODE> is a boolean.
- * This is an atomic operation.
- * @param {array} x - given array
- * @returns {value} - head of array <CODE>x</CODE>
+ * Assumes the head of pair <CODE>p</CODE> is a boolean
+ * <CODE>b</CODE>. Sets the head of <CODE>p</CODE> to
+ * <CODE>true</CODE>. Returns <CODE>b</CODE>. This is an
+ * atomic operation.
+ * @param {array} p - given pair
+ * @returns {value} - head of pair <CODE>b</CODE>
  */
-function test_and_set(x) {}
+function test_and_set(p) {}
 
 /**
- * Sets the head of the array <CODE>x</CODE> to
+ * Sets the head of pair <CODE>p</CODE> to
  * <CODE>false</CODE>. Returns <CODE>undefined</CODE>.
  * This is an atomic operation.
- * @param {array} x - given array
+ * @param {array} p - given pair
  * @returns {undefined} undefined
  */
-function clear(x) {}
+function clear(p) {}
