@@ -492,4 +492,26 @@ describe('Type checking reassignment for Source 3', () => {
         List<boolean>"
     `)
   })
+
+  it('checks for attempts to reassign constants', () => {
+    const code1 = `
+      let x = 1;
+      const y = 1;
+      const z = 'test';
+
+      z = false;
+      x = 4;
+      y = 4; // error
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "x: number
+      y: number
+      z: string"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 6: Reassignment of constant z
+      Line 8: Reassignment of constant y"
+    `)
+  })
 })

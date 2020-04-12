@@ -6,6 +6,28 @@ import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
 
+export class ReassignConstError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.AssignmentExpression>,
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const [varName,] = formatAssignment(this.node)
+    return `Reassignment of constant ${varName}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
 export class DifferentAssignmentError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING

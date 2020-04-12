@@ -24,7 +24,8 @@ import {
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
   CyclicReferenceError,
-  DifferentAssignmentError
+  DifferentAssignmentError,
+  ReassignConstError
 } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
@@ -670,7 +671,8 @@ function _infer(
                 (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
                   .inferredType as Variable,
                 newConstraints
-              )
+              ),
+              declNode.kind === 'const'
             )
           )
         }
@@ -821,7 +823,12 @@ function _infer(
       const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
       const newConstraints = infer(rightNode, env, constraints)
-      const expectedType = extractFreeVariablesAndGenFresh(env.get(leftNode.name) as ForAll)
+      const leftNodeType = env.get(leftNode.name) as ForAll
+      if (leftNodeType.constant) {
+        typeErrors.push(new ReassignConstError(node))
+        return newConstraints
+      }
+      const expectedType = extractFreeVariablesAndGenFresh(leftNodeType)
       try {
         return addToConstraintList(newConstraints, [rightNode.inferredType!, expectedType])
       } catch (e) {
@@ -884,10 +891,11 @@ function tList(var1: Type): List {
   }
 }
 
-function tForAll(type: Type): ForAll {
+function tForAll(type: Type, constant: boolean = true): ForAll {
   return {
     kind: 'forall',
-    polyType: type
+    polyType: type,
+    constant
   }
 }
 

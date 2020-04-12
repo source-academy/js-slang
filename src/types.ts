@@ -266,5 +266,6 @@ export interface Pair {
 
 export interface ForAll {
   kind: 'forall'
-  polyType: Type
+  polyType: Type,
+  constant: boolean
 }
