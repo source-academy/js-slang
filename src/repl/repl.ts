@@ -2,13 +2,13 @@
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
-import { EvaluationMethod, ExecutionMethod } from '../types'
+import { Variant, ExecutionMethod } from '../types'
 import Closure from '../interpreter/closure'
 
 function startRepl(
   chapter = 1,
   executionMethod: ExecutionMethod = 'interpreter',
-  evaluationMethod: EvaluationMethod = 'strict',
+  variant: Variant = 'default',
   useSubst: boolean = false,
   useRepl: boolean,
   prelude = ''
@@ -17,12 +17,12 @@ function startRepl(
   let lastResult: Result;
   let context: any
   let options: Partial<IOptions>
-  if (chapter === 43) {
+  if (variant === 'nondet') {
     context = createContext(2)
     options = {
       scheduler: 'nondet',
       executionMethod,
-      evaluationMethod,
+      variant,
       useSubst
     }
   } else {
@@ -30,7 +30,7 @@ function startRepl(
     options = {
       scheduler: 'preemptive',
       executionMethod,
-      evaluationMethod,
+      variant,
       useSubst
     }
   }
@@ -96,12 +96,12 @@ function main() {
     .parseSystem()
 
   const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
-  const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict'
+  const variant = opt.options.lazy === true ? 'nondet' : 'default'
   const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
-  startRepl(chapter, executionMethod, evaluationMethod, useSubst, useRepl, prelude)
+  startRepl(chapter, executionMethod, variant, useSubst, useRepl, prelude)
 }
 
 main()

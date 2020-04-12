@@ -13,9 +13,9 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt } from './parser/parser'
-import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from './schedulers'
-import { getAllOccurrencesInScopeHelper } from './scope-refactoring'
+import { parse, parseAt, parseForNames } from './parser/parser'
+import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler, NonDeteScheduler } from './schedulers'
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
@@ -23,22 +23,27 @@ import { transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
-  EvaluationMethod,
   ExecutionMethod,
   Finished,
   Result,
   Scheduler,
-  SourceError
+  SourceError,
+  Variant
 } from './types'
+import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { compileWithPrelude } from './vm/svml-compiler'
+import { runWithProgram } from './vm/svml-machine'
+export { SourceDocumentation } from './editors/ace/docTooltip'
+import { getProgramNames } from './name-extractor'
 import { evaluateNonDet } from './interpreter/nonDetInterpreter'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async' | 'nondet'
   steps: number
   executionMethod: ExecutionMethod
-  evaluationMethod: EvaluationMethod
+  variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
 }
@@ -47,7 +52,7 @@ const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
   executionMethod: 'auto',
-  evaluationMethod: 'strict',
+  variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false
 }
@@ -175,6 +180,27 @@ export function findDeclaration(
   return declarationNode.loc
 }
 
+export function getScope(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): SourceLocation[] {
+  const program = parse(code, context, true)
+  if (!program) {
+    return []
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return []
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (!declarationNode || declarationNode.loc == null || identifierNode !== declarationNode) {
+    return []
+  }
+
+  return getScopeHelper(declarationNode.loc, program, identifierNode.name)
+}
+
 export function getAllOccurrencesInScope(
   code: string,
   context: Context,
@@ -195,6 +221,15 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export async function getNames(code: string, line: number, col: number): Promise<any> {
+  const [program, comments] = parseForNames(code)
+
+  if (!program) {
+    return []
+  }
+  return getProgramNames(program, comments, { line, column: col })
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -210,7 +245,7 @@ export async function runInContext(
     return undefined
   }
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.evaluationMethod = theOptions.evaluationMethod
+  context.variant = determineVariant(context, options)
   context.errors = []
 
   verboseErrors = getFirstLine(code) === 'enable verbose'
@@ -221,6 +256,27 @@ export async function runInContext(
   validateAndAnnotate(program as Program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
+  }
+  if (context.variant === 'concurrent') {
+    if (previousCode === code) {
+      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+    }
+    previousCode = code
+    try {
+      return Promise.resolve({
+        status: 'finished',
+        value: runWithProgram(compileWithPrelude(program, context), context)
+      } as Result)
+    } catch (error) {
+      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+        context.errors.push(error) // use ExceptionErrors for non Source Errors
+        return resolvedErrorPromise
+      }
+      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
+      return resolvedErrorPromise
+    }
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
@@ -247,7 +303,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.evaluationMethod)
+      const temp = transpile(program, context.contextId, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
@@ -296,19 +352,42 @@ export async function runInContext(
       )
     }
   } else {
-    if (theOptions.scheduler !== 'nondet') {
-      const it = evaluate(program, context)
+    if (context.variant === 'nondet') {
+      const it = evaluateNonDet(program, context)
+      return new NonDeteScheduler().run(it, context)
+    } else {
+      let it = evaluate(program, context)
       let scheduler: Scheduler
-      if (theOptions.scheduler === 'async') {
+      if (context.variant === 'non-det') {
+        it = nonDetEvaluate(program, context)
+        scheduler = new NonDetScheduler()
+      } else if (theOptions.scheduler === 'async') {
         scheduler = new AsyncScheduler()
       } else {
         scheduler = new PreemptiveScheduler(theOptions.steps)
       }
       return scheduler.run(it, context)
-    } else {
-      const it = evaluateNonDet(program, context)
-      return new NonDetScheduler().run(it, context)
     }
+  }
+}
+
+/**
+ * Small function to determine the variant to be used
+ * by a program, as both context and options can have
+ * a variant. The variant provided in options will
+ * have precedence over the variant provided in context.
+ *
+ * @param context The context of the program.
+ * @param options Options to be used when
+ *                running the program.
+ *
+ * @returns The variant that the program is to be run in
+ */
+function determineVariant(context: Context, options: Partial<IOptions>): Variant {
+  if (options.variant) {
+    return options.variant
+  } else {
+    return context.variant
   }
 }
 

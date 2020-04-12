@@ -290,3 +290,14 @@ export const ifStatement = (
   alternate,
   loc
 })
+
+export const whileStatement = (
+  body: es.BlockStatement,
+  test: es.Expression,
+  loc?: es.SourceLocation
+): es.WhileStatement => ({
+  type: 'WhileStatement',
+  test,
+  body,
+  loc
+})

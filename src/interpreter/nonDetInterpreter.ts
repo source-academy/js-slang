@@ -3,13 +3,11 @@ import * as es from 'estree'
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import RuntimeError = WebAssembly.RuntimeError
 import * as _ from 'lodash'
 
 class ReturnValue {
@@ -118,8 +116,6 @@ function defineVariable(context: Context, name: string, value: Value, constant =
 }
 
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
-const replaceEnvironment = (context: Context, environment: Environment) =>
-  (context.runtime.environments[0] = environment)
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 const pushEnvironment = (context: Context, environment: Environment) =>
   context.runtime.environments.unshift(environment)

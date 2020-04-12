@@ -160,6 +160,26 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
   }
 })
 
+// Names-extractor needs comments
+export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
+  let comments: acorn.Comment[] = []
+  const options: AcornOptions = {
+    sourceType: 'module',
+    ecmaVersion: 6,
+    locations: true,
+    onComment: comments
+  }
+  let program: es.Program | undefined
+  try {
+    program = (acornParse(source, options) as unknown) as es.Program
+  } catch {
+    comments = []
+    program = acornLooseParse(source, options)
+  }
+
+  return [program, comments]
+}
+
 export function looseParse(source: string, context: Context) {
   const program = (acornLooseParse(
     source,

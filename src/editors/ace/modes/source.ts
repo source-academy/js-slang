@@ -1,3 +1,5 @@
+import { Variant } from '../../../types'
+
 /* tslint:disable */
 
 /**
@@ -12,7 +14,7 @@
  * 1) change code styles so that it passes tslint test
  * 2) refactor some code to ES2015 class syntax
  */
-export function HighlightRulesSelector(id: number) {
+export function HighlightRulesSelector(id: number, variant: Variant = 'default') {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
@@ -55,6 +57,11 @@ export function HighlightRulesSelector(id: number) {
         'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
     }
 
+    const concurrent = {
+      keywords: '',
+      functions: 'test_and_set|clear|concurrent_execute'
+    }
+
     const chapter4 = {
       keywords: '',
       functions: 'apply_in_underlying_javascript'
@@ -73,6 +80,9 @@ export function HighlightRulesSelector(id: number) {
       }
       if (id >= 4) {
         output += '|' + chapter4.functions
+      }
+      if (variant === 'concurrent') {
+        output += '|' + concurrent.functions
       }
       return output
     }
