@@ -138,6 +138,10 @@ export function typeToString(type: Type): string {
     case 'list':
       return `List<${typeToString(type.elementType)}>`
     case 'pair':
+      const headType = typeToString(type.headType)
+      // convert [T1 , List<T1>] back to List<T1>
+      if (type.tailType.kind === 'list' && headType === typeToString(type.tailType.elementType))
+        return `List<${headType}>`
       return `[${typeToString(type.headType)}, ${typeToString(type.tailType)}]`
     case 'function':
       let parametersString = type.parameterTypes.map(typeToString).join(', ')

@@ -68,15 +68,15 @@ describe('type checking pairs and lists', () => {
     `
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
-      map: (number -> boolean, [number, List<number>]) -> [boolean, List<boolean>]
-      append: ([boolean, List<boolean>], [boolean, List<boolean>]) -> [boolean, List<boolean>]
-      remove: (addable, [addable, List<addable>]) -> [addable, List<addable>]
-      xs: [number, List<number>]
+      "accumulate: ((number, number) -> number, number, List<number>) -> number
+      map: (number -> boolean, List<number>) -> List<boolean>
+      append: (List<boolean>, List<boolean>) -> List<boolean>
+      remove: (addable, List<addable>) -> List<addable>
+      xs: List<number>
       y: number
-      xs1: [boolean, List<boolean>]
-      xs2: [boolean, List<boolean>]
-      xs3: [boolean, List<boolean>]"
+      xs1: List<boolean>
+      xs2: List<boolean>
+      xs3: List<boolean>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -93,9 +93,9 @@ describe('type checking pairs and lists', () => {
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "accumulate: ((T67, T13) -> T13, T13, [T67, List<T67>]) -> T13
-      xs: [number, List<number>]
-      ys: [boolean, List<boolean>]"
+      "accumulate: ((T67, T13) -> T13, T13, List<T67>) -> T13
+      xs: List<number>
+      ys: List<boolean>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -113,9 +113,9 @@ describe('type checking pairs and lists', () => {
 
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "accumulate: ((number, number) -> number, number, [number, List<number>]) -> number
-      xs: [number, List<number>]
-      ys: [boolean, List<boolean>]
+      "accumulate: ((number, number) -> number, number, List<number>) -> number
+      xs: List<number>
+      ys: List<boolean>
       a: number
       b: T53"
     `)
@@ -123,9 +123,9 @@ describe('type checking pairs and lists', () => {
       "Line 8: A type mismatch was detected in the function call:
         accumulate((x, ...  y) => x || y, 0, ys)
       The function expected 3 arguments of types:
-        (number, number) -> number, number, [number, List<number>]
+        (number, number) -> number, number, List<number>
       but instead received 3 arguments of types:
-        (boolean, T57) -> T57, number, [boolean, List<boolean>]"
+        (boolean, T57) -> T57, number, List<boolean>"
     `)
   })
 })
@@ -139,7 +139,7 @@ describe('type checking functions', () => {
     `
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"append: ([T25, List<T25>], [T25, List<T25>]) -> [T25, List<T25>]"`
+      `"append: (List<T25>, List<T25>) -> List<T25>"`
     )
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
