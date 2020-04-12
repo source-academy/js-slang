@@ -575,7 +575,7 @@ function _infer(
           tFunc(leftType, rightType, storedType),
           opType
         ])
-      } catch(e) {
+      } catch (e) {
         if (e instanceof UnifyError) {
           const expectedTypes = (opType as FunctionType).parameterTypes
           typeErrors.push(

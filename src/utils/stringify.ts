@@ -130,8 +130,10 @@ export function typeToString(type: Type): string {
     case 'primitive':
       return type.name
     case 'variable':
-      return type.constraint 
-        ? type.constraint === 'none' ? type.name : type.constraint
+      return type.constraint
+        ? type.constraint === 'none'
+          ? type.name
+          : type.constraint
         : type.name
     case 'list':
       return `List<${typeToString(type.elementType)}>`
