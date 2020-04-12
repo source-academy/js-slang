@@ -14,7 +14,12 @@ import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt, parseForNames } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler, NonDeteScheduler } from './schedulers'
+import {
+  AsyncScheduler,
+  PreemptiveScheduler,
+  NonDetScheduler,
+  NonDeteScheduler
+} from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { getEvaluationSteps } from './stepper/stepper'

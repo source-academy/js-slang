@@ -79,6 +79,7 @@ export class NonDeteScheduler implements Scheduler {
           })
         }
       } catch (e) {
+        console.log('error = ', e)
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false

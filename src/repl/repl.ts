@@ -14,7 +14,7 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
-  let lastResult: Result;
+  let lastResult: Result
   let context: any
   let options: Partial<IOptions>
   if (variant === 'nondet') {
@@ -44,18 +44,18 @@ function startRepl(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
-            if(cmd.trim() === 'try_again();') {
-              (resume(lastResult) as Promise<Result>).then(obj2 => {
+            if (cmd.trim() === 'try_again();') {
+              ;(resume(lastResult) as Promise<Result>).then(obj2 => {
                 if (obj2.status === 'finished' || obj2.status === 'suspend-nondet') {
                   callback(null, obj2.value)
                 } else {
                   callback(new Error(parseError(context.errors)), undefined)
                 }
-              });
-            } else{
+              })
+            } else {
               runInContext(cmd, context, options).then(obj => {
                 if (obj.status === 'finished' || obj.status === 'suspend-nondet') {
-                  lastResult = obj;
+                  lastResult = obj
                   callback(null, obj.value)
                 } else {
                   callback(new Error(parseError(context.errors)), undefined)

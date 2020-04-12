@@ -176,19 +176,32 @@ const checkNumberOfArguments = (
   }
   return undefined
 }
-
 function* getArgs(context: Context, call: es.CallExpression) {
-  const args = []
-  for (const arg of call.arguments) {
-    const argGen = evaluateNonDet(arg, context)
-    let argNext = argGen.next()
-    while (!argNext.done) {
-      const argValue = argNext.value
-      args.push(argValue)
-      argNext = argGen.next()
+  return yield* evalArgs(context, _.cloneDeep(call.arguments) as es.Expression[], [])
+}
+
+function* evalArgs(
+  context: Context,
+  args: es.Expression[],
+  argsValues: Value[]
+): IterableIterator<Value[]> {
+  if (args.length === 0) {
+    yield argsValues
+  } else {
+    const arg = args.shift()
+    if (arg) {
+      const argGen = evaluateNonDet(arg, context)
+      let argNext = argGen.next()
+      while (!argNext.done) {
+        const argValue = argNext.value
+        argsValues.push(argValue)
+        yield* evalArgs(context, args, argsValues)
+        argsValues.pop()
+        argNext = argGen.next()
+      }
+      args.unshift(arg)
     }
   }
-  yield args
 }
 
 function* ambChoices(context: Context, call: es.CallExpression) {
@@ -297,12 +310,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const callee = calleeNext.value
       while (!argsNext.done) {
         const args = argsNext.value
+        if(node.callee.type==="Identifier"){
+          console.log(`applying args ${args} to Identifier ${node.callee.name}`)
+        }
+
         yield* apply(context, callee, args, node, undefined)
         argsNext = argsGen.next()
       }
       calleeNext = calleeGen.next()
     }
-
   },
 
 
