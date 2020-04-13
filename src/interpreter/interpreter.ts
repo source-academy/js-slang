@@ -97,9 +97,9 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
   throw error
 }
 
-const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function hoistIdentifier(context: Context, name: string, node: es.Node) {
+function declareIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -109,33 +109,33 @@ function hoistIdentifier(context: Context, name: string, node: es.Node) {
       new errors.VariableRedeclaration(node, name, descriptors[name].writable)
     )
   }
-  environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
   return environment
 }
 
-function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+function declareVariables(context: Context, node: es.VariableDeclaration) {
   for (const declaration of node.declarations) {
-    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
   }
 }
 
-function hoistImportDeclarations(context: Context, node: es.ImportDeclaration) {
+function declareImports(context: Context, node: es.ImportDeclaration) {
   for (const declaration of node.specifiers) {
-    hoistIdentifier(context, declaration.local.name, node)
+    declareIdentifier(context, declaration.local.name, node)
   }
 }
 
-function hoistFunctionsAndVariableDeclarationsIdentifiers(
+function declareFunctionsAndVariables(
   context: Context,
   node: es.BlockStatement
 ) {
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        hoistVariableDeclarations(context, statement)
+        declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
@@ -144,7 +144,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
   const environment = context.runtime.environments[0]
 
-  if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
+  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
       new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
@@ -183,7 +183,7 @@ const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         return handleRuntimeError(
           context,
           new errors.UnassignedVariable(name, context.runtime.nodes[0])
@@ -202,7 +202,7 @@ const setVariable = (context: Context, name: string, value: any) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         break
       }
       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -273,7 +273,7 @@ function* reduceIf(
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
 function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
-  hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
+  declareFunctionsAndVariables(context, node)
   let result
   for (const statement of node.body) {
     result = yield* evaluate(statement, context)
@@ -419,7 +419,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const testNode = node.test!
     const updateNode = node.update!
     if (initNode.type === 'VariableDeclaration') {
-      hoistVariableDeclarations(context, initNode)
+      declareVariables(context, initNode)
     }
     yield* actualValue(initNode, context)
 
@@ -434,7 +434,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       pushEnvironment(context, environment)
       for (const name in loopEnvironment.head) {
         if (loopEnvironment.head.hasOwnProperty(name)) {
-          hoistIdentifier(context, name, node)
+          declareIdentifier(context, name, node)
           defineVariable(context, name, loopEnvironment.head[name], true)
         }
       }
@@ -611,7 +611,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const moduleName = node.source.value as string
     const neededSymbols = node.specifiers.map(spec => spec.local.name)
     const module = loadIIFEModule(moduleName)
-    hoistImportDeclarations(context, node)
+    declareImports(context, node)
     for (const name of neededSymbols) {
       defineVariable(context, name, module[name], true);
     }
