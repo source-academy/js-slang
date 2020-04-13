@@ -5,7 +5,7 @@ const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttp
 // TODO: Change this URL to actual Backend URL
 const BACKEND_STATIC_URL = 'http://ec2-54-169-81-133.ap-southeast-1.compute.amazonaws.com/static'
 
-export function loadIIFEModuleText(path: string) {
+export function loadModuleText(path: string) {
   const scriptPath = `${BACKEND_STATIC_URL}/${path}.js`
   const req = new HttpRequest()
   req.open('GET', scriptPath, false)
@@ -17,9 +17,12 @@ export function loadIIFEModuleText(path: string) {
 }
 
 /* tslint:disable */
-export function loadIIFEModule(path: string) {
+export function loadIIFEModule(path: string, moduleText?: string) {
   try {
-    return eval(loadIIFEModuleText(path)) as object
+    if (moduleText === undefined) {
+      moduleText = loadModuleText(path)
+    }
+    return eval(moduleText) as object
   } catch (_error) {
     throw new ModuleInternalError(path)
   }

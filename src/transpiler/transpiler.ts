@@ -5,7 +5,7 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
 import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { loadIIFEModuleText } from '../modules/moduleLoader'
+import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 
 /**
@@ -69,14 +69,17 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = loadIIFEModuleText(node.source.value as string)
+    const moduleText = loadModuleText(node.source.value as string)
     prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
     moduleCounter++
   }
   return prefix
 }
 
-function transformSingleImportDeclaration(moduleCounter: number, node: es.ImportDeclaration) {
+export function transformSingleImportDeclaration(
+  moduleCounter: number,
+  node: es.ImportDeclaration
+) {
   const result = []
   const tempNamespace = `__MODULE_${moduleCounter}__`
   // const yyy = __MODULE_xxx__.yyy;

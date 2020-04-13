@@ -13,7 +13,7 @@ test('Try loading a non-existing module', () => {
 
 test('Try executing a wrongly implemented module', () => {
   // A module in wrong format
-  const path = '_mock_dir/_mock_file';
+  const path = '_mock_dir/_mock_file'
   const wrongModuleText = stripIndent`
     export function es6_function(params) {}
   `
