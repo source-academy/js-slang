@@ -284,9 +284,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
 
-  function inferReturnStatement(
-    returnStatement: TypeAnnotatedNode<es.ReturnStatement>
-  ) {
+  function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatement>) {
     // Update type constraints in constraintStore
     // e.g. Given: (return (...)^T1)^T2, Set: T2 = T1
     const arg = returnStatement.argument as TypeAnnotatedNode<es.Node>
@@ -296,7 +294,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (returnypeVariable !== undefined && argTypeVariable !== undefined) {
       const result = updateTypeConstraints(returnypeVariable, argTypeVariable)
-      if (result !== undefined) { // type error
+      if (result !== undefined) {
+        // type error
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferReturnStatement()` - pls debug',
           returnStatement.loc
@@ -313,11 +312,12 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     // First, try to add constraints that ensure all ReturnStatements give same type
     // e.g. T2 = T3
-    const bodyNodes = functionDeclaration.body.body;
+    const bodyNodes = functionDeclaration.body.body
     let prevReturnTypeVariable
     for (const node of bodyNodes) {
       if (node.type === 'ReturnStatement') {
-        const currReturnTypeVariable = (node as TypeAnnotatedNode<es.ReturnStatement>).typeVariable as Variable
+        const currReturnTypeVariable = (node as TypeAnnotatedNode<es.ReturnStatement>)
+          .typeVariable as Variable
         if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
           const result = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
           if (result === -1) {
@@ -352,7 +352,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
     const idenTypeVariable = iden.typeVariable as Variable
 
-    const functionType = primitiveMap.get(iden.name)  // Get function type from Type Env since it was added there
+    const functionType = primitiveMap.get(iden.name) // Get function type from Type Env since it was added there
 
     if (idenTypeVariable !== undefined && functionType !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, functionType)
@@ -365,9 +365,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
 
-  function inferFunctionApplication(
-    functionApplication: TypeAnnotatedNode<es.CallExpression>
-  ) {
+  function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.CallExpression>) {
     // Update type constraints in constraintStore
     // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
     //             f^T7 (1^T6)
@@ -389,10 +387,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       )
     }
 
-    // for (let i in applicationArgs) {  // add type constraint for each arg
-    for (let i = 0 ; i < applicationArgs.length; i++) {  // add type constraint for each arg
+    for (let i = 0; i < applicationArgs.length; i++) {  // add type constraint for each arg
       const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
-      const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i].typeVariable as Variable
+      const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i]
+        .typeVariable as Variable
 
       if (applicationArgTypeVariable && declarationArgTypeVariable) {
         const result = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)

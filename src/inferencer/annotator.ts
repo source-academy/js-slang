@@ -143,7 +143,7 @@ export function annotateProgram(program: es.Program): es.Program {
     ReturnStatement: annotateReturnStatement,
     ConditionalExpression: annotateConditionalExpressions,
     IfStatement: annotateIfStatements,
-    BlockStatement: annotateBlocks,
+    BlockStatement: annotateBlocks
   })
   return program
 }
