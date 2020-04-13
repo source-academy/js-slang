@@ -84,50 +84,33 @@ function generateAddableType() {
 // Initiatize Type Environment
 primitiveMap.set('-', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: numberType },
-    // { argumentTypes: [numberType], resultType: numberType }
     generateFunctionType([numberType, numberType], numberType),
     generateFunctionType([numberType], numberType)
   ]
-  // isPolymorphic: false
 })
 primitiveMap.set('*', {
-  // types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
-  // isPolymorphic: false
 })
 primitiveMap.set('/', {
-  // types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
-  // isPolymorphic: false
 })
 primitiveMap.set('%', {
-  // types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
-  // isPolymorphic: false
 })
 primitiveMap.set('&&', {
-  // types: [{ argumentTypes: [booleanType, 'any'], resultType: 'any' }],
   types: [generateFunctionType([booleanType, variableType], variableType, true)]
-  // isPolymorphic: false
 })
 primitiveMap.set('||', {
-  // types: [{ argumentTypes: [booleanType, 'any'], resultType: 'any' }],
   types: [generateFunctionType([booleanType, variableType], variableType, true)],
   isPolymorphic: false
 })
 primitiveMap.set('!', {
-  // types: [{ argumentTypes: [booleanType], resultType: booleanType }],
   types: [generateFunctionType([booleanType], booleanType)]
-  // isPolymorphic: false
 })
 
 let newAddableType = generateAddableType()
 primitiveMap.set('+', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: numberType },
-    // { argumentTypes: [stringType, stringType], resultType: stringType }
-    // generateFunctionType([addableType, addableType], addableType, true)
     generateFunctionType([newAddableType, newAddableType], newAddableType, true)
   ]
 })
@@ -135,9 +118,6 @@ primitiveMap.set('+', {
 newAddableType = generateAddableType()
 primitiveMap.set('===', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([variableType, variableType], booleanType, true)
   ]
 })
@@ -145,9 +125,6 @@ primitiveMap.set('===', {
 newAddableType = generateAddableType()
 primitiveMap.set('!==', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([variableType, variableType], booleanType, true)
   ]
 })
@@ -155,9 +132,6 @@ primitiveMap.set('!==', {
 newAddableType = generateAddableType()
 primitiveMap.set('>', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
@@ -165,9 +139,6 @@ primitiveMap.set('>', {
 newAddableType = generateAddableType()
 primitiveMap.set('>=', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
@@ -175,9 +146,6 @@ primitiveMap.set('>=', {
 newAddableType = generateAddableType()
 primitiveMap.set('<', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
@@ -185,9 +153,6 @@ primitiveMap.set('<', {
 newAddableType = generateAddableType()
 primitiveMap.set('<=', {
   types: [
-    // { argumentTypes: [numberType, numberType], resultType: booleanType },
-    // { argumentTypes: [stringType, stringType], resultType: booleanType }
-    // generateFunctionType([addableType, addableType], booleanType, true)
     generateFunctionType([newAddableType, newAddableType], booleanType, true)
   ]
 })
@@ -210,156 +175,114 @@ primitiveMap.set('<=', {
 // })
 
 primitiveMap.set('Infinity', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
   types: [numberType]
 })
 primitiveMap.set('is_boolean', {
   types: [
-    // { argumentTypes: [numberType], resultType: booleanType },
-    // { argumentTypes: [stringType], resultType: stringType }
     generateFunctionType([variableType], booleanType, true)
   ]
 })
 primitiveMap.set('is_function', {
   types: [
-    // { argumentTypes: [numberType], resultType: booleanType },
-    // { argumentTypes: [stringType], resultType: stringType }
     generateFunctionType([variableType], booleanType, true)
   ]
 })
 primitiveMap.set('is_number', {
   types: [
-    // { argumentTypes: [numberType], resultType: booleanType },
-    // { argumentTypes: [stringType], resultType: stringType }
     generateFunctionType([variableType], booleanType, true)
   ]
 })
 primitiveMap.set('is_string', {
   types: [
-    // { argumentTypes: [numberType], resultType: booleanType },
-    // { argumentTypes: [stringType], resultType: stringType }
     generateFunctionType([variableType], booleanType, true)
   ]
 })
 primitiveMap.set('is_undefined', {
   types: [
-    // { argumentTypes: [numberType], resultType: booleanType },
-    // { argumentTypes: [stringType], resultType: stringType }
     generateFunctionType([variableType], booleanType, true)
   ]
 })
 
 primitiveMap.set('math_abs', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_acos', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_acosh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_asin', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_asinh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_atan', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_atan2', {
-  // types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
 primitiveMap.set('math_atanh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_cbrt', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_ceil', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_clz32', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_cos', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_cosh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_exp', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_expml', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_floor', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_fround', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 // primitiveMap.set('math_hypot', {
-//   // types: [{ argumentTypes: [numberType], resultType: undefined }],
 //   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
 //   isPolymorphic: true
 // })
 primitiveMap.set('math_imul', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
 primitiveMap.set('math_LN2', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
-  // types: [generateFunctionType([], numberType)],
   types: [numberType]
 })
 primitiveMap.set('math_LN10', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
-  // types: [generateFunctionType([], numberType)],
   types: [numberType]
 })
 primitiveMap.set('math_log', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_log1p', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_log2', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_LOG2E', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
-  // types: [generateFunctionType([], numberType)],
   types: [numberType]
 })
 primitiveMap.set('math_log10', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_LOG10E', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
-  // types: [generateFunctionType([], numberType)],
   types: [numberType]
 })
 // primitiveMap.set('math_max', {
@@ -379,83 +302,60 @@ primitiveMap.set('math_LOG10E', {
 //   isPolymorphic: true
 // })
 primitiveMap.set('math_PI', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
-  // types: [generateFunctionType([], numberType)],
   types: [numberType]
 })
 primitiveMap.set('math_pow', {
-  // types: [{ argumentTypes: [numberType, numberType], resultType: numberType }],
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
 primitiveMap.set('math_random', {
-  // types: [{ argumentTypes: [], resultType: numberType }],
   types: [generateFunctionType([], numberType)]
 })
 primitiveMap.set('math_round', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_sign', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_sin', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_sinh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_sqrt', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_SQRT1_2', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
   types: [numberType]
 })
 primitiveMap.set('math_SQRT2', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
   types: [numberType]
 })
 primitiveMap.set('math_tan', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_tanh', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('math_trunc', {
-  // types: [{ argumentTypes: [numberType], resultType: numberType }],
   types: [generateFunctionType([numberType], numberType)]
 })
 primitiveMap.set('NaN', {
-  // types: [{ argumentTypes: [numberType], resultType: undefined }],
   types: [numberType]
 })
 primitiveMap.set('parse_int', {
-  // types: [{ argumentTypes: [stringType, numberType], resultType: numberType }],
   types: [generateFunctionType([stringType, numberType], numberType)]
 })
 primitiveMap.set('prompt', {
-  // types: [{ argumentTypes: [stringType], resultType: stringType }],
   types: [generateFunctionType([stringType], stringType)]
 })
 primitiveMap.set('runtime', {
-  // types: [{ argumentTypes: [], resultType: numberType }],
   types: [generateFunctionType([], numberType)]
 })
 primitiveMap.set('stringify', {
-  // types: [
-  //   { argumentTypes: [numberType], resultType: stringType },
-  //   { argumentTypes: [stringType], resultType: stringType }
-  // ],
   types: [generateFunctionType([variableType], stringType, true)]
 })
 primitiveMap.set('undefined', {
-  // types: [{ argumentTypes: [undefinedType], resultType: undefined }],
   types: [undefinedType]
 })
 
