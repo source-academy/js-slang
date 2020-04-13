@@ -9,7 +9,7 @@ export function loadIIFEModuleText(path: string) {
   const req = new HttpRequest()
   req.open('GET', scriptPath, false)
   req.send(null)
-  if (req.status != 200 && req.status != 304) {
+  if (req.status !== 200 && req.status !== 304) {
     throw new Error(`module ${path} not found.`)
   }
   return req.responseText
