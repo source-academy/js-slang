@@ -75,7 +75,7 @@ const predefined = new Set([
   'undefined'
 ])
 
-function printType(type: Type): string {
+export function printType(type: Type): string {
   // if (type === null) return 'null'
   switch (type.kind) {
     case 'primitive':
