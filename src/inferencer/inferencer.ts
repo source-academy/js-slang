@@ -380,14 +380,16 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const declarationFunctionType = primitiveMap.get(iden.name).types[0]
     const declarationArgCount = declarationFunctionType.parameterTypes.length
 
-    if (applicationArgCount !== declarationArgCount) {  // check arg count
+    if (applicationArgCount !== declarationArgCount) {
+      // check arg count
       displayErrorAndTerminate(
         `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
         functionApplication.loc
       )
     }
 
-    for (let i = 0; i < applicationArgs.length; i++) {  // add type constraint for each arg
+    for (let i = 0; i < applicationArgs.length; i++) {
+      // add type constraint for each arg
       const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
       const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i]
         .typeVariable as Variable
