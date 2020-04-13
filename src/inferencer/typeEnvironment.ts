@@ -110,51 +110,37 @@ primitiveMap.set('!', {
 
 let newAddableType = generateAddableType()
 primitiveMap.set('+', {
-  types: [
-    generateFunctionType([newAddableType, newAddableType], newAddableType, true)
-  ]
+  types: [generateFunctionType([newAddableType, newAddableType], newAddableType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('===', {
-  types: [
-    generateFunctionType([variableType, variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType, variableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('!==', {
-  types: [
-    generateFunctionType([variableType, variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType, variableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('>', {
-  types: [
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
-  ]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('>=', {
-  types: [
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
-  ]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('<', {
-  types: [
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
-  ]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
 primitiveMap.set('<=', {
-  types: [
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
-  ]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 // primitiveMap.set('display', {
@@ -178,29 +164,19 @@ primitiveMap.set('Infinity', {
   types: [numberType]
 })
 primitiveMap.set('is_boolean', {
-  types: [
-    generateFunctionType([variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType], booleanType, true)]
 })
 primitiveMap.set('is_function', {
-  types: [
-    generateFunctionType([variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType], booleanType, true)]
 })
 primitiveMap.set('is_number', {
-  types: [
-    generateFunctionType([variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType], booleanType, true)]
 })
 primitiveMap.set('is_string', {
-  types: [
-    generateFunctionType([variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType], booleanType, true)]
 })
 primitiveMap.set('is_undefined', {
-  types: [
-    generateFunctionType([variableType], booleanType, true)
-  ]
+  types: [generateFunctionType([variableType], booleanType, true)]
 })
 
 primitiveMap.set('math_abs', {
