@@ -1,0 +1,1319 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Scoped based refactoring of ordinary variable definitions 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+{
+const target = 3;
+target + 4;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 3,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 6,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+target + 99;",
+    "label": "Test 2",
+    "target": Target {
+      "column": 3,
+      "line": 3,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with arrow function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+function test(target) {
+const arrowFn = target => target + 1;
+const x = target * 777777;
+const nestedArrowFn = (y) => (target) => 1 + target;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 48,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 36,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 30,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 51,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 45,
+          "line": 5,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with conditionals and loops 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+if (target < 2) {
+target = 2 + 3;
+} else if (target > 2) {
+target = \\"nooooooo\\";
+} else {
+target = 99999;
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 2,
+      "line": 5,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 4,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 2;
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 2",
+    "target": Target {
+      "column": 5,
+      "line": 3,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 3,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 2;
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 2",
+    "target": Target {
+      "column": 10,
+      "line": 2,
+      "name": "i",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 16,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 25,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 24,
+          "line": 2,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 2;
+while (target > 0) {
+const x = \\"i am coronavirus\\";
+target -= 0.1;
+}",
+    "label": "Test 3",
+    "target": Target {
+      "column": 4,
+      "line": 4,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 7,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 4,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let i = \\"dontgetconfusedwith the next one pls\\";
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 4",
+    "target": Target {
+      "column": 10,
+      "line": 2,
+      "name": "i",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 17,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 16,
+          "line": 2,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 25,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 24,
+          "line": 2,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let i = \\"dontgetconfusedwith the next one pls\\";
+for (let i = 0; i < 10; i++) {
+target += 99;
+}",
+    "label": "Test 4",
+    "target": Target {
+      "column": 5,
+      "line": 1,
+      "name": "i",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`Scoped based refactoring with function scopes 1`] = `
+Array [
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 3,
+      "line": 7,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 14,
+          "line": 3,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 5,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 7,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "let target = 1;
+target = 2;
+function test(target) {
+const x = 3;
+target + 4;
+function y() {
+target * 99;
+}
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 6,
+      "line": 1,
+      "name": "target",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 10,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 2,
+        },
+      },
+    ],
+  },
+  Object {
+    "code": "function parse_and_eval(1) {
+eval_top_level(1);
+}
+function repl(str) {
+const res = parse_and_eval(23);
+}",
+    "label": "Test 1",
+    "target": Target {
+      "column": 13,
+      "line": 1,
+      "name": "parse_and_eval",
+    },
+    "value": Array [
+      SourceLocation {
+        "end": Position {
+          "column": 23,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 12,
+          "line": 5,
+        },
+      },
+    ],
+  },
+]
+`;
+
+exports[`getBlockFromLoc with arrow function name 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 8,
+          "line": 8,
+        },
+      },
+      "name": "lmao",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 9,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 9,
+        },
+      },
+      "name": "abba",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
+              "line": 10,
+            },
+            "start": Position {
+              "column": 10,
+              "line": 10,
+            },
+          },
+          "name": "bestSong",
+          "type": "DefinitionNode",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 9,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 18,
+          "line": 9,
+        },
+      },
+      "type": "BlockFrame",
+    },
+  ],
+  "enclosingLoc": SourceLocation {
+    "end": Position {
+      "column": 1,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 7,
+    },
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 1,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 7,
+    },
+  },
+  "type": "BlockFrame",
+}
+`;
+
+exports[`getBlockFromLoc with function definition name 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 8,
+          "line": 8,
+        },
+      },
+      "name": "lmao",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 9,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 9,
+        },
+      },
+      "name": "abba",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 18,
+              "line": 10,
+            },
+            "start": Position {
+              "column": 10,
+              "line": 10,
+            },
+          },
+          "name": "bestSong",
+          "type": "DefinitionNode",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 9,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 18,
+          "line": 9,
+        },
+      },
+      "type": "BlockFrame",
+    },
+  ],
+  "enclosingLoc": SourceLocation {
+    "end": Position {
+      "column": 1,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 7,
+    },
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 1,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 7,
+    },
+  },
+  "type": "BlockFrame",
+}
+`;
+
+exports[`getBlockFromLoc with normal variable name 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 7,
+        },
+      },
+      "name": "bestSong",
+      "type": "DefinitionNode",
+    },
+  ],
+  "enclosingLoc": SourceLocation {
+    "end": Position {
+      "column": 3,
+      "line": 9,
+    },
+    "start": Position {
+      "column": 2,
+      "line": 6,
+    },
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 3,
+      "line": 9,
+    },
+    "start": Position {
+      "column": 18,
+      "line": 6,
+    },
+  },
+  "type": "BlockFrame",
+}
+`;
+
+exports[`scopeVariables should return an accurate scope tree 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "anakin",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 3,
+        },
+      },
+      "name": "obiwan",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 13,
+          "line": 4,
+        },
+      },
+      "name": "disneyTrilogy",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 31,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 5,
+            },
+          },
+          "name": "isWorseThanPrequels",
+          "type": "DefinitionNode",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 4,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 29,
+          "line": 4,
+        },
+      },
+      "type": "BlockFrame",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 35,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 13,
+          "line": 8,
+        },
+      },
+      "name": "functionmcfunctionface",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 9,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 9,
+            },
+          },
+          "name": "x",
+          "type": "DefinitionNode",
+        },
+        Object {
+          "children": Array [
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 23,
+                  "line": 9,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 9,
+                },
+              },
+              "name": "corona",
+              "type": "DefinitionNode",
+            },
+            Object {
+              "children": Array [
+                Object {
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 34,
+                      "line": 9,
+                    },
+                    "start": Position {
+                      "column": 29,
+                      "line": 9,
+                    },
+                  },
+                  "name": "virus",
+                  "type": "DefinitionNode",
+                },
+              ],
+              "enclosingLoc": SourceLocation {
+                "end": Position {
+                  "column": 53,
+                  "line": 9,
+                },
+                "start": Position {
+                  "column": 28,
+                  "line": 9,
+                },
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 53,
+                  "line": 9,
+                },
+                "start": Position {
+                  "column": 39,
+                  "line": 9,
+                },
+              },
+              "type": "BlockFrame",
+            },
+          ],
+          "enclosingLoc": SourceLocation {
+            "end": Position {
+              "column": 53,
+              "line": 9,
+            },
+            "start": Position {
+              "column": 16,
+              "line": 9,
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 53,
+              "line": 9,
+            },
+            "start": Position {
+              "column": 28,
+              "line": 9,
+            },
+          },
+          "type": "BlockFrame",
+        },
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 16,
+              "line": 10,
+            },
+            "start": Position {
+              "column": 10,
+              "line": 10,
+            },
+          },
+          "name": "hahaha",
+          "type": "DefinitionNode",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 8,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 12,
+        },
+        "start": Position {
+          "column": 38,
+          "line": 8,
+        },
+      },
+      "type": "BlockFrame",
+    },
+  ],
+  "enclosingLoc": SourceLocation {
+    "end": Position {
+      "column": 2,
+      "line": 13,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 2,
+      "line": 13,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "type": "BlockFrame",
+}
+`;
+
+exports[`scopeVariables should return an accurate scope tree with normal block scopes 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 2,
+        },
+      },
+      "name": "anakin",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 3,
+        },
+      },
+      "name": "obiwan",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 13,
+          "line": 4,
+        },
+      },
+      "name": "disneyTrilogy",
+      "type": "DefinitionNode",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 31,
+              "line": 5,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 5,
+            },
+          },
+          "name": "isWorseThanPrequels",
+          "type": "DefinitionNode",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 4,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 29,
+          "line": 4,
+        },
+      },
+      "type": "BlockFrame",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "line": 9,
+                },
+                "start": Position {
+                  "column": 15,
+                  "line": 9,
+                },
+              },
+              "name": "i",
+              "type": "DefinitionNode",
+            },
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 10,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 10,
+                },
+              },
+              "name": "x",
+              "type": "DefinitionNode",
+            },
+          ],
+          "enclosingLoc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 11,
+            },
+            "start": Position {
+              "column": 6,
+              "line": 9,
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 11,
+            },
+            "start": Position {
+              "column": 35,
+              "line": 9,
+            },
+          },
+          "type": "BlockFrame",
+        },
+        Object {
+          "children": Array [
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 13,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 13,
+                },
+              },
+              "name": "y",
+              "type": "DefinitionNode",
+            },
+          ],
+          "enclosingLoc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 14,
+            },
+            "start": Position {
+              "column": 16,
+              "line": 12,
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 14,
+            },
+            "start": Position {
+              "column": 16,
+              "line": 12,
+            },
+          },
+          "type": "BlockFrame",
+        },
+        Object {
+          "children": Array [
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 15,
+                  "line": 15,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 15,
+                },
+              },
+              "name": "t",
+              "type": "DefinitionNode",
+            },
+          ],
+          "enclosingLoc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 16,
+            },
+            "start": Position {
+              "column": 24,
+              "line": 14,
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 16,
+            },
+            "start": Position {
+              "column": 24,
+              "line": 14,
+            },
+          },
+          "type": "BlockFrame",
+        },
+        Object {
+          "children": Array [
+            Object {
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 23,
+                  "line": 17,
+                },
+                "start": Position {
+                  "column": 14,
+                  "line": 17,
+                },
+              },
+              "name": "jfksdfjgk",
+              "type": "DefinitionNode",
+            },
+          ],
+          "enclosingLoc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 18,
+            },
+            "start": Position {
+              "column": 13,
+              "line": 16,
+            },
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 7,
+              "line": 18,
+            },
+            "start": Position {
+              "column": 13,
+              "line": 16,
+            },
+          },
+          "type": "BlockFrame",
+        },
+      ],
+      "enclosingLoc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 19,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 8,
+        },
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 19,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 8,
+        },
+      },
+      "type": "BlockFrame",
+    },
+  ],
+  "enclosingLoc": SourceLocation {
+    "end": Position {
+      "column": 2,
+      "line": 20,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 2,
+      "line": 20,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "type": "BlockFrame",
+}
+`;

@@ -5,6 +5,7 @@ import {
   parseExpressionAt as acornParseAt,
   Position
 } from 'acorn'
+import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -107,7 +108,7 @@ export function parseAt(source: string, num: number) {
   return theNode
 }
 
-export function parse(source: string, context: Context) {
+export function parse(source: string, context: Context, fallbackToLooseParse: boolean = false) {
   let program: es.Program | undefined
   try {
     program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
@@ -128,6 +129,8 @@ export function parse(source: string, context: Context) {
   const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
   if (program && !hasErrors) {
     return program
+  } else if (fallbackToLooseParse) {
+    return looseParse(source, context)
   } else {
     return undefined
   }
@@ -156,6 +159,34 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
     )
   }
 })
+
+// Names-extractor needs comments
+export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
+  let comments: acorn.Comment[] = []
+  const options: AcornOptions = {
+    sourceType: 'module',
+    ecmaVersion: 6,
+    locations: true,
+    onComment: comments
+  }
+  let program: es.Program | undefined
+  try {
+    program = (acornParse(source, options) as unknown) as es.Program
+  } catch {
+    comments = []
+    program = acornLooseParse(source, options)
+  }
+
+  return [program, comments]
+}
+
+export function looseParse(source: string, context: Context) {
+  const program = (acornLooseParse(
+    source,
+    createAcornParserOptions(context)
+  ) as unknown) as es.Program
+  return program
+}
 
 function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },

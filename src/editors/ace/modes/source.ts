@@ -1,3 +1,5 @@
+import { Variant } from '../../../types'
+
 /* tslint:disable */
 
 /**
@@ -12,8 +14,7 @@
  * 1) change code styles so that it passes tslint test
  * 2) refactor some code to ES2015 class syntax
  */
-
-export function HighlightRulesSelector(id: number) {
+export function HighlightRulesSelector(id: number, variant: Variant = 'default') {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
@@ -56,6 +57,11 @@ export function HighlightRulesSelector(id: number) {
         'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
     }
 
+    const concurrent = {
+      keywords: '',
+      functions: 'test_and_set|clear|concurrent_execute'
+    }
+
     const chapter4 = {
       keywords: '',
       functions: 'apply_in_underlying_javascript'
@@ -74,6 +80,9 @@ export function HighlightRulesSelector(id: number) {
       }
       if (id >= 4) {
         output += '|' + chapter4.functions
+      }
+      if (variant === 'concurrent') {
+        output += '|' + concurrent.functions
       }
       return output
     }
@@ -122,7 +131,7 @@ export function HighlightRulesSelector(id: number) {
 
           'storage.type': 'const|let|function',
 
-          'support.function': 'alert|' + ChapterFunctionNameSelector(),
+          'support.function': ChapterFunctionNameSelector(),
 
           'variable.language':
             'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
@@ -286,15 +295,15 @@ export function HighlightRulesSelector(id: number) {
             regex: /that\b/
           },
           {
-            token: ['storage.type', 'punctuation.operator', 'support.function.firebug'],
-            regex: /(console)(\.)(warn|info|log|error|time|trace|timeEnd|assert)\b/
+            token: ['variable.language'],
+            regex: /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
           },
           {
             token: keywordMapper,
             regex: identifierRegex
           },
           {
-            token: 'punctuation.operator',
+            token: 'variable.language',
             regex: /[.](?![.])/,
             next: 'property'
           },
@@ -304,7 +313,7 @@ export function HighlightRulesSelector(id: number) {
           },
           {
             token: 'keyword.operator',
-            regex: /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
+            regex: /===|=|!==|<+=?|>+=?|!|&&|\|\||[%*+-\/]/,
             next: 'start'
           },
           {
@@ -358,11 +367,11 @@ export function HighlightRulesSelector(id: number) {
             regex: /[.](?![.])/
           },
           {
-            token: 'support.function',
+            token: 'variable.language',
             regex: /(s(?:h(?:ift|ow(?:Mod(?:elessDialog|alDialog)|Help))|croll(?:X|By(?:Pages|Lines)?|Y|To)?|t(?:op|rike)|i(?:n|zeToContent|debar|gnText)|ort|u(?:p|b(?:str(?:ing)?)?)|pli(?:ce|t)|e(?:nd|t(?:Re(?:sizable|questHeader)|M(?:i(?:nutes|lliseconds)|onth)|Seconds|Ho(?:tKeys|urs)|Year|Cursor|Time(?:out)?|Interval|ZOptions|Date|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Date|FullYear)|FullYear|Active)|arch)|qrt|lice|avePreferences|mall)|h(?:ome|andleEvent)|navigate|c(?:har(?:CodeAt|At)|o(?:s|n(?:cat|textual|firm)|mpile)|eil|lear(?:Timeout|Interval)?|a(?:ptureEvents|ll)|reate(?:StyleSheet|Popup|EventObject))|t(?:o(?:GMTString|S(?:tring|ource)|U(?:TCString|pperCase)|Lo(?:caleString|werCase))|est|a(?:n|int(?:Enabled)?))|i(?:s(?:NaN|Finite)|ndexOf|talics)|d(?:isableExternalCapture|ump|etachEvent)|u(?:n(?:shift|taint|escape|watch)|pdateCommands)|j(?:oin|avaEnabled)|p(?:o(?:p|w)|ush|lugins.refresh|a(?:ddings|rse(?:Int|Float)?)|r(?:int|ompt|eference))|e(?:scape|nableExternalCapture|val|lementFromPoint|x(?:p|ec(?:Script|Command)?))|valueOf|UTC|queryCommand(?:State|Indeterm|Enabled|Value)|f(?:i(?:nd|le(?:ModifiedDate|Size|CreatedDate|UpdatedDate)|xed)|o(?:nt(?:size|color)|rward)|loor|romCharCode)|watch|l(?:ink|o(?:ad|g)|astIndexOf)|a(?:sin|nchor|cos|t(?:tachEvent|ob|an(?:2)?)|pply|lert|b(?:s|ort))|r(?:ou(?:nd|teEvents)|e(?:size(?:By|To)|calc|turnValue|place|verse|l(?:oad|ease(?:Capture|Events)))|andom)|g(?:o|et(?:ResponseHeader|M(?:i(?:nutes|lliseconds)|onth)|Se(?:conds|lection)|Hours|Year|Time(?:zoneOffset)?|Da(?:y|te)|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Da(?:y|te)|FullYear)|FullYear|A(?:ttention|llResponseHeaders)))|m(?:in|ove(?:B(?:y|elow)|To(?:Absolute)?|Above)|ergeAttributes|a(?:tch|rgins|x))|b(?:toa|ig|o(?:ld|rderWidths)|link|ack))\b(?=\()/
           },
           {
-            token: 'support.function.dom',
+            token: 'variable.language.dom',
             regex: /(s(?:ub(?:stringData|mit)|plitText|e(?:t(?:NamedItem|Attribute(?:Node)?)|lect))|has(?:ChildNodes|Feature)|namedItem|c(?:l(?:ick|o(?:se|neNode))|reate(?:C(?:omment|DATASection|aption)|T(?:Head|extNode|Foot)|DocumentFragment|ProcessingInstruction|E(?:ntityReference|lement)|Attribute))|tabIndex|i(?:nsert(?:Row|Before|Cell|Data)|tem)|open|delete(?:Row|C(?:ell|aption)|T(?:Head|Foot)|Data)|focus|write(?:ln)?|a(?:dd|ppend(?:Child|Data))|re(?:set|place(?:Child|Data)|move(?:NamedItem|Child|Attribute(?:Node)?)?)|get(?:NamedItem|Element(?:sBy(?:Name|TagName|ClassName)|ById)|Attribute(?:Node)?)|blur)\b(?=\()/
           },
           {
@@ -802,11 +811,7 @@ export function ModeSelector(id: number) {
 
       // @ts-ignore
       this.createWorker = function(session) {
-        var worker = new WorkerClient(
-          ['ace'],
-          require('brace/worker/javascript'),
-          'JavaScriptWorker'
-        )
+        var worker = new WorkerClient(['ace'], require('../worker/javascript'), 'JavaScriptWorker')
         worker.attachToDocument(session.getDocument())
 
         // @ts-ignore
@@ -822,7 +827,7 @@ export function ModeSelector(id: number) {
       }
 
       // @ts-ignore
-      this.$id = 'ace/mode/source1' + id.toString()
+      this.$id = 'ace/mode/source' + id.toString()
     }.call(Mode.prototype))
 
     exports.Mode = Mode

@@ -25,9 +25,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn
+    - run: yarn jsdoc
+    - run: yarn autocomplete
     - run: yarn format:ci
     - run: yarn tslint
     - run: yarn test
-    - run: yarn test-coveralls
       env:
         CI: true
