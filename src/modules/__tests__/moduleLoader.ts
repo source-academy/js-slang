@@ -2,10 +2,20 @@
  * @jest-environment node
  */
 
-import { loadIIFEModuleText } from '../moduleLoader'
-import { ModuleNotFound } from '../../errors/errors'
+import { loadModuleText, loadIIFEModule } from '../moduleLoader'
+import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
+import { stripIndent } from '../../utils/formatters'
 
 test('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
-  expect(() => loadIIFEModuleText(moduleName)).toThrow(ModuleNotFound)
+  expect(() => loadModuleText(moduleName)).toThrow(ModuleNotFound)
+})
+
+test('Try executing a wrongly implemented module', () => {
+  // A module in wrong format
+  const path = '_mock_dir/_mock_file';
+  const wrongModuleText = stripIndent`
+    export function es6_function(params) {}
+  `
+  expect(() => loadIIFEModule(path, wrongModuleText)).toThrow(ModuleInternalError)
 })
