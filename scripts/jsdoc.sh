@@ -44,12 +44,31 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
     
+    # Source §1 Lazy
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_LAZY.md \
+	     -d ${DST}/"source_1_lazy"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js
+    
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_2.md \
 	     -d ${DST}/"source_2"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js
+    
+    # Source §2 Lazy
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_2_LAZY.md \
+	     -d ${DST}/"source_2_lazy"/ \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
