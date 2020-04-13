@@ -82,6 +82,11 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       })
       break
     }
+    case 'WhileStatement': {
+      traverse(node.test, constraints)
+      traverse(node.body, constraints)
+      break
+    }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
       traverse(node.test, constraints)
@@ -485,28 +490,75 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
   }
 }
 
-function ifStatementHasReturn(node: es.IfStatement): boolean {
-  const consNode = node.consequent as es.BlockStatement // guaranteed that they are block statements
-  const altNode = node.alternate as es.BlockStatement // guaranteed to be a block and exist
-  return blockStatementHasReturn(consNode) || blockStatementHasReturn(altNode)
-}
-
-function blockStatementHasReturn(node: es.BlockStatement): boolean {
-  const body = node.body
-  for (const stmt of body) {
-    if (stmt.type === 'ReturnStatement') {
+function statementHasReturn(node: es.Node): boolean {
+  switch (node.type) {
+    case 'IfStatement': {
+      return statementHasReturn(node.consequent) || statementHasReturn(node.alternate!)
+    }
+    case 'BlockStatement': {
+      return node.body.some(stmt => statementHasReturn(stmt))
+    }
+    case 'WhileStatement': {
+      return statementHasReturn(node.body)
+    }
+    case 'ReturnStatement': {
       return true
-    } else if (stmt.type === 'IfStatement') {
-      if (ifStatementHasReturn(stmt)) {
-        return true
-      }
-    } else if (stmt.type === 'BlockStatement') {
-      if (blockStatementHasReturn(stmt)) {
-        return true
-      }
+    }
+    default: {
+      return false
     }
   }
-  return false
+}
+
+// These are the only two possible kinds of value returning statements when excluding return statements
+function stmtHasValueReturningStmt(node: es.Node): boolean {
+  switch (node.type) {
+    case 'ExpressionStatement': {
+      return true
+    }
+    case 'IfStatement': {
+      return (
+        stmtHasValueReturningStmt(node.consequent) || stmtHasValueReturningStmt(node.alternate!)
+      )
+    }
+    case 'BlockStatement': {
+      return node.body.some(stmt => stmtHasValueReturningStmt(stmt))
+    }
+    case 'WhileStatement': {
+      return stmtHasValueReturningStmt(node.body)
+    }
+    default: {
+      return false
+    }
+  }
+}
+
+/**
+ * The following is the index of the node whose value will be the value of the block itself.
+ * At the top level and if we are currently in the last value returning stmt of the parent block stmt,
+ * we will use the last value returning statement of the current block. Anywhere else, we will use
+ * either the first return statement or the last statement in the block otherwise
+ */
+function returnBlockValueNodeIndexFor(
+  node: es.Program | es.BlockStatement,
+  isTopLevelAndLastValStmt: boolean
+): number {
+  const lastStatementIndex = node.body.length - 1
+  if (isTopLevelAndLastValStmt) {
+    let index = lastStatementIndex
+    for (index = lastStatementIndex; index >= 0; index--) {
+      if (stmtHasValueReturningStmt(node.body[index])) {
+        return index
+      }
+    }
+    // in the case there are no value returning statements in the body
+    // return the last statement
+    return lastStatementIndex
+  } else {
+    return node.body.findIndex((currentNode, index) => {
+      return index === lastStatementIndex || statementHasReturn(currentNode)
+    })
+  }
 }
 
 /* tslint:disable cyclomatic-complexity */
@@ -514,10 +566,10 @@ function infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
   try {
-    return _infer(node, env, constraints, isLastStatementInBlock)
+    return _infer(node, env, constraints, isTopLevelAndLastValStmt)
   } catch (e) {
     if (e instanceof InternalCyclicReferenceError) {
       // cyclic reference errors only happen in function declarations
@@ -533,7 +585,7 @@ function _infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
   const storedType = node.inferredType as Variable
   switch (node.type) {
@@ -603,19 +655,27 @@ function _infer(
         addToConstraintList(constraints, [storedType, argNode.inferredType as Variable])
       )
     }
+    case 'WhileStatement': {
+      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testType = testNode.inferredType as Variable
+      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyType = bodyNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [testType, tBool])
+      newConstraints = addToConstraintList(newConstraints, [storedType, bodyType])
+      try {
+        newConstraints = infer(testNode, env, newConstraints)
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+        }
+      }
+      return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
+    }
     case 'Program':
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
       const lastStatementIndex = node.body.length - 1
-      const lastCheckedNodeIndex = isLastStatementInBlock
-        ? lastStatementIndex
-        : node.body.findIndex((currentNode, index) => {
-            return (
-              index === lastStatementIndex ||
-              currentNode.type === 'ReturnStatement' ||
-              (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
-            )
-          })
+      const returnValNodeIndex = returnBlockValueNodeIndexFor(node, isTopLevelAndLastValStmt)
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
       let n = lastStatementIndex
@@ -624,8 +684,7 @@ function _infer(
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
           // in the event we havent yet found our last decl
-          // and we are not after our first return statement
-          if (!lastDeclFound && n <= lastCheckedNodeIndex) {
+          if (!lastDeclFound) {
             lastDeclFound = true
             lastDeclNodeIndex = n
           }
@@ -646,13 +705,17 @@ function _infer(
           )
         }
       })
-      const lastNode = node.body[lastCheckedNodeIndex] as TypeAnnotatedNode<es.Node>
-      const lastNodeType = (isLastStatementInBlock && lastNode.type === 'ExpressionStatement'
+      const lastNode = node.body[returnValNodeIndex] as TypeAnnotatedNode<es.Node>
+      const lastNodeType = (isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
         ? (lastNode.expression as TypeAnnotatedNode<es.Node>).inferredType
         : lastNode.inferredType) as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
-        newConstraints = infer(node.body[i], newEnv, newConstraints)
+        if (i === returnValNodeIndex) {
+          newConstraints = infer(node.body[i], newEnv, newConstraints, isTopLevelAndLastValStmt)
+        } else {
+          newConstraints = infer(node.body[i], newEnv, newConstraints)
+        }
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
@@ -677,11 +740,11 @@ function _infer(
           )
         }
       })
-      for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
+      for (let i = lastDeclNodeIndex + 1; i <= lastStatementIndex; i++) {
         // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
         const checkedNode = node.body[i]
-        if (i === lastCheckedNodeIndex && checkedNode.type === 'IfStatement') {
-          newConstraints = infer(checkedNode, newEnv, newConstraints, isLastStatementInBlock)
+        if (i === returnValNodeIndex) {
+          newConstraints = infer(checkedNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
         } else {
           newConstraints = infer(checkedNode, newEnv, newConstraints)
         }
@@ -737,10 +800,10 @@ function _infer(
           typeErrors.push(new InvalidTestConditionError(node, e.LHS))
         }
       }
-      newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
+      newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
       if (altNode) {
         try {
-          newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
+          newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
         } catch (e) {
           if (e instanceof UnifyError) {
             typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
@@ -764,10 +827,7 @@ function _infer(
       return infer(bodyNode, newEnv, newConstraints)
     }
     case 'VariableDeclaration': {
-      const initNode = node.declarations[0].init
-      if (!initNode) {
-        throw Error('No initialization')
-      }
+      const initNode = node.declarations[0].init!
       return infer(initNode, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'FunctionDeclaration': {
@@ -822,8 +882,9 @@ function _infer(
     case 'AssignmentExpression': {
       const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
-      const newConstraints = infer(rightNode, env, constraints)
+      let newConstraints = infer(rightNode, env, constraints)
       const leftNodeType = env.get(leftNode.name) as ForAll
+      newConstraints = addToConstraintList(newConstraints, [storedType, rightNode.inferredType!])
       if (leftNodeType.constant) {
         typeErrors.push(new ReassignConstError(node))
         return newConstraints

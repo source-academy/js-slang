@@ -10,16 +10,14 @@ export class ReassignConstError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(
-    public node: TypeAnnotatedNode<es.AssignmentExpression>,
-  ) {}
+  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) {}
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    const [varName,] = formatAssignment(this.node)
+    const [varName] = formatAssignment(this.node)
     return `Reassignment of constant ${varName}`
   }
 
@@ -181,17 +179,29 @@ export class InvalidArgumentTypesError implements SourceError {
   }
 }
 
-function formatIf(node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>) {
-  let ifString = simplify(generate(node.test))
-  let type
-  if (node.type === 'IfStatement') {
-    ifString = `if (${ifString}) { ... } else { ... }`
-    type = 'if statement'
-  } else {
-    ifString = `${ifString} ? ... : ...`
-    type = 'conditional expression'
+function formatNodeWithTest(
+  node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression | es.WhileStatement>
+) {
+  let exprString = simplify(generate(node.test))
+  let kind: string
+  switch (node.type) {
+    case 'IfStatement': {
+      exprString = `if (${exprString}) { ... } else { ... }`
+      kind = 'if statement'
+      break
+    }
+    case 'ConditionalExpression': {
+      exprString = `${exprString} ? ... : ...`
+      kind = 'conditional expression'
+      break
+    }
+    case 'WhileStatement': {
+      exprString = `while (${exprString}) { ... }`
+      kind = 'while statement'
+      break
+    }
   }
-  return { ifString, type }
+  return { exprString, kind }
 }
 
 export class InvalidTestConditionError implements SourceError {
@@ -199,7 +209,7 @@ export class InvalidTestConditionError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression | es.WhileStatement>,
     public receivedType: Type
   ) {}
 
@@ -208,10 +218,10 @@ export class InvalidTestConditionError implements SourceError {
   }
 
   public explain() {
-    const { ifString, type } = formatIf(this.node)
+    const { exprString, kind } = formatNodeWithTest(this.node)
     return stripIndent`
-    Expected the test part of the ${type}:
-      ${ifString}
+    Expected the test part of the ${kind}:
+      ${exprString}
     to have type boolean, but instead it is type:
       ${typeToString(this.receivedType)}
     `
@@ -237,10 +247,10 @@ export class ConsequentAlternateMismatchError implements SourceError {
   }
 
   public explain() {
-    const { ifString, type } = formatIf(this.node)
+    const { exprString, kind } = formatNodeWithTest(this.node)
     return stripIndent`
-    The two branches of the ${type}:
-      ${ifString}
+    The two branches of the ${kind}:
+      ${exprString}
     produce different types!
     The true branch has type:
       ${typeToString(this.consequentType)}

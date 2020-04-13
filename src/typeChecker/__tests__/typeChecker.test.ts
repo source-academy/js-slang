@@ -515,3 +515,140 @@ describe('Type checking reassignment for Source 3', () => {
     `)
   })
 })
+
+describe('checking while loops in source 3', () => {
+  it('type checks if while loops use a bool type for the test', () => {
+    const code = `
+      let x = 2;
+      x = x + 3;
+      while(x <= 1) {
+        x = x + 1;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('throws a type error if the test is not of boolean type', () => {
+    const code = `
+      let x = 1;
+      while(x) {
+        x = x + 1;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 3: Expected the test part of the while statement:
+  while (x) { ... }
+to have type boolean, but instead it is type:
+  number"
+`)
+  })
+})
+
+describe('Checking top level blocks', () => {
+  it('When using if statements that do not unify at the top level, throw error', () => {
+    const code = `
+      let a = true;
+      if (a) {
+        3;
+      } else {
+        'a';
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 3: The two branches of the if statement:
+  if (a) { ... } else { ... }
+produce different types!
+The true branch has type:
+  number
+but the false branch has type:
+  string"
+`)
+  })
+
+  it('When the same if stmts are not the last value producing stmts, no issue', () => {
+    const code = `
+      let a = true;
+      if (a) {
+        3;
+      } else {
+        'a';
+      }
+      a = a || false;
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('When using while statements that does not unify at the top level, throw error', () => {
+    const code = `
+      let a = true;
+      if (a) {
+        3;
+      } else {
+        while(a) {
+          a = a && false;
+        }
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 3: The two branches of the if statement:
+  if (a) { ... } else { ... }
+produce different types!
+The true branch has type:
+  number
+but the false branch has type:
+  boolean"
+`)
+  })
+
+  it('Passes type checking even if last value returning statement is not the last statement', () => {
+    const code = `
+      let a = true;
+      if (a) {
+        a;
+      } else {
+        while(a) {
+          a = a && false;
+        }
+        const b = 3;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('fails type checking even if last value returning statement is not the last statement', () => {
+    const code = `
+      let a = true;
+      if (a) {
+        const c = 4;
+      } else {
+        while(a) {
+          a = a && false;
+        }
+        const b = 3;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+"Line 3: The two branches of the if statement:
+  if (a) { ... } else { ... }
+produce different types!
+The true branch has type:
+  undefined
+but the false branch has type:
+  boolean"
+`)
+  })
+})
