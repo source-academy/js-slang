@@ -92,7 +92,7 @@ function transformSingleImportDeclaration(moduleCounter: number, node: es.Import
   return result
 }
 
-function transformImportDeclarations(program: es.Program) {
+export function transformImportDeclarations(program: es.Program) {
   const imports = []
   let result: es.VariableDeclaration[] = []
   let moduleCounter = 0
