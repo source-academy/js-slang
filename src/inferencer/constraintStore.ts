@@ -83,17 +83,3 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // console.log('After solving')
   // constraintStore.forEach((value, key) => console.log(key, value))
 }
-
-// Note: Moved the below to ./types.ts because inferencer.ts needs these functions as well
-
-// function isBaseType(type: Type) {
-//   return (type && type.kind === 'primitive')
-// }
-
-// function isTypeVariable(type: Type) {
-//   return (type && type.kind === 'variable')
-// }
-
-// function is_function_type(type: Type) {
-//     return type.kind === 'function'
-// }
