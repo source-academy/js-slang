@@ -48,7 +48,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // check if both sides are type variables and they have the same name (Rule 3)
   else if (
     isTypeVariable(constraintLhs) &&
-    constraintStore.get(constraintRhs) !== undefined &&
+    ifConstraintStoreHas(constraintRhs) &&
     isTypeVariable(constraintStore.get(constraintRhs)) &&
     (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id
   ) {
@@ -58,9 +58,9 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // Rule 4
   else if (
     isTypeVariable(constraintLhs) &&
-    constraintStore.get(constraintRhs) !== undefined &&
+    ifConstraintStoreHas(constraintRhs) &&
     isFunctionType(constraintStore.get(constraintRhs)) &&
-    (ifContains(constraintStore.get(constraintRhs) as FunctionType, constraintLhs) ||
+    (ifFunctionContains(constraintStore.get(constraintRhs) as FunctionType, constraintLhs) ||
       ((constraintStore.get(constraintRhs) as FunctionType).returnType as Variable).id ===
         (constraintLhs as Variable).id)
   ) {
@@ -70,7 +70,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // Rule 5
   else if (
     (constraintLhs as Variable).isAddable &&
-    constraintStore.get(constraintRhs) !== undefined &&
+    ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
     ((constraintRhs as Primitive).name !== 'number' ||
       (constraintRhs as Primitive).name !== 'string')
@@ -79,21 +79,20 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     return { constraintLhs, constraintRhs } // for error logging
   }
   // Rule 6
-  else if (isTypeVariable(constraintLhs) && constraintStore.get(constraintLhs) !== undefined) {
+  else if (isTypeVariable(constraintLhs) && ifConstraintStoreHas(constraintLhs)) {
     return solveConstraint(constraintRhs, constraintStore.get(constraintLhs))
   }
   // Rule 7
   else if (
     isTypeVariable(constraintLhs) &&
-    constraintStore.get(constraintLhs) === undefined &&
-    constraintStore.get(constraintRhs) !== undefined
+    !ifConstraintStoreHas(constraintLhs) &&
+    ifConstraintStoreHas(constraintRhs)
   ) {
     // Rule 7B
     if (
-      constraintStore.get(constraintLhs) !== undefined &&
-      (constraintStore.get(constraintLhs) as Variable).isAddable &&
-      constraintStore.get(constraintRhs) !== undefined &&
-      isTypeVariable(constraintStore.get(constraintRhs))
+      (constraintLhs as Variable).isAddable &&
+      isTypeVariable(constraintStore.get(constraintRhs)) &&
+      !constraintStore.get(constraintRhs).isAddable
     ) {
       (constraintStore.get(constraintRhs) as Variable).isAddable = true
     }
@@ -102,12 +101,12 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // Rule 8
   else if (
     isFunctionType(constraintLhs) &&
-    constraintStore.get(constraintRhs) !== undefined &&
+    ifConstraintStoreHas(constraintRhs) &&
     isFunctionType(constraintStore.get(constraintRhs)) &&
     (constraintLhs as FunctionType).parameterTypes.length ===
       (constraintStore.get(constraintRhs) as FunctionType).parameterTypes.length
   ) {
-    addConstraint(constraintLhs as FunctionType, constraintStore.get(constraintRhs))
+    addNConstraint(constraintLhs as FunctionType, constraintStore.get(constraintRhs))
   }
   // check for mismatch base types (Rule 9)
   else if (
@@ -123,15 +122,18 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   }
 }
 
-function ifContains(constraintLhs: FunctionType, constraintRhs: Type) {
+function ifConstraintStoreHas(constraint: Type) {
+  return constraintStore.get(constraint) !== undefined
+}
+
+function ifFunctionContains(constraintLhs: FunctionType, constraintRhs: Type) {
   for (let parameter of constraintLhs.parameterTypes) {
-    if ((parameter as Variable).id === (constraintRhs as Variable).id)
-      return true
+    if ((parameter as Variable).id === (constraintRhs as Variable).id) return true
   }
   return false
 }
 
-function addConstraint(constraintLhs: FunctionType, constraintRhs: FunctionType) {
+function addNConstraint(constraintLhs: FunctionType, constraintRhs: FunctionType) {
   for (let index = 0; index < constraintLhs.parameterTypes.length; index++) {
     solveConstraint(constraintLhs.parameterTypes[index], constraintRhs.parameterTypes[index])
   }
