@@ -57,14 +57,12 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   }
   // Rule 4
   else if (
-    (isTypeVariable(constraintLhs) &&
-      constraintStore.get(constraintRhs) !== undefined &&
-      isFunctionType(constraintStore.get(constraintRhs)) &&
-      (constraintStore.get(constraintRhs) as FunctionType).parameterTypes.includes(
-        constraintLhs
-      )) ||
-    (constraintStore.get(constraintRhs) as FunctionType).returnType.kind ===
-      (constraintLhs as Variable).kind
+    isTypeVariable(constraintLhs) &&
+    constraintStore.get(constraintRhs) !== undefined &&
+    isFunctionType(constraintStore.get(constraintRhs)) &&
+    (ifContains(constraintStore.get(constraintRhs) as FunctionType, constraintLhs) ||
+      ((constraintStore.get(constraintRhs) as FunctionType).returnType as Variable).id ===
+        (constraintLhs as Variable).id)
   ) {
     console.log('[debug] Error in Rule 4!')
     return { constraintLhs, constraintRhs } // for error logging
@@ -123,6 +121,14 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     constraintStore.set(constraintLhs, constraintRhs)
     return
   }
+}
+
+function ifContains(constraintLhs: FunctionType, constraintRhs: Type) {
+  for (let parameter of constraintLhs.parameterTypes) {
+    if ((parameter as Variable).id === (constraintRhs as Variable).id)
+      return true
+  }
+  return false
 }
 
 function addConstraint(constraintLhs: FunctionType, constraintRhs: FunctionType) {
