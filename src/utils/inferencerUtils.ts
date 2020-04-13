@@ -173,6 +173,16 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         const consequent = getExpressionString(node.consequent)
         return `${test} ? ${alternate} : ${consequent}`
       }
+      case 'IfStatement': {
+        node = node as es.IfStatement
+        const test = getExpressionString(node.test)
+        const consequent = getExpressionString(node.consequent)
+        const alternate = getExpressionString(node.alternate!)
+        return `if ${test} ${consequent} else ${alternate}`
+      }
+      case 'BlockStatement': {
+        return '{...}'
+      }
       default:
         return 'This node type is not in Source 1'
     }
@@ -243,7 +253,9 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     FunctionDeclaration: printFunctionDeclaration,
     ArrowFunctionExpression: printFunctionDefinition,
     CallExpression: printExpression,
-    ConditionalExpression: printExpression
+    ConditionalExpression: printExpression,
+    BlockStatement: printExpression,
+    IfStatement: printExpression,
   })
   console.log('\n')
 }
