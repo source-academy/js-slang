@@ -125,10 +125,7 @@ function declareImports(context: Context, node: es.ImportDeclaration) {
   }
 }
 
-function declareFunctionsAndVariables(
-  context: Context,
-  node: es.BlockStatement
-) {
+function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
