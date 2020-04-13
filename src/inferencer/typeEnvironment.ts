@@ -138,7 +138,7 @@ primitiveMap.set('===', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
+    generateFunctionType([variableType, variableType], booleanType, true)
   ]
 })
 
@@ -148,7 +148,7 @@ primitiveMap.set('!==', {
     // { argumentTypes: [numberType, numberType], resultType: booleanType },
     // { argumentTypes: [stringType, stringType], resultType: booleanType }
     // generateFunctionType([addableType, addableType], booleanType, true)
-    generateFunctionType([newAddableType, newAddableType], booleanType, true)
+    generateFunctionType([variableType, variableType], booleanType, true)
   ]
 })
 
