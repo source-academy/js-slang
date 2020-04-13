@@ -13,6 +13,7 @@ import { booleanType, isOverLoaded, primitiveMap, updateTypeEnvironment } from '
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
+  printType,
   printTypeAnnotation,
   printTypeConstraints,
   printTypeEnvironment
@@ -140,11 +141,23 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const resultTypeVariable = unaryExpression.typeVariable as Variable
 
     if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
-      updateTypeConstraints(argumentTypeVariable, operatorArgType)
+      const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
+      if (result === -1) {
+        displayErrorAndTerminate(
+          `Expecting type \`${printType(operatorArgType)}\` but got \`${printType(argumentTypeVariable)} + \` instead`,
+          unaryExpression.loc
+        )
+      }
     }
 
     if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
-      updateTypeConstraints(resultTypeVariable, operatorResultType)
+      const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
+      if (result === -1) {
+        displayErrorAndTerminate(
+          `Expecting type \`${printType(operatorResultType)}\` but got \`${printType(resultTypeVariable)} + \` instead`,
+          unaryExpression.loc
+        )
+      }
     }
   }
 
