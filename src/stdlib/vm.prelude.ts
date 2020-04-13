@@ -47,7 +47,7 @@ function _build_stream(n, fun) {
 function _display(args) {
   // display(args[0], args[1]);
   // compile this instead for easier replacing
-  args[0] % args[1];
+  return args[0] % args[1];
 }
 
 // 6 placeholder
@@ -77,7 +77,7 @@ function _equal(x, y) {
 function _error(args) {
   // error(args[0], args[1]);
   // compile this instead for easier replacing
-  args[0] % args[1];
+  return args[0] % args[1];
 }
 
 // 11
@@ -108,9 +108,13 @@ function _for_each(fun, xs) {
   }
 }
 
-// 14 unlike Source version, does not fail gracefully
+// 14
 function _head(xs) {
-  return xs[0];
+  if (!is_pair(xs)) {
+    error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    return xs[0];
+  }
 }
 
 // 15
@@ -375,14 +379,22 @@ function _reverse(xs) {
 // 73 placeholder
 function _runtime(x) {}
 
-// 74 unlike Source version, does not fail gracefully
+// 74
 function _set_head(xs,x) {
-  xs[0] = x;
+  if (!is_pair(xs)) {
+    error('set_head(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    xs[0] = x;
+  }
 }
 
-// 75 unlike Source version, does not fail gracefully
+// 75
 function _set_tail(xs, x) {
-  xs[1] = x;
+  if (!is_pair(xs)) {
+    error('set_tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    xs[1] = x;
+  }
 }
 
 // 76 custom
@@ -486,9 +498,16 @@ function _stream_reverse(xs) {
   return rev(xs, null);
 }
 
-// 87 unlike Source version, does not fail gracefully
+// 87
 function _stream_tail(xs) {
+  if (!is_pair(xs)) {
+    error('stream_tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else if (!is_function(xs[1])) {
+    error('stream_tail(xs) expects a function as the tail of the argument pair xs, ' +
+      'but encountered ' + stringify(xs[1]));
+  } else {
     return xs[1]();
+  }
 }
 
 // 88
@@ -498,9 +517,13 @@ function _stream_to_list(xs) {
     : pair(head(xs), stream_to_list(stream_tail(xs)));
 }
 
-// 89 unlike Source version, does not fail gracefully
+// 89
 function _tail(xs) {
-  return xs[1];
+  if (!is_pair(xs)) {
+    error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs));
+  } else {
+    return xs[1];
+  }
 }
 
 // 90 placeholder
@@ -706,7 +729,14 @@ export const EXTERNAL_PRIMITIVES: [string, number][] = [
 export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['undefined', undefined],
   ['Infinity', Infinity],
-  ['NaN', NaN]
+  ['NaN', NaN],
+  ['math_LN2', Math.LN2],
+  ['math_LN10', Math.LN10],
+  ['math_LOG2E', Math.LOG2E],
+  ['math_LOG10E', Math.LOG10E],
+  ['math_PI', Math.PI],
+  ['math_SQRT1_2', Math.SQRT1_2],
+  ['math_SQRT2', Math.SQRT2]
 ]
 
 // helper functions to generate machine code

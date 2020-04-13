@@ -9,8 +9,37 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes concurrent CLEAR fails for ill-typed arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "clear(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for clear.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for clear.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -28,8 +57,37 @@ display(head(x));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes concurrent TEST_AND_SET fails for ill-typed arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "test_and_set(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for test_and_set.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for test_and_set.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -47,7 +105,7 @@ display(head(x));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -64,8 +122,37 @@ display(NaN);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes self-implemented ARRAY_LEN fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "array_length(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array_length.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array_length.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -89,7 +176,7 @@ display(array_length(p));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -135,7 +222,7 @@ display(is_array(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -152,7 +239,7 @@ display(is_boolean(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -169,7 +256,7 @@ display(is_function(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -186,7 +273,7 @@ display(is_null(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -203,7 +290,7 @@ display(is_number(false));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -220,7 +307,7 @@ display(is_string(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -237,7 +324,7 @@ display(is_undefined(1));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -252,7 +339,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -267,35 +354,20 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`primitive opcodes unary handler: expectDisplayResult 1`] = `
+exports[`primitive opcodes self-implemented stream_tail fails for ill-typed arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display(math_abs(-1));",
-  "displayResult": Array [
-    "1",
-  ],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": undefined,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`standard opcodes ADDG fails for ill-typed operands: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "1+undefined;",
+  "code": "stream_tail(1);",
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: types of operands do not match],
+      "error": [Error: "stream_tail(xs) expects a pair as argument xs, but encountered 1"],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -310,7 +382,51 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: types of operands do not match",
+  "parsedErrors": "Line -1: Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes unary handler: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(math_abs(-1));",
+  "displayResult": Array [
+    "1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes ADDG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1+undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for +.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for +.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -326,7 +442,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -341,7 +457,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -362,7 +478,7 @@ if (false) {} else {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -397,6 +513,35 @@ Object {
 }
 `;
 
+exports[`standard opcodes DIVG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1/undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for /.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for /.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes DIVG works for numbers: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -406,7 +551,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -443,8 +588,37 @@ y === test_and_set &&
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes GEG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1>=undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for >=.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >=.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -462,7 +636,7 @@ display(10 >= 5);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -481,8 +655,37 @@ display('bcd' >= 'abc');",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes GTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1>undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for >.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -497,7 +700,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -513,8 +716,66 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes LDAG fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const arr = []; arr[\\"hi\\"];",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number, got string for array index.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for array index.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes LDAG fails for non-array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1[0];",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array access.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array access.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -535,8 +796,37 @@ display(x);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes LEG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1<=undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for <=.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <=.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -554,7 +844,7 @@ display(10 <= 5);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -573,7 +863,7 @@ display('bcd' <= 'abc');",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -588,7 +878,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -603,7 +893,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -618,7 +908,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -633,7 +923,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -648,7 +938,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -663,7 +953,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -678,8 +968,37 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes LTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1<undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected string and string or number and number, got number and undefined for <.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -694,7 +1013,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -710,8 +1029,37 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes MODG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1%undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected undefined, got undefined for undefined.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected undefined, got undefined for undefined.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -725,8 +1073,37 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes MULG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1*undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for *.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for *.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -740,8 +1117,82 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NEGG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "-\\"hi\\";",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number, got string for -.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for -.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NEGG works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(-1);display(-(-1));",
+  "displayResult": Array [
+    "-1",
+    "1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes NOTG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "!1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected boolean, got number for !.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected boolean, got number for !.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -756,8 +1207,66 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes STAG fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const arr = []; arr[\\"hi\\"] = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number, got string for array index.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number, got string for array index.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes STAG fails for non-array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "0[1] = 1;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected array, got number for array access.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected array, got number for array access.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -771,8 +1280,37 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes SUBG fails for ill-typed operands: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1-undefined;",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected number and number, got number and undefined for -.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected number and number, got number and undefined for -.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -786,7 +1324,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -802,7 +1340,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -824,7 +1362,7 @@ display(f);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -853,7 +1391,7 @@ display('after BR');",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -875,7 +1413,7 @@ g(true);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -901,7 +1439,7 @@ function f(y) {
       error('should not reach here');
     }
     display(x);
-    f();
+    f(1);
   }
   display(x);
 }
@@ -915,8 +1453,37 @@ display(x);",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution call non function value throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = 0; x(1,2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: calling non-function value 0.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: calling non-function value 0.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
@@ -937,7 +1504,7 @@ f();",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -993,7 +1560,7 @@ for (i; i < 2; i = i + 1) {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1021,7 +1588,7 @@ display(permutations(list(1,2,3)));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1036,20 +1603,20 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`standard program execution program always returns undefined: expectResult 1`] = `
+exports[`standard program execution program always returns all threads terminated: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "1 + 1;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1151,7 +1718,7 @@ display(eval_stream(s, 10));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1169,7 +1736,7 @@ display(f());",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1186,7 +1753,7 @@ display(x(xs));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1202,7 +1769,7 @@ display(x(1,2));",
   ],
   "errors": Array [],
   "parsedErrors": "",
-  "result": undefined,
+  "result": "all threads terminated",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -1216,7 +1783,7 @@ test_and_set(x, 1);",
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: execution aborted: incorrect number of arguments encountered for function call],
+      "error": [Error: execution aborted: Expected 1 arguments, but got 2.],
       "location": Object {
         "end": Object {
           "column": -1,
@@ -1231,7 +1798,65 @@ test_and_set(x, 1);",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line -1: Error: execution aborted: incorrect number of arguments encountered for function call",
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution wrong number of arguments for normal functions throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "((x, y) => 1)(1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected 2 arguments, but got 1.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 2 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard program execution wrong number of arguments for primitive functions throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_sin(1,2);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: execution aborted: Expected 1 arguments, but got 2.],
+      "location": Object {
+        "end": Object {
+          "column": -1,
+          "line": -1,
+        },
+        "start": Object {
+          "column": -1,
+          "line": -1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line -1: Error: execution aborted: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
