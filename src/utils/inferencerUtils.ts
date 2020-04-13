@@ -81,7 +81,7 @@ export function printType(type: Type): string {
     case 'primitive':
       return type.name
     case 'variable':
-      return type.isAddable ? `A${type.id}` : `T${type.id}`
+      return `T${type.id}`
     case 'function':
       let params = ''
       for (const argument of type.parameterTypes) {

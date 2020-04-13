@@ -1,5 +1,4 @@
 import { Type, Variable, Primitive, isBaseType, isTypeVariable } from '../types'
-import { printType } from '../utils/inferencerUtils'
 
 export const constraintStore = new Map()
 
@@ -12,9 +11,19 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefined {
   // temp logging for debug
-  const toPrint = `> Trying to add: ${printType(constraintLhs)} = ${printType(constraintRhs)}`
+  let toPrint = '> Trying to add: '
+  if (constraintLhs === null) toPrint += 'null'
+  else if (constraintLhs.kind === 'variable')
+    toPrint += (constraintLhs.isAddable ? 'A' : 'T') + constraintLhs.id
+  else if (constraintLhs.kind === 'primitive') toPrint += constraintLhs.name
+  toPrint += ' = '
+  if (constraintRhs === null) toPrint += 'null'
+  else if (constraintRhs.kind === 'variable')
+    toPrint += (constraintRhs.isAddable ? 'A' : 'T') + constraintRhs.id
+  else if (constraintRhs.kind === 'primitive') toPrint += constraintRhs.name
   console.log(toPrint)
   // logging - end
+
   // check if both key and value are base types and of the same kind (Rule 1)
   if (
     isBaseType(constraintLhs) &&
