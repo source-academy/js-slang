@@ -180,7 +180,9 @@ export class InvalidArgumentTypesError implements SourceError {
 }
 
 function formatNodeWithTest(
-  node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression | es.WhileStatement>
+  node: TypeAnnotatedNode<
+    es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
+  >
 ) {
   let exprString = simplify(generate(node.test))
   let kind: string
@@ -200,6 +202,10 @@ function formatNodeWithTest(
       kind = 'while statement'
       break
     }
+    case 'ForStatement': {
+      exprString = `for (...; ${exprString}; ...) { ... }`
+      kind = 'for statement'
+    }
   }
   return { exprString, kind }
 }
@@ -209,7 +215,9 @@ export class InvalidTestConditionError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression | es.WhileStatement>,
+    public node: TypeAnnotatedNode<
+      es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
+    >,
     public receivedType: Type
   ) {}
 

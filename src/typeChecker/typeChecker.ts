@@ -87,6 +87,13 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       traverse(node.body, constraints)
       break
     }
+    case 'ForStatement': {
+      traverse(node.init!, constraints)
+      traverse(node.test!, constraints)
+      traverse(node.update!, constraints)
+      traverse(node.body, constraints)
+      break
+    }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
       traverse(node.test, constraints)
@@ -498,6 +505,7 @@ function statementHasReturn(node: es.Node): boolean {
     case 'BlockStatement': {
       return node.body.some(stmt => statementHasReturn(stmt))
     }
+    case 'ForStatement':
     case 'WhileStatement': {
       return statementHasReturn(node.body)
     }
@@ -524,6 +532,7 @@ function stmtHasValueReturningStmt(node: es.Node): boolean {
     case 'BlockStatement': {
       return node.body.some(stmt => stmtHasValueReturningStmt(stmt))
     }
+    case 'ForStatement':
     case 'WhileStatement': {
       return stmtHasValueReturningStmt(node.body)
     }
@@ -671,6 +680,52 @@ function _infer(
       }
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
     }
+    case 'ForStatement': {
+      let newEnv = env
+      const initNode = node.init as TypeAnnotatedNode<es.Node>
+      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testType = testNode.inferredType as Variable
+      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyType = bodyNode.inferredType as Variable
+      const updateNode = node.update as TypeAnnotatedNode<es.Node>
+      let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
+      if (
+        initNode.type === 'VariableDeclaration' &&
+        initNode.declarations[0].id.type === 'Identifier'
+      ) {
+        // we need to introduce it into the scope and do something similar to what we do when
+        // evaluating a block statement
+        newEnv = cloneEnv(env)
+        newEnv.set(
+          initNode.declarations[0].id.name,
+          (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+        )
+        newConstraints = infer(initNode, newEnv, newConstraints)
+        newEnv.set(
+          initNode.declarations[0].id.name,
+          tForAll(
+            applyConstraints(
+              (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
+                .inferredType as Variable,
+              newConstraints
+            ),
+            initNode.kind === 'const'
+          )
+        )
+      } else {
+        newConstraints = infer(initNode, newEnv, newConstraints)
+      }
+      try {
+        newConstraints = infer(testNode, newEnv, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+        }
+      }
+      newConstraints = infer(updateNode, newEnv, newConstraints)
+      return infer(bodyNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
+    }
     case 'Program':
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
@@ -786,13 +841,10 @@ function _infer(
       const testType = testNode.inferredType as Variable
       const consNode = node.consequent as TypeAnnotatedNode<es.Node>
       const consType = consNode.inferredType as Variable
+      const altNode = node.alternate as TypeAnnotatedNode<es.Node>
+      const altType = altNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [testType, tBool])
       newConstraints = addToConstraintList(newConstraints, [storedType, consType])
-      const altNode = node.alternate as TypeAnnotatedNode<es.Node>
-      if (altNode) {
-        const altType = altNode.inferredType as Variable
-        newConstraints = addToConstraintList(newConstraints, [consType, altType])
-      }
       try {
         newConstraints = infer(testNode, env, newConstraints)
       } catch (e) {
@@ -801,13 +853,12 @@ function _infer(
         }
       }
       newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
-      if (altNode) {
-        try {
-          newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
-        } catch (e) {
-          if (e instanceof UnifyError) {
-            typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
-          }
+      try {
+        newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
+        newConstraints = addToConstraintList(newConstraints, [consType, altType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
         }
       }
       return newConstraints
