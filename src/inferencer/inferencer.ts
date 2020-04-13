@@ -286,27 +286,47 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
 
-  // function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
-  //   // get parameterTypes
-  //   var parameterTypes = [];
-  //
-  //   // get resultType
-  //   const bodyNodes = functionDeclaration.body.body;
-  //   var resultType;
-  //   for (var i = 0; i < bodyNodes.length; i++) {
-  //     if (typeof bodyNodes[i] === es.ReturnStatement) {
-  //       resultType = bodyNodes[i].argument.inferredType;
-  //     }
-  //   }
-  //
-  //   // declare
-  //   functionDeclaration.inferredType = {
-  //     kind : 'function',
-  //     parameterTypes : parameterTypes,
-  //     resultType :  resultType
-  //   }
-  //   functionDeclaration.typability = 'Typed'
-  // }
+  function inferFunctionDeclaration(
+    functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
+  ) {
+    // Update type constraints in constraintStore
+    // e.g. Given: x^T3 (a^T1) { return (...)^T2 }, Set: ??? (see PDF)
+    // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+    // const idenName = iden.name
+    // const idenTypeVariable = iden.typeVariable as Variable
+    // Todo
+    // Update from ConstDecl to FuncDecl
+    // Note: Handle polymorphic - refer to BinaryExp case
+    // const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
+    // const valueTypeVariable = value.typeVariable as Variable
+    // if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
+    //   const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
+    //   if (result === -1) {
+    //     displayErrorAndTerminate(
+    //       'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
+    //       constantDeclaration.loc
+    //     )
+    //   }
+    // }
+    // Very old implementation
+    // // get parameterTypes
+    // var parameterTypes = [];
+    // // get resultType
+    // const bodyNodes = functionDeclaration.body.body;
+    // var resultType;
+    // for (var i = 0; i < bodyNodes.length; i++) {
+    //   if (typeof bodyNodes[i] === es.ReturnStatement) {
+    //     resultType = bodyNodes[i].argument.inferredType;
+    //   }
+    // }
+    // // declare
+    // functionDeclaration.inferredType = {
+    //   kind : 'function',
+    //   parameterTypes : parameterTypes,
+    //   resultType :  resultType
+    // }
+    // functionDeclaration.typability = 'Typed'
+  }
 
   function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Literal>) {
     // Update type constraints in constraintStore
@@ -372,7 +392,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
   function logObjectsForDebugging() {
     // for Debugging output
-    console.log('-----------')
+    console.log('\n--------------')
     printTypeAnnotation(program)
     printTypeEnvironment(primitiveMap)
     printTypeConstraints(constraintStore)
@@ -395,8 +415,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
     ConditionalExpression: inferConditionalExpressions,
-    UnaryExpression: inferUnaryExpression
-    // FunctionDeclaration: inferFunctionDeclaration
+    UnaryExpression: inferUnaryExpression,
+    FunctionDeclaration: inferFunctionDeclaration
   })
 
   // Successful run..

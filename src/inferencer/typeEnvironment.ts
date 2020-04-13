@@ -25,9 +25,50 @@ export function updateTypeEnvironment(program: es.Program) {
     }
   }
 
+  function updateForFunctionDeclaration(
+    functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
+  ) {
+    console.log('updateForFunctionDeclaration')
+    // e.g. Given: f^T3 (x^T1) { return (...) }^T2, Set: Γ[ f ← [T1] => T2 ]
+    const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+    const idenName = iden.name
+
+    const params = functionDeclaration.params as TypeAnnotatedNode<es.Node>[]
+    const paramTypeVariables = []
+    for (const p of params) {
+      if (p.typeVariable) paramTypeVariables.push(p.typeVariable as Variable)
+    }
+
+    // let returnTypeVariable
+    // const bodyNodes = functionDeclaration.body.body
+    // for (let i in bodyNodes) {
+    //   if (bodyNodes[i].type && bodyNodes[i].type === 'ReturnStatement') {
+    //     console.log(bodyNodes[i] as TypeAnnotatedNode<es.ReturnStatement>)
+    //     console.log((bodyNodes[i] as TypeAnnotatedNode<es.ReturnStatement>).typeVariable)
+    //     returnTypeVariable = (bodyNodes[i] as TypeAnnotatedNode<es.ReturnStatement>).typeVariable as Variable
+    //   }
+    // }
+
+    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
+    const blockTypeVariable = block.typeVariable as Variable
+
+    console.log(blockTypeVariable)
+
+    // Todo: How to tell if the function declared is polymorphic? (w/o evaluating the body)
+    // From the return statement's type variable obj?
+    const isPolymorphic = true // set all to true for now and see what happens
+    // ...
+
+    if (idenName !== undefined && blockTypeVariable !== undefined) {
+      primitiveMap.set(idenName, {
+        types: [generateFunctionType(paramTypeVariables, blockTypeVariable, isPolymorphic)]
+      })
+    }
+  }
+
   ancestor(program as es.Node, {
-    VariableDeclaration: updateForConstantDeclaration // Source 1 only has constant declaration
-    // FunctionDeclaration: updateForFunctionDeclaration
+    VariableDeclaration: updateForConstantDeclaration, // Source 1 only has constant declaration
+    FunctionDeclaration: updateForFunctionDeclaration
   })
 }
 
