@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import {loadIIFEModuleText} from '../moduleLoader'
+import { loadIIFEModuleText } from '../moduleLoader'
 import { ModuleNotFound } from '../../errors/errors'
 
 test('Try loading a non-existing module', () => {
