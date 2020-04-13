@@ -28,7 +28,6 @@ export function updateTypeEnvironment(program: es.Program) {
   function updateForFunctionDeclaration(
     functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
   ) {
-    console.log('updateForFunctionDeclaration')
     // e.g. Given: f^T3 (x^T1) { return (...) }^T2, Set: Γ[ f ← [T1] => T2 ]
     const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
     const idenName = iden.name
@@ -51,8 +50,6 @@ export function updateTypeEnvironment(program: es.Program) {
 
     const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
-
-    console.log(blockTypeVariable)
 
     // Todo: How to tell if the function declared is polymorphic? (w/o evaluating the body)
     // From the return statement's type variable obj?

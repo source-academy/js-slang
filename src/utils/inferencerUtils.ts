@@ -183,6 +183,9 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
       case 'BlockStatement': {
         return '{...}'
       }
+      case 'ReturnStatement': {
+        return 'return (...)'
+      }
       default:
         return 'This node type is not in Source 1'
     }
@@ -256,6 +259,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     ConditionalExpression: printExpression,
     BlockStatement: printExpression,
     IfStatement: printExpression,
+    ReturnStatement: printExpression
   })
   console.log('\n')
 }

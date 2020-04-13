@@ -69,9 +69,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // Update type constraints in constraintStore
     // e.g. Given: x^T2, Set: T2 = Γ[x]
     const idenTypeVariable = identifier.typeVariable as Variable
-
-    const idenName = identifier.name
-    const idenTypeEnvType = primitiveMap.get(idenName).types[0] // Type obj
+    const idenTypeEnvType = primitiveMap.get(identifier.name).types[0] // Type obj
 
     if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
@@ -286,46 +284,142 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     }
   }
 
+  function inferReturnStatement(
+    returnStatement: TypeAnnotatedNode<es.ReturnStatement>
+  ) {
+    // Update type constraints in constraintStore
+    // e.g. Given: (return (...)^T1)^T2, Set: T2 = T1
+    const arg = returnStatement.argument as TypeAnnotatedNode<es.Node>
+    const argTypeVariable = arg.typeVariable as Variable
+
+    const returnypeVariable = returnStatement.typeVariable as Variable
+
+    if (returnypeVariable !== undefined && argTypeVariable !== undefined) {
+      const result = updateTypeConstraints(returnypeVariable, argTypeVariable)
+      if (result !== undefined) { // type error
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferReturnStatement()` - pls debug',
+          returnStatement.loc
+        )
+      }
+    }
+  }
+
   function inferFunctionDeclaration(
     functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
   ) {
     // Update type constraints in constraintStore
-    // e.g. Given: x^T3 (a^T1) { return (...)^T2 }, Set: ??? (see PDF)
-    // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
-    // const idenName = iden.name
-    // const idenTypeVariable = iden.typeVariable as Variable
-    // Todo
-    // Update from ConstDecl to FuncDecl
-    // Note: Handle polymorphic - refer to BinaryExp case
-    // const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
-    // const valueTypeVariable = value.typeVariable as Variable
-    // if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
-    //   const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
-    //   if (result === -1) {
-    //     displayErrorAndTerminate(
-    //       'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
-    //       constantDeclaration.loc
-    //     )
-    //   }
-    // }
-    // Very old implementation
-    // // get parameterTypes
-    // var parameterTypes = [];
-    // // get resultType
-    // const bodyNodes = functionDeclaration.body.body;
-    // var resultType;
-    // for (var i = 0; i < bodyNodes.length; i++) {
-    //   if (typeof bodyNodes[i] === es.ReturnStatement) {
-    //     resultType = bodyNodes[i].argument.inferredType;
-    //   }
-    // }
-    // // declare
-    // functionDeclaration.inferredType = {
-    //   kind : 'function',
-    //   parameterTypes : parameterTypes,
-    //   resultType :  resultType
-    // }
-    // functionDeclaration.typability = 'Typed'
+    // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
+
+    // First, try to add constraints that ensure all ReturnStatements give same type
+    // e.g. T2 = T3
+    const bodyNodes = functionDeclaration.body.body;
+    let prevReturnTypeVariable
+    for (const node of bodyNodes) {
+      if (node.type === 'ReturnStatement') {
+        const currReturnTypeVariable = (node as TypeAnnotatedNode<es.ReturnStatement>).typeVariable as Variable
+        if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
+          const result = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
+          if (result === -1) {
+            displayErrorAndTerminate(
+              'Expecting all return statements to have same type, but encountered a different type',
+              node.loc
+            )
+          }
+        }
+        prevReturnTypeVariable = currReturnTypeVariable
+      }
+    }
+
+    // If the above step executes successfully w/o any Type Error,
+    // Next, add constraint to give the FunctionDeclaration a result type corresponding to the ReturnStatement
+    // e.g. T4 = T3
+    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
+    const blockTypeVariable = block.typeVariable as Variable
+
+    if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
+      const result = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
+      if (result !== undefined) {
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part B - pls debug',
+          functionDeclaration.loc
+        )
+      }
+    }
+
+    // Finally, add constraint to give the function identifier the corresponding function type
+    // e.g. T5 = [T1] => T4
+    const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+    const idenTypeVariable = iden.typeVariable as Variable
+
+    const functionType = primitiveMap.get(iden.name)  // Get function type from Type Env since it was added there
+
+    if (idenTypeVariable !== undefined && functionType !== undefined) {
+      const result = updateTypeConstraints(idenTypeVariable, functionType)
+      if (result !== undefined) {
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part C - pls debug',
+          functionDeclaration.loc
+        )
+      }
+    }
+  }
+
+  function inferFunctionApplication(
+    functionApplication: TypeAnnotatedNode<es.CallExpression>
+  ) {
+    // Update type constraints in constraintStore
+    // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
+    //             f^T7 (1^T6)
+
+    // First, ensure arg nodes have same count as Γ(f)
+    // And try to add constraints that ensure arg nodes have same corresponding types
+    // e.g. T6 = T1
+    const iden = functionApplication.callee as TypeAnnotatedNode<es.Identifier>
+    const applicationArgs = functionApplication.arguments as TypeAnnotatedNode<es.Node>[]
+    const applicationArgCount = applicationArgs.length
+
+    const declarationFunctionType = primitiveMap.get(iden.name).types[0]
+    const declarationArgCount = declarationFunctionType.parameterTypes.length
+
+    if (applicationArgCount !== declarationArgCount) {  // check arg count
+      displayErrorAndTerminate(
+        `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
+        functionApplication.loc
+      )
+    }
+
+    // for (let i in applicationArgs) {  // add type constraint for each arg
+    for (let i = 0 ; i < applicationArgs.length; i++) {  // add type constraint for each arg
+      const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
+      const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i].typeVariable as Variable
+
+      if (applicationArgTypeVariable && declarationArgTypeVariable) {
+        const result = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
+        if (result === -1) {
+          displayErrorAndTerminate(
+            'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
+            applicationArgs[i].loc
+          )
+        }
+      }
+    }
+
+    // If the above step executes successfully w/o any Type Error,
+    // Next, add constraint to give the functionApplication a type corresponding to returnType of functionDeclaration
+    // e.g. T7 = T4
+    const applicationTypeVariable = functionApplication.typeVariable as Variable
+    const resultTypeVariable = declarationFunctionType.returnType
+
+    if (applicationTypeVariable && resultTypeVariable) {
+      const errorObj = updateTypeConstraints(applicationTypeVariable, resultTypeVariable)
+      if (errorObj) {
+        displayErrorAndTerminate(
+          'WARNING: There should not be a type error here in `inferFunctionApplication()` - pls debug',
+          functionApplication.loc
+        )
+      }
+    }
   }
 
   function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Literal>) {
@@ -413,10 +507,12 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     Literal: inferLiteral,
     Identifier: inferIdentifier,
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
+    UnaryExpression: inferUnaryExpression,
     BinaryExpression: inferBinaryExpression,
     ConditionalExpression: inferConditionalExpressions,
-    UnaryExpression: inferUnaryExpression,
-    FunctionDeclaration: inferFunctionDeclaration
+    ReturnStatement: inferReturnStatement,
+    FunctionDeclaration: inferFunctionDeclaration,
+    CallExpression: inferFunctionApplication
   })
 
   // Successful run..
