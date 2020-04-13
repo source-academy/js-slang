@@ -1,3 +1,4 @@
+import { ModuleNotFound, ModuleInternalError } from '../errors/errors'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttpRequest
 
@@ -10,12 +11,16 @@ export function loadIIFEModuleText(path: string) {
   req.open('GET', scriptPath, false)
   req.send(null)
   if (req.status !== 200 && req.status !== 304) {
-    throw new Error(`module ${path} not found.`)
+    throw new ModuleNotFound(`module ${path} not found.`)
   }
   return req.responseText
 }
 
 /* tslint:disable */
 export function loadIIFEModule(path: string) {
-  return eval(loadIIFEModuleText(path)) as object
+  try {
+    return eval(loadIIFEModuleText(path)) as object
+  } catch (_error) {
+    throw new ModuleInternalError(path)
+  }
 }
