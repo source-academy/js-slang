@@ -75,7 +75,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferIdentifier()` - pls debug',
           identifier.loc
@@ -105,7 +105,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
       const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
           constantDeclaration.loc
@@ -142,9 +142,11 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
       const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
-          `Expecting type \`${printType(operatorArgType)}\` but got \`${printType(argumentTypeVariable)} + \` instead`,
+          `Expecting type \`${printType(operatorArgType)}\` but got \`${printType(
+            argumentTypeVariable
+          )} + \` instead`,
           unaryExpression.loc
         )
       }
@@ -152,9 +154,11 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
       const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
-          `Expecting type \`${printType(operatorResultType)}\` but got \`${printType(resultTypeVariable)} + \` instead`,
+          `Expecting type \`${printType(operatorResultType)}\` but got \`${printType(
+            resultTypeVariable
+          )} + \` instead`,
           unaryExpression.loc
         )
       }
@@ -200,11 +204,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       if (result !== undefined && result.constraintRhs) {
         if (!functionType.isPolymorphic)
           displayErrorAndTerminate(
-            'Expecting type `' +
-              param1Type.name +
-              '` but got `' +
-              result.constraintRhs.name +
-              '` instead',
+            `Expecting type \`${param1Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
             param1.loc
           )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param1.loc)
@@ -216,11 +216,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       if (result !== undefined && result.constraintRhs) {
         if (!functionType.isPolymorphic)
           displayErrorAndTerminate(
-            'Expecting type `' +
-              param2Type.name +
-              '` but got `' +
-              result.constraintRhs.name +
-              '` instead',
+            `Expecting type \`${param2Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
             param2.loc
           )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param2.loc)
@@ -232,11 +228,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
       if (result !== undefined && result.constraintRhs) {
         if (!functionType.isPolymorphic)
           displayErrorAndTerminate(
-            'Expecting type `' +
-              returnType.name +
-              '` but got `' +
-              result.constraintRhs.name +
-              '` instead',
+            `Expecting type \` ${returnType.name}\` but got \`${result.constraintRhs.name}\` instead`,
             binaryExpression.loc
           )
         else displayErrorAndTerminate('Polymorphic type error, error msg TBC', binaryExpression.loc)
@@ -264,9 +256,11 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const testTypeVariable = test.typeVariable as Variable
     if (testTypeVariable !== undefined) {
       const result = updateTypeConstraints(testTypeVariable, booleanType)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
-          'Expecting type `boolean` but got `' + testTypeVariable.kind + '` instead',
+          `Expecting type of test expression to be a \`boolean\` but got \` ${printType(
+            testTypeVariable
+          )}\` instead`,
           test.loc
         )
       }
@@ -277,13 +271,13 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const alternateTypeVariable = alternate.typeVariable as Variable
     if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
       const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
-          'Expecting type `' +
-            consequentTypeVariable.kind +
-            '` and `' +
-            alternateTypeVariable.kind +
-            '` to be the same, but got different',
+          `Expecting consequent type \`${printType(
+            consequentTypeVariable
+          )}\` and alternate type \`${printType(
+            alternateTypeVariable
+          )}\` to be the same, but got different`,
           consequent.loc
         )
       } else {
@@ -324,7 +318,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
 
     if (literalTypeVariable !== undefined && literalType !== undefined) {
       const result = updateTypeConstraints(literalTypeVariable, literalType)
-      if (result === -1) {
+      if (result !== undefined) {
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `addTypeConstraintForLiteralPrimitive()` - pls debug',
           literal.loc
@@ -369,8 +363,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     console.log('!!! Type check error !!!')
 
     // Print error msg with optional location (if exists)
-    if (loc)
-      console.log(errorMsg + ' (line: ' + loc.start.line + ', char: ' + loc.start.column + ')')
+    if (loc) console.log(`${errorMsg} (line: ${loc.start.line}, char: ${loc.start.column})`)
     else console.log(errorMsg)
 
     console.log('\nTerminating program..')
@@ -402,7 +395,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     BinaryExpression: inferBinaryExpression,
     ConditionalExpression: inferConditionalExpressions,
-    UnaryExpression: inferUnaryExpression,
+    UnaryExpression: inferUnaryExpression
     // FunctionDeclaration: inferFunctionDeclaration
   })
 
