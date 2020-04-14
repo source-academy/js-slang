@@ -8,7 +8,9 @@ import * as source_4 from './source_4.json'
 export const SourceDocumentation = {
   builtins: {
     '1': source_1,
+    '1_lazy': source_1,
     '2': source_2,
+    '2_lazy': source_2,
     '3': source_3,
     '3_concurrent': source_3_concurrent,
     '4': source_4

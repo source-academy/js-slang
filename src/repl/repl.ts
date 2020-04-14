@@ -2,13 +2,13 @@
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 import { createContext, IOptions, parseError, runInContext } from '../index'
-import { EvaluationMethod, ExecutionMethod } from '../types'
+import { Variant, ExecutionMethod } from '../types'
 import Closure from '../interpreter/closure'
 
 function startRepl(
   chapter = 1,
   executionMethod: ExecutionMethod = 'interpreter',
-  evaluationMethod: EvaluationMethod = 'strict',
+  variant: Variant = 'default',
   useSubst: boolean = false,
   useRepl: boolean,
   prelude = ''
@@ -18,7 +18,7 @@ function startRepl(
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
     executionMethod,
-    evaluationMethod,
+    variant,
     useSubst
   }
   runInContext(prelude, context, options).then(preludeResult => {
@@ -52,7 +52,7 @@ function startRepl(
         }
       )
     } else {
-      throw new Error(parseError(context.errors))
+      console.error(parseError(context.errors))
     }
   })
 }
@@ -63,7 +63,7 @@ function main() {
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
       ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
-      ['n', 'native', 'use the native execution method'],
+      ['i', 'interpreter', 'use the interpreter for execution'],
       ['l', 'lazy', 'use lazy evaluation'],
       ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
@@ -71,13 +71,13 @@ function main() {
     .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
     .parseSystem()
 
-  const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
-  const evaluationMethod = opt.options.lazy === true ? 'lazy' : 'strict'
-  const chapter = parseFloat(opt.options.chapter)
+  const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
+  const variant = opt.options.lazy === true ? 'lazy' : 'default'
+  const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
-  startRepl(chapter, executionMethod, evaluationMethod, useSubst, useRepl, prelude)
+  startRepl(chapter, executionMethod, variant, useSubst, useRepl, prelude)
 }
 
 main()
