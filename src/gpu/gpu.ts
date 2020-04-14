@@ -10,7 +10,11 @@ export function transpileToGPU(program: es.Program) {
   transformer.transform()
 }
 
-export function getInternalFunctions(info: any, cid: any) {
+export function getInternalNamesForGPU(): Set<string> {
+  return new Set(Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => key))
+}
+
+export function getInternalFunctionsForGPU(info: any, cid: any) {
   return Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => {
     const kind: AllowedDeclarations = 'const'
     const value: es.Expression = create.callExpression(

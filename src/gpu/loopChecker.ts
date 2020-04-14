@@ -19,7 +19,7 @@ class GPULoopDetecter {
 
   // functions needed
   counter: any
-  end: number
+  end: es.Expression
   ok: boolean
 
   constructor(node: es.ForStatement) {
@@ -84,7 +84,7 @@ class GPULoopDetecter {
       return false
     }
 
-    this.end = rv.value as number
+    this.end = rv
     return true
   }
 

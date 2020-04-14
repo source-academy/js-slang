@@ -1,9 +1,9 @@
 import * as es from 'estree'
-import { simple, make } from 'acorn-walk/dist/walk'
+import { ancestor, simple, make } from 'acorn-walk/dist/walk'
 import * as create from '../utils/astCreator'
 import GPULoopDetecter from './loopChecker'
 // import { parse } from 'acorn'
-// import { generate } from 'astring'
+import { generate } from 'astring'
 
 /*x
   takes in a node and decides whether it is possible to break down into GPU     library code
@@ -24,7 +24,7 @@ class GPUTransformer {
 
   // GPU Loops
   counters: string[]
-  end: number[]
+  end: es.Expression[]
 
   state: number
 
@@ -67,6 +67,9 @@ class GPUTransformer {
       return
     }
 
+    console.log(this.counters)
+    console.log(this.end)
+
     this.checkBody(this.innerBody)
     if (this.state === 0) {
       return
@@ -78,6 +81,137 @@ class GPUTransformer {
 
     // get proper body using state
     this.getTargetBody(node)
+
+    // get a dictionary as global variables
+    console.log(this.outerVariables)
+    const p: es.Property[] = []
+    for (const key in this.outerVariables) {
+      if (this.outerVariables.hasOwnProperty(key)) {
+        const val = this.outerVariables[key]
+        p.push(create.property(key, val))
+      }
+    }
+
+    console.log(generate(this.targetBody))
+    console.log('MUTATING')
+
+    // create function?
+    const params: es.Identifier[] = []
+    for (let i = 0; i < this.state; i++) {
+      params.push(create.identifier(this.counters[i]))
+    }
+
+    const counters: string[] = []
+    for (let i = 0; i < this.state; i = i + 1) {
+      counters.push(this.counters[i])
+    }
+
+    // change math functions to Math.__
+    simple(this.targetBody, {
+      CallExpression(nx: es.CallExpression) {
+        if (nx.callee.type !== 'Identifier') {
+          return
+        }
+
+        const functionName = nx.callee.name
+        console.log(functionName)
+        const term = functionName.split('_')[1]
+        console.log(term)
+        const args: es.Expression[] = nx.arguments as any
+
+        create.mutateToCallExpression(
+          nx,
+          create.memberExpression(create.identifier('Math'), term),
+          args
+        )
+      }
+    })
+
+    // change global variables to be a member access
+    const names = [this.outputArray.name, ...this.counters, 'Math']
+    const locals = this.localVar
+    simple(this.targetBody, {
+      Identifier(nx: es.Identifier) {
+        if (names.includes(nx.name) || locals.has(nx.name)) {
+          return
+        }
+
+        console.log(nx)
+        create.mutateToMemberExpression(
+          nx,
+          create.memberExpression(create.identifier('this'), 'constants'),
+          create.identifier(nx.name)
+        )
+      }
+    })
+
+    // change any counters to member access
+    let threads = ['x']
+    if (this.state === 2) threads = ['y', 'x']
+    if (this.state === 3) threads = ['z', 'y', 'x']
+
+    simple(this.targetBody, {
+      Identifier(nx: es.Identifier) {
+        let x = -1
+        for (let i = 0; i < counters.length; i = i + 1) {
+          if (nx.name === counters[i]) {
+            x = i
+            break
+          }
+        }
+
+        if (x === -1) {
+          return
+        }
+
+        const id = threads[x]
+        create.mutateToMemberExpression(
+          nx,
+          create.memberExpression(create.identifier('this'), 'thread'),
+          create.identifier(id)
+        )
+      }
+    })
+
+    // change assignment to a return
+    ancestor(this.targetBody, {
+      AssignmentExpression(nx: es.AssignmentExpression, ancstor: es.Node[]) {
+        // assigning to local val, it's okay
+        if (nx.left.type === 'Identifier') {
+          return
+        }
+
+        if (nx.left.type !== 'MemberExpression') {
+          return
+        }
+
+        console.log(nx.right.type)
+        console.log(nx.right)
+
+        const sz = ancstor.length
+        console.log(sz)
+        console.log(ancstor[sz - 1])
+        console.log(ancstor[sz - 2])
+
+        create.mutateToReturnStatement(ancstor[sz - 2], nx.right)
+      }
+    })
+
+    const f = create.functionExpression([], this.targetBody)
+    console.log(generate(f))
+
+    // mutate node to assignment expression
+    create.mutateToExpressionStatement(
+      node,
+      create.assignmentExpression(
+        this.outputArray,
+        create.callExpression(
+          GPUTransformer.globalIds.__createKernel,
+          [create.arrayExpression(this.end), create.objectExpression(p), f],
+          node.loc!
+        )
+      )
+    )
   }
 
   // get the body that we want to parallelize
@@ -238,6 +372,8 @@ class GPUTransformer {
       if (res[i] !== this.counters[i]) break
       this.state++
     }
+
+    if (this.state > 3) this.state = 3
   }
 
   // get all variables defined outside the block (on right hand side)
