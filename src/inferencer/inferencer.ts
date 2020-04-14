@@ -395,7 +395,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
         .typeVariable as Variable
 
       if (applicationArgTypeVariable && declarationArgTypeVariable) {
-        const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
+        const errorObj = updateTypeConstraints(
+          applicationArgTypeVariable,
+          declarationArgTypeVariable
+        )
         if (errorObj) {
           displayErrorAndTerminate(
             'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
