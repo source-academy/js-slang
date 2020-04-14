@@ -127,6 +127,21 @@ describe('type checking pairs and lists', () => {
       but instead received 3 arguments of types:
         (boolean, T0) -> T0, number, List<boolean>"
     `)
+    expect(parseError(errors, true)).toMatchInlineSnapshot(`
+      "Line 8, Column 16: A type mismatch was detected in the function call:
+        accumulate((x, ...  y) => x || y, 0, ys)
+      The function expected 3 arguments of types:
+        (number, number) -> number, number, List<number>
+      but instead received 3 arguments of types:
+        (boolean, T0) -> T0, number, List<boolean>
+      A type mismatch was detected in the function call:
+        accumulate((x, ...  y) => x || y, 0, ys)
+      The function expected 3 arguments of types:
+        (number, number) -> number, number, List<number>
+      but instead received 3 arguments of types:
+        (boolean, T0) -> T0, number, List<boolean>
+      "
+    `)
   })
 })
 
@@ -155,6 +170,11 @@ describe('type checking functions', () => {
     expect(parseError(errors)).toMatchInlineSnapshot(
       `"Line 2: foo contains cyclic reference to itself"`
     )
+    expect(parseError(errors, true)).toMatchInlineSnapshot(`
+      "Line 2, Column 6: foo contains cyclic reference to itself
+      foo contains cyclic reference to itself
+      "
+    `)
   })
 
   it('fails with correct error msg when wrong number of args passed in', () => {
@@ -162,20 +182,39 @@ describe('type checking functions', () => {
       function foo(x) { return x + 1; }
       function goo(x) { return x === 0 ? 1 : goo(x - 1, x - 1); }
       function bar(f) { return f; }
+      function baz() { return 0; }
       foo(1, 2);
       bar(foo)(3, 4, 5);
+      baz(3);
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
       goo: number -> number
-      bar: T0 -> T0"
+      bar: T0 -> T0
+      baz: () -> number"
     `)
 
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: Function expected 1 args, but got 2
-      Line 5: Function expected 1 args, but got 2
-      Line 6: Function expected 1 args, but got 3"
+      Line 6: Function expected 1 args, but got 2
+      Line 7: Function expected 1 args, but got 3
+      Line 8: Function expected 0 args, but got 1"
+    `)
+
+    expect(parseError(errors, true)).toMatchInlineSnapshot(`
+      "Line 3, Column 45: Function expected 1 args, but got 2
+      Function expected 1 args, but got 2
+
+      Line 6, Column 6: Function expected 1 args, but got 2
+      Function expected 1 args, but got 2
+
+      Line 7, Column 6: Function expected 1 args, but got 3
+      Function expected 1 args, but got 3
+
+      Line 8, Column 6: Function expected 0 args, but got 1
+      Function expected 0 args, but got 1
+      "
     `)
   })
 
