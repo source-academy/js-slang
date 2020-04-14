@@ -267,6 +267,7 @@ class GPUTransformer {
   }
 
   // get all variables defined outside the block (on right hand side)
+  // TODO: method can be more optimized
   getOuterVariables() {
     // set some local variables for walking
     const curr = this.innerBody
@@ -313,7 +314,7 @@ class GPUTransformer {
         }
 
         found[nodeName] = line
-        varDefinitions[nodeName] = node.declarations[0].init
+        varDefinitions[nodeName] = node.declarations[0].id
       },
 
       AssignmentExpression(node: es.AssignmentExpression) {
@@ -337,7 +338,7 @@ class GPUTransformer {
         }
 
         found[nodeName] = line
-        varDefinitions[nodeName] = node.right
+        varDefinitions[nodeName] = node.left
       }
     })
     this.outerVariables = varDefinitions
