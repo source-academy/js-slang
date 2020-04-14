@@ -97,7 +97,7 @@ export function printType(type: Type): string {
 }
 
 export function printTypeConstraints(typeContraints: Map<Type, Type>) {
-  console.log('Printing Type Constraints')
+  console.log('Printing Type Constraints:')
   for (const [key, value] of typeContraints) {
     console.log(`${printType(key)} = ${printType(value)}`)
   }
@@ -105,12 +105,12 @@ export function printTypeConstraints(typeContraints: Map<Type, Type>) {
 }
 
 export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
-  console.log('Printing Type Environment')
+  console.log('Printing Type Environment:')
   for (const [key, value] of typeEnvironment) {
     if (predefined.has(key)) {
       continue
     }
-    console.log(`${key} = ${printType(value.types[0])}`)
+    console.log(`${key} <- ${printType(value.types[0])}`)
   }
   console.log('\n')
 }
@@ -182,6 +182,13 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
       }
       case 'BlockStatement': {
         return '{...}'
+      }
+      case 'ReturnStatement': {
+        // return 'return (...)'
+        node = node as es.ReturnStatement
+        node.argument = node.argument as es.Expression
+        const argument = getExpressionString(node.argument)
+        return `return ${argument}`
       }
       default:
         return 'This node type is not in Source 1'
@@ -255,7 +262,8 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     CallExpression: printExpression,
     ConditionalExpression: printExpression,
     BlockStatement: printExpression,
-    IfStatement: printExpression
+    IfStatement: printExpression,
+    ReturnStatement: printExpression
   })
   console.log('\n')
 }
