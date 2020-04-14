@@ -12,7 +12,7 @@
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}/dist/repl/repl.js",
-      "args": ["3"],
+      "args": ["3", "interpreter", "lazy"],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"

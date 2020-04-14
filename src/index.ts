@@ -261,7 +261,7 @@ export async function runInContext(
     }
   } else {
     const interpreter = getInterpreter(theOptions.useLazyEval)
-    const it = interpreter.boundedForceEvaluate(program, context)
+    const it = interpreter.boundedEvaluateForUser(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()

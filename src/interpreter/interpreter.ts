@@ -5,14 +5,15 @@ import { Context, Value } from '../types'
 
 import { Evaluator } from './evaluatorUtils'
 import { getEvaluators } from './evaluators'
-import Thunk, { EvaluateFunction, dethunk } from './thunk'
+import Thunk, { EvaluateFunction, dethunk, deepDethunk } from './thunk'
 
 export interface Interpreter {
-  boundedForceEvaluate: EvaluateFunction
+  boundedEvaluateForUser: EvaluateFunction
 }
 
 export class ApplicativeOrderEvaluationInterpreter implements Interpreter {
   evaluators: { [nodeType: string]: Evaluator<es.Node> }
+  boundedEvaluateForUser: EvaluateFunction
   boundedForceEvaluate: EvaluateFunction
   boundedEvaluate: EvaluateFunction;
 
@@ -36,13 +37,15 @@ export class ApplicativeOrderEvaluationInterpreter implements Interpreter {
   }
 
   constructor() {
-    this.boundedForceEvaluate = this.boundedEvaluate = this.evaluate.bind(this)
+    this.boundedEvaluateForUser = this.boundedForceEvaluate = this.boundedEvaluate = this.evaluate.bind(this)
     this.evaluators = getEvaluators(this.boundedEvaluate, this.boundedEvaluate)
   }
 }
 
 export class LazyEvaluationInterpreter implements Interpreter {
   evaluators: { [nodeType: string]: Evaluator<es.Node> }
+
+  boundedEvaluateForUser: EvaluateFunction
   boundedForceEvaluate: EvaluateFunction
   boundedEvaluate: EvaluateFunction;
 
@@ -69,7 +72,13 @@ export class LazyEvaluationInterpreter implements Interpreter {
     return new Thunk(node, context, this.boundedForceEvaluate)
   }
 
+  *evaluateForUser(node: es.Node, context: Context): IterableIterator<Value>{
+    const result = yield* this.forceEvaluate(node,context)
+    return yield* deepDethunk(result)
+  }
+
   constructor() {
+    this.boundedEvaluateForUser = this.evaluateForUser.bind(this)
     this.boundedEvaluate = this.evaluate.bind(this)
     this.boundedForceEvaluate = this.forceEvaluate.bind(this)
     this.evaluators = getEvaluators(this.boundedEvaluate, this.boundedForceEvaluate)

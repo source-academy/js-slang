@@ -3,11 +3,12 @@ import repl = require('repl') // 'repl' here refers to the module named 'repl' i
 // import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import { stringify } from '../utils/stringify'
+import { ExecutionMethod } from '../types'
 
-function startRepl(chapter = 1, useSubst: boolean, prelude = '') {
+function startRepl(chapter = 1, useSubst: boolean, theExecutionMethod:ExecutionMethod, useLazyEval:boolean, prelude = '') {
   // use defaults for everything
-  const context = createContext(chapter)
-  const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst }
+  const context = createContext(chapter, [], useLazyEval)
+  const options: Partial<IOptions> = { scheduler: 'preemptive', useSubst, executionMethod: theExecutionMethod , useLazyEval  }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
       console.dir(preludeResult.value, { depth: null })
@@ -46,12 +47,19 @@ function main() {
       if (err) {
         throw err
       }
-      startRepl(4, false, data)
+      startRepl(4, false,'interpreter', false, data)
     })
   } else {
     const chapter = process.argv.length > 2 ? parseInt(firstArg, 10) : 1
     const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
-    startRepl(chapter, useSubst)
+    const ExecutionMethod = process.argv.length > 3 && process.argv[3] === 'interpreter' ? 'interpreter' : 'auto'
+
+    let useLazyEval = false;
+    if ((!useSubst && ExecutionMethod==='interpreter')&&
+        (process.argv.includes('lazy'))){
+      useLazyEval = true;
+    }
+    startRepl(chapter ,useSubst, ExecutionMethod, useLazyEval)
   }
 }
 

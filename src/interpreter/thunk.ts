@@ -70,7 +70,7 @@ type MakeThunkAwareResult = (...args: Value[]) => IterableIterator<Value>
 export function makeThunkAware(fun: Value, thisContext?: Value): MakeThunkAwareResult {
   function* wrapper(...args: Value[]): IterableIterator<Value> {
     if (isThunkAware(fun)) {
-      return fun.apply(thisContext, args)
+      return yield* fun.apply(thisContext, args)
     }
     const dethunkedArgs = [...args]
     for (let i = 0; i < dethunkedArgs.length; i++) {

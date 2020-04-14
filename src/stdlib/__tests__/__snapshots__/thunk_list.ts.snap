@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filter with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+function h(x){return x%2===0;}
+head(filter(h,f(1)));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite functions with list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return list(x,f(x+1)); }
+head(f(0))+head(head(tail(f(0))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite functions with pair: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+head(f(0))+head(tail(tail(f(0))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is_null with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return list(x,f(x+1)); }
+is_null(f(0));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`is_pair && is_list with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return list(x,f(x+1)); }
+is_pair(f(0)) && is_list(f(0));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`list_ref with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+list_ref(f(0),3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`map with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+head(tail(map((a)=>{return a*a;}, f(1))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`member with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x*x,f(x+1)); }
+head(member(4,f(0)));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove_all with infinite function: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+head(tail(remove_all(1,f(0))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
