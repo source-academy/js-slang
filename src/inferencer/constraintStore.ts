@@ -4,7 +4,7 @@ import { printType } from '../utils/inferencerUtils'
 export const constraintStore = new Map()
 
 export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: Type) {
-  console.log('constraintStore.updateTypeConstraints:')
+  console.log('\nconstraintStore.updateTypeConstraints:')
 
   // Note: If no error, returns undefined (i.e. nothing), else return error obj for logging
   return solveConstraint(newConstraintLhs, newConstraintRhs)

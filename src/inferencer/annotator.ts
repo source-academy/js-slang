@@ -107,6 +107,7 @@ export function annotateProgram(program: es.Program): es.Program {
     if (returnStatement.argument !== undefined) {
       annotateNode(returnStatement.argument as TypeAnnotatedNode<es.Node>)
     }
+    annotateNode(returnStatement)
   }
 
   function annotateConditionalExpressions(
