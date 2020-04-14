@@ -93,7 +93,7 @@ describe('type checking pairs and lists', () => {
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "accumulate: ((T67, T13) -> T13, T13, List<T67>) -> T13
+      "accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1
       xs: List<number>
       ys: List<boolean>"
     `)
@@ -117,7 +117,7 @@ describe('type checking pairs and lists', () => {
       xs: List<number>
       ys: List<boolean>
       a: number
-      b: T53"
+      b: T0"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 8: A type mismatch was detected in the function call:
@@ -125,7 +125,7 @@ describe('type checking pairs and lists', () => {
       The function expected 3 arguments of types:
         (number, number) -> number, number, List<number>
       but instead received 3 arguments of types:
-        (boolean, T57) -> T57, number, List<boolean>"
+        (boolean, T0) -> T0, number, List<boolean>"
     `)
   })
 })
@@ -139,7 +139,7 @@ describe('type checking functions', () => {
     `
     const [program, errors] = typeCheck(parse(code1, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"append: (List<T25>, List<T25>) -> List<T25>"`
+      `"append: (List<T0>, List<T0>) -> List<T0>"`
     )
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -151,7 +151,7 @@ describe('type checking functions', () => {
       }
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: T2"`)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: T0"`)
     expect(parseError(errors)).toMatchInlineSnapshot(
       `"Line 2: foo contains cyclic reference to itself"`
     )
@@ -169,7 +169,7 @@ describe('type checking functions', () => {
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
       goo: number -> number
-      bar: T29 -> T29"
+      bar: T0 -> T0"
     `)
 
     expect(parseError(errors)).toMatchInlineSnapshot(`
@@ -213,7 +213,7 @@ function foo(x, y) {
 }
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T11, T12) -> [T11, T12]"`)
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T0, T1) -> [T0, T1]"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
@@ -247,9 +247,9 @@ head(x) + 56;
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
       "x: [number, number]
-      y: T7
+      y: T0
       a: [number, [number, boolean]]
-      b: T21"
+      b: T0"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: A type mismatch was detected in the binary expression:
@@ -306,8 +306,8 @@ describe('type checking of functions with variable number of arguments', () => {
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
-      "xs: T2
-      xs1: T9"
+      "xs: T0
+      xs1: T0"
     `)
   })
 })
