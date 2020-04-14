@@ -184,7 +184,11 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
         return '{...}'
       }
       case 'ReturnStatement': {
-        return 'return (...)'
+        // return 'return (...)'
+        node = node as es.ReturnStatement
+        node.argument = node.argument as es.Expression
+        const argument = getExpressionString(node.argument)
+        return `return ${argument}`
       }
       default:
         return 'This node type is not in Source 1'

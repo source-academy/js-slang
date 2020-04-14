@@ -293,8 +293,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const returnypeVariable = returnStatement.typeVariable as Variable
 
     if (returnypeVariable !== undefined && argTypeVariable !== undefined) {
-      const result = updateTypeConstraints(returnypeVariable, argTypeVariable)
-      if (result !== undefined) {
+      const errorObj = updateTypeConstraints(returnypeVariable, argTypeVariable)
+      if (errorObj) {
         // type error
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferReturnStatement()` - pls debug',
@@ -319,8 +319,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
         const currReturnTypeVariable = (node as TypeAnnotatedNode<es.ReturnStatement>)
           .typeVariable as Variable
         if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
-          const result = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
-          if (result === -1) {
+          const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
+          if (errorObj) {
             displayErrorAndTerminate(
               'Expecting all return statements to have same type, but encountered a different type',
               node.loc
@@ -338,8 +338,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const blockTypeVariable = block.typeVariable as Variable
 
     if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
-      const result = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
-      if (result !== undefined) {
+      const errorObj = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
+      if (errorObj) {
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part B - pls debug',
           functionDeclaration.loc
@@ -355,8 +355,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     const functionType = primitiveMap.get(iden.name) // Get function type from Type Env since it was added there
 
     if (idenTypeVariable !== undefined && functionType !== undefined) {
-      const result = updateTypeConstraints(idenTypeVariable, functionType)
-      if (result !== undefined) {
+      const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
+      if (errorObj) {
         displayErrorAndTerminate(
           'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part C - pls debug',
           functionDeclaration.loc
@@ -395,8 +395,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
         .typeVariable as Variable
 
       if (applicationArgTypeVariable && declarationArgTypeVariable) {
-        const result = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
-        if (result === -1) {
+        const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
+        if (errorObj) {
           displayErrorAndTerminate(
             'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
             applicationArgs[i].loc
