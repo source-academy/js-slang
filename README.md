@@ -77,7 +77,7 @@ documentation and places it in the folder `docs/source`. The script
 `jsdoc` provides an installation command to deploy the
 documentation via `scp` to a web server:
 ``` {.}
-$ yarn jsdoc install`
+$ yarn jsdoc install
 ```
 You can test the documentation using a local server:
 ``` {.}
