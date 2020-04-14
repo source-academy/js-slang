@@ -41,7 +41,7 @@ Usage: js-slang [PROGRAM_STRING] [OPTION]
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
   -s, --use-subst       use substitution
   -h, --help            display this help
-  -n, --native          use the native execution method
+  -n, --native          use the interpreter for execution
   -l, --lazy            use lazy evaluation
   -e, --eval            don't show REPL, only display output of evaluation
 ```
