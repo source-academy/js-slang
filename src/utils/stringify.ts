@@ -129,16 +129,15 @@ export function typeToString(type: Type): string {
   return niceTypeToString(type)
 }
 
-function niceTypeToString(type: Type, nameMap = { _next : 0 }) : string {
-  function curriedTypeToString(type: Type) {
-    return niceTypeToString(type, nameMap)
+function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
+  function curriedTypeToString(t: Type) {
+    return niceTypeToString(t, nameMap)
   }
 
   switch (type.kind) {
     case 'primitive':
       return type.name
     case 'variable':
-      console.log(type)
       if (type.constraint && type.constraint !== 'none') {
         return type.constraint
       }
@@ -152,7 +151,10 @@ function niceTypeToString(type: Type, nameMap = { _next : 0 }) : string {
     case 'pair':
       const headType = curriedTypeToString(type.headType)
       // convert [T1 , List<T1>] back to List<T1>
-      if (type.tailType.kind === 'list' && headType === curriedTypeToString(type.tailType.elementType))
+      if (
+        type.tailType.kind === 'list' &&
+        headType === curriedTypeToString(type.tailType.elementType)
+      )
         return `List<${headType}>`
       return `[${curriedTypeToString(type.headType)}, ${curriedTypeToString(type.tailType)}]`
     case 'function':
@@ -162,5 +164,6 @@ function niceTypeToString(type: Type, nameMap = { _next : 0 }) : string {
       }
       return `${parametersString} -> ${curriedTypeToString(type.returnType)}`
     default:
-      return 'Unable to infer type'  }
+      return 'Unable to infer type'
+  }
 }
