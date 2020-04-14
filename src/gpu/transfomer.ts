@@ -1,8 +1,8 @@
 import * as es from 'estree'
 import { ancestor, simple, make } from 'acorn-walk/dist/walk'
 import * as create from '../utils/astCreator'
-import GPULoopVerifier from './loopVerifier'
-import GPUBodyVerifier from './bodyVerifier'
+import GPULoopVerifier from './verification/loopVerifier'
+import GPUBodyVerifier from './verification/bodyVerifier'
 
 /*
  * GPU Transformer runs through the program and transpiles for loops to GPU code
@@ -81,7 +81,7 @@ class GPUTransformer {
       return
     }
 
-    const verifier = new GPUBodyVerifier(this.innerBody, this.counters)
+    const verifier = new GPUBodyVerifier(this.program, this.innerBody, this.counters)
     if (verifier.state === 0) {
       return
     }
@@ -206,7 +206,12 @@ class GPUTransformer {
         this.outputArray,
         create.callExpression(
           GPUTransformer.globalIds.__createKernel,
-          [create.arrayExpression(this.end), create.objectExpression(externObject), kernelFunction],
+          [
+            create.arrayExpression(this.end),
+            create.objectExpression(externObject),
+            kernelFunction,
+            this.outputArray
+          ],
           node.loc!
         )
       )

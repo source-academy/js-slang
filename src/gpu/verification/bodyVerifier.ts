@@ -10,6 +10,7 @@ import { simple } from 'acorn-walk/dist/walk'
  *   @outputArray: array that is being written to
  */
 class GPUBodyVerifier {
+  program: es.Program
   node: es.Statement
 
   state: number
@@ -22,7 +23,8 @@ class GPUBodyVerifier {
    * @param node body to be verified
    * @param counters list of for loop counters (to check array assignment)
    */
-  constructor(node: es.Statement, counters: string[]) {
+  constructor(program: es.Program, node: es.Statement, counters: string[]) {
+    this.program = program
     this.node = node
     this.counters = counters
     this.state = 0
@@ -140,7 +142,6 @@ class GPUBodyVerifier {
   getPropertyAccess = (node: es.MemberExpression): string[] => {
     const res: string[] = []
     let ok: boolean = true
-
     let curr: any = node
     while (curr.type === 'MemberExpression') {
       if (curr.property.type !== 'Identifier') {
@@ -157,7 +158,37 @@ class GPUBodyVerifier {
     }
 
     this.outputArray = curr
+
+    // check that it is not a constant
+    ok = this.checkConst()
+    if (!ok) {
+      return []
+    }
+
     return res.reverse()
+  }
+
+  // checks result variable is a constant
+  checkConst = (): boolean => {
+    const output = this.outputArray
+    let ok = true
+    simple(this.program, {
+      VariableDeclaration(node: es.VariableDeclaration) {
+        if (node.declarations[0].id.type !== 'Identifier') {
+          return
+        }
+
+        const nodeName = node.declarations[0].id.name
+        if (nodeName !== output.name) {
+          return
+        }
+
+        if (node.kind === 'const') {
+          ok = false
+        }
+      }
+    })
+    return ok
   }
 }
 
