@@ -231,6 +231,7 @@ primitiveMap.set('math_fround', {
   types: [generateFunctionType([numberType], numberType)]
 })
 // primitiveMap.set('math_hypot', {
+// types: [{ argumentTypes: [numberType], resultType: undefined }],
 //   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
 //   isPolymorphic: true
 // })
