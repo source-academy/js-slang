@@ -60,10 +60,10 @@ class GPUTransformer {
    * 1. Check if it meets our specifications
    * 2. Get external variables + target body (body to be run across gpu threads)
    * 3. Build a AST Node for (2) - this will be given to (8)
-   * 4. In body, update all math_* calls to become Math.* calls
-   * 5. In body, update all external variable references
-   * 6. In body, update reference to counters
-   * 7. Change assignment in body to a return statement
+   * 4. Change assignment in body to a return statement
+   * 5. In body, update all math_* calls to become Math.* calls
+   * 6. In body, update all external variable references
+   * 7. In body, update reference to counters
    * 8. Call __createKernel and assign it to our external variable
    */
   gpuTranspile = (node: es.ForStatement) => {
@@ -103,7 +103,31 @@ class GPUTransformer {
       }
     }
 
-    // 4. Update all math_* calls to become Math.*
+    // 4. Change assignment in body to a return statement
+    ancestor(this.targetBody, {
+      AssignmentExpression(nx: es.AssignmentExpression, ancstor: es.Node[]) {
+        // assigning to local val, it's okay
+        if (nx.left.type === 'Identifier') {
+          return
+        }
+
+        if (nx.left.type !== 'MemberExpression') {
+          return
+        }
+
+        const sz = ancstor.length
+        create.mutateToReturnStatement(ancstor[sz - 2], nx.right)
+      }
+    })
+
+    // deep copy here (for runtime checks)
+    const params: es.Identifier[] = []
+    for (let i = 0; i < this.state; i++) {
+      params.push(create.identifier(this.counters[i]))
+    }
+    const tempNode = create.functionExpression(params, JSON.parse(JSON.stringify(this.targetBody)))
+
+    // 5. Update all math_* calls to become Math.*
     simple(this.targetBody, {
       CallExpression(nx: es.CallExpression) {
         if (nx.callee.type !== 'Identifier') {
@@ -122,7 +146,7 @@ class GPUTransformer {
       }
     })
 
-    // 5. Update all external variable references in body
+    // 6. Update all external variable references in body
     // e.g. let res = 1 + y; where y is an external variable
     // becomes let res = 1 + this.constants.y;
 
@@ -143,7 +167,7 @@ class GPUTransformer {
       }
     })
 
-    // 6. Update reference to counters
+    // 7. Update reference to counters
     // e.g. let res = 1 + i; where i is a counter
     // becomes let res = 1 + this.thread.x;
 
@@ -180,24 +204,6 @@ class GPUTransformer {
       }
     })
 
-    // 7. Change assignment in body to a return statement
-
-    ancestor(this.targetBody, {
-      AssignmentExpression(nx: es.AssignmentExpression, ancstor: es.Node[]) {
-        // assigning to local val, it's okay
-        if (nx.left.type === 'Identifier') {
-          return
-        }
-
-        if (nx.left.type !== 'MemberExpression') {
-          return
-        }
-
-        const sz = ancstor.length
-        create.mutateToReturnStatement(ancstor[sz - 2], nx.right)
-      }
-    })
-
     // 8. we transpile the loop to a function call, __createKernel
     const kernelFunction = create.functionExpression([], this.targetBody)
     create.mutateToExpressionStatement(
@@ -210,7 +216,8 @@ class GPUTransformer {
             create.arrayExpression(this.end),
             create.objectExpression(externObject),
             kernelFunction,
-            this.outputArray
+            this.outputArray,
+            tempNode
           ],
           node.loc!
         )
