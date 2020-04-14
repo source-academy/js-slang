@@ -9,7 +9,15 @@ import {
   isFunctionType
 } from '../types'
 import { annotateProgram, fresh } from './annotator'
-import { booleanType, isOverLoaded, primitiveMap, updateTypeEnvironment } from './typeEnvironment'
+import {
+  numberType,
+  booleanType,
+  isOverLoaded,
+  primitiveMap,
+  updateTypeEnvironment,
+  stringType,
+  undefinedType
+} from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
@@ -24,45 +32,23 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     const valueOfLiteral = literal.value
     if (typeof valueOfLiteral === 'number') {
-      // declare
-      literal.inferredType = {
-        kind: 'primitive',
-        name: 'number'
-      }
-      literal.typability = 'Typed'
-
-      // e.g. Given: 1^T2, Set: T2 = number
-      addTypeConstraintForLiteralPrimitive(literal)
+      literal.inferredType = numberType
     } else if (typeof valueOfLiteral === 'boolean') {
-      // declare
-      literal.inferredType = {
-        kind: 'primitive',
-        name: 'boolean'
-      }
-      literal.typability = 'Typed'
-
-      // e.g. Given: true^T2, Set: T2 = boolean
-      addTypeConstraintForLiteralPrimitive(literal)
+      literal.inferredType = booleanType
     } else if (typeof valueOfLiteral === 'string') {
-      // declare
-      literal.inferredType = {
-        kind: 'primitive',
-        name: 'string'
-      }
-      literal.typability = 'Typed'
-
-      // e.g. Given: 'hi'^T2, Set: T2 = string
-      addTypeConstraintForLiteralPrimitive(literal)
+      literal.inferredType = stringType
     } else if (typeof valueOfLiteral === 'undefined') {
-      // declare
-      literal.inferredType = {
-        kind: 'primitive',
-        name: 'undefined'
-      }
-      literal.typability = 'Typed'
-
-      addTypeConstraintForLiteralPrimitive(literal) // todo: undefined gives an object in type environment, handle properly
+      literal.inferredType = undefinedType
+    } else {
+      literal.typability = 'Untypable'
+      return
     }
+    literal.typability = 'Typed'
+    // e.g. Given: 1^T2, Set: T2 = number
+    // e.g. Given: true^T2, Set: T2 = boolean
+    // e.g. Given: 'hi'^T2, Set: T2 = string
+    // todo: undefined gives an object in type environment, handle properly
+    addTypeConstraintForLiteralPrimitive(literal)
   }
 
   function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
