@@ -232,7 +232,7 @@ export interface Typed {
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List | Pair
+export type Type = Primitive | Variable | FunctionType | List | Pair | SArray
 export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
@@ -255,6 +255,11 @@ export interface FunctionType {
 
 export interface List {
   kind: 'list'
+  elementType: Type
+}
+
+export interface SArray {
+  kind: 'array'
   elementType: Type
 }
 

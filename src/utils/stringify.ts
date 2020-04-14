@@ -137,6 +137,8 @@ export function typeToString(type: Type): string {
         : type.name
     case 'list':
       return `List<${typeToString(type.elementType)}>`
+    case 'array':
+      return `Array<${typeToString(type.elementType)}>`
     case 'pair':
       const headType = typeToString(type.headType)
       // convert [T1 , List<T1>] back to List<T1>

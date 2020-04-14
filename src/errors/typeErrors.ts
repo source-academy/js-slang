@@ -1,10 +1,53 @@
 import * as es from 'estree'
-import { ErrorSeverity, ErrorType, SourceError, Type, TypeAnnotatedNode } from '../types'
+import { ErrorSeverity, ErrorType, SourceError, SArray, Type, TypeAnnotatedNode } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
+
+export class InvalidArrayIndexType implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Expected array index as number, got ${typeToString(this.receivedType)} instead`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ArrayAssignmentError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.Node>,
+    public arrayType: SArray,
+    public receivedType: Type
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return stripIndent`Array expected type: ${typeToString(this.arrayType)}
+    but got: ${typeToString(this.receivedType)}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
 
 export class ReassignConstError implements SourceError {
   public type = ErrorType.TYPE

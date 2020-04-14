@@ -6,6 +6,7 @@ import {
   Pair,
   List,
   ForAll,
+  SArray,
   Type,
   FunctionType,
   TypeAnnotatedFuncDecl,
@@ -25,8 +26,11 @@ import {
   InvalidArgumentTypesError,
   CyclicReferenceError,
   DifferentAssignmentError,
-  ReassignConstError
+  ReassignConstError,
+  ArrayAssignmentError,
+  InvalidArrayIndexType
 } from '../errors/typeErrors'
+import { typeToString } from '../utils/stringify'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -159,7 +163,15 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'AssignmentExpression':
+      traverse(node.left, constraints)
       traverse(node.right, constraints)
+      break
+    case 'ArrayExpression':
+      node.elements.forEach(element => traverse(element, constraints))
+      break
+    case 'MemberExpression':
+      traverse(node.object, constraints)
+      traverse(node.property, constraints)
       break
     case 'Literal':
     case 'Identifier':
@@ -243,6 +255,11 @@ function fresh(monoType: Type, subst: { [typeName: string]: Variable }): Type {
         kind: 'list',
         elementType: fresh(monoType.elementType, subst)
       }
+    case 'array':
+      return {
+        kind: 'array',
+        elementType: fresh(monoType.elementType, subst)
+      }
     case 'pair':
       return {
         kind: 'pair',
@@ -276,6 +293,8 @@ function freeTypeVarsInType(type: Type): Variable[] {
     case 'primitive':
       return []
     case 'list':
+      return freeTypeVarsInType(type.elementType)
+    case 'array':
       return freeTypeVarsInType(type.elementType)
     case 'pair':
       return union(freeTypeVarsInType(type.headType), freeTypeVarsInType(type.tailType))
@@ -347,10 +366,17 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
       }
     }
     case 'list': {
-      const listType = __applyConstraints(type.elementType, constraints)
+      const elementType = __applyConstraints(type.elementType, constraints)
       return {
         kind: 'list',
-        elementType: listType
+        elementType
+      }
+    }
+    case 'array': {
+      const elementType = __applyConstraints(type.elementType, constraints)
+      return {
+        kind: 'array',
+        elementType
       }
     }
     case 'variable': {
@@ -401,6 +427,7 @@ function contains(type: Type, name: string): boolean {
       return false
     case 'pair':
       return contains(type.headType, name) || contains(type.tailType, name)
+    case 'array':
     case 'list':
       return contains(type.elementType, name)
     case 'variable':
@@ -447,6 +474,8 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
     return constraints
+  } else if (LHS.kind === 'array' && RHS.kind === 'array') {
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   } else if (LHS.kind === 'list' && RHS.kind === 'list') {
     return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
@@ -931,30 +960,118 @@ function _infer(
       return newConstraints
     }
     case 'AssignmentExpression': {
-      const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+      // need to handle array item assignment
+      // Two cases:
+      // 1. LHS is identifier
+      // 2. LHS is member expression
+      // x = ...., need to check that x is not const
+      // arr[x]
+      const leftNode = node.left as TypeAnnotatedNode<es.Identifier | es.MemberExpression>
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const rightType = rightNode.inferredType as Variable
       let newConstraints = infer(rightNode, env, constraints)
-      const leftNodeType = env.get(leftNode.name) as ForAll
-      newConstraints = addToConstraintList(newConstraints, [storedType, rightNode.inferredType!])
-      if (leftNodeType.constant) {
-        typeErrors.push(new ReassignConstError(node))
-        return newConstraints
+      if (leftNode.type === 'Identifier') {
+        // for identifiers, expect type stored in env to be forall
+        const leftNodeType = env.get(leftNode.name) as ForAll
+        newConstraints = addToConstraintList(newConstraints, [storedType, rightType])
+        if (leftNodeType!.kind === 'forall' && leftNodeType!.constant) {
+          typeErrors.push(new ReassignConstError(node))
+          return newConstraints
+        }
+        const expectedType = extractFreeVariablesAndGenFresh(leftNodeType)
+        try {
+          return addToConstraintList(newConstraints, [rightType, expectedType])
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(
+              new DifferentAssignmentError(
+                node,
+                expectedType,
+                applyConstraints(rightType, newConstraints)
+              )
+            )
+            return newConstraints
+          }
+        }
+      } else {
+        newConstraints = infer(leftNode, env, newConstraints) // catch invalid index type
+        // assert that RHS = array element type
+        try {
+          return addToConstraintList(newConstraints, [rightType, leftNode.inferredType!])
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(
+              new ArrayAssignmentError(
+                node,
+                tArray(applyConstraints(leftNode.inferredType!, newConstraints)),
+                applyConstraints(rightType, newConstraints)
+              )
+            )
+          }
+        }
       }
-      const expectedType = extractFreeVariablesAndGenFresh(leftNodeType)
+      return newConstraints
+    }
+    case 'ArrayExpression': {
+      let newConstraints = constraints
+      const elements = node.elements as TypeAnnotatedNode<es.Node>[]
+      // infer the types of array elements
+      elements.forEach(element => {
+        newConstraints = infer(element, env, newConstraints)
+      })
+      const arrayElementType = tVar(typeIdCounter++)
+      newConstraints = addToConstraintList(newConstraints, [storedType, tArray(arrayElementType)])
+      elements.forEach(element => {
+        try {
+          newConstraints = addToConstraintList(newConstraints, [
+            arrayElementType,
+            element.inferredType!
+          ])
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(
+              new ArrayAssignmentError(
+                node,
+                applyConstraints(node.inferredType!, newConstraints) as SArray,
+                applyConstraints(element.inferredType!, newConstraints)
+              )
+            )
+          }
+        }
+      })
+      return newConstraints
+    }
+    case 'MemberExpression': {
+      // object and property
+      // need to check that property is number and add constraints that inferredType is array
+      // element type
+      const obj = node.object as TypeAnnotatedNode<es.Identifier>
+      const objName = obj.name
+      const property = node.property as TypeAnnotatedNode<es.Node>
+      const propertyType = property.inferredType as Variable
+      let newConstraints = infer(property, env, constraints)
+      // Check that property is of type number
+      // type in env can be either var or forall
+      const envType = env.get(objName) as ForAll | Variable
+      const arrayType =
+        envType.kind === 'forall'
+          ? extractFreeVariablesAndGenFresh(env.get(objName) as ForAll)
+          : applyConstraints(envType, newConstraints)
+      if (arrayType.kind !== 'array')
+        throw new InternalTypeError(
+          `Expected ${objName} to be an array, got ${typeToString(arrayType)}`
+        )
+      const expectedElementType = arrayType.elementType
       try {
-        return addToConstraintList(newConstraints, [rightNode.inferredType!, expectedType])
+        newConstraints = addToConstraintList(constraints, [propertyType, tNumber])
       } catch (e) {
         if (e instanceof UnifyError) {
           typeErrors.push(
-            new DifferentAssignmentError(
-              node,
-              expectedType,
-              applyConstraints(rightNode.inferredType!, newConstraints)
-            )
+            new InvalidArrayIndexType(node, applyConstraints(propertyType, newConstraints))
           )
-          return newConstraints
         }
       }
+      return addToConstraintList(newConstraints, [storedType, expectedElementType])
     }
     default:
       return constraints
@@ -1008,6 +1125,13 @@ function tForAll(type: Type, constant: boolean = true): ForAll {
     kind: 'forall',
     polyType: type,
     constant
+  }
+}
+
+function tArray(var1: Type): SArray {
+  return {
+    kind: 'array',
+    elementType: var1
   }
 }
 
@@ -1101,6 +1225,11 @@ const pairFuncs: [string, Type | ForAll][] = [
 
 const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
 
+const arrayFuncs: [string, Type | ForAll][] = [
+  ['is_array', tForAll(tFunc(tVar('T'), tBool))],
+  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
+]
+
 const primitiveFuncs: [string, Type | ForAll][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],
   ['!', tFunc(tBool, tBool)],
@@ -1120,4 +1249,10 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['/', tFunc(tNumber, tNumber, tNumber)]
 ]
 
-const initialEnv = [...predeclaredNames, ...pairFuncs, ...listFuncs, ...primitiveFuncs]
+const initialEnv = [
+  ...predeclaredNames,
+  ...pairFuncs,
+  ...listFuncs,
+  ...arrayFuncs,
+  ...primitiveFuncs
+]

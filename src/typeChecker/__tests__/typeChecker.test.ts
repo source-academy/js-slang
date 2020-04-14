@@ -540,11 +540,11 @@ describe('checking while loops in source 3', () => {
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: Expected the test part of the while statement:
-  while (x) { ... }
-to have type boolean, but instead it is type:
-  number"
-`)
+      "Line 3: Expected the test part of the while statement:
+        while (x) { ... }
+      to have type boolean, but instead it is type:
+        number"
+    `)
   })
 })
 
@@ -561,14 +561,14 @@ describe('Checking top level blocks', () => {
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: The two branches of the if statement:
-  if (a) { ... } else { ... }
-produce different types!
-The true branch has type:
-  number
-but the false branch has type:
-  string"
-`)
+      "Line 3: The two branches of the if statement:
+        if (a) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        number
+      but the false branch has type:
+        string"
+    `)
   })
 
   it('When the same if stmts are not the last value producing stmts, no issue', () => {
@@ -600,14 +600,14 @@ but the false branch has type:
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: The two branches of the if statement:
-  if (a) { ... } else { ... }
-produce different types!
-The true branch has type:
-  number
-but the false branch has type:
-  boolean"
-`)
+      "Line 3: The two branches of the if statement:
+        if (a) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        number
+      but the false branch has type:
+        boolean"
+    `)
   })
 
   it('Passes type checking even if last value returning statement is not the last statement', () => {
@@ -642,14 +642,14 @@ but the false branch has type:
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: The two branches of the if statement:
-  if (a) { ... } else { ... }
-produce different types!
-The true branch has type:
-  undefined
-but the false branch has type:
-  boolean"
-`)
+      "Line 3: The two branches of the if statement:
+        if (a) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        undefined
+      but the false branch has type:
+        boolean"
+    `)
   })
 
   it('fails type checking even if for loop is not the last statement', () => {
@@ -666,14 +666,14 @@ but the false branch has type:
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: The two branches of the if statement:
-  if (a) { ... } else { ... }
-produce different types!
-The true branch has type:
-  undefined
-but the false branch has type:
-  number"
-`)
+      "Line 3: The two branches of the if statement:
+        if (a) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        undefined
+      but the false branch has type:
+        number"
+    `)
   })
 })
 
@@ -714,11 +714,11 @@ describe('type checking for loops', () => {
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: Expected the test part of the for statement:
-  for (...; a + 5; ...) { ... }
-to have type boolean, but instead it is type:
-  boolean"
-`)
+      "Line 3: Expected the test part of the for statement:
+        for (...; a + 5; ...) { ... }
+      to have type boolean, but instead it is type:
+        boolean"
+    `)
   })
 
   it('fails when initialized variable not used correctly', () => {
@@ -731,18 +731,94 @@ to have type boolean, but instead it is type:
     const [program, errors] = typeCheck(parse(code, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 3: A type mismatch was detected in the binary expression:
-  a || false
-The binary operator (||) expected two operands with types:
-  boolean || T19
-but instead it received two operands of types:
-  number || boolean
-Line 4: A type mismatch was detected in the binary expression:
-  a && a
-The binary operator (&&) expected two operands with types:
-  boolean && T20
-but instead it received two operands of types:
-  number && number"
-`)
+      "Line 3: A type mismatch was detected in the binary expression:
+        a || false
+      The binary operator (||) expected two operands with types:
+        boolean || T20
+      but instead it received two operands of types:
+        number || boolean
+      Line 4: A type mismatch was detected in the binary expression:
+        a && a
+      The binary operator (&&) expected two operands with types:
+        boolean && T21
+      but instead it received two operands of types:
+        number && number"
+    `)
+  })
+})
+
+describe('type checking arrays', () => {
+  it('asserts that arrays are used in an monomporhic manner', () => {
+    const code1 = `
+      const arr1 = [1,2,3,4,5];
+      const arr_fail = [1,2,3,4,5, false]; // error
+      const arr2 = [false, false, true];
+      const arr3 = [x => x+1, x => x+3, x => 2*x];
+
+      // valid index and assignment type
+      arr1[1] = 4;
+      arr2[2] = false;
+      arr3[1] = x => x + 4;
+
+      // invalid index type
+      arr1[false] = 3;  // error
+      arr1['test'] = 3; // error
+
+      // invalid assignment type
+      arr1[1] = false; // error
+      arr1[1] || false; // error
+
+      // array indexing on RHS
+      const temp = arr1[1];
+      const x = 10 + arr1[2];
+      const y = !arr1[2]; // error
+      const z = 10 + arr3[2](4);
+      const a = arr3[2](false); // error
+
+      // built in functions
+      const arrLen = array_length(arr1);
+      const is_arr = is_array(x);
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "arr1: Array<number>
+      arr_fail: Array<number>
+      arr2: Array<boolean>
+      arr3: Array<number -> number>
+      temp: number
+      x: number
+      y: T95
+      z: number
+      a: T108
+      arrLen: number
+      is_arr: boolean"
+    `)
+    expect(errors.length).toEqual(7)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: Array expected type: Array<number>
+          but got: boolean
+      Line 13: Expected array index as number, got boolean instead
+      Line 14: Expected array index as number, got string instead
+      Line 17: Array expected type: Array<number>
+          but got: boolean
+      Line 18: A type mismatch was detected in the binary expression:
+        arr1[1] || false
+      The binary operator (||) expected two operands with types:
+        boolean || T128
+      but instead it received two operands of types:
+        number || boolean
+      Line 23: A type mismatch was detected in the unary expression:
+        ! arr1[2]
+      The unary operator (!) expected its operand to be of type:
+        boolean
+      but instead it received an operand of type:
+        number
+      Line 25: A type mismatch was detected in the function call:
+        arr3[2](false)
+      The function expected an argument of type:
+        number
+      but instead received an argument of type:
+        boolean"
+    `)
   })
 })
