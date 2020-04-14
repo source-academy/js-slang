@@ -255,7 +255,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     CallExpression: printExpression,
     ConditionalExpression: printExpression,
     BlockStatement: printExpression,
-    IfStatement: printExpression,
+    IfStatement: printExpression
   })
   console.log('\n')
 }
