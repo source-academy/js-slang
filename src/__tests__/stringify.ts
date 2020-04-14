@@ -38,10 +38,10 @@ test('String representation of functions are nice', () => {
   `,
     { native: true }
   ).toMatchInlineSnapshot(`
-"function f(x, y) {
-  return x;
-}"
-`)
+            "function f(x, y) {
+              return x;
+            }"
+          `)
 })
 
 test('String representation of arrow functions are nice', () => {
@@ -102,96 +102,96 @@ test('String representation of huge lists are nice', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-"[ 1,
-[ 2,
-[ 3,
-[ 4,
-[ 5,
-[ 6,
-[ 7,
-[ 8,
-[ 9,
-[ 10,
-[ 11,
-[ 12,
-[ 13,
-[ 14,
-[ 15,
-[ 16,
-[ 17,
-[ 18,
-[ 19,
-[ 20,
-[ 21,
-[ 22,
-[ 23,
-[ 24,
-[ 25,
-[ 26,
-[ 27,
-[ 28,
-[ 29,
-[ 30,
-[ 31,
-[ 32,
-[ 33,
-[ 34,
-[ 35,
-[ 36,
-[ 37,
-[ 38,
-[ 39,
-[ 40,
-[ 41,
-[ 42,
-[ 43,
-[ 44,
-[ 45,
-[ 46,
-[ 47,
-[ 48,
-[ 49,
-[ 50,
-[ 51,
-[ 52,
-[ 53,
-[ 54,
-[ 55,
-[ 56,
-[ 57,
-[ 58,
-[ 59,
-[ 60,
-[ 61,
-[ 62,
-[ 63,
-[ 64,
-[ 65,
-[ 66,
-[ 67,
-[ 68,
-[ 69,
-[ 70,
-[ 71,
-[ 72,
-[ 73,
-[ 74,
-[ 75,
-[ 76,
-[ 77,
-[ 78,
-[ 79,
-[ 80,
-[ 81,
-[ 82,
-[ 83,
-[ 84,
-[ 85,
-[ 86,
-[ 87,
-[ 88,
-[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
-`)
+            "[ 1,
+            [ 2,
+            [ 3,
+            [ 4,
+            [ 5,
+            [ 6,
+            [ 7,
+            [ 8,
+            [ 9,
+            [ 10,
+            [ 11,
+            [ 12,
+            [ 13,
+            [ 14,
+            [ 15,
+            [ 16,
+            [ 17,
+            [ 18,
+            [ 19,
+            [ 20,
+            [ 21,
+            [ 22,
+            [ 23,
+            [ 24,
+            [ 25,
+            [ 26,
+            [ 27,
+            [ 28,
+            [ 29,
+            [ 30,
+            [ 31,
+            [ 32,
+            [ 33,
+            [ 34,
+            [ 35,
+            [ 36,
+            [ 37,
+            [ 38,
+            [ 39,
+            [ 40,
+            [ 41,
+            [ 42,
+            [ 43,
+            [ 44,
+            [ 45,
+            [ 46,
+            [ 47,
+            [ 48,
+            [ 49,
+            [ 50,
+            [ 51,
+            [ 52,
+            [ 53,
+            [ 54,
+            [ 55,
+            [ 56,
+            [ 57,
+            [ 58,
+            [ 59,
+            [ 60,
+            [ 61,
+            [ 62,
+            [ 63,
+            [ 64,
+            [ 65,
+            [ 66,
+            [ 67,
+            [ 68,
+            [ 69,
+            [ 70,
+            [ 71,
+            [ 72,
+            [ 73,
+            [ 74,
+            [ 75,
+            [ 76,
+            [ 77,
+            [ 78,
+            [ 79,
+            [ 80,
+            [ 81,
+            [ 82,
+            [ 83,
+            [ 84,
+            [ 85,
+            [ 86,
+            [ 87,
+            [ 88,
+            [89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
+          `)
 })
 // tslint:enable:max-line-length
 
@@ -199,114 +199,114 @@ test('String representation of huge arrays are nice', () => {
   return expectResult(
     stripIndent`
   const arr = [];
-  for (let i = 0; i < 100; i = i + 1) {
+  for (let i = 1; i < 100; i = i + 1) {
     arr[i] = i;
   }
   stringify(arr);
   `,
     { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`
-"[ 0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26,
-  27,
-  28,
-  29,
-  30,
-  31,
-  32,
-  33,
-  34,
-  35,
-  36,
-  37,
-  38,
-  39,
-  40,
-  41,
-  42,
-  43,
-  44,
-  45,
-  46,
-  47,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  54,
-  55,
-  56,
-  57,
-  58,
-  59,
-  60,
-  61,
-  62,
-  63,
-  64,
-  65,
-  66,
-  67,
-  68,
-  69,
-  70,
-  71,
-  72,
-  73,
-  74,
-  75,
-  76,
-  77,
-  78,
-  79,
-  80,
-  81,
-  82,
-  83,
-  84,
-  85,
-  86,
-  87,
-  88,
-  89,
-  90,
-  91,
-  92,
-  93,
-  94,
-  95,
-  96,
-  97,
-  98,
-  99 ]"
-`)
+            "[ ,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99 ]"
+          `)
 })
 
 test('String representation of objects are nice', () => {
@@ -339,19 +339,19 @@ test('String representation of big objects are nice', () => {
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`
-"{ \\"a\\": 1,
-  \\"b\\": true,
-  \\"c\\": () => 1,
-  \\"d\\": {\\"e\\": 5, \\"f\\": 6},
-  \\"g\\": 0,
-  \\"h\\": 0,
-  \\"i\\": 0,
-  \\"j\\": 0,
-  \\"k\\": 0,
-  \\"l\\": 0,
-  \\"m\\": 0,
-  \\"n\\": 0 }"
-`)
+            "{ \\"a\\": 1,
+              \\"b\\": true,
+              \\"c\\": () => 1,
+              \\"d\\": {\\"e\\": 5, \\"f\\": 6},
+              \\"g\\": 0,
+              \\"h\\": 0,
+              \\"i\\": 0,
+              \\"j\\": 0,
+              \\"k\\": 0,
+              \\"l\\": 0,
+              \\"m\\": 0,
+              \\"n\\": 0 }"
+          `)
 })
 
 test('String representation of nested objects are nice', () => {
@@ -372,10 +372,10 @@ test('String representation of builtins are nice', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-"function pair(left, right) {
-	[implementation hidden]
-}"
-`)
+            "function pair(left, right) {
+            	[implementation hidden]
+            }"
+          `)
 })
 
 test('String representation of null is nice', () => {
@@ -415,10 +415,10 @@ test('String representation with 1 space indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[\\"function_definition\\",
-[[[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-`)
+            "[\\"function_definition\\",
+            [[[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+          `)
 })
 
 test('String representation with default (2 space) indent', () => {
@@ -428,10 +428,10 @@ test('String representation with default (2 space) indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[ \\"function_definition\\",
-[ [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]"
-`)
+            "[ \\"function_definition\\",
+            [ [[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]"
+          `)
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', () => {
@@ -441,10 +441,10 @@ test('String representation with more than 10 space indent should trim to 10 spa
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[         \\"function_definition\\",
-[         [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]"
-`)
+            "[         \\"function_definition\\",
+            [         [[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]"
+          `)
 })
 
 test('String representation with custom indent', () => {
@@ -454,10 +454,10 @@ test('String representation with custom indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[... \\"function_definition\\",
-[... [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]"
-`)
+            "[... \\"function_definition\\",
+            [... [[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]"
+          `)
 })
 
 test('String representation with long custom indent gets trimmed to 10 characters', () => {
@@ -467,9 +467,9 @@ test('String representation with long custom indent gets trimmed to 10 character
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-"[.........\\"function_definition\\",
-[.........[[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]"
-`)
+            "[.........\\"function_definition\\",
+            [.........[[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]"
+          `)
 })
 // tslint:enable:max-line-length

@@ -1,4 +1,4 @@
-import { ancestor, simple } from 'acorn-walk/dist/walk'
+import { ancestor, simple, make } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
@@ -7,7 +7,7 @@ import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
-import { transpileToGPU, getInternalFunctions } from '../gpu/gpu'
+import { transpileToGPU, getInternalFunctionsForGPU, getInternalNamesForGPU } from '../gpu/gpu'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -31,6 +31,21 @@ let NATIVE_STORAGE: {
 }
 
 let usedIdentifiers: Set<string>
+
+/*  BLACKLIST - any functions here will be ignored by transpiler */
+const blacklist = ['__createKernel']
+const ignoreWalker = make({
+  CallExpression: (node: es.CallExpression, st: any, c: any) => {
+    if (node.callee.type === 'Identifier') {
+      if (blacklist.includes(node.callee.name)) {
+        return
+      }
+    }
+
+    c(node.callee, st, 'Expression')
+    if (node.arguments) for (const arg of node.arguments) c(arg, st, 'Expression')
+  }
+})
 
 function getUniqueId(uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
@@ -282,6 +297,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
+
         const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
 
         if (variant === 'lazy') {
@@ -306,16 +322,20 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
     }
   }
 
-  simple(program, {
-    ReturnStatement(node: es.ReturnStatement) {
-      node.argument = transformLogicalExpression(node.argument!)
-    },
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      if (node.expression) {
-        node.body = transformLogicalExpression(node.body as es.Expression)
+  simple(
+    program,
+    {
+      ReturnStatement(node: es.ReturnStatement) {
+        node.argument = transformLogicalExpression(node.argument!)
+      },
+      ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+        if (node.expression) {
+          node.body = transformLogicalExpression(node.body as es.Expression)
+        }
       }
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 function delayIt(expr: es.Expression) {
@@ -335,27 +355,38 @@ function delayIt(expr: es.Expression) {
 }
 
 function transformCallExpressionsToCheckIfFunction(program: es.Program, variant: Variant) {
-  simple(program, {
-    CallExpression(node: es.CallExpression) {
-      const { line, column } = node.loc!.start
-      const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
-
-      if (variant === 'lazy') {
-        for (const arg of node.arguments) {
-          args.push(delayIt(arg as es.Expression))
+  simple(
+    program,
+    {
+      CallExpression(node: es.CallExpression) {
+        // ignore this function
+        if (node.callee.type === 'Identifier') {
+          if (blacklist.includes(node.callee.name)) {
+            return
+          }
         }
+
+        const { line, column } = node.loc!.start
+        const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
+
+        if (variant === 'lazy') {
+          for (const arg of node.arguments) {
+            args.push(delayIt(arg as es.Expression))
+          }
+        }
+
+        node.arguments = [
+          node.callee as es.Expression,
+          create.literal(line),
+          create.literal(column),
+          ...args
+        ]
+
+        node.callee = globalIds.callIfFuncAndRightArgs
       }
-
-      node.arguments = [
-        node.callee as es.Expression,
-        create.literal(line),
-        create.literal(column),
-        ...args
-      ]
-
-      node.callee = globalIds.callIfFuncAndRightArgs
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
@@ -418,34 +449,39 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     )
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
-  ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
-    ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
-      }
-    },
-    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
-      identifiersToAncestors.set(identifier, [...ancestors])
-    },
-    Pattern(node: es.Pattern, ancestors: es.Node[]) {
-      if (node.type === 'Identifier') {
-        identifiersToAncestors.set(node, [...ancestors])
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiersToAncestors.set(node.object, [...ancestors])
+  ancestor(
+    program,
+    {
+      Program: processBlock,
+      BlockStatement: processBlock,
+      FunctionDeclaration: processFunction,
+      ArrowFunctionExpression: processFunction,
+      ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+        const init = forStatement.init!
+        if (init.type === 'VariableDeclaration') {
+          identifiersIntroducedByNode.set(
+            forStatement,
+            new Set([(init.declarations[0].id as es.Identifier).name])
+          )
+        }
+      },
+      Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+        identifiersToAncestors.set(identifier, [...ancestors])
+      },
+      Pattern(node: es.Pattern, ancestors: es.Node[]) {
+        if (node.type === 'Identifier') {
+          identifiersToAncestors.set(node, [...ancestors])
+        } else if (node.type === 'MemberExpression') {
+          if (node.object.type === 'Identifier') {
+            identifiersToAncestors.set(node.object, [...ancestors])
+          }
         }
       }
-    }
-  })
+    },
+    ignoreWalker
+  )
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
+
   for (const [identifier, ancestors] of identifiersToAncestors) {
     const name = identifier.name
     const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
@@ -511,7 +547,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
             )
           }
         }
-      } else if (!nativeInternalNames.has(name)) {
+      } else if (!nativeInternalNames.has(name) && !getInternalNamesForGPU().has(name)) {
         if (!skipErrors) {
           throw new UndefinedVariable(name, identifier)
         }
@@ -538,13 +574,17 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
     ])
   }
 
-  simple(program, {
-    IfStatement: transform,
-    ConditionalExpression: transform,
-    LogicalExpression: transform,
-    ForStatement: transform,
-    WhileStatement: transform
-  })
+  simple(
+    program,
+    {
+      IfStatement: transform,
+      ConditionalExpression: transform,
+      LogicalExpression: transform,
+      ForStatement: transform,
+      WhileStatement: transform
+    },
+    ignoreWalker
+  )
 }
 
 function refreshLatestIdentifiers(program: es.Program) {
@@ -630,29 +670,33 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 }
 
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
-  simple(program, {
-    BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = node.loc!.start
-      const { operator, left, right } = node
-      create.mutateToCallExpression(node, globalIds.binaryOp, [
-        create.literal(operator),
-        left,
-        right,
-        create.literal(line),
-        create.literal(column)
-      ])
+  simple(
+    program,
+    {
+      BinaryExpression(node: es.BinaryExpression) {
+        const { line, column } = node.loc!.start
+        const { operator, left, right } = node
+        create.mutateToCallExpression(node, globalIds.binaryOp, [
+          create.literal(operator),
+          left,
+          right,
+          create.literal(line),
+          create.literal(column)
+        ])
+      },
+      UnaryExpression(node: es.UnaryExpression) {
+        const { line, column } = node.loc!.start
+        const { operator, argument } = node as es.UnaryExpression
+        create.mutateToCallExpression(node, globalIds.unaryOp, [
+          create.literal(operator),
+          argument,
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
     },
-    UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = node.loc!.start
-      const { operator, argument } = node as es.UnaryExpression
-      create.mutateToCallExpression(node, globalIds.unaryOp, [
-        create.literal(operator),
-        argument,
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+    ignoreWalker
+  )
 }
 
 function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
@@ -678,18 +722,22 @@ function transformPropertyAssignment(program: es.Program) {
 }
 
 function transformPropertyAccess(program: es.Program) {
-  simple(program, {
-    MemberExpression(node: es.MemberExpression) {
-      const { object, property, computed, loc } = node
-      const { line, column } = loc!.start
-      create.mutateToCallExpression(node, globalIds.getProp, [
-        object as es.Expression,
-        getComputedProperty(computed, property),
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+  simple(
+    program,
+    {
+      MemberExpression(node: es.MemberExpression) {
+        const { object, property, computed, loc } = node
+        const { line, column } = loc!.start
+        create.mutateToCallExpression(node, globalIds.getProp, [
+          object as es.Expression,
+          getComputedProperty(computed, property),
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
+    },
+    ignoreWalker
+  )
 }
 
 function addInfiniteLoopProtection(program: es.Program) {
@@ -720,10 +768,14 @@ function addInfiniteLoopProtection(program: es.Program) {
     node.body = newStatements
   }
 
-  simple(program, {
-    Program: instrumentLoops,
-    BlockStatement: instrumentLoops
-  })
+  simple(
+    program,
+    {
+      Program: instrumentLoops,
+      BlockStatement: instrumentLoops
+    },
+    ignoreWalker
+  )
 }
 
 export function transpile(
@@ -777,10 +829,9 @@ export function transpile(
   ])
   program.body = [
     ...getDeclarationsToAccessTranspilerInternals(),
-    ...getInternalFunctions(globalIds, contextId),
+    ...getInternalFunctionsForGPU(globalIds, contextId),
     wrapped
   ]
-  console.log(program.body)
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })

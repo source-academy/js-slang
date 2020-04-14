@@ -1,24 +1,17 @@
 import * as es from 'estree'
 
-const isNumber = (v: any) => typeOf(v) === 'number'
-const typeOf = (v: any) => {
-  if (v === null) {
-    return 'null'
-  } else if (Array.isArray(v)) {
-    return 'array'
-  } else {
-    return typeof v
-  }
-}
-
 /*
-takes in a for loop and verifies if it meets the specifications of a GPU for loop
-*/
-class GPULoopDetecter {
+ * Loop Detector helps to verify if a for loop can be parallelized with a GPU
+ * Updates ok, counter and end upon termination
+ * @ok: false if not valid, true of valid
+ * @end: if valid, stores the end of the loop
+ * @counter: stores the string representation of the counter
+ */
+class GPULoopVerifier {
+  // for loop that we are looking at
   node: es.ForStatement
 
-  // functions needed
-  counter: any
+  counter: string
   end: es.Expression
   ok: boolean
 
@@ -36,6 +29,10 @@ class GPULoopDetecter {
       this.hasCounter(node.init) && this.hasCondition(node.test) && this.hasUpdate(node.update)
   }
 
+  /*
+   * Checks if the loop counter is valid
+   * it has to be "let <identifier> = 0;"
+   */
   hasCounter = (node: es.VariableDeclaration | es.Expression | null): boolean => {
     if (!node || node.type !== 'VariableDeclaration') {
       return false
@@ -65,6 +62,11 @@ class GPULoopDetecter {
     return true
   }
 
+  /*
+   * Checks if the loop condition is valid
+   * it has to be "<identifier> < <number>;"
+   * identifier is the same as the one initialized above
+   */
   hasCondition = (node: es.Expression): boolean => {
     if (node.type !== 'BinaryExpression') {
       return false
@@ -88,6 +90,11 @@ class GPULoopDetecter {
     return true
   }
 
+  /*
+   * Checks if the loop update is valid
+   * it has to be "<identifier> = <identifier> + 1;"
+   * identifier is the same as the one initialized above
+   */
   hasUpdate = (node: es.Expression): boolean => {
     if (node.type !== 'AssignmentExpression') {
       return false
@@ -116,8 +123,21 @@ class GPULoopDetecter {
     const literalLeft = rv.left.type === 'Literal' && rv.left.value === 1
     const literalRight = rv.right.type === 'Literal' && rv.right.value === 1
 
+    // we allow both i = i + 1 and i = 1 + i
     return (identifierLeft && literalRight) || (identifierRight && literalLeft)
   }
 }
 
-export default GPULoopDetecter
+// utility functions used above
+const isNumber = (v: any) => typeOf(v) === 'number'
+const typeOf = (v: any) => {
+  if (v === null) {
+    return 'null'
+  } else if (Array.isArray(v)) {
+    return 'array'
+  } else {
+    return typeof v
+  }
+}
+
+export default GPULoopVerifier

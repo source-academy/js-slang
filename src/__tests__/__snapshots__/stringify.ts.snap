@@ -350,14 +350,14 @@ exports[`String representation of huge arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const arr = [];
-for (let i = 0; i < 100; i = i + 1) {
+for (let i = 1; i < 100; i = i + 1) {
   arr[i] = i;
 }
 stringify(arr);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[ 0,
+  "result": "[ ,
   1,
   2,
   3,
@@ -477,7 +477,7 @@ const __createKernel = native.gpu.get(\\"__createKernel\\");
       {
         const arr = [];
         const startTime = runtime();
-        for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
+        for (let i = 1; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
           throwIfTimeout(startTime, runtime(), 2, 0);
           setProp(arr, i, i, 3, 2);
         }
