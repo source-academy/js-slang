@@ -41,7 +41,7 @@ Usage: js-slang [PROGRAM_STRING] [OPTION]
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
   -s, --use-subst       use substitution
   -h, --help            display this help
-  -n, --native          use the native execution method
+  -i, --interpreter         use the interpreter for execution
   -l, --lazy            use lazy evaluation
   -e, --eval            don't show REPL, only display output of evaluation
 ```
@@ -77,7 +77,7 @@ documentation and places it in the folder `docs/source`. The script
 `jsdoc` provides an installation command to deploy the
 documentation via `scp` to a web server:
 ``` {.}
-$ yarn jsdoc install`
+$ yarn jsdoc install
 ```
 You can test the documentation using a local server:
 ``` {.}
