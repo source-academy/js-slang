@@ -99,8 +99,7 @@ export class InvalidArgumentTypesError implements SourceError {
     const functionString = simplify(generate(this.node))
     function formatPhrasing(types: Type[]) {
       switch (types.length) {
-        case 0:
-          return 'no arguments,'
+        // there will at least be one argument
         case 1:
           return `an argument of type:
       ${typeToString(types[0])}`
