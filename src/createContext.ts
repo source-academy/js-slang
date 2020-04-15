@@ -11,7 +11,7 @@ import * as parser from './stdlib/parser'
 import * as non_thunk_stream from './stdlib/stream'
 import * as thunk_stream from './stdlib/thunk_stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value } from './types'
+import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
@@ -43,6 +43,7 @@ const createGlobalEnvironment = () => ({
 
 export const createEmptyContext = <T>(
   chapter: number,
+  variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -55,6 +56,7 @@ export const createEmptyContext = <T>(
   })
   return {
     chapter,
+    variant,
     externalSymbols,
     errors: [],
     externalContext,
@@ -96,9 +98,9 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export const defineBuiltin = (context: Context, name: string, value: Value) => {
   if (typeof value === 'function') {
-    let wrapped = (...args: any) => value(...args)
+    const wrapped: any = (...args: any) => value(...args)
     if (value.hasOwnProperty('isThunkAware')) {
-      wrapped = Object.assign(wrapped, { isThunkAware: value.isThunkAware })
+      wrapped.isThunkAware = true
     }
 
     const funName = name.split('(')[0].trim()
@@ -121,11 +123,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (
-  context: Context,
-  externalBuiltIns: CustomBuiltIns,
-  useLazyEval?: boolean
-) => {
+export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value, s: string) =>
@@ -135,6 +133,7 @@ export const importBuiltins = (
   const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
+  const useLazyEval = context.variant === 'lazy'
   const list = useLazyEval === true ? thunk_list : non_thunk_list
   const stream = useLazyEval === true ? thunk_stream : non_thunk_stream
 
@@ -234,14 +233,15 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(
   chapter = 1,
+  variant: Variant = 'default',
   externalSymbols: string[] = [],
-  useLazyEval?: boolean,
+
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ) => {
-  const context = createEmptyContext(chapter, externalSymbols, externalContext)
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
-  importBuiltins(context, externalBuiltIns, useLazyEval)
+  importBuiltins(context, externalBuiltIns)
   importPrelude(context)
   importExternalSymbols(context, externalSymbols)
 

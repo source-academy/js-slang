@@ -57,6 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'default' // this might replace EvaluationMethod
 
 export interface Context<T = any> {
   /** The source version used */
@@ -103,7 +104,16 @@ export interface Context<T = any> {
    */
   contextId: number
 
+  /**
+   * Describes the language processor to be used for evaluation
+   */
   executionMethod: ExecutionMethod
+
+  /**
+   * Describes the strategy / paradigm to be used for evaluation
+   * Examples: lazy, concurrent or non-deterministic
+   */
+  variant: Variant
 }
 
 export interface BlockFrame {

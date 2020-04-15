@@ -3,7 +3,7 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, Variant, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 
 export interface TestContext extends Context {
@@ -31,27 +31,27 @@ interface TestResult {
 interface TestOptions {
   context?: TestContext
   chapter?: number
+  variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
-  lazyEvaluation?: boolean
 }
 
 export function createTestContext({
   context,
   chapter = 1,
-  testBuiltins = {},
-  lazyEvaluation = false
+  variant = 'default',
+  testBuiltins = {}
 }: {
   context?: TestContext
   chapter?: number
+  variant?: Variant
   testBuiltins?: TestBuiltins
-  lazyEvaluation?: boolean
 } = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, [], lazyEvaluation, undefined, {
+      ...createContext(chapter, variant, [], undefined, {
         rawDisplay: (str1, str2, externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
@@ -92,13 +92,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     resultStatus: result.status,
     result: result.status === 'finished' ? result.value : undefined
   })
-  const useLazyEval = !!options.lazyEvaluation
   const interpretedResult = getTestResult(
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: 'interpreter',
-      useLazyEval
+      executionMethod: 'interpreter'
     })
   )
   if (options.native) {

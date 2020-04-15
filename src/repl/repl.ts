@@ -1,24 +1,22 @@
 import fs = require('fs')
 import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
-// import util = require('util')
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import { stringify } from '../utils/stringify'
-import { ExecutionMethod } from '../types'
+import { Variant, ExecutionMethod } from '../types'
 
 function startRepl(
   chapter = 1,
+  variant: Variant,
   useSubst: boolean,
   theExecutionMethod: ExecutionMethod,
-  useLazyEval: boolean,
   prelude = ''
 ) {
   // use defaults for everything
-  const context = createContext(chapter, [], useLazyEval)
+  const context = createContext(chapter, variant)
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
     useSubst,
-    executionMethod: theExecutionMethod,
-    useLazyEval
+    executionMethod: theExecutionMethod
   }
   runInContext(prelude, context, options).then(preludeResult => {
     if (preludeResult.status === 'finished') {
@@ -39,10 +37,6 @@ function startRepl(
             // use stringify instead because util.inspect create super long output for functions and Closures
             // note that js-slang/utils/stringify is used in cadet-frontend
             stringify(output)
-          // util.inspect(output, {
-          //   depth: 1000,
-          //   colors: true
-          // })
         }
       )
     } else {
@@ -58,7 +52,7 @@ function main() {
       if (err) {
         throw err
       }
-      startRepl(4, false, 'interpreter', false, data)
+      startRepl(4, 'default', false, 'interpreter', data)
     })
   } else {
     const chapter = process.argv.length > 2 ? parseInt(firstArg, 10) : 1
@@ -66,11 +60,9 @@ function main() {
     const executionMethod =
       process.argv.length > 3 && process.argv[3] === 'interpreter' ? 'interpreter' : 'auto'
 
-    let useLazyEval = false
-    if (!useSubst && executionMethod === 'interpreter' && process.argv.includes('lazy')) {
-      useLazyEval = true
-    }
-    startRepl(chapter, useSubst, executionMethod, useLazyEval)
+    const useLazyEval =
+      !useSubst && executionMethod === 'interpreter' && process.argv.includes('lazy')
+    startRepl(chapter, useLazyEval ? 'lazy' : 'default', useSubst, executionMethod, '')
   }
 }
 

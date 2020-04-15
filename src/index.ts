@@ -40,17 +40,14 @@ export interface IOptions {
   executionMethod: ExecutionMethod
   originalMaxExecTime: number
   useSubst: boolean
-  useLazyEval: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  // executionMethod: 'auto',
-  executionMethod: 'interpreter', // TODO: Add a command line option for this
+  executionMethod: 'auto',
   originalMaxExecTime: 1000,
-  useSubst: false,
-  useLazyEval: false // TODO: Add a command line option for this
+  useSubst: false
 }
 
 // needed to work on browsers
@@ -260,7 +257,7 @@ export async function runInContext(
       )
     }
   } else {
-    const interpreter = getInterpreter(theOptions.useLazyEval)
+    const interpreter = getInterpreter(context.variant === 'lazy')
     const it = interpreter.boundedEvaluateForUser(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
