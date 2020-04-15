@@ -514,6 +514,30 @@ describe('Type checking reassignment for Source 3', () => {
       Line 8: Reassignment of constant y"
     `)
   })
+
+  it('checks for attempts to reassign constants before another const declaration', () => {
+    const code1 = `
+      let x = 1;
+      const y = 1;
+      const z = 'test';
+
+      z = false;
+      x = 4;
+      y = 4; // error
+      const a = 3;
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "x: number
+      y: number
+      z: string
+      a: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 6: Reassignment of constant z
+      Line 8: Reassignment of constant y"
+    `)
+  })
 })
 
 describe('checking while loops in source 3', () => {
