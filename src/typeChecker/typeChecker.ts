@@ -12,8 +12,6 @@ import {
   SourceError
 } from '../types'
 import {
-  TypeError,
-  InternalTypeError,
   UnifyError,
   InternalDifferentNumberArgumentsError,
   InternalCyclicReferenceError
@@ -45,10 +43,8 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
       node.typability = 'Typed'
     } catch (e) {
-      // ignore if InternalCyclicReferenceError
-      // if (e instanceof InternalCyclicReferenceError) {}
-      if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
-        typeErrors.push(new TypeError(node, e))
+      if (!(e instanceof InternalCyclicReferenceError)) {
+        throw e
       }
     }
   } else {
@@ -132,8 +128,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
         } catch (e) {
           if (e instanceof InternalCyclicReferenceError) {
             typeErrors.push(new CyclicReferenceError(node))
-          } else if (isInternalTypeError(e)) {
-            typeErrors.push(new TypeError(node, e))
           }
         }
       } else {
@@ -165,10 +159,6 @@ function getListType(type: Type): Type | null {
     return type.elementType
   }
   return null
-}
-
-function isInternalTypeError(error: any) {
-  return error instanceof InternalTypeError
 }
 
 // Type Definitions
