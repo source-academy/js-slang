@@ -204,9 +204,9 @@ function isInternalTypeError(error: any) {
 // Our type environment maps variable names to types.
 // it also remembers if names weer declared as const or let
 interface Env {
-  typeMap: Map<string, Type | ForAll>,
+  typeMap: Map<string, Type | ForAll>
   declKindMap: Map<string, AllowedDeclarations>
-} 
+}
 
 function cloneEnv(env: Env): Env {
   return {
@@ -748,7 +748,7 @@ function _infer(
               (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
                 .inferredType as Variable,
               newConstraints
-            ),
+            )
           )
         )
       } else {
@@ -833,7 +833,7 @@ function _infer(
                 (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
                   .inferredType as Variable,
                 newConstraints
-              ),
+              )
             )
           )
         }
@@ -991,7 +991,10 @@ function _infer(
           return newConstraints
         }
         const leftNodeType = env.typeMap.get(leftNode.name)!
-        const expectedType = leftNodeType.kind === 'forall' ? extractFreeVariablesAndGenFresh(leftNodeType) : leftNodeType
+        const expectedType =
+          leftNodeType.kind === 'forall'
+            ? extractFreeVariablesAndGenFresh(leftNodeType)
+            : leftNodeType
         try {
           return addToConstraintList(newConstraints, [rightType, expectedType])
         } catch (e) {
@@ -1136,7 +1139,7 @@ function tList(var1: Type): List {
 function tForAll(type: Type): ForAll {
   return {
     kind: 'forall',
-    polyType: type,
+    polyType: type
   }
 }
 
