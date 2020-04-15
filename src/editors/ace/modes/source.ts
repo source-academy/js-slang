@@ -101,11 +101,12 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
         !(name in SourceDocumentation.builtins['3'])
       ) {
         func4 += '|' + name
+      } else if (SourceDocumentation.builtins['4'][name]['meta'] === 'const') {
+        constants += '|' + name
       }
     }
 
     func4 = func4.substr(1)
-    constants = constants.substr(1)
 
     const chapter4 = {
       keywords: '',
@@ -181,7 +182,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language': 'null|' + constants,
+          'constant.language': 'null' + constants,
 
           'constant.language.boolean': 'true|false',
 
