@@ -79,7 +79,8 @@ function substituteMain(
    */
   const substituters = {
     Identifier(
-      target: es.Identifier, index: number
+      target: es.Identifier,
+      index: number
     ): es.Identifier | FunctionDeclarationExpression | es.Literal | es.Expression {
       if (replacement.type === 'Literal') {
         // only accept string, boolean and numbers for arguments
@@ -146,7 +147,10 @@ function substituteMain(
       return substedUnaryExpression
     },
 
-    ConditionalExpression(target: es.ConditionalExpression, index: number): es.ConditionalExpression {
+    ConditionalExpression(
+      target: es.ConditionalExpression,
+      index: number
+    ): es.ConditionalExpression {
       const substedConditionalExpression = ast.conditionalExpression(
         dummyExpression(),
         dummyExpression(),
@@ -164,8 +168,14 @@ function substituteMain(
         allPaths[thirdIndex].push('alternate')
       }
       substedConditionalExpression.test = substitute(target.test, index) as es.Expression
-      substedConditionalExpression.consequent = substitute(target.consequent, nextIndex) as es.Expression
-      substedConditionalExpression.alternate = substitute(target.alternate, thirdIndex) as es.Expression
+      substedConditionalExpression.consequent = substitute(
+        target.consequent,
+        nextIndex
+      ) as es.Expression
+      substedConditionalExpression.alternate = substitute(
+        target.alternate,
+        thirdIndex
+      ) as es.Expression
       return substedConditionalExpression
     },
 
@@ -343,7 +353,10 @@ function substituteMain(
     },
 
     // source 1
-    ArrowFunctionExpression(target: es.ArrowFunctionExpression, index: number): es.ArrowFunctionExpression {
+    ArrowFunctionExpression(
+      target: es.ArrowFunctionExpression,
+      index: number
+    ): es.ArrowFunctionExpression {
       const substedArrow = ast.arrowFunctionExpression(target.params, dummyBlockStatement())
       seenBefore.set(target, substedArrow)
       // check for free/bounded variable
@@ -395,7 +408,7 @@ function substituteMain(
         if (pathNotEnded(index)) {
           allPaths[index].push('init')
         }
-        substedVariableDeclarator.init = (substitute(target.init!, index) as es.Expression)
+        substedVariableDeclarator.init = substitute(target.init!, index) as es.Expression
       }
       return substedVariableDeclarator
     },
@@ -420,7 +433,7 @@ function substituteMain(
       substedIfStatement.test = substitute(target.test, index) as es.Expression
       substedIfStatement.consequent = substitute(target.consequent, nextIndex) as es.BlockStatement
       substedIfStatement.alternate = target.alternate
-        ? substitute(target.alternate, thirdIndex) as es.BlockStatement
+        ? (substitute(target.alternate, thirdIndex) as es.BlockStatement)
         : null
       return substedIfStatement
     },
@@ -448,7 +461,7 @@ function substituteMain(
       })
       return substedArray
     }
-    }
+  }
 
   /**
    * For mapper use, maps a [symbol, value] pair to the node supplied.
@@ -511,10 +524,17 @@ function apply(
     : ast.blockExpression((substedBody as es.BlockStatement).body)
 }
 
-function reduceMain(node: substituterNodes, context: Context): [substituterNodes, Context, string[][]] {
+function reduceMain(
+  node: substituterNodes,
+  context: Context
+): [substituterNodes, Context, string[][]] {
   const reducers = {
     // source 0
-    Identifier(node: es.Identifier, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    Identifier(
+      node: es.Identifier,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       // can only be built ins. the rest should have been declared
       if (!(isAllowedLiterals(node) || isBuiltinFunction(node))) {
         throw new errors.UndefinedVariable(node.name, node)
@@ -523,13 +543,21 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       }
     },
 
-    ExpressionStatement(node: es.ExpressionStatement, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
-      paths[0].push("expression")
+    ExpressionStatement(
+      node: es.ExpressionStatement,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
+      paths[0].push('expression')
       const [reduced, cont, path] = reduce(node.expression, context, paths)
       return [ast.expressionStatement(reduced as es.Expression), cont, path]
     },
 
-    BinaryExpression(node: es.BinaryExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    BinaryExpression(
+      node: es.BinaryExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const { operator, left, right } = node
       if (isIrreducible(left)) {
         if (isIrreducible(right)) {
@@ -550,7 +578,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
             throw error
           }
         } else {
-          paths[0].push("right")
+          paths[0].push('right')
           const [reducedRight, cont, path] = reduce(right, context, paths)
           const reducedExpression = ast.binaryExpression(
             operator,
@@ -561,7 +589,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           return [reducedExpression, cont, path]
         }
       } else {
-        paths[0].push("left")
+        paths[0].push('left')
         const [reducedLeft, cont, path] = reduce(left, context, paths)
         const reducedExpression = ast.binaryExpression(
           operator,
@@ -573,7 +601,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       }
     },
 
-    UnaryExpression(node: es.UnaryExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    UnaryExpression(
+      node: es.UnaryExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const { operator, argument } = node
       if (isIrreducible(argument)) {
         // tslint:disable-next-line
@@ -586,7 +618,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           throw error
         }
       } else {
-        paths[0].push("argument")
+        paths[0].push('argument')
         const [reducedArgument, cont, path] = reduce(argument, context, paths)
         const reducedExpression = ast.unaryExpression(
           operator,
@@ -597,7 +629,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       }
     },
 
-    LogicalExpression(node: es.LogicalExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    LogicalExpression(
+      node: es.LogicalExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const { left, right } = node
       if (isIrreducible(left)) {
         if (!(left.type === 'Literal' && typeof left.value === 'boolean')) {
@@ -609,12 +645,12 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
                 ? right
                 : ast.literal(false, node.loc!)
               : left.value
-                ? ast.literal(true, node.loc!)
-                : right
+              ? ast.literal(true, node.loc!)
+              : right
           return [result as es.Expression, context, paths]
         }
       } else {
-        paths[0].push("left")
+        paths[0].push('left')
         const [reducedLeft, cont, path] = reduce(left, context, paths)
         return [
           ast.logicalExpression(
@@ -629,7 +665,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       }
     },
 
-    ConditionalExpression(node: es.ConditionalExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    ConditionalExpression(
+      node: es.ConditionalExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
@@ -639,7 +679,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           throw error
         }
       } else {
-        paths[0].push("test")
+        paths[0].push('test')
         const [reducedTest, cont, path] = reduce(test, context, paths)
         const reducedExpression = ast.conditionalExpression(
           reducedTest as es.Expression,
@@ -652,19 +692,19 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
     },
 
     // core of the subst model
-    CallExpression(node: es.CallExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    CallExpression(
+      node: es.CallExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const [callee, args] = [node.callee, node.arguments]
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
       if (!isIrreducible(callee)) {
-        paths[0].push("callee")
+        paths[0].push('callee')
         const [reducedCallee, cont, path] = reduce(callee, context, paths)
         return [
-          ast.callExpression(
-            reducedCallee as es.Expression,
-            args as es.Expression[],
-            node.loc!
-          ),
+          ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc!),
           cont,
           path
         ]
@@ -686,13 +726,9 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           for (let i = 0; i < args.length; i++) {
             const currentArg = args[i]
             if (!isIrreducible(currentArg)) {
-              paths[0].push("arguments[" + i + "]")
+              paths[0].push('arguments[' + i + ']')
               const [reducedCurrentArg, cont, path] = reduce(currentArg, context, paths)
-              const reducedArgs = [
-                ...args.slice(0, i),
-                reducedCurrentArg,
-                ...args.slice(i + 1)
-              ]
+              const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
               return [
                 ast.callExpression(
                   callee as es.Expression,
@@ -713,7 +749,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
         }
         // if it reaches here, means all the arguments are legal.
         if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
-          return [apply(callee as FunctionDeclarationExpression, args as es.Literal[]), context, paths]
+          return [
+            apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
+            context,
+            paths
+          ]
         } else {
           if ((callee as es.Identifier).name.includes('math')) {
             return [builtin.evaluateMath((callee as es.Identifier).name, ...args), context, paths]
@@ -723,9 +763,16 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       }
     },
 
-    Program(node: es.Program, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    Program(
+      node: es.Program,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const [firstStatement, ...otherStatements] = node.body
-      if (firstStatement.type === 'ExpressionStatement' && isIrreducible(firstStatement.expression)) {
+      if (
+        firstStatement.type === 'ExpressionStatement' &&
+        isIrreducible(firstStatement.expression)
+      ) {
         return [ast.program(otherStatements as es.Statement[]), context, paths]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
@@ -734,18 +781,17 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           firstStatement.body
         ) as FunctionDeclarationExpression
         // substitute body
-        funDecExp = substituteMain(
-          funDecExp.id,
-          funDecExp,
-          funDecExp,
-          [[]]
-        )[0] as FunctionDeclarationExpression
+        funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+          []
+        ])[0] as FunctionDeclarationExpression
         // substitute the rest of the program
         const remainingProgram = ast.program(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
-        if (subst[1].length === 0) { allPaths.push([]) }
+        if (subst[1].length === 0) {
+          allPaths.push([])
+        }
         return [subst[0], context, allPaths]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
@@ -768,16 +814,19 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
             return [dummyProgram(), context, paths]
           } else if (isIrreducible(rhs)) {
             const remainingProgram = ast.program(otherStatements as es.Statement[])
-            const subst = substituteMain(declarator.id, rhs as es.ArrayExpression, remainingProgram, paths)
+            const subst = substituteMain(
+              declarator.id,
+              rhs as es.ArrayExpression,
+              remainingProgram,
+              paths
+            )
             // forced casting for some weird errors
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
-            return [
-              subst[0],
-              context,
-              allPaths
-            ]
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
+            return [subst[0], context, allPaths]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -787,23 +836,22 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
                 : ast.blockStatement([ast.returnStatement(rhs.body)])
             ) as FunctionDeclarationExpression
             // substitute body
-            funDecExp = substituteMain(
-              funDecExp.id,
-              funDecExp,
-              funDecExp,
-              [[]]
-            )[0] as FunctionDeclarationExpression
+            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+              []
+            ])[0] as FunctionDeclarationExpression
             // substitute the rest of the program
             const remainingProgram = ast.program(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
             return [subst[0], context, allPaths]
           } else {
-            paths[0].push("body[0]")
-            paths[0].push("declarations[0]")
-            paths[0].push("init")
+            paths[0].push('body[0]')
+            paths[0].push('declarations[0]')
+            paths[0].push('init')
             const [reducedRhs, cont, path] = reduce(rhs, context, paths)
             return [
               ast.program([
@@ -820,12 +868,20 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           }
         }
       }
-      paths[0].push("body[0]")
+      paths[0].push('body[0]')
       const [reduced, cont, path] = reduce(firstStatement, context, paths)
-      return [ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]), cont, path]
+      return [
+        ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
+        cont,
+        path
+      ]
     },
 
-    BlockStatement(node: es.BlockStatement, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    BlockStatement(
+      node: es.BlockStatement,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
@@ -833,7 +889,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           return [firstStatement, context, paths]
         } else {
           paths[0].push('body[0]')
-          paths[0].push("argument")
+          paths[0].push('argument')
           const [reducedArg, cont, path] = reduce(arg, context, paths)
           const reducedReturn = ast.returnStatement(
             reducedArg as es.Expression,
@@ -859,18 +915,17 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           firstStatement.body
         ) as FunctionDeclarationExpression
         // substitute body
-        funDecExp = substituteMain(
-          funDecExp.id,
-          funDecExp,
-          funDecExp,
-          [[]]
-        )[0] as FunctionDeclarationExpression
+        funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+          []
+        ])[0] as FunctionDeclarationExpression
         // substitute the rest of the blockStatement
         const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
-        if (subst[1].length === 0) { allPaths.push([]) }
+        if (subst[1].length === 0) {
+          allPaths.push([])
+        }
         return [subst[0], context, allPaths]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
@@ -894,15 +949,18 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           } else if (isIrreducible(rhs)) {
             const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
             // force casting for weird errors
-            const subst = substituteMain(declarator.id, rhs as es.ArrayExpression, remainingBlockStatement, paths)
+            const subst = substituteMain(
+              declarator.id,
+              rhs as es.ArrayExpression,
+              remainingBlockStatement,
+              paths
+            )
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
-            return [
-              subst[0],
-              context,
-              allPaths
-            ]
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
+            return [subst[0], context, allPaths]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -912,23 +970,22 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
                 : ast.blockStatement([ast.returnStatement(rhs.body)])
             ) as FunctionDeclarationExpression
             // substitute body
-            funDecExp = substituteMain(
-              funDecExp.id,
-              funDecExp,
-              funDecExp,
-              [[]]
-            )[0] as FunctionDeclarationExpression
+            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+              []
+            ])[0] as FunctionDeclarationExpression
             // substitute the rest of the blockStatement
             const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
             return [subst[0], context, allPaths]
           } else {
-            paths[0].push("body[0]")
-            paths[0].push("declarations[0]")
-            paths[0].push("init")
+            paths[0].push('body[0]')
+            paths[0].push('declarations[0]')
+            paths[0].push('init')
             const [reducedRhs, cont, path] = reduce(rhs, context, paths)
             return [
               ast.blockStatement([
@@ -945,7 +1002,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           }
         }
       }
-      paths[0].push("body[0]")
+      paths[0].push('body[0]')
       const [reduced, cont, path] = reduce(firstStatement, context, paths)
       return [
         ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -954,7 +1011,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
       ]
     },
 
-    BlockExpression(node: BlockExpression, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    BlockExpression(
+      node: BlockExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
@@ -962,7 +1023,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           return [arg, context, paths]
         } else {
           paths[0].push('body[0]')
-          paths[0].push("argument")
+          paths[0].push('argument')
           const [reducedArg, cont, path] = reduce(arg, context, paths)
           const reducedReturn = ast.returnStatement(
             reducedArg as es.Expression,
@@ -988,18 +1049,17 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           firstStatement.body
         ) as FunctionDeclarationExpression
         // substitute body
-        funDecExp = substituteMain(
-          funDecExp.id,
-          funDecExp,
-          funDecExp,
-          [[]]
-        )[0] as FunctionDeclarationExpression
+        funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+          []
+        ])[0] as FunctionDeclarationExpression
         // substitute the rest of the blockExpression
         const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockExpression, paths)
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
-        if (subst[1].length === 0) { allPaths.push([]) }
+        if (subst[1].length === 0) {
+          allPaths.push([])
+        }
         return [subst[0], context, allPaths]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
@@ -1022,16 +1082,19 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
             return [dummyBlockExpression(), context, paths]
           } else if (isIrreducible(rhs)) {
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
-            const subst = substituteMain(declarator.id, rhs as es.ArrayExpression, remainingBlockExpression, paths)
+            const subst = substituteMain(
+              declarator.id,
+              rhs as es.ArrayExpression,
+              remainingBlockExpression,
+              paths
+            )
             // forced casting for some weird errors
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
-            return [
-              subst[0],
-              context,
-              allPaths
-            ]
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
+            return [subst[0], context, allPaths]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -1041,23 +1104,22 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
                 : ast.blockStatement([ast.returnStatement(rhs.body)])
             ) as FunctionDeclarationExpression
             // substitute body
-            funDecExp = substituteMain(
-              funDecExp.id,
-              funDecExp,
-              funDecExp,
-              [[]]
-            )[0] as FunctionDeclarationExpression
+            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+              []
+            ])[0] as FunctionDeclarationExpression
             // substitute the rest of the blockExpression
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockExpression, paths)
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) { allPaths.push([]) }
+            if (subst[1].length === 0) {
+              allPaths.push([])
+            }
             return [subst[0], context, allPaths]
           } else {
-            paths[0].push("body[0]")
-            paths[0].push("declarations[0]")
-            paths[0].push("init")
+            paths[0].push('body[0]')
+            paths[0].push('declarations[0]')
+            paths[0].push('init')
             const [reducedRhs, cont, path] = reduce(rhs, context, paths)
             return [
               ast.blockExpression([
@@ -1074,7 +1136,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           }
         }
       }
-      paths[0].push("body[0]")
+      paths[0].push('body[0]')
       const [reduced, cont, path] = reduce(firstStatement, context, paths)
       return [
         ast.blockExpression([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -1084,7 +1146,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
     },
 
     // source 1
-    IfStatement(node: es.IfStatement, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+    IfStatement(
+      node: es.IfStatement,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][]] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
@@ -1094,7 +1160,7 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
           throw error
         }
       } else {
-        paths[0].push("test")
+        paths[0].push('test')
         const [reducedTest, cont, path] = reduce(test, context, paths)
         const reducedIfStatement = ast.ifStatement(
           reducedTest as es.Expression,
@@ -1107,7 +1173,11 @@ function reduceMain(node: substituterNodes, context: Context): [substituterNodes
     }
   }
 
-  function reduce(node: substituterNodes, context: Context, paths: string[][]): [substituterNodes, Context, string[][]] {
+  function reduce(
+    node: substituterNodes,
+    context: Context,
+    paths: string[][]
+  ): [substituterNodes, Context, string[][]] {
     const reducer = reducers[node.type]
     if (reducer === undefined) {
       return [ast.program([]), context, []] // exit early
@@ -1268,7 +1338,10 @@ function treeifyMain(target: substituterNodes): substituterNodes {
 
 export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
 
-function pathifyMain(target: substituterNodes, paths: string[][]): [substituterNodes, substituterNodes] {
+function pathifyMain(
+  target: substituterNodes,
+  paths: string[][]
+): [substituterNodes, substituterNodes] {
   let pathIndex = 0
   let path = paths[0]
   let redex = ast.program([]) as substituterNodes
@@ -1282,9 +1355,10 @@ function pathifyMain(target: substituterNodes, paths: string[][]): [substituterN
       if (path[pathIndex] === 'expression') {
         if (pathIndex === endIndex) {
           redex = exp
-          exp = (target.expression.type === 'ArrowFunctionExpression')
-            ? withBrackets as es.Expression
-            : redexMarker as es.Expression
+          exp =
+            target.expression.type === 'ArrowFunctionExpression'
+              ? (withBrackets as es.Expression)
+              : (redexMarker as es.Expression)
         } else {
           pathIndex++
           exp = pathify(target.expression) as es.Expression
@@ -1391,9 +1465,10 @@ function pathifyMain(target: substituterNodes, paths: string[][]): [substituterN
       if (path[pathIndex] === 'callee') {
         if (pathIndex === endIndex) {
           redex = callee
-          callee = target.callee.type === 'ArrowFunctionExpression'
-            ? withBrackets as es.Expression
-            : redexMarker as es.Expression
+          callee =
+            target.callee.type === 'ArrowFunctionExpression'
+              ? (withBrackets as es.Expression)
+              : (redexMarker as es.Expression)
         } else {
           pathIndex++
           callee = pathify(target.callee) as es.Expression
@@ -1666,7 +1741,10 @@ function pathifyMain(target: substituterNodes, paths: string[][]): [substituterN
   }
 }
 
-export const redexify = (node: substituterNodes, path: string[][]): [string, string] => [generate(pathifyMain(node, path)[0]), generate(pathifyMain(node, path)[1])]
+export const redexify = (node: substituterNodes, path: string[][]): [string, string] => [
+  generate(pathifyMain(node, path)[0]),
+  generate(pathifyMain(node, path)[1])
+]
 
 // strategy: we remember how many statements are there originally in program.
 // since listPrelude are just functions, they will be disposed of one by one
@@ -1685,8 +1763,10 @@ function substPredefinedFns(program: es.Program, context: Context): [es.Program,
   while (combinedProgram.body.length > originalStatementCount) {
     // some bug with no semis
     // tslint:disable-next-line
-    ;[combinedProgram] = [reduceMain(combinedProgram, context)[0], 
-    reduceMain(combinedProgram, context)[1]] as [es.Program, Context]
+    ;[combinedProgram] = [
+      reduceMain(combinedProgram, context)[0],
+      reduceMain(combinedProgram, context)[1]
+    ] as [es.Program, Context]
   }
   return [combinedProgram, context]
 }
@@ -1709,7 +1789,10 @@ function substPredefinedConstants(program: es.Program): es.Program {
 }
 
 // the context here is for builtins
-export function getEvaluationSteps(program: es.Program, context: Context): [es.Program, string[][]][] {
+export function getEvaluationSteps(
+  program: es.Program,
+  context: Context
+): [es.Program, string[][]][] {
   const steps: [es.Program, string[][]][] = []
   try {
     // starts with substituting predefined constants
@@ -1720,13 +1803,18 @@ export function getEvaluationSteps(program: es.Program, context: Context): [es.P
     let reducedWithPath: [substituterNodes, Context, string[][]] = [start, context, []]
     let i = -1
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
-      steps.push([reducedWithPath[0] as es.Program,
-        reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2]])
+      steps.push([
+        reducedWithPath[0] as es.Program,
+        reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2]
+      ])
       if (steps.length === 999) {
         steps[i][1] = reducedWithPath[2]
-        steps.push(
-          [ast.program([ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))]), []]
-        )
+        steps.push([
+          ast.program([
+            ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))
+          ]),
+          []
+        ])
         break
       }
       steps.push([reducedWithPath[0] as es.Program, []])
