@@ -9,11 +9,12 @@ import { SourceDocumentation } from '../docTooltip'
  * The link to the original JavaScript mode can be found here:
  * https://github.com/ajaxorg/ace-builds/blob/master/src/mode-javascript.js
  *
- * This is by now only a base line for future modifications
- *
  * Changes includes:
  * 1) change code styles so that it passes tslint test
  * 2) refactor some code to ES2015 class syntax
+ * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
+ * 4) changed regex to mark certain operators in pink
+ * 5) use SourceDocumentation to include all library functions and constants from source
  */
 export function HighlightRulesSelector(id: number, variant: Variant = 'default') {
   // @ts-ignore
@@ -26,152 +27,48 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
     var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
-    let func1 = ''
-    for (let name in SourceDocumentation.builtins['1']) {
-      if (SourceDocumentation.builtins['1'][name]['meta'] === 'func') {
-        func1 += '|' + name
+    function getAllFunctionNames(chapter: string) {
+      let func = ''
+      for (let name in SourceDocumentation.builtins[chapter]) {
+        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'func') {
+          func += '|' + name
+        }
       }
-    }
-    func1 = func1.substr(1)
-
-    const chapter1 = {
-      keywords: 'const|else|if|return|function',
-      functions: func1
+      return func.substr(1)
     }
 
-    let func2 = ''
-
-    for (let name in SourceDocumentation.builtins['2']) {
-      if (
-        SourceDocumentation.builtins['2'][name]['meta'] === 'func' &&
-        !(name in SourceDocumentation.builtins['1'])
-      ) {
-        func2 += '|' + name
+    function getAllConstantName(chapter: string) {
+      let constants = 'null'
+      for (let name in SourceDocumentation.builtins[chapter]) {
+        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'const') {
+          constants += '|' + name
+        }
       }
+      return constants
     }
-
-    func2 = func2.substr(1)
-
-    const chapter2 = {
-      keywords: '',
-      functions: func2
-    }
-
-    let func3 = ''
-
-    for (let name in SourceDocumentation.builtins['3']) {
-      if (
-        SourceDocumentation.builtins['3'][name]['meta'] === 'func' &&
-        !(name in SourceDocumentation.builtins['2'])
-      ) {
-        func3 += '|' + name
-      }
-    }
-    func3 = func3.substr(1)
-
-    const chapter3 = {
-      keywords: 'while|for|break|continue|let',
-      functions: func3
-    }
-
-    let func_concurrent = ''
-
-    for (let name in SourceDocumentation.builtins['3_concurrent']) {
-      if (
-        SourceDocumentation.builtins['3_concurrent'][name]['meta'] === 'func' &&
-        !(name in SourceDocumentation.builtins['2'])
-      ) {
-        func_concurrent += '|' + name
-      }
-    }
-
-    func_concurrent = func_concurrent.substr(1)
-
-    const concurrent = {
-      keywords: '',
-      functions: func_concurrent
-    }
-
-    let func4 = ''
-    let constants = ''
-
-    for (let name in SourceDocumentation.builtins['4']) {
-      if (
-        SourceDocumentation.builtins['4'][name]['meta'] === 'func' &&
-        !(name in SourceDocumentation.builtins['3'])
-      ) {
-        func4 += '|' + name
-      } else if (SourceDocumentation.builtins['4'][name]['meta'] === 'const') {
-        constants += '|' + name
-      }
-    }
-
-    func4 = func4.substr(1)
-
-    const chapter4 = {
-      keywords: '',
-      functions: func4
-    }
-
-    /*
-    let ext = '';
-    for (let name in SourceDocumentation.ext_lib) {
-      if (SourceDocumentation.ext_lib[name]['meta'] === 'func'
-        && !(name in SourceDocumentation.builtins['1'])) {
-          ext += '|' + name;
-      }
-    }
-
-    const ext_lib = {
-      keywords: '',
-      functions: ext
-    }
-    */
 
     const ChapterFunctionNameSelector = () => {
-      let output = ''
-      if (id >= 1) {
-        output += chapter1.functions
+      if (variant === 'default') {
+        return getAllFunctionNames(id.toString())
+      } else {
+        return getAllFunctionNames(id.toString() + '_' + variant)
       }
-      if (id >= 2) {
-        output += '|' + chapter2.functions
-      }
-      if (id >= 3) {
-        output += '|' + chapter3.functions
-      }
-      if (id >= 4) {
-        output += '|' + chapter4.functions
-      }
-      if (variant === 'concurrent') {
-        output += '|' + concurrent.functions
-      }
-      return output
     }
 
     const ChapterKeywordSelector = () => {
       let output = ''
       if (id >= 1) {
-        output += chapter1.keywords
-      }
-      if (id >= 2) {
-        output += '|' + chapter2.keywords
+        output += 'const|else|if|return|function'
       }
       if (id >= 3) {
-        output += '|' + chapter3.keywords
-      }
-      if (id >= 4) {
-        output += '|' + chapter4.keywords
+        output += '|while|for|break|continue|let'
       }
       return output
     }
 
     const ChapterForbbidenWordSelector = () => {
-      if (id === 1) {
-        return chapter2.keywords + '|' + chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 2) {
-        return chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 3) {
-        return chapter4.keywords
+      if (id <= 3) {
+        return 'while|for|break|continue|let'
       } else {
         return ''
       }
@@ -182,7 +79,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language': 'null' + constants,
+          'constant.language': getAllConstantName(id.toString()),
 
           'constant.language.boolean': 'true|false',
 
