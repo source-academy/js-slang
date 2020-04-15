@@ -227,8 +227,8 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     // binaryExpression.typability = 'Typed'
   }
 
-  function inferConditionalExpressions(
-    conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression>
+  function inferConditionals(
+    conditionalExpression: TypeAnnotatedNode<es.ConditionalExpression | es.IfStatement>
   ) {
     const expressionTypeVariable = conditionalExpression.typeVariable as Variable
     const test = conditionalExpression.test as TypeAnnotatedNode<es.Expression>
@@ -498,10 +498,11 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     UnaryExpression: inferUnaryExpression,
     BinaryExpression: inferBinaryExpression,
-    ConditionalExpression: inferConditionalExpressions,
+    ConditionalExpression: inferConditionals,
     ReturnStatement: inferReturnStatement,
     FunctionDeclaration: inferFunctionDeclaration,
-    CallExpression: inferFunctionApplication
+    CallExpression: inferFunctionApplication,
+    IfStatement: inferConditionals
   })
 
   // Successful run..
