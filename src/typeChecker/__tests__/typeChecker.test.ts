@@ -252,7 +252,7 @@ function foo(x, y) {
 }
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"foo: (T0, T1) -> [T0, T1]"`)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> [T0, T1]"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
@@ -267,7 +267,7 @@ const z = head(x) + 34;
 head(x) + 56;
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: (number, number) -> [number, number]
       x: [number, number]
       y: [number, number]
@@ -284,7 +284,7 @@ head(x) + 56;
       const b = tail(tail(a)) + 1;
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "x: [number, number]
       y: T0
       a: [number, [number, boolean]]
@@ -344,7 +344,7 @@ describe('type checking of functions with variable number of arguments', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "xs: T0
       xs1: T0"
     `)
@@ -365,7 +365,7 @@ describe('type checking overloaded unary/binary primitives', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
       bar: (number, number) -> number
       a: number
@@ -468,7 +468,7 @@ describe('type checking overloaded unary/binary primitives', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: boolean
       b: number
       c: number
@@ -490,7 +490,7 @@ describe('type checking overloaded unary/binary primitives', () => {
     to have type boolean, but instead it is type:
       string"
     `)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: string
       b: number
       c: number
@@ -515,7 +515,7 @@ describe('type checking overloaded unary/binary primitives', () => {
     but the false branch has type:
       string"
     `)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: boolean
       b: number
       c: string
@@ -534,7 +534,7 @@ describe('type checking functions used in polymorphic fashion', () => {
 
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
-    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`"f: addable -> addable"`)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"f: addable -> addable"`)
   })
   it('errors when fn used in polymorhpic fashion before last const decl', () => {
     const code = `
@@ -551,5 +551,340 @@ describe('type checking functions used in polymorphic fashion', () => {
       but instead received an argument of type:
         string"
     `)
+  })
+})
+
+describe('typing some SICP Chapter 1 programs', () => {
+  it('1.1.1', () => {
+    const code = `3 * 2 * (4 + (3 - 5)) + 10 * (27 / 6);`
+    const [, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.1.2', () => {
+    const code = `
+      const pi = 3.14159;
+      const radius = 10;
+      pi * radius * radius;
+      const circumference = 2 * pi * radius;
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "pi: number
+      radius: number
+      circumference: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.1.4', () => {
+    const code = `
+      function square(x) {
+        return x * x;
+      }
+      function sum_of_squares(x,y) {
+        return square(x) + square(y);
+      }
+      function f(a) {
+        return sum_of_squares(a + 1, a * 2);
+      }
+      square(2 + 5);
+      square(square(3));
+      f(3);
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "square: number -> number
+      sum_of_squares: (number, number) -> number
+      f: number -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.1.6', () => {
+    const code = `
+      function abs(x) {
+        return x >= 0 ? x : -x;
+      }
+      function not_equal(x, y) {
+        return x > y || x < y;
+      }
+      function not_equal2(x, y) {
+        return !(x >= y && x <= y);
+      }
+      const a = 3;
+      const b = a + 1;
+      a + b + a * b;
+      a === b;
+      b > a && b < a * b 
+        ? b : a;
+      a === 4 ? 6 : b === 4 ? 6 + 7 + a : 25;
+      2 + (b > a ? b : a);
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "abs: number -> number
+      not_equal: (addable, addable) -> boolean
+      not_equal2: (addable, addable) -> boolean
+      a: number
+      b: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.1.8', () => {
+    const code = `
+      function square(x) {
+        return x * x;
+      }
+      function average(x,y) {
+        return (x + y) / 2;
+      }
+      function sqrt(x) {
+          function good_enough(guess) {
+              return math_abs(square(guess) - x) < 0.001;
+          }
+          function improve(guess) {
+              return average(guess, x / guess);
+          }
+          function sqrt_iter(guess) {
+              return good_enough(guess)
+                    ? guess
+                    : sqrt_iter(improve(guess));
+        }
+        return sqrt_iter(1.0);
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "square: number -> number
+      average: (number, number) -> number
+      sqrt: number -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.2.1', () => {
+    const code = `
+      function factorial(n) {
+        return n === 1 
+              ? 1
+              : n * factorial(n - 1);
+      }
+      function factorial_iter(n) {
+        return fact_iter(1, 1, n);
+      }
+      function fact_iter(product, counter, max_count) {
+          return counter > max_count
+                ? product
+                : fact_iter(counter * product,
+                            counter + 1,
+                            max_count);
+      }
+      function A(x,y) {
+        return y === 0
+              ? 0
+              : x === 0
+                ? 2 * y
+                : y === 1
+                  ? 2
+                  : A(x - 1, A(x, y - 1));
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "factorial: number -> number
+      factorial_iter: number -> number
+      fact_iter: (number, number, number) -> number
+      A: (number, number) -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.2.2', () => {
+    const code = `
+      function fib(n) {
+        return n === 0
+              ? 0
+              : n === 1
+                ? 1
+                : fib(n - 1) + fib(n - 2);
+      }
+      function fibo(n) {
+        return fib_iter(1, 0, n);
+      }
+      function fib_iter(a, b, count) {
+          return count === 0
+                ? b
+                : fib_iter(a + b, a, count - 1);
+      }
+      function count_change(amount) {
+        return cc(amount, 5);
+      }
+      function cc(amount, kinds_of_coins) {
+        return amount === 0
+              ? 1
+              : amount < 0 ||
+                kinds_of_coins === 0
+                ? 0
+                : cc(amount, kinds_of_coins - 1)
+                  +
+                  cc(amount - first_denomination(
+                                  kinds_of_coins),
+                      kinds_of_coins);
+      }
+      function first_denomination(kinds_of_coins) {
+        return kinds_of_coins === 1 ? 1 :
+              kinds_of_coins === 2 ? 5 :
+              kinds_of_coins === 3 ? 10 :
+              kinds_of_coins === 4 ? 25 :
+              kinds_of_coins === 5 ? 50 : 0;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "fib: number -> number
+      fibo: number -> number
+      fib_iter: (number, number, number) -> number
+      count_change: number -> number
+      cc: (number, number) -> number
+      first_denomination: number -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.2.4 - 1.2.6', () => {
+    const code = `
+      function square(x) {
+        return x * x;
+      }
+      function expt(b,n) {
+        return n === 0
+              ? 1
+              : b * expt(b, n - 1);
+      }
+      function expt2(b,n) {
+        return expt_iter(b,n,1);
+      }
+      function expt_iter(b,counter,product) {
+          return counter === 0
+                ? product
+                : expt_iter(b,
+                            counter - 1, 
+                            b * product);
+      }
+      function fast_expt(b, n) {
+        return n === 0
+              ? 1
+              : is_even(n)
+                ? square(fast_expt(b, n / 2))
+                : b * fast_expt(b, n - 1);
+      }
+      function is_even(n) {
+        return n % 2 === 0;
+      }
+      function gcd(a, b) {
+        return b === 0 ? a : gcd(b, a % b);
+      }
+      function smallest_divisor(n) {
+        return find_divisor(n, 2);
+      }
+      function find_divisor(n, test_divisor) {
+        return square(test_divisor) > n
+                ? n
+                : divides(test_divisor, n)
+                  ? test_divisor
+                  : find_divisor(n, test_divisor + 1);
+      }
+      function divides(a, b) {
+        return b % a === 0;
+      }
+      function is_prime(n) {
+        return n === smallest_divisor(n);
+      }
+      function expmod(base, exp, m) {
+        return exp === 0
+              ? 1
+              : is_even(exp)
+                ? square(expmod(base, exp / 2, m)) % m
+                : (base * expmod(base, exp - 1, m)) % m;
+      }
+      function fermat_test(n) {
+        function try_it(a) {
+            return expmod(a, n, n) === a;
+        }
+        return try_it(1 + math_random());
+      }
+      function fast_is_prime(n, times) {
+        return times === 0
+              ? true
+              : fermat_test(n)
+                ? fast_is_prime(n, times - 1)
+                : false;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "square: number -> number
+      expt: (number, number) -> number
+      expt2: (number, number) -> number
+      expt_iter: (number, number, number) -> number
+      fast_expt: (number, number) -> number
+      is_even: number -> boolean
+      gcd: (number, number) -> number
+      smallest_divisor: number -> number
+      find_divisor: (number, number) -> number
+      divides: (number, number) -> boolean
+      is_prime: number -> boolean
+      expmod: (number, number, number) -> number
+      fermat_test: number -> boolean
+      fast_is_prime: (number, number) -> boolean"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('1.3', () => {
+    const code = `
+      function sum(term, a, next, b) {
+        return a > b
+              ? 0
+              : term(a) + sum(term, next(a), next, b);
+      }
+      function cube(x) {
+        return x * x * x;
+      }
+      function inc(n) {
+        return n + 1;
+      }
+      function sum_cubes(a, b) {
+        return sum(cube, a, inc, b);
+      }
+      function identity(x) {
+        return x;
+      }
+      function sum_integers(a, b) {
+        return sum(identity, a, inc, b);
+      }
+      function pi_sum(a, b) {
+        function pi_term(x) {
+            return 1.0 / (x * (x + 2));
+        }
+        function pi_next(x) {
+            return x + 4;
+        }
+        return sum(pi_term, a, pi_next, b);
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "sum: (number -> number, number, number -> number, number) -> number
+      cube: number -> number
+      inc: number -> number
+      sum_cubes: (number, number) -> number
+      identity: number -> number
+      sum_integers: (number, number) -> number
+      pi_sum: (number, number) -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 })
