@@ -12,10 +12,14 @@ import {
   numberType,
   booleanType,
   isOverLoaded,
-  primitiveMap,
+  environments,
   updateTypeEnvironment,
   stringType,
-  undefinedType
+  extendEnvironment,
+  globalTypeEnvironment,
+  popEnvironment,
+  undefinedType,
+  emptyMap
 } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
@@ -27,6 +31,7 @@ import {
 } from '../utils/inferencerUtils'
 
 let annotatedProgram: es.Program;
+let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   const valueOfLiteral = literal.value
@@ -51,7 +56,7 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   // Update type constraints in constraintStore
   // e.g. Given: x^T2, Set: T2 = Γ[x]
   const idenTypeVariable = identifier.typeVariable as Variable
-  const idenTypeEnvType = primitiveMap.get(identifier.name).types[0]
+  const idenTypeEnvType = currentTypeEnvironment.get(identifier.name).types[0]
 
   if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
     const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
@@ -108,8 +113,8 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   const operator = unaryExpression.operator
   // retrieves function type of unary '-'
   const typeOfOperator = isOverLoaded(operator)
-    ? primitiveMap.get(operator).types[1]
-    : primitiveMap.get(operator).types[0]
+    ? currentTypeEnvironment.get(operator).types[1]
+    : currentTypeEnvironment.get(operator).types[0]
   const operatorArgType = typeOfOperator.parameterTypes[0]
   const operatorResultType = typeOfOperator.returnType
 
@@ -145,11 +150,11 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
 
 function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
   // Given operator, get arg and result types of binary expression from type env
-  const primitiveMapTypes = primitiveMap.get(binaryExpression.operator).types
+  const currentTypeEnvironmentTypes = currentTypeEnvironment.get(binaryExpression.operator).types
   let functionType
 
   // Only take the one for BinaryExpression where num params = 2 (e.g. in the case of overloaded '-')
-  for (const type of primitiveMapTypes) {
+  for (const type of currentTypeEnvironmentTypes) {
     if (type.parameterTypes && type.parameterTypes.length === 2) {
       functionType = type
     }
@@ -329,7 +334,7 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
   const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
   const idenTypeVariable = iden.typeVariable as Variable
 
-  const functionType = primitiveMap.get(iden.name) // Get function type from Type Env since it was added there
+  const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
 
   if (idenTypeVariable !== undefined && functionType !== undefined) {
     const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
@@ -354,7 +359,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   const applicationArgs = functionApplication.arguments as TypeAnnotatedNode<es.Node>[]
   const applicationArgCount = applicationArgs.length
 
-  const declarationFunctionType = primitiveMap.get(iden.name).types[0]
+  const declarationFunctionType = currentTypeEnvironment.get(iden.name).types[0]
   const declarationArgCount = declarationFunctionType.parameterTypes.length
 
   if (applicationArgCount !== declarationArgCount) {
@@ -446,18 +451,51 @@ function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Ty
   }
 }
 
-function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>) {
+function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
   // TODO: Implement type environment scoping
+  extendEnvironment(environmentToExtend)
+  currentTypeEnvironment = environments[0]
+  const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
     infer(expression)
+    if (expression.type === 'ReturnStatement') {
+      // TODO: add type constraint for return statements
+      const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
+      if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
+        const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
+        if (result) {
+          displayErrorAndTerminate(
+            'WARNING: There is a type error when checking the type of a block', block.loc
+          )
+        }
+        popEnvironment()
+        currentTypeEnvironment = environments[0]
+        return
+      }
+    }
+  }
+
+  // TODO: else they have undefined type
+  if (blockTypeVariable !== undefined) {
+    const result = updateTypeConstraints(blockTypeVariable, undefinedType)
+    if (result) {
+      displayErrorAndTerminate(
+        'WARNING: There is a type error when checking the type of a block', block.loc
+      )
+    }
+    popEnvironment()
+    currentTypeEnvironment = environments[0]
+    return
   }
 }
 
-function infer(statement: es.Node) {
+function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap) {
   console.log(statement.type)
   switch (statement.type) {
     case 'BlockStatement': {
-      inferBlockStatement(statement)
+      if (environmentToExtend !== undefined) {
+        inferBlockStatement(statement, environmentToExtend)
+      }
       return
     }
     case 'Literal': {
@@ -503,8 +541,9 @@ function infer(statement: es.Node) {
       return
     }
     case 'FunctionDeclaration': {
+      const parameters = new Map()
       for (const param of statement.params) {
-        infer(param)
+        parameters.set((param as es.Identifier).name, (param as TypeAnnotatedNode<es.Identifier>).typeVariable)
       }
       infer(statement.body)
       inferFunctionDeclaration(statement)
@@ -546,7 +585,7 @@ function logObjectsForDebugging() {
   // for Debugging output
   console.log('\n--------------')
   printTypeAnnotation(annotatedProgram)
-  printTypeEnvironment(primitiveMap)
+  printTypeEnvironment(currentTypeEnvironment)
   printTypeConstraints(constraintStore)
 }
 // // main function that will infer a program
