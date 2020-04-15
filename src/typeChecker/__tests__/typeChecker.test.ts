@@ -177,6 +177,19 @@ describe('type checking functions', () => {
     `)
   })
 
+  it('works for double recursive functions', () => {
+    const code1 = `
+      function fib(x) {
+        return x === 0 ? 1 : x === 1 ? 1 : fib(x - 1) + fib(x - 2);
+      }
+    `
+    const [program, errors] = typeCheck(parse(code1, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
+      `"fib: number -> number"`
+    )
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
   it('fails with correct error msg when wrong number of args passed in', () => {
     const code = `
       function foo(x) { return x + 1; }
@@ -241,6 +254,18 @@ describe('type checking functions', () => {
       but instead received an argument of type:
         boolean -> boolean"
     `)
+  })
+
+  it('when we make reference to an undefined identifier in a function catch the error', () => {
+    const code = `
+      function foo(x, y) {
+        append(x, y);
+        return 1;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undefined identifier 'append' detected"`)
   })
 })
 
@@ -884,6 +909,260 @@ describe('typing some SICP Chapter 1 programs', () => {
       identity: number -> number
       sum_integers: (number, number) -> number
       pi_sum: (number, number) -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('typing some SICP Chapter 1 programs', () => {
+  it('2.1.1', () => {
+    const code = `
+      function make_rat(n, d) {
+        return pair(n, d);
+      }
+      function numer(x) {
+          return head(x);
+      }
+      function denom(x) {
+          return tail(x);
+      }
+      function add_rat(x, y) {
+        return make_rat(numer(x) * denom(y) + numer(y) * denom(x),
+                        denom(x) * denom(y));
+      }
+      function sub_rat(x, y) {
+          return make_rat(numer(x) * denom(y) - numer(y) * denom(x),
+                          denom(x) * denom(y));
+      }
+      function mul_rat(x, y) {
+          return make_rat(numer(x) * numer(y),
+                          denom(x) * denom(y));
+      }
+      function div_rat(x, y) {
+          return make_rat(numer(x) * denom(y),
+                          denom(x) * numer(y));
+      }
+      function equal_rat(x, y) {
+          return numer(x) * denom(y) === numer(y) * denom(x);
+      }
+      function print_rat(x) {
+        display(numer(x));
+        display("-");
+        display(denom(x));
+      }
+      const one_half = make_rat(1, 2);
+
+      print_rat(one_half);
+      const one_third = make_rat(1, 3);
+
+      print_rat(one_third);
+      print_rat(add_rat(one_half, one_third));
+      print_rat(mul_rat(one_half, one_third));
+      print_rat(div_rat(one_half, one_third));
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "make_rat: (number, number) -> [number, number]
+      numer: [number, number] -> number
+      denom: [number, number] -> number
+      add_rat: ([number, number], [number, number]) -> [number, number]
+      sub_rat: ([number, number], [number, number]) -> [number, number]
+      mul_rat: ([number, number], [number, number]) -> [number, number]
+      div_rat: ([number, number], [number, number]) -> [number, number]
+      equal_rat: ([number, number], [number, number]) -> boolean
+      print_rat: [number, number] -> undefined
+      one_half: [number, number]
+      one_third: [number, number]"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('2.2.1', () => {
+    const code = `
+      function list_ref(items, n) {
+        return n === 0
+              ? head(items)
+              : list_ref(tail(items), n - 1);
+      }
+      function length(items) {
+        return is_null(items)
+              ? 0
+              : 1 + length(tail(items));
+      }
+      function length_iterative(items) {
+        function length_iter(a, count) {
+            return is_null(a)
+                  ? count
+                  : length_iter(tail(a), count + 1);
+        }
+        return length_iter(items, 0);
+      }
+      function map(fun, items) {
+        return is_null(items)
+              ? null
+              : pair(fun(head(items)), 
+                      map(fun, tail(items)));
+      }
+      function scale_list(items, factor) {
+        return map(x => x * factor, items);
+      }
+      const squares = list(1, 4, 9, 16, 25);
+      list_ref(squares, 3);
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "list_ref: (List<T0>, number) -> T0
+      length: List<T0> -> number
+      length_iterative: List<T0> -> number
+      map: (number -> number, List<number>) -> List<number>
+      scale_list: (List<number>, number) -> List<number>
+      squares: T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+  it('2.2.2', () => {
+    const code = `
+      function count_leaves(x) {
+        return count_leaves(head(x)) +
+                  count_leaves(tail(x));
+      }
+      function scale_tree(tree, factor) {
+        return is_null(tree)
+              ? null
+              : ! is_pair(tree)
+                ? tree * factor
+                : pair(scale_tree(head(tree), factor), 
+                        scale_tree(tail(tree), factor));
+      }
+      const x = pair(pair(1, pair(2,null)), pair(3, pair(4,null)));
+      count_leaves(x);
+      count_leaves(list(x, x));
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "count_leaves: T0
+      scale_tree: T0
+      x: T0"
+    `)
+    // note: our type inferencer simply doesn't work for trees, because of the way we store
+    // list internally
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+    "Line 10: A type mismatch was detected in the binary expression:
+      tree * factor
+    The binary operator (*) expected two operands with types:
+      number * number
+    but instead it received two operands of types:
+      [T0, T1] * T0
+    Line 14: A type mismatch was detected in the function call:
+      pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
+    The function expected 2 arguments of types:
+      T0, T0
+    but instead received 2 arguments of types:
+      List<number>, List<number>
+    Line 2: count_leaves contains cyclic reference to itself
+    Line 6: scale_tree contains cyclic reference to itself
+    Line 14: Error: Failed to unify types"
+    `)
+  })
+
+  it('2.2.3', () => {
+    const code = `
+      function is_even(n) {
+        return n % 2 === 0;
+      }
+      function square(x) {
+        return x * x;
+      }
+      function fib(x) {
+        return x === 0 ? 1 : x === 1 ? 1 : fib(x - 1) + fib(x - 2);
+      }
+      function append(xs, ys) {
+        return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+      }
+      function map(fun, items) {
+        return is_null(items)
+              ? null
+              : pair(fun(head(items)), 
+                      map(fun, tail(items)));
+      }
+      function even_fibs(n) {
+        function next(k) {
+            if (k > n) {
+                return null;
+            } else {
+                const f = fib(k);
+                return is_even(f)
+                      ? pair(f, next(k + 1))
+                      : next(k + 1);
+            }
+        }
+        return next(0);
+      }
+      function filter(predicate, sequence) {
+        return is_null(sequence)
+              ? null
+              : predicate(head(sequence))
+                ? pair(head(sequence), 
+                        filter(predicate, tail(sequence)))
+                : filter(predicate, tail(sequence));
+      }
+      function accumulate(op, initial, sequence) {
+        return is_null(sequence)
+              ? initial
+              : op(head(sequence), 
+                    accumulate(op, initial, tail(sequence)));
+      }
+      function enumerate_interval(low, high) {
+        return low > high
+              ? null
+              : pair(low,
+                      enumerate_interval(low + 1, high));
+      }
+      function remove(item, sequence) {
+        return filter(x => !(x === item),
+                      sequence);
+      }
+      filter(is_even, list(1, 2, 3, 4, 5));
+      // we type this in a new block to allow for the above functions to be used in a polymorphic manner
+      {
+        function even_fibs2(n) {
+        return accumulate(pair, 
+                          null, 
+                          filter(is_even, 
+                                map(fib, 
+                                    enumerate_interval(0, n))));
+        }
+        function list_fib_squares(n) {
+          return accumulate(pair, 
+                            null, 
+                            map(square, 
+                                map(fib, 
+                                    enumerate_interval(0, n))));
+        }
+        function flatmap(f, seq) {
+          return accumulate(append, null, map(f, seq));
+        }
+        function permutations(s) {
+          return is_null(s)
+                ? list(null)
+                : flatmap(x => map(p => pair(x, p),
+                                    permutations(remove(x, s))),
+                          s);
+        }
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 2))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "is_even: number -> boolean
+      square: number -> number
+      fib: number -> number
+      append: (List<T0>, List<T0>) -> List<T0>
+      map: (T0 -> T1, List<T0>) -> List<T1>
+      even_fibs: number -> List<number>
+      filter: (addable -> boolean, List<addable>) -> List<addable>
+      accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1
+      enumerate_interval: (number, number) -> List<number>
+      remove: (addable, List<addable>) -> List<addable>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })

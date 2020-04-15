@@ -12,6 +12,8 @@ import {
   SourceError
 } from '../types'
 import {
+  TypeError,
+  InternalTypeError,
   UnifyError,
   InternalDifferentNumberArgumentsError,
   InternalCyclicReferenceError
@@ -21,7 +23,8 @@ import {
   InvalidTestConditionError,
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
-  CyclicReferenceError
+  CyclicReferenceError,
+  UndefinedIdentifierError
 } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
@@ -43,8 +46,8 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
       node.typability = 'Typed'
     } catch (e) {
-      if (!(e instanceof InternalCyclicReferenceError)) {
-        throw e
+      if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
+        typeErrors.push(new TypeError(node, e))
       }
     }
   } else {
@@ -122,6 +125,8 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
         } catch (e) {
           if (e instanceof InternalCyclicReferenceError) {
             typeErrors.push(new CyclicReferenceError(node))
+          } else if (isInternalTypeError(e)) {
+            typeErrors.push(new TypeError(node, e))
           }
         }
       } else {
@@ -153,6 +158,10 @@ function getListType(type: Type): Type | null {
     return type.elementType
   }
   return null
+}
+
+function isInternalTypeError(error: any) {
+  return error instanceof InternalTypeError
 }
 
 // Type Definitions
@@ -687,7 +696,8 @@ function _infer(
           return addToConstraintList(constraints, [storedType, envType])
         }
       }
-      throw Error(`Undefined identifier: ${identifierName}`)
+      typeErrors.push(new UndefinedIdentifierError(node, identifierName))
+      return constraints
     }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
