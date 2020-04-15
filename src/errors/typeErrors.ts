@@ -166,10 +166,7 @@ export class UndefinedIdentifierError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(
-    public node: TypeAnnotatedNode<es.Identifier>,
-    public name: string
-  ) {}
+  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) {}
 
   get location() {
     return this.node.loc!

@@ -184,9 +184,7 @@ describe('type checking functions', () => {
       }
     `
     const [program, errors] = typeCheck(parse(code1, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"fib: number -> number"`
-    )
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fib: number -> number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
@@ -265,7 +263,9 @@ describe('type checking functions', () => {
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undefined identifier 'append' detected"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(
+      `"Line 3: Undefined identifier 'append' detected"`
+    )
   })
 })
 
@@ -1000,7 +1000,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       function map(fun, items) {
         return is_null(items)
               ? null
-              : pair(fun(head(items)), 
+              : pair(fun(head(items)),
                       map(fun, tail(items)));
       }
       function scale_list(items, factor) {
@@ -1031,7 +1031,7 @@ describe('typing some SICP Chapter 1 programs', () => {
               ? null
               : ! is_pair(tree)
                 ? tree * factor
-                : pair(scale_tree(head(tree), factor), 
+                : pair(scale_tree(head(tree), factor),
                         scale_tree(tail(tree), factor));
       }
       const x = pair(pair(1, pair(2,null)), pair(3, pair(4,null)));
@@ -1082,7 +1082,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       function map(fun, items) {
         return is_null(items)
               ? null
-              : pair(fun(head(items)), 
+              : pair(fun(head(items)),
                       map(fun, tail(items)));
       }
       function even_fibs(n) {
@@ -1102,14 +1102,14 @@ describe('typing some SICP Chapter 1 programs', () => {
         return is_null(sequence)
               ? null
               : predicate(head(sequence))
-                ? pair(head(sequence), 
+                ? pair(head(sequence),
                         filter(predicate, tail(sequence)))
                 : filter(predicate, tail(sequence));
       }
       function accumulate(op, initial, sequence) {
         return is_null(sequence)
               ? initial
-              : op(head(sequence), 
+              : op(head(sequence),
                     accumulate(op, initial, tail(sequence)));
       }
       function enumerate_interval(low, high) {
@@ -1126,17 +1126,17 @@ describe('typing some SICP Chapter 1 programs', () => {
       // we type this in a new block to allow for the above functions to be used in a polymorphic manner
       {
         function even_fibs2(n) {
-        return accumulate(pair, 
-                          null, 
-                          filter(is_even, 
-                                map(fib, 
+        return accumulate(pair,
+                          null,
+                          filter(is_even,
+                                map(fib,
                                     enumerate_interval(0, n))));
         }
         function list_fib_squares(n) {
-          return accumulate(pair, 
-                            null, 
-                            map(square, 
-                                map(fib, 
+          return accumulate(pair,
+                            null,
+                            map(square,
+                                map(fib,
                                     enumerate_interval(0, n))));
         }
         function flatmap(f, seq) {
