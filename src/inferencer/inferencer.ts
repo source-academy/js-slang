@@ -1,4 +1,3 @@
-import { ancestor } from 'acorn-walk/dist/walk'
 import {
   TypeAnnotatedNode,
   Type,
@@ -26,6 +25,8 @@ import {
   printTypeConstraints,
   printTypeEnvironment
 } from '../utils/inferencerUtils'
+
+let annotatedProgram: es.Program;
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   const valueOfLiteral = literal.value
@@ -74,9 +75,7 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   // literal.typability = 'Typed'
 }
 
-function inferConstantDeclaration(
-  constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
-) {
+function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
   // Update type constraints in constraintStore
   // e.g. Given: const x^T1 = 1^T2, Set: T1 = T2
   const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
@@ -288,9 +287,7 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
   }
 }
 
-function inferFunctionDeclaration(
-  functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>
-) {
+function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
   // Update type constraints in constraintStore
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
 
@@ -379,10 +376,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
       .typeVariable as Variable
 
     if (applicationArgTypeVariable && declarationArgTypeVariable) {
-      const errorObj = updateTypeConstraints(
-        applicationArgTypeVariable,
-        declarationArgTypeVariable
-      )
+      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
       if (errorObj) {
         displayErrorAndTerminate(
           'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
@@ -459,43 +453,85 @@ function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Ty
   }
 }
 
+function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>) {
+  // TODO: Implement type environment scoping
+  for (const expression of block.body) {
+    infer(expression)
+  }
+}
+
 function infer(statement: es.Node) {
   console.log(statement.type)
   switch (statement.type) {
-    case "BlockStatement": {
+    case 'BlockStatement': {
       inferBlockStatement(statement)
       return
     }
-    case "Literal": {
+    case 'Literal': {
       inferLiteral(statement)
       return
     }
-    case "Identifier": {
+    case 'Identifier': {
       inferIdentifier(statement)
       return
     }
-    case "VariableDeclaration": {
+    case 'VariableDeclaration': {
+      infer(statement.declarations[0].init!)
       inferConstantDeclaration(statement)
       return
     }
-    case "UnaryExpression": {
+    case 'UnaryExpression': {
+      infer(statement.argument)
       inferUnaryExpression(statement)
       return
     }
-    case "BinaryExpression": {
+    case 'ExpressionStatement': {
+      infer(statement.expression)
+      return
+    }
+    case 'BinaryExpression': {
+      infer(statement.left)
+      infer(statement.right)
       inferBinaryExpression(statement)
       return
     }
-    case "ConditionalExpression": {
+    case 'ConditionalExpression': {
+      infer(statement.test)
+      infer(statement.alternate)
+      infer(statement.consequent)
       inferConditionals(statement)
       return
     }
-    case "IfStatement": {
+    case 'IfStatement': {
+      infer(statement.test)
+      infer(statement.alternate!)
+      infer(statement.consequent)
       inferConditionals(statement)
       return
+    }
+    case 'FunctionDeclaration': {
+      for (const param of statement.params) {
+        infer(param)
+      }
+      infer(statement.body)
+      inferFunctionDeclaration(statement)
+      return
+    }
+    case 'CallExpression': {
+      for (const argument of statement.arguments) {
+        infer(argument)
+      }
+      infer(statement.callee)
+      inferFunctionApplication(statement)
+      return
+    }
+    case 'ReturnStatement': {
+      infer(statement.argument!)
+      inferReturnStatement(statement)
+      break
     }
     default: {
-      console.log("Not implemented yet!")
+      console.log('Not implemented yet!')
       return
     }
   }
@@ -513,10 +549,10 @@ function displayErrorAndTerminate(errorMsg: string, loc: es.SourceLocation | nul
   return process.exit(0)
 }
 
-function logObjectsForDebugging(program: es.Program) {
+function logObjectsForDebugging() {
   // for Debugging output
   console.log('\n--------------')
-  printTypeAnnotation(program)
+  printTypeAnnotation(annotatedProgram)
   printTypeEnvironment(primitiveMap)
   printTypeConstraints(constraintStore)
 }
@@ -524,24 +560,18 @@ function logObjectsForDebugging(program: es.Program) {
 export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
   // Step 1. Annotate program
   program = annotateProgram(program)
+  annotatedProgram = program
 
   // Step 2. Update type environment
   updateTypeEnvironment(program)
 
   // Step 3. Update and solve type constraints
-  ancestor(program as es.Node, {
-    UnaryExpression: inferUnaryExpression,
-    BinaryExpression: inferBinaryExpression,
-    ConditionalExpression: inferConditionals,
-    ReturnStatement: inferReturnStatement,
-    FunctionDeclaration: inferFunctionDeclaration,
-    CallExpression: inferFunctionApplication,
-    IfStatement: inferConditionals
-  })
-
+  for (const statement of program.body) {
+    infer(statement)
+  }
 
   // Successful run..
-  logObjectsForDebugging(program)
+  logObjectsForDebugging()
   // return the AST with annotated types
   return program
 }

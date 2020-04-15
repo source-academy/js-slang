@@ -86,7 +86,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
       isTypeVariable(constraintStore.get(constraintRhs)) &&
       !constraintStore.get(constraintRhs).isAddable
     ) {
-      (constraintStore.get(constraintRhs) as Variable).isAddable = true
+      ;(constraintStore.get(constraintRhs) as Variable).isAddable = true
     }
     return solveConstraint(constraintLhs, constraintStore.get(constraintRhs))
   }
