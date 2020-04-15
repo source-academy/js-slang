@@ -458,6 +458,70 @@ describe('type checking overloaded unary/binary primitives', () => {
         number, boolean"
     `)
   })
+
+  it('passes type checking for ternary operators used correctly', () => {
+    const code = `
+      const a = false;
+      const b = 23;
+      const c = 4;
+      const d = (a || !a) ? b : c;
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+      "a: boolean
+      b: number
+      c: number
+      d: number"
+    `)
+  })
+
+  it('fails type checking for ternary operators when test is not boolean', () => {
+    const code = `
+      const a = 'false';
+      const b = 23;
+      const c = 4;
+      const d = (a ) ? b : c;
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+    "Line 5: Expected the test part of the conditional expression:
+      a ? ... : ...
+    to have type boolean, but instead it is type:
+      string"
+    `)
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+      "a: string
+      b: number
+      c: number
+      d: number"
+    `)
+  })
+
+  it('fails type checking for ternary operators when consequent does not match the alternate', () => {
+    const code = `
+      const a = false;
+      const b = 23;
+      const c = '4';
+      const d = (a ) ? b : c;
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+    "Line 5: The two branches of the conditional expression:
+      a ? ... : ...
+    produce different types!
+    The true branch has type:
+      number
+    but the false branch has type:
+      string"
+    `)
+    expect(topLevelTypesToString(program!)).toMatchInlineSnapshot(`
+      "a: boolean
+      b: number
+      c: string
+      d: number"
+    `)
+  })
 })
 
 describe('type checking functions used in polymorphic fashion', () => {
