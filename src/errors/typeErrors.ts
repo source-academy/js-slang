@@ -199,8 +199,7 @@ export class InvalidArgumentTypesError implements SourceError {
     const functionString = simplify(generate(this.node))
     function formatPhrasing(types: Type[]) {
       switch (types.length) {
-        case 0:
-          return 'no arguments,'
+        // there will at least be one argument
         case 1:
           return `an argument of type:
       ${typeToString(types[0])}`
@@ -275,6 +274,27 @@ export class InvalidTestConditionError implements SourceError {
       ${exprString}
     to have type boolean, but instead it is type:
       ${typeToString(this.receivedType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class UndefinedIdentifierError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return stripIndent`
+    Undefined identifier '${this.name}' detected
     `
   }
 

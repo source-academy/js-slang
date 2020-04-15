@@ -1,4 +1,3 @@
-// TODO delete this
 import * as es from 'estree'
 import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from '../types'
 
@@ -44,12 +43,6 @@ export class UnifyError extends InternalTypeError {
 export class InternalDifferentNumberArgumentsError extends InternalTypeError {
   constructor(public numExpectedArgs: number, public numReceived: number) {
     super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
-  }
-}
-
-export class InternalInvalidArgumentTypesError extends InternalTypeError {
-  constructor(public expectedTypes: Type[], receivedTypes: Type[]) {
-    super('Failed to unify types')
   }
 }
 

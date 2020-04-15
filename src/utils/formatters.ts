@@ -25,7 +25,7 @@ export function stripIndent(content: TemplateStringsArray | string, ...variables
 }
 
 export function simplify(content: string, maxLength = 15, separator = '...') {
-  if (content.length < 15) {
+  if (content.length < maxLength) {
     return content
   }
   const charsToTake = Math.ceil(maxLength - separator.length / 2)

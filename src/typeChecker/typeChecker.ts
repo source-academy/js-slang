@@ -29,7 +29,8 @@ import {
   DifferentAssignmentError,
   ReassignConstError,
   ArrayAssignmentError,
-  InvalidArrayIndexType
+  InvalidArrayIndexType,
+  UndefinedIdentifierError
 } from '../errors/typeErrors'
 import { typeToString } from '../utils/stringify'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
@@ -116,18 +117,12 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'ReturnStatement': {
-      const arg = node.argument
-      if (arg === undefined || arg === null) {
-        return
-      }
+      const arg = node.argument!
       traverse(arg, constraints)
       break
     }
     case 'VariableDeclaration': {
-      const init = node.declarations[0].init
-      if (init === undefined || init === null) {
-        return
-      }
+      const init = node.declarations[0].init!
       traverse(init, constraints)
       break
     }
@@ -228,14 +223,10 @@ export function typeCheck(
   typeErrors = []
   const env: Env = cloneEnv(initialEnv)
   const constraints: Constraint[] = []
-  try {
-    traverse(program)
-    infer(program, env, constraints, true)
-    traverse(program, constraints)
-    return [program, typeErrors]
-  } catch (e) {
-    throw e
-  }
+  traverse(program)
+  infer(program, env, constraints, true)
+  traverse(program, constraints)
+  return [program, typeErrors]
 }
 
 /**
@@ -691,9 +682,6 @@ function _infer(
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'ReturnStatement': {
-      if (node.argument === undefined || node.argument === null) {
-        throw Error('Node argument cannot be undefined or null')
-      }
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       return infer(
         argNode,
@@ -876,7 +864,8 @@ function _infer(
           return addToConstraintList(constraints, [storedType, envType])
         }
       }
-      throw Error(`Undefined identifier: ${identifierName}`)
+      typeErrors.push(new UndefinedIdentifierError(node, identifierName))
+      return constraints
     }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
