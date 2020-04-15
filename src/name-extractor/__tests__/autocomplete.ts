@@ -430,3 +430,46 @@ test('Test that local and global variables are available in return statements', 
   ]
   expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
 })
+
+// Declarations
+test('Test that no prompts are returned when user is declaring variable', async () => {
+  const code: string = '\
+    let bar = 1;\n\
+    let b\n\
+  '
+  const line = 2
+  const col = 9
+  const [extractedNames] = await getNames(code, line, col, createContext(0))
+  const expectedNames: NameDeclaration[] = []
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
+
+// Builtins
+test('Test that builtins are prompted', async () => {
+  const code: string = 'w'
+  const line = 1
+  const col = 1
+  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const expectedNames: NameDeclaration[] = [
+    { name: 'function', meta: 'keyword', score: 20000 },
+    { name: 'const', meta: 'keyword', score: 20000 },
+    { name: 'let', meta: 'keyword', score: 20000 },
+    { name: 'while', meta: 'keyword', score: 20000 },
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'for', meta: 'keyword', score: 20000 }
+  ]
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
+
+test('Test that unavailable builtins are not prompted', async () => {
+  const code: string = 'w'
+  const line = 1
+  const col = 1
+  const [extractedNames] = await getNames(code, line, col, createContext(1))
+  const expectedNames: NameDeclaration[] = [
+    { name: 'function', meta: 'keyword', score: 20000 },
+    { name: 'const', meta: 'keyword', score: 20000 },
+    { name: 'if', meta: 'keyword', score: 20000 }
+  ]
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
