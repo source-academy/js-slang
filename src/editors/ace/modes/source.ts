@@ -1,4 +1,5 @@
 import { Variant } from '../../../types'
+import { SourceDocumentation } from '../docTooltip'
 
 /* tslint:disable */
 
@@ -8,11 +9,12 @@ import { Variant } from '../../../types'
  * The link to the original JavaScript mode can be found here:
  * https://github.com/ajaxorg/ace-builds/blob/master/src/mode-javascript.js
  *
- * This is by now only a base line for future modifications
- *
  * Changes includes:
  * 1) change code styles so that it passes tslint test
  * 2) refactor some code to ES2015 class syntax
+ * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
+ * 4) changed regex to mark certain operators in pink
+ * 5) use SourceDocumentation to include all library functions and constants from source
  */
 export function HighlightRulesSelector(id: number, variant: Variant = 'default') {
   // @ts-ignore
@@ -25,92 +27,48 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
     var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
-    const chapter1 = {
-      keywords: 'const|else|if|return|function',
-      functions:
-        'display|error|is_boolean|is_function|is_number|is_string|is_undefined|' +
-        'math_abs|math_acos|math_acosh|math_asin|math_asinh|math_atan|' +
-        'math_atan2|math_atanh|math_cbrt|math_ceil|math_clz32|' +
-        'math_cos|math_cosh|math_exp|math_expm1|math_floor|math_fround|math_hypot|math_imul|' +
-        'math_log|math_log1p|math_log2|math_log10|math_max|math_min|math_pow|math_random|' +
-        'math_round|math_sign|math_sin|math_sinh|math_sqrt|math_tan|math_tanh|' +
-        'math_tanh|math_trunc|parse_int|prompt|runtime|stringify'
+    function getAllFunctionNames(chapter: string) {
+      let func = ''
+      for (let name in SourceDocumentation.builtins[chapter]) {
+        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'func') {
+          func += '|' + name
+        }
+      }
+      return func.substr(1)
     }
 
-    const chapter2 = {
-      keywords: '',
-      functions:
-        'accumulate|append|build_list|' +
-        'draw_data|enum_list|equal|error|filter|for_each|head|' +
-        'is_pair|length|list|list_ref|list_to_string|' +
-        'map|member|pair|parse_int|prompt|remove|remove_all|reverse|runtime|tail'
-    }
-
-    const chapter3 = {
-      keywords: 'while|for|break|continue|let',
-      functions:
-        'array_length|build_stream|enum_stream|' +
-        'eval_stream|integers_from|is_array|is_stream|' +
-        'list_to_stream|set_head|set_tail|stream|stream_append|' +
-        'stream_filter|stream_for_each|stream_length|' +
-        'stream_map|stream_member|stream_ref|stream_remove|' +
-        'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
-    }
-
-    const concurrent = {
-      keywords: '',
-      functions: 'test_and_set|clear|concurrent_execute'
-    }
-
-    const chapter4 = {
-      keywords: '',
-      functions: 'apply_in_underlying_javascript'
+    function getAllConstantName(chapter: string) {
+      let constants = 'null'
+      for (let name in SourceDocumentation.builtins[chapter]) {
+        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'const') {
+          constants += '|' + name
+        }
+      }
+      return constants
     }
 
     const ChapterFunctionNameSelector = () => {
-      let output = ''
-      if (id >= 1) {
-        output += chapter1.functions
+      if (variant === 'default') {
+        return getAllFunctionNames(id.toString())
+      } else {
+        return getAllFunctionNames(id.toString() + '_' + variant)
       }
-      if (id >= 2) {
-        output += '|' + chapter2.functions
-      }
-      if (id >= 3) {
-        output += '|' + chapter3.functions
-      }
-      if (id >= 4) {
-        output += '|' + chapter4.functions
-      }
-      if (variant === 'concurrent') {
-        output += '|' + concurrent.functions
-      }
-      return output
     }
 
     const ChapterKeywordSelector = () => {
       let output = ''
       if (id >= 1) {
-        output += chapter1.keywords
-      }
-      if (id >= 2) {
-        output += '|' + chapter2.keywords
+        output += 'const|else|if|return|function'
       }
       if (id >= 3) {
-        output += '|' + chapter3.keywords
-      }
-      if (id >= 4) {
-        output += '|' + chapter4.keywords
+        output += '|while|for|break|continue|let'
       }
       return output
     }
 
     const ChapterForbbidenWordSelector = () => {
-      if (id === 1) {
-        return chapter2.keywords + '|' + chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 2) {
-        return chapter3.keywords + '|' + chapter4.keywords
-      } else if (id === 3) {
-        return chapter4.keywords
+      if (id <= 3) {
+        return 'while|for|break|continue|let'
       } else {
         return ''
       }
@@ -121,9 +79,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language':
-            'null|Infinity|NaN|undefined|math_LN2|math_LN10|' +
-            'math_LOG2E|math_LOG10E|math_PI|math_SQRT1_2|math_SQRT2',
+          'constant.language': getAllConstantName(id.toString()),
 
           'constant.language.boolean': 'true|false',
 
