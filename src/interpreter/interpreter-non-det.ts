@@ -339,16 +339,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    const leftGenerator = evaluate(node.left, context)
-    for (const leftValue of leftGenerator) {
-      const rightGenerator = evaluate(node.right, context)
-      for (const rightValue of rightGenerator) {
-        const error = rttc.checkBinaryExpression(node, node.operator, leftValue, rightValue)
-        if (error) {
-          return handleRuntimeError(context, error)
-        }
-        yield evaluateBinaryExpression(node.operator, leftValue, rightValue)
+    const pairGenerator = cartesianProduct(context, [node.left, node.right], [])
+    for (const pair of pairGenerator) {
+      const leftValue = pair[0]
+      const rightValue = pair[1]
+      const error = rttc.checkBinaryExpression(node, node.operator, leftValue, rightValue)
+      if (error) {
+        return handleRuntimeError(context, error)
       }
+      yield evaluateBinaryExpression(node.operator, leftValue, rightValue)
     }
     return
   },
