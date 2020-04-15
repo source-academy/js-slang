@@ -11,18 +11,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 27,
-          "line": 147,
+          "line": 148,
         },
         "start": Position {
           "column": 19,
-          "line": 147,
+          "line": 148,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 148: Error: head(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -61,19 +61,19 @@ Object {
       "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
       "location": SourceLocation {
         "end": Position {
-          "column": 47,
-          "line": 147,
+          "column": 31,
+          "line": 149,
         },
         "start": Position {
-          "column": 39,
-          "line": 147,
+          "column": 23,
+          "line": 149,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 149: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -112,19 +112,19 @@ Object {
       "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
       "location": SourceLocation {
         "end": Position {
-          "column": 47,
-          "line": 147,
+          "column": 31,
+          "line": 149,
         },
         "start": Position {
-          "column": 39,
-          "line": 147,
+          "column": 23,
+          "line": 149,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 149: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -164,12 +164,12 @@ Object {
       "got": "string",
       "location": SourceLocation {
         "end": Position {
-          "column": 54,
-          "line": 147,
+          "column": 35,
+          "line": 149,
         },
         "start": Position {
-          "column": 49,
-          "line": 147,
+          "column": 32,
+          "line": 149,
         },
       },
       "severity": "Error",
@@ -177,7 +177,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 149: Expected number on left hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;

@@ -96,19 +96,15 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export const defineBuiltin = (context: Context, name: string, value: Value) => {
   if (typeof value === 'function') {
-
     let wrapped = (...args: any) => value(...args)
-    if (value.hasOwnProperty('isThunkAware')){
-      wrapped = Object.assign(
-        wrapped,
-        {isThunkAware : value.isThunkAware})
+    if (value.hasOwnProperty('isThunkAware')) {
+      wrapped = Object.assign(wrapped, { isThunkAware: value.isThunkAware })
     }
 
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
     defineSymbol(context, funName, wrapped)
-
   } else {
     defineSymbol(context, name, value)
   }
@@ -125,7 +121,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns, useLazyEval?: boolean) => {
+export const importBuiltins = (
+  context: Context,
+  externalBuiltIns: CustomBuiltIns,
+  useLazyEval?: boolean
+) => {
   ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value, s: string) =>
@@ -135,8 +135,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
-  const list = useLazyEval===true ? thunk_list : non_thunk_list
-  const stream = useLazyEval===true ? thunk_stream : non_thunk_stream
+  const list = useLazyEval === true ? thunk_list : non_thunk_list
+  const stream = useLazyEval === true ? thunk_stream : non_thunk_stream
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'runtime()', misc.runtime)
@@ -238,7 +238,6 @@ const createContext = <T>(
   useLazyEval?: boolean,
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
-
 ) => {
   const context = createEmptyContext(chapter, externalSymbols, externalContext)
 

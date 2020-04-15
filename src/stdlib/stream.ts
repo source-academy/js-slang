@@ -8,10 +8,9 @@ type Stream = null | Pair<any, () => Stream>
 
 export function stream_tail(xs: Stream) {
   let theTail
-  if (xs===null){
+  if (xs === null) {
     return null
-  }
-  else if (is_pair(xs)) {
+  } else if (is_pair(xs)) {
     theTail = xs[1]
   } else {
     throw new Error('stream_tail(xs) expects a pair as ' + 'argument xs, but encountered ' + xs)
@@ -33,15 +32,16 @@ export function stream_tail(xs: Stream) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 // Lazy? No: In this implementation, we generate first a
 //           complete list, and then a stream using list_to_stream
-export function stream(...elements: any[]):Stream {
+export function stream(...elements: any[]): Stream {
   return list_to_stream(list(...elements))
 }
 
-export function list_to_stream(xs: List):Stream {
-  if (is_null(xs)||is_pair(xs)){
+export function list_to_stream(xs: List): Stream {
+  if (is_null(xs) || is_pair(xs)) {
     return is_null(xs) ? null : pair(head(xs), () => list_to_stream(tail(xs)))
-  }
-  else{
-    throw new Error('list_to_stream(xs) expects a list as argument xs, but encountered ' + stringify(xs))
+  } else {
+    throw new Error(
+      'list_to_stream(xs) expects a list as argument xs, but encountered ' + stringify(xs)
+    )
   }
 }

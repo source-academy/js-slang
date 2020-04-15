@@ -41,7 +41,12 @@ export function createTestContext({
   chapter = 1,
   testBuiltins = {},
   lazyEvaluation = false
-}: { context?: TestContext; chapter?: number; testBuiltins?: TestBuiltins; lazyEvaluation?: boolean} = {}): TestContext {
+}: {
+  context?: TestContext
+  chapter?: number
+  testBuiltins?: TestBuiltins
+  lazyEvaluation?: boolean
+} = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
@@ -93,7 +98,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     await runInContext(code, interpretedTestContext, {
       scheduler,
       executionMethod: 'interpreter',
-      useLazyEval: useLazyEval
+      useLazyEval
     })
   )
   if (options.native) {

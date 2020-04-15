@@ -11,7 +11,6 @@ import { Evaluator, getArgs, apply } from './evaluatorUtils'
 import { transformLogicalExpression, reduceIf, evaluateBlockStatement } from './evaluatorUtils'
 import { makeThunkAware } from './thunk'
 
-
 export function getEvaluators(
   evaluate: Evaluator<es.Node>,
   forceEvaluate: Evaluator<es.Node>

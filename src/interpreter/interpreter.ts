@@ -37,7 +37,9 @@ export class ApplicativeOrderEvaluationInterpreter implements Interpreter {
   }
 
   constructor() {
-    this.boundedEvaluateForUser = this.boundedForceEvaluate = this.boundedEvaluate = this.evaluate.bind(this)
+    this.boundedEvaluateForUser = this.boundedForceEvaluate = this.boundedEvaluate = this.evaluate.bind(
+      this
+    )
     this.evaluators = getEvaluators(this.boundedEvaluate, this.boundedEvaluate)
   }
 }
@@ -72,8 +74,8 @@ export class LazyEvaluationInterpreter implements Interpreter {
     return new Thunk(node, context, this.boundedForceEvaluate)
   }
 
-  *evaluateForUser(node: es.Node, context: Context): IterableIterator<Value>{
-    const result = yield* this.forceEvaluate(node,context)
+  *evaluateForUser(node: es.Node, context: Context): IterableIterator<Value> {
+    const result = yield* this.forceEvaluate(node, context)
     return yield* deepDethunk(result)
   }
 
