@@ -616,7 +616,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       const b = a + 1;
       a + b + a * b;
       a === b;
-      b > a && b < a * b 
+      b > a && b < a * b
         ? b : a;
       a === 4 ? 6 : b === 4 ? 6 + 7 + a : 25;
       2 + (b > a ? b : a);
@@ -667,7 +667,7 @@ describe('typing some SICP Chapter 1 programs', () => {
   it('1.2.1', () => {
     const code = `
       function factorial(n) {
-        return n === 1 
+        return n === 1
               ? 1
               : n * factorial(n - 1);
       }
@@ -770,7 +770,7 @@ describe('typing some SICP Chapter 1 programs', () => {
           return counter === 0
                 ? product
                 : expt_iter(b,
-                            counter - 1, 
+                            counter - 1,
                             b * product);
       }
       function fast_expt(b, n) {
