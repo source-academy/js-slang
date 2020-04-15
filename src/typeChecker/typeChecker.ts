@@ -95,18 +95,12 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'ReturnStatement': {
-      const arg = node.argument
-      if (arg === undefined || arg === null) {
-        return
-      }
+      const arg = node.argument!
       traverse(arg, constraints)
       break
     }
     case 'VariableDeclaration': {
-      const init = node.declarations[0].init
-      if (init === undefined || init === null) {
-        return
-      }
+      const init = node.declarations[0].init!
       traverse(init, constraints)
       break
     }
@@ -182,14 +176,10 @@ export function typeCheck(
   typeErrors = []
   const env: Env = new Map(initialEnv)
   const constraints: Constraint[] = []
-  try {
-    traverse(program)
-    infer(program, env, constraints, true)
-    traverse(program, constraints)
-    return [program, typeErrors]
-  } catch (e) {
-    throw e
-  }
+  traverse(program)
+  infer(program, env, constraints, true)
+  traverse(program, constraints)
+  return [program, typeErrors]
 }
 
 /**
@@ -579,9 +569,6 @@ function _infer(
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'ReturnStatement': {
-      if (node.argument === undefined || node.argument === null) {
-        throw Error('Node argument cannot be undefined or null')
-      }
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       return infer(
         argNode,
@@ -749,10 +736,7 @@ function _infer(
       return infer(bodyNode, newEnv, newConstraints)
     }
     case 'VariableDeclaration': {
-      const initNode = node.declarations[0].init
-      if (!initNode) {
-        throw Error('No initialization')
-      }
+      const initNode = node.declarations[0].init!
       return infer(initNode, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'FunctionDeclaration': {
