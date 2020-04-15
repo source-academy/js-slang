@@ -1,4 +1,5 @@
 import { Variant } from '../../../types'
+import { SourceDocumentation } from '../docTooltip'
 
 /* tslint:disable */
 
@@ -25,47 +26,106 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
     var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
+    let func1 = ''
+    for (let name in SourceDocumentation.builtins['1']) {
+      if (SourceDocumentation.builtins['1'][name]['meta'] === 'func') {
+        func1 += '|' + name
+      }
+    }
+    func1 = func1.substr(1)
+
     const chapter1 = {
       keywords: 'const|else|if|return|function',
-      functions:
-        'display|error|is_boolean|is_function|is_number|is_string|is_undefined|' +
-        'math_abs|math_acos|math_acosh|math_asin|math_asinh|math_atan|' +
-        'math_atan2|math_atanh|math_cbrt|math_ceil|math_clz32|' +
-        'math_cos|math_cosh|math_exp|math_expm1|math_floor|math_fround|math_hypot|math_imul|' +
-        'math_log|math_log1p|math_log2|math_log10|math_max|math_min|math_pow|math_random|' +
-        'math_round|math_sign|math_sin|math_sinh|math_sqrt|math_tan|math_tanh|' +
-        'math_tanh|math_trunc|parse_int|prompt|runtime|stringify'
+      functions: func1
     }
+
+    let func2 = ''
+
+    for (let name in SourceDocumentation.builtins['2']) {
+      if (
+        SourceDocumentation.builtins['2'][name]['meta'] === 'func' &&
+        !(name in SourceDocumentation.builtins['1'])
+      ) {
+        func2 += '|' + name
+      }
+    }
+
+    func2 = func2.substr(1)
 
     const chapter2 = {
       keywords: '',
-      functions:
-        'accumulate|append|build_list|' +
-        'draw_data|enum_list|equal|error|filter|for_each|head|' +
-        'is_pair|length|list|list_ref|list_to_string|' +
-        'map|member|pair|parse_int|prompt|remove|remove_all|reverse|runtime|tail'
+      functions: func2
     }
+
+    let func3 = ''
+
+    for (let name in SourceDocumentation.builtins['3']) {
+      if (
+        SourceDocumentation.builtins['3'][name]['meta'] === 'func' &&
+        !(name in SourceDocumentation.builtins['2'])
+      ) {
+        func3 += '|' + name
+      }
+    }
+    func3 = func3.substr(1)
 
     const chapter3 = {
       keywords: 'while|for|break|continue|let',
-      functions:
-        'array_length|build_stream|enum_stream|' +
-        'eval_stream|integers_from|is_array|is_stream|' +
-        'list_to_stream|set_head|set_tail|stream|stream_append|' +
-        'stream_filter|stream_for_each|stream_length|' +
-        'stream_map|stream_member|stream_ref|stream_remove|' +
-        'stream_remove_all|stream_reverse|stream_tail|stream_to_list'
+      functions: func3
     }
+
+    let func_concurrent = ''
+
+    for (let name in SourceDocumentation.builtins['3_concurrent']) {
+      if (
+        SourceDocumentation.builtins['3_concurrent'][name]['meta'] === 'func' &&
+        !(name in SourceDocumentation.builtins['2'])
+      ) {
+        func_concurrent += '|' + name
+      }
+    }
+
+    func_concurrent = func_concurrent.substr(1)
 
     const concurrent = {
       keywords: '',
-      functions: 'test_and_set|clear|concurrent_execute'
+      functions: func_concurrent
     }
+
+    let func4 = ''
+    let constants = ''
+
+    for (let name in SourceDocumentation.builtins['4']) {
+      if (
+        SourceDocumentation.builtins['4'][name]['meta'] === 'func' &&
+        !(name in SourceDocumentation.builtins['3'])
+      ) {
+        func4 += '|' + name
+      }
+    }
+
+    func4 = func4.substr(1)
+    constants = constants.substr(1)
 
     const chapter4 = {
       keywords: '',
-      functions: 'apply_in_underlying_javascript'
+      functions: func4
     }
+
+    /*
+    let ext = '';
+    for (let name in SourceDocumentation.ext_lib) {
+      if (SourceDocumentation.ext_lib[name]['meta'] === 'func'
+        && !(name in SourceDocumentation.builtins['1'])) {
+          ext += '|' + name;
+      }
+    }
+
+    const ext_lib = {
+      keywords: '',
+      functions: ext
+    }
+    */
 
     const ChapterFunctionNameSelector = () => {
       let output = ''
@@ -121,9 +181,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language':
-            'null|Infinity|NaN|undefined|math_LN2|math_LN10|' +
-            'math_LOG2E|math_LOG10E|math_PI|math_SQRT1_2|math_SQRT2',
+          'constant.language': 'null|' + constants,
 
           'constant.language.boolean': 'true|false',
 
