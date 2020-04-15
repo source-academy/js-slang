@@ -123,31 +123,38 @@ function convertNativeErrorToSourceError(
 
 let previousCode = ''
 
-function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
-  let isNativeRunnable
-  if (theOptions.executionMethod === 'auto') {
-    if (context.executionMethod === 'auto') {
-      if (verboseErrors) {
-        isNativeRunnable = false
-      } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
-      } else {
-        let hasDeuggerStatement = false
-        simple(program, {
-          DebuggerStatement(node: DebuggerStatement) {
-            hasDeuggerStatement = true
-          }
-        })
-        isNativeRunnable = !hasDeuggerStatement
-      }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
-    }
-  } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
+function determineExecutionMethod(
+  theOptions: IOptions,
+  context: Context,
+  program: Program
+): 'native' | 'interpreter' {
+  if (theOptions.executionMethod !== 'auto') {
+    return theOptions.executionMethod
   }
-  return isNativeRunnable
+  if (context.executionMethod !== 'auto') {
+    return context.executionMethod
+  }
+  if (verboseErrors) {
+    return 'interpreter'
+  }
+  if (areBreakpointsSet()) {
+    return 'interpreter'
+  }
+  if (context.variant === 'lazy') {
+    return 'interpreter'
+  }
+
+  let hasDebuggerStatement = false
+  simple(program, {
+    DebuggerStatement(node: DebuggerStatement) {
+      hasDebuggerStatement = true
+    }
+  })
+
+  if (hasDebuggerStatement) {
+    return 'interpreter'
+  }
+  return 'native'
 }
 
 export async function runInContext(
@@ -190,14 +197,14 @@ export async function runInContext(
       value: steps.map(codify)
     } as Result)
   }
-  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+  const executionMethod = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
     await runInContext(prelude, context, options)
     return runInContext(code, context, options)
   }
-  if (isNativeRunnable) {
+  if (executionMethod === 'native') {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {

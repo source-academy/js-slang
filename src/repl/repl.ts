@@ -60,8 +60,7 @@ function main() {
     const executionMethod =
       process.argv.length > 3 && process.argv[3] === 'interpreter' ? 'interpreter' : 'auto'
 
-    const useLazyEval =
-      !useSubst && executionMethod === 'interpreter' && process.argv.includes('lazy')
+    const useLazyEval = !useSubst && process.argv.includes('lazy')
     startRepl(chapter, useLazyEval ? 'lazy' : 'default', useSubst, executionMethod, '')
   }
 }
