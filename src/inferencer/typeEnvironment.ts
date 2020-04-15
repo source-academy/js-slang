@@ -51,7 +51,7 @@ export function updateTypeEnvironment(program: es.Program) {
     const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
 
-    // Todo: How to tell if the function declared is polymorphic? (w/o evaluating the body)
+    // TODO: How to tell if the function declared is polymorphic? (w/o evaluating the body)
     // From the return statement's type variable obj?
     const isPolymorphic = true // set all to true for now and see what happens
     // ...

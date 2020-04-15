@@ -36,8 +36,6 @@ function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
     literal.inferredType = booleanType
   } else if (typeof valueOfLiteral === 'string') {
     literal.inferredType = stringType
-  } else if (typeof valueOfLiteral === 'undefined') {
-    literal.inferredType = undefinedType
   } else {
     literal.typability = 'Untypable'
     return
@@ -46,7 +44,6 @@ function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   // e.g. Given: 1^T2, Set: T2 = number
   // e.g. Given: true^T2, Set: T2 = boolean
   // e.g. Given: 'hi'^T2, Set: T2 = string
-  // todo: undefined gives an object in type environment, handle properly
   addTypeConstraintForLiteralPrimitive(literal)
 }
 
@@ -54,7 +51,7 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   // Update type constraints in constraintStore
   // e.g. Given: x^T2, Set: T2 = Γ[x]
   const idenTypeVariable = identifier.typeVariable as Variable
-  const idenTypeEnvType = primitiveMap.get(identifier.name).types[0] // Type obj
+  const idenTypeEnvType = primitiveMap.get(identifier.name).types[0]
 
   if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
     const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
@@ -66,7 +63,7 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
     }
   }
 
-  // declare - Todo: do I need to declare? TBC
+  // TODO: do I need to declare? TBC
   // - not necessary since it itself is 'not a type'? e.g. 'x;' -> there's no type to x? - TBC
   // identifier.inferredType = {
   //   kind: '??',
@@ -96,7 +93,7 @@ function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.Vari
 
   // if manage to pass step 3, means no type error
 
-  // declare - Todo: do I need to declare? TBC
+  // declare - TODO: do I need to declare? TBC
   // - not necessary since no one is dependent on constantDeclaration's inferredType?? - TBC
   // - plus not sure what to put in 'kind' and 'name' also
   // constantDeclaration.inferredType = {
@@ -172,10 +169,10 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
 
   // Update type constraints in constraintStore
   // e.g. Given: (x^T1 * 1^T2)^T3, Set: T1 = number, T2 = number, T3 = number
-  const param1 = binaryExpression.left as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
+  const param1 = binaryExpression.left as TypeAnnotatedNode<es.Node>
   const param1TypeVariable = param1.typeVariable as Variable
 
-  const param2 = binaryExpression.right as TypeAnnotatedNode<es.Node> // can be identifier or literal or something else?
+  const param2 = binaryExpression.right as TypeAnnotatedNode<es.Node>
   const param2TypeVariable = param2.typeVariable as Variable
 
   const resultTypeVariable = binaryExpression.typeVariable as Variable
@@ -188,7 +185,7 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
           `Expecting type \`${param1Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
           param1.loc
         )
-      else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param1.loc)
+      else displayErrorAndTerminate('Polymorphic type error when type checking first argument, error msg TBC', param1.loc)
     }
   }
 
@@ -200,7 +197,7 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
           `Expecting type \`${param2Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
           param2.loc
         )
-      else displayErrorAndTerminate('Polymorphic type error, error msg TBC', param2.loc)
+      else displayErrorAndTerminate('Polymorphic type error when type checking second argument, error msg TBC', param2.loc)
     }
   }
 
@@ -216,7 +213,7 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
     }
   }
 
-  // declare - Todo: do I need to declare? TBC
+  // declare - TODO: do I need to declare? TBC
   // binaryExpression.inferredType = {
   //   kind : 'primitive',
   //   name: resultType
@@ -233,7 +230,6 @@ function inferConditionals(
   const alternate = conditionalExpression.alternate as TypeAnnotatedNode<es.Expression>
 
   // check that the type of the test expression is boolean
-  // const testTypeVariable = (test.typeVariable as Variable).id
   const testTypeVariable = test.typeVariable as Variable
   if (testTypeVariable !== undefined) {
     const result = updateTypeConstraints(testTypeVariable, booleanType)
@@ -370,7 +366,6 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   }
 
   for (let i = 0; i < applicationArgs.length; i++) {
-    // add type constraint for each arg
     const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
     const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i]
       .typeVariable as Variable
@@ -406,9 +401,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
 function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Literal>) {
   // Update type constraints in constraintStore
   // e.g. Given: 1^T2, Set: T2 = number
-  // const lhsVariableId = (literal.typeVariable as Variable).id
   const literalTypeVariable = literal.typeVariable as Variable
-  // const rhsType = (literal.inferredType as Primitive).name
   const literalType = literal.inferredType as Primitive
 
   if (literalTypeVariable !== undefined && literalType !== undefined) {
