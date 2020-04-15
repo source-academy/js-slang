@@ -9,7 +9,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value } from './types'
+import {Context, CustomBuiltIns, EvaluationMethod, Value} from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
@@ -50,7 +50,8 @@ const createGlobalEnvironment = () => ({
 export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
-  externalContext?: T
+  externalContext?: T,
+  evalMethod : EvaluationMethod = 'strict'
 ): Context<T> => {
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
@@ -70,7 +71,7 @@ export const createEmptyContext = <T>(
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto',
-    evaluationMethod: 'strict'
+    evaluationMethod: evalMethod
   }
 }
 
@@ -134,7 +135,6 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 export const importBuiltins = (
   context: Context,
   externalBuiltIns: CustomBuiltIns,
-  lazy: boolean = false
 ) => {
   ensureGlobalEnvironmentExist(context)
 
@@ -171,7 +171,7 @@ export const importBuiltins = (
   if (context.chapter >= 2) {
     // List library
 
-    if (lazy) {
+    if (context.evaluationMethod === 'lazy') {
       defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
       defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false))
       defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
@@ -255,11 +255,10 @@ const createContext = <T>(
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
-  lazy: boolean = false
+  evaluationMethod: EvaluationMethod = 'strict'
 ) => {
-  const context = createEmptyContext(chapter, externalSymbols, externalContext)
-  context.evaluationMethod = lazy ? 'lazy' : 'strict'
-  importBuiltins(context, externalBuiltIns, lazy)
+  const context = createEmptyContext(chapter, externalSymbols, externalContext, evaluationMethod)
+  importBuiltins(context, externalBuiltIns)
   importPrelude(context)
   importExternalSymbols(context, externalSymbols)
 

@@ -71,7 +71,7 @@ export function createTestContext({
             testContext.visualiseListResult.push(value)
           }
         } as CustomBuiltIns,
-        evaluationMethod === 'lazy'
+        evaluationMethod
       ),
       displayResult: [],
       promptResult: [],

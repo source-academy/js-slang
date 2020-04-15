@@ -18,7 +18,7 @@ function startRepl(
     undefined,
     undefined,
     undefined,
-    evaluationMethod === 'lazy'
+    evaluationMethod
   )
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
