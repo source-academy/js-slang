@@ -61,6 +61,7 @@ function main() {
   const opt = require('node-getopt')
     .create([
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
+      ['v', 'variant=VARIANT', 'set the Source variant (i.e., lazy, non-det, concurrent, wasm)', 'default'],
       ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
       ['i', 'interpreter', 'use the interpreter for execution'],
@@ -72,7 +73,7 @@ function main() {
     .parseSystem()
 
   const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
-  const variant = opt.options.lazy === true ? 'lazy' : 'default'
+  const variant = opt.options.lazy === true ? 'lazy' : opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
