@@ -61,6 +61,7 @@ export function getKeywords(
     return []
   }
 
+  // In the init part of a for statement, `let` is the only valid keyword
   if (
     ancestors[0].type === 'ForStatement' &&
     identifier === (ancestors[0] as es.ForStatement).init
@@ -72,12 +73,15 @@ export function getKeywords(
 
   const keywordSuggestions: NameDeclaration[] = []
 
+  // Suggest `return` only inside functions
   if (
     ancestors.some(node => isFunction(node)) &&
     context.chapter >= syntaxBlacklist.ReturnStatement
   ) {
     keywordSuggestions.push({ name: 'return', meta: 'keyword', score: 20000 })
   }
+
+  // The rest of the keywords are only valid at the beginning of a statement
   if (
     ancestors[0].type === 'ExpressionStatement' &&
     ancestors[0].loc!.start === identifier.loc!.start
@@ -139,6 +143,7 @@ export function getProgramNames(
     }
   }
 
+  // Do not prompt user if he is declaring a variable
   for (const nameNode of nameQueue) {
     if (cursorInIdentifier(nameNode, n => cursorInLoc(n.loc))) {
       return [[], false]
@@ -256,6 +261,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
         }
 
         if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
+          // constant initialized with arrow function will always be a function
           delcarations.push({ name, meta: KIND_FUNCTION })
         } else {
           delcarations.push({ name, meta: node.kind })
