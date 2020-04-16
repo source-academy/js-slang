@@ -1,4 +1,4 @@
-import { simple } from 'acorn-walk/dist/walk'
+import { simple, findNodeAt } from 'acorn-walk/dist/walk'
 import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
@@ -27,7 +27,8 @@ import {
   Result,
   Scheduler,
   SourceError,
-  Variant
+  Variant,
+  TypeAnnotatedNode
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
@@ -35,7 +36,10 @@ import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import { getProgramNames } from './name-extractor'
+import { getProgramNames, getKeywords } from './name-extractor'
+import * as es from 'estree'
+import { typeCheck } from './typeChecker/typeChecker'
+import { typeToString } from './utils/stringify'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -219,13 +223,200 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
-export async function getNames(code: string, line: number, col: number): Promise<any> {
+export async function getNames(
+  code: string,
+  line: number,
+  col: number,
+  context: Context
+): Promise<any> {
   const [program, comments] = parseForNames(code)
 
   if (!program) {
     return []
   }
-  return getProgramNames(program, comments, { line, column: col })
+  const cursorLoc: es.Position = { line, column: col }
+
+  const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
+  const keywords = getKeywords(program, cursorLoc, context)
+  return [progNames.concat(keywords), displaySuggestions]
+}
+
+function typedParse(code: any, context: Context) {
+  const program: any = parse(code, context)
+  if (program === undefined) {
+    return null
+  }
+  return validateAndAnnotate(program, context)
+}
+
+/*
+function getStringRepresentation(
+  node:
+    | TypeAnnotatedNode<es.VariableDeclaration>
+    | TypeAnnotatedNode<es.FunctionDeclaration>
+    | TypeAnnotatedNode<es.BlockStatement>,
+  lineNumber: number,
+  name: string
+): string {
+  if (node.type === 'BlockStatement') {
+    return node.body
+      .filter(
+        (
+          nd:
+            | TypeAnnotatedNode<es.VariableDeclaration>
+            | TypeAnnotatedNode<es.FunctionDeclaration>
+            | TypeAnnotatedNode<es.BlockStatement>
+        ) => {
+          if (nd.type === 'BlockStatement') {
+            return true
+          }
+          return isFiltered(nd, lineNumber, name)
+        }
+      )
+      .map(
+        (
+          nd:
+            | TypeAnnotatedNode<es.VariableDeclaration>
+            | TypeAnnotatedNode<es.FunctionDeclaration>
+            | TypeAnnotatedNode<es.BlockStatement>
+        ) => getStringRepresentation(nd, lineNumber, name)
+      )
+      .join('\n')
+  } else {
+    const id =
+      node.type === 'VariableDeclaration'
+        ? (node.declarations[0].id as es.Identifier).name
+        : node.id?.name!
+    const actualNode =
+      node.type === 'VariableDeclaration'
+        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        : node
+    const type =
+      actualNode.typability === 'Untypable'
+        ? "Couldn't infer type"
+        : typeToString(
+            actualNode.type === 'FunctionDeclaration'
+              ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+              : actualNode.inferredType!
+          )
+    return `${id}: ${type}`
+  }
+}
+
+function isFiltered(
+  node:
+    | TypeAnnotatedNode<es.VariableDeclaration>
+    | TypeAnnotatedNode<es.FunctionDeclaration>
+    | TypeAnnotatedNode<es.BlockStatement>,
+  lineNumber: number,
+  name: string
+) {
+  const loc = node.loc
+  if (loc === null || loc === undefined) {
+    return false
+  }
+  if (node.type === 'BlockStatement') {
+    return true
+  }
+  const id =
+    node.type === 'VariableDeclaration'
+      ? (node.declarations[0].id as es.Identifier).name
+      : node.id?.name!
+  return (
+    ['VariableDeclaration', 'FunctionDeclaration', 'BlockStatement'].includes(node.type) &&
+    loc.start.line <= lineNumber &&
+    lineNumber <= loc.end.line &&
+    id === name
+  )
+}
+*/
+
+export function getTypeInformation(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number },
+  name: string
+): string {
+  const lineNumber = loc.line
+  const program = typedParse(code, context)
+  if (program === null) {
+    return ''
+  }
+  const typedProgram = typeCheck(program)[0]
+
+  if (!typedProgram) {
+    return ''
+  }
+
+  function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
+    if (!node.inferredType) {
+      return false
+    }
+    const location = node.loc
+    const nodeType = node.type
+    if (nodeType && location) {
+      let id = ''
+      if (node.type === 'Identifier') {
+        id = node.name
+      } else if (node.type === 'FunctionDeclaration') {
+        id = node.id?.name!
+      } else if (node.type === 'VariableDeclaration') {
+        id = (node.declarations[0].id as es.Identifier).name
+      }
+      return id === name && location.start.line <= loc.line && location.end.line >= loc.line
+    }
+    return false
+  }
+
+  // TODO: error handling
+
+  return typedProgram.body
+    .map((node: TypeAnnotatedNode<es.Node>) => {
+      const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+      if (res === undefined) {
+        return undefined
+      } else {
+        return res.node
+      }
+    })
+    .filter((node: TypeAnnotatedNode<es.Node>) => {
+      return node !== undefined
+    })
+    .map((node: TypeAnnotatedNode<es.Node>) => {
+      let id = ''
+      if (node.type === 'Identifier') {
+        id = node.name
+      } else if (node.type === 'FunctionDeclaration') {
+        id = node.id?.name!
+      } else if (node.type === 'VariableDeclaration') {
+        id = (node.declarations[0].id as es.Identifier).name
+      }
+      const type = typeToString(node.inferredType!)
+      return `At Line ${lineNumber} => ${id}: ${type}`
+    })
+    .slice(0, 1)
+    .join('\n')
+
+  /*
+  return typedProgram.body
+    .filter(
+      (
+        node:
+          | TypeAnnotatedNode<es.VariableDeclaration>
+          | TypeAnnotatedNode<es.FunctionDeclaration>
+          | TypeAnnotatedNode<es.BlockStatement>
+      ) => isFiltered(node, lineNumber, name)
+    )
+    .map(
+      (
+        node:
+          | TypeAnnotatedNode<es.VariableDeclaration>
+          | TypeAnnotatedNode<es.FunctionDeclaration>
+          | TypeAnnotatedNode<es.BlockStatement>
+      ) => getStringRepresentation(node, lineNumber, name)
+    )
+    .join('\n')
+    */
 }
 
 export async function runInContext(

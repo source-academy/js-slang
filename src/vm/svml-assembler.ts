@@ -39,8 +39,9 @@ function writeStringConstant(b: Buffer, s: string) {
 
   b.align(4)
   b.putU(16, 1)
-  b.putU(32, sBytes.byteLength)
+  b.putU(32, sBytes.byteLength + 1)
   b.putA(sBytes)
+  b.putU(8, 0)
 }
 
 function serialiseFunction(f: SVMFunction): ImFunction {
