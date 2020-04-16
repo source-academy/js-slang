@@ -456,6 +456,7 @@ test('Test that builtins are prompted', async () => {
     { name: 'let', meta: 'keyword', score: 20000 },
     { name: 'while', meta: 'keyword', score: 20000 },
     { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 },
     { name: 'for', meta: 'keyword', score: 20000 }
   ]
   expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
@@ -469,7 +470,8 @@ test('Test that unavailable builtins are not prompted', async () => {
   const expectedNames: NameDeclaration[] = [
     { name: 'function', meta: 'keyword', score: 20000 },
     { name: 'const', meta: 'keyword', score: 20000 },
-    { name: 'if', meta: 'keyword', score: 20000 }
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 }
   ]
   expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
 })

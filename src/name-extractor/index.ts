@@ -32,13 +32,18 @@ function isDummyName(name: string): boolean {
 }
 
 // Ensure that keywords are prioritized over names
-const keywords: { [key: string]: NameDeclaration } = {
-  FunctionDeclaration: { name: 'function', meta: 'keyword', score: 20000 },
-  VariableDeclaration: { name: 'const', meta: 'keyword', score: 20000 },
-  AssignmentExpression: { name: 'let', meta: 'keyword', score: 20000 },
-  WhileStatement: { name: 'while', meta: 'keyword', score: 20000 },
-  IfStatement: { name: 'if', meta: 'keyword', score: 20000 },
-  ForStatement: { name: 'for', meta: 'keyword', score: 20000 }
+const keywords: { [key: string]: NameDeclaration[] } = {
+  // Return cannot always be suggested so it is handled specially
+  // ReturnStatement: [{ name: 'return', meta: 'keyword', score: 20000 }],
+  FunctionDeclaration: [{ name: 'function', meta: 'keyword', score: 20000 }],
+  VariableDeclaration: [{ name: 'const', meta: 'keyword', score: 20000 }],
+  AssignmentExpression: [{ name: 'let', meta: 'keyword', score: 20000 }],
+  WhileStatement: [{ name: 'while', meta: 'keyword', score: 20000 }],
+  IfStatement: [
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 }
+  ],
+  ForStatement: [{ name: 'for', meta: 'keyword', score: 20000 }]
 }
 
 export function getKeywords(
@@ -61,19 +66,27 @@ export function getKeywords(
     identifier === (ancestors[0] as es.ForStatement).init
   ) {
     return context.chapter >= syntaxBlacklist.AssignmentExpression
-      ? [keywords.AssignmentExpression]
+      ? keywords.AssignmentExpression
       : []
   }
 
+  const keywordSuggestions: NameDeclaration[] = []
+
+  if (
+    ancestors.some(node => isFunction(node)) &&
+    context.chapter >= syntaxBlacklist.ReturnStatement
+  ) {
+    keywordSuggestions.push({ name: 'return', meta: 'keyword', score: 20000 })
+  }
   if (
     ancestors[0].type === 'ExpressionStatement' &&
     ancestors[0].loc!.start === identifier.loc!.start
   ) {
-    return Object.entries(keywords)
+    Object.entries(keywords)
       .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .map(([nodeType, decl]) => decl)
+      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
   }
-  return []
+  return keywordSuggestions
 }
 
 // Returns [suggestions, shouldPrompt].
