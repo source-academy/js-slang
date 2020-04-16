@@ -26,24 +26,37 @@ function isFunction(node: es.Node): boolean {
   )
 }
 
+function isLoop(node: es.Node): boolean {
+  return node.type === 'WhileStatement' || node.type === 'ForStatement'
+}
+
 // Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
   return name === '✖'
 }
 
+const KEYWORD_SCORE = 20000
+
 // Ensure that keywords are prioritized over names
-const keywords: { [key: string]: NameDeclaration[] } = {
-  // Return cannot always be suggested so it is handled specially
-  // ReturnStatement: [{ name: 'return', meta: 'keyword', score: 20000 }],
-  FunctionDeclaration: [{ name: 'function', meta: 'keyword', score: 20000 }],
-  VariableDeclaration: [{ name: 'const', meta: 'keyword', score: 20000 }],
-  AssignmentExpression: [{ name: 'let', meta: 'keyword', score: 20000 }],
-  WhileStatement: [{ name: 'while', meta: 'keyword', score: 20000 }],
+const keywordsInBlock: { [key: string]: NameDeclaration[] } = {
+  FunctionDeclaration: [{ name: 'function', meta: 'keyword', score: KEYWORD_SCORE }],
+  VariableDeclaration: [{ name: 'const', meta: 'keyword', score: KEYWORD_SCORE }],
+  AssignmentExpression: [{ name: 'let', meta: 'keyword', score: KEYWORD_SCORE }],
+  WhileStatement: [{ name: 'while', meta: 'keyword', score: KEYWORD_SCORE }],
   IfStatement: [
-    { name: 'if', meta: 'keyword', score: 20000 },
-    { name: 'else', meta: 'keyword', score: 20000 }
+    { name: 'if', meta: 'keyword', score: KEYWORD_SCORE },
+    { name: 'else', meta: 'keyword', score: KEYWORD_SCORE }
   ],
-  ForStatement: [{ name: 'for', meta: 'keyword', score: 20000 }]
+  ForStatement: [{ name: 'for', meta: 'keyword', score: KEYWORD_SCORE }]
+}
+
+const keywordsInLoop: { [key: string]: NameDeclaration[] } = {
+  BreakStatement: [{ name: 'break', meta: 'keyword', score: KEYWORD_SCORE }],
+  ContinueStatement: [{ name: 'continue', meta: 'keyword', score: KEYWORD_SCORE }]
+}
+
+const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
+  ReturnStatement: [{ name: 'return', meta: 'keyword', score: KEYWORD_SCORE }]
 }
 
 export function getKeywords(
@@ -67,18 +80,25 @@ export function getKeywords(
     identifier === (ancestors[0] as es.ForStatement).init
   ) {
     return context.chapter >= syntaxBlacklist.AssignmentExpression
-      ? keywords.AssignmentExpression
+      ? keywordsInBlock.AssignmentExpression
       : []
   }
 
   const keywordSuggestions: NameDeclaration[] = []
+  function addAllowedKeywords(keywords: { [key: string]: NameDeclaration[] }) {
+    Object.entries(keywords)
+      .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
+      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
+  }
 
-  // Suggest `return` only inside functions
-  if (
-    ancestors.some(node => isFunction(node)) &&
-    context.chapter >= syntaxBlacklist.ReturnStatement
-  ) {
-    keywordSuggestions.push({ name: 'return', meta: 'keyword', score: 20000 })
+  // Keywords only allowed in functions
+  if (ancestors.some(node => isFunction(node))) {
+    addAllowedKeywords(keywordsInFunction)
+  }
+
+  // Keywords only allowed in loops
+  if (ancestors.some(node => isLoop(node))) {
+    addAllowedKeywords(keywordsInLoop)
   }
 
   // The rest of the keywords are only valid at the beginning of a statement
@@ -86,10 +106,9 @@ export function getKeywords(
     ancestors[0].type === 'ExpressionStatement' &&
     ancestors[0].loc!.start === identifier.loc!.start
   ) {
-    Object.entries(keywords)
-      .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
+    addAllowedKeywords(keywordsInBlock)
   }
+
   return keywordSuggestions
 }
 
