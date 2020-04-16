@@ -91,22 +91,21 @@ export function getKeywords(
       .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
   }
 
-  // Keywords only allowed in functions
-  if (ancestors.some(node => isFunction(node))) {
-    addAllowedKeywords(keywordsInFunction)
-  }
-
-  // Keywords only allowed in loops
-  if (ancestors.some(node => isLoop(node))) {
-    addAllowedKeywords(keywordsInLoop)
-  }
-
   // The rest of the keywords are only valid at the beginning of a statement
   if (
     ancestors[0].type === 'ExpressionStatement' &&
     ancestors[0].loc!.start === identifier.loc!.start
   ) {
     addAllowedKeywords(keywordsInBlock)
+    // Keywords only allowed in functions
+    if (ancestors.some(node => isFunction(node))) {
+      addAllowedKeywords(keywordsInFunction)
+    }
+
+    // Keywords only allowed in loops
+    if (ancestors.some(node => isLoop(node))) {
+      addAllowedKeywords(keywordsInLoop)
+    }
   }
 
   return keywordSuggestions
