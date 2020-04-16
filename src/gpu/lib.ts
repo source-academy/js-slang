@@ -32,7 +32,7 @@ function checkArray(arr: any): boolean {
 function checkArray2D(arr: any, end: any): boolean {
   for (let i = 0; i < end[0]; i = i + 1) {
     for (let j = 0; j < end[1]; j = j + 1) {
-      if (arr[i] === undefined) return false
+      if (!Array.isArray(arr[i])) return false
     }
   }
   return true
@@ -43,7 +43,7 @@ function checkArray3D(arr: any, end: any): boolean {
   for (let i = 0; i < end[0]; i = i + 1) {
     for (let j = 0; j < end[1]; j = j + 1) {
       for (let k = 0; k < end[2]; k = k + 1) {
-        if (arr[i][j] === undefined) return false
+        if (!Array.isArray(arr[i][j])) return false
       }
     }
   }

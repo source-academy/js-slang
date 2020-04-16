@@ -330,7 +330,11 @@ class GPUTransformer {
       },
 
       AssignmentExpression(node: es.AssignmentExpression) {
-        const line = node.loc!.start
+        if (!node.loc) {
+          return
+        }
+
+        const line = node.loc.start
         if (line > lineEnd) {
           return
         }
