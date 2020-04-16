@@ -456,6 +456,7 @@ test('Test that builtins are prompted', async () => {
     { name: 'let', meta: 'keyword', score: 20000 },
     { name: 'while', meta: 'keyword', score: 20000 },
     { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 },
     { name: 'for', meta: 'keyword', score: 20000 }
   ]
   expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
@@ -469,7 +470,65 @@ test('Test that unavailable builtins are not prompted', async () => {
   const expectedNames: NameDeclaration[] = [
     { name: 'function', meta: 'keyword', score: 20000 },
     { name: 'const', meta: 'keyword', score: 20000 },
-    { name: 'if', meta: 'keyword', score: 20000 }
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 }
+  ]
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
+
+test('Test keywords in function', async () => {
+  const code: string = 'function foo() {r}'
+  const line = 1
+  const col = 17
+  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const expectedNames: NameDeclaration[] = [
+    { name: 'foo', meta: 'func', score: 0 },
+    { name: 'return', meta: 'keyword', score: 20000 },
+    { name: 'function', meta: 'keyword', score: 20000 },
+    { name: 'const', meta: 'keyword', score: 20000 },
+    { name: 'let', meta: 'keyword', score: 20000 },
+    { name: 'while', meta: 'keyword', score: 20000 },
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 },
+    { name: 'for', meta: 'keyword', score: 20000 }
+  ]
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
+
+test('Test keywords in while loop', async () => {
+  const code: string = 'while (true) {r}'
+  const line = 1
+  const col = 15
+  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const expectedNames: NameDeclaration[] = [
+    { name: 'break', meta: 'keyword', score: 20000 },
+    { name: 'continue', meta: 'keyword', score: 20000 },
+    { name: 'function', meta: 'keyword', score: 20000 },
+    { name: 'const', meta: 'keyword', score: 20000 },
+    { name: 'let', meta: 'keyword', score: 20000 },
+    { name: 'while', meta: 'keyword', score: 20000 },
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 },
+    { name: 'for', meta: 'keyword', score: 20000 }
+  ]
+  expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
+})
+
+test('Test keywords in for loop', async () => {
+  const code: string = 'for(;;){r}'
+  const line = 1
+  const col = 9
+  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const expectedNames: NameDeclaration[] = [
+    { name: 'break', meta: 'keyword', score: 20000 },
+    { name: 'continue', meta: 'keyword', score: 20000 },
+    { name: 'function', meta: 'keyword', score: 20000 },
+    { name: 'const', meta: 'keyword', score: 20000 },
+    { name: 'let', meta: 'keyword', score: 20000 },
+    { name: 'while', meta: 'keyword', score: 20000 },
+    { name: 'if', meta: 'keyword', score: 20000 },
+    { name: 'else', meta: 'keyword', score: 20000 },
+    { name: 'for', meta: 'keyword', score: 20000 }
   ]
   expect(new Set(extractedNames)).toMatchObject(new Set(expectedNames))
 })
