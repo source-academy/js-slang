@@ -35,7 +35,8 @@ import { validateAndAnnotate } from './validator/validator'
 import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import { getProgramNames } from './name-extractor'
+import { getProgramNames, getKeywords } from './name-extractor'
+import * as es from 'estree'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -219,13 +220,22 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
-export async function getNames(code: string, line: number, col: number): Promise<any> {
+export async function getNames(
+  code: string,
+  line: number,
+  col: number,
+  context: Context
+): Promise<any> {
   const [program, comments] = parseForNames(code)
 
   if (!program) {
     return []
   }
-  return getProgramNames(program, comments, { line, column: col })
+  const cursorLoc: es.Position = { line, column: col }
+
+  const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
+  const keywords = getKeywords(program, cursorLoc, context)
+  return [progNames.concat(keywords), displaySuggestions]
 }
 
 export async function runInContext(
