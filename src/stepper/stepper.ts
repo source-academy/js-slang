@@ -531,26 +531,33 @@ function reduceMain(
   let verbose = true
   function bodify(target: substituterNodes): string {
     const bodifiers = {
-      Literal: (target: es.Literal): string => target.raw !== undefined ? target.raw : String(target.value),
-  
+      Literal: (target: es.Literal): string =>
+        target.raw !== undefined ? target.raw : String(target.value),
+
       ExpressionStatement: (target: es.ExpressionStatement): string => bodify(target.expression),
-  
+
       FunctionDeclaration: (target: es.FunctionDeclaration): string => {
         const funcName = target.id !== null ? target.id.name : 'error'
-        return 'function ' + funcName + ' declared, parameter(s) ' + target.params.map(bodify) + ' required'
+        return (
+          'function ' +
+          funcName +
+          ' declared, parameter(s) ' +
+          target.params.map(bodify) +
+          ' required'
+        )
       },
-  
-      VariableDeclaration: (target: es.VariableDeclaration): string => 
-        'constant ' + bodify(target.declarations[0].id)  + ' declared and substituted into rest of block'
-      ,
-  
+
+      VariableDeclaration: (target: es.VariableDeclaration): string =>
+        'constant ' +
+        bodify(target.declarations[0].id) +
+        ' declared and substituted into rest of block',
       ReturnStatement: (target: es.ReturnStatement): string => {
         const arg = target.argument as es.Expression
         return isIrreducible(arg) ? bodify(arg) + ' returned' : 'error'
       },
-  
+
       Identifier: (target: es.Identifier): string => target.name,
-  
+
       CallExpression: (target: es.CallExpression): string => {
         if (target.callee.type === 'ArrowFunctionExpression') {
           return '(' + bodify(target.callee) + ')(' + target.arguments.map(bodify) + ')'
@@ -559,16 +566,17 @@ function reduceMain(
         }
       },
 
-      LogicalExpression: (target: es.LogicalExpression): string => bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
-  
-      BinaryExpression: (target: es.BinaryExpression): string => bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
-  
-      UnaryExpression: (target: es.UnaryExpression): string => target.operator + bodify(target.argument),
+      LogicalExpression: (target: es.LogicalExpression): string =>
+        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
 
-      ConditionalExpression: (target: es.ConditionalExpression): string => 
-        bodify(target.test) + ' ? ' + bodify(target.consequent) + ' : ' + bodify(target.alternate)
-      ,
+      BinaryExpression: (target: es.BinaryExpression): string =>
+        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
 
+      UnaryExpression: (target: es.UnaryExpression): string =>
+        target.operator + bodify(target.argument),
+
+      ConditionalExpression: (target: es.ConditionalExpression): string =>
+        bodify(target.test) + ' ? ' + bodify(target.consequent) + ' : ' + bodify(target.alternate),
       ArrowFunctionExpression: (target: es.ArrowFunctionExpression): string => {
         if (verbose) {
           verbose = false
@@ -579,79 +587,107 @@ function reduceMain(
           return target.params.map(bodify) + ' => ...'
         }
       },
-  
+
       FunctionExpression: (target: es.FunctionExpression): string => {
         const id = target.id
-        return (id === null || id === undefined) ? '...' : id.name
+        return id === null || id === undefined ? '...' : id.name
       },
-  
-      ArrayExpression: (target: es.ArrayExpression): string => target.elements.map(bodify).toString()
+
+      ArrayExpression: (target: es.ArrayExpression): string =>
+        target.elements.map(bodify).toString()
     }
-  
+
     const bodifier = bodifiers[target.type]
     return bodifier === undefined ? '...' : bodifier(target)
   }
-  
-  
+
   function explain(target: substituterNodes): string {
     const explainers = {
       Literal: (target: es.Literal): string => bodify(target),
-  
+
       Identifier: (target: es.Identifier): string => target.name,
-  
+
       CallExpression: (target: es.CallExpression): string => {
         if (target.callee.type === 'ArrowFunctionExpression') {
-          return target.arguments.map(bodify) + ' substituted into '+ target.callee.params.map(bodify) + ' of '+ bodify(target.callee)
+          return (
+            target.arguments.map(bodify) +
+            ' substituted into ' +
+            target.callee.params.map(bodify) +
+            ' of ' +
+            bodify(target.callee)
+          )
         } else if (target.callee.type === 'FunctionExpression') {
-          return 'function ' + bodify(target.callee) + ' takes in ' + target.arguments.map(bodify) + ' as input ' + target.callee.params.map(bodify)
+          return (
+            'function ' +
+            bodify(target.callee) +
+            ' takes in ' +
+            target.arguments.map(bodify) +
+            ' as input ' +
+            target.callee.params.map(bodify)
+          )
         } else {
-          return 'function ' + bodify(target.callee) + ' takes in ' + target.arguments.map(bodify) + ' and evaluates'
+          return (
+            'function ' +
+            bodify(target.callee) +
+            ' takes in ' +
+            target.arguments.map(bodify) +
+            ' and evaluates'
+          )
         }
       },
-  
-      BinaryExpression: (target: es.BinaryExpression): string => 'binary expression ' + bodify(target) + ' evaluated',
-  
+
+      BinaryExpression: (target: es.BinaryExpression): string =>
+        'binary expression ' + bodify(target) + ' evaluated',
+
       UnaryExpression: (target: es.UnaryExpression): string => {
-        return 'unary expression evaluated, ' + (
-          target.operator === '!' ? 'boolean ' : 'value '
-          ) + bodify(target.argument) + ' negated' 
+        return (
+          'unary expression evaluated, ' +
+          (target.operator === '!' ? 'boolean ' : 'value ') +
+          bodify(target.argument) +
+          ' negated'
+        )
       },
-  
+
       LogicalExpression: (target: es.LogicalExpression): string => {
-        return target.operator === '&&' 
-              ? ('AND operation evaluated, left of value is ' + 
-                (target.left 
-                  ? 'true, continue evaluating left of operator' 
-                  : 'false, stop evaluating')) 
-              : ('OR operation evaluated, left of value is ' + 
-                (target.left
-                  ? 'true, stop evaluating' 
-                  : 'false, continue evaluating left of operator'))
+        return target.operator === '&&'
+          ? 'AND operation evaluated, left of value is ' +
+              (target.left
+                ? 'true, continue evaluating left of operator'
+                : 'false, stop evaluating')
+          : 'OR operation evaluated, left of value is ' +
+              (target.left
+                ? 'true, stop evaluating'
+                : 'false, continue evaluating left of operator')
       },
-  
+
       ConditionalExpression: (target: es.ConditionalExpression): string => {
-        return 'condtional expression evaluated, condition is ' + 
-                (target.test
-                  ? 'true, consequent evaluated' 
-                  : 'false, alternate evaluated')
+        return (
+          'condtional expression evaluated, condition is ' +
+          (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
+        )
       },
-  
+
       Program: (target: es.Program): string => {
-        return bodify(target.body[0]) + (target.body[0].type === 'ExpressionStatement' ? ' finished evaluating' : '')
+        return (
+          bodify(target.body[0]) +
+          (target.body[0].type === 'ExpressionStatement' ? ' finished evaluating' : '')
+        )
       },
-  
+
       BlockExpression: (target: BlockExpression): string => bodify(target.body[0]),
-  
+
       BlockStatement: (target: es.BlockStatement): string => bodify(target.body[0]),
-  
+
       IfStatement: (target: es.IfStatement): string => {
-        return 'if statement evaluated, ' + 
-                (target.test
-                  ? 'condition true, proceed to if block' 
-                  : 'condition false, proceed to else block')
+        return (
+          'if statement evaluated, ' +
+          (target.test
+            ? 'condition true, proceed to if block'
+            : 'condition false, proceed to else block')
+        )
       }
     }
-  
+
     const explainer = explainers[target.type]
     return explainer === undefined ? '...' : explainer(target)
   }
@@ -803,7 +839,12 @@ function reduceMain(
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
         if (error === undefined) {
-          return [(test.value ? consequent : alternate) as es.Expression, context, paths, explain(node)]
+          return [
+            (test.value ? consequent : alternate) as es.Expression,
+            context,
+            paths,
+            explain(node)
+          ]
         } else {
           throw error
         }
@@ -888,7 +929,12 @@ function reduceMain(
           ]
         } else {
           if ((callee as es.Identifier).name.includes('math')) {
-            return [builtin.evaluateMath((callee as es.Identifier).name, ...args), context, paths, explain(node)]
+            return [
+              builtin.evaluateMath((callee as es.Identifier).name, ...args),
+              context,
+              paths,
+              explain(node)
+            ]
           }
           return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
         }
@@ -1295,7 +1341,12 @@ function reduceMain(
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
         if (error === undefined) {
-          return [(test.value ? consequent : alternate) as es.Statement, context, paths, explain(node)]
+          return [
+            (test.value ? consequent : alternate) as es.Statement,
+            context,
+            paths,
+            explain(node)
+          ]
         } else {
           throw error
         }
@@ -1940,7 +1991,12 @@ export function getEvaluationSteps(
     // and predefined fns.
     start = substPredefinedFns(start, context)[0]
     // then add in path
-    let reducedWithPath: [substituterNodes, Context, string[][], string] = [start, context, [], 'Start of evaluation']
+    let reducedWithPath: [substituterNodes, Context, string[][], string] = [
+      start,
+      context,
+      [],
+      'Start of evaluation'
+    ]
     let i = -1
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
       steps.push([
@@ -1951,11 +2007,7 @@ export function getEvaluationSteps(
       if (steps.length === 999) {
         steps[i][1] = reducedWithPath[2]
         steps[i][2] = reducedWithPath[3]
-        steps.push([
-          ast.program([]),
-          [],
-          'Maximum number of steps exceeded'
-        ])
+        steps.push([ast.program([]), [], 'Maximum number of steps exceeded'])
         break
       }
       steps.push([reducedWithPath[0] as es.Program, [], ''])
