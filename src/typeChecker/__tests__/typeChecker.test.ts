@@ -1654,49 +1654,49 @@ function make_account(balance) {
   })
   it('3.3.1', () => {
     const code1 = `
-      function front_ptr(queue) {
-        return head(queue);
-      }
-      function rear_ptr(queue) {
-        return tail(queue);
-      }
-      function set_front_ptr(queue, item) {
-        set_head(queue, item);
-      }
-      function set_rear_ptr(queue, item) {
-        set_tail(queue, item);
-      }
-      function is_empty_queue(queue) {
-        return is_null(front_ptr(queue));
-      }
-      function make_queue() {
-        return pair(null, null);
-      }
-      function insert_queue(queue, item) {
-        const new_pair = pair(item, null);
-        if (is_empty_queue(queue)) {
-          set_front_ptr(queue, new_pair);
-          set_rear_ptr(queue, new_pair);
-        } else {
-          set_tail(rear_ptr(queue), new_pair);
-          set_rear_ptr(queue, new_pair);
-        }
-        return queue;
-      }
-      function delete_queue(queue) {
-        if (is_empty_queue(queue)) {
-          // error(queue, "delete_queue called with an empty queue:");
-          return queue;
-        } else {
-          set_front_ptr(queue, tail(front_ptr(queue)));
-          return queue;
-        }
-      }
-      const q1 = make_queue();
-      insert_queue(q1, "a");
-      insert_queue(q1, "b");
-      delete_queue(q1);
-      delete_queue(q1);
+function front_ptr(queue) {
+  return head(queue);
+}
+function rear_ptr(queue) {
+  return tail(queue);
+}
+function set_front_ptr(queue, item) {
+  set_head(queue, item);
+}
+function set_rear_ptr(queue, item) {
+  set_tail(queue, item);
+}
+function is_empty_queue(queue) {
+  return is_null(front_ptr(queue));
+}
+function make_queue() {
+  return pair(null, null);
+}
+function insert_queue(queue, item) {
+  const new_pair = pair(item, null);
+  if (is_empty_queue(queue)) {
+    set_front_ptr(queue, new_pair);
+    set_rear_ptr(queue, new_pair);
+  } else {
+    set_tail(rear_ptr(queue), new_pair);
+    set_rear_ptr(queue, new_pair);
+  }
+  return queue;
+}
+function delete_queue(queue) {
+  if (is_empty_queue(queue)) {
+    // error(queue, "delete_queue called with an empty queue:");
+    return queue;
+  } else {
+    set_front_ptr(queue, tail(front_ptr(queue)));
+    return queue;
+  }
+}
+const q1 = make_queue();
+insert_queue(q1, "a");
+insert_queue(q1, "b");
+delete_queue(q1);
+delete_queue(q1);
     `
     const [program, errors] = typeCheck(parse(code1, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
@@ -1711,5 +1711,60 @@ function make_account(balance) {
       q1: List<List<T0>>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+  it('3.5.1', () => {
+    const code1 = `
+function stream_tail(stream) {
+  return tail(stream)();
+}
+  
+function stream_ref(s, n) {
+  return n === 0
+         ? head(s)
+         : stream_ref(stream_tail(s), n - 1);
+}
+function stream_map(f, s) {
+  return is_null(s)
+         ? null
+         : pair(f(head(s)),
+                () => stream_map(f, stream_tail(s)));
+}
+function stream_for_each(fun, s) {
+  if (is_null(s)) {
+      // return true;
+      return undefined;
+  } else {
+      fun(head(s));
+      return stream_for_each(fun, stream_tail(s));
+  }
+}
+
+const my_stream = pair(4, () => pair(5, () => null));
+const my_stream_2 = stream_map(x => x + 1, my_stream);
+const x = stream_ref(my_stream, 1);
+const y = stream_ref(my_stream_2, 1);
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "stream_tail: T0
+      stream_ref: T0
+      stream_map: (number -> number, [number, () -> [number, () -> List<T0>]]) -> List<number>
+      stream_for_each: (T0 -> T1, [T0, T2]) -> undefined
+      my_stream: [number, () -> [number, () -> List<T0>]]
+      my_stream_2: List<number>
+      x: T0
+      y: T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 12: The two branches of the conditional expression:
+        is_null(s) ? ... : ...
+      produce different types!
+      The true branch has type:
+        List<T0>
+      but the false branch has type:
+        () -> List<T0>
+      Line 2: stream_tail contains cyclic reference to itself
+      Line 6: stream_ref contains cyclic reference to itself"
+    `)
   })
 })
