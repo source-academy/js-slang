@@ -88,9 +88,9 @@ export class DifferentAssignmentError implements SourceError {
     return stripIndent`
     Expected reassignment of ${varName}:
       ${assignmentStr}
-    to be of type:
+    to get a value of type:
       ${typeToString(this.expectedType)}
-    but got:
+    but got a value of type:
       ${typeToString(this.receivedType)}
     `
   }
