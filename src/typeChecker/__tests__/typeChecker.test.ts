@@ -1309,7 +1309,7 @@ describe('typing some SICP Chapter 1 programs', () => {
   })
 })
 
-describe('typing some SICP Chapter 1 programs', () => {
+describe('typing some SICP Chapter 2 programs', () => {
   it('2.1.1', () => {
     const code = `
       function make_rat(n, d) {
@@ -1564,5 +1564,96 @@ describe('typing some SICP Chapter 1 programs', () => {
       remove: (addable, List<addable>) -> List<addable>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('typing some SICP Chapter 3 programs', () => {
+  it('3.1', () => {
+    const code = `
+    function factorial(n) {
+      let product = 1;
+      let counter = 1;
+      function iter() {
+         if (counter > n) {
+             return product;
+         } else {
+             product = counter * product;
+             counter = counter + 1;
+             return iter();
+         }
+      }
+      return iter();
+   }
+   function make_simplified_withdraw(balance) {
+    return amount => {
+               balance = balance - amount;
+               return balance;
+           };
+}
+function make_withdraw_with_balance(balance) {
+  return amount => {
+      if (balance >= amount) {
+          balance = balance - amount;
+          return balance;
+      } else {
+          return "insufficient funds";
+      }
+  };
+}
+function make_account(balance) {
+  function withdraw(amount) {
+      if (balance >= amount) {
+          balance = balance - amount;
+          return balance;
+      } else {
+          return "Insufficient funds";
+      }
+  }
+  function deposit(amount) {
+      balance = balance + amount;
+      return balance;
+  }
+  function dispatch(m) {
+      if (m === "withdraw") {
+          return withdraw;
+      } else if (m === "deposit") {
+          return deposit;
+      } else {
+          return "Unknown request - - MAKE-ACCOUNT";
+      }
+  }
+  return dispatch;
+}
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "factorial: number -> number
+      make_simplified_withdraw: number -> number -> number
+      make_withdraw_with_balance: number -> number -> number
+      make_account: number -> string -> number -> number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 24: The two branches of the if statement:
+        if (balance >= amo ... unt) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        number
+      but the false branch has type:
+        string
+      Line 34: The two branches of the if statement:
+        if (balance >= amo ... unt) { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        number
+      but the false branch has type:
+        string
+      Line 48: The two branches of the if statement:
+        if (m === \\"deposit ... \\") { ... } else { ... }
+      produce different types!
+      The true branch has type:
+        number -> number
+      but the false branch has type:
+        string"
+    `)
   })
 })
