@@ -82,6 +82,8 @@ function parseOptions(): CliOptions | null {
               error = true
               break
           }
+          args.splice(0, argShiftNumber)
+          break
         case '--out':
         case '-o':
           ret.outputFilename = argument

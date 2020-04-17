@@ -1227,12 +1227,12 @@ const pairFuncs: [string, Type | ForAll][] = [
   ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
 ]
 
-const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
-
 const arrayFuncs: [string, Type | ForAll][] = [
   ['is_array', tForAll(tFunc(tVar('T'), tBool))],
   ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
 ]
+
+const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
 
 const primitiveFuncs: [string, Type | ForAll][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],
