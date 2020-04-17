@@ -534,7 +534,29 @@ function reduceMain(
       Literal: (target: es.Literal): string =>
         target.raw !== undefined ? target.raw : String(target.value),
 
+      Identifier: (target: es.Identifier): string => target.name,
+
       ExpressionStatement: (target: es.ExpressionStatement): string => bodify(target.expression),
+
+      BinaryExpression: (target: es.BinaryExpression): string =>
+        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
+
+      UnaryExpression: (target: es.UnaryExpression): string =>
+        target.operator + bodify(target.argument),
+
+      ConditionalExpression: (target: es.ConditionalExpression): string =>
+        bodify(target.test) + ' ? ' + bodify(target.consequent) + ' : ' + bodify(target.alternate),
+
+      LogicalExpression: (target: es.LogicalExpression): string =>
+        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
+
+      CallExpression: (target: es.CallExpression): string => {
+        if (target.callee.type === 'ArrowFunctionExpression') {
+          return '(' + bodify(target.callee) + ')(' + target.arguments.map(bodify) + ')'
+        } else {
+          return bodify(target.callee) + '(' + target.arguments.map(bodify) + ')'
+        }
+      },
 
       FunctionDeclaration: (target: es.FunctionDeclaration): string => {
         const funcName = target.id !== null ? target.id.name : 'error'
@@ -547,36 +569,14 @@ function reduceMain(
         )
       },
 
-      VariableDeclaration: (target: es.VariableDeclaration): string =>
-        'constant ' +
-        bodify(target.declarations[0].id) +
-        ' declared and substituted into rest of block',
-      ReturnStatement: (target: es.ReturnStatement): string => {
-        const arg = target.argument as es.Expression
-        return isIrreducible(arg) ? bodify(arg) + ' returned' : 'error'
+      FunctionExpression: (target: es.FunctionExpression): string => {
+        const id = target.id
+        return id === null || id === undefined ? '...' : id.name
       },
 
-      Identifier: (target: es.Identifier): string => target.name,
+      ReturnStatement: (target: es.ReturnStatement): string => 
+        bodify(target.argument as es.Expression) + ' returned',
 
-      CallExpression: (target: es.CallExpression): string => {
-        if (target.callee.type === 'ArrowFunctionExpression') {
-          return '(' + bodify(target.callee) + ')(' + target.arguments.map(bodify) + ')'
-        } else {
-          return bodify(target.callee) + '(' + target.arguments.map(bodify) + ')'
-        }
-      },
-
-      LogicalExpression: (target: es.LogicalExpression): string =>
-        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
-
-      BinaryExpression: (target: es.BinaryExpression): string =>
-        bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
-
-      UnaryExpression: (target: es.UnaryExpression): string =>
-        target.operator + bodify(target.argument),
-
-      ConditionalExpression: (target: es.ConditionalExpression): string =>
-        bodify(target.test) + ' ? ' + bodify(target.consequent) + ' : ' + bodify(target.alternate),
       ArrowFunctionExpression: (target: es.ArrowFunctionExpression): string => {
         if (verbose) {
           verbose = false
@@ -588,10 +588,10 @@ function reduceMain(
         }
       },
 
-      FunctionExpression: (target: es.FunctionExpression): string => {
-        const id = target.id
-        return id === null || id === undefined ? '...' : id.name
-      },
+      VariableDeclaration: (target: es.VariableDeclaration): string =>
+        'constant ' +
+        bodify(target.declarations[0].id) +
+        ' declared and substituted into rest of block',
 
       ArrayExpression: (target: es.ArrayExpression): string =>
         target.elements.map(bodify).toString()
@@ -606,6 +606,37 @@ function reduceMain(
       Literal: (target: es.Literal): string => bodify(target),
 
       Identifier: (target: es.Identifier): string => target.name,
+
+      BinaryExpression: (target: es.BinaryExpression): string =>
+        'binary expression ' + bodify(target) + ' evaluated',
+
+      UnaryExpression: (target: es.UnaryExpression): string => {
+        return (
+          'unary expression evaluated, ' +
+          (target.operator === '!' ? 'boolean ' : 'value ') +
+          bodify(target.argument) +
+          ' negated'
+        )
+      },
+
+      ConditionalExpression: (target: es.ConditionalExpression): string => {
+        return (
+          'condtional expression evaluated, condition is ' +
+          (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
+        )
+      },
+
+      LogicalExpression: (target: es.LogicalExpression): string => {
+        return target.operator === '&&'
+          ? 'AND operation evaluated, left of value is ' +
+              (target.left
+                ? 'true, continue evaluating left of operator'
+                : 'false, stop evaluating')
+          : 'OR operation evaluated, left of value is ' +
+              (target.left
+                ? 'true, stop evaluating'
+                : 'false, continue evaluating left of operator')
+      },
 
       CallExpression: (target: es.CallExpression): string => {
         if (target.callee.type === 'ArrowFunctionExpression') {
@@ -634,37 +665,6 @@ function reduceMain(
             ' and evaluates'
           )
         }
-      },
-
-      BinaryExpression: (target: es.BinaryExpression): string =>
-        'binary expression ' + bodify(target) + ' evaluated',
-
-      UnaryExpression: (target: es.UnaryExpression): string => {
-        return (
-          'unary expression evaluated, ' +
-          (target.operator === '!' ? 'boolean ' : 'value ') +
-          bodify(target.argument) +
-          ' negated'
-        )
-      },
-
-      LogicalExpression: (target: es.LogicalExpression): string => {
-        return target.operator === '&&'
-          ? 'AND operation evaluated, left of value is ' +
-              (target.left
-                ? 'true, continue evaluating left of operator'
-                : 'false, stop evaluating')
-          : 'OR operation evaluated, left of value is ' +
-              (target.left
-                ? 'true, stop evaluating'
-                : 'false, continue evaluating left of operator')
-      },
-
-      ConditionalExpression: (target: es.ConditionalExpression): string => {
-        return (
-          'condtional expression evaluated, condition is ' +
-          (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
-        )
       },
 
       Program: (target: es.Program): string => {
@@ -793,6 +793,37 @@ function reduceMain(
       }
     },
 
+    ConditionalExpression(
+      node: es.ConditionalExpression,
+      context: Context,
+      paths: string[][]
+    ): [substituterNodes, Context, string[][], string] {
+      const { test, consequent, alternate } = node
+      if (test.type === 'Literal') {
+        const error = rttc.checkIfStatement(node, test.value)
+        if (error === undefined) {
+          return [
+            (test.value ? consequent : alternate) as es.Expression,
+            context,
+            paths,
+            explain(node)
+          ]
+        } else {
+          throw error
+        }
+      } else {
+        paths[0].push('test')
+        const [reducedTest, cont, path, str] = reduce(test, context, paths)
+        const reducedExpression = ast.conditionalExpression(
+          reducedTest as es.Expression,
+          consequent,
+          alternate,
+          node.loc!
+        )
+        return [reducedExpression, cont, path, str]
+      }
+    },
+
     LogicalExpression(
       node: es.LogicalExpression,
       context: Context,
@@ -827,37 +858,6 @@ function reduceMain(
           path,
           str
         ]
-      }
-    },
-
-    ConditionalExpression(
-      node: es.ConditionalExpression,
-      context: Context,
-      paths: string[][]
-    ): [substituterNodes, Context, string[][], string] {
-      const { test, consequent, alternate } = node
-      if (test.type === 'Literal') {
-        const error = rttc.checkIfStatement(node, test.value)
-        if (error === undefined) {
-          return [
-            (test.value ? consequent : alternate) as es.Expression,
-            context,
-            paths,
-            explain(node)
-          ]
-        } else {
-          throw error
-        }
-      } else {
-        paths[0].push('test')
-        const [reducedTest, cont, path, str] = reduce(test, context, paths)
-        const reducedExpression = ast.conditionalExpression(
-          reducedTest as es.Expression,
-          consequent,
-          alternate,
-          node.loc!
-        )
-        return [reducedExpression, cont, path, str]
       }
     },
 
@@ -1065,18 +1065,7 @@ function reduceMain(
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
-        if (isIrreducible(arg)) {
-          return [firstStatement, context, paths, explain(node)]
-        } else {
-          paths[0].push('body[0]')
-          paths[0].push('argument')
-          const [reducedArg, cont, path, str] = reduce(arg, context, paths)
-          const reducedReturn = ast.returnStatement(
-            reducedArg as es.Expression,
-            firstStatement.loc!
-          )
-          return [ast.blockStatement([reducedReturn, ...otherStatements]), cont, path, str]
-        }
+        return [ast.expressionStatement(arg), context, paths, explain(node)]
       } else if (
         firstStatement.type === 'ExpressionStatement' &&
         isIrreducible(firstStatement.expression)
@@ -1202,18 +1191,7 @@ function reduceMain(
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
-        if (isIrreducible(arg)) {
-          return [arg, context, paths, explain(node)]
-        } else {
-          paths[0].push('body[0]')
-          paths[0].push('argument')
-          const [reducedArg, cont, path, str] = reduce(arg, context, paths)
-          const reducedReturn = ast.returnStatement(
-            reducedArg as es.Expression,
-            firstStatement.loc!
-          )
-          return [ast.blockExpression([reducedReturn, ...otherStatements]), cont, path, str]
-        }
+        return [arg, context, paths, explain(node)]
       } else if (
         firstStatement.type === 'ExpressionStatement' &&
         isIrreducible(firstStatement.expression)
@@ -1401,14 +1379,6 @@ function treeifyMain(target: substituterNodes): substituterNodes {
       )
     },
 
-    LogicalExpression: (target: es.LogicalExpression) => {
-      return ast.logicalExpression(
-        target.operator,
-        treeify(target.left) as es.Expression,
-        treeify(target.right) as es.Expression
-      )
-    },
-
     UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
       return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
     },
@@ -1418,6 +1388,14 @@ function treeifyMain(target: substituterNodes): substituterNodes {
         treeify(target.test) as es.Expression,
         treeify(target.consequent) as es.Expression,
         treeify(target.alternate) as es.Expression
+      )
+    },
+
+    LogicalExpression: (target: es.LogicalExpression) => {
+      return ast.logicalExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
       )
     },
 
@@ -1465,31 +1443,15 @@ function treeifyMain(target: substituterNodes): substituterNodes {
       return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
     },
 
-    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-      return ast.returnStatement(treeify(target.argument!) as es.Expression)
-    },
-
     BlockExpression: (target: BlockExpression): es.BlockStatement => {
       return ast.blockStatement(target.body.map(treeify) as es.Statement[])
     },
 
+    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+      return ast.returnStatement(treeify(target.argument!) as es.Expression)
+    },
+
     // source 1
-    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
-      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
-    },
-
-    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
-      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
-    },
-
-    IfStatement: (target: es.IfStatement): es.IfStatement => {
-      return ast.ifStatement(
-        treeify(target.test) as es.Expression,
-        treeify(target.consequent) as es.BlockStatement,
-        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
-      )
-    },
-
     // CORE
     ArrowFunctionExpression: (
       target: es.ArrowFunctionExpression
@@ -1507,6 +1469,22 @@ function treeifyMain(target: substituterNodes): substituterNodes {
         // returns infinite substitution warning after 5 substitutions
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
+    },
+
+    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
+      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
+    },
+
+    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
+      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
+    },
+
+    IfStatement: (target: es.IfStatement): es.IfStatement => {
+      return ast.ifStatement(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.BlockStatement,
+        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
+      )
     },
 
     // source 2
@@ -1581,29 +1559,6 @@ function pathifyMain(
       return ast.binaryExpression(target.operator, left, right)
     },
 
-    LogicalExpression: (target: es.LogicalExpression) => {
-      let left = treeifyMain(target.left) as es.Expression
-      let right = treeifyMain(target.right) as es.Expression
-      if (path[pathIndex] === 'left') {
-        if (pathIndex === endIndex) {
-          redex = left
-          left = redexMarker as es.Expression
-        } else {
-          pathIndex++
-          left = pathify(target.left) as es.Expression
-        }
-      } else if (path[pathIndex] === 'right') {
-        if (pathIndex === endIndex) {
-          redex = right
-          right = redexMarker as es.Expression
-        } else {
-          pathIndex++
-          right = pathify(target.right) as es.Expression
-        }
-      }
-      return ast.logicalExpression(target.operator, left, right)
-    },
-
     UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
       let arg = treeifyMain(target.argument) as es.Expression
       if (path[pathIndex] === 'argument') {
@@ -1648,6 +1603,29 @@ function pathifyMain(
         }
       }
       return ast.conditionalExpression(test, cons, alt)
+    },
+
+    LogicalExpression: (target: es.LogicalExpression) => {
+      let left = treeifyMain(target.left) as es.Expression
+      let right = treeifyMain(target.right) as es.Expression
+      if (path[pathIndex] === 'left') {
+        if (pathIndex === endIndex) {
+          redex = left
+          left = redexMarker as es.Expression
+        } else {
+          pathIndex++
+          left = pathify(target.left) as es.Expression
+        }
+      } else if (path[pathIndex] === 'right') {
+        if (pathIndex === endIndex) {
+          redex = right
+          right = redexMarker as es.Expression
+        } else {
+          pathIndex++
+          right = pathify(target.right) as es.Expression
+        }
+      }
+      return ast.logicalExpression(target.operator, left, right)
     },
 
     CallExpression: (target: es.CallExpression): es.CallExpression => {
@@ -1764,20 +1742,6 @@ function pathifyMain(
       return ast.blockStatement(body)
     },
 
-    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-      let arg = treeifyMain(target.argument!) as es.Expression
-      if (path[pathIndex] === 'argument') {
-        if (pathIndex === endIndex) {
-          redex = arg
-          arg = redexMarker as es.Expression
-        } else {
-          pathIndex++
-          arg = pathify(target.argument!) as es.Expression
-        }
-      }
-      return ast.returnStatement(arg)
-    },
-
     BlockExpression: (target: BlockExpression): es.BlockStatement => {
       const body = target.body.map(treeifyMain) as es.Statement[]
       let bodyIndex
@@ -1800,7 +1764,37 @@ function pathifyMain(
       return ast.blockStatement(body)
     },
 
+    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+      let arg = treeifyMain(target.argument!) as es.Expression
+      if (path[pathIndex] === 'argument') {
+        if (pathIndex === endIndex) {
+          redex = arg
+          arg = redexMarker as es.Expression
+        } else {
+          pathIndex++
+          arg = pathify(target.argument!) as es.Expression
+        }
+      }
+      return ast.returnStatement(arg)
+    },
+
     // source 1
+    ArrowFunctionExpression: (
+      target: es.ArrowFunctionExpression
+    ): es.Identifier | es.ArrowFunctionExpression => {
+      let body = treeifyMain(target.body) as es.BlockStatement
+      if (path[pathIndex] === 'body') {
+        if (pathIndex === endIndex) {
+          redex = body
+          body = redexMarker as es.BlockStatement
+        } else {
+          pathIndex++
+          body = pathify(target.body) as es.BlockStatement
+        }
+      }
+      return ast.arrowFunctionExpression(target.params, body)
+    },
+    
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
       const decl = target.declarations.map(treeifyMain) as es.VariableDeclarator[]
       let declIndex
@@ -1867,22 +1861,6 @@ function pathifyMain(
         }
       }
       return ast.ifStatement(test, cons, alt)
-    },
-
-    ArrowFunctionExpression: (
-      target: es.ArrowFunctionExpression
-    ): es.Identifier | es.ArrowFunctionExpression => {
-      let body = treeifyMain(target.body) as es.BlockStatement
-      if (path[pathIndex] === 'body') {
-        if (pathIndex === endIndex) {
-          redex = body
-          body = redexMarker as es.BlockStatement
-        } else {
-          pathIndex++
-          body = pathify(target.body) as es.BlockStatement
-        }
-      }
-      return ast.arrowFunctionExpression(target.params, body)
     },
 
     // source 2
