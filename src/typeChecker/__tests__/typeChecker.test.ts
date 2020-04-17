@@ -1442,26 +1442,22 @@ describe('typing some SICP Chapter 2 programs', () => {
     // note: our type inferencer simply doesn't work for trees, because of the way we store
     // list internally
     expect(parseError(errors)).toMatchInlineSnapshot(`
-          "Line 10: A type mismatch was detected in the binary expression:
-            tree * factor
-          The binary operator (*) expected two operands with types:
-            number * number
-          but instead it received two operands of types:
-            [T0, T1] * T0
-          Line 14: A type mismatch was detected in the function call:
-            pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
-          The function expected 2 arguments of types:
-            T0, T0
-          but instead received 2 arguments of types:
-            List<number>, List<number>
-          Line 2: count_leaves contains cyclic reference to itself
-          Line 6: scale_tree contains cyclic reference to itself
-          Line 9: Error: Failed to unify types
-          Line 10: Error: Failed to unify types
-          Line 11: Error: Failed to unify types
-          Line 11: Error: Failed to unify types
-          Line 14: Error: Failed to unify types"
-        `)
+      "Line 10: A type mismatch was detected in the binary expression:
+        tree * factor
+      The binary operator (*) expected two operands with types:
+        number * number
+      but instead it received two operands of types:
+        [T0, T1] * T0
+      Line 14: A type mismatch was detected in the function call:
+        pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
+      The function expected 2 arguments of types:
+        T0, T0
+      but instead received 2 arguments of types:
+        List<number>, List<number>
+      Line 2: count_leaves contains cyclic reference to itself
+      Line 6: scale_tree contains cyclic reference to itself
+      Line 14: Error: Failed to unify LHS: number, RHS: List<number>"
+    `)
   })
 
   it('2.2.3', () => {
@@ -1655,5 +1651,65 @@ function make_account(balance) {
       but the false branch has type:
         string"
     `)
+  })
+  it('3.3.1', () => {
+    const code1 = `
+      function front_ptr(queue) {
+        return head(queue);
+      }
+      function rear_ptr(queue) {
+        return tail(queue);
+      }
+      function set_front_ptr(queue, item) {
+        set_head(queue, item);
+      }
+      function set_rear_ptr(queue, item) {
+        set_tail(queue, item);
+      }
+      function is_empty_queue(queue) {
+        return is_null(front_ptr(queue));
+      }
+      function make_queue() {
+        return pair(null, null);
+      }
+      function insert_queue(queue, item) {
+        const new_pair = pair(item, null);
+        if (is_empty_queue(queue)) {
+          set_front_ptr(queue, new_pair);
+          set_rear_ptr(queue, new_pair);
+        } else {
+          set_tail(rear_ptr(queue), new_pair);
+          set_rear_ptr(queue, new_pair);
+        }
+        return queue;
+      }
+      function delete_queue(queue) {
+        if (is_empty_queue(queue)) {
+          // error(queue, "delete_queue called with an empty queue:");
+          return queue;
+        } else {
+          set_front_ptr(queue, tail(front_ptr(queue)));
+          return queue;
+        }
+      }
+      const q1 = make_queue();
+      insert_queue(q1, "a");
+      insert_queue(q1, "b");
+      delete_queue(q1);
+      delete_queue(q1);
+    `
+    const [program, errors] = typeCheck(parse(code1, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "front_ptr: List<List<T0>> -> List<T0>
+      rear_ptr: List<List<T0>> -> List<List<T0>>
+      set_front_ptr: (List<List<T0>>, List<T0>) -> undefined
+      set_rear_ptr: (List<List<T0>>, List<List<T0>>) -> undefined
+      is_empty_queue: List<List<T0>> -> boolean
+      make_queue: () -> List<List<T0>>
+      insert_queue: (List<List<T0>>, T1) -> List<List<T0>>
+      delete_queue: List<List<T0>> -> List<List<T0>>
+      q1: List<List<T0>>"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 })

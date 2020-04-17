@@ -1,5 +1,6 @@
 import * as es from 'estree'
 import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from '../types'
+import { typeToString } from '../utils/stringify'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
@@ -36,7 +37,7 @@ export class InternalTypeError extends Error {
 
 export class UnifyError extends InternalTypeError {
   constructor(public LHS: Type, public RHS: Type) {
-    super('Failed to unify types')
+    super(`Failed to unify LHS: ${typeToString(LHS)}, RHS: ${typeToString(RHS)}`)
   }
 }
 

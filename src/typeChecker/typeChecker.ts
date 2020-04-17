@@ -477,6 +477,12 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   } else if (LHS.kind === 'list' && RHS.kind === 'list') {
     return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
+  } else if (LHS.kind === 'pair' && RHS.kind === 'list') { 
+    // swap so that we hit the below rule
+    return addToConstraintList(constraints, [RHS, LHS])
+  } else if (LHS.kind === 'list' && RHS.kind === 'pair') {
+    // t is List(t_el) and t' is pair type, then try to add constraint t' = Pair(t_el, t)
+    return addToConstraintList(constraints, [RHS, tPair(LHS.elementType, LHS)])
   } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
     let newConstraints = constraints
     newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
@@ -1224,7 +1230,10 @@ const pairFuncs: [string, Type | ForAll][] = [
   ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
+  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))],
+  // Only for Source 3 and above (TODO make it hidden if less then Source 3)
+  ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
+  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))],
 ]
 
 const arrayFuncs: [string, Type | ForAll][] = [
