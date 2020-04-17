@@ -527,19 +527,147 @@ function apply(
 function reduceMain(
   node: substituterNodes,
   context: Context
-): [substituterNodes, Context, string[][]] {
+): [substituterNodes, Context, string[][], string] {
+  let verbose = true
+  function bodify(target: substituterNodes): string {
+    const bodifiers = {
+      Literal: (target: es.Literal): string => target.raw !== undefined ? target.raw : String(target.value),
+  
+      ExpressionStatement: (target: es.ExpressionStatement): string => bodify(target.expression),
+  
+      FunctionDeclaration: (target: es.FunctionDeclaration): string => {
+        const funcName = target.id !== null ? target.id.name : 'error'
+        return 'function ' + funcName + ' declared, parameter(s) ' + target.params.map(bodify) + ' required'
+      },
+  
+      VariableDeclaration: (target: es.VariableDeclaration): string => 
+        'constant ' + bodify(target.declarations[0].id)  + ' declared and substituted into rest of block'
+      ,
+  
+      ReturnStatement: (target: es.ReturnStatement): string => {
+        const arg = target.argument as es.Expression
+        return isIrreducible(arg) ? bodify(arg) + ' returned' : 'error'
+      },
+  
+      Identifier: (target: es.Identifier): string => target.name,
+  
+      CallExpression: (target: es.CallExpression): string => {
+        if (target.callee.type === 'ArrowFunctionExpression') {
+          return '(' + bodify(target.callee) + ')(' + target.arguments.map(bodify) + ')'
+        } else {
+          return bodify(target.callee) + '(' + target.arguments.map(bodify) + ')'
+        }
+      },
+
+      LogicalExpression: (target: es.LogicalExpression): string => bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
+  
+      BinaryExpression: (target: es.BinaryExpression): string => bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
+  
+      UnaryExpression: (target: es.UnaryExpression): string => target.operator + bodify(target.argument),
+
+      ConditionalExpression: (target: es.ConditionalExpression): string => 
+        bodify(target.test) + ' ? ' + bodify(target.consequent) + ' : ' + bodify(target.alternate)
+      ,
+
+      ArrowFunctionExpression: (target: es.ArrowFunctionExpression): string => {
+        if (verbose) {
+          verbose = false
+          const redacted = target.params.map(bodify) + ' => ' + bodify(target.body)
+          verbose = true
+          return redacted
+        } else {
+          return target.params.map(bodify) + ' => ...'
+        }
+      },
+  
+      FunctionExpression: (target: es.FunctionExpression): string => {
+        const id = target.id
+        return (id === null || id === undefined) ? '...' : id.name
+      },
+  
+      ArrayExpression: (target: es.ArrayExpression): string => target.elements.map(bodify).toString()
+    }
+  
+    const bodifier = bodifiers[target.type]
+    return bodifier === undefined ? '...' : bodifier(target)
+  }
+  
+  
+  function explain(target: substituterNodes): string {
+    const explainers = {
+      Literal: (target: es.Literal): string => bodify(target),
+  
+      Identifier: (target: es.Identifier): string => target.name,
+  
+      CallExpression: (target: es.CallExpression): string => {
+        if (target.callee.type === 'ArrowFunctionExpression') {
+          return target.arguments.map(bodify) + ' substituted into '+ target.callee.params.map(bodify) + ' of '+ bodify(target.callee)
+        } else if (target.callee.type === 'FunctionExpression') {
+          return 'function ' + bodify(target.callee) + ' takes in ' + target.arguments.map(bodify) + ' as input ' + target.callee.params.map(bodify)
+        } else {
+          return 'function ' + bodify(target.callee) + ' takes in ' + target.arguments.map(bodify) + ' and evaluates'
+        }
+      },
+  
+      BinaryExpression: (target: es.BinaryExpression): string => 'binary expression ' + bodify(target) + ' evaluated',
+  
+      UnaryExpression: (target: es.UnaryExpression): string => {
+        return 'unary expression evaluated, ' + (
+          target.operator === '!' ? 'boolean ' : 'value '
+          ) + bodify(target.argument) + ' negated' 
+      },
+  
+      LogicalExpression: (target: es.LogicalExpression): string => {
+        return target.operator === '&&' 
+              ? ('AND operation evaluated, left of value is ' + 
+                (target.left 
+                  ? 'true, continue evaluating left of operator' 
+                  : 'false, stop evaluating')) 
+              : ('OR operation evaluated, left of value is ' + 
+                (target.left
+                  ? 'true, stop evaluating' 
+                  : 'false, continue evaluating left of operator'))
+      },
+  
+      ConditionalExpression: (target: es.ConditionalExpression): string => {
+        return 'condtional expression evaluated, condition is ' + 
+                (target.test
+                  ? 'true, consequent evaluated' 
+                  : 'false, alternate evaluated')
+      },
+  
+      Program: (target: es.Program): string => {
+        return bodify(target.body[0]) + (target.body[0].type === 'ExpressionStatement' ? ' finished evaluating' : '')
+      },
+  
+      BlockExpression: (target: BlockExpression): string => bodify(target.body[0]),
+  
+      BlockStatement: (target: es.BlockStatement): string => bodify(target.body[0]),
+  
+      IfStatement: (target: es.IfStatement): string => {
+        return 'if statement evaluated, ' + 
+                (target.test
+                  ? 'condition true, proceed to if block' 
+                  : 'condition false, proceed to else block')
+      }
+    }
+  
+    const explainer = explainers[target.type]
+    return explainer === undefined ? '...' : explainer(target)
+  }
+
   const reducers = {
     // source 0
     Identifier(
       node: es.Identifier,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       // can only be built ins. the rest should have been declared
       if (!(isAllowedLiterals(node) || isBuiltinFunction(node))) {
         throw new errors.UndefinedVariable(node.name, node)
       } else {
-        return [node, context, paths]
+        return [node, context, paths, 'identifier']
       }
     },
 
@@ -547,17 +675,17 @@ function reduceMain(
       node: es.ExpressionStatement,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       paths[0].push('expression')
-      const [reduced, cont, path] = reduce(node.expression, context, paths)
-      return [ast.expressionStatement(reduced as es.Expression), cont, path]
+      const [reduced, cont, path, str] = reduce(node.expression, context, paths)
+      return [ast.expressionStatement(reduced as es.Expression), cont, path, str]
     },
 
     BinaryExpression(
       node: es.BinaryExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const { operator, left, right } = node
       if (isIrreducible(left)) {
         if (isIrreducible(right)) {
@@ -567,37 +695,37 @@ function reduceMain(
             builtin.is_function(right).value &&
             operator === '==='
           ) {
-            return [valueToExpression(left === right), context, paths]
+            return [valueToExpression(left === right), context, paths, explain(node)]
           }
           const [leftValue, rightValue] = [left, right].map(nodeToValue)
           const error = rttc.checkBinaryExpression(node, operator, leftValue, rightValue)
           if (error === undefined) {
             const lit = evaluateBinaryExpression(operator, leftValue, rightValue)
-            return [valueToExpression(lit, context), context, paths]
+            return [valueToExpression(lit, context), context, paths, explain(node)]
           } else {
             throw error
           }
         } else {
           paths[0].push('right')
-          const [reducedRight, cont, path] = reduce(right, context, paths)
+          const [reducedRight, cont, path, str] = reduce(right, context, paths)
           const reducedExpression = ast.binaryExpression(
             operator,
             left,
             reducedRight as es.Expression,
             node.loc!
           )
-          return [reducedExpression, cont, path]
+          return [reducedExpression, cont, path, str]
         }
       } else {
         paths[0].push('left')
-        const [reducedLeft, cont, path] = reduce(left, context, paths)
+        const [reducedLeft, cont, path, str] = reduce(left, context, paths)
         const reducedExpression = ast.binaryExpression(
           operator,
           reducedLeft as es.Expression,
           right,
           node.loc!
         )
-        return [reducedExpression, cont, path]
+        return [reducedExpression, cont, path, str]
       }
     },
 
@@ -605,7 +733,7 @@ function reduceMain(
       node: es.UnaryExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const { operator, argument } = node
       if (isIrreducible(argument)) {
         // tslint:disable-next-line
@@ -613,19 +741,19 @@ function reduceMain(
         const error = rttc.checkUnaryExpression(node, operator, argumentValue)
         if (error === undefined) {
           const result = evaluateUnaryExpression(operator, argumentValue)
-          return [valueToExpression(result, context), context, paths]
+          return [valueToExpression(result, context), context, paths, explain(node)]
         } else {
           throw error
         }
       } else {
         paths[0].push('argument')
-        const [reducedArgument, cont, path] = reduce(argument, context, paths)
+        const [reducedArgument, cont, path, str] = reduce(argument, context, paths)
         const reducedExpression = ast.unaryExpression(
           operator,
           reducedArgument as es.Expression,
           node.loc!
         )
-        return [reducedExpression, cont, path]
+        return [reducedExpression, cont, path, str]
       }
     },
 
@@ -633,7 +761,7 @@ function reduceMain(
       node: es.LogicalExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const { left, right } = node
       if (isIrreducible(left)) {
         if (!(left.type === 'Literal' && typeof left.value === 'boolean')) {
@@ -647,11 +775,11 @@ function reduceMain(
               : left.value
               ? ast.literal(true, node.loc!)
               : right
-          return [result as es.Expression, context, paths]
+          return [result as es.Expression, context, paths, explain(node)]
         }
       } else {
         paths[0].push('left')
-        const [reducedLeft, cont, path] = reduce(left, context, paths)
+        const [reducedLeft, cont, path, str] = reduce(left, context, paths)
         return [
           ast.logicalExpression(
             node.operator,
@@ -660,7 +788,8 @@ function reduceMain(
             node.loc!
           ) as substituterNodes,
           cont,
-          path
+          path,
+          str
         ]
       }
     },
@@ -669,25 +798,25 @@ function reduceMain(
       node: es.ConditionalExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
         if (error === undefined) {
-          return [(test.value ? consequent : alternate) as es.Expression, context, paths]
+          return [(test.value ? consequent : alternate) as es.Expression, context, paths, explain(node)]
         } else {
           throw error
         }
       } else {
         paths[0].push('test')
-        const [reducedTest, cont, path] = reduce(test, context, paths)
+        const [reducedTest, cont, path, str] = reduce(test, context, paths)
         const reducedExpression = ast.conditionalExpression(
           reducedTest as es.Expression,
           consequent,
           alternate,
           node.loc!
         )
-        return [reducedExpression, cont, path]
+        return [reducedExpression, cont, path, str]
       }
     },
 
@@ -696,17 +825,18 @@ function reduceMain(
       node: es.CallExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const [callee, args] = [node.callee, node.arguments]
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
       if (!isIrreducible(callee)) {
         paths[0].push('callee')
-        const [reducedCallee, cont, path] = reduce(callee, context, paths)
+        const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
         return [
           ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc!),
           cont,
-          path
+          path,
+          str
         ]
       } else if (callee.type === 'Literal') {
         throw new errors.CallingNonFunctionValue(callee, node)
@@ -727,7 +857,7 @@ function reduceMain(
             const currentArg = args[i]
             if (!isIrreducible(currentArg)) {
               paths[0].push('arguments[' + i + ']')
-              const [reducedCurrentArg, cont, path] = reduce(currentArg, context, paths)
+              const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
               const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
               return [
                 ast.callExpression(
@@ -736,7 +866,8 @@ function reduceMain(
                   node.loc!
                 ),
                 cont,
-                path
+                path,
+                str
               ]
             }
             if (
@@ -752,13 +883,14 @@ function reduceMain(
           return [
             apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
             context,
-            paths
+            paths,
+            explain(node)
           ]
         } else {
           if ((callee as es.Identifier).name.includes('math')) {
-            return [builtin.evaluateMath((callee as es.Identifier).name, ...args), context, paths]
+            return [builtin.evaluateMath((callee as es.Identifier).name, ...args), context, paths, explain(node)]
           }
-          return [builtin[(callee as es.Identifier).name](...args), context, paths]
+          return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
         }
       }
     },
@@ -767,13 +899,13 @@ function reduceMain(
       node: es.Program,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const [firstStatement, ...otherStatements] = node.body
       if (
         firstStatement.type === 'ExpressionStatement' &&
         isIrreducible(firstStatement.expression)
       ) {
-        return [ast.program(otherStatements as es.Statement[]), context, paths]
+        return [ast.program(otherStatements as es.Statement[]), context, paths, explain(node)]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
           firstStatement.id!,
@@ -792,12 +924,12 @@ function reduceMain(
         if (subst[1].length === 0) {
           allPaths.push([])
         }
-        return [subst[0], context, allPaths]
+        return [subst[0], context, allPaths, explain(node)]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
         if (kind !== 'const') {
           // TODO: cannot use let or var
-          return [dummyProgram(), context, paths]
+          return [dummyProgram(), context, paths, 'cannot use let or var']
         } else if (
           declarations.length <= 0 ||
           declarations.length > 1 ||
@@ -805,13 +937,13 @@ function reduceMain(
           !declarations[0].init
         ) {
           // TODO: syntax error
-          return [dummyProgram(), context, paths]
+          return [dummyProgram(), context, paths, 'syntax error']
         } else {
           const declarator = declarations[0] as es.VariableDeclarator
           const rhs = declarator.init!
           if (declarator.id.type !== 'Identifier') {
             // TODO: source does not allow destructuring
-            return [dummyProgram(), context, paths]
+            return [dummyProgram(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
             const remainingProgram = ast.program(otherStatements as es.Statement[])
             const subst = substituteMain(
@@ -826,7 +958,7 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -847,12 +979,12 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else {
             paths[0].push('body[0]')
             paths[0].push('declarations[0]')
             paths[0].push('init')
-            const [reducedRhs, cont, path] = reduce(rhs, context, paths)
+            const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
             return [
               ast.program([
                 ast.declaration(
@@ -863,17 +995,19 @@ function reduceMain(
                 ...(otherStatements as es.Statement[])
               ]),
               cont,
-              path
+              path,
+              str
             ]
           }
         }
       }
       paths[0].push('body[0]')
-      const [reduced, cont, path] = reduce(firstStatement, context, paths)
+      const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
       return [
         ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
         cont,
-        path
+        path,
+        str
       ]
     },
 
@@ -881,21 +1015,21 @@ function reduceMain(
       node: es.BlockStatement,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
         if (isIrreducible(arg)) {
-          return [firstStatement, context, paths]
+          return [firstStatement, context, paths, explain(node)]
         } else {
           paths[0].push('body[0]')
           paths[0].push('argument')
-          const [reducedArg, cont, path] = reduce(arg, context, paths)
+          const [reducedArg, cont, path, str] = reduce(arg, context, paths)
           const reducedReturn = ast.returnStatement(
             reducedArg as es.Expression,
             firstStatement.loc!
           )
-          return [ast.blockStatement([reducedReturn, ...otherStatements]), cont, path]
+          return [ast.blockStatement([reducedReturn, ...otherStatements]), cont, path, str]
         }
       } else if (
         firstStatement.type === 'ExpressionStatement' &&
@@ -906,7 +1040,8 @@ function reduceMain(
             ? ast.blockStatement(otherStatements as es.Statement[])
             : ast.expressionStatement(ast.identifier('undefined')),
           context,
-          paths
+          paths,
+          explain(node)
         ]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
@@ -926,12 +1061,12 @@ function reduceMain(
         if (subst[1].length === 0) {
           allPaths.push([])
         }
-        return [subst[0], context, allPaths]
+        return [subst[0], context, allPaths, explain(node)]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
         if (kind !== 'const') {
           // TODO: cannot use let or var
-          return [dummyBlockStatement(), context, paths]
+          return [dummyBlockStatement(), context, paths, 'cannot use let or var']
         } else if (
           declarations.length <= 0 ||
           declarations.length > 1 ||
@@ -939,13 +1074,13 @@ function reduceMain(
           !declarations[0].init
         ) {
           // TODO: syntax error
-          return [dummyBlockStatement(), context, paths]
+          return [dummyBlockStatement(), context, paths, 'syntax error']
         } else {
           const declarator = declarations[0] as es.VariableDeclarator
           const rhs = declarator.init!
           if (declarator.id.type !== 'Identifier') {
             // TODO: source does not allow destructuring
-            return [dummyBlockStatement(), context, paths]
+            return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
             const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
             // force casting for weird errors
@@ -960,7 +1095,7 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -981,12 +1116,12 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else {
             paths[0].push('body[0]')
             paths[0].push('declarations[0]')
             paths[0].push('init')
-            const [reducedRhs, cont, path] = reduce(rhs, context, paths)
+            const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
             return [
               ast.blockStatement([
                 ast.declaration(
@@ -997,17 +1132,19 @@ function reduceMain(
                 ...(otherStatements as es.Statement[])
               ]),
               cont,
-              path
+              path,
+              str
             ]
           }
         }
       }
       paths[0].push('body[0]')
-      const [reduced, cont, path] = reduce(firstStatement, context, paths)
+      const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
       return [
         ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
         cont,
-        path
+        path,
+        str
       ]
     },
 
@@ -1015,21 +1152,21 @@ function reduceMain(
       node: BlockExpression,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const [firstStatement, ...otherStatements] = node.body
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
         if (isIrreducible(arg)) {
-          return [arg, context, paths]
+          return [arg, context, paths, explain(node)]
         } else {
           paths[0].push('body[0]')
           paths[0].push('argument')
-          const [reducedArg, cont, path] = reduce(arg, context, paths)
+          const [reducedArg, cont, path, str] = reduce(arg, context, paths)
           const reducedReturn = ast.returnStatement(
             reducedArg as es.Expression,
             firstStatement.loc!
           )
-          return [ast.blockExpression([reducedReturn, ...otherStatements]), cont, path]
+          return [ast.blockExpression([reducedReturn, ...otherStatements]), cont, path, str]
         }
       } else if (
         firstStatement.type === 'ExpressionStatement' &&
@@ -1040,7 +1177,8 @@ function reduceMain(
             ? ast.blockExpression(otherStatements as es.Statement[])
             : ast.identifier('undefined'),
           context,
-          paths
+          paths,
+          explain(node)
         ]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
@@ -1060,12 +1198,12 @@ function reduceMain(
         if (subst[1].length === 0) {
           allPaths.push([])
         }
-        return [subst[0], context, allPaths]
+        return [subst[0], context, allPaths, explain(node)]
       } else if (firstStatement.type === 'VariableDeclaration') {
         const { kind, declarations } = firstStatement
         if (kind !== 'const') {
           // TODO: cannot use let or var
-          return [dummyBlockExpression(), context, paths]
+          return [dummyBlockExpression(), context, paths, 'cannot use let or var']
         } else if (
           declarations.length <= 0 ||
           declarations.length > 1 ||
@@ -1073,13 +1211,13 @@ function reduceMain(
           !declarations[0].init
         ) {
           // TODO: syntax error
-          return [dummyBlockExpression(), context, paths]
+          return [dummyBlockExpression(), context, paths, 'syntax error']
         } else {
           const declarator = declarations[0] as es.VariableDeclarator
           const rhs = declarator.init!
           if (declarator.id.type !== 'Identifier') {
             // TODO: source does not allow destructuring
-            return [dummyBlockExpression(), context, paths]
+            return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             const subst = substituteMain(
@@ -1094,7 +1232,7 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
@@ -1115,12 +1253,12 @@ function reduceMain(
             if (subst[1].length === 0) {
               allPaths.push([])
             }
-            return [subst[0], context, allPaths]
+            return [subst[0], context, allPaths, explain(node)]
           } else {
             paths[0].push('body[0]')
             paths[0].push('declarations[0]')
             paths[0].push('init')
-            const [reducedRhs, cont, path] = reduce(rhs, context, paths)
+            const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
             return [
               ast.blockExpression([
                 ast.declaration(
@@ -1131,17 +1269,19 @@ function reduceMain(
                 ...(otherStatements as es.Statement[])
               ]),
               cont,
-              path
+              path,
+              str
             ]
           }
         }
       }
       paths[0].push('body[0]')
-      const [reduced, cont, path] = reduce(firstStatement, context, paths)
+      const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
       return [
         ast.blockExpression([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
         cont,
-        path
+        path,
+        str
       ]
     },
 
@@ -1150,25 +1290,25 @@ function reduceMain(
       node: es.IfStatement,
       context: Context,
       paths: string[][]
-    ): [substituterNodes, Context, string[][]] {
+    ): [substituterNodes, Context, string[][], string] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
         const error = rttc.checkIfStatement(node, test.value)
         if (error === undefined) {
-          return [(test.value ? consequent : alternate) as es.Statement, context, paths]
+          return [(test.value ? consequent : alternate) as es.Statement, context, paths, explain(node)]
         } else {
           throw error
         }
       } else {
         paths[0].push('test')
-        const [reducedTest, cont, path] = reduce(test, context, paths)
+        const [reducedTest, cont, path, str] = reduce(test, context, paths)
         const reducedIfStatement = ast.ifStatement(
           reducedTest as es.Expression,
           consequent as es.BlockStatement,
           alternate as es.IfStatement | es.BlockStatement,
           node.loc!
         )
-        return [reducedIfStatement, cont, path]
+        return [reducedIfStatement, cont, path, str]
       }
     }
   }
@@ -1177,10 +1317,10 @@ function reduceMain(
     node: substituterNodes,
     context: Context,
     paths: string[][]
-  ): [substituterNodes, Context, string[][]] {
+  ): [substituterNodes, Context, string[][], string] {
     const reducer = reducers[node.type]
     if (reducer === undefined) {
-      return [ast.program([]), context, []] // exit early
+      return [ast.program([]), context, [], ''] // exit early
       // return [node, context] // if reducer is not found we just get stuck
     } else {
       return reducer(node, context, paths)
@@ -1584,7 +1724,7 @@ function pathifyMain(
           arg = pathify(target.argument!) as es.Expression
         }
       }
-      return ast.returnStatement(treeifyMain(target.argument!) as es.Expression)
+      return ast.returnStatement(arg)
     },
 
     BlockExpression: (target: BlockExpression): es.BlockStatement => {
@@ -1792,37 +1932,42 @@ function substPredefinedConstants(program: es.Program): es.Program {
 export function getEvaluationSteps(
   program: es.Program,
   context: Context
-): [es.Program, string[][]][] {
-  const steps: [es.Program, string[][]][] = []
+): [es.Program, string[][], string][] {
+  const steps: [es.Program, string[][], string][] = []
   try {
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns.
     start = substPredefinedFns(start, context)[0]
     // then add in path
-    let reducedWithPath: [substituterNodes, Context, string[][]] = [start, context, []]
+    let reducedWithPath: [substituterNodes, Context, string[][], string] = [start, context, [], 'Start of evaluation']
     let i = -1
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
       steps.push([
         reducedWithPath[0] as es.Program,
-        reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2]
+        reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
+        reducedWithPath[3]
       ])
       if (steps.length === 999) {
         steps[i][1] = reducedWithPath[2]
+        steps[i][2] = reducedWithPath[3]
         steps.push([
-          ast.program([
-            ast.expressionStatement(ast.identifier('Maximum number of steps exceeded'))
-          ]),
-          []
+          ast.program([]),
+          [],
+          'Maximum number of steps exceeded'
         ])
         break
       }
-      steps.push([reducedWithPath[0] as es.Program, []])
+      steps.push([reducedWithPath[0] as es.Program, [], ''])
       if (i > 0) {
         steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
+        steps[i][2] = reducedWithPath[3]
       }
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
+    }
+    if (steps.length !== 1000) {
+      steps[steps.length - 1][2] = 'Evaluation complete'
     }
     return steps
   } catch (error) {

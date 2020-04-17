@@ -3,7 +3,7 @@ import { parse } from '../../parser/parser'
 import { substituterNodes } from '../../types'
 import { codify, getEvaluationSteps } from '../stepper'
 
-function getLastStepAsString(steps: [substituterNodes, string[][]][]): string {
+function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {
   return codify(steps[steps.length - 1][0]).trim()
 }
 
