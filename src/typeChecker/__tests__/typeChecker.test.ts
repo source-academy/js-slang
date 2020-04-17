@@ -1717,7 +1717,7 @@ delete_queue(q1);
 function stream_tail(stream) {
   return tail(stream)();
 }
-  
+
 function stream_ref(s, n) {
   return n === 0
          ? head(s)
