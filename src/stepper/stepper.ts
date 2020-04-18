@@ -81,7 +81,7 @@ function substituteMain(
    * 1. Create dummy replacement and push [target, dummyReplacement]
    *    into the seenBefore array.
    * 2. [Recursive step] substitute the children;
-   *    for each child, branch out the current path 
+   *    for each child, branch out the current path
    *    and push the appropriate access string into the path
    * 3. Return the dummyReplacement
    */
@@ -538,12 +538,11 @@ function apply(
     : ast.blockExpression((substedBody as es.BlockStatement).body)
 }
 
-// Wrapper function to house reduce, explain and bodify 
+// Wrapper function to house reduce, explain and bodify
 function reduceMain(
   node: substituterNodes,
   context: Context
 ): [substituterNodes, Context, string[][], string] {
-
   // variable to control verbosity of bodify
   let verbose = true
 
@@ -593,7 +592,7 @@ function reduceMain(
         return id === null || id === undefined ? '...' : id.name
       },
 
-      ReturnStatement: (target: es.ReturnStatement): string => 
+      ReturnStatement: (target: es.ReturnStatement): string =>
         bodify(target.argument as es.Expression) + ' returned',
 
       // guards against infinite text generation
@@ -661,12 +660,12 @@ function reduceMain(
             return bodify(target.callee) + ' runs'
           } else {
             return (
-            target.arguments.map(bodify) +
-            ' substituted into ' +
-            target.callee.params.map(bodify) +
-            ' of ' +
-            bodify(target.callee)
-          )
+              target.arguments.map(bodify) +
+              ' substituted into ' +
+              target.callee.params.map(bodify) +
+              ' of ' +
+              bodify(target.callee)
+            )
           }
         } else if (target.callee.type === 'FunctionExpression') {
           if (target.callee.params.length === 0) {
@@ -1867,7 +1866,7 @@ function pathifyMain(
       }
       return ast.arrowFunctionExpression(target.params, body)
     },
-    
+
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
       const decl = target.declarations.map(treeifyMain) as es.VariableDeclarator[]
       let declIndex
