@@ -50,17 +50,11 @@ function substituteMain(
 ): [substituterNodes, string[][]] {
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
+  // initialises array to keep track of all paths visited
+  // without modifying input path array
   const allPaths: string[][] = []
   let allPathsIndex = 0
   const endMarker = '$'
-
-  const pathNotEnded = (index: number) => index > -1
-
-  function branch(index: number): number {
-    allPathsIndex++
-    allPaths[allPathsIndex] = [...allPaths[index]]
-    return allPathsIndex
-  }
 
   if (paths[0] === undefined) {
     allPaths.push([])
@@ -68,16 +62,32 @@ function substituteMain(
     allPaths.push([...paths[0]])
   }
 
+  // substituters will stop expanding the path if index === -1
+  const pathNotEnded = (index: number) => index > -1
+
+  // branches out path into two different paths,
+  // returns array index of branched path
+  function branch(index: number): number {
+    allPathsIndex++
+    allPaths[allPathsIndex] = [...allPaths[index]]
+    return allPathsIndex
+  }
+
   /**
    * Substituters are invoked only when the target is not seen before,
    *  therefore each function has the responsbility of registering the
    *  [target, replacement] pair in seenBefore.
-   * Substituter have two general steps:
-   * 1. Create dummy replacement with 1. and push [target, dummyReplacement]
-   *  into the seenBefore array.
-   * 2. [recursive step] we substitute the children, and return the dummyReplacement.
+   * How substituters work:
+   * 1. Create dummy replacement and push [target, dummyReplacement]
+   *    into the seenBefore array.
+   * 2. [Recursive step] substitute the children;
+   *    for each child, branch out the current path 
+   *    and push the appropriate access string into the path
+   * 3. Return the dummyReplacement
    */
   const substituters = {
+    // if name to be replaced is found,
+    // push endMarker into path
     Identifier(
       target: es.Identifier,
       index: number
@@ -484,6 +494,10 @@ function substituteMain(
       return substituter(target, index)
     }
   }
+
+  // after running substitute,
+  // find paths that contain endMarker
+  // and return only those paths
   const substituted = substitute(target, 0)
   const validPaths: string[][] = []
   for (const path of allPaths) {
@@ -498,7 +512,7 @@ function substituteMain(
  * Substitutes a call expression with the body of the callee (funExp)
  * and the body will have all ocurrences of parameters substituted
  * with the arguments.
- * @param call call expression with callee as functionExpression
+ * @param callee call expression with callee as functionExpression
  * @param args arguments supplied to the call expression
  */
 function apply(
@@ -524,11 +538,16 @@ function apply(
     : ast.blockExpression((substedBody as es.BlockStatement).body)
 }
 
+// Wrapper function to house reduce, explain and bodify 
 function reduceMain(
   node: substituterNodes,
   context: Context
 ): [substituterNodes, Context, string[][], string] {
+
+  // variable to control verbosity of bodify
   let verbose = true
+
+  // converts body of code to string
   function bodify(target: substituterNodes): string {
     const bodifiers = {
       Literal: (target: es.Literal): string =>
@@ -577,6 +596,7 @@ function reduceMain(
       ReturnStatement: (target: es.ReturnStatement): string => 
         bodify(target.argument as es.Expression) + ' returned',
 
+      // guards against infinite text generation
       ArrowFunctionExpression: (target: es.ArrowFunctionExpression): string => {
         if (verbose) {
           verbose = false
@@ -601,18 +621,15 @@ function reduceMain(
     return bodifier === undefined ? '...' : bodifier(target)
   }
 
+  // generates string to explain current step
   function explain(target: substituterNodes): string {
     const explainers = {
-      Literal: (target: es.Literal): string => bodify(target),
-
-      Identifier: (target: es.Identifier): string => target.name,
-
       BinaryExpression: (target: es.BinaryExpression): string =>
-        'binary expression ' + bodify(target) + ' evaluated',
+        'Binary expression ' + bodify(target) + ' evaluated',
 
       UnaryExpression: (target: es.UnaryExpression): string => {
         return (
-          'unary expression evaluated, ' +
+          'Unary expression evaluated, ' +
           (target.operator === '!' ? 'boolean ' : 'value ') +
           bodify(target.argument) +
           ' negated'
@@ -621,7 +638,7 @@ function reduceMain(
 
       ConditionalExpression: (target: es.ConditionalExpression): string => {
         return (
-          'condtional expression evaluated, condition is ' +
+          'Condtional expression evaluated, condition is ' +
           (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
         )
       },
@@ -640,30 +657,32 @@ function reduceMain(
 
       CallExpression: (target: es.CallExpression): string => {
         if (target.callee.type === 'ArrowFunctionExpression') {
-          return (
+          if (target.callee.params.length === 0) {
+            return bodify(target.callee) + ' runs'
+          } else {
+            return (
             target.arguments.map(bodify) +
             ' substituted into ' +
             target.callee.params.map(bodify) +
             ' of ' +
             bodify(target.callee)
           )
+          }
         } else if (target.callee.type === 'FunctionExpression') {
-          return (
-            'function ' +
-            bodify(target.callee) +
-            ' takes in ' +
-            target.arguments.map(bodify) +
-            ' as input ' +
-            target.callee.params.map(bodify)
-          )
+          if (target.callee.params.length === 0) {
+            return 'Function ' + bodify(target.callee) + ' runs'
+          } else {
+            return (
+              'Function ' +
+              bodify(target.callee) +
+              ' takes in ' +
+              target.arguments.map(bodify) +
+              ' as input ' +
+              target.callee.params.map(bodify)
+            )
+          }
         } else {
-          return (
-            'function ' +
-            bodify(target.callee) +
-            ' takes in ' +
-            target.arguments.map(bodify) +
-            ' and evaluates'
-          )
+          return bodify(target.callee) + ' runs'
         }
       },
 
@@ -680,7 +699,7 @@ function reduceMain(
 
       IfStatement: (target: es.IfStatement): string => {
         return (
-          'if statement evaluated, ' +
+          'If statement evaluated, ' +
           (target.test
             ? 'condition true, proceed to if block'
             : 'condition false, proceed to else block')
@@ -965,6 +984,10 @@ function reduceMain(
         // substitute the rest of the program
         const remainingProgram = ast.program(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
+        // concats paths such that:
+        // paths[0] -> path to the program to be substituted, pre-redex
+        // paths[1...] -> path(s) to the parts of the remaining program
+        // that were substituted, post-redex
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
         if (subst[1].length === 0) {
@@ -992,13 +1015,17 @@ function reduceMain(
             return [dummyProgram(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
             const remainingProgram = ast.program(otherStatements as es.Statement[])
+            // forced casting for some weird errors
             const subst = substituteMain(
               declarator.id,
               rhs as es.ArrayExpression,
               remainingProgram,
               paths
             )
-            // forced casting for some weird errors
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1020,6 +1047,10 @@ function reduceMain(
             // substitute the rest of the program
             const remainingProgram = ast.program(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1091,6 +1122,10 @@ function reduceMain(
         // substitute the rest of the blockStatement
         const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
+        // concats paths such that:
+        // paths[0] -> path to the program to be substituted, pre-redex
+        // paths[1...] -> path(s) to the parts of the remaining program
+        // that were substituted, post-redex
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
         if (subst[1].length === 0) {
@@ -1125,6 +1160,10 @@ function reduceMain(
               remainingBlockStatement,
               paths
             )
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1146,6 +1185,10 @@ function reduceMain(
             // substitute the rest of the blockStatement
             const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1217,6 +1260,10 @@ function reduceMain(
         // substitute the rest of the blockExpression
         const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
         const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockExpression, paths)
+        // concats paths such that:
+        // paths[0] -> path to the program to be substituted, pre-redex
+        // paths[1...] -> path(s) to the parts of the remaining program
+        // that were substituted, post-redex
         paths[0].push('body[0]')
         const allPaths = paths.concat(subst[1])
         if (subst[1].length === 0) {
@@ -1244,13 +1291,17 @@ function reduceMain(
             return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
+            // forced casting for some weird errors
             const subst = substituteMain(
               declarator.id,
               rhs as es.ArrayExpression,
               remainingBlockExpression,
               paths
             )
-            // forced casting for some weird errors
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1272,6 +1323,10 @@ function reduceMain(
             // substitute the rest of the blockExpression
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockExpression, paths)
+            // concats paths such that:
+            // paths[0] -> path to the program to be substituted, pre-redex
+            // paths[1...] -> path(s) to the parts of the remaining program
+            // that were substituted, post-redex
             paths[0].push('body[0]')
             const allPaths = paths.concat(subst[1])
             if (subst[1].length === 0) {
@@ -1342,6 +1397,16 @@ function reduceMain(
     }
   }
 
+  /**
+   * Reduces one step of the program and returns
+   * 1. The reduced program
+   * 2. The path(s) leading to the redex
+   *    - If substitution not involved, returns array containing one path
+   *    - If substitution is involved, returns array containing
+   *      path to program to be substituted pre-redex, as well as
+   *      path(s) to the parts of the program that were substituted post-redex
+   * 3. String explaining the reduction
+   */
   function reduce(
     node: substituterNodes,
     context: Context,
@@ -1349,8 +1414,7 @@ function reduceMain(
   ): [substituterNodes, Context, string[][], string] {
     const reducer = reducers[node.type]
     if (reducer === undefined) {
-      return [ast.program([]), context, [], ''] // exit early
-      // return [node, context] // if reducer is not found we just get stuck
+      return [ast.program([]), context, [], 'error'] // exit early
     } else {
       return reducer(node, context, paths)
     }
@@ -1430,7 +1494,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
         verboseCount = 0
         return redacted
       } else {
-        // returns infinite substitution warning after 5 substitutions
+        // shortens body after 5 iterations
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
@@ -1466,7 +1530,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
         verboseCount = 0
         return redacted
       } else {
-        // returns infinite substitution warning after 5 substitutions
+        // shortens body after 5 iterations
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
       }
     },
@@ -1505,8 +1569,17 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   return treeify(target)
 }
 
+// Mainly kept for testing
 export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
 
+/**
+ * Recurses down the tree, tracing path to redex
+ * and calling treeifyMain on all other children
+ * Once redex is found, extract redex from tree
+ * and put redexMarker in its place
+ * Returns array containing modified tree and
+ * extracted redex
+ */
 function pathifyMain(
   target: substituterNodes,
   paths: string[][]
@@ -1900,6 +1973,7 @@ function pathifyMain(
     return [treeifyMain(target), ast.program([])]
   } else {
     let pathified = pathify(target)
+    // runs pathify more than once if more than one substitution path
     for (let i = 1; i < paths.length; i++) {
       pathIndex = 0
       path = paths[i]
@@ -1910,6 +1984,7 @@ function pathifyMain(
   }
 }
 
+// Function to convert array from getEvaluationSteps into text
 export const redexify = (node: substituterNodes, path: string[][]): [string, string] => [
   generate(pathifyMain(node, path)[0]),
   generate(pathifyMain(node, path)[1])
@@ -1968,13 +2043,16 @@ export function getEvaluationSteps(
     let start = substPredefinedConstants(program)
     // and predefined fns.
     start = substPredefinedFns(start, context)[0]
-    // then add in path
+    // then add in path and explanation string
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
       start,
       context,
       [],
       'Start of evaluation'
     ]
+    // reduces program until evaluation completes
+    // even steps: program before reduction
+    // odd steps: program after reduction
     let i = -1
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
       steps.push([
