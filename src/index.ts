@@ -256,19 +256,25 @@ export function getTypeInformation(
   name: string
 ): string {
   const lineNumber = loc.line
+
+  // parse the program into typed nodes and parse error
   const program = typedParse(code, context)
   if (program === null) {
     return ''
   }
   const [typedProgram, error] = typeCheck(program)
   const parsedError = parseError(error)
+
+  // initialize the ans string
+  let ans = ''
   if (parsedError) {
-    return parsedError
+    ans += parsedError + '\n'
   }
   if (!typedProgram) {
-    return ''
+    return ans
   }
 
+  // callback function for findNodeAt function
   function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
     if (!node.inferredType) {
       return false
@@ -289,34 +295,36 @@ export function getTypeInformation(
     return false
   }
 
-  // TODO: error handling
-
-  return typedProgram.body
-    .map((node: TypeAnnotatedNode<es.Node>) => {
-      const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
-      if (res === undefined) {
-        return undefined
-      } else {
-        return res.node
-      }
-    })
-    .filter((node: TypeAnnotatedNode<es.Node>) => {
-      return node !== undefined
-    })
-    .map((node: TypeAnnotatedNode<es.Node>) => {
-      let id = ''
-      if (node.type === 'Identifier') {
-        id = node.name
-      } else if (node.type === 'FunctionDeclaration') {
-        id = node.id?.name!
-      } else if (node.type === 'VariableDeclaration') {
-        id = (node.declarations[0].id as es.Identifier).name
-      }
-      const type = typeToString(node.inferredType!)
-      return `At Line ${lineNumber} => ${id}: ${type}`
-    })
-    .slice(0, 1)
-    .join('\n')
+  // report both as the type inference
+  return (
+    ans +
+    typedProgram.body
+      .map((node: TypeAnnotatedNode<es.Node>) => {
+        const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+        if (res === undefined) {
+          return undefined
+        } else {
+          return res.node
+        }
+      })
+      .filter((node: TypeAnnotatedNode<es.Node>) => {
+        return node !== undefined
+      })
+      .map((node: TypeAnnotatedNode<es.Node>) => {
+        let id = ''
+        if (node.type === 'Identifier') {
+          id = node.name
+        } else if (node.type === 'FunctionDeclaration') {
+          id = node.id?.name!
+        } else if (node.type === 'VariableDeclaration') {
+          id = (node.declarations[0].id as es.Identifier).name
+        }
+        const type = typeToString(node.inferredType!)
+        return `At Line ${lineNumber} => ${id}: ${type}`
+      })
+      .slice(0, 1)
+      .join('\n')
+  )
 }
 
 export async function runInContext(
