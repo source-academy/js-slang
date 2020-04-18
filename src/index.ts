@@ -249,88 +249,6 @@ function typedParse(code: any, context: Context) {
   return validateAndAnnotate(program, context)
 }
 
-/*
-function getStringRepresentation(
-  node:
-    | TypeAnnotatedNode<es.VariableDeclaration>
-    | TypeAnnotatedNode<es.FunctionDeclaration>
-    | TypeAnnotatedNode<es.BlockStatement>,
-  lineNumber: number,
-  name: string
-): string {
-  if (node.type === 'BlockStatement') {
-    return node.body
-      .filter(
-        (
-          nd:
-            | TypeAnnotatedNode<es.VariableDeclaration>
-            | TypeAnnotatedNode<es.FunctionDeclaration>
-            | TypeAnnotatedNode<es.BlockStatement>
-        ) => {
-          if (nd.type === 'BlockStatement') {
-            return true
-          }
-          return isFiltered(nd, lineNumber, name)
-        }
-      )
-      .map(
-        (
-          nd:
-            | TypeAnnotatedNode<es.VariableDeclaration>
-            | TypeAnnotatedNode<es.FunctionDeclaration>
-            | TypeAnnotatedNode<es.BlockStatement>
-        ) => getStringRepresentation(nd, lineNumber, name)
-      )
-      .join('\n')
-  } else {
-    const id =
-      node.type === 'VariableDeclaration'
-        ? (node.declarations[0].id as es.Identifier).name
-        : node.id?.name!
-    const actualNode =
-      node.type === 'VariableDeclaration'
-        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
-        : node
-    const type =
-      actualNode.typability === 'Untypable'
-        ? "Couldn't infer type"
-        : typeToString(
-            actualNode.type === 'FunctionDeclaration'
-              ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
-              : actualNode.inferredType!
-          )
-    return `${id}: ${type}`
-  }
-}
-
-function isFiltered(
-  node:
-    | TypeAnnotatedNode<es.VariableDeclaration>
-    | TypeAnnotatedNode<es.FunctionDeclaration>
-    | TypeAnnotatedNode<es.BlockStatement>,
-  lineNumber: number,
-  name: string
-) {
-  const loc = node.loc
-  if (loc === null || loc === undefined) {
-    return false
-  }
-  if (node.type === 'BlockStatement') {
-    return true
-  }
-  const id =
-    node.type === 'VariableDeclaration'
-      ? (node.declarations[0].id as es.Identifier).name
-      : node.id?.name!
-  return (
-    ['VariableDeclaration', 'FunctionDeclaration', 'BlockStatement'].includes(node.type) &&
-    loc.start.line <= lineNumber &&
-    lineNumber <= loc.end.line &&
-    id === name
-  )
-}
-*/
-
 export function getTypeInformation(
   code: string,
   context: Context,
@@ -399,26 +317,6 @@ export function getTypeInformation(
     })
     .slice(0, 1)
     .join('\n')
-  /*
-  return typedProgram.body
-    .filter(
-      (
-        node:
-          | TypeAnnotatedNode<es.VariableDeclaration>
-          | TypeAnnotatedNode<es.FunctionDeclaration>
-          | TypeAnnotatedNode<es.BlockStatement>
-      ) => isFiltered(node, lineNumber, name)
-    )
-    .map(
-      (
-        node:
-          | TypeAnnotatedNode<es.VariableDeclaration>
-          | TypeAnnotatedNode<es.FunctionDeclaration>
-          | TypeAnnotatedNode<es.BlockStatement>
-      ) => getStringRepresentation(node, lineNumber, name)
-    )
-    .join('\n')
-    */
 }
 
 export async function runInContext(
