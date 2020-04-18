@@ -26,19 +26,37 @@ function isFunction(node: es.Node): boolean {
   )
 }
 
+function isLoop(node: es.Node): boolean {
+  return node.type === 'WhileStatement' || node.type === 'ForStatement'
+}
+
 // Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
   return name === '✖'
 }
 
+const KEYWORD_SCORE = 20000
+
 // Ensure that keywords are prioritized over names
-const keywords: { [key: string]: NameDeclaration } = {
-  FunctionDeclaration: { name: 'function', meta: 'keyword', score: 20000 },
-  VariableDeclaration: { name: 'const', meta: 'keyword', score: 20000 },
-  AssignmentExpression: { name: 'let', meta: 'keyword', score: 20000 },
-  WhileStatement: { name: 'while', meta: 'keyword', score: 20000 },
-  IfStatement: { name: 'if', meta: 'keyword', score: 20000 },
-  ForStatement: { name: 'for', meta: 'keyword', score: 20000 }
+const keywordsInBlock: { [key: string]: NameDeclaration[] } = {
+  FunctionDeclaration: [{ name: 'function', meta: 'keyword', score: KEYWORD_SCORE }],
+  VariableDeclaration: [{ name: 'const', meta: 'keyword', score: KEYWORD_SCORE }],
+  AssignmentExpression: [{ name: 'let', meta: 'keyword', score: KEYWORD_SCORE }],
+  WhileStatement: [{ name: 'while', meta: 'keyword', score: KEYWORD_SCORE }],
+  IfStatement: [
+    { name: 'if', meta: 'keyword', score: KEYWORD_SCORE },
+    { name: 'else', meta: 'keyword', score: KEYWORD_SCORE }
+  ],
+  ForStatement: [{ name: 'for', meta: 'keyword', score: KEYWORD_SCORE }]
+}
+
+const keywordsInLoop: { [key: string]: NameDeclaration[] } = {
+  BreakStatement: [{ name: 'break', meta: 'keyword', score: KEYWORD_SCORE }],
+  ContinueStatement: [{ name: 'continue', meta: 'keyword', score: KEYWORD_SCORE }]
+}
+
+const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
+  ReturnStatement: [{ name: 'return', meta: 'keyword', score: KEYWORD_SCORE }]
 }
 
 export function getKeywords(
@@ -56,24 +74,41 @@ export function getKeywords(
     return []
   }
 
+  // In the init part of a for statement, `let` is the only valid keyword
   if (
     ancestors[0].type === 'ForStatement' &&
     identifier === (ancestors[0] as es.ForStatement).init
   ) {
     return context.chapter >= syntaxBlacklist.AssignmentExpression
-      ? [keywords.AssignmentExpression]
+      ? keywordsInBlock.AssignmentExpression
       : []
   }
 
+  const keywordSuggestions: NameDeclaration[] = []
+  function addAllowedKeywords(keywords: { [key: string]: NameDeclaration[] }) {
+    Object.entries(keywords)
+      .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
+      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
+  }
+
+  // The rest of the keywords are only valid at the beginning of a statement
   if (
     ancestors[0].type === 'ExpressionStatement' &&
     ancestors[0].loc!.start === identifier.loc!.start
   ) {
-    return Object.entries(keywords)
-      .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .map(([nodeType, decl]) => decl)
+    addAllowedKeywords(keywordsInBlock)
+    // Keywords only allowed in functions
+    if (ancestors.some(node => isFunction(node))) {
+      addAllowedKeywords(keywordsInFunction)
+    }
+
+    // Keywords only allowed in loops
+    if (ancestors.some(node => isLoop(node))) {
+      addAllowedKeywords(keywordsInLoop)
+    }
   }
-  return []
+
+  return keywordSuggestions
 }
 
 // Returns [suggestions, shouldPrompt].
@@ -126,6 +161,7 @@ export function getProgramNames(
     }
   }
 
+  // Do not prompt user if he is declaring a variable
   for (const nameNode of nameQueue) {
     if (cursorInIdentifier(nameNode, n => cursorInLoc(n.loc))) {
       return [[], false]
@@ -243,6 +279,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
         }
 
         if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
+          // constant initialized with arrow function will always be a function
           delcarations.push({ name, meta: KIND_FUNCTION })
         } else {
           delcarations.push({ name, meta: node.kind })
