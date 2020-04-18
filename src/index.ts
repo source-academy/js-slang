@@ -342,63 +342,63 @@ export function getTypeInformation(
   if (program === null) {
     return ''
   }
-    const [typedProgram, error] = typeCheck(program);
-    const parsedError = parseError(error);
-    if (parsedError) {
-      return parsedError;
-    }
-    if (!typedProgram) {
-      return ''
-    }
+  const [typedProgram, error] = typeCheck(program)
+  const parsedError = parseError(error)
+  if (parsedError) {
+    return parsedError
+  }
+  if (!typedProgram) {
+    return ''
+  }
 
-    function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
-      if (!node.inferredType) {
-        return false
-      }
-      const location = node.loc
-      const nodeType = node.type
-      if (nodeType && location) {
-        let id = ''
-        if (node.type === 'Identifier') {
-          id = node.name
-        } else if (node.type === 'FunctionDeclaration') {
-          id = node.id?.name!
-        } else if (node.type === 'VariableDeclaration') {
-          id = (node.declarations[0].id as es.Identifier).name
-        }
-        return id === name && location.start.line <= loc.line && location.end.line >= loc.line
-      }
+  function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
+    if (!node.inferredType) {
       return false
     }
+    const location = node.loc
+    const nodeType = node.type
+    if (nodeType && location) {
+      let id = ''
+      if (node.type === 'Identifier') {
+        id = node.name
+      } else if (node.type === 'FunctionDeclaration') {
+        id = node.id?.name!
+      } else if (node.type === 'VariableDeclaration') {
+        id = (node.declarations[0].id as es.Identifier).name
+      }
+      return id === name && location.start.line <= loc.line && location.end.line >= loc.line
+    }
+    return false
+  }
 
-    // TODO: error handling
+  // TODO: error handling
 
-    return typedProgram.body
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
-        if (res === undefined) {
-          return undefined
-        } else {
-          return res.node
-        }
-      })
-      .filter((node: TypeAnnotatedNode<es.Node>) => {
-        return node !== undefined
-      })
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        let id = ''
-        if (node.type === 'Identifier') {
-          id = node.name
-        } else if (node.type === 'FunctionDeclaration') {
-          id = node.id?.name!
-        } else if (node.type === 'VariableDeclaration') {
-          id = (node.declarations[0].id as es.Identifier).name
-        }
-        const type = typeToString(node.inferredType!)
-        return `At Line ${lineNumber} => ${id}: ${type}`
-      })
-      .slice(0, 1)
-      .join('\n')
+  return typedProgram.body
+    .map((node: TypeAnnotatedNode<es.Node>) => {
+      const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+      if (res === undefined) {
+        return undefined
+      } else {
+        return res.node
+      }
+    })
+    .filter((node: TypeAnnotatedNode<es.Node>) => {
+      return node !== undefined
+    })
+    .map((node: TypeAnnotatedNode<es.Node>) => {
+      let id = ''
+      if (node.type === 'Identifier') {
+        id = node.name
+      } else if (node.type === 'FunctionDeclaration') {
+        id = node.id?.name!
+      } else if (node.type === 'VariableDeclaration') {
+        id = (node.declarations[0].id as es.Identifier).name
+      }
+      const type = typeToString(node.inferredType!)
+      return `At Line ${lineNumber} => ${id}: ${type}`
+    })
+    .slice(0, 1)
+    .join('\n')
   /*
   return typedProgram.body
     .filter(
