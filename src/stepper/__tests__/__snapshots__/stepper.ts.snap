@@ -2741,7 +2741,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function factorial declared, parameter(s) n required",
+    "Function factorial declared, parameter(s) n required",
   ],
   Array [
     Object {
@@ -3018,7 +3018,7 @@ Array [
         "callee",
       ],
     ],
-    "function factorial declared, parameter(s) n required",
+    "Function factorial declared, parameter(s) n required",
   ],
   Array [
     Object {
@@ -4930,7 +4930,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -5282,7 +5282,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -8021,7 +8021,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -8393,7 +8393,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -11272,7 +11272,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -11664,7 +11664,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -14683,7 +14683,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -15095,7 +15095,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -18254,7 +18254,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -18686,7 +18686,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -21985,7 +21985,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -22120,7 +22120,7 @@ Array [
         "right",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -23644,7 +23644,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function f declared, parameter(s) n,m required",
+    "Function f declared, parameter(s) n,m required",
   ],
   Array [
     Object {
@@ -23954,7 +23954,7 @@ Array [
         "callee",
       ],
     ],
-    "function f declared, parameter(s) n,m required",
+    "Function f declared, parameter(s) n,m required",
   ],
   Array [
     Object {
@@ -26949,7 +26949,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function f declared, parameter(s) n required",
+    "Function f declared, parameter(s) n required",
   ],
   Array [
     Object {
@@ -27165,7 +27165,7 @@ Array [
         "callee",
       ],
     ],
-    "function f declared, parameter(s) n required",
+    "Function f declared, parameter(s) n required",
   ],
   Array [
     Object {
@@ -30649,7 +30649,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -30729,7 +30729,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -30809,7 +30809,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -30843,7 +30843,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -32775,7 +32775,7 @@ Array [
         "expression",
       ],
     ],
-    "OR operation evaluated, left of value is true, stop evaluating",
+    "OR operation evaluated, left of operator is true, stop evaluation",
   ],
   Array [
     Object {
@@ -32810,7 +32810,7 @@ Array [
         "expression",
       ],
     ],
-    "OR operation evaluated, left of value is true, stop evaluating",
+    "OR operation evaluated, left of operator is true, stop evaluation",
   ],
   Array [
     Object {
@@ -32969,7 +32969,7 @@ Array [
         "body[0]",
       ],
     ],
-    "constant a declared and substituted into rest of block",
+    "Constant a declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -32991,7 +32991,7 @@ Array [
         "expression",
       ],
     ],
-    "constant a declared and substituted into rest of block",
+    "Constant a declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -33849,7 +33849,7 @@ Array [
         "body[0]",
       ],
     ],
-    "constant z declared and substituted into rest of block",
+    "Constant z declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -34107,7 +34107,7 @@ Array [
         "right",
       ],
     ],
-    "constant z declared and substituted into rest of block",
+    "Constant z declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -34361,7 +34361,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function f declared, parameter(s) g required",
+    "Function f declared, parameter(s) g required",
   ],
   Array [
     Object {
@@ -34601,7 +34601,7 @@ Array [
         "callee",
       ],
     ],
-    "function f declared, parameter(s) g required",
+    "Function f declared, parameter(s) g required",
   ],
   Array [
     Object {
@@ -35183,7 +35183,7 @@ Array [
         "body[0]",
       ],
     ],
-    "constant z declared and substituted into rest of block",
+    "Constant z declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -35302,7 +35302,7 @@ Array [
         "arguments[0]",
       ],
     ],
-    "constant z declared and substituted into rest of block",
+    "Constant z declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -36666,7 +36666,7 @@ Array [
         "body[0]",
       ],
     ],
-    "constant odd declared and substituted into rest of block",
+    "Constant odd declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -37080,7 +37080,7 @@ Array [
         "callee",
       ],
     ],
-    "constant odd declared and substituted into rest of block",
+    "Constant odd declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -37489,7 +37489,7 @@ Array [
         "body[0]",
       ],
     ],
-    "constant even declared and substituted into rest of block",
+    "Constant even declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -37842,7 +37842,7 @@ Array [
         "callee",
       ],
     ],
-    "constant even declared and substituted into rest of block",
+    "Constant even declared and substituted into rest of block",
   ],
   Array [
     Object {
@@ -39902,7 +39902,7 @@ Array [
         "expression",
       ],
     ],
-    "OR operation evaluated, left of value is true, stop evaluating",
+    "OR operation evaluated, left of operator is true, stop evaluation",
   ],
   Array [
     Object {
@@ -40297,7 +40297,7 @@ Array [
         "expression",
       ],
     ],
-    "OR operation evaluated, left of value is true, stop evaluating",
+    "OR operation evaluated, left of operator is true, stop evaluation",
   ],
   Array [
     Object {
@@ -43254,7 +43254,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -43289,7 +43289,7 @@ Array [
         "expression",
       ],
     ],
-    "Condtional expression evaluated, condition is true, consequent evaluated",
+    "Conditional expression evaluated, condition is true, consequent evaluated",
   ],
   Array [
     Object {
@@ -47091,7 +47091,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function f declared, parameter(s)  required",
+    "Function f declared, parameter(s)  required",
   ],
   Array [
     Object {
@@ -47552,7 +47552,7 @@ Array [
         "right",
       ],
     ],
-    "function f declared, parameter(s)  required",
+    "Function f declared, parameter(s)  required",
   ],
   Array [
     Object {
@@ -47994,7 +47994,7 @@ Array [
         "body[0]",
       ],
     ],
-    "function g declared, parameter(s)  required",
+    "Function g declared, parameter(s)  required",
   ],
   Array [
     Object {
@@ -48881,7 +48881,7 @@ Array [
         "right",
       ],
     ],
-    "function g declared, parameter(s)  required",
+    "Function g declared, parameter(s)  required",
   ],
   Array [
     Object {
