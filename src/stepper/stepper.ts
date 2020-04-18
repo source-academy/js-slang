@@ -579,7 +579,7 @@ function reduceMain(
       FunctionDeclaration: (target: es.FunctionDeclaration): string => {
         const funcName = target.id !== null ? target.id.name : 'error'
         return (
-          'function ' +
+          'Function ' +
           funcName +
           ' declared, parameter(s) ' +
           target.params.map(bodify) +
@@ -608,7 +608,7 @@ function reduceMain(
       },
 
       VariableDeclaration: (target: es.VariableDeclaration): string =>
-        'constant ' +
+        'Constant ' +
         bodify(target.declarations[0].id) +
         ' declared and substituted into rest of block',
 
@@ -637,21 +637,21 @@ function reduceMain(
 
       ConditionalExpression: (target: es.ConditionalExpression): string => {
         return (
-          'Condtional expression evaluated, condition is ' +
+          'Conditional expression evaluated, condition is ' +
           (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
         )
       },
 
       LogicalExpression: (target: es.LogicalExpression): string => {
         return target.operator === '&&'
-          ? 'AND operation evaluated, left of value is ' +
+          ? 'AND operation evaluated, left of operator is ' +
               (target.left
-                ? 'true, continue evaluating left of operator'
-                : 'false, stop evaluating')
-          : 'OR operation evaluated, left of value is ' +
+                ? 'true, continue evaluating right of operator'
+                : 'false, stop evaluation')
+          : 'OR operation evaluated, left of operator is ' +
               (target.left
-                ? 'true, stop evaluating'
-                : 'false, continue evaluating left of operator')
+                ? 'true, stop evaluation'
+                : 'false, continue evaluating right of operator')
       },
 
       CallExpression: (target: es.CallExpression): string => {
