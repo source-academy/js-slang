@@ -123,10 +123,22 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
   return checkers
 }
 
+function cleanTset(tset: stype.TransitionSet) {
+  //code breaks if number of caller args =/= callee args
+  for (let [key,val] of tset) {
+    for (let t of val) {
+      if(t.callee.type === 'FunctionSymbol' && t.caller.args.length !== t.callee.args.length) {
+        tset.delete(key);
+        break;
+      }
+    }
+  }
+}
+
 export function updateCheckers(tset: stype.TransitionSet) {
+  cleanTset(tset)
   const checkers1 = checkMLinearDiv(tset)
   const checkers2 = checkBaseCase(tset)
   const checkers3 = checkStateChange(tset)
-
   return checkers1.concat(checkers2).concat(checkers3)
 }
