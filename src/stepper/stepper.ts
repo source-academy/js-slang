@@ -554,8 +554,9 @@ function reduceMain(
 
       Identifier: (target: es.Identifier): string => target.name,
 
-      ExpressionStatement: (target: es.ExpressionStatement): string => bodify(target.expression),
-
+      ExpressionStatement: (target: es.ExpressionStatement): string =>
+        bodify(target.expression) + ' finished evaluating',
+      
       BinaryExpression: (target: es.BinaryExpression): string =>
         bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
 
@@ -581,9 +582,10 @@ function reduceMain(
         return (
           'Function ' +
           funcName +
-          ' declared, parameter(s) ' +
-          target.params.map(bodify) +
-          ' required'
+          ' declared' +
+          (target.params.length > 0
+            ? ', parameter(s) ' + target.params.map(bodify) + ' required'
+            : '')
         )
       },
 
@@ -599,11 +601,14 @@ function reduceMain(
       ArrowFunctionExpression: (target: es.ArrowFunctionExpression): string => {
         if (verbose) {
           verbose = false
-          const redacted = target.params.map(bodify) + ' => ' + bodify(target.body)
+          const redacted =
+            (target.params.length > 0 ? target.params.map(bodify) : '()') +
+            ' => ' +
+            bodify(target.body)
           verbose = true
           return redacted
         } else {
-          return target.params.map(bodify) + ' => ...'
+          return (target.params.length > 0 ? target.params.map(bodify) : '()') + ' => ...'
         }
       },
 
@@ -638,18 +643,20 @@ function reduceMain(
       ConditionalExpression: (target: es.ConditionalExpression): string => {
         return (
           'Conditional expression evaluated, condition is ' +
-          (target.test ? 'true, consequent evaluated' : 'false, alternate evaluated')
+          (bodify(target.test) === 'true'
+            ? 'true, consequent evaluated'
+            : 'false, alternate evaluated')
         )
       },
 
       LogicalExpression: (target: es.LogicalExpression): string => {
         return target.operator === '&&'
           ? 'AND operation evaluated, left of operator is ' +
-              (target.left
+              (bodify(target.left) === 'true'
                 ? 'true, continue evaluating right of operator'
                 : 'false, stop evaluation')
           : 'OR operation evaluated, left of operator is ' +
-              (target.left
+              (bodify(target.left) === 'true'
                 ? 'true, stop evaluation'
                 : 'false, continue evaluating right of operator')
       },
@@ -685,21 +692,17 @@ function reduceMain(
         }
       },
 
-      Program: (target: es.Program): string => {
-        return (
-          bodify(target.body[0]) +
-          (target.body[0].type === 'ExpressionStatement' ? ' finished evaluating' : '')
-        )
-      },
+      Program: (target: es.Program): string => bodify(target.body[0]),
 
       BlockExpression: (target: BlockExpression): string => bodify(target.body[0]),
 
-      BlockStatement: (target: es.BlockStatement): string => bodify(target.body[0]),
+      BlockStatement: (target: es.BlockStatement): string =>
+        target.body.length === 0 ? 'Empty block statement evaluated' : bodify(target.body[0]),
 
       IfStatement: (target: es.IfStatement): string => {
         return (
           'If statement evaluated, ' +
-          (target.test
+          (bodify(target.test) === 'true'
             ? 'condition true, proceed to if block'
             : 'condition false, proceed to else block')
         )
@@ -969,6 +972,8 @@ function reduceMain(
         firstStatement.type === 'ExpressionStatement' &&
         isIrreducible(firstStatement.expression)
       ) {
+        paths[0].push('body[0]')
+        paths.push([])
         return [ast.program(otherStatements as es.Statement[]), context, paths, explain(node)]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
@@ -1092,137 +1097,163 @@ function reduceMain(
       context: Context,
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
-      const [firstStatement, ...otherStatements] = node.body
-      if (firstStatement.type === 'ReturnStatement') {
-        const arg = firstStatement.argument as es.Expression
-        return [ast.expressionStatement(arg), context, paths, explain(node)]
-      } else if (
-        firstStatement.type === 'ExpressionStatement' &&
-        isIrreducible(firstStatement.expression)
-      ) {
-        return [
-          otherStatements.length > 0
-            ? ast.blockStatement(otherStatements as es.Statement[])
-            : ast.expressionStatement(ast.identifier('undefined')),
-          context,
-          paths,
-          explain(node)
-        ]
-      } else if (firstStatement.type === 'FunctionDeclaration') {
-        let funDecExp = ast.functionDeclarationExpression(
-          firstStatement.id!,
-          firstStatement.params,
-          firstStatement.body
-        ) as FunctionDeclarationExpression
-        // substitute body
-        funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-          []
-        ])[0] as FunctionDeclarationExpression
-        // substitute the rest of the blockStatement
-        const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
-        const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
-        // concats paths such that:
-        // paths[0] -> path to the program to be substituted, pre-redex
-        // paths[1...] -> path(s) to the parts of the remaining program
-        // that were substituted, post-redex
-        paths[0].push('body[0]')
-        const allPaths = paths.concat(subst[1])
-        if (subst[1].length === 0) {
-          allPaths.push([])
-        }
-        return [subst[0], context, allPaths, explain(node)]
-      } else if (firstStatement.type === 'VariableDeclaration') {
-        const { kind, declarations } = firstStatement
-        if (kind !== 'const') {
-          // TODO: cannot use let or var
-          return [dummyBlockStatement(), context, paths, 'cannot use let or var']
-        } else if (
-          declarations.length <= 0 ||
-          declarations.length > 1 ||
-          declarations[0].type !== 'VariableDeclarator' ||
-          !declarations[0].init
-        ) {
-          // TODO: syntax error
-          return [dummyBlockStatement(), context, paths, 'syntax error']
-        } else {
-          const declarator = declarations[0] as es.VariableDeclarator
-          const rhs = declarator.init!
-          if (declarator.id.type !== 'Identifier') {
-            // TODO: source does not allow destructuring
-            return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
-          } else if (isIrreducible(rhs)) {
-            const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
-            // force casting for weird errors
-            const subst = substituteMain(
-              declarator.id,
-              rhs as es.ArrayExpression,
-              remainingBlockStatement,
-              paths
-            )
-            // concats paths such that:
-            // paths[0] -> path to the program to be substituted, pre-redex
-            // paths[1...] -> path(s) to the parts of the remaining program
-            // that were substituted, post-redex
-            paths[0].push('body[0]')
-            const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) {
-              allPaths.push([])
+      if (node.body.length === 0) {
+        return [ast.expressionStatement(ast.identifier('undefined')), context, paths, explain(node)]
+      } else {
+        const [firstStatement, ...otherStatements] = node.body
+        if (firstStatement.type === 'ReturnStatement') {
+          const arg = firstStatement.argument as es.Expression
+          return [ast.expressionStatement(arg), context, paths, explain(node)]
+        } else if (firstStatement.type === 'IfStatement') {
+          paths[0].push('body[0]')
+          const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
+          if (reduced.type === 'BlockStatement') {
+            const body = reduced.body as es.Statement[]
+            if (body.length > 1) {
+              path[1] = [...path[0].slice(0, path[0].length - 1)]
             }
-            return [subst[0], context, allPaths, explain(node)]
-          } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-            let funDecExp = ast.functionDeclarationExpression(
-              declarator.id,
-              rhs.params,
-              rhs.body.type === 'BlockStatement'
-                ? rhs.body
-                : ast.blockStatement([ast.returnStatement(rhs.body)])
-            ) as FunctionDeclarationExpression
-            // substitute body
-            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-              []
-            ])[0] as FunctionDeclarationExpression
-            // substitute the rest of the blockStatement
-            const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
-            const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
-            // concats paths such that:
-            // paths[0] -> path to the program to be substituted, pre-redex
-            // paths[1...] -> path(s) to the parts of the remaining program
-            // that were substituted, post-redex
-            paths[0].push('body[0]')
-            const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) {
-              allPaths.push([])
-            }
-            return [subst[0], context, allPaths, explain(node)]
+            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
+            return [ast.blockStatement(wholeBlock), cont, path, str]
           } else {
-            paths[0].push('body[0]')
-            paths[0].push('declarations[0]')
-            paths[0].push('init')
-            const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
             return [
-              ast.blockStatement([
-                ast.declaration(
-                  declarator.id.name,
-                  'const',
-                  reducedRhs as es.Expression
-                ) as es.Statement,
-                ...(otherStatements as es.Statement[])
-              ]),
+              ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
               cont,
               path,
               str
             ]
           }
+        } else if (
+          firstStatement.type === 'ExpressionStatement' &&
+          isIrreducible(firstStatement.expression)
+        ) {
+          let stmt
+          if (otherStatements.length > 0) {
+            paths[0].push('body[0]')
+            paths.push([])
+            stmt = ast.blockStatement(otherStatements as es.Statement[])
+          } else {
+            stmt = ast.expressionStatement(ast.identifier('undefined'))
+          }
+          return [stmt, context, paths, explain(node)]
+        } else if (firstStatement.type === 'FunctionDeclaration') {
+          let funDecExp = ast.functionDeclarationExpression(
+            firstStatement.id!,
+            firstStatement.params,
+            firstStatement.body
+          ) as FunctionDeclarationExpression
+          // substitute body
+          funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+            []
+          ])[0] as FunctionDeclarationExpression
+          // substitute the rest of the blockStatement
+          const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
+          const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
+          // concats paths such that:
+          // paths[0] -> path to the program to be substituted, pre-redex
+          // paths[1...] -> path(s) to the parts of the remaining program
+          // that were substituted, post-redex
+          paths[0].push('body[0]')
+          const allPaths = paths.concat(subst[1])
+          if (subst[1].length === 0) {
+            allPaths.push([])
+          }
+          return [subst[0], context, allPaths, explain(node)]
+        } else if (firstStatement.type === 'VariableDeclaration') {
+          const { kind, declarations } = firstStatement
+          if (kind !== 'const') {
+            // TODO: cannot use let or var
+            return [dummyBlockStatement(), context, paths, 'cannot use let or var']
+          } else if (
+            declarations.length <= 0 ||
+            declarations.length > 1 ||
+            declarations[0].type !== 'VariableDeclarator' ||
+            !declarations[0].init
+          ) {
+            // TODO: syntax error
+            return [dummyBlockStatement(), context, paths, 'syntax error']
+          } else {
+            const declarator = declarations[0] as es.VariableDeclarator
+            const rhs = declarator.init!
+            if (declarator.id.type !== 'Identifier') {
+              // TODO: source does not allow destructuring
+              return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
+            } else if (isIrreducible(rhs)) {
+              const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
+              // force casting for weird errors
+              const subst = substituteMain(
+                declarator.id,
+                rhs as es.ArrayExpression,
+                remainingBlockStatement,
+                paths
+              )
+              // concats paths such that:
+              // paths[0] -> path to the program to be substituted, pre-redex
+              // paths[1...] -> path(s) to the parts of the remaining program
+              // that were substituted, post-redex
+              paths[0].push('body[0]')
+              const allPaths = paths.concat(subst[1])
+              if (subst[1].length === 0) {
+                allPaths.push([])
+              }
+              return [subst[0], context, allPaths, explain(node)]
+            } else if (
+              rhs.type === 'ArrowFunctionExpression' ||
+              rhs.type === 'FunctionExpression'
+            ) {
+              let funDecExp = ast.functionDeclarationExpression(
+                declarator.id,
+                rhs.params,
+                rhs.body.type === 'BlockStatement'
+                  ? rhs.body
+                  : ast.blockStatement([ast.returnStatement(rhs.body)])
+              ) as FunctionDeclarationExpression
+              // substitute body
+              funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+                []
+              ])[0] as FunctionDeclarationExpression
+              // substitute the rest of the blockStatement
+              const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
+              const subst = substituteMain(funDecExp.id, funDecExp, remainingBlockStatement, paths)
+              // concats paths such that:
+              // paths[0] -> path to the program to be substituted, pre-redex
+              // paths[1...] -> path(s) to the parts of the remaining program
+              // that were substituted, post-redex
+              paths[0].push('body[0]')
+              const allPaths = paths.concat(subst[1])
+              if (subst[1].length === 0) {
+                allPaths.push([])
+              }
+              return [subst[0], context, allPaths, explain(node)]
+            } else {
+              paths[0].push('body[0]')
+              paths[0].push('declarations[0]')
+              paths[0].push('init')
+              const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
+              return [
+                ast.blockStatement([
+                  ast.declaration(
+                    declarator.id.name,
+                    'const',
+                    reducedRhs as es.Expression
+                  ) as es.Statement,
+                  ...(otherStatements as es.Statement[])
+                ]),
+                cont,
+                path,
+                str
+              ]
+            }
+          }
         }
+        paths[0].push('body[0]')
+        const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
+        return [
+          ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
+          cont,
+          path,
+          str
+        ]
       }
-      paths[0].push('body[0]')
-      const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
-      return [
-        ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
-        cont,
-        path,
-        str
-      ]
     },
 
     BlockExpression(
@@ -1234,18 +1265,37 @@ function reduceMain(
       if (firstStatement.type === 'ReturnStatement') {
         const arg = firstStatement.argument as es.Expression
         return [arg, context, paths, explain(node)]
+      } else if (firstStatement.type === 'IfStatement') {
+        paths[0].push('body[0]')
+        const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
+        if (reduced.type === 'BlockStatement') {
+          const body = reduced.body as es.Statement[]
+          if (body.length > 1) {
+            path[1] = [...path[0].slice(0, path[0].length - 1)]
+          }
+          const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
+          return [ast.blockExpression(wholeBlock), cont, path, str]
+        } else {
+          return [
+            ast.blockExpression([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
+            cont,
+            path,
+            str
+          ]
+        }
       } else if (
         firstStatement.type === 'ExpressionStatement' &&
         isIrreducible(firstStatement.expression)
       ) {
-        return [
-          otherStatements.length > 0
-            ? ast.blockExpression(otherStatements as es.Statement[])
-            : ast.identifier('undefined'),
-          context,
-          paths,
-          explain(node)
-        ]
+        let stmt
+        if (otherStatements.length > 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          stmt = ast.blockExpression(otherStatements as es.Statement[])
+        } else {
+          stmt = ast.identifier('undefined')
+        }
+        return [stmt, context, paths, explain(node)]
       } else if (firstStatement.type === 'FunctionDeclaration') {
         let funDecExp = ast.functionDeclarationExpression(
           firstStatement.id!,
