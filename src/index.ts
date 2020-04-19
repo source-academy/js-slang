@@ -379,7 +379,7 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context)
     const redexedSteps: [string, string, string][] = []
     for (const step of steps) {
-      const redexed = redexify(step[0], step[1]) 
+      const redexed = redexify(step[0], step[1])
       redexedSteps.push([redexed[0], redexed[1], step[2]])
     }
     return Promise.resolve({
