@@ -1,0 +1,11 @@
+\subsection*{Nondeterminism support}
+
+The following operators and functions form the building blocks of nondeterminism:
+
+\begin{itemize}
+\item \lstinline{amb(e1, e2, ..., en)}: \textit{operator}, creates a choice point whose value is chosen, at runtime,
+from the set \lstinline{e1, e2, ..., en}. Note that this \textit{amb} operator is not an expression. It is simply an operator, like binary and unary operators.
+\item \lstinline{amb()}: applying \textit{amb} without any arguments forces the language processor to backtrack to the most recent \textit{amb expression}.
+\item \lstinline{require(pred)}: \textit{builtin}, this function forces the language processor to backtrack to the most recent \textit{amb expression}, if and only if \lstinline{pred} is false.
+\item \lstinline{cut}: \textit{operator}, prevents the language processor from backtracking any further beyond the current statement.
+\end{itemize}
