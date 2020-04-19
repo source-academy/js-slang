@@ -379,6 +379,86 @@ test('Block statements', async () => {
     true
   )
 })
+
+test('Deterministic arrays', async () => {
+  await testDeterministicCode(`[];`, [])
+
+  await testDeterministicCode(`const a = [[1, 2], [3, [4]]]; a;`, [
+    [1, 2],
+    [3, [4]]
+  ])
+
+  await testDeterministicCode(`const a = [[[[6]]]]; a[0][0][0][0];`, 6)
+
+  await testDeterministicCode(`const f = () => 2; const a = [1, f(), 3]; a;`, [1, 2, 3])
+
+  await testDeterministicCode(
+    `[1, 1, 1][4.4];`,
+    'Line 1: Expected array index as prop, got other number.',
+    true
+  )
+
+  await testDeterministicCode(
+    `[1, 1, 1]["str"] = 2;`,
+    'Line 1: Expected array index as prop, got string.',
+    true
+  )
+
+  await testDeterministicCode(`4[0];`, 'Line 1: Expected object or array, got number.', true)
+})
+
+test('Non-deterministic array values', async () => {
+  await testNonDeterministicCode(`const a = [amb(1, 2), amb(3, 4)]; a;`, [
+    [1, 3],
+    [1, 4],
+    [2, 3],
+    [2, 4]
+  ])
+
+  await testNonDeterministicCode(`const a = [1, 2, 3, 4]; a[2] = amb(10, 11, 12); a;`, [
+    [1, 2, 10, 4],
+    [1, 2, 11, 4],
+    [1, 2, 12, 4]
+  ])
+})
+
+test('Non-deterministic array objects', async () => {
+  await testNonDeterministicCode(
+    `const a = [1, 2]; const b = [3, 4];
+     amb(a, b)[1] = 99; a;
+    `,
+    [
+      [1, 99],
+      [1, 2]
+    ]
+  )
+
+  await testNonDeterministicCode(
+    `const a = [1, 2]; const b = [3, 4];
+     amb(a, b)[1] = 99; b;
+    `,
+    [
+      [3, 4],
+      [3, 99]
+    ]
+  )
+})
+
+test('Non-deterministic array properties', async () => {
+  await testNonDeterministicCode(
+    `
+      const a = [100, 101, 102, 103];
+      a[amb(0, 1, 2, 3)] = 999; a;
+    `,
+    [
+      [999, 101, 102, 103],
+      [100, 999, 102, 103],
+      [100, 101, 999, 103],
+      [100, 101, 102, 999]
+    ]
+  )
+})
+
 test('Material Conditional', async () => {
   await testDeterministicCode(`implication(true, true);`, true)
   await testDeterministicCode(`implication(true, false);`, false)
