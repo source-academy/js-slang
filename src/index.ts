@@ -16,7 +16,7 @@ import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { getEvaluationSteps } from './stepper/stepper'
+import { redexify, getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -377,9 +377,14 @@ export async function runInContext(
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
+    const redexedSteps: [string, string, string][] = []
+    for (const step of steps) {
+      const redexed = redexify(step[0], step[1]) 
+      redexedSteps.push([redexed[0], redexed[1], step[2]])
+    }
     return Promise.resolve({
       status: 'finished',
-      value: steps
+      value: redexedSteps
     } as Result)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)

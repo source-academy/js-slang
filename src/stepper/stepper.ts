@@ -556,7 +556,7 @@ function reduceMain(
 
       ExpressionStatement: (target: es.ExpressionStatement): string =>
         bodify(target.expression) + ' finished evaluating',
-      
+
       BinaryExpression: (target: es.BinaryExpression): string =>
         bodify(target.left) + ' ' + target.operator + ' ' + bodify(target.right),
 
