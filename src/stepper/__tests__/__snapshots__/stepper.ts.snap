@@ -44046,6 +44046,15 @@ repeat_pattern(5, plus_one, 0);
 
 repeat_pattern(5, plus_one, 0);
 
+repeat_pattern(5, plus_one, 0);
+
+{
+  function twice_p(r) {
+    return plus_one(plus_one(r));
+  }
+  return 5 === 0 ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);
+};
+
 {
   function twice_p(r) {
     return plus_one(plus_one(r));
@@ -44854,7 +44863,7 @@ Array [
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 11,
+                    "column": 2,
                     "line": 2,
                   },
                 },
@@ -44938,12 +44947,9 @@ Array [
                 "prefix": true,
                 "type": "UnaryExpression",
               },
-            ],
-            "callee": Node {
-              "end": 11,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 17,
                   "line": 2,
                 },
                 "start": Position {
@@ -44964,8 +44970,11 @@ Array [
                 "column": 2,
                 "line": 2,
               },
+              "name": "NaN",
+              "start": 22,
+              "type": "Identifier",
             },
-            "type": "CallExpression",
+            "type": "LogicalExpression",
           },
           "type": "ExpressionStatement",
         },
@@ -45013,6 +45022,10 @@ Array [
                 "column": 0,
                 "line": 1,
               },
+              "raw": "1048576",
+              "start": 0,
+              "type": "Literal",
+              "value": 1048576,
             },
             "operator": "-",
             "prefix": true,
@@ -45065,6 +45078,9 @@ Array [
                 "column": 0,
                 "line": 1,
               },
+              "name": "NaN",
+              "start": 22,
+              "type": "Identifier",
             },
             "operator": "-",
             "prefix": true,
@@ -45126,9 +45142,12 @@ Array [
                 "start": 3,
                 "type": "Identifier",
               },
+            ],
+            "callee": Node {
+              "end": 11,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 10,
                   "line": 2,
                 },
                 "start": Position {
