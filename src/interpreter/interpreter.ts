@@ -9,6 +9,7 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import { loadIIFEModule } from '../modules/moduleLoader'
 
 class BreakValue {}
 
@@ -20,6 +21,36 @@ class ReturnValue {
 
 class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
+}
+
+class Thunk {
+  public value: Value
+  public isMemoized: boolean
+  constructor(public exp: es.Node, public env: Environment) {
+    this.isMemoized = false
+    this.value = null
+  }
+}
+
+const delayIt = (exp: es.Node, env: Environment): Thunk => new Thunk(exp, env)
+
+function* forceIt(val: any, context: Context): Value {
+  if (val instanceof Thunk) {
+    if (val.isMemoized) return val.value
+
+    pushEnvironment(context, val.env)
+    const evalRes = yield* actualValue(val.exp, context)
+    popEnvironment(context)
+    val.value = evalRes
+    val.isMemoized = true
+    return evalRes
+  } else return val
+}
+
+export function* actualValue(exp: es.Node, context: Context): Value {
+  const evalResult = yield* evaluate(exp, context)
+  const forced = yield* forceIt(evalResult, context)
+  return forced
 }
 
 const createEnvironment = (
@@ -66,9 +97,9 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
   throw error
 }
 
-const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function hoistIdentifier(context: Context, name: string, node: es.Node) {
+function declareIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -78,27 +109,30 @@ function hoistIdentifier(context: Context, name: string, node: es.Node) {
       new errors.VariableRedeclaration(node, name, descriptors[name].writable)
     )
   }
-  environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
   return environment
 }
 
-function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+function declareVariables(context: Context, node: es.VariableDeclaration) {
   for (const declaration of node.declarations) {
-    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
   }
 }
 
-function hoistFunctionsAndVariableDeclarationsIdentifiers(
-  context: Context,
-  node: es.BlockStatement
-) {
+function declareImports(context: Context, node: es.ImportDeclaration) {
+  for (const declaration of node.specifiers) {
+    declareIdentifier(context, declaration.local.name, node)
+  }
+}
+
+function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        hoistVariableDeclarations(context, statement)
+        declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
@@ -107,7 +141,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
   const environment = context.runtime.environments[0]
 
-  if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
+  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
       new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
@@ -146,7 +180,7 @@ const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         return handleRuntimeError(
           context,
           new errors.UnassignedVariable(name, context.runtime.nodes[0])
@@ -165,7 +199,7 @@ const setVariable = (context: Context, name: string, value: any) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         break
       }
       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -202,7 +236,11 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    args.push(yield* evaluate(arg, context))
+    if (context.variant !== 'lazy') {
+      args.push(yield* actualValue(arg, context))
+    } else {
+      args.push(delayIt(arg, currentEnvironment(context)))
+    }
   }
   return args
 }
@@ -219,7 +257,7 @@ function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
 ): IterableIterator<es.Node> {
-  const test = yield* evaluate(node.test, context)
+  const test = yield* actualValue(node.test, context)
 
   const error = rttc.checkIfStatement(node, test)
   if (error) {
@@ -232,7 +270,7 @@ function* reduceIf(
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
 function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
-  hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
+  declareFunctionsAndVariables(context, node)
   let result
   for (const statement of node.body) {
     result = yield* evaluate(statement, context)
@@ -296,11 +334,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
-    const callee = yield* evaluate(node.callee, context)
+    const callee = yield* actualValue(node.callee, context)
     const args = yield* getArgs(context, node)
     let thisContext
     if (node.callee.type === 'MemberExpression') {
-      thisContext = yield* evaluate(node.callee.object, context)
+      thisContext = yield* actualValue(node.callee.object, context)
     }
     const result = yield* apply(context, callee, args, node, thisContext)
     return result
@@ -324,7 +362,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
-    const value = yield* evaluate(node.argument, context)
+    const value = yield* actualValue(node.argument, context)
 
     const error = rttc.checkUnaryExpression(node, node.operator, value)
     if (error) {
@@ -334,8 +372,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    const left = yield* evaluate(node.left, context)
-    const right = yield* evaluate(node.right, context)
+    const left = yield* actualValue(node.left, context)
+    const right = yield* actualValue(node.right, context)
 
     const error = rttc.checkBinaryExpression(node, node.operator, left, right)
     if (error) {
@@ -378,12 +416,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const testNode = node.test!
     const updateNode = node.update!
     if (initNode.type === 'VariableDeclaration') {
-      hoistVariableDeclarations(context, initNode)
+      declareVariables(context, initNode)
     }
-    yield* evaluate(initNode, context)
+    yield* actualValue(initNode, context)
 
     let value
-    while (yield* evaluate(testNode, context)) {
+    while (yield* actualValue(testNode, context)) {
       // create block context and shallow copy loop environment head
       // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
       // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -393,12 +431,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       pushEnvironment(context, environment)
       for (const name in loopEnvironment.head) {
         if (loopEnvironment.head.hasOwnProperty(name)) {
-          hoistIdentifier(context, name, node)
+          declareIdentifier(context, name, node)
           defineVariable(context, name, loopEnvironment.head[name], true)
         }
       }
 
-      value = yield* evaluate(node.body, context)
+      value = yield* actualValue(node.body, context)
 
       // Remove block context
       popEnvironment(context)
@@ -413,7 +451,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         break
       }
 
-      yield* evaluate(updateNode, context)
+      yield* actualValue(updateNode, context)
     }
 
     popEnvironment(context)
@@ -422,13 +460,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
-    let obj = yield* evaluate(node.object, context)
+    let obj = yield* actualValue(node.object, context)
     if (obj instanceof Closure) {
       obj = obj.fun
     }
     let prop
     if (node.computed) {
-      prop = yield* evaluate(node.property, context)
+      prop = yield* actualValue(node.property, context)
     } else {
       prop = (node.property as es.Identifier).name
     }
@@ -456,10 +494,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
     if (node.left.type === 'MemberExpression') {
       const left = node.left
-      const obj = yield* evaluate(left.object, context)
+      const obj = yield* actualValue(left.object, context)
       let prop
       if (left.computed) {
-        prop = yield* evaluate(left.property, context)
+        prop = yield* actualValue(left.property, context)
       } else {
         prop = (left.property as es.Identifier).name
       }
@@ -515,8 +553,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression') {
-      const callee = yield* evaluate(returnExpression.callee, context)
+    if (returnExpression.type === 'CallExpression' && context.variant !== 'lazy') {
+      const callee = yield* actualValue(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
     } else {
@@ -528,12 +566,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     let value: any // tslint:disable-line
     while (
       // tslint:disable-next-line
-      (yield* evaluate(node.test, context)) &&
+      (yield* actualValue(node.test, context)) &&
       !(value instanceof ReturnValue) &&
       !(value instanceof BreakValue) &&
       !(value instanceof TailCallReturnValue)
     ) {
-      value = yield* evaluate(node.body, context)
+      value = yield* actualValue(node.body, context)
     }
     if (value instanceof BreakValue) {
       return undefined
@@ -566,11 +604,23 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return result
   },
 
+  ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
+    const moduleName = node.source.value as string
+    const neededSymbols = node.specifiers.map(spec => spec.local.name)
+    const module = loadIIFEModule(moduleName)
+    declareImports(context, node)
+    for (const name of neededSymbols) {
+      defineVariable(context, name, module[name], true);
+    }
+    return undefined
+  },
+
   Program: function*(node: es.BlockStatement, context: Context) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-    return yield* evaluateBlockSatement(context, node)
+    const result = yield *forceIt(yield* evaluateBlockSatement(context, node), context);
+    return result;
   }
 }
 // tslint:enable:object-literal-shorthand
@@ -585,7 +635,7 @@ export function* evaluate(node: es.Node, context: Context) {
 export function* apply(
   context: Context,
   fun: Closure | Value,
-  args: Value[],
+  args: (Thunk | Value)[],
   node: es.CallExpression,
   thisContext?: Value
 ) {
@@ -614,7 +664,13 @@ export function* apply(
       }
     } else if (typeof fun === 'function') {
       try {
-        result = fun.apply(thisContext, args)
+        const forcedArgs = []
+
+        for (const arg of args) {
+          forcedArgs.push(yield* forceIt(arg, context))
+        }
+
+        result = fun.apply(thisContext, forcedArgs)
         break
       } catch (e) {
         // Recover from exception

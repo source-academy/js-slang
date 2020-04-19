@@ -1,12 +1,12 @@
-import { stripIndent } from '../../utils/formatters'
-import { expectParsedError } from '../../utils/testing'
+import { simple } from 'acorn-walk/dist/walk'
+import * as es from 'estree'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { validateAndAnnotate } from '../validator'
-import * as es from 'estree'
-import { simple } from 'acorn-walk/dist/walk'
-import { getVariableDecarationName } from '../../utils/astCreator'
 import { TypeAnnotatedNode } from '../../types'
+import { getVariableDecarationName } from '../../utils/astCreator'
+import { stripIndent } from '../../utils/formatters'
+import { expectParsedError } from '../../utils/testing'
+import { validateAndAnnotate } from '../validator'
 
 export async function toValidatedAst(code: string) {
   const context = mockContext(1)

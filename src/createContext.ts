@@ -5,11 +5,12 @@ import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
+import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value } from './types'
+import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
@@ -41,6 +42,7 @@ const createGlobalEnvironment = () => ({
 
 export const createEmptyContext = <T>(
   chapter: number,
+  variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -61,7 +63,8 @@ export const createEmptyContext = <T>(
     prelude: null,
     debugger: createEmptyDebugger(),
     contextId: length - 1,
-    executionMethod: 'auto'
+    executionMethod: 'auto',
+    variant
   }
 }
 
@@ -204,6 +207,11 @@ function importPrelude(context: Context) {
   if (context.chapter >= 3) {
     prelude += streamPrelude
   }
+
+  if (context.variant === 'non-det') {
+    prelude += nonDetPrelude
+  }
+
   if (prelude !== '') {
     context.prelude = prelude
   }
@@ -222,11 +230,12 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(
   chapter = 1,
+  variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ) => {
-  const context = createEmptyContext(chapter, externalSymbols, externalContext)
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)
