@@ -16,7 +16,11 @@ import { SourceDocumentation } from '../docTooltip'
  * 4) changed regex to mark certain operators in pink
  * 5) use SourceDocumentation to include all library functions and constants from source
  */
-export function HighlightRulesSelector(id: number, variant: Variant = 'default', external: String = 'NONE') {
+export function HighlightRulesSelector(
+  id: number,
+  variant: Variant = 'default',
+  external: String = 'NONE'
+) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
@@ -27,26 +31,26 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default',
     var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
-    const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant;
-    const builtin_lib = SourceDocumentation.builtins[chapter];
+    const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
+    const builtin_lib = SourceDocumentation.builtins[chapter]
     const ext_lib = external === 'NONE' ? null : SourceDocumentation.ext_lib
 
-    function addFromLibrary(lib : any, meta: string) {
+    function addFromLibrary(lib: any, meta: string) {
       if (lib === null) {
-        return '';
+        return ''
       }
-      let func = '';
+      let func = ''
       for (let name in lib) {
         if (lib[name]['meta'] === meta) {
           func += '|' + name
         }
       }
-      return func;
+      return func
     }
 
     function getAllNames(meta: string) {
-      const concat = addFromLibrary(builtin_lib, meta) + addFromLibrary(ext_lib, meta);
-      return concat.substr(1);
+      const concat = addFromLibrary(builtin_lib, meta) + addFromLibrary(ext_lib, meta)
+      return concat.substr(1)
     }
 
     const ChapterKeywordSelector = () => {
@@ -668,7 +672,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default',
     exports.SourceHighlightRules = SourceHighlightRules
   }
 
-  const name = id.toString() + variant + external;
+  const name = id.toString() + variant + external
 
   // @ts-ignore
   ace.define(
@@ -686,10 +690,8 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default',
 }
 
 //source mode
-export function ModeSelector(id: number, variant : Variant = 'default', external: string = 'NONE') {
-
-  const name = id.toString() + variant + external;
-
+export function ModeSelector(id: number, variant: Variant = 'default', external: string = 'NONE') {
+  const name = id.toString() + variant + external
 
   // @ts-ignore
   function _Mode(acequire, exports, module) {
@@ -697,8 +699,7 @@ export function ModeSelector(id: number, variant : Variant = 'default', external
 
     var oop = acequire('../lib/oop')
     var TextMode = acequire('./text').Mode
-    var SourceHighlightRules = acequire('./source_highlight_rules' + name)
-      .SourceHighlightRules
+    var SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
     var MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
     var WorkerClient = acequire('../worker/worker_client').WorkerClient
     var CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
