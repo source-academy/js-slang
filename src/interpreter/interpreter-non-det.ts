@@ -188,7 +188,7 @@ function* cartesianProduct(
   nodeValues: Value[]
 ): IterableIterator<Value[]> {
   if (nodes.length === 0) {
-    yield nodeValues
+    yield nodeValues.slice() // yield a new array to avoid modifying previous ones
   } else {
     const currentNode = nodes.shift()! // we need the postfix ! to tell compiler that nodes array is nonempty
     const nodeValueGenerator = evaluate(currentNode, context)
