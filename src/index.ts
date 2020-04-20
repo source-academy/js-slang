@@ -33,7 +33,7 @@ import {
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
-import { compileWithPrelude } from './vm/svml-compiler'
+import { compileForConcurrent } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import { getProgramNames, getKeywords } from './name-extractor'
@@ -364,7 +364,7 @@ export async function runInContext(
     try {
       return Promise.resolve({
         status: 'finished',
-        value: runWithProgram(compileWithPrelude(program, context), context)
+        value: runWithProgram(compileForConcurrent(program, context), context)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
