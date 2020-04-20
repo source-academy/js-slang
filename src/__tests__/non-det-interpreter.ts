@@ -283,13 +283,13 @@ test('Require operator', async () => {
 
 test('Cut operator', async () => {
   await testNonDeterministicCode(
-    `const f = amb(1, 2, 3); cut; f + amb(4, 5, 6);
+    `const f = amb(1, 2, 3); cut(); f + amb(4, 5, 6);
     `,
     [5, 6, 7]
   )
 
   await testNonDeterministicCode(
-    `const f = amb(1, 2, 3);  const g = amb(4, 5, 6); cut; f + g;
+    `const f = amb(1, 2, 3);  const g = amb(4, 5, 6); cut(); f + g;
     `,
     [5]
   )

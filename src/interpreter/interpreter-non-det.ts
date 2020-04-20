@@ -305,12 +305,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    if (node.name === 'cut') {
-      return yield CUT
-    }
-
-    yield getVariable(context, node.name)
-    return
+    return yield getVariable(context, node.name)
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
@@ -318,6 +313,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (rttc.isIdentifier(callee)) {
       if (callee.name === 'amb') {
         return yield* getAmbArgs(context, node)
+      } else if (callee.name === 'cut') {
+        return yield CUT
       }
     }
 
