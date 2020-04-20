@@ -28,12 +28,14 @@ import {
   Scheduler,
   SourceError,
   Variant,
-  TypeAnnotatedNode
+  TypeAnnotatedNode,
+  SVMProgram
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
-import { compileForConcurrent } from './vm/svml-compiler'
+import { compileForConcurrent, compileToIns } from './vm/svml-compiler'
+import { assemble } from './vm/svml-assembler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import { getProgramNames, getKeywords } from './name-extractor'
@@ -503,4 +505,22 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine }
+export function compile(
+  code: string,
+  context: Context,
+  vmInternalFunctions?: string[]
+): SVMProgram | undefined {
+  const astProgram = parse(code, context)
+  if (!astProgram) {
+    return undefined
+  }
+
+  try {
+    return compileToIns(astProgram, undefined, vmInternalFunctions)
+  } catch (error) {
+    context.errors.push(error)
+    return undefined
+  }
+}
+
+export { createContext, Context, Result, setBreakpointAtLine, assemble }

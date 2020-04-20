@@ -31,7 +31,7 @@ const VALID_BINARY_OPERATORS = new Map([
   ['!==', OpCodes.NEQG]
 ])
 
-type Offset = number // instructions to skip
+export type Offset = number // instructions to skip
 export type Address = [
   number, // function index
   number? // instruction index within function; optional
@@ -41,7 +41,7 @@ export type Instruction = [
   Argument?,
   Argument?
 ]
-type Argument = number | boolean | string | Offset | Address
+export type Argument = number | boolean | string | Offset | Address
 export type SVMFunction = [
   number, // stack size
   number, // environment size
