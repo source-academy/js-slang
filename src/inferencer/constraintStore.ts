@@ -119,7 +119,7 @@ function ifConstraintStoreHas(constraint: Type) {
 }
 
 function ifFunctionContains(constraintLhs: FunctionType, constraintRhs: Type) {
-  for (let parameter of constraintLhs.parameterTypes) {
+  for (const parameter of constraintLhs.parameterTypes) {
     if ((parameter as Variable).id === (constraintRhs as Variable).id) return true
   }
   return false
