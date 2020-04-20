@@ -587,7 +587,8 @@ const compilers = {
       addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length)
       maxStackOperands++
     }
-    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands), insertFlag }
+    // need at least 1 stack slot for the return value!
+    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands, 1), insertFlag }
   },
 
   UnaryExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
