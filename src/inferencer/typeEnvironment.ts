@@ -163,7 +163,7 @@ globalTypeEnvironment.set('+', {
 
 newAddableType = generateAddableType()
 globalTypeEnvironment.set('===', {
-  types: [generateFunctionType([variableType, variableType], booleanType, true)]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
