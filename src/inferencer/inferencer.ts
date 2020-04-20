@@ -491,7 +491,6 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
 }
 
 function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap) {
-  console.log(statement.type)
   switch (statement.type) {
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
