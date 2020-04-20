@@ -23,3 +23,11 @@ export function stripIndent(content: TemplateStringsArray | string, ...variables
   }
   return result.trim()
 }
+
+export function simplify(content: string, maxLength = 15, separator = '...') {
+  if (content.length < maxLength) {
+    return content
+  }
+  const charsToTake = Math.ceil(maxLength - separator.length / 2)
+  return content.slice(0, charsToTake) + ' ... ' + content.slice(charsToTake)
+}
