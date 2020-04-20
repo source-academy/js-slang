@@ -1,7 +1,7 @@
 import * as ace from 'ace-builds'
 import DefaultMode from 'ace-builds/src-noconflict/mode-javascript'
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
-import { Variant } from '../types';
+import { Variant } from '../types'
 
 // suppress all console warning
 console.warn = () => {
@@ -9,8 +9,8 @@ console.warn = () => {
 }
 
 // default chapter variant and external library
-const defaultVariant : Variant = 'default'
-const defaultExternal : string = 'NONE';
+const defaultVariant: Variant = 'default'
+const defaultExternal: string = 'NONE'
 
 // define session
 const session = ace.createEditSession('', DefaultMode)
@@ -27,13 +27,12 @@ const CATEGORY = {
 }
 
 const setSession = (chapter: number, variant: Variant, external: string, code: string): void => {
-
   // load the library
-  HighlightRulesSelector(chapter, variant, external);
-  ModeSelector(chapter, variant, external);
+  HighlightRulesSelector(chapter, variant, external)
+  ModeSelector(chapter, variant, external)
 
   // set mode and value
-  session.setMode('ace/mode/source' + chapter.toString() + variant + external);
+  session.setMode('ace/mode/source' + chapter.toString() + variant + external)
   session.setValue(code)
 }
 
@@ -66,16 +65,16 @@ test('function token type error', () => {
 test('constants are not correctly loaded', () => {
   const code = `true; \n5; \nmath_LOG2E;`
 
-  setSession(1, defaultVariant, defaultExternal, code);
+  setSession(1, defaultVariant, defaultExternal, code)
 
-  const token1 = session.getTokenAt(0, 1);
-  expect(expectedBool(token1, CATEGORY.bool)).toBe(true);
+  const token1 = session.getTokenAt(0, 1)
+  expect(expectedBool(token1, CATEGORY.bool)).toBe(true)
 
-  const token2 = session.getTokenAt(1, 1);
-  expect(expectedBool(token2, CATEGORY.number)).toBe(true);
+  const token2 = session.getTokenAt(1, 1)
+  expect(expectedBool(token2, CATEGORY.number)).toBe(true)
 
-  const token3 = session.getTokenAt(2, 1);
-  expect(expectedBool(token3, CATEGORY.consts)).toBe(true);
+  const token3 = session.getTokenAt(2, 1)
+  expect(expectedBool(token3, CATEGORY.consts)).toBe(true)
 })
 
 test('operator syntax type error', () => {
@@ -137,6 +136,6 @@ test('external library functions are not correctly loaded', () => {
   const token1 = session.getTokenAt(0, 15)
   expect(expectedBool(token1, CATEGORY.consts)).toBe(true)
 
-  const token2 = session.getTokenAt(1, 1);
-  expect(expectedBool(token2, CATEGORY.functions)).toBe(true);
+  const token2 = session.getTokenAt(1, 1)
+  expect(expectedBool(token2, CATEGORY.functions)).toBe(true)
 })
