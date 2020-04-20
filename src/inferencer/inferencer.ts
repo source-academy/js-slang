@@ -27,11 +27,12 @@ import {
   printType,
   printTypeAnnotation,
   printTypeConstraints,
-  printTypeEnvironment
+  printTypeEnvironment,
+  replaceTypeVariablesInTypeEnvironment,
 } from '../utils/inferencerUtils'
 
 let annotatedProgram: es.Program;
-let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
+export let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   const valueOfLiteral = literal.value
@@ -601,6 +602,10 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   for (const statement of program.body) {
     infer(statement)
   }
+
+  // TODO: Check if I can update type environment as I type check expressions
+  // Step 4. Replace type variables in type environment with inferred type
+  replaceTypeVariablesInTypeEnvironment(constraintStore, currentTypeEnvironment);
 
   // Successful run..
   logObjectsForDebugging()

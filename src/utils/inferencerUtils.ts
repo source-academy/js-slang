@@ -267,3 +267,16 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   })
   console.log('\n')
 }
+
+export function replaceTypeVariablesInTypeEnvironment(typeContraints: any, typeEnvironment: any) {
+  for (const [key, value] of typeEnvironment) {
+    if (!predefined.has(key)) {
+      // TODO: Replace code if object reference does not work
+    const typeVariable: Type = value.types[0];
+    const inferredType = {
+      types: [typeContraints.get(typeVariable)]
+    }
+    typeEnvironment.set(key, inferredType)
+    }
+  }
+}
