@@ -627,7 +627,7 @@ exports.publish = (taffyData, opts, tutorials) => {
     // JC: 29/3/20: change all remaining "_" to " ", then capitalize each word
     const spacedName = symbolReplacedName.replace(/_/g, " ");
     // Arsalan: 21/4/20: capitalize the first letter of each word, including those separated by a hyphen
-    const displayName = spacedName.replace(/(^|[\s-])\S/g, name => name.toUpperCase());
+    const displayName = spacedName.replace(/(^|[\s-])\S/g, firstLetter => firstLetter.toUpperCase());
                                  
     const link = `<a href=".">${displayName}</a>`;    
     
