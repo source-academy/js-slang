@@ -10,4 +10,6 @@ from the set \lstinline{e1, e2, ..., en}. Note: although the usage of this primi
 \item \lstinline{require(pred)}: \textit{builtin}, forces the language processor to backtrack to the most recent \textit{amb expression}, if and only if \lstinline{pred} is false.
 \item \lstinline{an_element_of(xs)}: \textit{builtin}, nondeterministically returns an element from the list \lstinline{xs}.
 \item \lstinline{an_integer_between(n, m)}: \textit{builtin}, nondeterministically returns an integer between integers \lstinline{n} and \lstinline{m} (inclusively).
+\item \lstinline{implication(p, q)}: \textit{builtin} returns true if and only if the boolean values \lstinline{p} and \lstinline{q} satisfy the equation $P \Rightarrow Q$
+\item \lstinline{bi_implication(p, q)}: \textit{builtin} returns true if and only if the boolean values \lstinline{p} and \lstinline{q} satisfy the equation $P \Leftrightarrow Q$
 \end{itemize}
