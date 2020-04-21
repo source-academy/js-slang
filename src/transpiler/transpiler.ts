@@ -704,21 +704,25 @@ function getComputedProperty(computed: boolean, property: es.Expression): es.Exp
 }
 
 function transformPropertyAssignment(program: es.Program) {
-  simple(program, {
-    AssignmentExpression(node: es.AssignmentExpression) {
-      if (node.left.type === 'MemberExpression') {
-        const { object, property, computed, loc } = node.left
-        const { line, column } = loc!.start
-        create.mutateToCallExpression(node, globalIds.setProp, [
-          object as es.Expression,
-          getComputedProperty(computed, property),
-          node.right,
-          create.literal(line),
-          create.literal(column)
-        ])
+  simple(
+    program,
+    {
+      AssignmentExpression(node: es.AssignmentExpression) {
+        if (node.left.type === 'MemberExpression') {
+          const { object, property, computed, loc } = node.left
+          const { line, column } = loc!.start
+          create.mutateToCallExpression(node, globalIds.setProp, [
+            object as es.Expression,
+            getComputedProperty(computed, property),
+            node.right,
+            create.literal(line),
+            create.literal(column)
+          ])
+        }
       }
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 function transformPropertyAccess(program: es.Program) {

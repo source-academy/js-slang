@@ -81,12 +81,7 @@ class GPULoopVerifier {
       return false
     }
 
-    const rv: es.Expression = node.right
-    if (rv.type !== 'Literal' || !rv.value || !isNumber(rv.value) || rv.value <= 0) {
-      return false
-    }
-
-    this.end = rv
+    this.end = node.right
     return true
   }
 
@@ -125,18 +120,6 @@ class GPULoopVerifier {
 
     // we allow both i = i + 1 and i = 1 + i
     return (identifierLeft && literalRight) || (identifierRight && literalLeft)
-  }
-}
-
-// utility functions used above
-const isNumber = (v: any) => typeOf(v) === 'number'
-const typeOf = (v: any) => {
-  if (v === null) {
-    return 'null'
-  } else if (Array.isArray(v)) {
-    return 'array'
-  } else {
-    return typeof v
   }
 }
 

@@ -1,26 +1,40 @@
 import { GPU } from 'gpu.js'
 import { TypeError } from '../utils/rttc'
+import { isArray } from 'util'
 
 // helper function to build 2D array output
-function build2DArray(arr: Float32Array[][], end: any): Float32Array[][] {
-  const res = []
+function buildArray(arr: Float32Array[][], end: any, res: any) {
   for (let i = 0; i < end[0]; i++) {
-    res.push(Array.from(arr[i]))
+    res[i] = prettyOutput(arr[i])
   }
-  return res
+}
+
+function build2DArray(arr: Float32Array[][], end: any, res: any) {
+  for (let i = 0; i < end[0]; i++) {
+    for (let j = 0; j < end[1]; j++) {
+      res[i][j] = prettyOutput(arr[i][j])
+    }
+  }
 }
 
 // helper function to build 3D array output
-function build3DArray(arr: Float32Array[][][], end: any): Float32Array[][][] {
-  const res = []
+function build3DArray(arr: Float32Array[][][], end: any, res: any) {
   for (let i = 0; i < end[0]; i++) {
-    const res1 = []
     for (let j = 0; j < end[1]; j++) {
-      res1.push(Array.from(arr[i][j]))
+      for (let k = 0; k < end[2]; k++) {
+        res[i][j][k] = prettyOutput(arr[i][j][k])
+      }
     }
-    res.push(res1)
   }
-  return res
+}
+
+function prettyOutput(arr: any): any {
+  if (!(arr instanceof Float32Array)) {
+    return arr
+  }
+
+  const res = arr.map(x => prettyOutput(x))
+  return Array.from(res)
 }
 
 // helper function to check array is initialized
@@ -50,6 +64,14 @@ function checkArray3D(arr: any, end: any): boolean {
   return true
 }
 
+function checkForNumber(arr: any): boolean {
+  if (isArray(arr)) {
+    return arr.length > 0 && arr.filter(x => !checkForNumber(x)).length === 0
+  }
+
+  return typeof arr === 'number'
+}
+
 /*
  * we only use the gpu if:
  * 1. we are working with numbers
@@ -62,7 +84,13 @@ function checkValidGPU(f: any, end: any): boolean {
   if (end.length === 3) res = f(0, 0, 0)
 
   if (typeof res !== 'number') {
-    return false
+    if (!Array.isArray(res)) {
+      return false
+    }
+
+    if (!checkForNumber(res)) {
+      return false
+    }
   }
 
   let cnt = 1
@@ -74,38 +102,32 @@ function checkValidGPU(f: any, end: any): boolean {
 }
 
 // just run on js!
-function manualRun(f: any, end: any) {
+function manualRun(f: any, end: any, res: any) {
   function build() {
-    const res = []
     for (let i = 0; i < end[0]; i++) {
       res[i] = f(i)
     }
-    return res
+    return
   }
 
   function build2D() {
-    const res = [] as any
     for (let i = 0; i < end[0]; i = i + 1) {
-      res[i] = []
       for (let j = 0; j < end[1]; j = j + 1) {
         res[i][j] = f(i, j)
       }
     }
-    return res
+    return
   }
 
   function build3D() {
-    const res = [] as any
     for (let i = 0; i < end[0]; i = i + 1) {
-      res[i] = []
       for (let j = 0; j < end[1]; j = j + 1) {
-        res[j] = []
         for (let k = 0; k < end[2]; k = k + 1) {
           res[i][j][k] = f(i, j, k)
         }
       }
     }
-    return res
+    return
   }
 
   if (end.length === 1) return build()
@@ -121,6 +143,10 @@ function manualRun(f: any, end: any) {
  */
 export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any) {
   const gpu = new GPU()
+  const nend = []
+  for (let i = end.length - 1; i >= 0; i--) {
+    nend.push(end[i])
+  }
 
   // check array is initialized properly
   let ok = checkArray(arr)
@@ -151,17 +177,18 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
   // check if program is valid to run on GPU
   ok = checkValidGPU(f2, end)
   if (!ok) {
-    return manualRun(f2, end)
+    manualRun(f2, end, arr)
+    return
   }
 
   // external variables to be in the GPU
   const out = { constants: {} }
   out.constants = extern
 
-  const gpuFunction = gpu.createKernel(f, out).setOutput(end)
+  const gpuFunction = gpu.createKernel(f, out).setOutput(nend)
   const res = gpuFunction() as any
 
-  if (end.length === 1) return Array.from(res)
-  if (end.length === 2) return build2DArray(res, end)
-  return build3DArray(res, end)
+  if (end.length === 1) buildArray(res, end, arr)
+  if (end.length === 2) build2DArray(res, end, arr)
+  if (end.length === 3) build3DArray(res, end, arr)
 }

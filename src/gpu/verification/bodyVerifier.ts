@@ -100,12 +100,21 @@ class GPUBodyVerifier {
 
     // make sure only one assignment
     const resultExpr: es.AssignmentExpression[] = []
+    const checker = this.getArrayName
     simple(node, {
       AssignmentExpression(nx: es.AssignmentExpression) {
         // assigning to local val, it's okay
         if (nx.left.type === 'Identifier' && localVar.has(nx.left.name)) {
           return
         }
+
+        if (nx.left.type === 'MemberExpression') {
+          const chk = checker(nx.left)
+          if (localVar.has(chk.name)) {
+            return
+          }
+        }
+
         resultExpr.push(nx)
       }
     })
@@ -137,6 +146,14 @@ class GPUBodyVerifier {
     if (this.state > 3) this.state = 3
   }
 
+  getArrayName = (node: es.MemberExpression): es.Identifier => {
+    let curr: any = node
+    while (curr.type === 'MemberExpression') {
+      curr = curr.object
+    }
+    return curr
+  }
+
   // helper function that helps to get indices accessed from array
   // e.g. returns i, j for res[i][j]
   getPropertyAccess = (node: es.MemberExpression): string[] => {
@@ -158,37 +175,7 @@ class GPUBodyVerifier {
     }
 
     this.outputArray = curr
-
-    // check that it is not a constant
-    ok = this.checkConst()
-    if (!ok) {
-      return []
-    }
-
     return res.reverse()
-  }
-
-  // checks result variable is a constant
-  checkConst = (): boolean => {
-    const output = this.outputArray
-    let ok = true
-    simple(this.program, {
-      VariableDeclaration(node: es.VariableDeclaration) {
-        if (node.declarations[0].id.type !== 'Identifier') {
-          return
-        }
-
-        const nodeName = node.declarations[0].id.name
-        if (nodeName !== output.name) {
-          return
-        }
-
-        if (node.kind === 'const') {
-          ok = false
-        }
-      }
-    })
-    return ok
   }
 }
 

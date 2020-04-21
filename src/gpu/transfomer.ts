@@ -73,7 +73,6 @@ class GPUTransformer {
     this.end = []
 
     // 1. verification of outer loops + body
-
     this.checkOuterLoops(node)
 
     // no gpu loops found
@@ -107,6 +106,8 @@ class GPUTransformer {
     }
 
     // 4. Change assignment in body to a return statement
+    const checker = verifier.getArrayName
+    const locals = this.localVar
     ancestor(this.targetBody, {
       AssignmentExpression(nx: es.AssignmentExpression, ancstor: es.Node[]) {
         // assigning to local val, it's okay
@@ -115,6 +116,11 @@ class GPUTransformer {
         }
 
         if (nx.left.type !== 'MemberExpression') {
+          return
+        }
+
+        const id = checker(nx.left)
+        if (locals.has(id.name)) {
           return
         }
 
@@ -154,7 +160,6 @@ class GPUTransformer {
     // becomes let res = 1 + this.constants.y;
 
     const names = [this.outputArray.name, ...this.counters, 'Math']
-    const locals = this.localVar
     simple(this.targetBody, {
       Identifier(nx: es.Identifier) {
         // ignore these names
@@ -211,19 +216,16 @@ class GPUTransformer {
     const kernelFunction = create.functionExpression([], this.targetBody)
     create.mutateToExpressionStatement(
       node,
-      create.assignmentExpression(
-        this.outputArray,
-        create.callExpression(
-          GPUTransformer.globalIds.__createKernel,
-          [
-            create.arrayExpression(this.end),
-            create.objectExpression(externObject),
-            kernelFunction,
-            this.outputArray,
-            tempNode
-          ],
-          node.loc!
-        )
+      create.callExpression(
+        GPUTransformer.globalIds.__createKernel,
+        [
+          create.arrayExpression(this.end),
+          create.objectExpression(externObject),
+          kernelFunction,
+          this.outputArray,
+          tempNode
+        ],
+        node.loc!
       )
     )
   }
@@ -232,13 +234,12 @@ class GPUTransformer {
   checkOuterLoops = (node: es.ForStatement) => {
     let currForLoop = node
     while (currForLoop.type === 'ForStatement') {
-      this.innerBody = currForLoop.body
       const detector = new GPULoopVerifier(currForLoop)
-
       if (!detector.ok) {
         break
       }
 
+      this.innerBody = currForLoop.body
       this.counters.push(detector.counter)
       this.end.push(detector.end)
 
@@ -293,7 +294,12 @@ class GPUTransformer {
     const varDefinitions = {}
     simple(curr, {
       Identifier(node: es.Identifier) {
-        if (localVar.has(node.name) || counters.includes(node.name) || node.name === output) {
+        if (
+          localVar.has(node.name) ||
+          counters.includes(node.name) ||
+          node.name === output ||
+          node.name.startsWith('math_')
+        ) {
           return
         }
 
