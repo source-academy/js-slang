@@ -477,13 +477,11 @@ function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStat
 }
 
 function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
-  // TODO: Implement type environment scoping
   currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
     infer(expression, environmentToExtend)
     if (expression.type === 'ReturnStatement') {
-      // TODO: add type constraint for return statements
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
@@ -497,8 +495,8 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
     }
 
     if (expression.type === 'IfStatement' && ifStatementHasReturnStatements(expression)) {
-      // TODO: Check if it has return statements. It has return statements when the type of the block is not undefined.
-      // if it does, assign type of block to type of IfStatement.
+      // Check if it has return statements. It has return statements when the type of the block is not undefined.
+      // If it does, assign type of block to type of IfStatement.
       const ifStatementTypeVariable = (expression as TypeAnnotatedNode<es.IfStatement>).typeVariable
       if (ifStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         const result = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
@@ -512,7 +510,6 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
     }
   }
 
-  // TODO: else they have undefined type
   if (blockTypeVariable !== undefined) {
     const result = updateTypeConstraints(blockTypeVariable, undefinedType)
     if (result) {
@@ -520,8 +517,6 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
         'WARNING: There is a type error when checking the type of a block', block.loc
       )
     }
-    popEnvironment()
-    currentTypeEnvironment = environments[0]
     return
   }
 }
@@ -579,6 +574,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       return
     }
     case 'FunctionDeclaration': {
+      // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
         parameters.set((param as es.Identifier).name, { types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable] })
