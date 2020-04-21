@@ -25,7 +25,7 @@ Choice point expressions are created using the \texttt{amb} operator. For simpli
 
 \newpage
 
-\input source_3_nondet_bnf.tex
+\input source_3_bnf.tex
 
 \newpage
 
@@ -57,6 +57,16 @@ Choice point expressions are created using the \texttt{amb} operator. For simpli
 
 \input source_js_differences
 
+\section*{Limitations in Source \S Non-Det}
+This sections lists the current limitations of Source \S 3 Non-Det.
+Future contributors can consider addressing these areas.
+
+\begin{itemize}
+\item Unlike Source \S 3, Source \S 3 Non-Det does not support loops.
+\item 
+\end{itemize}
+
+
 \newpage
 
 \input source_list_library
@@ -64,5 +74,7 @@ Choice point expressions are created using the \texttt{amb} operator. For simpli
 \newpage
 
 \input source_stream_library
+
+\input source_nondet_library
 
     \end{document}
