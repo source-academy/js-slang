@@ -99,7 +99,10 @@ class GPUTransformer {
     for (const key in this.outerVariables) {
       if (this.outerVariables.hasOwnProperty(key)) {
         const val = this.outerVariables[key]
-        externObject.push(create.property(key, val))
+
+        // push in a deep copy of the identifier
+        // this is needed cos we modify it later
+        externObject.push(create.property(key, JSON.parse(JSON.stringify(val))))
       }
     }
 
@@ -287,74 +290,14 @@ class GPUTransformer {
     const counters = this.counters
     const output = this.outputArray.name
 
-    const externalVar: string[] = []
+    const varDefinitions = {}
     simple(curr, {
       Identifier(node: es.Identifier) {
         if (localVar.has(node.name) || counters.includes(node.name) || node.name === output) {
           return
         }
 
-        externalVar.push(node.name)
-      }
-    })
-
-    // find definition of all externalVar
-    const varDefinitions = {}
-    const found = {}
-
-    const lineEnd = curr.loc!.start // We assume loc is always there!!
-    const prog = this.program
-    simple(prog, {
-      VariableDeclaration(node: es.VariableDeclaration) {
-        const line = node.loc!.start
-        if (line > lineEnd) {
-          return
-        }
-
-        if (node.declarations[0].id.type !== 'Identifier') {
-          return
-        }
-
-        const nodeName = node.declarations[0].id.name
-        if (!externalVar.includes(nodeName)) {
-          return
-        }
-
-        // check if already found
-        if (nodeName in found && found[nodeName] > line) {
-          return
-        }
-
-        found[nodeName] = line
-        varDefinitions[nodeName] = node.declarations[0].id
-      },
-
-      AssignmentExpression(node: es.AssignmentExpression) {
-        if (!node.loc) {
-          return
-        }
-
-        const line = node.loc.start
-        if (line > lineEnd) {
-          return
-        }
-
-        if (node.left.type !== 'Identifier') {
-          return
-        }
-
-        const nodeName = node.left.name
-        if (!externalVar.includes(nodeName)) {
-          return
-        }
-
-        // check if already found
-        if (nodeName in found && found[nodeName] > line) {
-          return
-        }
-
-        found[nodeName] = line
-        varDefinitions[nodeName] = node.left
+        varDefinitions[node.name] = node
       }
     })
     this.outerVariables = varDefinitions
