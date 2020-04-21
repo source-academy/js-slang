@@ -64,10 +64,21 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
+    ((constraintStore.get(constraintRhs) as Primitive).name !== 'number' ||
+      (constraintStore.get(constraintRhs) as Primitive).name !== 'string')
+  ) {
+    console.log('[debug] Error in Rule 5')
+    return { constraintLhs, constraintRhs } // for error logging
+  }
+  // Rule 5 (b) - if constraintStore does not contain constraintRhs, we try to use constraintRhs as the condition. E.g. when adding A13 = boolean
+  else if (
+    (constraintLhs as Variable).isAddable &&
+    // ifConstraintStoreHas(constraintRhs) &&
+    !isTypeVariable(constraintRhs) &&
     ((constraintRhs as Primitive).name !== 'number' ||
       (constraintRhs as Primitive).name !== 'string')
   ) {
-    console.log('[debug] Error in Rule 5')
+    console.log('[debug] Error in Rule 5(b)')
     return { constraintLhs, constraintRhs } // for error logging
   }
   // Rule 6
