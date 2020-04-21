@@ -480,7 +480,7 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
   currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
-    infer(expression, environmentToExtend)
+    infer(expression, currentTypeEnvironment)
     if (expression.type === 'ReturnStatement') {
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
@@ -582,6 +582,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       infer(statement.body, parameters)
       currentTypeEnvironment = extendEnvironment(parameters)
       inferFunctionDeclaration(statement)
+      currentTypeEnvironment = popEnvironment()
       return
     }
     case 'CallExpression': {
