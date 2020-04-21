@@ -12,7 +12,6 @@ import {
   numberType,
   booleanType,
   isOverLoaded,
-  environments,
   updateTypeEnvironment,
   stringType,
   extendEnvironment,
@@ -479,11 +478,10 @@ function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStat
 
 function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
   // TODO: Implement type environment scoping
-  extendEnvironment(environmentToExtend)
-  currentTypeEnvironment = environments[0]
+  currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
-    infer(expression)
+    infer(expression, environmentToExtend)
     if (expression.type === 'ReturnStatement') {
       // TODO: add type constraint for return statements
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
@@ -534,6 +532,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
         inferBlockStatement(statement, environmentToExtend)
+        currentTypeEnvironment = popEnvironment()
       }
       return
     }
@@ -582,9 +581,10 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
     case 'FunctionDeclaration': {
       const parameters = new Map()
       for (const param of statement.params) {
-        parameters.set((param as es.Identifier).name, (param as TypeAnnotatedNode<es.Identifier>).typeVariable)
+        parameters.set((param as es.Identifier).name, { types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable] })
       }
-      infer(statement.body)
+      infer(statement.body, parameters)
+      currentTypeEnvironment = extendEnvironment(parameters)
       inferFunctionDeclaration(statement)
       return
     }

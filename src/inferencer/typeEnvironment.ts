@@ -10,10 +10,12 @@ export const environments: Map<string, Type>[] = [globalTypeEnvironment]
 export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
   const newTypeEnvironment =  new Map([...environments[0], ...map])
   environments.push(newTypeEnvironment)
+  return environments[environments.length - 1]
 }
 
 export const popEnvironment = () => {
   environments.pop()
+  return environments[environments.length - 1]
 }
 
 // Main function that will update the type environment e.g. for declarations
