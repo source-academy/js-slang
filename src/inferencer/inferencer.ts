@@ -573,9 +573,9 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       return
     }
     case 'IfStatement': {
-      infer(statement.test)
-      infer(statement.alternate!)
-      infer(statement.consequent)
+      infer(statement.test, environmentToExtend)
+      infer(statement.alternate!, environmentToExtend)
+      infer(statement.consequent, environmentToExtend)
       inferConditionals(statement)
       return
     }
