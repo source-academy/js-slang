@@ -498,6 +498,7 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
     VariableDeclaration: inferConstantDeclaration, // Source 1 only has constant declaration
     UnaryExpression: inferUnaryExpression,
     BinaryExpression: inferBinaryExpression,
+    LogicalExpression: inferBinaryExpression,
     ConditionalExpression: inferConditionals,
     ReturnStatement: inferReturnStatement,
     FunctionDeclaration: inferFunctionDeclaration,
