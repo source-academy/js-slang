@@ -4,7 +4,19 @@ import { generateTypeVariable } from './annotator'
 import * as es from 'estree'
 
 // The Type Environment
-export const primitiveMap = new Map()
+export const globalTypeEnvironment = new Map()
+export const emptyMap = new Map()
+export const environments: Map<string, Type>[] = [globalTypeEnvironment]
+export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
+  const newTypeEnvironment =  new Map([...environments[0], ...map])
+  environments.push(newTypeEnvironment)
+  return environments[environments.length - 1]
+}
+
+export const popEnvironment = () => {
+  environments.pop()
+  return environments[environments.length - 1]
+}
 
 // Main function that will update the type environment e.g. for declarations
 export function updateTypeEnvironment(program: es.Program) {
@@ -19,7 +31,7 @@ export function updateTypeEnvironment(program: es.Program) {
     const valueTypeVariable = value.typeVariable as Variable
 
     if (idenName !== undefined && valueTypeVariable !== undefined) {
-      primitiveMap.set(idenName, {
+      globalTypeEnvironment.set(idenName, {
         types: [valueTypeVariable]
       })
     }
@@ -51,13 +63,13 @@ export function updateTypeEnvironment(program: es.Program) {
     const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
 
-    // Todo: How to tell if the function declared is polymorphic? (w/o evaluating the body)
+    // TODO: How to tell if the function declared is polymorphic? (w/o evaluating the body)
     // From the return statement's type variable obj?
     const isPolymorphic = true // set all to true for now and see what happens
     // ...
 
     if (idenName !== undefined && blockTypeVariable !== undefined) {
-      primitiveMap.set(idenName, {
+      globalTypeEnvironment.set(idenName, {
         types: [generateFunctionType(paramTypeVariables, blockTypeVariable, isPolymorphic)]
       })
     }
@@ -128,26 +140,26 @@ let newVariableType2
 let newAddableType
 
 // Initiatize Type Environment
-primitiveMap.set('-', {
+globalTypeEnvironment.set('-', {
   types: [
     generateFunctionType([numberType, numberType], numberType),
     generateFunctionType([numberType], numberType)
   ]
 })
-primitiveMap.set('*', {
+globalTypeEnvironment.set('*', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
-primitiveMap.set('/', {
+globalTypeEnvironment.set('/', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
-primitiveMap.set('%', {
+globalTypeEnvironment.set('%', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
 
 // LogicalExpression
 newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
-primitiveMap.set('&&', {
+globalTypeEnvironment.set('&&', {
   // types: [generateFunctionType([booleanType, variableType], variableType, true)],
   types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
@@ -155,50 +167,50 @@ primitiveMap.set('&&', {
 // LogicalExpression
 newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
-primitiveMap.set('||', {
+globalTypeEnvironment.set('||', {
   // types: [generateFunctionType([booleanType, variableType], variableType, true)],
   types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
-primitiveMap.set('!', {
+globalTypeEnvironment.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('+', {
+globalTypeEnvironment.set('+', {
   types: [generateFunctionType([newAddableType, newAddableType], newAddableType, true)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('===', {
+globalTypeEnvironment.set('===', {
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
+})
+
+newAddableType = generateAddableType()
+globalTypeEnvironment.set('!==', {
   types: [generateFunctionType([variableType, variableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('!==', {
-  types: [generateFunctionType([variableType, variableType], booleanType, true)]
-})
-
-newAddableType = generateAddableType()
-primitiveMap.set('>', {
+globalTypeEnvironment.set('>', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('>=', {
+globalTypeEnvironment.set('>=', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('<', {
+globalTypeEnvironment.set('<', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
-primitiveMap.set('<=', {
+globalTypeEnvironment.set('<=', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
-// primitiveMap.set('display', {
+// globalTypeEnvironment.set('display', {
 //   types: [
 //     // { argumentTypes: [numberType], resultType: undefined },
 //     // { argumentTypes: [stringType], resultType: undefined }
@@ -206,7 +218,7 @@ primitiveMap.set('<=', {
 //   ],
 //   isPolymorphic: true
 // })
-// primitiveMap.set('error', {
+// globalTypeEnvironment.set('error', {
 //   types: [
 //     // { argumentTypes: [numberType], resultType: undefined },
 //     // { argumentTypes: [stringType], resultType: undefined }
@@ -215,120 +227,120 @@ primitiveMap.set('<=', {
 //   isPolymorphic: true
 // })
 
-primitiveMap.set('Infinity', {
+globalTypeEnvironment.set('Infinity', {
   types: [numberType]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('is_boolean', {
+globalTypeEnvironment.set('is_boolean', {
   // types: [generateFunctionType([variableType], booleanType, true)]
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('is_function', {
+globalTypeEnvironment.set('is_function', {
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('is_number', {
+globalTypeEnvironment.set('is_number', {
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('is_string', {
+globalTypeEnvironment.set('is_string', {
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('is_undefined', {
+globalTypeEnvironment.set('is_undefined', {
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
-primitiveMap.set('math_abs', {
+globalTypeEnvironment.set('math_abs', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_acos', {
+globalTypeEnvironment.set('math_acos', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_acosh', {
+globalTypeEnvironment.set('math_acosh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_asin', {
+globalTypeEnvironment.set('math_asin', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_asinh', {
+globalTypeEnvironment.set('math_asinh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_atan', {
+globalTypeEnvironment.set('math_atan', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_atan2', {
+globalTypeEnvironment.set('math_atan2', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
-primitiveMap.set('math_atanh', {
+globalTypeEnvironment.set('math_atanh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_cbrt', {
+globalTypeEnvironment.set('math_cbrt', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_ceil', {
+globalTypeEnvironment.set('math_ceil', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_clz32', {
+globalTypeEnvironment.set('math_clz32', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_cos', {
+globalTypeEnvironment.set('math_cos', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_cosh', {
+globalTypeEnvironment.set('math_cosh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_exp', {
+globalTypeEnvironment.set('math_exp', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_expml', {
+globalTypeEnvironment.set('math_expml', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_floor', {
+globalTypeEnvironment.set('math_floor', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_fround', {
+globalTypeEnvironment.set('math_fround', {
   types: [generateFunctionType([numberType], numberType)]
 })
-// primitiveMap.set('math_hypot', {
+// globalTypeEnvironment.set('math_hypot', {
 // types: [{ argumentTypes: [numberType], resultType: undefined }],
 //   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
 //   isPolymorphic: true
 // })
-primitiveMap.set('math_imul', {
+globalTypeEnvironment.set('math_imul', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
-primitiveMap.set('math_LN2', {
+globalTypeEnvironment.set('math_LN2', {
   types: [numberType]
 })
-primitiveMap.set('math_LN10', {
+globalTypeEnvironment.set('math_LN10', {
   types: [numberType]
 })
-primitiveMap.set('math_log', {
+globalTypeEnvironment.set('math_log', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_log1p', {
+globalTypeEnvironment.set('math_log1p', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_log2', {
+globalTypeEnvironment.set('math_log2', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_LOG2E', {
+globalTypeEnvironment.set('math_LOG2E', {
   types: [numberType]
 })
-primitiveMap.set('math_log10', {
+globalTypeEnvironment.set('math_log10', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_LOG10E', {
+globalTypeEnvironment.set('math_LOG10E', {
   types: [numberType]
 })
-// primitiveMap.set('math_max', {
+// globalTypeEnvironment.set('math_max', {
 //   // types: [
 //   //   { argumentTypes: [numberType], resultType: undefined },
 //   //   { argumentTypes: [stringType], resultType: undefined }
@@ -336,7 +348,7 @@ primitiveMap.set('math_LOG10E', {
 //   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
 //   isPolymorphic: true
 // })
-// primitiveMap.set('math_min', {
+// globalTypeEnvironment.set('math_min', {
 //   // types: [
 //   //   { argumentTypes: [numberType], resultType: undefined },
 //   //   { argumentTypes: [stringType], resultType: undefined }
@@ -344,64 +356,64 @@ primitiveMap.set('math_LOG10E', {
 //   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
 //   isPolymorphic: true
 // })
-primitiveMap.set('math_PI', {
+globalTypeEnvironment.set('math_PI', {
   types: [numberType]
 })
-primitiveMap.set('math_pow', {
+globalTypeEnvironment.set('math_pow', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
-primitiveMap.set('math_random', {
+globalTypeEnvironment.set('math_random', {
   types: [generateFunctionType([], numberType)]
 })
-primitiveMap.set('math_round', {
+globalTypeEnvironment.set('math_round', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_sign', {
+globalTypeEnvironment.set('math_sign', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_sin', {
+globalTypeEnvironment.set('math_sin', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_sinh', {
+globalTypeEnvironment.set('math_sinh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_sqrt', {
+globalTypeEnvironment.set('math_sqrt', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_SQRT1_2', {
+globalTypeEnvironment.set('math_SQRT1_2', {
   types: [numberType]
 })
-primitiveMap.set('math_SQRT2', {
+globalTypeEnvironment.set('math_SQRT2', {
   types: [numberType]
 })
-primitiveMap.set('math_tan', {
+globalTypeEnvironment.set('math_tan', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_tanh', {
+globalTypeEnvironment.set('math_tanh', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('math_trunc', {
+globalTypeEnvironment.set('math_trunc', {
   types: [generateFunctionType([numberType], numberType)]
 })
-primitiveMap.set('NaN', {
+globalTypeEnvironment.set('NaN', {
   types: [numberType]
 })
-primitiveMap.set('parse_int', {
+globalTypeEnvironment.set('parse_int', {
   types: [generateFunctionType([stringType, numberType], numberType)]
 })
-primitiveMap.set('prompt', {
+globalTypeEnvironment.set('prompt', {
   types: [generateFunctionType([stringType], stringType)]
 })
-primitiveMap.set('runtime', {
+globalTypeEnvironment.set('runtime', {
   types: [generateFunctionType([], numberType)]
 })
 
 newVariableType1 = generateVariableType()
-primitiveMap.set('stringify', {
+globalTypeEnvironment.set('stringify', {
   types: [generateFunctionType([newVariableType1], stringType, true)]
 })
 
-primitiveMap.set('undefined', {
+globalTypeEnvironment.set('undefined', {
   types: [undefinedType]
 })
 
