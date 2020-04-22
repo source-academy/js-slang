@@ -57,14 +57,13 @@ Choice point expressions are created using the \texttt{amb} operator. For simpli
 
 \input source_js_differences
 
-\section*{Limitations in Source \S Non-Det}
+\section*{Limitations in Source \S 3 Non-Det}
 This sections lists the current limitations of the Source \S 3 Non-Det implementation.
 
 \begin{itemize}
 \item Unlike Source \S 3, Source \S 3 Non-Det does not support loops.
 \item As discussed above, a Source \S 3 Non-Det program can have multiple outcomes. The \emph{try again} command 
-prompts the language evaluator to process the next outcome. However, if the language evaluator is given a new program \textbf{while} an existing program is being evaluated, then the evaluation of the existing program will be abandoned.
-Essentially, the evaluator only supports one search process at a time.
+prompts the language evaluator to process the next outcome. However, if the language evaluator is given a new program \textbf{before} all the outcomes of an existing program have been processed, then all remaining outcomes will be ignored. Essentially, the evaluator only supports one search process at a time.
 \end{itemize}
 
 
