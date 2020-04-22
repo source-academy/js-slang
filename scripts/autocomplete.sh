@@ -103,6 +103,7 @@ def process_dir_globals(target):
 targets = [
     "source_1",
     "source_1_lazy",
+    "source_1_wasm",
     "source_2",
     "source_2_lazy",
     "source_3",
