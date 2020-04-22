@@ -119,6 +119,12 @@ function generateAddableType() {
   return generateTypeVariable(false, true) // (isPolymorphic, isAddable)
 }
 
+function generateVariableType() {
+  return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
+}
+
+let newVariableType1, newVariableType2, newAddableType
+
 // Initiatize Type Environment
 primitiveMap.set('-', {
   types: [
@@ -135,18 +141,27 @@ primitiveMap.set('/', {
 primitiveMap.set('%', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
+
+// LogicalExpression
+newVariableType1 = generateVariableType()
+newVariableType2 = generateVariableType()
 primitiveMap.set('&&', {
-  types: [generateFunctionType([booleanType, variableType], variableType, true)]
+  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
+
+// LogicalExpression
+newVariableType1 = generateVariableType()
+newVariableType2 = generateVariableType()
 primitiveMap.set('||', {
-  types: [generateFunctionType([booleanType, variableType], variableType, true)],
-  isPolymorphic: false
+  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)],
 })
 primitiveMap.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
 })
 
-let newAddableType = generateAddableType()
+newAddableType = generateAddableType()
 primitiveMap.set('+', {
   types: [generateFunctionType([newAddableType, newAddableType], newAddableType, true)]
 })
@@ -201,20 +216,31 @@ primitiveMap.set('<=', {
 primitiveMap.set('Infinity', {
   types: [numberType]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('is_boolean', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  // types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('is_function', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('is_number', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('is_string', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('is_undefined', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 primitiveMap.set('math_abs', {
@@ -367,9 +393,12 @@ primitiveMap.set('prompt', {
 primitiveMap.set('runtime', {
   types: [generateFunctionType([], numberType)]
 })
+
+newVariableType1 = generateVariableType()
 primitiveMap.set('stringify', {
-  types: [generateFunctionType([variableType], stringType, true)]
+  types: [generateFunctionType([newVariableType1], stringType, true)]
 })
+
 primitiveMap.set('undefined', {
   types: [undefinedType]
 })
