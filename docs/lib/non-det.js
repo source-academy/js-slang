@@ -1,4 +1,4 @@
-// \texttt{nondet.js START} \begin{lstlisting}
+// \texttt{non-det.js START} \begin{lstlisting}
 
 /**
  * Given <CODE>n</CODE> values, creates a choice point whose value is chosen, at run-time, from the set <CODE>e1, e2, ..., en<CODE>.<br>
@@ -65,4 +65,4 @@ function an_integer_between(n, m) {
     return n > m ? amb() : amb(n, an_integer_between(n + 1, m));
 }
 
-// \end{lstlisting} // \texttt{nondet.js END}
+// \end{lstlisting} // \texttt{non-det.js END}
