@@ -18,7 +18,7 @@ This is achieved by supporting a new type of expression, called the \emph{choice
 A Source \S 3 Non-Det program can contain any number of choice points. Evaluating a program can hence have an exponential number of outcomes - one outcome for every combination of possible choices. The language's search mechanism, however, only returns one outcome at a time. The programmer can \emph{command} the search mechanism to re-evaluate the program with a different combination of choices. On the Source Academy platform, this command is implemented as the keyword
 \textbf{\texttt{try again}}, which has to be entered into the programming REPL. \newline
 
-Choice point expressions are created using the \texttt{amb} operator. For simplicity, we refer to choice point expressions as \emph{amb expressions}.
+Choice point expressions are created using the \texttt{amb} operator. Henceforth, we will refer to choice point expressions as \emph{amb expressions}.
 
 
 \input source_bnf.tex
