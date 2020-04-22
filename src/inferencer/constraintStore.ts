@@ -64,7 +64,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
-    ((constraintStore.get(constraintRhs) as Primitive).name !== 'number' ||
+    ((constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
       (constraintStore.get(constraintRhs) as Primitive).name !== 'string')
   ) {
     console.log('[debug] Error in Rule 5')
@@ -75,7 +75,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     // ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintRhs) &&
-    ((constraintRhs as Primitive).name !== 'number' ||
+    ((constraintRhs as Primitive).name !== 'number' &&
       (constraintRhs as Primitive).name !== 'string')
   ) {
     console.log('[debug] Error in Rule 5(b)')
