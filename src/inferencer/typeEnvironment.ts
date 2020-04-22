@@ -135,7 +135,9 @@ function generateVariableType() {
   return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
 }
 
-let newVariableType1, newVariableType2, newAddableType
+let newVariableType1
+let newVariableType2
+let newAddableType
 
 // Initiatize Type Environment
 globalTypeEnvironment.set('-', {
@@ -167,7 +169,7 @@ newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('||', {
   // types: [generateFunctionType([booleanType, variableType], variableType, true)],
-  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
 globalTypeEnvironment.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
