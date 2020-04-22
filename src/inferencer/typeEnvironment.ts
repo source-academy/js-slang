@@ -123,7 +123,9 @@ function generateVariableType() {
   return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
 }
 
-let newVariableType1, newVariableType2, newAddableType
+let newVariableType1
+let newVariableType2
+let newAddableType
 
 // Initiatize Type Environment
 primitiveMap.set('-', {
@@ -155,7 +157,7 @@ newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 primitiveMap.set('||', {
   // types: [generateFunctionType([booleanType, variableType], variableType, true)],
-  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
 primitiveMap.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
