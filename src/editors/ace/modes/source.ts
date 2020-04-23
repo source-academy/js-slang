@@ -22,17 +22,20 @@ export function HighlightRulesSelector(
   id: number,
   variant: Variant = 'default',
   external: String = 'NONE',
-  externalLibraries: ({
-    caption: string;
-    value: string;
-    meta: any;
-    docHTML: any;
-} | {
-    caption: string;
-    value: string;
-    meta: string;
-    docHTML?: undefined;
-})[] = []
+  externalLibraries: (
+    | {
+        caption: string
+        value: string
+        meta: any
+        docHTML: any
+      }
+    | {
+        caption: string
+        value: string
+        meta: string
+        docHTML?: undefined
+      }
+  )[] = []
 ) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
@@ -72,7 +75,6 @@ export function HighlightRulesSelector(
       })
       return func
     }
-  
 
     function getAllNames(meta: string) {
       const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta)
