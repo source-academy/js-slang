@@ -39,8 +39,10 @@ export default class Buffer {
       return
     }
 
-    this._capacity *= 2
-    this._buffer = ArrayBuffer.transfer(this._buffer, this._capacity * 2)
+    while (this.cursor + n >= this._capacity) {
+      this._capacity *= 2
+    }
+    this._buffer = ArrayBuffer.transfer(this._buffer, this._capacity)
     this._view = new DataView(this._buffer)
   }
 
