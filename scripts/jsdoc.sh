@@ -53,6 +53,14 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
     
+    # Source §1 WebAssembly
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_WASM.md \
+	     -d ${DST}/"source_1_wasm"/ \
+	     ${LIB}/empty.js
+    
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
