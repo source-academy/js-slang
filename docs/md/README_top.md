@@ -13,6 +13,8 @@
   
 ## <a href="source_1_lazy/">Source §1 Lazy</a>
   
+## <a href="source_1_wasm/">Source §1 WebAssembly</a>
+  
 ## <a href="source_2/">Source §2</a>
 
 ## <a href="source_2_lazy/">Source §2 Lazy</a>

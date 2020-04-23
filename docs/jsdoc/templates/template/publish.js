@@ -630,8 +630,13 @@ exports.publish = (taffyData, opts, tutorials) => {
     const displayName = spacedName.replace(/(^|[\s-])\S/g, firstLetter => firstLetter.toUpperCase());
                                  
     const link = `<a href=".">${displayName}</a>`;    
-    
-    if (members.globals.length) { generate('Predeclared in '+ link, [{kind: 'globalobj'}], globalUrl); }
+
+    // MH: 23/4/2020: added else to conditional to allow for empty libs
+    if (members.globals.length) {
+	generate('Predeclared in '+ link, [{kind: 'globalobj'}], globalUrl);
+    } else {
+	generate('No names predeclared in ' + link, [{kind: 'globalobj'}], globalUrl);
+    }
 
     // index page displays information from package.json and lists files
     files = find({kind: 'file'});

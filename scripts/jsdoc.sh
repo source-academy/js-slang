@@ -53,6 +53,14 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
     
+    # Source §1 WebAssembly
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_WASM.md \
+	     -d ${DST}/"source_1_wasm"/ \
+	     ${LIB}/empty.js
+    
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
@@ -267,12 +275,11 @@ install() {
     cd docs; scp -r ${DST} sicp@web1.comp.nus.edu.sg:public_html/.
 }
 
-tocs1101s() {
+covid() {
     prepare 
-    cd docs; scp -r source cs1101s@sunfire.comp.nus.edu.sg:. ; \
-    echo "now: ssh cs1101s@sunfire.comp.nus.edu.sg and: "; \
-    echo "scp -r source sicp@web1.comp.nus.edu.sg:public_html"
-
+    cd docs; scp -r source henz@suna.comp.nus.edu.sg:source; \
+    echo "next: ssh henz@suna.comp.nus.edu.sg"; \
+    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging"
 }
 
 clean() {
