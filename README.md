@@ -76,7 +76,7 @@ $ cd docs/source_language_specs
 $ make        # to make the PDF documents using LaTeX
 ```
 
-Note: The documentation may not build on Windows, depending on your bash setup.
+Note: The documentation may not build on Windows, depending on your bash setup, [see above](https://github.com/source-academy/js-slang#requirements).
 
 Documentation on the Source libraries are generated from inline
 documentation in the library sources, a copy of which are kept in
