@@ -30,9 +30,8 @@ function require(pred) {
 
 
 /**
- * Indicates if the Material Conditional connective between two boolean
- * expressions is satisfied.<br>
- * If <CODE>P</CODE>, then <CODE>Q</CODE>.
+ * Returns true if and only if <CODE>P</CODE> and <CODE>Q</CODE>
+ * satisfy the boolean equation P --> Q.
  * @param {boolean} P - antecedent of the conditional
  * @param {boolean} Q - consequent of the conditional
  * @return {boolean} - a boolean according to the truth table of
@@ -43,10 +42,8 @@ function implication(P, Q) {
 }
 
 /**
- * Indicates if the Material Biconditional connective between two
- * boolean expressions is satisfied.<br>
- * (If <CODE>P</CODE>, then <CODE>Q</CODE>) AND (If <CODE>Q</CODE>,
- * then <CODE>P</CODE>).
+ * Returns true if and only if <CODE>P</CODE> and <CODE>Q</CODE>
+ * satisfy the boolean equation P <--> Q.
  * @param {boolean} P - antecedent and consequent of the conditional
  * @param {boolean} Q - antecedent and consequent of the conditional
  * @return {boolean} - a boolean according to the truth table of
