@@ -63,7 +63,6 @@ Source is documented here: <https://sicp.comp.nus.edu.sg/source/>
 * `latexmk`: Version 4.52c
 * `pdflatex`: known working versions
   * pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
-
 To build the documentation, run
 
 ``` {.}
@@ -75,6 +74,8 @@ $ yarn jsdoc  # to make the web pages in js-slang/docs/source
 $ cd docs/source_language_specs 
 $ make        # to make the PDF documents using LaTeX
 ```
+
+Note: The documentation may not build on Windows, depending on your bash setup.
 
 Documentation on the Source libraries are generated from inline
 documentation in the library sources, a copy of which are kept in
