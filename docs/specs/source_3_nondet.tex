@@ -16,7 +16,7 @@ Source \S 3 Non-Det modifies Source \S 3 by adding an automatic search mechanism
 This is achieved by supporting a new type of expression, called the \emph{choice point} expression. Every choice point expression is described by a (possibly empty) set of \emph{expressions} (known as the set of \emph{choices}). At runtime, a choice point expression can assume any value from its set of choices. A program can also include instructions that force the language processor to \emph{backtrack} to any choice point expression. \emph{Backtracking} means that the choice point expression will take on a different value from its set of choices, and the program will then be re-evaluated with this new choice. \newline
 
 A Source \S 3 Non-Det program can contain any number of choice points. Evaluating a program can hence have an exponential number of outcomes - one outcome for every combination of possible choices. The language's search mechanism, however, only returns one outcome at a time. The programmer can \emph{command} the search mechanism to re-evaluate the program with a different combination of choices. On the Source Academy Playground, this command is implemented as the keyword
-\textbf{\texttt{try again}}, which has to be entered into the programming REPL. \newline
+\textbf{\texttt{try again}}, which has to be entered into the REPL. \newline
 
 In the Source Academy implementation, the Source \S 3 Non-Det evaluator can only process one program at a time. If the evaluator is given a new program \textbf{before} all the outcomes of an existing program have been processed, then all remaining outcomes will be ignored. \newline
 
