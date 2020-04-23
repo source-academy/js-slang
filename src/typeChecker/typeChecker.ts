@@ -321,38 +321,8 @@ function extractFreeVariablesAndGenFresh(polyType: ForAll): Type {
 
 /**
  * Going down the DAG that is the constraint list
- * Apply the following normalizations
- * List<T1> ==> Pair<T1, List<T1>>
- * Pair<T1, Pair<T2, List<T3>> -> Pair<T4, List<T4>>
  */
 function applyConstraints(type: Type, constraints: Constraint[]): Type {
-  const result = __applyConstraints(type, constraints)
-  if (isList(result)) {
-    const list = result
-    return {
-      kind: 'pair',
-      headType: getListType(list) as Type,
-      tailType: list
-    }
-  } else if (isPair(result)) {
-    const pair = result
-    const _tail = pair.tailType
-    if (isPair(_tail)) {
-      const tail = _tail
-      if (getListType(tail.tailType) !== null) {
-        addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
-        addToConstraintList(constraints, [tail.headType, pair.headType])
-        return __applyConstraints(tail, constraints)
-      }
-    }
-  }
-  return result
-}
-
-/**
- * Going down the DAG that is the constraint list
- */
-function __applyConstraints(type: Type, constraints: Constraint[]): Type {
   switch (type.kind) {
     case 'primitive': {
       return type
@@ -360,19 +330,19 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
     case 'pair': {
       return {
         kind: 'pair',
-        headType: __applyConstraints(type.headType, constraints),
-        tailType: __applyConstraints(type.tailType, constraints)
+        headType: applyConstraints(type.headType, constraints),
+        tailType: applyConstraints(type.tailType, constraints)
       }
     }
     case 'list': {
-      const elementType = __applyConstraints(type.elementType, constraints)
+      const elementType = applyConstraints(type.elementType, constraints)
       return {
         kind: 'list',
         elementType
       }
     }
     case 'array': {
-      const elementType = __applyConstraints(type.elementType, constraints)
+      const elementType = applyConstraints(type.elementType, constraints)
       return {
         kind: 'array',
         elementType
@@ -470,46 +440,37 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   )
 }
 
+
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
+  // console.log(`LHS: ${typeToString(LHS)} RHS: ${typeToString(RHS)}`)
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
+    // if t is base type and t' also base type of the same kind, do nothing
     return constraints
-  } else if (LHS.kind === 'array' && RHS.kind === 'array') {
-    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
-  } else if (LHS.kind === 'list' && RHS.kind === 'list') {
-    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
-  } else if (LHS.kind === 'pair' && RHS.kind === 'list') {
-    // swap so that we hit the below rule
+  } else if (LHS.kind !== 'variable' && RHS.kind === 'variable') {
+    // if t is not a type var and t' is type var, then swap order 
     return addToConstraintList(constraints, [RHS, LHS])
-  } else if (LHS.kind === 'list' && RHS.kind === 'pair') {
-    // t is List(t_el) and t' is pair type, then try to add constraint t' = Pair(t_el, t)
-    return addToConstraintList(constraints, [RHS, tPair(LHS.elementType, LHS)])
-  } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
-    let newConstraints = constraints
-    newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
-    newConstraints = addToConstraintList(constraints, [LHS.tailType, RHS.tailType])
-    return newConstraints
   } else if (LHS.kind === 'variable') {
-    // case when we have a new constraint like T_1 = T_1
-    if (RHS.kind === 'variable' && RHS.name === LHS.name) {
+    RHS = applyConstraints(RHS, constraints)
+    if ((RHS.kind === 'primitive' || RHS.kind === 'variable') && LHS.name === RHS.name) {
+      // if t is type var and S(t') is a type var with same name, do nothing
       return constraints
-    } else if (contains(RHS, LHS.name)) {
-      if (isPair(RHS) && (LHS === RHS.tailType || LHS === getListType(RHS.tailType))) {
-        // T1 = Pair<T2, T1> ===> T1 = List<T2>
-        return addToConstraintList(constraints, [LHS, tList(RHS.headType)])
-      } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
-        constraints.push([LHS, RHS])
-        return constraints
-      }
+    } else if (RHS.kind === 'pair' && LHS === RHS.tailType) {
+      // if t is type var and S(t') = Pair(t'',t), add t = List(t'')
+      addToConstraintList(constraints, [LHS, tList(RHS.headType)])
+    } else if (RHS.kind === 'pair' && RHS.tailType.kind === 'list') {
+      // if t = type var and t' = Pair(T1, List<T2>), add T1 = T2 and t = List(T1)
+      const newConstraints = addToConstraintList(constraints, [RHS.headType, getListType(RHS.tailType)!])
+      return addToConstraintList(newConstraints, [LHS, tList(RHS.headType)])
+    // } else if (['function', 'list', 'pair'].includes(RHS.kind) && contains(RHS, LHS.name)){
+    } else if (contains(RHS, LHS.name)){
+      // if t is tpye var and S(t') is function, list or pair type and t contained in S(t'), throw 
+      // recursive definition error 
       throw new InternalCyclicReferenceError(LHS.name)
-    }
+    } 
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
       throw new UnifyError(LHS, RHS)
     }
-    // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
-  } else if (RHS.kind === 'variable') {
-    // swap around so the type var is on the left hand side
-    return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
       throw new InternalDifferentNumberArgumentsError(
@@ -526,9 +487,24 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     }
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
-  } else {
-    throw new UnifyError(LHS, RHS)
+  } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
+    // if t = Pair<T1, T2> and t' = Pair<T3, T4>, add T1 = T3 and T2 = T4
+    const newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
+    return addToConstraintList(newConstraints, [LHS.tailType, RHS.tailType])
+  } else if (LHS.kind === 'list' && RHS.kind === 'list') {
+    // if t = List<T1> and t' = List<T2>, add T1 = T2
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
+  } else if (LHS.kind === 'list' && RHS.kind === 'pair') {
+    // if t = List<T1> and t' = Pair<T2, T3>, add t' = Pair<T1, List<T1>>
+    return addToConstraintList(constraints, [RHS, tPair(LHS.elementType, LHS)])
+  } else if (RHS.kind === 'list' && LHS.kind === 'pair') {
+    // if t = Pair<T1, T2> and t' = List<T3>, add t = Pair<T3, List<T3>>
+    return addToConstraintList(constraints, [LHS, tPair(RHS.elementType, RHS)])
+  } else if (LHS.kind === 'array' && RHS.kind === 'array') {
+    // if t = Array<T1> and t' = Array<T2>, add T1 = T2
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   }
+  throw new UnifyError(LHS, RHS)
 }
 
 function statementHasReturn(node: es.Node): boolean {
@@ -615,8 +591,7 @@ function infer(
     return _infer(node, env, constraints, isTopLevelAndLastValStmt)
   } catch (e) {
     if (e instanceof InternalCyclicReferenceError) {
-      // cyclic reference errors only happen in function declarations
-      // which would have been caught when inferring it
+      typeErrors.push(new CyclicReferenceError(node))
       return constraints
     }
     throw e

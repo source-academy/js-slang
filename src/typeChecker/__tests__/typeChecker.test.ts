@@ -166,12 +166,12 @@ describe('type checking functions', () => {
       }
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: T0"`)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: T0 -> T1"`)
     expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 2: foo contains cyclic reference to itself"`
+      `"Line 3: foo contains cyclic reference to itself"`
     )
     expect(parseError(errors, true)).toMatchInlineSnapshot(`
-      "Line 2, Column 6: foo contains cyclic reference to itself
+      "Line 3, Column 15: foo contains cyclic reference to itself
       foo contains cyclic reference to itself
       "
     `)
@@ -1435,8 +1435,8 @@ describe('typing some SICP Chapter 2 programs', () => {
     `
     const [program, errors] = typeCheck(parse(code, 2))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "count_leaves: T0
-      scale_tree: T0
+      "count_leaves: List<T0> -> addable
+      scale_tree: (List<T0>, T1) -> List<T2>
       x: T0"
     `)
     // note: our type inferencer simply doesn't work for trees, because of the way we store
@@ -1453,10 +1453,7 @@ describe('typing some SICP Chapter 2 programs', () => {
       The function expected 2 arguments of types:
         T0, T0
       but instead received 2 arguments of types:
-        List<number>, List<number>
-      Line 2: count_leaves contains cyclic reference to itself
-      Line 6: scale_tree contains cyclic reference to itself
-      Line 14: Error: Failed to unify LHS: number, RHS: List<number>"
+        List<number>, List<number>"
     `)
   })
 
@@ -1746,13 +1743,13 @@ const y = stream_ref(my_stream_2, 1);
     `
     const [program, errors] = typeCheck(parse(code1, 3))
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "stream_tail: T0
-      stream_ref: T0
+      "stream_tail: [number, () -> [number, () -> List<T0>]] -> [number, () -> List<T0>]
+      stream_ref: ([number, () -> [number, () -> List<T0>]], number) -> number
       stream_map: (number -> number, [number, () -> [number, () -> List<T0>]]) -> List<number>
-      stream_for_each: (T0 -> T1, [T0, T2]) -> undefined
+      stream_for_each: (number -> T0, [number, () -> [number, () -> List<T1>]]) -> undefined
       my_stream: [number, () -> [number, () -> List<T0>]]
       my_stream_2: List<number>
-      x: T0
+      x: number
       y: T0"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
@@ -1762,9 +1759,13 @@ const y = stream_ref(my_stream_2, 1);
       The true branch has type:
         List<T0>
       but the false branch has type:
-        () -> List<T0>
-      Line 2: stream_tail contains cyclic reference to itself
-      Line 6: stream_ref contains cyclic reference to itself"
+        () -> T0
+      Line 30: A type mismatch was detected in the function call:
+        stream_ref(my_ ... stream_2, 1)
+      The function expected 2 arguments of types:
+        [number, () -> [number, () -> List<T0>]], number
+      but instead received 2 arguments of types:
+        List<number>, number"
     `)
   })
 })
