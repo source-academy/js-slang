@@ -58,6 +58,12 @@ Documentation
 
 Source is documented here: <https://sicp.comp.nus.edu.sg/source/>
 
+## Requirements
+* `bash`: known working version: GNU bash, version 5.0.16
+* `latexmk`: Version 4.52c
+* `pdflatex`: known working versions
+  * pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
+
 To build the documentation, run
 
 ``` {.}
