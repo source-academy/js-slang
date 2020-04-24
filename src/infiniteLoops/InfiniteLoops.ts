@@ -11,9 +11,10 @@ import * as create from '../utils/astCreator'
 interface SimpleEnv {
   constants: [string, any][]
   tset: stype.TransitionSet
+  chapter2: boolean
 }
-function newEnv() {
-  return { constants: [], tset: new Map() } as SimpleEnv
+function newEnv(chap?: boolean) {
+  return { constants: [], tset: new Map(), chapter2: chap } as SimpleEnv
 }
 
 function getVariable(envs: SimpleEnv[], name: string) {
@@ -56,8 +57,39 @@ function buildTset(node: es.FunctionDeclaration, envs: SimpleEnv[]) {
   envs[0].tset.set(id.name, transition)
 }
 
+function removePreludeFunctions(envs: SimpleEnv[]) {
+  const preludeListFunctions = [
+    'is_list',
+    'equal',
+    'length',
+    'map',
+    'build_list',
+    'for_each',
+    'list_to_string',
+    'reverse',
+    'append',
+    'member',
+    'remove',
+    'remove_all',
+    'filter',
+    'enum_list',
+    'list_ref',
+    'accumulate'
+  ]
+  for (let i = envs.length - 1; i >= 0; i--) {
+    const tset = envs[i].tset
+    if (tset.size === 16 && tset.has('is_list')) {
+      for (const fn of preludeListFunctions) {
+        envs[i].tset.delete(fn)
+      }
+      break
+    }
+  }
+}
+
 function mergeTset(envs: SimpleEnv[]) {
   const t0 = new Map()
+  removePreludeFunctions(envs)
   for (const e of envs) {
     for (const [k, v] of e.tset.entries()) {
       if (!t0.has(k)) {
@@ -241,6 +273,6 @@ function simpleEval(node: es.Node, envs: SimpleEnv[]) {
   }
 }
 
-export function addInfiniteLoopProtection(prog: es.Program) {
-  simpleEval(prog, [newEnv()])
+export function addInfiniteLoopProtection(prog: es.Program, chap: boolean) {
+  simpleEval(prog, [newEnv(chap)])
 }

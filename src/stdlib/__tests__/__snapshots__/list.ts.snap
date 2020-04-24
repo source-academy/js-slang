@@ -59,14 +59,14 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: "Infinite loop detected. Did you call a value that is outside the range of your function?"],
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
       "location": SourceLocation {
         "end": Position {
-          "column": 55,
+          "column": 47,
           "line": 147,
         },
         "start": Position {
-          "column": 30,
+          "column": 39,
           "line": 147,
         },
       },
@@ -74,7 +74,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\"",
+  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -111,14 +111,14 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: "Infinite loop detected. Did you call a value that is outside the range of your function?"],
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
       "location": SourceLocation {
         "end": Position {
-          "column": 55,
+          "column": 47,
           "line": 147,
         },
         "start": Position {
-          "column": 30,
+          "column": 39,
           "line": 147,
         },
       },
@@ -126,7 +126,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\"",
+  "parsedErrors": "Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;
@@ -163,24 +163,24 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     TypeError {
-      "expected": "string",
-      "got": "number",
+      "expected": "number",
+      "got": "string",
       "location": SourceLocation {
         "end": Position {
-          "column": 55,
+          "column": 54,
           "line": 147,
         },
         "start": Position {
-          "column": 30,
+          "column": 49,
           "line": 147,
         },
       },
       "severity": "Error",
-      "side": " on right hand side of operation",
+      "side": " on left hand side of operation",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 147: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 147: Expected number on left hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = $$NATIVE_STORAGE;

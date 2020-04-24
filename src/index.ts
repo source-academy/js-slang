@@ -391,7 +391,7 @@ export async function runInContext(
     } as Result)
   }
   if (context.chapter <= 2) {
-    addInfiniteLoopProtection(program)
+    addInfiniteLoopProtection(program, context.chapter === 2)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
