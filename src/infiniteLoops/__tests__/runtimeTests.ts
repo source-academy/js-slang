@@ -160,7 +160,6 @@ test('infinite loop detected: no state change fac cond', () => {
   return expectParsedError(code).toMatchSnapshot()
 })
 
-
 test('infinite loop detected: no state change fac log', () => {
   const code = `
   function NSC_fac_log(x,s) {
@@ -268,5 +267,5 @@ test('infinite loops not detected', () => {
   }
   sum(list(1,2,3)); // sum always terminates
       `
-  return expectResult(code,{ chapter:2 }).toMatchSnapshot()
+  return expectResult(code, { chapter: 2 }).toMatchSnapshot()
 })

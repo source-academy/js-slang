@@ -58,7 +58,7 @@ export function processLogical(node: stype.BooleanSymbol) {
  */
 function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
   const newArgs = []
-  let nestedCalls : stype.FunctionSymbol[] = []
+  let nestedCalls: stype.FunctionSymbol[] = []
   for (const arg of node.args) {
     if (arg.type === 'FunctionSymbol') {
       newArgs.push(stype.skipSymbol)
@@ -67,7 +67,7 @@ function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
       newArgs.push(arg)
     }
   }
-  nestedCalls.unshift({...node, args:newArgs})
+  nestedCalls.unshift({ ...node, args: newArgs })
   return nestedCalls
 }
 

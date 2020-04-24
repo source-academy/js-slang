@@ -20,7 +20,11 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
       checkers.push(makeChecker(name, loc))
     } else {
       for (const transition of transitions) {
-        if (transition.condition === null && transition.callee.type === 'FunctionSymbol' && transition.caller.name === transition.callee.name) {
+        if (
+          transition.condition === null &&
+          transition.callee.type === 'FunctionSymbol' &&
+          transition.caller.name === transition.callee.name
+        ) {
           const loc = transition.caller.loc
           checkers.push(makeChecker(name, loc))
         }
@@ -40,7 +44,8 @@ function alignedArgs(f1: stype.FunctionSymbol, f2: stype.FunctionSymbol) {
   for (let i = 0; i < f1.args.length; i++) {
     const a1 = f1.args[i]
     const a2 = f2.args[i]
-    const sameNumber = a1.type === 'NumberSymbol' && a2.type === 'NumberSymbol' && a1.name === a2.name
+    const sameNumber =
+      a1.type === 'NumberSymbol' && a2.type === 'NumberSymbol' && a1.name === a2.name
     const hasSkip = a1.type === 'SkipSymbol' || a2.type === 'SkipSymbol'
     if (sameNumber || hasSkip) {
       continue
@@ -110,7 +115,7 @@ function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] 
 
 function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function sameArgs(f1: stype.FunctionSymbol, f2: stype.SSymbol, names: string[]) {
-    if (f2.type !== 'FunctionSymbol' || f1.name !== f2.name || !alignedArgs(f1,f2)) return false
+    if (f2.type !== 'FunctionSymbol' || f1.name !== f2.name || !alignedArgs(f1, f2)) return false
     for (let i = 0; i < f1.args.length; i++) {
       const a1 = f1.args[i]
       const a2 = f2.args[i]
@@ -120,19 +125,19 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
         a1.name === a2.name &&
         a1.constant === a2.constant &&
         a1.isPositive === a2.isPositive
-      ) { //a1 & a2 are exactly the same
+      ) {
+        //a1 & a2 are exactly the same
         continue
       }
-      for(const name of names) {
-        if (a1.type === 'NumberSymbol' && a1.name === name)
-          return false
+      for (const name of names) {
+        if (a1.type === 'NumberSymbol' && a1.name === name) return false
       }
     }
     return true
   }
-  function getNames(sym : stype.BooleanSymbol | null) : string[] {
-    if(sym === null) return []
-    if(sym.type === 'InequalitySymbol') {
+  function getNames(sym: stype.BooleanSymbol | null): string[] {
+    if (sym === null) return []
+    if (sym.type === 'InequalitySymbol') {
       return [sym.name]
     } else {
       return getNames(sym.left).concat(getNames(sym.right))
@@ -145,7 +150,12 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
       const cond = transition.condition
       const caller = transition.caller
       const callee = transition.callee
-      if (cond && cond.type !== 'SkipSymbol' && callee.type === 'FunctionSymbol' && sameArgs(caller,callee,getNames(cond))) {
+      if (
+        cond &&
+        cond.type !== 'SkipSymbol' &&
+        callee.type === 'FunctionSymbol' &&
+        sameArgs(caller, callee, getNames(cond))
+      ) {
         const name = transition.caller.name
         const checker = stype.makeLoopChecker(
           name,
