@@ -112,11 +112,13 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     addNConstraint(constraintLhs as FunctionType, constraintStore.get(constraintRhs))
   }
   // check for mismatch base types (Rule 9)
-  else if (
+  else if ((
     isBaseType(constraintLhs) &&
     isBaseType(constraintRhs) &&
     (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name
-  ) {
+   ) 
+   || (isFunctionType(constraintLhs) && isBaseType(constraintRhs)) 
+   || (isBaseType(constraintLhs) && isFunctionType(constraintRhs))) {
     console.log('[debug] Error in Rule 9')
     return { constraintLhs, constraintRhs } // for error logging
   } else {
