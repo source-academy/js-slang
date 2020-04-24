@@ -130,9 +130,9 @@ function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
     ? node.type === 'VariableDeclaration'
       ? (node.declarations[0].id as es.Identifier).name
       : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
-    : node.type === 'Identifier' 
-      ? node.name
-      : JSON.stringify(node) // might not be a good idea
+    : node.type === 'Identifier'
+    ? node.name
+    : JSON.stringify(node) // might not be a good idea
 }
 
 export class DifferentNumberArgumentsError implements SourceError {

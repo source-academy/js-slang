@@ -33,7 +33,6 @@ import {
   UndefinedIdentifierError
 } from '../errors/typeErrors'
 import { typeToString } from '../utils/stringify'
-/* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
 const NEGATIVE_OP = '-_1'
@@ -328,11 +327,14 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
       return type
     }
     case 'pair': {
-      return {
-        kind: 'pair',
-        headType: applyConstraints(type.headType, constraints),
-        tailType: applyConstraints(type.tailType, constraints)
+      const pairHeadType = applyConstraints(type.headType, constraints)
+      const pairTailType = applyConstraints(type.tailType, constraints)
+      if (pairTailType.kind === 'list' && pairHeadType === getListType(pairTailType)) {
+        return tList(pairHeadType)
+      } else {
+        return tPair(pairHeadType, pairTailType)
       }
+      return type
     }
     case 'list': {
       const elementType = applyConstraints(type.elementType, constraints)
@@ -440,14 +442,12 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   )
 }
 
-
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
-  // console.log(`LHS: ${typeToString(LHS)} RHS: ${typeToString(RHS)}`)
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
     // if t is base type and t' also base type of the same kind, do nothing
     return constraints
   } else if (LHS.kind !== 'variable' && RHS.kind === 'variable') {
-    // if t is not a type var and t' is type var, then swap order 
+    // if t is not a type var and t' is type var, then swap order
     return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'variable') {
     RHS = applyConstraints(RHS, constraints)
@@ -459,14 +459,16 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
       addToConstraintList(constraints, [LHS, tList(RHS.headType)])
     } else if (RHS.kind === 'pair' && RHS.tailType.kind === 'list') {
       // if t = type var and t' = Pair(T1, List<T2>), add T1 = T2 and t = List(T1)
-      const newConstraints = addToConstraintList(constraints, [RHS.headType, getListType(RHS.tailType)!])
+      const newConstraints = addToConstraintList(constraints, [
+        RHS.headType,
+        getListType(RHS.tailType)!
+      ])
       return addToConstraintList(newConstraints, [LHS, tList(RHS.headType)])
-    // } else if (['function', 'list', 'pair'].includes(RHS.kind) && contains(RHS, LHS.name)){
-    } else if (contains(RHS, LHS.name)){
-      // if t is tpye var and S(t') is function, list or pair type and t contained in S(t'), throw 
-      // recursive definition error 
+    } else if (contains(RHS, LHS.name)) {
+      // if t is tpye var and S(t') is function, list or pair type and t contained in S(t'), throw
+      // recursive definition error
       throw new InternalCyclicReferenceError(LHS.name)
-    } 
+    }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
       throw new UnifyError(LHS, RHS)
     }
