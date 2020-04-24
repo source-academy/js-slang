@@ -124,7 +124,7 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
 
   const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
   if (result !== undefined) {
-    throw new WrongArgumentTypeError(operatorArgType, constraintStore.get(argumentTypeVariable), unaryExpression.loc!);
+    throw new WrongArgumentTypeError(operatorArgType, constraintStore.get(argumentTypeVariable), 1, unaryExpression.loc!);
   }
 
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
@@ -176,12 +176,12 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
 
   const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
   if (resultParam1 !== undefined && resultParam1.constraintRhs) {
-    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, param1.loc!);
+    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, 1, param1.loc!);
   }
 
   const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
   if (resultParam2 !== undefined && resultParam2.constraintRhs) {
-    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, param2.loc!);
+    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, 2, param2.loc!);
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
@@ -332,7 +332,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
 
     const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
     if (errorObj) {
-      throw new WrongArgumentTypeError(declarationArgTypeVariable, errorObj.constraintRhs, applicationArgs[i].loc!)
+      throw new WrongArgumentTypeError(declarationArgTypeVariable, errorObj.constraintRhs, i, applicationArgs[i].loc!)
     }
   }
 
