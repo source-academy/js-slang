@@ -805,7 +805,7 @@ export function transpile(
 
     // add some display statements to program
     if (res.length > 0) {
-      let str = 'Attempting to optimize for loop on line:'
+      let str = 'Attempting to optimize for loop on line: '
       if (res.length > 1) {
         str = 'Attempting to optimize for loops on lines: '
       }
