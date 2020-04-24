@@ -6,6 +6,7 @@ import { createEmptyContext } from '../createContext'
 import { compileToIns } from './svml-compiler'
 import { assemble } from './svml-assembler'
 import { stringifyProgram } from './util'
+import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
@@ -13,6 +14,7 @@ interface CliOptions {
   sourceVariant: 'default' | 'concurrent' // does not support other variants
   inputFilename: string
   outputFilename: string | null
+  vmInternalFunctions: string[] | null
 }
 
 const readFileAsync = util.promisify(fs.readFile)
@@ -27,7 +29,8 @@ function parseOptions(): CliOptions | null {
     sourceChapter: 3,
     sourceVariant: 'default',
     inputFilename: '',
-    outputFilename: null
+    outputFilename: null,
+    vmInternalFunctions: null
   }
 
   let endOfOptions = false
@@ -82,9 +85,16 @@ function parseOptions(): CliOptions | null {
               error = true
               break
           }
+          args.splice(0, argShiftNumber)
+          break
         case '--out':
         case '-o':
           ret.outputFilename = argument
+          args.splice(0, argShiftNumber)
+          break
+        case '--internals':
+        case '-i':
+          ret.vmInternalFunctions = JSON.parse(argument)
           args.splice(0, argShiftNumber)
           break
         case '--':
@@ -135,6 +145,9 @@ Options:
 -o, --out <filename>: [see below]
   Sets the output filename.
   Defaults to the input filename, minus any '.js' extension, plus '.svm'.
+-i, --internals <JSON array of internal names>: ["[]"]
+  Sets the list of VM-internal functions. The argument should be a JSON array of
+  strings containing the names of the VM-internal functions.
 --:
   Signifies the end of arguments, in case your input filename starts with -.`)
     process.exitCode = 1
@@ -179,8 +192,17 @@ Options:
     return
   }
 
-  // the current compiler does not differentiate between chapters 1,2 or 3
-  const compiled = compileToIns(program, options.sourceVariant)
+  if (options.sourceVariant === 'concurrent' && options.vmInternalFunctions) {
+    console.warn('Warning: ignoring internal functions specified on command line for concurrent VM')
+  }
+
+  const vmInternalFunctions =
+    options.sourceVariant === 'concurrent'
+      ? concurrentInternalFunctions.map(([name]) => name)
+      : options.vmInternalFunctions || []
+
+  // the current compiler does not differentiate between chapters 1, 2 or 3
+  const compiled = compileToIns(program, undefined, vmInternalFunctions)
 
   if (options.compileTo === 'debug') {
     console.log(stringifyProgram(compiled).trimRight())

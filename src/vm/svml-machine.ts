@@ -140,6 +140,9 @@ const NORMAL = 0
 const DIV_ERROR = 1
 const TYPE_ERROR = 2
 const NUM_ARGS_ERROR = 3
+const CALL_NON_FUNCTION_ERROR = 4
+
+let ERROR_MSG_ARGS: any[] = []
 
 let STATE = NORMAL
 
@@ -518,13 +521,18 @@ function FUNCTION_CALL() {
       HEAP[I + ARRAY_SIZE_SLOT] = G // manually update array length
       D = E + HEAP[E + FIRST_CHILD_SLOT]
       HEAP[D] = I
-    } else {
+    } else if (I === G) {
       D = E + HEAP[E + FIRST_CHILD_SLOT] + G - 1
       // D is now address where last argument goes in new env
       for (C = D; C > D - G; C = C - 1) {
         POP_OS() // now RES has the address of the next arg
         HEAP[C] = RES // copy argument into new env
       }
+    } else {
+      STATE = NUM_ARGS_ERROR
+      ERROR_MSG_ARGS[0] = I
+      ERROR_MSG_ARGS[1] = G
+      RUNNING = false
     }
 
     if (J === NORMAL_CALL || J === TAIL_CALL) {
@@ -553,6 +561,8 @@ function INTERNAL_FUNCTION_CALL() {
   K = F // save the internal function
   if (K[INTERNAL_NUM_ARGS_SLOT] !== VARARGS_NUM_ARGS && K[INTERNAL_NUM_ARGS_SLOT] !== G) {
     STATE = NUM_ARGS_ERROR
+    ERROR_MSG_ARGS[0] = K[INTERNAL_NUM_ARGS_SLOT]
+    ERROR_MSG_ARGS[1] = G
     RUNNING = false
   } else {
     M[K[INTERNAL_OPCODE_SLOT]]() // call subroutine directly
@@ -586,7 +596,7 @@ function node_kind(x: number) {
   return x === NUMBER_TAG
     ? 'number'
     : x === BOOL_TAG
-    ? 'bool'
+    ? 'boolean'
     : x === CLOSURE_TAG
     ? 'closure'
     : x === RTS_FRAME_TAG
@@ -750,127 +760,242 @@ M[OpCodes.ADDG] = () => {
   A = RES
   PUSH_OS()
   PC = PC + 1
-  G = D || E
-  G = !(G && H)
-  if (G) {
+  J = D || E
+  J = !(J && H)
+  if (J) {
     STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[G + TAG_SLOT])} and ${node_kind(HEAP[I + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '+'
     RUNNING = false
   }
 }
 
 M[OpCodes.SUBG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] - A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] - A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '-'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.MULG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] * A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] * A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '*'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.DIVG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
-  E = A
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] / A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  F = A
+  A = HEAP[E + NUMBER_VALUE_SLOT] / A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
-  E = E === 0
-  if (E) {
-    STATE = DIV_ERROR
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '/'
+    RUNNING = false
   }
-  if (E) {
+
+  F = G && F === 0
+  if (F) {
+    STATE = DIV_ERROR
     RUNNING = false
   }
 }
 
 M[OpCodes.MODG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] % A
+  E = RES
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + NUMBER_VALUE_SLOT] % A
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = E && HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    RUNNING = false
+  }
 }
 
 M[OpCodes.NEGG] = () => {
   POP_OS()
-  A = -HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
+  A = -HEAP[D + NUMBER_VALUE_SLOT]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '-'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.NOTG] = () => {
   POP_OS()
-  A = !HEAP[RES + BOOL_VALUE_SLOT]
+  D = RES
+  A = !HEAP[D + BOOL_VALUE_SLOT]
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === BOOL_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'boolean'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '!'
+    RUNNING = false
+  }
 }
 
 // for comparisons, assume both string or both nums
 M[OpCodes.LTG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] < A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] < A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '<'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.GTG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] > A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] > A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '>'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.LEG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] <= A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] <= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '<='
+    RUNNING = false
+  }
 }
 
 M[OpCodes.GEG] = () => {
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + BOXED_VALUE_SLOT] >= A
+  E = RES
+  A = HEAP[D + BOXED_VALUE_SLOT]
+  A = HEAP[E + BOXED_VALUE_SLOT] >= A
   NEW_BOOL()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === HEAP[E + TAG_SLOT]
+  G = G && (HEAP[D + TAG_SLOT] === NUMBER_TAG || HEAP[D + TAG_SLOT] === STRING_TAG)
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'string and string or number and number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])} and ${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = '>='
+    RUNNING = false
+  }
 }
 
 // check type here as undefined and null need to be differentiated by nodes
@@ -954,32 +1079,73 @@ M[OpCodes.STPG] = () => {
 
 M[OpCodes.LDAG] = () => {
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT]
+  D = RES
   POP_OS()
-  A = HEAP[RES + ARRAY_VALUE_SLOT][A]
+  E = RES
+  G = HEAP[E + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array access'
+    RUNNING = false
+    return
+  }
+
+  A = HEAP[D + NUMBER_VALUE_SLOT]
+  A = HEAP[E + ARRAY_VALUE_SLOT][A]
   if (A === undefined) {
     NEW_UNDEFINED()
     A = RES
   }
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array index'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.STAG] = () => {
   POP_OS()
   D = RES
   POP_OS()
-  A = HEAP[RES + NUMBER_VALUE_SLOT] // index
+  E = RES
+  A = HEAP[E + NUMBER_VALUE_SLOT] // index
   POP_OS()
-  HEAP[RES + ARRAY_VALUE_SLOT][A] = D
+  F = RES
+  G = HEAP[F + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[F + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array access'
+    RUNNING = false
+    return
+  }
+  HEAP[F + ARRAY_VALUE_SLOT][A] = D
 
   // update array size
-  D = HEAP[RES + ARRAY_SIZE_SLOT]
+  D = HEAP[F + ARRAY_SIZE_SLOT]
   if (D < A + 1) {
     D = A + 1
   }
-  HEAP[RES + ARRAY_SIZE_SLOT] = D
+  HEAP[F + ARRAY_SIZE_SLOT] = D
   PC = PC + 1
+
+  G = HEAP[E + TAG_SLOT] === NUMBER_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'number'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[E + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array index'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.BRT] = () => {
@@ -1011,8 +1177,15 @@ M[OpCodes.CALL] = () => {
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
 
-  J = NORMAL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = NORMAL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLT] = () => {
@@ -1020,8 +1193,15 @@ M[OpCodes.CALLT] = () => {
   // we peek down OS to get the closure
   F = HEAP[OS + HEAP[OS + LAST_CHILD_SLOT] - G]
 
-  J = TAIL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLP] = () => {
@@ -1029,8 +1209,15 @@ M[OpCodes.CALLP] = () => {
   F = P[PC][CALLP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
 
-  J = PRIMITIVE_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = PRIMITIVE_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLTP] = () => {
@@ -1038,24 +1225,45 @@ M[OpCodes.CALLTP] = () => {
   F = P[PC][CALLTP_ID_OFFSET] // lets keep primitiveCall Id in F
   F = HEAP[GLOBAL_ENV + HEAP[GLOBAL_ENV + FIRST_CHILD_SLOT] + F] // get closure
 
-  J = PRIMITIVE_TAIL_CALL
-  FUNCTION_CALL()
+  E = HEAP[F + TAG_SLOT] === CLOSURE_TAG
+  if (E) {
+    J = PRIMITIVE_TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLV] = () => {
   G = P[PC][CALLV_NUM_ARGS_OFFSET]
   F = P[PC][CALLV_ID_OFFSET]
 
-  J = INTERNAL_CALL
-  FUNCTION_CALL()
+  E = F < INTERNAL_FUNCTIONS.length
+  if (E) {
+    J = INTERNAL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.CALLTV] = () => {
   G = P[PC][CALLTV_NUM_ARGS_OFFSET]
   F = P[PC][CALLTV_ID_OFFSET]
 
-  J = INTERNAL_TAIL_CALL
-  FUNCTION_CALL()
+  E = F < INTERNAL_FUNCTIONS.length
+  if (E) {
+    J = INTERNAL_TAIL_CALL
+    FUNCTION_CALL()
+  } else {
+    STATE = CALL_NON_FUNCTION_ERROR
+    ERROR_MSG_ARGS[0] = convertToJsFormat(F)
+    RUNNING = false
+  }
 }
 
 M[OpCodes.RETG] = () => {
@@ -1115,11 +1323,21 @@ M[OpCodes.NEWCV] = () => {
 // all opcodes from here onwards are custom to this implementation (3 Concurrent)
 M[OpCodes.ARRAY_LEN] = () => {
   POP_OS()
-  A = HEAP[RES + ARRAY_SIZE_SLOT]
+  D = RES
+  A = HEAP[D + ARRAY_SIZE_SLOT]
   NEW_NUMBER()
   A = RES
   PUSH_OS()
   PC = PC + 1
+
+  G = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!G) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'array_length'
+    RUNNING = false
+  }
 }
 
 M[OpCodes.DISPLAY] = () => {
@@ -1128,8 +1346,7 @@ M[OpCodes.DISPLAY] = () => {
   POP_OS()
   D = RES
   externalFunctions.get(OpCodes.DISPLAY)(convertToJsFormat(D), convertToJsFormat(C))
-  NEW_UNDEFINED()
-  A = RES
+  A = D
   PUSH_OS()
   PC = PC + 1
 }
@@ -1138,7 +1355,6 @@ M[OpCodes.DISPLAY] = () => {
 M[OpCodes.DRAW_DATA] = () => {
   POP_OS()
   externalFunctions.get(OpCodes.DRAW_DATA)(convertToJsFormat(RES))
-  NEW_UNDEFINED()
   A = RES
   PUSH_OS()
   PC = PC + 1
@@ -1150,7 +1366,10 @@ M[OpCodes.ERROR] = () => {
   POP_OS()
   D = RES
   externalFunctions.get(OpCodes.ERROR)(convertToJsFormat(D), convertToJsFormat(C))
-  // terminates
+  // terminates so don't do anything else
+  // A = D
+  // PUSH_OS()
+  // PC = PC + 1
 }
 
 M[OpCodes.IS_ARRAY] = () => {
@@ -1280,20 +1499,38 @@ M[OpCodes.EXECUTE] = () => {
 M[OpCodes.TEST_AND_SET] = () => {
   POP_OS()
   D = RES // array
-  E = HEAP[D + ARRAY_VALUE_SLOT][0] // get old boolean value
-  A = true
-  NEW_BOOL()
-  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
-  A = E
-  PUSH_OS() // push old value to os
+  E = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!E) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'test_and_set'
+    RUNNING = false
+  } else {
+    E = HEAP[D + ARRAY_VALUE_SLOT][0] // get old boolean value
+    A = true
+    NEW_BOOL()
+    HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+    A = E
+    PUSH_OS() // push old value to os
+  }
 }
 
 M[OpCodes.CLEAR] = () => {
   POP_OS()
   D = RES // array
-  A = false
-  NEW_BOOL()
-  HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+  E = HEAP[D + TAG_SLOT] === ARRAY_TAG
+  if (!E) {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'array'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'clear'
+    RUNNING = false
+  } else {
+    A = false
+    NEW_BOOL()
+    HEAP[D + ARRAY_VALUE_SLOT][0] = RES
+  }
 }
 
 // called whenever the machine is first run
@@ -1384,7 +1621,7 @@ function run(): any {
   // show_heap_value(RES)
   // return convertToJsFormat(RES)
   // Source 3 Concurrent programs do not return anything.
-  return undefined
+  return 'all threads terminated'
 }
 
 function getErrorType(): string {
@@ -1392,9 +1629,14 @@ function getErrorType(): string {
     case DIV_ERROR:
       return 'division by 0'
     case TYPE_ERROR:
-      return 'types of operands do not match'
+      // 0: expected types
+      // 1: received types
+      // 2: operator
+      return `Expected ${ERROR_MSG_ARGS[0]}, got ${ERROR_MSG_ARGS[1]} for ${ERROR_MSG_ARGS[2]}.`
     case NUM_ARGS_ERROR:
-      return 'incorrect number of arguments encountered for function call'
+      return `Expected ${ERROR_MSG_ARGS[0]} arguments, but got ${ERROR_MSG_ARGS[1]}.`
+    case CALL_NON_FUNCTION_ERROR:
+      return `calling non-function value ${ERROR_MSG_ARGS[0]}.`
     default:
       throw Error('invalid error type')
   }
@@ -1411,7 +1653,7 @@ function convertToJsFormat(node: number): any {
 
     case 'number':
     case 'string':
-    case 'bool':
+    case 'boolean':
       return HEAP[node + BOXED_VALUE_SLOT]
 
     case 'array': {
@@ -1450,6 +1692,7 @@ export function runWithProgram(p: Program, context: Context): any {
   TOP_RTS = -1
   STATE = NORMAL
   RUNNING = true
+  ERROR_MSG_ARGS = []
 
   A = 0
   B = 0

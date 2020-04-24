@@ -9,7 +9,7 @@ import {
   CONSTANT_PRIMITIVES,
   INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
-import { Context, Variant } from '../types'
+import { Context } from '../types'
 import { parse } from '../parser/parser'
 import OpCodes from './opcodes'
 
@@ -31,7 +31,7 @@ const VALID_BINARY_OPERATORS = new Map([
   ['!==', OpCodes.NEQG]
 ])
 
-type Offset = number // instructions to skip
+export type Offset = number // instructions to skip
 export type Address = [
   number, // function index
   number? // instruction index within function; optional
@@ -41,7 +41,7 @@ export type Instruction = [
   Argument?,
   Argument?
 ]
-type Argument = number | boolean | string | Offset | Address
+export type Argument = number | boolean | string | Offset | Address
 export type SVMFunction = [
   number, // stack size
   number, // environment size
@@ -52,8 +52,6 @@ export type Program = [
   number, // index of entry point function
   SVMFunction[]
 ]
-
-let variant = 'default'
 
 // Array of function headers in the compiled program
 let SVMFunctions: SVMFunction[] = []
@@ -129,15 +127,17 @@ function toCompileTaskIndexTable(toCompileTask: CompileTask): Map<string, EnvEnt
 function makeEmptyIndexTable(): Map<string, EnvEntry>[] {
   return []
 }
-function makeIndexTableWithPrimitivesAndInternals(): Map<string, EnvEntry>[] {
+function makeIndexTableWithPrimitivesAndInternals(
+  vmInternalFunctions?: string[]
+): Map<string, EnvEntry>[] {
   const names = new Map<string, EnvEntry>()
   for (let i = 0; i < PRIMITIVE_FUNCTION_NAMES.length; i++) {
     const name = PRIMITIVE_FUNCTION_NAMES[i]
     names.set(name, { index: i, isVar: false, type: 'primitive' })
   }
-  if (variant === 'concurrent') {
-    for (let i = 0; i < INTERNAL_FUNCTIONS.length; i++) {
-      const name = INTERNAL_FUNCTIONS[i][0]
+  if (vmInternalFunctions) {
+    for (let i = 0; i < vmInternalFunctions.length; i++) {
+      const name = vmInternalFunctions[i]
       names.set(name, { index: i, isVar: false, type: 'internal' })
     }
   }
@@ -247,11 +247,17 @@ function extractAndRenameNames(
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
       extractAndRenameNames(node, names)
-    } else if (stmt.type === 'IfStatement') {
-      const { consequent, alternate } = stmt as es.IfStatement
-      extractAndRenameNames(consequent as es.BlockStatement, names)
-      // Source spec must have alternate
-      extractAndRenameNames(alternate! as es.BlockStatement, names)
+    }
+    if (stmt.type === 'IfStatement') {
+      let nextAlt = stmt as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
+        // if else if...
+        const { consequent, alternate } = nextAlt as es.IfStatement
+        extractAndRenameNames(consequent as es.BlockStatement, names)
+        // Source spec must have alternate
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
+      }
+      extractAndRenameNames(nextAlt as es.BlockStatement, names)
     }
   }
   return names
@@ -323,9 +329,13 @@ function renameVariables(
       }
     },
     IfStatement(node: es.IfStatement, inactive, c) {
-      const { consequent, alternate } = node
-      recurseBlock(consequent as es.BlockStatement, inactive, c)
-      recurseBlock(alternate! as es.BlockStatement, inactive, c)
+      let nextAlt = node as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
+        const { consequent, alternate } = node
+        recurseBlock(consequent as es.BlockStatement, inactive, c)
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
+      }
+      recurseBlock(nextAlt! as es.BlockStatement, inactive, c)
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
@@ -577,7 +587,8 @@ const compilers = {
       addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length)
       maxStackOperands++
     }
-    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands), insertFlag }
+    // need at least 1 stack slot for the return value!
+    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands, 1), insertFlag }
   },
 
   UnaryExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
@@ -637,7 +648,7 @@ const compilers = {
     insertFlag: boolean,
     isTailCallPosition: boolean = false
   ) {
-    const { test, consequent, alternate } = node as es.IfStatement
+    const { test, consequent, alternate } = node as es.ConditionalExpression
     const { maxStackSize: m1 } = compile(test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
@@ -924,18 +935,19 @@ function compile(
   return { maxStackSize, insertFlag: newInsertFlag }
 }
 
-export function compileWithPrelude(program: es.Program, context: Context) {
+export function compileForConcurrent(program: es.Program, context: Context) {
   // assume vmPrelude is always a correct program
   const prelude = compileToIns(parse(vmPrelude, context)!)
   generatePrimitiveFunctionCode(prelude)
+  const vmInternalFunctions = INTERNAL_FUNCTIONS.map(([name]) => name)
 
-  return compileToIns(program, context.variant, prelude)
+  return compileToIns(program, prelude, vmInternalFunctions)
 }
 
 export function compileToIns(
   program: es.Program,
-  runVariant: Variant = 'default',
-  prelude?: Program
+  prelude?: Program,
+  vmInternalFunctions?: string[]
 ): Program {
   // reset variables
   SVMFunctions = []
@@ -943,7 +955,6 @@ export function compileToIns(
   toCompile = []
   loopTracker = []
   toplevel = true
-  variant = runVariant
 
   transformForLoopsToWhileLoops(program)
   const locals = extractAndRenameNames(program, new Map<string, EnvEntry>())
@@ -954,7 +965,10 @@ export function compileToIns(
   const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0 // GE + # primitive func
   SVMFunctions[topFunctionIndex] = topFunction
 
-  const extendedTable = extendIndexTable(makeIndexTableWithPrimitivesAndInternals(), locals)
+  const extendedTable = extendIndexTable(
+    makeIndexTableWithPrimitivesAndInternals(vmInternalFunctions),
+    locals
+  )
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
   return [0, SVMFunctions]

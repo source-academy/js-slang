@@ -12,9 +12,11 @@ const OUT_DIR = "src/editors/ace/docTooltip"
 
 const TARGETS = [
   "source_1",
+  "source_1_wasm",
   "source_2",
   "source_3",
   "source_3_concurrent",
+  "source_3_non-det",
   "source_4",
   "External libraries",
 ]

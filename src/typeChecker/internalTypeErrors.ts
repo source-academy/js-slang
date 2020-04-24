@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from './types'
+import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from '../types'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
@@ -31,5 +31,23 @@ export class InternalTypeError extends Error {
   // }
   constructor(public message: string) {
     super()
+  }
+}
+
+export class UnifyError extends InternalTypeError {
+  constructor(public LHS: Type, public RHS: Type) {
+    super('Failed to unify types')
+  }
+}
+
+export class InternalDifferentNumberArgumentsError extends InternalTypeError {
+  constructor(public numExpectedArgs: number, public numReceived: number) {
+    super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
+  }
+}
+
+export class InternalCyclicReferenceError extends InternalTypeError {
+  constructor(public name: string) {
+    super(`contains a cyclic reference to itself`)
   }
 }

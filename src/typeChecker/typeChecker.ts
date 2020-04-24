@@ -8,10 +8,24 @@ import {
   ForAll,
   Type,
   FunctionType,
-  TypeAnnotatedFuncDecl
+  TypeAnnotatedFuncDecl,
+  SourceError
 } from '../types'
-import { TypeError, InternalTypeError } from '../typeErrors'
-import { typeToString } from '../utils/stringify'
+import {
+  TypeError,
+  InternalTypeError,
+  UnifyError,
+  InternalDifferentNumberArgumentsError,
+  InternalCyclicReferenceError
+} from './internalTypeErrors'
+import {
+  ConsequentAlternateMismatchError,
+  InvalidTestConditionError,
+  DifferentNumberArgumentsError,
+  InvalidArgumentTypesError,
+  CyclicReferenceError,
+  UndefinedIdentifierError
+} from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
 /** Name of Unary negative builtin operator */
@@ -32,7 +46,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
       node.typability = 'Typed'
     } catch (e) {
-      if (isInternalTypeError(e)) {
+      if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
         typeErrors.push(new TypeError(node, e))
       }
     }
@@ -84,18 +98,12 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'ReturnStatement': {
-      const arg = node.argument
-      if (arg === undefined || arg === null) {
-        return
-      }
+      const arg = node.argument!
       traverse(arg, constraints)
       break
     }
     case 'VariableDeclaration': {
-      const init = node.declarations[0].init
-      if (init === undefined || init === null) {
-        return
-      }
+      const init = node.declarations[0].init!
       traverse(init, constraints)
       break
     }
@@ -115,7 +123,9 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
             constraints
           )
         } catch (e) {
-          if (isInternalTypeError(e)) {
+          if (e instanceof InternalCyclicReferenceError) {
+            typeErrors.push(new CyclicReferenceError(node))
+          } else if (isInternalTypeError(e)) {
             typeErrors.push(new TypeError(node, e))
           }
         }
@@ -163,26 +173,22 @@ function cloneEnv(env: Env) {
 }
 
 type Constraint = [Variable, Type]
-let typeErrors: TypeError[] = []
+let typeErrors: SourceError[] = []
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
  */
 export function typeCheck(
   program: TypeAnnotatedNode<es.Program>
-): [TypeAnnotatedNode<es.Program>, TypeError[]] {
+): [TypeAnnotatedNode<es.Program>, SourceError[]] {
   typeIdCounter = 0
   typeErrors = []
   const env: Env = new Map(initialEnv)
   const constraints: Constraint[] = []
-  try {
-    traverse(program)
-    infer(program, env, constraints, true)
-    traverse(program, constraints)
-    return [program, typeErrors]
-  } catch (e) {
-    throw e
-  }
+  traverse(program)
+  infer(program, env, constraints, true)
+  traverse(program, constraints)
+  return [program, typeErrors]
 }
 
 /**
@@ -291,7 +297,6 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
       if (getListType(tail.tailType) !== null) {
         addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
         addToConstraintList(constraints, [tail.headType, pair.headType])
-        // console.log('normalization triggered')
         return __applyConstraints(tail, constraints)
       }
     }
@@ -338,9 +343,7 @@ function __applyConstraints(type: Type, constraints: Constraint[]): Type {
                 elementType: LHS
               }
             }
-            throw new InternalTypeError(
-              'Contains cyclic reference to itself, where the type being bound to is a function type'
-            )
+            throw new InternalCyclicReferenceError(type.name)
           }
           return applyConstraints(constraint[1], constraints)
         }
@@ -431,20 +434,15 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     } else if (contains(RHS, LHS.name)) {
       if (isPair(RHS) && (LHS === RHS.tailType || LHS === getListType(RHS.tailType))) {
         // T1 = Pair<T2, T1> ===> T1 = List<T2>
-        // throw Error('need to unify pair')
         return addToConstraintList(constraints, [LHS, tList(RHS.headType)])
       } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
         constraints.push([LHS, RHS])
         return constraints
       }
-      throw Error(
-        'Contains cyclic reference to itself, where the type being bound to is a function type'
-      )
+      throw new InternalCyclicReferenceError(LHS.name)
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
-      throw new InternalTypeError(
-        `Expected either a number or a string, got ${typeToString(RHS)} instead.`
-      )
+      throw new UnifyError(LHS, RHS)
     }
     // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
@@ -453,7 +451,10 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
-      throw Error(`Expected ${LHS.parameterTypes.length} args, got ${RHS.parameterTypes.length}`)
+      throw new InternalDifferentNumberArgumentsError(
+        RHS.parameterTypes.length,
+        LHS.parameterTypes.length
+      )
     }
     let newConstraints = constraints
     for (let i = 0; i < LHS.parameterTypes.length; i++) {
@@ -465,7 +466,7 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
   } else {
-    throw new InternalTypeError(`Types do not unify: ${typeToString(LHS)} vs ${typeToString(RHS)}`)
+    throw new UnifyError(LHS, RHS)
   }
 }
 
@@ -503,8 +504,9 @@ function infer(
   try {
     return _infer(node, env, constraints, isLastStatementInBlock)
   } catch (e) {
-    if (isInternalTypeError(e)) {
-      typeErrors.push(new TypeError(node, e.message))
+    if (e instanceof InternalCyclicReferenceError) {
+      // cyclic reference errors only happen in function declarations
+      // which would have been caught when inferring it
       return constraints
     }
     throw e
@@ -525,11 +527,21 @@ function _infer(
       const funcType = env.get(op) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
-      return infer(
-        argNode,
-        env,
-        addToConstraintList(constraints, [tFunc(argType, storedType), funcType])
-      )
+      let newConstraints = constraints
+      const receivedTypes: Type[] = []
+      newConstraints = infer(argNode, env, newConstraints)
+      receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
+      try {
+        newConstraints = addToConstraintList(newConstraints, [tFunc(argType, storedType), funcType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          const expectedTypes = funcType.parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes)
+          )
+        }
+      }
+      return newConstraints
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
@@ -539,20 +551,33 @@ function _infer(
       const leftType = leftNode.inferredType as Variable
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
       const rightType = rightNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [
-        tFunc(leftType, rightType, storedType),
-        opType
-      ])
-      newConstraints = infer(leftNode, env, newConstraints)
-      return infer(rightNode, env, newConstraints)
+
+      const argNodes = [leftNode, rightNode]
+      let newConstraints = constraints
+      const receivedTypes: Type[] = []
+      argNodes.forEach(argNode => {
+        newConstraints = infer(argNode, env, newConstraints)
+        receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
+      })
+      try {
+        newConstraints = addToConstraintList(constraints, [
+          tFunc(leftType, rightType, storedType),
+          opType
+        ])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          const expectedTypes = (opType as FunctionType).parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
+          )
+        }
+      }
+      return newConstraints
     }
     case 'ExpressionStatement': {
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'ReturnStatement': {
-      if (node.argument === undefined || node.argument === null) {
-        throw Error('Node argument cannot be undefined or null')
-      }
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       return infer(
         argNode,
@@ -671,25 +696,38 @@ function _infer(
           return addToConstraintList(constraints, [storedType, envType])
         }
       }
-      throw Error(`Undefined identifier: ${identifierName}`)
+      typeErrors.push(new UndefinedIdentifierError(node, identifierName))
+      return constraints
     }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
       const testNode = node.test as TypeAnnotatedNode<es.Node>
       const testType = testNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [testType, tBool])
       const consNode = node.consequent as TypeAnnotatedNode<es.Node>
       const consType = consNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [testType, tBool])
       newConstraints = addToConstraintList(newConstraints, [storedType, consType])
       const altNode = node.alternate as TypeAnnotatedNode<es.Node>
       if (altNode) {
         const altType = altNode.inferredType as Variable
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       }
-      newConstraints = infer(testNode, env, newConstraints)
+      try {
+        newConstraints = infer(testNode, env, newConstraints)
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+        }
+      }
       newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
       if (altNode) {
-        newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
+        try {
+          newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
+          }
+        }
       }
       return newConstraints
     }
@@ -708,10 +746,7 @@ function _infer(
       return infer(bodyNode, newEnv, newConstraints)
     }
     case 'VariableDeclaration': {
-      const initNode = node.declarations[0].init
-      if (!initNode) {
-        throw Error('No initialization')
-      }
+      const initNode = node.declarations[0].init!
       return infer(initNode, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'FunctionDeclaration': {
@@ -738,11 +773,29 @@ function _infer(
       const argNodes = node.arguments as TypeAnnotatedNode<es.Node>[]
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
-      let newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
+      let newConstraints = constraints
       newConstraints = infer(calleeNode, env, newConstraints)
+      const calledFunctionType = applyConstraints(
+        (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
+        newConstraints
+      )
+      const receivedTypes: Type[] = []
       argNodes.forEach(argNode => {
         newConstraints = infer(argNode, env, newConstraints)
+        receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
       })
+      try {
+        newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
+          typeErrors.push(
+            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
+          )
+        } else if (e instanceof InternalDifferentNumberArgumentsError) {
+          typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
+        }
+      }
       return newConstraints
     }
     default:
@@ -871,25 +924,23 @@ const predeclaredNames: [string, Type | ForAll][] = [
   ['parse_int', tFunc(tString, tNumber, tNumber)],
   ['prompt', tFunc(tString, tString)],
   ['runtime', tFunc(tNumber)],
-  ['stringify', tForAll(tFunc(tVar('T'), tString))]
+  ['stringify', tForAll(tFunc(tVar('T'), tString))],
+  ['display', tForAll(tVar('T'))],
+  ['error', tForAll(tVar('T'))]
 ]
 
-const headType1 = tVar('headType1')
-const tailType1 = tVar('tailType1')
-const headType2 = tVar('headType2')
-const tailType2 = tVar('tailType2')
-const headType3 = tVar('headType3')
-const tailType3 = tVar('tailType3')
-const headType4 = tVar('headType4')
-const tailType4 = tVar('tailType4')
+const headType = tVar('headType')
+const tailType = tVar('tailType')
 
 const pairFuncs: [string, Type | ForAll][] = [
-  ['pair', tForAll(tFunc(headType1, tailType1, tPair(headType1, tailType1)))],
-  ['head', tForAll(tFunc(tPair(headType2, tailType2), headType2))],
-  ['tail', tForAll(tFunc(tPair(headType3, tailType3), tailType3))],
+  ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
+  ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
+  ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType4, tailType4), tBool))]
+  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
 ]
+
+const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
 
 const primitiveFuncs: [string, Type | ForAll][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],
@@ -910,4 +961,4 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['/', tFunc(tNumber, tNumber, tNumber)]
 ]
 
-const initialEnv = [...predeclaredNames, ...pairFuncs, ...primitiveFuncs]
+const initialEnv = [...predeclaredNames, ...pairFuncs, ...listFuncs, ...primitiveFuncs]

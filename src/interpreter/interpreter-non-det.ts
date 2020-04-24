@@ -300,13 +300,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     yield Closure.makeFromArrowFunction(node, currentEnvironment(context), context)
   },
 
-  Identifier: function*(node: es.Identifier, context: Context) {
-    if (node.name === 'cut') {
-      return yield CUT
-    }
+  ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
+    yield* cartesianProduct(context, node.elements as es.Expression[], [])
+  },
 
-    yield getVariable(context, node.name)
-    return
+  Identifier: function*(node: es.Identifier, context: Context) {
+    return yield getVariable(context, node.name)
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
@@ -314,13 +313,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if (rttc.isIdentifier(callee)) {
       if (callee.name === 'amb') {
         return yield* getAmbArgs(context, node)
+      } else if (callee.name === 'cut') {
+        return yield CUT
       }
     }
 
     const calleeGenerator = evaluate(node.callee, context)
     for (const calleeValue of calleeGenerator) {
       const argsGenerator = getArgs(context, node)
-      for(const args of argsGenerator) {
+      for (const args of argsGenerator) {
         yield* apply(context, calleeValue, args, node, undefined)
       }
     }
@@ -339,16 +340,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
-    const leftGenerator = evaluate(node.left, context)
-    for (const leftValue of leftGenerator) {
-      const rightGenerator = evaluate(node.right, context)
-      for (const rightValue of rightGenerator) {
-        const error = rttc.checkBinaryExpression(node, node.operator, leftValue, rightValue)
-        if (error) {
-          return handleRuntimeError(context, error)
-        }
-        yield evaluateBinaryExpression(node.operator, leftValue, rightValue)
+    const pairGenerator = cartesianProduct(context, [node.left, node.right], [])
+    for (const pair of pairGenerator) {
+      const leftValue = pair[0]
+      const rightValue = pair[1]
+      const error = rttc.checkBinaryExpression(node, node.operator, leftValue, rightValue)
+      if (error) {
+        return handleRuntimeError(context, error)
       }
+      yield evaluateBinaryExpression(node.operator, leftValue, rightValue)
     }
     return
   },
@@ -374,14 +374,50 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return undefined
   },
 
-  AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
-    const id = node.left as es.Identifier
+  MemberExpression: function*(node: es.MemberExpression, context: Context) {
+    const pairGenerator = cartesianProduct(context, [node.property, node.object as es.Expression], [])
+    for (const pair of pairGenerator) {
+      const prop = pair[0]
+      const obj = pair[1]
 
+      const error = rttc.checkMemberAccess(node, obj, prop)
+      if (error) {
+        return yield handleRuntimeError(context, error)
+      }
+
+      yield obj[prop]
+    }
+
+    return
+  },
+
+  AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
+    if (node.left.type === 'MemberExpression') {
+      const tripleGenerator = cartesianProduct(context, [node.right, node.left.property, node.left.object as es.Expression], [])
+      for (const triple of tripleGenerator) {
+        const val = triple[0]
+        const prop = triple[1]
+        const obj = triple[2]
+
+        const error = rttc.checkMemberAccess(node, obj, prop)
+        if (error) {
+          return yield handleRuntimeError(context, error)
+        }
+
+        obj[prop] = val
+        yield val
+      }
+
+      return
+    }
+
+    const id = node.left as es.Identifier
     const valueGenerator = evaluate(node.right, context)
     for (const value of valueGenerator) {
       setVariable(context, id.name, value)
       yield value
     }
+    return
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {

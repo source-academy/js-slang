@@ -23,7 +23,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2021}{Source}{\S 1 Type Inference}
+	\docheader{2021}{Source}{\S 1 Type Inference}{Martin Henz, K Muruges, Raynold Ng, Daryl Tan, Tse Hiu Fung}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -505,12 +505,11 @@ expressions get the same type.
 
 We have the following rule for function application.
 
-\noindent
 \[
-  \Rule{(\Sigma_0 \wedge t_0 = (t_1, \ldots, t_n) \rightarrow t),
-    \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad \cdots \quad 
-  \Sigma_n, \Gamma \vdash E_n^{t_n} : \Sigma_{n+1}}{
-  \Sigma_0, \Gamma \vdash (E_0^{t_0}\ \Lp \ E_1^{t_1}, \ldots, E_n^{t_n}\ \Rp)^t : \Sigma_{n+1}}  
+\Rule{  \Sigma_0, \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
+	\cdots \quad \Sigma_{n}, \Gamma \vdash E_{n}^{t_n} : \Sigma_{n+1} \quad
+	(\Sigma_{n+1} \wedge t_0 = (t_1, \ldots, t_n) \rightarrow t) = \Sigma_{n+2}}{
+	\Sigma_0, \Gamma \vdash (E_0^{t_0}\ \Lp \ E_1^{t_1}, \ldots, E_n^{t_n}\ \Rp)^t : \Sigma_{n+2}}  
 \]
 
 \noindent
