@@ -3,6 +3,7 @@ import * as source_1 from './source_1.json'
 import * as source_2 from './source_2.json'
 import * as source_3 from './source_3.json'
 import * as source_3_concurrent from './source_3_concurrent.json'
+import * as source_3_non_det from './source_3_non-det.json'
 import * as source_4 from './source_4.json'
 
 export const SourceDocumentation = {
@@ -13,6 +14,7 @@ export const SourceDocumentation = {
     '2_lazy': source_2,
     '3': source_3,
     '3_concurrent': source_3_concurrent,
+    '3_non-det': source_3_non_det,
     '4': source_4
   },
   ext_lib
