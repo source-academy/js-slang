@@ -222,21 +222,12 @@ function inferConditionals(
   // check that the types of the test expressions are the same
   const consequentTypeVariable = consequent.typeVariable as Variable
   const alternateTypeVariable = alternate.typeVariable as Variable
-  if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
-    const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
-    if (result !== undefined) {
-      displayErrorAndTerminate(
-        `Expecting consequent type \`${printType(
-          consequentTypeVariable
-        )}\` and alternate type \`${printType(
-          alternateTypeVariable
-        )}\` to be the same, but got different`,
-        consequent.loc
-      )
-    } else {
-      updateTypeConstraints(expressionTypeVariable, consequentTypeVariable)
-    }
+  const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
+  if (result !== undefined) {
+    throw new ConditionalTypeError(result.constraintLhs, result.constraintRhs, consequent.loc!)
   }
+
+  updateTypeConstraints(expressionTypeVariable, consequentTypeVariable)
 }
 
 function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatement>) {
