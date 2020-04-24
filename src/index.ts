@@ -36,7 +36,6 @@ import { compileWithPrelude } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import { getProgramNames } from './name-extractor'
-import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -283,9 +282,6 @@ export async function runInContext(
       status: 'finished',
       value: steps
     } as Result)
-  }
-  if (context.chapter <= 2) {
-    addInfiniteLoopProtection(program)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
