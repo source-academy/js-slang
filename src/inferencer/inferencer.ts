@@ -265,10 +265,7 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
       if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
         const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
         if (errorObj) {
-          displayErrorAndTerminate(
-            'Expecting all return statements to have same type, but encountered a different type',
-            node.loc
-          )
+          throw new DifferentReturnTypeError(node.loc!)
         }
       }
       prevReturnTypeVariable = currReturnTypeVariable
