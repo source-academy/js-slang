@@ -330,14 +330,9 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
     const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i]
       .typeVariable as Variable
 
-    if (applicationArgTypeVariable && declarationArgTypeVariable) {
-      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
-      if (errorObj) {
-        displayErrorAndTerminate(
-          'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
-          applicationArgs[i].loc
-        )
-      }
+    const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
+    if (errorObj) {
+      throw new WrongArgumentTypeError(declarationArgTypeVariable, errorObj.constraintRhs, applicationArgs[i].loc!)
     }
   }
 
