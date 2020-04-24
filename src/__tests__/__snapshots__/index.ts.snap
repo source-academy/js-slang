@@ -812,8 +812,7 @@ Object {
 f(list(1, 2));",
   "displayResult": Array [],
   "errors": Any<Array>,
-  "parsedErrors": "Line 1: Maximum call stack size exceeded
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
+  "parsedErrors": "Line 1: Error: \\"Infinite loop detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

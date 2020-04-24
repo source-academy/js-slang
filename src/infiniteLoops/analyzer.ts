@@ -126,7 +126,7 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
         a1.constant === a2.constant &&
         a1.isPositive === a2.isPositive
       ) {
-        //a1 & a2 are exactly the same
+        // a1 & a2 are exactly the same
         continue
       }
       for (const name of names) {

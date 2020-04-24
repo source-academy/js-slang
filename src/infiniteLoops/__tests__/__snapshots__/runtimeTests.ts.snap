@@ -96,7 +96,7 @@ Object {
   function f(x) {
     return f() + f(1,2);
   }
-  f(1);  
+  f(1);
       ",
   "displayResult": Array [],
   "errors": Array [

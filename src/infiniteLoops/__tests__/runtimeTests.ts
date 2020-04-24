@@ -20,7 +20,7 @@ test('InvalidNumberOfArguments does not break implementation', () => {
   function f(x) {
     return f() + f(1,2);
   }
-  f(1);  
+  f(1);
       `
   return expectParsedError(code).toMatchSnapshot()
 })
