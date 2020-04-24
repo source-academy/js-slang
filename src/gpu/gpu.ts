@@ -5,9 +5,9 @@ import * as es from 'estree'
 
 // top-level gpu functions that call our code
 
-export function transpileToGPU(program: es.Program) {
+export function transpileToGPU(program: es.Program): es.Position[] {
   const transformer = new GPUTransformer(program)
-  transformer.transform()
+  return transformer.transform()
 }
 
 export function getInternalNamesForGPU(): Set<string> {

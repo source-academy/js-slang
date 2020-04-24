@@ -799,8 +799,28 @@ export function transpile(
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
+  const gpuDisplayStatements: es.Statement[] = []
   if (variant === 'gpu') {
-    transpileToGPU(program)
+    const res = transpileToGPU(program)
+
+    // add some display statements to program
+    if (res.length > 0) {
+      let str = 'Attempting to optimize for loop on line:'
+      if (res.length > 1) {
+        str = 'Attempting to optimize for loops on lines: '
+      }
+
+      for (let i = 0; i < res.length; i = i + 1) {
+        if (i > 0) str += ' '
+        str += res[i].line
+      }
+
+      gpuDisplayStatements.push(
+        create.expressionStatement(
+          create.callExpression(create.identifier('display'), [create.literal(str)])
+        )
+      )
+    }
   }
 
   transformReturnStatementsToAllowProperTailCalls(program, variant)
@@ -825,8 +845,10 @@ export function transpile(
     lastStatementStoredInResult,
     evalMap
   } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+
   const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
     wrapWithPreviouslyDeclaredGlobals([
+      ...gpuDisplayStatements,
       ...statements,
       lastStatementStoredInResult,
       ...statementsToSaveDeclaredGlobals
