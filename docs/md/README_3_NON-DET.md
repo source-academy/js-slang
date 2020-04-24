@@ -91,5 +91,5 @@ The <CODE>an_integer_between</CODE> function can be used to non-deterministicall
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3_non_det.pdf">Specification of Source §3 Non-Det</a>.
+<a href="../source_3_nondet.pdf">Specification of Source §3 Non-Det</a>.
 Feel free to take a peek!
