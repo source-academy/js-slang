@@ -15,8 +15,8 @@ main() {
 	prepare
     elif [ "$1" == "clean" ]; then
 	clean
-    elif [ "$1" == "tocs1101s" ]; then
-	tocs1101s
+    elif [ "$1" == "via" ]; then
+	via
     elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
         run
     else
@@ -275,11 +275,11 @@ install() {
     cd docs; scp -r ${DST} sicp@web1.comp.nus.edu.sg:public_html/.
 }
 
-covid() {
+via() {
     prepare 
-    cd docs; scp -r source henz@suna.comp.nus.edu.sg:source; \
+    cd docs/source; scp -r * henz@suna.comp.nus.edu.sg:source; \
     echo "next: ssh henz@suna.comp.nus.edu.sg"; \
-    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging"
+    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging/source"
 }
 
 clean() {
