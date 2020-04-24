@@ -15,11 +15,27 @@ import { SourceDocumentation } from '../docTooltip'
  * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
  * 4) changed regex to mark certain operators in pink
  * 5) use SourceDocumentation to include all library functions and constants from source
+ * 6) include all external libraries
  */
+
 export function HighlightRulesSelector(
   id: number,
   variant: Variant = 'default',
-  external: String = 'NONE'
+  external: String = 'NONE',
+  externalLibraries: (
+    | {
+        caption: string
+        value: string
+        meta: any
+        docHTML: any
+      }
+    | {
+        caption: string
+        value: string
+        meta: string
+        docHTML?: undefined
+      }
+  )[] = []
 ) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
@@ -33,23 +49,35 @@ export function HighlightRulesSelector(
 
     const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
     const builtin_lib = SourceDocumentation.builtins[chapter]
-    const ext_lib = external === 'NONE' ? null : SourceDocumentation.ext_lib
 
-    function addFromLibrary(lib: any, meta: string) {
-      if (lib === null) {
+    function addFromBuiltinLibrary(meta: string) {
+      if (builtin_lib === null) {
         return ''
       }
       let func = ''
-      for (let name in lib) {
-        if (lib[name]['meta'] === meta) {
+      for (let name in builtin_lib) {
+        if (builtin_lib[name]['meta'] === meta) {
           func += '|' + name
         }
       }
       return func
     }
 
+    function addFromExternalLibrary(meta: string) {
+      if (externalLibraries === null) {
+        return ''
+      }
+      let func = ''
+      externalLibraries.forEach(node => {
+        if (node.meta === meta) {
+          func += '|' + node.caption
+        }
+      })
+      return func
+    }
+
     function getAllNames(meta: string) {
-      const concat = addFromLibrary(builtin_lib, meta) + addFromLibrary(ext_lib, meta)
+      const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta)
       return concat.substr(1)
     }
 
