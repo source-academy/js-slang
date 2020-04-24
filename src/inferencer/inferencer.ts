@@ -28,8 +28,15 @@ import {
   printTypeConstraints,
   printTypeEnvironment
 } from '../utils/inferencerUtils'
+import {
+  WrongArgumentTypeError,
+  ConditionalTestTypeError,
+  ConditionalTypeError,
+  DifferentReturnTypeError,
+  WrongNumberArgumentsError
+} from './typeErrors'
 
-let annotatedProgram: es.Program;
+let annotatedProgram: es.Program
 let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
@@ -124,7 +131,12 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
 
   const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
   if (result !== undefined) {
-    throw new WrongArgumentTypeError(operatorArgType, constraintStore.get(argumentTypeVariable), 1, unaryExpression.loc!);
+    throw new WrongArgumentTypeError(
+      operatorArgType,
+      constraintStore.get(argumentTypeVariable),
+      1,
+      unaryExpression.loc!
+    )
   }
 
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
@@ -176,12 +188,12 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
 
   const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
   if (resultParam1 !== undefined && resultParam1.constraintRhs) {
-    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, 1, param1.loc!);
+    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, 1, param1.loc!)
   }
 
   const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
   if (resultParam2 !== undefined && resultParam2.constraintRhs) {
-    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, 2, param2.loc!);
+    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, 2, param2.loc!)
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
@@ -322,7 +334,11 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   const declarationArgCount = declarationFunctionType.parameterTypes.length
 
   if (applicationArgCount !== declarationArgCount) {
-    throw new WrongNumberArgumentsError(declarationArgCount, applicationArgCount, functionApplication.loc!)
+    throw new WrongNumberArgumentsError(
+      declarationArgCount,
+      applicationArgCount,
+      functionApplication.loc!
+    )
   }
 
   for (let i = 0; i < applicationArgs.length; i++) {
@@ -332,7 +348,12 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
 
     const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
     if (errorObj) {
-      throw new WrongArgumentTypeError(declarationArgTypeVariable, errorObj.constraintRhs, i, applicationArgs[i].loc!)
+      throw new WrongArgumentTypeError(
+        declarationArgTypeVariable,
+        errorObj.constraintRhs,
+        i,
+        applicationArgs[i].loc!
+      )
     }
   }
 
@@ -405,7 +426,9 @@ function ifStatementHasReturnStatements(ifStatement: TypeAnnotatedNode<es.IfStat
   const consequent = ifStatement.consequent as TypeAnnotatedNode<es.BlockStatement>
   const alternate = ifStatement.alternate as TypeAnnotatedNode<es.BlockStatement>
 
-  return blockStatementHasReturnStatements(consequent) || blockStatementHasReturnStatements(alternate)
+  return (
+    blockStatementHasReturnStatements(consequent) || blockStatementHasReturnStatements(alternate)
+  )
 }
 
 function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStatement>): boolean {
@@ -427,18 +450,23 @@ function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStat
   return false
 }
 
-function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
+function inferBlockStatement(
+  block: TypeAnnotatedNode<es.BlockStatement>,
+  environmentToExtend: Map<any, any>
+) {
   currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
     infer(expression, currentTypeEnvironment)
     if (expression.type === 'ReturnStatement') {
-      const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
+      const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>)
+        .typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
         if (result) {
           displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block', block.loc
+            'WARNING: There is a type error when checking the type of a block',
+            block.loc
           )
         }
         return
@@ -453,7 +481,8 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
         const result = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
         if (result) {
           displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block', block.loc
+            'WARNING: There is a type error when checking the type of a block',
+            block.loc
           )
         }
         return
@@ -465,7 +494,8 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
     const result = updateTypeConstraints(blockTypeVariable, undefinedType)
     if (result) {
       displayErrorAndTerminate(
-        'WARNING: There is a type error when checking the type of a block', block.loc
+        'WARNING: There is a type error when checking the type of a block',
+        block.loc
       )
     }
     return
@@ -473,7 +503,6 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
 }
 
 function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap) {
-  console.log(statement.type)
   switch (statement.type) {
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
@@ -528,7 +557,9 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
-        parameters.set((param as es.Identifier).name, { types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable] })
+        parameters.set((param as es.Identifier).name, {
+          types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable]
+        })
       }
       infer(statement.body, parameters)
       currentTypeEnvironment = extendEnvironment(parameters)
