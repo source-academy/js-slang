@@ -122,16 +122,9 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   const argumentTypeVariable = argument.typeVariable as Variable
   const resultTypeVariable = unaryExpression.typeVariable as Variable
 
-  if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
-    const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
-    if (result !== undefined) {
-      displayErrorAndTerminate(
-        `Expecting type \`${printType(operatorArgType)}\` but got \`${printType(
-          argumentTypeVariable
-        )} + \` instead`,
-        unaryExpression.loc
-      )
-    }
+  const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
+  if (result !== undefined) {
+    throw new WrongArgumentTypeError(operatorArgType, constraintStore.get(argumentTypeVariable), unaryExpression.loc!);
   }
 
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
