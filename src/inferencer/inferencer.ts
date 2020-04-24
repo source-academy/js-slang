@@ -174,28 +174,14 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
 
   const resultTypeVariable = binaryExpression.typeVariable as Variable
 
-  if (param1TypeVariable !== undefined && param1Type !== undefined) {
-    const result = updateTypeConstraints(param1TypeVariable, param1Type)
-    if (result !== undefined && result.constraintRhs) {
-      if (!functionType.isPolymorphic)
-        displayErrorAndTerminate(
-          `Expecting type \`${param1Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
-          param1.loc
-        )
-      else displayErrorAndTerminate('Polymorphic type error when type checking first argument, error msg TBC', param1.loc)
-    }
+  const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
+  if (resultParam1 !== undefined && resultParam1.constraintRhs) {
+    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, param1.loc!);
   }
 
-  if (param2TypeVariable !== undefined && param2Type !== undefined) {
-    const result = updateTypeConstraints(param2TypeVariable, param2Type)
-    if (result !== undefined && result.constraintRhs) {
-      if (!functionType.isPolymorphic)
-        displayErrorAndTerminate(
-          `Expecting type \`${param2Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
-          param2.loc
-        )
-      else displayErrorAndTerminate('Polymorphic type error when type checking second argument, error msg TBC', param2.loc)
-    }
+  const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
+  if (resultParam2 !== undefined && resultParam2.constraintRhs) {
+    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, param2.loc!);
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
