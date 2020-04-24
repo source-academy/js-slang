@@ -42,6 +42,7 @@ import { getProgramNames, getKeywords } from './name-extractor'
 import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -388,6 +389,9 @@ export async function runInContext(
       status: 'finished',
       value: redexedSteps
     } as Result)
+  }
+  if (context.chapter <= 2) {
+    addInfiniteLoopProtection(program)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
