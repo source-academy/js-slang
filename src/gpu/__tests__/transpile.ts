@@ -10,8 +10,9 @@ test('simple for loop gets transpiled correctly', () => {
         res[i] = i;
     }
     `
-  const context = mockContext(4)
-  const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
 
   expect({ code, transpiled }).toMatchSnapshot()
 })
@@ -23,8 +24,9 @@ test('many simple for loop gets transpiled correctly', () => {
         res[i] = i;
     }
     `
-  const context = mockContext(4)
-  const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
 
   expect({ code, transpiled }).toMatchSnapshot()
 })
@@ -38,8 +40,9 @@ test('2 for loop case gets transpiled correctly', () => {
         }
     }
     `
-  const context = mockContext(4)
-  const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
 
   expect({ code, transpiled }).toMatchSnapshot()
 })
@@ -53,8 +56,9 @@ test('2 for loop case with 2 indices being written to gets transpiled correctly'
         }
     }
     `
-  const context = mockContext(4)
-  const transpiled = transpile(parse(code, context)!, context.contextId).transpiled
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
 
   expect({ code, transpiled }).toMatchSnapshot()
 })

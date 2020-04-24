@@ -798,7 +798,11 @@ export function transpile(
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
-  transpileToGPU(program)
+
+  if (variant === 'gpu') {
+    transpileToGPU(program)
+  }
+
   transformReturnStatementsToAllowProperTailCalls(program, variant)
   transformCallExpressionsToCheckIfFunction(program, variant)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
@@ -831,6 +835,7 @@ export function transpile(
       create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
     )
   ])
+
   program.body = [
     ...getDeclarationsToAccessTranspilerInternals(),
     ...getInternalFunctionsForGPU(globalIds, contextId),
