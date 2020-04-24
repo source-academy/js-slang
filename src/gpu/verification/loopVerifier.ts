@@ -72,7 +72,7 @@ class GPULoopVerifier {
       return false
     }
 
-    if (node.operator !== '<') {
+    if (!(node.operator === '<' || node.operator === '<=')) {
       return false
     }
 
@@ -81,7 +81,12 @@ class GPULoopVerifier {
       return false
     }
 
-    this.end = node.right
+    const rv = node.right
+    if (!(rv.type === 'Identifier' || rv.type === 'Literal')) {
+      return false
+    }
+
+    this.end = rv
     return true
   }
 

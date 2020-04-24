@@ -187,7 +187,6 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
 
   const gpuFunction = gpu.createKernel(f, out).setOutput(nend)
   const res = gpuFunction() as any
-
   if (end.length === 1) buildArray(res, end, arr)
   if (end.length === 2) build2DArray(res, end, arr)
   if (end.length === 3) build3DArray(res, end, arr)
