@@ -15,8 +15,8 @@ main() {
 	prepare
     elif [ "$1" == "clean" ]; then
 	clean
-    elif [ "$1" == "tocs1101s" ]; then
-	tocs1101s
+    elif [ "$1" == "via" ]; then
+	via
     elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
         run
     else
@@ -52,6 +52,14 @@ run() {
 	     -d ${DST}/"source_1_lazy"/ \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
+    
+    # Source §1 WebAssembly
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_WASM.md \
+	     -d ${DST}/"source_1_wasm"/ \
+	     ${LIB}/empty.js
     
     # Source §2
     
@@ -267,12 +275,11 @@ install() {
     cd docs; scp -r ${DST} sicp@web1.comp.nus.edu.sg:public_html/.
 }
 
-tocs1101s() {
+via() {
     prepare 
-    cd docs; scp -r source cs1101s@sunfire.comp.nus.edu.sg:. ; \
-    echo "now: ssh cs1101s@sunfire.comp.nus.edu.sg and: "; \
-    echo "scp -r source sicp@web1.comp.nus.edu.sg:public_html"
-
+    cd docs/source; scp -r * henz@suna.comp.nus.edu.sg:source; \
+    echo "next: ssh henz@suna.comp.nus.edu.sg"; \
+    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging/source"
 }
 
 clean() {
