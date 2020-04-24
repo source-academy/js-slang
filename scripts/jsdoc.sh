@@ -136,6 +136,20 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/mce.js
+
+    # Source §4 GPU
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_GPU.md \
+	     -d ${DST}/"source_4_gpu"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+		 ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+	     ${LIB}/concurrency.js
     
     # MISC
     
