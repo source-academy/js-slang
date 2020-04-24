@@ -1,6 +1,11 @@
 import * as es from 'estree'
 import * as stype from './symTypes'
 
+/* Input is asymmetric, i.e. sym + literal
+ * or literal + sym, so the idea is to only handle
+ * 1 of these cases and reuse it to handle the other.
+ * using the 'flipped' flag
+ */
 function execBinarySymbol(
   node1: stype.SymbolicExecutable,
   node2: stype.SymbolicExecutable,
@@ -136,6 +141,7 @@ export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol
 
 type Executor = (node: es.Node, store: Map<string, stype.SSymbol>[]) => stype.SSymbol
 
+// similar to evaluators in the interpreter
 export const nodeToSym: { [nodeType: string]: Executor } = {
   Literal(node: es.Literal, store: Map<string, stype.SSymbol>[]) {
     if (typeof node.value === 'number' || typeof node.value === 'boolean') {
@@ -236,6 +242,11 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
   }
 }
 
+/* handle the case where we return a conditional,
+ * e.g. return true?1:2;
+ * we want to turn it into a terminate symbol if
+ * we can.
+ */
 function returnConditional(sym: stype.BranchSymbol): stype.SSymbol {
   let consequent = stype.terminalOrSkip(sym.consequent) ? stype.terminateSymbol : sym.consequent
   let alternate = stype.terminalOrSkip(sym.alternate) ? stype.terminateSymbol : sym.alternate
@@ -260,6 +271,9 @@ function symEx(node: stype.SymbolicExecutable, store: Map<string, stype.SSymbol>
   return stype.skipSymbol
 }
 
+/* initialize the store with function parameters (from firstCall)
+ * and globals. e.g. for function fac(x){...}, we create and store an 'x' symbol
+ */
 function makeStore(
   firstCall: stype.FunctionSymbol,
   constants: [string, number][]

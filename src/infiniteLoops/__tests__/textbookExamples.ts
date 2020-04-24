@@ -1,6 +1,9 @@
 /* tslint:disable:max-line-length */
 import { expectResult } from '../../utils/testing'
 
+// Examples taken from SICP to ensure normal programs
+// don't get detected as infinite loops
+
 test('examples from chapter1 no false positives 1', () => {
   const works = `
     function square(x) {

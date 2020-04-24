@@ -1,6 +1,10 @@
 /* tslint:disable:max-line-length */
 import { expectParsedError, expectResult } from '../../utils/testing'
 
+// More test cases https://tinyurl.com/source-infloops
+// Look under UNSUPPORTED for infinite loops that cannot
+// be detected yet
+
 test('CallingNonFunctionValue does not break implementation', () => {
   const code = `
   function f(x) {

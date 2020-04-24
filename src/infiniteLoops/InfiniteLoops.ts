@@ -5,7 +5,7 @@ import * as stype from './symTypes'
 import { checkBinaryExpression, checkUnaryExpression } from '../utils/rttc'
 import { serialize } from './serializer'
 import { getFirstCall, symbolicExecute } from './symbolicExecutor'
-import { updateCheckers } from './analyzer'
+import { getCheckers } from './analyzer'
 import * as create from '../utils/astCreator'
 
 interface SimpleEnv {
@@ -57,7 +57,6 @@ function buildTset(node: es.FunctionDeclaration, envs: SimpleEnv[]) {
 }
 
 function mergeTset(envs: SimpleEnv[]) {
-  // TODO: change Tset from map to something else?
   const t0 = new Map()
   for (const e of envs) {
     for (const [k, v] of e.tset.entries()) {
@@ -109,6 +108,9 @@ function addProtection(checker: stype.InfiniteLoopChecker) {
   )
 }
 
+/* We run the detection here, need to use T-set
+ * with functions from the correct scope
+ */
 function evaluateBlockSatement(envs: SimpleEnv[], node: es.BlockStatement) {
   for (const statement of node.body) {
     if (statement.type === 'FunctionDeclaration') {
@@ -118,7 +120,7 @@ function evaluateBlockSatement(envs: SimpleEnv[], node: es.BlockStatement) {
     }
   }
 
-  const checkers = updateCheckers(mergeTset(envs))
+  const checkers = getCheckers(mergeTset(envs))
   for (const statement of node.body) {
     if (statement.type === 'FunctionDeclaration') {
       const id = statement.id as es.Identifier
@@ -133,9 +135,10 @@ function evaluateBlockSatement(envs: SimpleEnv[], node: es.BlockStatement) {
   return undefined
 }
 
+/* Simple evaluator to "simplify" some expressions, handle scoping,
+ * and global variables.
+ */
 const evaluators: { [nodeType: string]: (node: es.Node, envs: SimpleEnv[]) => any } = {
-  // TODO any?
-  /** Simple Values */
   Literal(node: es.Literal, envs: SimpleEnv[]) {
     return node.value
   },

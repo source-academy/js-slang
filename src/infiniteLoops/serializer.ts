@@ -1,5 +1,8 @@
 import * as stype from './symTypes'
 
+/* simplify conjunctions for easy analysis, e.g.
+ * (x<5 && x<10) --> (x<10)
+ */
 function collapseConjunction(node: stype.BooleanSymbol): stype.BooleanSymbol {
   if (node.type === 'LogicalSymbol' && node.conjunction) {
     const left = node.left
@@ -23,6 +26,11 @@ function collapseConjunction(node: stype.BooleanSymbol): stype.BooleanSymbol {
   }
   return node
 }
+
+/* simplify expression to DNF, i.e. sum of products.
+ * store each product as an element in a list
+ */
+
 function seperateDisjunctions(node: stype.BooleanSymbol): stype.BooleanSymbol[] {
   if (node.type === 'LogicalSymbol') {
     const splitLeft = seperateDisjunctions(node.left)
@@ -45,6 +53,9 @@ export function processLogical(node: stype.BooleanSymbol) {
   return seperateDisjunctions(node).map(collapseConjunction)
 }
 
+/* for nested functions, we want to make another transition, i.e.
+ * f(x) {g(h(x));} -> f calls g, f calls h.
+ */
 function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
   const newArgs = []
   let nestedCalls : stype.FunctionSymbol[] = []
@@ -60,6 +71,9 @@ function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
   return nestedCalls
 }
 
+/* creates a transition for each functionSymbol in the symbol tree
+ * refer to the documentation for more info
+ */
 function unTree(node: stype.SSymbol): stype.SSymbol[][] {
   if (stype.isTerminal(node)) {
     return [[stype.terminateSymbol]]

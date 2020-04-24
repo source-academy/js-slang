@@ -1,6 +1,9 @@
 import * as stype from './symTypes'
 import * as es from 'estree'
 
+/* if all callees = caller, no terminate symbol -> no base case
+ * if caller function always calls itself no matter what -> no base case
+ */
 function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function makeChecker(name: string, loc: es.SourceLocation): stype.InfiniteLoopChecker {
     return stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc)
@@ -28,6 +31,10 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   return checkers
 }
 
+/* check if the function calls itself without swapping variables, i.e.
+ * f(x,y) calls f(x+1,y+1) returns true, but
+ * f(x,y) calls f(y,x) returns false
+ */
 function alignedArgs(f1: stype.FunctionSymbol, f2: stype.FunctionSymbol) {
   if (f1.args.length !== f2.args.length) return false
   for (let i = 0; i < f1.args.length; i++) {
@@ -52,6 +59,10 @@ function getArg(sym: stype.FunctionSymbol, name: string) {
   }
   return -1
 }
+
+/* checks for countdown functions, see documentation
+ * for more details
+ */
 
 function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function check1(transition: stype.Transition) {
@@ -91,6 +102,11 @@ function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] 
   }
   return checkers
 }
+
+/* call all the variables that appear in the condition of the transition
+ * 'relevant variables'. If the function calls itself but does not change
+ * any of the relevant variables, there will be an infinite loop.
+ */
 
 function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function sameArgs(f1: stype.FunctionSymbol, f2: stype.SSymbol, names: string[]) {
@@ -144,7 +160,7 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
   return checkers
 }
 
-export function updateCheckers(tset: stype.TransitionSet) {
+export function getCheckers(tset: stype.TransitionSet) {
   const checkers1 = checkCountdown(tset)
   const checkers2 = checkBaseCase(tset)
   const checkers3 = checkStateChange(tset)
