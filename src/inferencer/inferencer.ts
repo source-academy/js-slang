@@ -67,9 +67,11 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
     const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
     if (result !== undefined) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferIdentifier()` - pls debug',
-        identifier.loc
+      throw new GeneralTypeError(
+        idenTypeVariable,
+        idenTypeEnvType,
+        "Failed in assigning the identifying the type of the identifier",
+        identifier.loc!
       )
     }
   }
@@ -95,9 +97,11 @@ function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.Vari
   if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
     const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
     if (result !== undefined) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
-        constantDeclaration.loc
+      throw new GeneralTypeError(
+        idenTypeVariable,
+        valueTypeVariable,
+        "Failed in assigning the type of the identifier to the type of its assigned expression",
+        constantDeclaration.loc!
       )
     }
   }
@@ -142,7 +146,7 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
     const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
     if (result !== undefined) {
-      throw new GeneralTypeError(operatorResultType, resultTypeVariable, "Unifying result type of operator with actual result type", unaryExpression.loc)
+      throw new GeneralTypeError(operatorResultType, resultTypeVariable, "Unifying result type of operator with actual result type", unaryExpression.loc!)
     }
   }
 }
@@ -593,17 +597,17 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
   }
 }
 
-function displayErrorAndTerminate(errorMsg: string, loc: es.SourceLocation | null | undefined) {
-  logObjectsForDebugging()
-  console.log('!!! Type check error !!!')
+// function displayErrorAndTerminate(errorMsg: string, loc: es.SourceLocation | null | undefined) {
+//   logObjectsForDebugging()
+//   console.log('!!! Type check error !!!')
 
-  // Print error msg with optional location (if exists)
-  if (loc) console.log(`${errorMsg} (line: ${loc.start.line}, char: ${loc.start.column})`)
-  else console.log(errorMsg)
+//   // Print error msg with optional location (if exists)
+//   if (loc) console.log(`${errorMsg} (line: ${loc.start.line}, char: ${loc.start.column})`)
+//   else console.log(errorMsg)
 
-  console.log('\nTerminating program..')
-  return process.exit(0)
-}
+//   console.log('\nTerminating program..')
+//   return process.exit(0)
+// }
 
 function logObjectsForDebugging() {
   // for Debugging output
