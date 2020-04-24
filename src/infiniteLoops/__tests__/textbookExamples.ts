@@ -296,7 +296,7 @@ test('examples from chapter1 no false positives 3', () => {
                      pi_sum(a + 4, b);
         }
 
-        8 * pi_sum(1, 1000);
+        8 * pi_sum(1, 100);
 
         function sum(term, a, next, b) {
             return a > b
@@ -323,7 +323,7 @@ test('examples from chapter1 no false positives 3', () => {
             return sum(pi_term, a, pi_next, b);
         }
 
-        8 * pi_sum2(1, 1000);
+        8 * pi_sum2(1, 100);
 
         function integral(f, a, b, dx) {
             function add_dx(x) {
@@ -332,7 +332,7 @@ test('examples from chapter1 no false positives 3', () => {
             return sum(f, a + dx / 2, add_dx, b) * dx;
         }
 
-        integral(cube, 0, 1, 0.01);
+        integral(cube, 0, 1, 0.1);
 
         function pi_sum3(a,b) {
             return sum(x => 1.0 / (x * (x + 2)),
@@ -341,7 +341,7 @@ test('examples from chapter1 no false positives 3', () => {
                        b);
         }
 
-        8 * pi_sum3(1, 1000);
+        8 * pi_sum3(1, 100);
 
         function integral2(f, a, b, dx) {
             return sum(f,
@@ -352,7 +352,7 @@ test('examples from chapter1 no false positives 3', () => {
                    dx;
         }
 
-        integral2(cube, 0, 1, 0.01);
+        integral2(cube, 0, 1, 0.1);
 
         function f2(x, y) {
             function f_helper(a, b) {
@@ -371,7 +371,7 @@ test('examples from chapter1 no false positives 3', () => {
         function negative(x) { return x < 0; }
 
         function close_enough(x,y) {
-            return abs(x - y) < 0.001;
+            return abs(x - y) < 0.01;
         }
 
         function search(f, neg_point, pos_point) {
@@ -432,7 +432,7 @@ test('examples from chapter1 no false positives 3', () => {
 
         sqrt2(6);
 
-        const dx = 0.00001;
+        const dx = 0.0001;
 
         function deriv(g) {
             return x => (g(x + dx) - g(x)) / dx;
@@ -494,7 +494,7 @@ test('examples from chapter1 no false positives coin change', () => {
                kinds_of_coins === 5 ? 50 : 0;
     }
 
-    count_change(20);
+    count_change(10);
           `
   return expectResult(works).toMatchSnapshot()
 })
