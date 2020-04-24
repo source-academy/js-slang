@@ -322,11 +322,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   const declarationArgCount = declarationFunctionType.parameterTypes.length
 
   if (applicationArgCount !== declarationArgCount) {
-    // check arg count
-    displayErrorAndTerminate(
-      `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
-      functionApplication.loc
-    )
+    throw new WrongNumberArgumentsError(declarationArgCount, applicationArgCount, functionApplication.loc!)
   }
 
   for (let i = 0; i < applicationArgs.length; i++) {
