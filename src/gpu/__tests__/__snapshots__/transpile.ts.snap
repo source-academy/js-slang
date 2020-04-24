@@ -99,6 +99,7 @@ const __createKernel = native[2].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
+        display(\\"Attempting to optimize for loop on line: 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   for (let j = 0; j < 5; j = j + 1) {     return this.thread.x;   } }, res, function (i) {   for (let j = 0; j < 5; j = j + 1) {     return i;   } });\\");
         globals.variables.set(\\"res\\", {
@@ -218,6 +219,7 @@ const __createKernel = native[3].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
+        display(\\"Attempting to optimize for loop on line: 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   return this.thread.y * this.thread.x; }, res, function (i, j) {   return i * j; });\\");
         globals.variables.set(\\"res\\", {
@@ -335,6 +337,7 @@ const __createKernel = native[1].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
+        display(\\"Attempting to optimize for loop on line: 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
         globals.variables.set(\\"res\\", {
@@ -452,6 +455,7 @@ const __createKernel = native[0].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
+        display(\\"Attempting to optimize for loop on line: 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
         globals.variables.set(\\"res\\", {
