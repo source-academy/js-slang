@@ -16,6 +16,7 @@ const TARGETS = [
   "source_2",
   "source_3",
   "source_3_concurrent",
+  "source_3_non-det",
   "source_4",
   "External libraries",
 ]
