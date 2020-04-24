@@ -214,16 +214,9 @@ function inferConditionals(
 
   // check that the type of the test expression is boolean
   const testTypeVariable = test.typeVariable as Variable
-  if (testTypeVariable !== undefined) {
-    const result = updateTypeConstraints(testTypeVariable, booleanType)
-    if (result !== undefined) {
-      displayErrorAndTerminate(
-        `Expecting type of test expression to be a \`boolean\` but got \` ${printType(
-          testTypeVariable
-        )}\` instead`,
-        test.loc
-      )
-    }
+  const resultOfTypeChecking = updateTypeConstraints(testTypeVariable, booleanType)
+  if (resultOfTypeChecking !== undefined) {
+    throw new ConditionalTestTypeError(resultOfTypeChecking.constraintRhs, test.loc!)
   }
 
   // check that the types of the test expressions are the same
