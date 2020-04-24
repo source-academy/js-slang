@@ -41,8 +41,23 @@ function seperateDisjunctions(node: stype.BooleanSymbol): stype.BooleanSymbol[] 
   }
   return [node]
 }
-function processLogical(node: stype.BooleanSymbol) {
+export function processLogical(node: stype.BooleanSymbol) {
   return seperateDisjunctions(node).map(collapseConjunction)
+}
+
+function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
+  const newArgs = []
+  let nestedCalls : stype.FunctionSymbol[] = []
+  for (const arg of node.args) {
+    if (arg.type === 'FunctionSymbol') {
+      newArgs.push(stype.skipSymbol)
+      nestedCalls = nestedCalls.concat(flattenFun(arg))
+    } else {
+      newArgs.push(arg)
+    }
+  }
+  nestedCalls.unshift({...node, args:newArgs})
+  return nestedCalls
 }
 
 function unTree(node: stype.SSymbol): stype.SSymbol[][] {
@@ -75,7 +90,7 @@ function unTree(node: stype.SSymbol): stype.SSymbol[][] {
     }
     return result
   } else if (node.type === 'FunctionSymbol') {
-    return [[node]]
+    return [flattenFun(node)]
   }
   return []
 }

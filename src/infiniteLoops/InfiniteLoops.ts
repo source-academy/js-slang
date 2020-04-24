@@ -133,7 +133,7 @@ function evaluateBlockSatement(envs: SimpleEnv[], node: es.BlockStatement) {
   return undefined
 }
 
-export const evaluators: { [nodeType: string]: (node: es.Node, envs: SimpleEnv[]) => any } = {
+const evaluators: { [nodeType: string]: (node: es.Node, envs: SimpleEnv[]) => any } = {
   // TODO any?
   /** Simple Values */
   Literal(node: es.Literal, envs: SimpleEnv[]) {

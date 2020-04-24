@@ -15,16 +15,27 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
     if (calleeNames.every(x => x === name)) {
       const loc = transitions[0].caller.loc
       checkers.push(makeChecker(name, loc))
+    } else {
+      for (const transition of transitions) {
+        if (transition.condition === null && transition.callee.type === 'FunctionSymbol' && transition.caller.name === transition.callee.name) {
+          const loc = transition.caller.loc
+          checkers.push(makeChecker(name, loc))
+        }
+      }
     }
   }
+
   return checkers
 }
 
 function alignedArgs(f1: stype.FunctionSymbol, f2: stype.FunctionSymbol) {
+  if (f1.args.length !== f2.args.length) return false
   for (let i = 0; i < f1.args.length; i++) {
     const a1 = f1.args[i]
     const a2 = f2.args[i]
-    if (a1.type === 'NumberSymbol' && a2.type === 'NumberSymbol' && a1.name === a2.name) {
+    const sameNumber = a1.type === 'NumberSymbol' && a2.type === 'NumberSymbol' && a1.name === a2.name
+    const hasSkip = a1.type === 'SkipSymbol' || a2.type === 'SkipSymbol'
+    if (sameNumber || hasSkip) {
       continue
     }
     return false
@@ -42,7 +53,7 @@ function getArg(sym: stype.FunctionSymbol, name: string) {
   return -1
 }
 
-function checkMLinearDiv(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
+function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
   function check1(transition: stype.Transition) {
     const caller = transition.caller
     const callee = transition.callee
@@ -54,7 +65,7 @@ function checkMLinearDiv(tset: stype.TransitionSet): stype.InfiniteLoopChecker[]
       const cond = transition.condition
       if (cond?.type === 'InequalitySymbol') {
         const idx = getArg(callee, cond.name)
-        if (idx !== -1) {
+        if (idx !== -1 && callee.args.length > idx) {
           const arg = callee.args[idx] as stype.NumberSymbol
           if (arg?.isPositive && arg.constant * cond.direction > 0) {
             return stype.makeLoopChecker(
@@ -82,9 +93,8 @@ function checkMLinearDiv(tset: stype.TransitionSet): stype.InfiniteLoopChecker[]
 }
 
 function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
-  function sameArgs(f1: stype.FunctionSymbol, f2: stype.SSymbol) {
-    if (f2.type !== 'FunctionSymbol') return false
-    if (f1.name !== f2.name) return false
+  function sameArgs(f1: stype.FunctionSymbol, f2: stype.SSymbol, names: string[]) {
+    if (f2.type !== 'FunctionSymbol' || f1.name !== f2.name || !alignedArgs(f1,f2)) return false
     for (let i = 0; i < f1.args.length; i++) {
       const a1 = f1.args[i]
       const a2 = f2.args[i]
@@ -94,50 +104,48 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
         a1.name === a2.name &&
         a1.constant === a2.constant &&
         a1.isPositive === a2.isPositive
-      ) {
+      ) { //a1 & a2 are exactly the same
         continue
       }
-      return false
+      for(const name of names) {
+        if (a1.type === 'NumberSymbol' && a1.name === name)
+          return false
+      }
     }
     return true
+  }
+  function getNames(sym : stype.BooleanSymbol | null) : string[] {
+    if(sym === null) return []
+    if(sym.type === 'InequalitySymbol') {
+      return [sym.name]
+    } else {
+      return getNames(sym.left).concat(getNames(sym.right))
+    }
   }
 
   const checkers: stype.InfiniteLoopChecker[] = []
   for (const transitions of tset.values()) {
     for (const transition of transitions) {
-      if (sameArgs(transition.caller, transition.callee)) {
+      const cond = transition.condition
+      const caller = transition.caller
+      const callee = transition.callee
+      if (cond && cond.type !== 'SkipSymbol' && callee.type === 'FunctionSymbol' && sameArgs(caller,callee,getNames(cond))) {
         const name = transition.caller.name
-        if (transition.condition && transition.condition.type !== 'SkipSymbol') {
-          const callee = transition.callee as stype.FunctionSymbol
-          const checker = stype.makeLoopChecker(
-            name,
-            'Check your function calls.',
-            transition.condition,
-            callee.loc
-          )
-          checkers.push(checker)
-        }
+        const checker = stype.makeLoopChecker(
+          name,
+          'Check your recursive function calls.',
+          cond,
+          callee.loc
+        )
+        checkers.push(checker)
       }
     }
   }
   return checkers
 }
 
-function cleanTset(tset: stype.TransitionSet) {
-  //code breaks if number of caller args =/= callee args
-  for (let [key,val] of tset) {
-    for (let t of val) {
-      if(t.callee.type === 'FunctionSymbol' && t.caller.args.length !== t.callee.args.length) {
-        tset.delete(key);
-        break;
-      }
-    }
-  }
-}
-
 export function updateCheckers(tset: stype.TransitionSet) {
-  cleanTset(tset)
-  const checkers1 = checkMLinearDiv(tset)
+  const checkers1 = checkCountdown(tset)
   const checkers2 = checkBaseCase(tset)
   const checkers3 = checkStateChange(tset)
   return checkers1.concat(checkers2).concat(checkers3)
