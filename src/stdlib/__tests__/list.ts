@@ -9,26 +9,26 @@ test('list creates list', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  Array [
-    "a string \\"\\"",
-    Array [
-      [Function],
-      Array [
-        [Function],
-        Array [
-          true,
-          Array [
-            3.14,
-            null,
-          ],
-        ],
-      ],
-    ],
-  ],
-]
-`)
+            Array [
+              1,
+              Array [
+                "a string \\"\\"",
+                Array [
+                  [Function],
+                  Array [
+                    [Function],
+                    Array [
+                      true,
+                      Array [
+                        3.14,
+                        null,
+                      ],
+                    ],
+                  ],
+                ],
+              ],
+            ]
+          `)
 })
 
 test('pair creates pair', () => {
@@ -38,11 +38,11 @@ test('pair creates pair', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  "a string \\"\\"",
-]
-`)
+            Array [
+              1,
+              "a string \\"\\"",
+            ]
+          `)
 })
 
 test('head works', () => {
@@ -166,11 +166,11 @@ test('remove not found', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  null,
-]
-`)
+            Array [
+              1,
+              null,
+            ]
+          `)
 })
 
 test('remove_all', () => {
@@ -536,7 +536,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+      `"Line 147: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\""`
     )
   })
 
@@ -547,7 +547,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 147: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+      `"Line 147: Error: \\"Infinite loop detected. Did you call a value that is outside the range of your function?\\""`
     )
   })
 
@@ -558,7 +558,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 147: Expected number on left hand side of operation, got string."`
+      `"Line 147: Expected string on right hand side of operation, got number."`
     )
   })
 })
