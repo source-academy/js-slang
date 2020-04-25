@@ -2,18 +2,59 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2021}{Source}{\S 4 GPU}{Martin Henz}
+	\docheader{2021}{Source}{\S 4 GPU}{Martin Henz, Rahul Rajesh, Zhang Yuntong}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
 
 \section*{Changes}
 
-This document oultines the syntax and functionality of Source \S GPU. 
-Source \S GPU is built on Source \S 4 GPU. The specifications for this language are listed here.
+Source \S 4 GPU allows for Source programs to be accelerated on the GPU if certain conditions are met.
+The exact specifications for this is outlined on \pageref{gpu_supp}. The main ideas behind Source \S 4 GPU 
+is to accelerate for loops by running them in parallel across many GPU threads. In order to do this, we have to
+define a formal specification to identify embarrassingly parallel loops.
 
 \input source_bnf.tex
 
+\input source_3_bnf.tex
+
+\newpage
+
+\input source_boolean_operators
+
+\input source_loops
+
+\input source_return_3
+
+\input source_names
+
+\input source_lists
+
+\input source_pair_mutators
+
+\input source_array_support
+
+\input source_streams
+
+\input source_numbers
+
+\input source_strings
+
+\input source_arrays
+
+\input source_typing_3
+
+\input source_interpreter
+
+\input source_comments
+
+\input source_js_differences
+
+\newpage
+
+\section*{GPU Acceleration}
+\label{gpu_supp}
+This section outlines the specifications for programs to be accelerated using the GPU.\
 \input source_gpu_bnf.tex
 
 \newpage
@@ -108,15 +149,13 @@ for (let i = 0; i < N; i = i + 1) {
 }
 \end{verbatim}
 
-\textbf{Invalid} - Using an index that is not part of a special for loop (see above):
-\begin{verbatim}
-for (let i = 0; i < N; i = i + 1) {
-    for (let j = 0; j < M; j = j + 1) {
-        for (let k = 1; k < C; k = k + 2) {
-            res[k] = arr1[i] + arr2[j];
-        }
-    }
-}
-\end{verbatim}
+\newpage
+
+\input source_list_library
+
+\newpage
+
+\input source_stream_library
+
 
 \end{document}
