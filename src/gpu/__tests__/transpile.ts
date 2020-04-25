@@ -14,12 +14,8 @@ test('simple for loop gets transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('many simple for loop gets transpiled correctly', () => {
@@ -38,12 +34,8 @@ test('many simple for loop gets transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(4)
 })
 
 test('simple for loop with constant condition transpiled correctly', () => {
@@ -57,13 +49,8 @@ test('simple for loop with constant condition transpiled correctly', () => {
   const context = mockContext(4, 'gpu')
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
-
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('simple for loop with let condition transpiled correctly', () => {
@@ -78,12 +65,8 @@ test('simple for loop with let condition transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('simple for loop with math function call transpiled correctly', () => {
@@ -98,12 +81,8 @@ test('simple for loop with math function call transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('simple for loop with different end condition transpiled correctly', () => {
@@ -119,12 +98,8 @@ test('simple for loop with different end condition transpiled correctly', () => 
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('2 for loop case gets transpiled correctly', () => {
@@ -140,12 +115,8 @@ test('2 for loop case gets transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('2 for loop case with body gets transpiled correctly', () => {
@@ -163,12 +134,8 @@ test('2 for loop case with body gets transpiled correctly', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('2 for loop case with 2 indices being written to gets transpiled correctly', () => {
@@ -184,12 +151,60 @@ test('2 for loop case with 2 indices being written to gets transpiled correctly'
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
+})
 
-  expect(replacedGlobalsLine).toMatchSnapshot()
+test('2 for loop case with 2 indices being written + local updates to gets transpiled correctly', () => {
+  const code = stripIndent`
+    let res1 = [];
+    for (let i = 0; i < 5; i = i + 1) {
+      res1[i] = [];
+      for (let j = 0; j < 5; j = j + 1) {
+        res1[i][j] = j;
+      }
+    }
+
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        for (let j = 0; j < 5; j = j + 1) {
+            let x = res1[i][j];
+            let y = math_abs(x * -5);
+            res[i][j] = x + y;
+        }
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
+
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
+})
+
+test('2 for loop case with 2 indices being written + use of result variable[i][j] gets transpiled', () => {
+  const code = stripIndent`
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+      res[i] = [];
+      for (let j = 0; j < 5; j = j + 1) {
+        res[i][j] = j;
+      }
+    }
+
+    for (let i = 0; i < 5; i = i + 1) {
+        for (let j = 0; j < 5; j = j + 1) {
+            let x = res[i][j];
+            let y = math_abs(x * -5);
+            res[i][j] = x + y;
+        }
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('3 for loop case with 1 indices being written to gets transpiled correctly', () => {
@@ -207,12 +222,8 @@ test('3 for loop case with 1 indices being written to gets transpiled correctly'
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('3 for loop case with 2 indices being written to gets transpiled correctly', () => {
@@ -230,12 +241,8 @@ test('3 for loop case with 2 indices being written to gets transpiled correctly'
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })
 
 test('3 for loop case with 3 indices being written to gets transpiled correctly', () => {
@@ -253,10 +260,6 @@ test('3 for loop case with 3 indices being written to gets transpiled correctly'
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  // replace native[<number>] as they may be inconsistent
-  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-  // replace the line hiding globals as they may differ between environments
-  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
-
-  expect(replacedGlobalsLine).toMatchSnapshot()
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(3)
 })

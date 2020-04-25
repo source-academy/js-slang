@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { simple } from 'acorn-walk/dist/walk'
+import { simple, make } from 'acorn-walk/dist/walk'
 
 /*
  * GPU Body verifier helps to ensure the body is parallelizable
@@ -134,6 +134,34 @@ class GPUBodyVerifier {
     // check res assignment and its counters
     const res = this.getPropertyAccess(resultExpr[0].left)
     if (res.length === 0 || res.length > this.counters.length) {
+      return
+    }
+
+    // check result variable is not used anywhere with wrong indices
+    const getProp = this.getPropertyAccess
+    simple(
+      node,
+      {
+        MemberExpression(nx: es.MemberExpression) {
+          const chk = checker(nx)
+          if (localVar.has(chk.name)) {
+            return
+          }
+
+          // get indices
+          const indices = getProp(nx)
+          if (JSON.stringify(indices) === JSON.stringify(res)) {
+            return
+          }
+
+          ok = false
+        }
+      },
+      // tslint:disable-next-line
+      make({ MemberExpression: () => {} })
+    )
+
+    if (!ok) {
       return
     }
 
