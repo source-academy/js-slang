@@ -145,7 +145,7 @@ test('error func apply native', async () => {
   await testNonDetNegative(`parse_int('e');`, ExceptionError.prototype)
 })
 
-test('error invalid num of arg', async () => {
+test('error invalid num of args', async () => {
   await testNonDetNegative('function f(a,b){return a+b;} f(1);', InvalidNumberOfArguments.prototype)
 })
 
