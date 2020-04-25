@@ -67,7 +67,6 @@ Even if the BNF syntax is met, GPU acceleration can only take place if all the r
 \subsection*{Special For Loops}
 
 In the BNF, we have special loops that take on this form:
-
 \begin{alignat*}{9}
 && \textbf{\texttt{for}}\ \textbf{\texttt{(}} 
                           \ \textit{gpu\_for\_let} \textbf{\texttt{;}} \\
@@ -93,15 +92,21 @@ Within \textit{core\_statement}, there are some constraints:
 
 \begin{itemize}
     \item{no assignment to any global variables (all assignments can only be done to variables defined in the \textit{gpu\_block}})
+    \item{no use of the variable in \textit{gpu\_result\_assignment} at an offset from the current index e.g. cannot be i - 1}
 \end{itemize}
 
 \subsection*{GPU Result Statement}
 
-The GPU Result statement is the statement that stores a value calculated in core statements into a result array. It access an array at a certain coordinate e.g. ${array[{i_1}][{i_2}][{i_3}]}$. This result array has to be defined outside the \textit{gpu\_block}.\\
+The \textit{gpu\_result\_assignment} is the statement that stores a value calculated in core statements into a result array. 
+It access an array at a certain coordinate e.g. ${array[{i_1}][{i_2}][{i_3}]}$. For this:
 
-The sequence of coordinates which we access in the result array ${{i_1}, {i_2}, {i_3} ... i_{k}}$ must be a prefix of the special for loop counters ${[c_1,c_2 ... c_n]}$. If you have ${n}$ special for loops, the array expression can take on ${k}$ coordinates where ${0 < k \leq n}$. The order matters as well, it has to follow the same order as the special for loops: you cannot have ${name[c_2][c_1]}$.
-
-\newpage
+\begin{itemize}
+    \item{This result array has to be defined outside the \textit{gpu\_block}.}
+    \item{The sequence of coordinates which we access in the result array ${{i_1}, {i_2}, {i_3} ... i_{k}}$ must be a 
+        prefix of the special for loop counters ${[c_1,c_2 ... c_n]}$.}
+    \item{ If you have ${n}$ special for loops, the array expression can take on ${k}$ coordinates where ${0 < k \leq n}$. 
+    The order matters as well, it has to follow the same order as the special for loops: you cannot have ${name[c_2][c_1]}$.}
+\end{itemize}
 
 \section*{Examples}
 
@@ -146,6 +151,17 @@ for (let i = 0; i < N; i = i + 1) {
             let x = math_pow(2, 10);
             let y = x * (1000);
             res[k][j][i] = (x + y * 2);
+        }
+    }
+}
+\end{verbatim}
+
+\textbf{Invalid} - Using an index that is not part of a special for loop (see above):
+\begin{verbatim}
+for (let i = 0; i < N; i = i + 1) {
+    for (let j = 0; j < M; j = j + 1) {
+        for (let k = 1; k < C; k = k + 2) {
+            res[k] = arr1[i] + arr2[j];
         }
     }
 }
