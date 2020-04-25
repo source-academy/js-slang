@@ -858,11 +858,15 @@ export function transpile(
     )
   ])
 
-  program.body = [
-    ...getDeclarationsToAccessTranspilerInternals(),
-    ...getInternalFunctionsForGPU(globalIds, contextId),
-    wrapped
-  ]
+  program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
+
+  if (variant === 'gpu') {
+    program.body = [
+      ...getDeclarationsToAccessTranspilerInternals(),
+      ...getInternalFunctionsForGPU(globalIds, contextId),
+      wrapped
+    ]
+  }
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
