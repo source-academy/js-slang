@@ -5,7 +5,7 @@ import * as es from 'estree'
 
 // top-level gpu functions that call our code
 
-export function transpileToGPU(program: es.Program): es.Position[] {
+export function transpileToGPU(program: es.Program): number[][] {
   const transformer = new GPUTransformer(program)
   return transformer.transform()
 }

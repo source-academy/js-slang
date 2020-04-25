@@ -39,17 +39,18 @@ class GPUTransformer {
   }
 
   // transforms away top-level for loops if possible
-  transform = (): es.Position[] => {
+  transform = (): number[][] => {
     const gpuTranspile = this.gpuTranspile
-    const res: es.Position[] = []
+    const res: number[][] = []
 
     // tslint:disable
     simple(
       this.program,
       {
         ForStatement(node: es.ForStatement) {
-          if (gpuTranspile(node) && node.loc) {
-            res.push(node.loc.start)
+          let state = gpuTranspile(node)
+          if (state > 0 && node.loc) {
+            res.push([node.loc.start.line, state])
           }
         }
       },
@@ -71,7 +72,7 @@ class GPUTransformer {
    * 7. In body, update reference to counters
    * 8. Call __createKernel and assign it to our external variable
    */
-  gpuTranspile = (node: es.ForStatement): boolean => {
+  gpuTranspile = (node: es.ForStatement): number => {
     // initialize our class variables
     this.state = 0
     this.counters = []
@@ -82,12 +83,12 @@ class GPUTransformer {
 
     // no gpu loops found
     if (this.counters.length === 0 || new Set(this.counters).size !== this.counters.length) {
-      return false
+      return 0
     }
 
     const verifier = new GPUBodyVerifier(this.program, this.innerBody, this.counters)
     if (verifier.state === 0) {
-      return false
+      return 0
     }
 
     this.state = verifier.state
@@ -234,7 +235,7 @@ class GPUTransformer {
       )
     )
 
-    return true
+    return this.state
   }
 
   // verification of outer loops using our verifier

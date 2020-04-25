@@ -92,7 +92,7 @@ const __createKernel = native[6].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize the loop on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   for (let j = 0; j < 5; j = j + 1) {     return this.thread.x;   } }, res, function (i) {   for (let j = 0; j < 5; j = j + 1) {     return i;   } });\\");
         globals.variables.set(\\"res\\", {
@@ -204,7 +204,7 @@ const __createKernel = native[8].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize 2 levels of nested loops starting on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   return this.thread.y * this.thread.x; }, res, function (i, j) {   return i * j; });\\");
         globals.variables.set(\\"res\\", {
@@ -316,7 +316,7 @@ const __createKernel = native[7].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize the loop on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5], {}, function () {   let sum = 0;   for (let j = 0; j < 5; j = j + 1) {     sum = sum + j;   }   return sum; }, res, function (i) {   let sum = 0;   for (let j = 0; j < 5; j = j + 1) {     sum = sum + j;   }   return sum; });\\");
         globals.variables.set(\\"res\\", {
@@ -428,7 +428,7 @@ const __createKernel = native[9].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize the loop on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   for (let j = 0; j < 5; j = j + 1) {     for (let k = 0; k < 5; k = k + 1) {       return this.thread.x * j;     }   } }, res, function (i) {   for (let j = 0; j < 5; j = j + 1) {     for (let k = 0; k < 5; k = k + 1) {       return i * j;     }   } });\\");
         globals.variables.set(\\"res\\", {
@@ -540,7 +540,7 @@ const __createKernel = native[10].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize 2 levels of nested loops starting on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   for (let k = 0; k < 5; k = k + 1) {     return this.thread.y * this.thread.x;   } }, res, function (i, j) {   for (let k = 0; k < 5; k = k + 1) {     return i * j;   } });\\");
         globals.variables.set(\\"res\\", {
@@ -652,7 +652,7 @@ const __createKernel = native[11].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize 3 levels of nested loops starting on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   return this.thread.z * this.thread.y; }, res, function (i, j, k) {   return i * j; });\\");
         globals.variables.set(\\"res\\", {
@@ -764,7 +764,8 @@ const __createKernel = native[1].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loops on lines: 2 7\\");
+        display(\\"Attempting to optimize the loop on line 2\\");
+        display(\\"Attempting to optimize the loop on line 7\\");
         let res = [];
         __createKernel([5], {}, function () {
           return this.thread.x;
@@ -891,7 +892,7 @@ const __createKernel = native[0].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 2\\");
+        display(\\"Attempting to optimize the loop on line 2\\");
         let res = [];
         lastStatementResult = eval(\\"__createKernel([5], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
         globals.variables.set(\\"res\\", {
@@ -1009,7 +1010,7 @@ const __createKernel = native[2].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 3\\");
+        display(\\"Attempting to optimize the loop on line 3\\");
         let res = [];
         const c = 10;
         lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
@@ -1129,7 +1130,7 @@ const __createKernel = native[5].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 4\\");
+        display(\\"Attempting to optimize the loop on line 4\\");
         let res = [];
         const f = wrap(() => ({
           isTail: false,
@@ -1261,7 +1262,7 @@ const __createKernel = native[3].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 3\\");
+        display(\\"Attempting to optimize the loop on line 3\\");
         let res = [];
         let c = 10;
         lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
@@ -1383,7 +1384,7 @@ const __createKernel = native[4].gpu.get(\\"__createKernel\\");
       const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
       const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
       {
-        display(\\"Attempting to optimize for loop on line: 3\\");
+        display(\\"Attempting to optimize the loop on line 3\\");
         let res = [];
         let c = 10;
         lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return Math.abs(this.thread.x); }, res, function (i) {   return math_abs(i); });\\");

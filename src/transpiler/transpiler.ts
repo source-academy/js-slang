@@ -805,21 +805,17 @@ export function transpile(
 
     // add some display statements to program
     if (res.length > 0) {
-      let str = 'Attempting to optimize for loop on line: '
-      if (res.length > 1) {
-        str = 'Attempting to optimize for loops on lines: '
-      }
-
-      for (let i = 0; i < res.length; i = i + 1) {
-        if (i > 0) str += ' '
-        str += res[i].line
-      }
-
-      gpuDisplayStatements.push(
-        create.expressionStatement(
-          create.callExpression(create.identifier('display'), [create.literal(str)])
+      for (const arr of res) {
+        let debug = `Attempting to optimize ${arr[1]} levels of nested loops starting on line ${arr[0]}`
+        if (arr[1] === 1) {
+          debug = `Attempting to optimize the loop on line ${arr[0]}`
+        }
+        gpuDisplayStatements.push(
+          create.expressionStatement(
+            create.callExpression(create.identifier('display'), [create.literal(debug)])
+          )
         )
-      )
+      }
     }
   }
 
