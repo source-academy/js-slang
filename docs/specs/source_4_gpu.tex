@@ -10,9 +10,10 @@
 \section*{Changes}
 
 Source \S 4 GPU allows for Source programs to be accelerated on the GPU if certain conditions are met.
-The exact specifications for this is outlined on \pageref{gpu_supp}. The main ideas behind Source \S 4 GPU 
-is to accelerate for loops by running them in parallel across many GPU threads. In order to do this, we have to
-define a formal specification to identify embarrassingly parallel loops.
+The exact specifications for this is outlined on page \pageref{gpu_supp}. Source \S 4 GPU  defines a formal specification 
+to identify areas in the program that are embarrssingly parallel (e.g. for loops etc.) . These will then
+be run in parallel across GPU threads. Experimentation has shown that Source \S 4 GPU is orders of magnitude faster
+than Source \S 4 for heavy CPU bound tasks (matrix multiplication of large matrices)
 
 \input source_bnf.tex
 
@@ -71,14 +72,15 @@ In the BNF, we have special loops that take on this form:
 && \textbf{\texttt{for}}\ \textbf{\texttt{(}} 
                           \ \textit{gpu\_for\_let} \textbf{\texttt{;}} \\
 && \ \ \textit{gpu\_condition} \textbf{\texttt{;}} \\
-&& \textit{gpu\_for\_assignment} \ )
+&& \textit{gpu\_for\_assignment} \ \textbf{\texttt{)}} 
 \end{alignat*}
 
 These are the loops that will be taken into consideration for parallelization. However, on top of the BNF syntax, the below requirement must also be statisfied:
 
 \begin{itemize}
-    \item{the names used in each for loop has to be different across the loops (no repeating identifiers among the for loops)}
-    \item{the names have to be the same within the loop}
+    \item{the names declared in each \textit{gpu\_for\_let} have to be different across the loops}
+    \item{in each loop, the \textit{gpu\_condition} and the \textit{gpu\_for\_assignment} must use the name declared
+    in the respective \textit{gpu\_for\_let} statement}
 \end{itemize}
 
 \subsection*{GPU Function}
@@ -123,7 +125,7 @@ for (let i = 0; i < N; i = i + 1) {
 }
 \end{verbatim}
 
-\textbf{Valid} - Using first three loop counters:
+\textbf{Valid} - Using first three loop counters (meaning the loop will be run across N*M*C threads, if available):
 \begin{verbatim}
 for (let i = 0; i < N; i = i + 1) {
     for (let j = 0; j < M; j = j + 1) {
