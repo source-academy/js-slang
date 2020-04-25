@@ -1,0 +1,1414 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`2 for loop case gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[6].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[6].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[6].operators.get(\\"boolOrErr\\");
+const wrap = native[6].operators.get(\\"wrap\\");
+const unaryOp = native[6].operators.get(\\"unaryOp\\");
+const binaryOp = native[6].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[6].operators.get(\\"throwIfTimeout\\");
+const setProp = native[6].operators.get(\\"setProp\\");
+const getProp = native[6].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[6].globals;
+const __createKernel = native[6].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   for (let j = 0; j < 5; j = j + 1) {     return this.thread.x;   } }, res, function (i) {   for (let j = 0; j < 5; j = j + 1) {     return i;   } });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`2 for loop case with 2 indices being written to gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[8].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[8].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[8].operators.get(\\"boolOrErr\\");
+const wrap = native[8].operators.get(\\"wrap\\");
+const unaryOp = native[8].operators.get(\\"unaryOp\\");
+const binaryOp = native[8].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[8].operators.get(\\"throwIfTimeout\\");
+const setProp = native[8].operators.get(\\"setProp\\");
+const getProp = native[8].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[8].globals;
+const __createKernel = native[8].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5, 5], {}, function () {   return this.thread.y * this.thread.x; }, res, function (i, j) {   return i * j; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`2 for loop case with body gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[7].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[7].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[7].operators.get(\\"boolOrErr\\");
+const wrap = native[7].operators.get(\\"wrap\\");
+const unaryOp = native[7].operators.get(\\"unaryOp\\");
+const binaryOp = native[7].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[7].operators.get(\\"throwIfTimeout\\");
+const setProp = native[7].operators.get(\\"setProp\\");
+const getProp = native[7].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[7].globals;
+const __createKernel = native[7].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5], {}, function () {   let sum = 0;   for (let j = 0; j < 5; j = j + 1) {     sum = sum + j;   }   return sum; }, res, function (i) {   let sum = 0;   for (let j = 0; j < 5; j = j + 1) {     sum = sum + j;   }   return sum; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`3 for loop case with 1 indices being written to gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[9].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[9].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[9].operators.get(\\"boolOrErr\\");
+const wrap = native[9].operators.get(\\"wrap\\");
+const unaryOp = native[9].operators.get(\\"unaryOp\\");
+const binaryOp = native[9].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[9].operators.get(\\"throwIfTimeout\\");
+const setProp = native[9].operators.get(\\"setProp\\");
+const getProp = native[9].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[9].globals;
+const __createKernel = native[9].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   for (let j = 0; j < 5; j = j + 1) {     for (let k = 0; k < 5; k = k + 1) {       return this.thread.x * j;     }   } }, res, function (i) {   for (let j = 0; j < 5; j = j + 1) {     for (let k = 0; k < 5; k = k + 1) {       return i * j;     }   } });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`3 for loop case with 2 indices being written to gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[10].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[10].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[10].operators.get(\\"boolOrErr\\");
+const wrap = native[10].operators.get(\\"wrap\\");
+const unaryOp = native[10].operators.get(\\"unaryOp\\");
+const binaryOp = native[10].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[10].operators.get(\\"throwIfTimeout\\");
+const setProp = native[10].operators.get(\\"setProp\\");
+const getProp = native[10].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[10].globals;
+const __createKernel = native[10].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   for (let k = 0; k < 5; k = k + 1) {     return this.thread.y * this.thread.x;   } }, res, function (i, j) {   for (let k = 0; k < 5; k = k + 1) {     return i * j;   } });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`3 for loop case with 3 indices being written to gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[11].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[11].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[11].operators.get(\\"boolOrErr\\");
+const wrap = native[11].operators.get(\\"wrap\\");
+const unaryOp = native[11].operators.get(\\"unaryOp\\");
+const binaryOp = native[11].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[11].operators.get(\\"throwIfTimeout\\");
+const setProp = native[11].operators.get(\\"setProp\\");
+const getProp = native[11].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[11].globals;
+const __createKernel = native[11].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5, 5, 5], {}, function () {   return this.thread.z * this.thread.y; }, res, function (i, j, k) {   return i * j; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`many simple for loop gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[1].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[1].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[1].operators.get(\\"boolOrErr\\");
+const wrap = native[1].operators.get(\\"wrap\\");
+const unaryOp = native[1].operators.get(\\"unaryOp\\");
+const binaryOp = native[1].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[1].operators.get(\\"throwIfTimeout\\");
+const setProp = native[1].operators.get(\\"setProp\\");
+const getProp = native[1].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[1].globals;
+const __createKernel = native[1].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loops on lines: 2 7\\");
+        let res = [];
+        __createKernel([5], {}, function () {
+          return this.thread.x;
+        }, res, function (i) {
+          return i;
+        });
+        let res1 = [];
+        lastStatementResult = eval(\\"__createKernel([5], {}, function () {   return this.thread.x; }, res1, function (i) {   return i; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+        globals.variables.set(\\"res1\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res1;
+          },
+          assignNewValue: function (unique0) {
+            return res1 = unique0;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`simple for loop gets transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[0].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[0].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[0].operators.get(\\"boolOrErr\\");
+const wrap = native[0].operators.get(\\"wrap\\");
+const unaryOp = native[0].operators.get(\\"unaryOp\\");
+const binaryOp = native[0].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[0].operators.get(\\"throwIfTimeout\\");
+const setProp = native[0].operators.get(\\"setProp\\");
+const getProp = native[0].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[0].globals;
+const __createKernel = native[0].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 2\\");
+        let res = [];
+        lastStatementResult = eval(\\"__createKernel([5], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`simple for loop with constant condition transpiled correctly 1`] = `
+Object {
+  "code": "let res = [];
+const c = 10;
+for (let i = 0; i < c; i = i + 1) {
+    res[i] = i;
+}",
+  "transpiled": "const native = $$NATIVE_STORAGE;
+const forceIt = native[2].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[2].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[2].operators.get(\\"boolOrErr\\");
+const wrap = native[2].operators.get(\\"wrap\\");
+const unaryOp = native[2].operators.get(\\"unaryOp\\");
+const binaryOp = native[2].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[2].operators.get(\\"throwIfTimeout\\");
+const setProp = native[2].operators.get(\\"setProp\\");
+const getProp = native[2].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[2].globals;
+const __createKernel = native[2].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 3\\");
+        let res = [];
+        const c = 10;
+        lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+        globals.variables.set(\\"c\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return c;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+",
+}
+`;
+
+exports[`simple for loop with different end condition transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[5].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[5].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[5].operators.get(\\"boolOrErr\\");
+const wrap = native[5].operators.get(\\"wrap\\");
+const unaryOp = native[5].operators.get(\\"unaryOp\\");
+const binaryOp = native[5].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[5].operators.get(\\"throwIfTimeout\\");
+const setProp = native[5].operators.get(\\"setProp\\");
+const getProp = native[5].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[5].globals;
+const __createKernel = native[5].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 4\\");
+        let res = [];
+        const f = wrap(() => ({
+          isTail: false,
+          value: 5
+        }), \\"() => 5\\");
+        let c = callIfFuncAndRightArgs(f, 3, 8);
+        lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+        globals.variables.set(\\"f\\", {
+          kind: \\"const\\",
+          getValue: () => {
+            return f;
+          }
+        });
+        globals.variables.set(\\"c\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return c;
+          },
+          assignNewValue: function (unique1) {
+            return c = unique1;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`simple for loop with let condition transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[3].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[3].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[3].operators.get(\\"boolOrErr\\");
+const wrap = native[3].operators.get(\\"wrap\\");
+const unaryOp = native[3].operators.get(\\"unaryOp\\");
+const binaryOp = native[3].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[3].operators.get(\\"throwIfTimeout\\");
+const setProp = native[3].operators.get(\\"setProp\\");
+const getProp = native[3].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[3].globals;
+const __createKernel = native[3].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 3\\");
+        let res = [];
+        let c = 10;
+        lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return this.thread.x; }, res, function (i) {   return i; });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+        globals.variables.set(\\"c\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return c;
+          },
+          assignNewValue: function (unique0) {
+            return c = unique0;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
+
+exports[`simple for loop with math function call transpiled correctly 1`] = `
+"const native = $$NATIVE_STORAGE;
+const forceIt = native[4].operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native[4].operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native[4].operators.get(\\"boolOrErr\\");
+const wrap = native[4].operators.get(\\"wrap\\");
+const unaryOp = native[4].operators.get(\\"unaryOp\\");
+const binaryOp = native[4].operators.get(\\"binaryOp\\");
+const throwIfTimeout = native[4].operators.get(\\"throwIfTimeout\\");
+const setProp = native[4].operators.get(\\"setProp\\");
+const getProp = native[4].operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = $$NATIVE_STORAGE[4].globals;
+const __createKernel = native[4].gpu.get(\\"__createKernel\\");
+((onafterprint, onbeforeprint, onbeforeunload, onhashchange, onlanguagechange, onmessage, onmessageerror, onoffline, ononline, onpagehide, onpageshow, onpopstate, onrejectionhandled, onstorage, onunhandledrejection, onunload, onblur, onerror, onfocus, onload, onresize, onscroll, onabort, onautocomplete, onautocompleteerror, oncancel, oncanplay, oncanplaythrough, onchange, onclick, onclose, oncontextmenu, oncuechange, ondblclick, ondrag, ondragend, ondragenter, ondragexit, ondragleave, ondragover, ondragstart, ondrop, ondurationchange, onemptied, onended, oninput, oninvalid, onkeydown, onkeypress, onkeyup, onloadeddata, onloadedmetadata, onloadstart, onmousedown, onmouseenter, onmouseleave, onmousemove, onmouseout, onmouseover, onmouseup, onwheel, onpause, onplay, onplaying, onprogress, onratechange, onreset, onsecuritypolicyviolation, onseeked, onseeking, onselect, onsort, onstalled, onsubmit, onsuspend, ontimeupdate, ontoggle, onvolumechange, onwaiting, _registeredHandlers, _eventHandlers, _resourceLoader, _globalProxy, _document, _sessionHistory, _virtualConsole, _runScripts, _top, _parent, _frameElement, _length, _pretendToBeVisual, _storageQuota, _commonForOrigin, _currentOriginData, _localStorage, _sessionStorage, length, window, frameElement, frames, self, parent, top, document, external, location, history, navigator, locationbar, menubar, personalbar, scrollbars, statusbar, toolbar, performance, screen, localStorage, sessionStorage, addEventListener, removeEventListener, dispatchEvent, setTimeout, setInterval, clearInterval, clearTimeout, requestAnimationFrame, cancelAnimationFrame, __stopAllTimers, postMessage, atob, btoa, FileReader, WebSocket, AbortSignal, AbortController, XMLHttpRequest, ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, stop, close, getComputedStyle, captureEvents, releaseEvents, console, name, status, devicePixelRatio, innerWidth, innerHeight, outerWidth, outerHeight, pageXOffset, pageYOffset, screenX, screenLeft, screenY, screenTop, scrollX, scrollY, alert, blur, confirm, focus, moveBy, moveTo, open, print, prompt, resizeBy, resizeTo, scroll, scrollBy, scrollTo, process, Buffer, setImmediate, clearImmediate, describe, xdescribe, fdescribe, it, xit, fit, beforeEach, afterEach, beforeAll, afterAll, pending, fail, spyOn, jsApiReporter, jasmine, test, xtest, expect, glWiretap, $$NATIVE_STORAGE, Object, Function, Array, Number, parseFloat, parseInt, Infinity, NaN, undefined, Boolean, String, Symbol, Date, Promise, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, globalThis, JSON, Math, Intl, BigUint64Array, BigInt64Array, DataView, Map, BigInt, Set, WeakMap, WeakSet, Proxy, Reflect, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, unescape, isFinite, isNaN, SharedArrayBuffer, Atomics, WebAssembly) => {
+  return (() => {
+    {
+      const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+      const display = globals.previousScope.variables.get(\\"display\\").getValue();
+      const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
+      const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
+      const error = globals.previousScope.variables.get(\\"error\\").getValue();
+      const prompt = globals.previousScope.variables.get(\\"prompt\\").getValue();
+      const is_number = globals.previousScope.variables.get(\\"is_number\\").getValue();
+      const is_string = globals.previousScope.variables.get(\\"is_string\\").getValue();
+      const is_function = globals.previousScope.variables.get(\\"is_function\\").getValue();
+      const is_boolean = globals.previousScope.variables.get(\\"is_boolean\\").getValue();
+      const is_undefined = globals.previousScope.variables.get(\\"is_undefined\\").getValue();
+      const parse_int = globals.previousScope.variables.get(\\"parse_int\\").getValue();
+      const undefined = globals.previousScope.variables.get(\\"undefined\\").getValue();
+      const NaN = globals.previousScope.variables.get(\\"NaN\\").getValue();
+      const Infinity = globals.previousScope.variables.get(\\"Infinity\\").getValue();
+      const math_abs = globals.previousScope.variables.get(\\"math_abs\\").getValue();
+      const math_acos = globals.previousScope.variables.get(\\"math_acos\\").getValue();
+      const math_acosh = globals.previousScope.variables.get(\\"math_acosh\\").getValue();
+      const math_asin = globals.previousScope.variables.get(\\"math_asin\\").getValue();
+      const math_asinh = globals.previousScope.variables.get(\\"math_asinh\\").getValue();
+      const math_atan = globals.previousScope.variables.get(\\"math_atan\\").getValue();
+      const math_atanh = globals.previousScope.variables.get(\\"math_atanh\\").getValue();
+      const math_atan2 = globals.previousScope.variables.get(\\"math_atan2\\").getValue();
+      const math_ceil = globals.previousScope.variables.get(\\"math_ceil\\").getValue();
+      const math_cbrt = globals.previousScope.variables.get(\\"math_cbrt\\").getValue();
+      const math_expm1 = globals.previousScope.variables.get(\\"math_expm1\\").getValue();
+      const math_clz32 = globals.previousScope.variables.get(\\"math_clz32\\").getValue();
+      const math_cos = globals.previousScope.variables.get(\\"math_cos\\").getValue();
+      const math_cosh = globals.previousScope.variables.get(\\"math_cosh\\").getValue();
+      const math_exp = globals.previousScope.variables.get(\\"math_exp\\").getValue();
+      const math_floor = globals.previousScope.variables.get(\\"math_floor\\").getValue();
+      const math_fround = globals.previousScope.variables.get(\\"math_fround\\").getValue();
+      const math_hypot = globals.previousScope.variables.get(\\"math_hypot\\").getValue();
+      const math_imul = globals.previousScope.variables.get(\\"math_imul\\").getValue();
+      const math_log = globals.previousScope.variables.get(\\"math_log\\").getValue();
+      const math_log1p = globals.previousScope.variables.get(\\"math_log1p\\").getValue();
+      const math_log2 = globals.previousScope.variables.get(\\"math_log2\\").getValue();
+      const math_log10 = globals.previousScope.variables.get(\\"math_log10\\").getValue();
+      const math_max = globals.previousScope.variables.get(\\"math_max\\").getValue();
+      const math_min = globals.previousScope.variables.get(\\"math_min\\").getValue();
+      const math_pow = globals.previousScope.variables.get(\\"math_pow\\").getValue();
+      const math_random = globals.previousScope.variables.get(\\"math_random\\").getValue();
+      const math_round = globals.previousScope.variables.get(\\"math_round\\").getValue();
+      const math_sign = globals.previousScope.variables.get(\\"math_sign\\").getValue();
+      const math_sin = globals.previousScope.variables.get(\\"math_sin\\").getValue();
+      const math_sinh = globals.previousScope.variables.get(\\"math_sinh\\").getValue();
+      const math_sqrt = globals.previousScope.variables.get(\\"math_sqrt\\").getValue();
+      const math_tan = globals.previousScope.variables.get(\\"math_tan\\").getValue();
+      const math_tanh = globals.previousScope.variables.get(\\"math_tanh\\").getValue();
+      const math_trunc = globals.previousScope.variables.get(\\"math_trunc\\").getValue();
+      const math_E = globals.previousScope.variables.get(\\"math_E\\").getValue();
+      const math_LN10 = globals.previousScope.variables.get(\\"math_LN10\\").getValue();
+      const math_LN2 = globals.previousScope.variables.get(\\"math_LN2\\").getValue();
+      const math_LOG10E = globals.previousScope.variables.get(\\"math_LOG10E\\").getValue();
+      const math_LOG2E = globals.previousScope.variables.get(\\"math_LOG2E\\").getValue();
+      const math_PI = globals.previousScope.variables.get(\\"math_PI\\").getValue();
+      const math_SQRT1_2 = globals.previousScope.variables.get(\\"math_SQRT1_2\\").getValue();
+      const math_SQRT2 = globals.previousScope.variables.get(\\"math_SQRT2\\").getValue();
+      const pair = globals.previousScope.variables.get(\\"pair\\").getValue();
+      const is_pair = globals.previousScope.variables.get(\\"is_pair\\").getValue();
+      const head = globals.previousScope.variables.get(\\"head\\").getValue();
+      const tail = globals.previousScope.variables.get(\\"tail\\").getValue();
+      const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
+      const list = globals.previousScope.variables.get(\\"list\\").getValue();
+      const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+      const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
+      const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
+      const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
+      const is_array = globals.previousScope.variables.get(\\"is_array\\").getValue();
+      const stream_tail = globals.previousScope.variables.get(\\"stream_tail\\").getValue();
+      const stream = globals.previousScope.variables.get(\\"stream\\").getValue();
+      const list_to_stream = globals.previousScope.variables.get(\\"list_to_stream\\").getValue();
+      const parse = globals.previousScope.variables.get(\\"parse\\").getValue();
+      const apply_in_underlying_javascript = globals.previousScope.variables.get(\\"apply_in_underlying_javascript\\").getValue();
+      {
+        display(\\"Attempting to optimize for loop on line: 3\\");
+        let res = [];
+        let c = 10;
+        lastStatementResult = eval(\\"__createKernel([c], {}, function () {   return Math.abs(this.thread.x); }, res, function (i) {   return math_abs(i); });\\");
+        globals.variables.set(\\"res\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return res;
+          },
+          assignNewValue: function (unique) {
+            return res = unique;
+          }
+        });
+        globals.variables.set(\\"c\\", {
+          kind: \\"let\\",
+          getValue: () => {
+            return c;
+          },
+          assignNewValue: function (unique0) {
+            return c = unique0;
+          }
+        });
+      }
+    }
+    return forceIt(lastStatementResult);
+  })();
+})();
+"
+`;
