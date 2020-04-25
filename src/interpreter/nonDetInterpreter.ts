@@ -252,9 +252,7 @@ function* evaluateSequence(context: Context, sequence: es.Statement[]): Iterable
   } else {
     sequence.shift()
     for (const sequenceValue of sequenceValGenerator) {
-      // console.log('evaluateSequence sequenceValue = ' + sequenceValue)
       if (sequenceValue instanceof ReturnValue) {
-        // console.log('sequenceValue instanceof ReturnValue')
         yield sequenceValue
         continue
       }
@@ -297,7 +295,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     if(node.callee.type==="Identifier"){
       const funcName = node.callee.name
       if(funcName==="amb"){
-        // console.log('CallExpression amb called......')
         yield* ambChoices(context,node)
         return
       }
@@ -310,10 +307,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       const callee = calleeNext.value
       while (!argsNext.done) {
         const args = argsNext.value
-        // if(node.callee.type==="Identifier"){
-        //   console.log(`applying args ${args} to Identifier ${node.callee.name}`)
-        // }
-
         yield* apply(context, callee, args, node, undefined)
         argsNext = argsGen.next()
       }
@@ -377,7 +370,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const valueGen = evaluateNonDet(declaration.init!, context)
     let valueNext = valueGen.next()
     while (!valueNext.done) {
-      // console.log("VariableDeclaration called......")
       defineVariable(context, id.name, valueNext.value, constant)
       yield "VariableDeclaration done "+valueNext.value
       valueNext = valueGen.next()
