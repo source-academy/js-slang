@@ -1,11 +1,16 @@
 import { stringify } from '../utils/stringify'
-// stream_tail returns the second component of the given pair
-// throws an exception if the argument is not a pair
+import { head, is_null, is_pair, list, List, pair, Pair, tail } from './thunk_list'
+// try to combine thunk with stream, though may not be 
+// very meaningful since in the situation, lazy-list is
+// lazier than lazy-stream.
 
-import { head, is_null, is_pair, list, List, pair, Pair, tail } from './thunk_list' // delete List & Pair
+// Define value of property 'isThunkAware' of each built-in function
+// to be true, to make the args of functions not deepthunked.
 
 type Stream = Pair<any, () => any> | null
 
+// stream_tail returns the second component of the given pair
+// throws an exception if the argument is not a pair
 export function* stream_tail(xs: any) {
   let theTail
   if (is_pair(xs)) {

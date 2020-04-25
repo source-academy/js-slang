@@ -99,6 +99,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
 export const defineBuiltin = (context: Context, name: string, value: Value) => {
   if (typeof value === 'function') {
     const wrapped: any = (...args: any) => value(...args)
+    // Pass the value of 'isThunkAware' property
     if (value.hasOwnProperty('isThunkAware')) {
       wrapped.isThunkAware = true
     }
@@ -134,6 +135,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   const useLazyEval = context.variant === 'lazy'
+  // Decide to use builtins from different files according to useLazyEval
   const list = useLazyEval === true ? thunk_list : non_thunk_list
   const stream = useLazyEval === true ? thunk_stream : non_thunk_stream
 

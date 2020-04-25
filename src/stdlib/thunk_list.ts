@@ -1,10 +1,19 @@
 import { stringify } from '../utils/stringify'
 import { dethunk } from '../interpreter/thunk'
 
-// list.ts: Supporting lists in the Scheme style, using pairs made
-//          up of two-element JavaScript array (vector)
-// Author: Martin Henz
-// Translated to TypeScript by Evan Sebastian
+// thunk_list.ts: Supporting lists in the Scheme style, using pairs made
+//          up of two-element JavaScript array (vector).
+//          Supporting lazy evaluation.
+// Author: Martin Henz & Nguyen Tien Trung Kien & Xiao Tian Yi
+
+// No list_to_vector and vector_to_list function compared with list.ts,
+// since these two functions are not builtin functions for any chapter.
+// For internal use of these two functions, vreateContext.ts would call
+// them from list.ts.
+
+// Define value of property 'isThunkAware' of each builtin function
+// to be true, to make the args of functions not deepthunked.
+
 export type Pair<H, T> = [H, T]
 export type List = null | NonEmptyList
 interface NonEmptyList extends Pair<any, any> {}
@@ -21,13 +30,13 @@ function array_test(x: any) {
 
 // pair constructs a pair using a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
-
 export function* pair<H, T>(x: H, xs: T): Generator<Pair<H, T>> {
   return [x, xs]
 }
 Object.defineProperty(pair, 'isThunkAware', { value: true })
 
 // is_pair returns true iff arg is a two-element array
+// or a thunk that contains a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function* is_pair(x: any) {
   x = yield* dethunk(x)
@@ -38,7 +47,6 @@ Object.defineProperty(is_pair, 'isThunkAware', { value: true })
 // head returns the first component of the given pair,
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-
 export function* head(xs: any) {
   xs = yield* dethunk(xs)
   if (yield* is_pair(xs)) {
@@ -84,7 +92,6 @@ Object.defineProperty(list, 'isThunkAware', { value: true })
 // set_head(xs,x) changes the head of given pair xs to be x,
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NO SOURCE
-
 export function* set_head(xs: any, x: any) {
   xs = yield* dethunk(xs)
   if (yield* is_pair(xs)) {
@@ -101,7 +108,6 @@ Object.defineProperty(set_head, 'isThunkAware', { value: true })
 // set_tail(xs,x) changes the tail of given pair xs to be x,
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-
 export function* set_tail(xs: any, x: any) {
   xs = yield* dethunk(xs)
   if (yield* is_pair(xs)) {
