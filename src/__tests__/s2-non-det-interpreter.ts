@@ -3,7 +3,8 @@ import { SourceError, SuspendedNonDete, Type } from '../types'
 import {
   CallingNonFunctionValue,
   ConstAssignment,
-  ExceptionError, InvalidNumberOfArguments,
+  ExceptionError,
+  InvalidNumberOfArguments,
   UnassignedVariable,
   UndefinedVariable,
   VariableRedeclaration
@@ -48,7 +49,7 @@ async function testNonDetNegative<T extends SourceError>(code: string, expectedE
   const context = defaultContext()
   const res = await runInContext(code, context, defaultOptions)
   expect(res.status).toEqual('error')
-  const actualErrorClass = context.errors[0].constructor.name;
+  const actualErrorClass = context.errors[0].constructor.name
   const expectedErrorClass = expectedErrorType.constructor.name
   expect(actualErrorClass).toEqual(expectedErrorClass)
 }
@@ -119,53 +120,53 @@ test('error var not declared', async () => {
   await testNonDetNegative('const a=0; b;', UndefinedVariable.prototype)
 })
 
-test('error define non-exist var',async()=>{
-  await testNonDetNegative('const a=0; b; const b=1;',UnassignedVariable.prototype)
+test('error define non-exist var', async () => {
+  await testNonDetNegative('const a=0; b; const b=1;', UnassignedVariable.prototype)
 })
 
-test('error assign to const ',async()=>{
-  await testNonDetNegative('const a=0;a=1;',ConstAssignment.prototype)
+test('error assign to const ', async () => {
+  await testNonDetNegative('const a=0;a=1;', ConstAssignment.prototype)
 })
 
-test('arrow function',async()=>{
-  await testNonDetPositive('const f = ()=>{return 1;};f();',1);
+test('arrow function', async () => {
+  await testNonDetPositive('const f = ()=>{return 1;};f();', 1)
 })
 
-test('assignment',async ()=>{
-  await testNonDetPositive('let a=1;a=2;a;',2);
+test('assignment', async () => {
+  await testNonDetPositive('let a=1;a=2;a;', 2)
 })
-test('block',async ()=>{
-  await testNonDetPositive('{let a=1;a=2;a;}',2);
-})
-
-test('error func apply',async()=>{
-  await testNonDetNegative(`function add(a,b){return a+b;} add(1,'str');`,TypeError.prototype);
+test('block', async () => {
+  await testNonDetPositive('{let a=1;a=2;a;}', 2)
 })
 
-test('error func apply native',async()=>{
-  await testNonDetNegative(`parse_int('e');`,ExceptionError.prototype);
+test('error func apply', async () => {
+  await testNonDetNegative(`function add(a,b){return a+b;} add(1,'str');`, TypeError.prototype)
 })
 
-test('error invalid num of arg',async ()=>{
-  await testNonDetNegative('function f(a,b){return a+b;} f(1);',InvalidNumberOfArguments.prototype)
+test('error func apply native', async () => {
+  await testNonDetNegative(`parse_int('e');`, ExceptionError.prototype)
 })
 
-test('error invalid if condition',async ()=>{
-  await testNonDetNegative(`if('a'){ 1; }else{ 2; }`,TypeError.prototype)
+test('error invalid num of arg', async () => {
+  await testNonDetNegative('function f(a,b){return a+b;} f(1);', InvalidNumberOfArguments.prototype)
 })
 
-test('error invalid unary',async ()=>{
-  await testNonDetNegative(`!'a';`,TypeError.prototype)
+test('error invalid if condition', async () => {
+  await testNonDetNegative(`if('a'){ 1; }else{ 2; }`, TypeError.prototype)
 })
 
-test('error call non function value',async ()=>{
-  testNonDetNegative('const a=0; a();', CallingNonFunctionValue.prototype);
+test('error invalid unary', async () => {
+  await testNonDetNegative(`!'a';`, TypeError.prototype)
 })
 
-test('yield undefined if function has no return statement',async ()=>{
-  await testNonDetPositive('const a=()=>{const b=1;}; a();',undefined)
+test('error call non function value', async () => {
+  testNonDetNegative('const a=0; a();', CallingNonFunctionValue.prototype)
 })
 
-test('yield undefined no statement',async ()=>{
-  await testNonDetPositive('',undefined)
+test('yield undefined if function has no return statement', async () => {
+  await testNonDetPositive('const a=()=>{const b=1;}; a();', undefined)
+})
+
+test('yield undefined no statement', async () => {
+  await testNonDetPositive('', undefined)
 })
