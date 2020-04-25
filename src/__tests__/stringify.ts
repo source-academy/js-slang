@@ -199,14 +199,14 @@ test('String representation of huge arrays are nice', () => {
   return expectResult(
     stripIndent`
   const arr = [];
-  for (let i = 1; i < 100; i = i + 1) {
+  for (let i = 0; i < 100; i = i + 1) {
     arr[i] = i;
   }
   stringify(arr);
   `,
     { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`
-            "[ ,
+            "[ 0,
               1,
               2,
               3,
