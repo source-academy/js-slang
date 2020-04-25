@@ -1,15 +1,13 @@
 import { createContext, IOptions, runInContext } from '../index'
-import { SourceError, SuspendedNonDete, Type } from '../types'
+import { SourceError, SuspendedNonDete } from '../types'
 import {
   CallingNonFunctionValue,
   ConstAssignment,
   ExceptionError,
   InvalidNumberOfArguments,
   UnassignedVariable,
-  UndefinedVariable,
-  VariableRedeclaration
+  UndefinedVariable
 } from '../errors/errors'
-import { Class } from 'estree'
 import { TypeError } from '../utils/rttc'
 const defaultOptions: Partial<IOptions> = { scheduler: 'nondet', executionMethod: 'interpreter' }
 const defaultContext = () => {
