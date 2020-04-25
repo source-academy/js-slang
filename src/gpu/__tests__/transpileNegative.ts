@@ -14,7 +14,12 @@ test('simple for loop with different update does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('simple for loop with different initialization does not get transpiled', () => {
@@ -29,7 +34,12 @@ test('simple for loop with different initialization does not get transpiled', ()
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('simple for loop with global variable update does not get transpiled', () => {
@@ -45,7 +55,12 @@ test('simple for loop with global variable update does not get transpiled', () =
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('simple for loop with function call does not get transpiled', () => {
@@ -61,7 +76,12 @@ test('simple for loop with function call does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('simple for loop with double update does not get transpiled', () => {
@@ -76,7 +96,12 @@ test('simple for loop with double update does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('2 for loops with wrong indice order does not get transpiled', () => {
@@ -92,7 +117,12 @@ test('2 for loops with wrong indice order does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('2 for loops with wrong indices order does not get transpiled', () => {
@@ -108,7 +138,12 @@ test('2 for loops with wrong indices order does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('3 for loops with wrong indice order does not get transpiled', () => {
@@ -126,7 +161,12 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
 
 test('3 for loops with wrong indice order does not get transpiled', () => {
@@ -144,5 +184,10 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
   const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
     .transpiled
 
-  expect(transpiled).toMatchSnapshot()
+  // replace native[<number>] as they may be inconsistent
+  const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
+  // replace the line hiding globals as they may differ between environments
+  const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
+
+  expect(replacedGlobalsLine).toMatchSnapshot()
 })
