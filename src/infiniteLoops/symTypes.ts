@@ -169,7 +169,7 @@ export function makeLoopChecker(
 ) {
   return {
     functionName,
-    message: 'Infinite loop detected. ' + message,
+    message: 'Infinite recursion detected. ' + message,
     condition,
     loc
   } as InfiniteLoopChecker

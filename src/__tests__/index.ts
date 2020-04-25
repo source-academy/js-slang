@@ -185,7 +185,7 @@ test('Function infinite recursion with list args represents CallExpression well'
   `,
     { chapter: 2 }
   ).toMatchInlineSnapshot(
-    `"Line 1: Error: \\"Infinite loop detected. Did you forget your base case?\\""`
+    `"Line 1: Error: \\"Infinite recursion detected. Did you forget your base case?\\""`
   )
 }, 30000)
 
@@ -204,7 +204,7 @@ test('Function infinite recursion with different args represents CallExpression 
     f(0);
   `).toEqual(
     expect.stringMatching(
-      /^Line 1: Error: \"Infinite loop detected. Did you forget your base case\?\"/
+      /^Line 1: Error: \"Infinite recursion detected. Did you forget your base case\?\"/
     )
   )
 }, 30000)
