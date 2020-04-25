@@ -570,6 +570,23 @@ describe('standard opcodes', () => {
 
 describe('primitive opcodes', () => {
   describe('self-implemented', () => {
+    test('DISPLAY works for circular references', () => {
+      return expectDisplayResult(
+        stripIndent`
+          const p = pair(1,2);
+          const q = pair(3,4);
+          set_head(q,p);
+          set_tail(p,q);
+          display(p);
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "[1, [...<circular>, 4]]",
+                ]
+              `)
+    })
+
     test('ARRAY_LEN works', () => {
       return expectDisplayResult(
         stripIndent`
