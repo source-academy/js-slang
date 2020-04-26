@@ -225,6 +225,27 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export function hasDeclaration(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): boolean {
+  const program = parse(code, context, true)
+  if (!program) {
+    return false
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return false
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (declarationNode == null || declarationNode.loc == null) {
+    return false
+  }
+
+  return true
+}
+
 export async function getNames(
   code: string,
   line: number,
@@ -264,6 +285,7 @@ export function getTypeInformation(
   if (program === null) {
     return ''
   }
+
   const [typedProgram, error] = typeCheck(program)
   const parsedError = parseError(error)
 
