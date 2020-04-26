@@ -1,0 +1,126 @@
+\subsection{Adding Arrays}
+
+In order to implement arrays, we add \texttt{NEWA} (New array),
+\texttt{LDAG} (Load boxed value from array),
+\texttt{STAG} (Store boxed value into array) and \texttt{DUP} 
+(Duplicate top of stack) to our instruction set. For this section,
+we will be using 0-indexing to refer to the elements instead for clarity.
+
+\paragraph{Compilation of Array Literals}
+The translation for an empty array literal is as follows.
+
+$\Rule{}{\lbrack\rbrack \translateaux \texttt{NEWA}}$
+
+Array literals typically have elements in the array as well. 
+Each element should be stored into its respective index in the array.
+Therefore, for each element in the array, we append the instructions
+$\texttt{DUP}.\texttt{LDCI}\ i.s_i.\texttt{STAG}$. 
+\texttt{DUP} is to duplicate the
+array reference at the top of the stack, so that we can pop the array 
+for the store operations, while keeping a reference to the array in 
+the stack for later usage. \texttt{LDCI i} refers to the index in the array
+to store the element in. Note that $i$ refers to the $i+1$th declared element
+in the array, hence \texttt{LDCI i} for the index in the array.
+We have the following rule for array literals.
+
+$\Rule{E_0 \translateaux s_0 \qquad \cdots \qquad E_n \translateaux s_n}{
+\lbrack E_0, ..., E_n\rbrack \translateaux s_0. \texttt{NEWA}.\texttt{DUP}
+.\texttt{LDCI}\ 0.s_0.\texttt{STAG}. \cdots .\texttt{DUP}
+.\texttt{LDCI}\ n.s_n\texttt{STAG}}
+$
+
+\paragraph{Execution of Array Literals}
+The execution of array literals should end with the newly declared
+array at the top of the operand stack. This is trivially done for the
+case of an empty array.
+
+$\Rule{s(\textit{pc}) = \texttt{NEWA}}{
+(\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(().os,\textit{pc}+1,e,\textit{rs})}
+$
+
+We represent our array here as a tuple of (elements).
+
+However, for an array literal with elements, in order to store elements
+into the array, we need to pop it from the stack. Therefore, in order
+to ensure we still have the array at the top of the stack after storing
+all the elements into the array, we have the \texttt{DUP} instruction. 
+Note that we simply pop the value at the top of the operand stack
+and push it back twice. The value does not need to be an array.
+
+$\Rule{s(\textit{pc}) = \texttt{DUP}}{
+(x.\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(x.x.\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+Finally, to store elements into the array, we use \texttt{STAG}, which pops the
+element to be stored, the index to store the element in, and the array
+itself, and stores the value accordingly. $x_i$ represents the element
+in index $i$ of the array. Each element in the array may or may not have
+a value. The length of the array is defined as the largest
+index assigned in the array + 1.
+
+$\Rule{s(\textit{pc}) = \texttt{STAG}\qquad 0 \leq j < i}{
+(y.i.(\cdots x_j).\textit{os},\textit{pc},e,\textit{rs}) 
+\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+Contents of array after instruction: $(\cdots x_j \cdots x_i)$
+
+Note that $y$ will be in index $i$ of the array. Indices with no explicit
+element assigned to it have the value \texttt{undefined}.
+
+\paragraph{Compilation and Execution of Array Assignment}
+We used \texttt{STAG} in the compilation of array literals
+above. \texttt{STAG} is similarly used for typical storing of elements in
+arrays through assignments.
+
+$\Rule{
+E_0 \translateaux s_0 \qquad E_1 \translateaux s_1 \qquad E_2 \translateaux s_2}
+{E_0\lbrack E_1\rbrack = E_2 \translateaux s_0.s_1.s_2.\texttt{STAG}}
+$
+
+Execution works the same as it did above. Note that the new element will replace
+the element that was stored at the same index in the array previously, if any.
+\texttt{STAG} will also update the length of the array if the index to 
+store the element in is larger than any previously used index for this array.
+
+$\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is not assigned}}{
+(y.i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \\
+\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+Contents of array after instruction: $(\cdots y \cdots)$
+
+$\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is assigned}}{
+(y.i.(\cdots x_i \cdots).\textit{os},\textit{pc},e,\textit{rs}) \\
+\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+Contents of array after instruction: $(\cdots y \cdots)$ 
+
+\paragraph{Compilation and Execution of Array Access}
+
+Lastly, to load an element from an array at an index, 
+and push the element to the top of the operand stack, we use \texttt{LDAG}.
+
+$\Rule{
+E_0 \translateaux s_0 \qquad E_1 \translateaux s_1}
+{E_0\lbrack E_1\rbrack \translateaux s_0.s_1.\texttt{LDAG}}
+$
+
+As for execution, if there is the array does contain an element in the
+corresponding index, it will load the element as such:
+
+$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is assigned}}{
+(i.(\cdots x_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(x_i.\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+Otherwise, it will load \texttt{undefined} instead, like in the case below:
+
+$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is not assigned}}{
+(i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(\texttt{undefined}.\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
