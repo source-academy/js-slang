@@ -2,6 +2,9 @@ import { GPU } from 'gpu.js'
 import { TypeError } from '../utils/rttc'
 import { isArray } from 'util'
 
+// Heuristic : Only use GPU if array is bigger than this
+const MAX_SIZE = 200
+
 // helper function to build 2D array output
 function buildArray(arr: Float32Array[][], end: any, res: any) {
   for (let i = 0; i < end[0]; i++) {
@@ -95,7 +98,7 @@ function checkValidGPU(f: any, end: any): boolean {
     cnt = cnt * i
   }
 
-  return cnt > 100
+  return cnt > MAX_SIZE
 }
 
 // just run on js!

@@ -5,9 +5,27 @@ import * as es from 'estree'
 
 // top-level gpu functions that call our code
 
-export function transpileToGPU(program: es.Program): number[][] {
+// transpiles if possible and returns display statements to end user
+export function transpileToGPU(program: es.Program): es.Statement[] {
   const transformer = new GPUTransformer(program)
-  return transformer.transform()
+  const res = transformer.transform()
+
+  const gpuDisplayStatements = []
+  // add some display statements to program
+  if (res.length > 0) {
+    for (const arr of res) {
+      let debug = `Attempting to optimize ${arr[1]} levels of nested loops starting on line ${arr[0]}`
+      if (arr[1] === 1) {
+        debug = `Attempting to optimize the loop on line ${arr[0]}`
+      }
+      gpuDisplayStatements.push(
+        create.expressionStatement(
+          create.callExpression(create.identifier('display'), [create.literal(debug)])
+        )
+      )
+    }
+  }
+  return gpuDisplayStatements
 }
 
 export function getInternalNamesForGPU(): Set<string> {

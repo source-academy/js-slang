@@ -14,7 +14,7 @@ import GPUBodyVerifier from './verification/bodyVerifier'
  * }
  * would become:
  * let res = 0;
- * res = __createKernel([5], {}, function() { return 5; })
+ * __createKernel(....)
  */
 class GPUTransformer {
   // program to mutate
@@ -80,7 +80,6 @@ class GPUTransformer {
 
     // 1. verification of outer loops + body
     this.checkOuterLoops(node)
-
     // no gpu loops found
     if (this.counters.length === 0 || new Set(this.counters).size !== this.counters.length) {
       return 0
@@ -264,7 +263,7 @@ class GPUTransformer {
   }
 
   /*
-   * Based on state, gets the correct body to me run across threads
+   * Based on state, gets the correct body to be run across threads
    * e.g. state = 2 (2 top level loops skipped)
    * for (...) {
    *    for (...) {

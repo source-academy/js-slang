@@ -207,7 +207,7 @@ test('2 for loop case with 2 indices being written + use of result variable[i][j
   expect(cnt).toEqual(3)
 })
 
-test('3 for loop case with 1 indices being written to gets transpiled correctly', () => {
+test('3 for loop case with 1 index being written to gets transpiled correctly', () => {
   const code = stripIndent`
     let res = [];
     for (let i = 0; i < 5; i = i + 1) {
@@ -262,4 +262,41 @@ test('3 for loop case with 3 indices being written to gets transpiled correctly'
 
   const cnt = transpiled.match(/__createKernel/g)?.length
   expect(cnt).toEqual(3)
+})
+
+test('many for loop case - matrix multiplication (2 transpilations)', () => {
+  const code = stripIndent`
+    const size = 10;
+    const L = [];
+    const R = [];
+    for (let r = 0; r < size; r = r + 1) {
+        L[r] = [];
+        R[r] = [];
+        for (let c = 0; c < size; c = c + 1) {
+            L[r][c] = r*c;
+            R[r][c] = r + c;
+        }
+    }
+
+    const res = [];
+    for (let r = 0; r < size; r = r + 1) {
+        res[r] = [];
+    }
+
+    for (let r = 0; r < size; r = r + 1) {
+        for (let c = 0; c < size; c = c + 1) {
+            let sum = 0;
+            for (let i = 0; i < size; i = i + 1) {
+                sum = sum + L[r][i] * R[i][c];
+            }
+            res[r][c] = sum;
+        }
+    }
+  `
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
+
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(4)
 })

@@ -799,24 +799,9 @@ export function transpile(
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
-  const gpuDisplayStatements: es.Statement[] = []
+  let gpuDisplayStatements: es.Statement[] = []
   if (variant === 'gpu') {
-    const res = transpileToGPU(program)
-
-    // add some display statements to program
-    if (res.length > 0) {
-      for (const arr of res) {
-        let debug = `Attempting to optimize ${arr[1]} levels of nested loops starting on line ${arr[0]}`
-        if (arr[1] === 1) {
-          debug = `Attempting to optimize the loop on line ${arr[0]}`
-        }
-        gpuDisplayStatements.push(
-          create.expressionStatement(
-            create.callExpression(create.identifier('display'), [create.literal(debug)])
-          )
-        )
-      }
-    }
+    gpuDisplayStatements = transpileToGPU(program)
   }
 
   transformReturnStatementsToAllowProperTailCalls(program, variant)

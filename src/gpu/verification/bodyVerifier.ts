@@ -139,12 +139,13 @@ class GPUBodyVerifier {
 
     // check result variable is not used anywhere with wrong indices
     const getProp = this.getPropertyAccess
+    const resArr = this.outputArray
     simple(
       node,
       {
         MemberExpression(nx: es.MemberExpression) {
           const chk = checker(nx)
-          if (localVar.has(chk.name)) {
+          if (chk.name !== resArr.name) {
             return
           }
 
