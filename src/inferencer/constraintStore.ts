@@ -23,14 +23,13 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
     // Iterate through all Type Envs and replace any TVar with their value from the constraintStore, if available
     for (const env of environments) {
       for (const val of env.values()) {
-        const typesArray = val.types  // Todo: Consider refactor later
+        const typesArray = val.types // Todo: Consider refactor later
         for (let i = 0; i < typesArray.length; i++) {
           const type = typesArray[i]
 
           if (isTypeVariable(type)) {
             typesArray[i] = getUpdatedTypeVariable(type)
-          }
-          else if (isFunctionType(type)) {
+          } else if (isFunctionType(type)) {
             for (let j = 0; j < type.parameterTypes.length; j++) {
               type.parameterTypes[j] = getUpdatedTypeVariable(type.parameterTypes[j])
             }
@@ -48,8 +47,7 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
 function getUpdatedTypeVariable(typeVariable: Type) {
   if (isTypeVariable(typeVariable) && constraintStore.get(typeVariable)) {
     return constraintStore.get(typeVariable)
-  }
-  else {
+  } else {
     return typeVariable
   }
 }
@@ -76,12 +74,12 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   // check if both sides are type variables and they have the same name (Rule 3)
   else if (
     (isTypeVariable(constraintLhs) &&
-    ifConstraintStoreHas(constraintRhs) &&
-    isTypeVariable(constraintStore.get(constraintRhs)) &&
-    (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id)
-    || (isTypeVariable(constraintLhs) &&
-    isTypeVariable(constraintRhs) &&
-    ((constraintLhs as Variable).id === (constraintRhs as Variable).id))
+      ifConstraintStoreHas(constraintRhs) &&
+      isTypeVariable(constraintStore.get(constraintRhs)) &&
+      (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id) ||
+    (isTypeVariable(constraintLhs) &&
+      isTypeVariable(constraintRhs) &&
+      (constraintLhs as Variable).id === (constraintRhs as Variable).id)
   ) {
     // do nothing
     return
@@ -103,8 +101,8 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
-    ((constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
-      (constraintStore.get(constraintRhs) as Primitive).name !== 'string')
+    (constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
+      (constraintStore.get(constraintRhs) as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5')
     return { constraintLhs, constraintRhs } // for error logging
@@ -114,8 +112,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     // ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintRhs) &&
-    ((constraintRhs as Primitive).name !== 'number' &&
-      (constraintRhs as Primitive).name !== 'string')
+    (constraintRhs as Primitive).name !== 'number' && (constraintRhs as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5(b)')
     return { constraintLhs, constraintRhs } // for error logging
@@ -151,13 +148,13 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     addNConstraint(constraintLhs as FunctionType, constraintStore.get(constraintRhs))
   }
   // check for mismatch base types (Rule 9)
-  else if ((
-    isBaseType(constraintLhs) &&
-    isBaseType(constraintRhs) &&
-    (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name
-   )
-   || (isFunctionType(constraintLhs) && isBaseType(constraintRhs))
-   || (isBaseType(constraintLhs) && isFunctionType(constraintRhs))) {
+  else if (
+    (isBaseType(constraintLhs) &&
+      isBaseType(constraintRhs) &&
+      (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name) ||
+    (isFunctionType(constraintLhs) && isBaseType(constraintRhs)) ||
+    (isBaseType(constraintLhs) && isFunctionType(constraintRhs))
+  ) {
     console.log('[debug] Error in Rule 9')
     return { constraintLhs, constraintRhs } // for error logging
   } else {

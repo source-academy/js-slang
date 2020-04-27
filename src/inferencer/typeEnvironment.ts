@@ -9,7 +9,7 @@ export const emptyMap = new Map()
 // export const environments: Map<string, Type>[] = [globalTypeEnvironment] // Todo: Consider refactor later
 export const environments: Map<string, any>[] = [globalTypeEnvironment]
 export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
-  const newTypeEnvironment =  new Map([...environments[0], ...map])
+  const newTypeEnvironment = new Map([...environments[0], ...map])
   environments.push(newTypeEnvironment)
   return environments[environments.length - 1]
 }

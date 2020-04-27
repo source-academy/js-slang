@@ -30,7 +30,7 @@ import {
   printTypeEnvironment
 } from '../utils/inferencerUtils'
 
-let annotatedProgram: es.Program;
+let annotatedProgram: es.Program
 let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
@@ -129,7 +129,9 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   }
 }
 
-function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression> | TypeAnnotatedNode<es.LogicalExpression>) {
+function inferBinaryExpression(
+  binaryExpression: TypeAnnotatedNode<es.BinaryExpression> | TypeAnnotatedNode<es.LogicalExpression>
+) {
   // Given operator, get arg and result types of binary expression from type env
   const currentTypeEnvironmentTypes = currentTypeEnvironment.get(binaryExpression.operator).types
   let functionType
@@ -170,7 +172,11 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
           `Expecting type \`${param1Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
           param1.loc
         )
-      else displayErrorAndTerminate('Polymorphic type error when type checking first argument, error msg TBC', param1.loc)
+      else
+        displayErrorAndTerminate(
+          'Polymorphic type error when type checking first argument, error msg TBC',
+          param1.loc
+        )
     }
   }
 
@@ -182,7 +188,11 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
           `Expecting type \`${param2Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
           param2.loc
         )
-      else displayErrorAndTerminate('Polymorphic type error when type checking second argument, error msg TBC', param2.loc)
+      else
+        displayErrorAndTerminate(
+          'Polymorphic type error when type checking second argument, error msg TBC',
+          param2.loc
+        )
     }
   }
 
@@ -335,7 +345,11 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   const declarationArgCount = declarationFunctionType.parameterTypes.length
 
   // Additional logic to handle polymorphic functions
-  if (declarationFunctionType && isFunctionType(declarationFunctionType) && declarationFunctionType.isPolymorphic) {
+  if (
+    declarationFunctionType &&
+    isFunctionType(declarationFunctionType) &&
+    declarationFunctionType.isPolymorphic
+  ) {
     declarationFunctionType = generateFunctionTypeWithFreshTypeVariables(declarationFunctionType)
   }
 
@@ -437,7 +451,9 @@ function ifStatementHasReturnStatements(ifStatement: TypeAnnotatedNode<es.IfStat
   const consequent = ifStatement.consequent as TypeAnnotatedNode<es.BlockStatement>
   const alternate = ifStatement.alternate as TypeAnnotatedNode<es.BlockStatement>
 
-  return blockStatementHasReturnStatements(consequent) || blockStatementHasReturnStatements(alternate)
+  return (
+    blockStatementHasReturnStatements(consequent) || blockStatementHasReturnStatements(alternate)
+  )
 }
 
 function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStatement>): boolean {
@@ -459,18 +475,23 @@ function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStat
   return false
 }
 
-function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
+function inferBlockStatement(
+  block: TypeAnnotatedNode<es.BlockStatement>,
+  environmentToExtend: Map<any, any>
+) {
   currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
     infer(expression, currentTypeEnvironment)
     if (expression.type === 'ReturnStatement') {
-      const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
+      const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>)
+        .typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
         if (result) {
           displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block', block.loc
+            'WARNING: There is a type error when checking the type of a block',
+            block.loc
           )
         }
         return
@@ -485,7 +506,8 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
         const result = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
         if (result) {
           displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block', block.loc
+            'WARNING: There is a type error when checking the type of a block',
+            block.loc
           )
         }
         return
@@ -497,7 +519,8 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
     const result = updateTypeConstraints(blockTypeVariable, undefinedType)
     if (result) {
       displayErrorAndTerminate(
-        'WARNING: There is a type error when checking the type of a block', block.loc
+        'WARNING: There is a type error when checking the type of a block',
+        block.loc
       )
     }
     return
@@ -566,7 +589,9 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
-        parameters.set((param as es.Identifier).name, { types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable] })
+        parameters.set((param as es.Identifier).name, {
+          types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable]
+        })
       }
       infer(statement.body, parameters)
       currentTypeEnvironment = extendEnvironment(parameters)
