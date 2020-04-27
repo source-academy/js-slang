@@ -3,9 +3,10 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
-import { AllowedDeclarations, EvaluationMethod, Value } from '../types'
-import * as create from '../utils/astCreator'
+import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { loadModuleText } from '../modules/moduleLoader'
+import * as create from '../utils/astCreator'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -60,6 +61,53 @@ const globalIds = {
   globals: create.identifier('dummy')
 }
 let contextId: number
+
+function prefixModule(program: es.Program): string {
+  let moduleCounter = 0
+  let prefix = ''
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break
+    }
+    const moduleText = loadModuleText(node.source.value as string)
+    prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
+    moduleCounter++
+  }
+  return prefix
+}
+
+export function transformSingleImportDeclaration(
+  moduleCounter: number,
+  node: es.ImportDeclaration
+) {
+  const result = []
+  const tempNamespace = `__MODULE_${moduleCounter}__`
+  // const yyy = __MODULE_xxx__.yyy;
+  const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
+  for (const symbol of neededSymbols) {
+    result.push(
+      create.constantDeclaration(
+        symbol,
+        create.memberExpression(create.identifier(tempNamespace), symbol)
+      )
+    )
+  }
+  return result
+}
+
+export function transformImportDeclarations(program: es.Program) {
+  const imports = []
+  let result: es.VariableDeclaration[] = []
+  let moduleCounter = 0
+  while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
+    imports.unshift(program.body.shift() as es.ImportDeclaration)
+  }
+  for (const node of imports) {
+    result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+    moduleCounter++
+  }
+  program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+}
 
 function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
@@ -211,10 +259,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(
-  program: es.Program,
-  evaluationMethod: EvaluationMethod
-) {
+function transformReturnStatementsToAllowProperTailCalls(program: es.Program, variant: Variant) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -236,9 +281,9 @@ function transformReturnStatementsToAllowProperTailCalls(
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
-        const args = evaluationMethod === 'strict' ? expression.arguments : ([] as es.Expression[])
+        const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
 
-        if (evaluationMethod === 'lazy') {
+        if (variant === 'lazy') {
           for (const arg of expression.arguments) {
             args.push(delayIt(arg as es.Expression))
           }
@@ -288,16 +333,13 @@ function delayIt(expr: es.Expression) {
   return obj
 }
 
-function transformCallExpressionsToCheckIfFunction(
-  program: es.Program,
-  evaluationMethod: EvaluationMethod
-) {
+function transformCallExpressionsToCheckIfFunction(program: es.Program, variant: Variant) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
-      const args = evaluationMethod === 'strict' ? node.arguments : ([] as es.Expression[])
+      const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
 
-      if (evaluationMethod === 'lazy') {
+      if (variant === 'lazy') {
         for (const arg of node.arguments) {
           args.push(delayIt(arg as es.Expression))
         }
@@ -340,6 +382,18 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     }
     variableScope = variableScope.previousScope
     variableScopeId = create.memberExpression(variableScopeId, 'previousScope')
+  }
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break
+    }
+    const symbols = node.specifiers.map(specifier => specifier.local.name)
+    for (const symbol of symbols) {
+      previousVariablesToAst.set(symbol, {
+        isConstant: true,
+        variableLocationId: create.literal(-1)
+      })
+    }
   }
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
@@ -675,7 +729,7 @@ export function transpile(
   program: es.Program,
   id: number,
   skipUndefinedVariableErrors = false,
-  evaluationMethod: EvaluationMethod = 'strict'
+  variant: Variant = 'default'
 ) {
   contextId = id
   refreshLatestIdentifiers(program)
@@ -687,8 +741,8 @@ export function transpile(
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
-  transformReturnStatementsToAllowProperTailCalls(program, evaluationMethod)
-  transformCallExpressionsToCheckIfFunction(program, evaluationMethod)
+  transformReturnStatementsToAllowProperTailCalls(program, variant)
+  transformCallExpressionsToCheckIfFunction(program, variant)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
   transformSomeExpressionsToCheckIfBoolean(program)
   transformPropertyAssignment(program)
@@ -700,6 +754,8 @@ export function transpile(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
+  const modulePrefix = prefixModule(program)
+  transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
@@ -720,7 +776,7 @@ export function transpile(
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
   const map = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap: map })
+  const transpiled = modulePrefix + generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }
 }

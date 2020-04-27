@@ -6,6 +6,7 @@ import {
   FunctionDeclaration,
   Identifier,
   Node,
+  SourceLocation,
   VariableDeclarator
 } from 'estree'
 import { Context } from './types'
@@ -89,22 +90,42 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
   return undefined
 }
 
-function containsNode(nodeOuter: Node, nodeInner: Node) {
+function containsNode(nodeOuter: Node, nodeInner: Node): boolean {
   const outerLoc = nodeOuter.loc
   const innerLoc = nodeInner.loc
+
   return (
-    outerLoc &&
-    innerLoc &&
-    ((outerLoc.start.line === innerLoc.start.line &&
-      outerLoc.end.line === innerLoc.end.line &&
-      outerLoc.start.column <= innerLoc.start.column &&
-      outerLoc.end.column >= innerLoc.end.column) ||
-      (outerLoc.start.line < innerLoc.start.line && outerLoc.end.line >= innerLoc.end.line) ||
-      (outerLoc.start.line <= innerLoc.start.line && outerLoc.end.line > innerLoc.end.line))
+    outerLoc != null &&
+    innerLoc != null &&
+    isInLoc(innerLoc.start.line, innerLoc.start.column, outerLoc) &&
+    isInLoc(innerLoc.end.line, innerLoc.end.column, outerLoc)
   )
 }
 
-function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
+// This checks if a given (line, col) value is part of another node.
+export function isInLoc(line: number, col: number, location: SourceLocation): boolean {
+  if (location == null) {
+    return false
+  }
+
+  if (location.start.line < line && location.end.line > line) {
+    return true
+  } else if (location.start.line === line && location.end.line > line) {
+    return location.start.column <= col
+  } else if (location.start.line < line && location.end.line === line) {
+    return location.end.column >= col
+  } else if (location.start.line === line && location.end.line === line) {
+    if (location.start.column <= col && location.end.column >= col) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+}
+
+export function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
   let foundAncestors: Node[] = []
   ancestor(root, {
     Identifier: (node: Identifier, ancestors: [Node]) => {

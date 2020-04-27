@@ -5,11 +5,12 @@ import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
+import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, EvaluationMethod, Value } from './types'
+import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
@@ -49,9 +50,9 @@ const createGlobalEnvironment = () => ({
 
 export const createEmptyContext = <T>(
   chapter: number,
+  variant: Variant = 'default',
   externalSymbols: string[],
-  externalContext?: T,
-  evalMethod: EvaluationMethod = 'strict'
+  externalContext?: T
 ): Context<T> => {
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
@@ -71,7 +72,7 @@ export const createEmptyContext = <T>(
     debugger: createEmptyDebugger(),
     contextId: length - 1,
     executionMethod: 'auto',
-    evaluationMethod: evalMethod
+    variant
   }
 }
 
@@ -168,7 +169,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 2) {
     // List library
 
-    if (context.evaluationMethod === 'lazy') {
+    if (context.variant === 'lazy') {
       defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
       defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false))
       defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
@@ -226,11 +227,16 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += context.evaluationMethod === 'strict' ? listPrelude : lazyListPrelude
+    prelude += context.variant === 'lazy' ? lazyListPrelude : listPrelude
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
   }
+
+  if (context.variant === 'non-det') {
+    prelude += nonDetPrelude
+  }
+
   if (prelude !== '') {
     context.prelude = prelude
   }
@@ -249,12 +255,13 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(
   chapter = 1,
+  variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
-  evaluationMethod: EvaluationMethod = 'strict'
 ) => {
-  const context = createEmptyContext(chapter, externalSymbols, externalContext, evaluationMethod)
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
+
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)
   importExternalSymbols(context, externalSymbols)

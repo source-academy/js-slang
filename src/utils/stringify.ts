@@ -1,7 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
-import { Value } from '../types'
 import { forceIt } from './operators'
+import { Value, Type } from '../types'
 
 function makeIndent(indent: number | string): string {
   if (typeof indent === 'number') {
@@ -125,4 +125,47 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
   }
 
   return stringifyValue(value, 0)
+}
+
+export function typeToString(type: Type): string {
+  return niceTypeToString(type)
+}
+
+function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
+  function curriedTypeToString(t: Type) {
+    return niceTypeToString(t, nameMap)
+  }
+
+  switch (type.kind) {
+    case 'primitive':
+      return type.name
+    case 'variable':
+      if (type.constraint && type.constraint !== 'none') {
+        return type.constraint
+      }
+      if (!(type.name in nameMap)) {
+        // type name is not in map, so add it
+        nameMap[type.name] = 'T' + nameMap._next++
+      }
+      return nameMap[type.name]
+    case 'list':
+      return `List<${curriedTypeToString(type.elementType)}>`
+    case 'pair':
+      const headType = curriedTypeToString(type.headType)
+      // convert [T1 , List<T1>] back to List<T1>
+      if (
+        type.tailType.kind === 'list' &&
+        headType === curriedTypeToString(type.tailType.elementType)
+      )
+        return `List<${headType}>`
+      return `[${curriedTypeToString(type.headType)}, ${curriedTypeToString(type.tailType)}]`
+    case 'function':
+      let parametersString = type.parameterTypes.map(curriedTypeToString).join(', ')
+      if (type.parameterTypes.length !== 1 || type.parameterTypes[0].kind === 'function') {
+        parametersString = `(${parametersString})`
+      }
+      return `${parametersString} -> ${curriedTypeToString(type.returnType)}`
+    default:
+      return 'Unable to infer type'
+  }
 }

@@ -9,5 +9,6 @@ coverage/
 # emacs backup files
 *~
 
+.vscode/
 tsconfig.tsbuildinfo
 test-report.html
