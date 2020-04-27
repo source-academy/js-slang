@@ -169,7 +169,7 @@ export function makeLoopChecker(
 ) {
   return {
     functionName,
-    message: 'Infinite recursion detected. ' + message,
+    message: 'Infinite recursion (or runtime error) detected. ' + message,
     condition,
     loc
   } as InfiniteLoopChecker

@@ -5,6 +5,38 @@ import { expectParsedError, expectResult } from '../../utils/testing'
 // Look under UNSUPPORTED for infinite loops that cannot
 // be detected yet
 
+test('scoping/shadowing does not cause false positives', () => {
+  const code = `
+  function f() {
+    const f = () => 1;
+    return f();
+  }
+  f();
+      `
+  return expectResult(code).toMatchSnapshot()
+})
+
+test('returning early does not cause false positives', () => {
+  const code = `
+  function f() {
+    return 1;
+    f();
+  }
+  f();
+      `
+  return expectResult(code).toMatchSnapshot()
+})
+
+test('CallingNonFunctionValue does not break implementation', () => {
+  const code = `
+  function f(x) {
+    return 1(2);
+  }
+  f(1);
+      `
+  return expectParsedError(code).toMatchSnapshot()
+})
+
 test('CallingNonFunctionValue does not break implementation', () => {
   const code = `
   function f(x) {

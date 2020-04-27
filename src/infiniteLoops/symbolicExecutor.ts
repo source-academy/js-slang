@@ -139,6 +139,31 @@ export function getFirstCall(node: es.FunctionDeclaration): stype.FunctionSymbol
   return stype.makeFunctionSymbol(id.name, args, ifNullWrapDummyLoc(node.loc))
 }
 
+function deleteAllAfterReturn(input: es.Node[]): es.Node[] {
+  function helper(nodes: es.Node[]): [boolean, es.Node[]] {
+    const output: es.Node[] = []
+    for (const nd of nodes) {
+      if (nd.type === 'ReturnStatement') {
+        output.push(nd)
+        return [true, output]
+      } else if (nd.type === 'BlockStatement') {
+        let newBody
+        let changedNodes
+        ;[changedNodes, newBody] = helper(nd.body)
+        const newBlock = { ...nd, body: newBody } as es.BlockStatement
+        output.push(newBlock)
+        if (changedNodes) {
+          return [true, output]
+        }
+      } else {
+        output.push(nd)
+      }
+    }
+    return [false, output]
+  }
+  return helper(input)[1]
+}
+
 type Executor = (node: es.Node, store: Map<string, stype.SSymbol>[]) => stype.SSymbol
 
 // similar to evaluators in the interpreter
@@ -163,14 +188,24 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
     if (rhs) {
       const result = symEx(rhs, store)
       if (stype.isTerminal(result)) {
-        store[0][id.name] = result
+        store[0].set(id.name, result)
         return stype.unusedSymbol
       } else {
-        store[0][id.name] = stype.unusedSymbol
+        store[0].set(id.name, stype.skipSymbol)
         return result
       }
     }
-    return stype.unusedSymbol
+    return stype.skipSymbol
+  },
+  FunctionDeclaration(node: es.FunctionDeclaration, store: Map<string, stype.SSymbol>[]) {
+    const id = node.id
+    if (id?.type === 'Identifier') {
+      store[0].set(id.name, stype.skipSymbol)
+    }
+    return stype.skipSymbol
+  },
+  ArrowFunctionExpression(node: es.FunctionDeclaration, store: Map<string, stype.SSymbol>[]) {
+    return stype.skipSymbol
   },
   ExpressionStatement(node: es.ExpressionStatement, store: Map<string, stype.SSymbol>[]) {
     return symEx(node.expression, store)
@@ -189,7 +224,8 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
   },
   BlockStatement(node: es.BlockStatement, store: Map<string, stype.SSymbol>[]) {
     const newContext = [new Map()].concat(store)
-    return stype.makeSequenceSymbol(node.body.map(x => symEx(x, newContext)))
+    const newBody = deleteAllAfterReturn(node.body)
+    return stype.makeSequenceSymbol(newBody.map(x => symEx(x, newContext)))
   },
   BinaryExpression(node: es.BinaryExpression, store: Map<string, stype.SSymbol>[]) {
     const lhs = symEx(node.left, store)
@@ -220,6 +256,10 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
   },
   CallExpression(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
     if (node.callee.type === 'Identifier') {
+      const checkShadowed = getFromStore(node.callee.name, store)
+      if (checkShadowed?.type === 'SkipSymbol') {
+        return stype.skipSymbol
+      }
       return stype.makeFunctionSymbol(
         node.callee.name,
         node.arguments.map(x => symEx(x, store)),

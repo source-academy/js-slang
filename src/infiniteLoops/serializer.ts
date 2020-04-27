@@ -55,20 +55,25 @@ export function processLogical(node: stype.BooleanSymbol) {
 
 /* for nested functions, we want to make another transition, i.e.
  * f(x) {g(h(x));} -> f calls g, f calls h.
+ * TODO: need to reconsider nested calls. Uncommenting the lines
+ *       below will include nested calls, but will cause trouble
+ *       with NoBaseCase detection. Possibly add a flag in the
+ *       T-set for nested calls? Can be put on hold for now
+ *       since we don't handle nested calls at all.
  */
 function flattenFun(node: stype.FunctionSymbol): stype.FunctionSymbol[] {
   const newArgs = []
-  let nestedCalls: stype.FunctionSymbol[] = []
+  // let nestedCalls: stype.FunctionSymbol[] = []
   for (const arg of node.args) {
     if (arg.type === 'FunctionSymbol') {
       newArgs.push(stype.skipSymbol)
-      nestedCalls = nestedCalls.concat(flattenFun(arg))
+      // nestedCalls = nestedCalls.concat(flattenFun(arg))
     } else {
       newArgs.push(arg)
     }
   }
-  nestedCalls.unshift({ ...node, args: newArgs })
-  return nestedCalls
+  // nestedCalls.unshift({ ...node, args: newArgs })
+  return [{ ...node, args: newArgs }]
 }
 
 /* creates a transition for each functionSymbol in the symbol tree

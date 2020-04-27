@@ -184,9 +184,10 @@ test('Function infinite recursion with list args represents CallExpression well'
     f(list(1, 2));
   `,
     { chapter: 2 }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: \\"Infinite recursion detected. Did you forget your base case?\\""`
-  )
+  ).toMatchInlineSnapshot(`
+            "Line 1: Maximum call stack size exceeded
+              f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+          `)
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
@@ -204,7 +205,7 @@ test('Function infinite recursion with different args represents CallExpression 
     f(0);
   `).toEqual(
     expect.stringMatching(
-      /^Line 1: Error: \"Infinite recursion detected. Did you forget your base case\?\"/
+      /^Line 1: Error: \"Infinite recursion \(or runtime error\) detected. Did you forget your base case\?\"/
     )
   )
 }, 30000)

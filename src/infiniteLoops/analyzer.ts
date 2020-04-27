@@ -18,17 +18,6 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
     if (calleeNames.every(x => x === name)) {
       const loc = transitions[0].caller.loc
       checkers.push(makeChecker(name, loc))
-    } else {
-      for (const transition of transitions) {
-        if (
-          transition.condition === null &&
-          transition.callee.type === 'FunctionSymbol' &&
-          transition.caller.name === transition.callee.name
-        ) {
-          const loc = transition.caller.loc
-          checkers.push(makeChecker(name, loc))
-        }
-      }
     }
   }
 
