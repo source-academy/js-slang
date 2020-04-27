@@ -6,7 +6,8 @@ import * as es from 'estree'
 // The Type Environment
 export const globalTypeEnvironment = new Map()
 export const emptyMap = new Map()
-export const environments: Map<string, Type>[] = [globalTypeEnvironment]
+// export const environments: Map<string, Type>[] = [globalTypeEnvironment] // Todo: Consider refactor later
+export const environments: Map<string, any>[] = [globalTypeEnvironment]
 export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
   const newTypeEnvironment =  new Map([...environments[0], ...map])
   environments.push(newTypeEnvironment)
@@ -65,6 +66,7 @@ export function updateTypeEnvironment(program: es.Program) {
 
     // TODO: How to tell if the function declared is polymorphic? (w/o evaluating the body)
     // From the return statement's type variable obj?
+    // Check if any param or return type is Tvar, if yes then it's polymorphic.
     const isPolymorphic = true // set all to true for now and see what happens
     // ...
 
@@ -125,6 +127,19 @@ function generateFunctionType(
     isPolymorphic
   }
   return functionType
+}
+
+export function generateAndCopyFunctionType(functionTypeToCopy: Type) {
+  const newFunctionType = Object.create(functionTypeToCopy)
+
+  // Array still gets copied by reference, hence force replace with new
+  const newParameterTypes = []
+  for (const type of newFunctionType.parameterTypes) {
+    newParameterTypes.push(Object.create(type))
+  }
+  newFunctionType.parameterTypes = newParameterTypes
+
+  return newFunctionType
 }
 
 function generateAddableType() {

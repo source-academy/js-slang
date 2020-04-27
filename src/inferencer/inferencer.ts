@@ -18,7 +18,8 @@ import {
   globalTypeEnvironment,
   popEnvironment,
   undefinedType,
-  emptyMap
+  emptyMap,
+  generateAndCopyFunctionType
 } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
@@ -57,23 +58,15 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   const idenTypeVariable = identifier.typeVariable as Variable
   const idenTypeEnvType = currentTypeEnvironment.get(identifier.name).types[0]
 
-  if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
-    const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
-    if (result !== undefined) {
+  if (idenTypeVariable && idenTypeEnvType) {
+    const errorObj = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
+    if (errorObj) {
       displayErrorAndTerminate(
         'WARNING: There should not be a type error here in `inferIdentifier()` - pls debug',
         identifier.loc
       )
     }
   }
-
-  // TODO: do I need to declare? TBC
-  // - not necessary since it itself is 'not a type'? e.g. 'x;' -> there's no type to x? - TBC
-  // identifier.inferredType = {
-  //   kind: '??',
-  //   type: '??'
-  // }
-  // literal.typability = 'Typed'
 }
 
 function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>) {
@@ -85,26 +78,15 @@ function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.Vari
   const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
   const valueTypeVariable = value.typeVariable as Variable
 
-  if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
-    const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
-    if (result !== undefined) {
+  if (idenTypeVariable && valueTypeVariable) {
+    const errorObj = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
+    if (errorObj) {
       displayErrorAndTerminate(
         'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
         constantDeclaration.loc
       )
     }
   }
-
-  // if manage to pass step 3, means no type error
-
-  // declare - TODO: do I need to declare? TBC
-  // - not necessary since no one is dependent on constantDeclaration's inferredType?? - TBC
-  // - plus not sure what to put in 'kind' and 'name' also
-  // constantDeclaration.inferredType = {
-  //   kind: 'variable',
-  //   name: variableType
-  // }
-  // constantDeclaration.typability = 'Typed'
 }
 
 function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
@@ -135,8 +117,8 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   }
 
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
-    const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
-    if (result !== undefined) {
+    const errorObj = updateTypeConstraints(resultTypeVariable, operatorResultType)
+    if (errorObj) {
       displayErrorAndTerminate(
         `Expecting type \`${printType(operatorResultType)}\` but got \`${printType(
           resultTypeVariable
@@ -147,7 +129,7 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   }
 }
 
-function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression>) {
+function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpression> | TypeAnnotatedNode<es.LogicalExpression>) {
   // Given operator, get arg and result types of binary expression from type env
   const currentTypeEnvironmentTypes = currentTypeEnvironment.get(binaryExpression.operator).types
   let functionType
@@ -162,9 +144,8 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
   // Additional logic for polymorphic case
   // E.g. `A1, A1 -> A1`
   // Becomes `A10, A10 -> A10` after generating fresh type variables
-  if (functionType.isPolymorphic) {
-    const tmpMap = new Map() // tracks old TVariable, new TVariable
-    replaceTypeVariablesWithFreshTypeVariables(functionType, tmpMap)
+  if (functionType && isFunctionType(functionType) && functionType.isPolymorphic) {
+    functionType = generateFunctionTypeWithFreshTypeVariables(functionType)
   }
 
   const param1Type = functionType.parameterTypes[0]
@@ -182,11 +163,11 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
   const resultTypeVariable = binaryExpression.typeVariable as Variable
 
   if (param1TypeVariable !== undefined && param1Type !== undefined) {
-    const result = updateTypeConstraints(param1TypeVariable, param1Type)
-    if (result !== undefined && result.constraintRhs) {
+    const errorObj = updateTypeConstraints(param1TypeVariable, param1Type)
+    if (errorObj && errorObj.constraintRhs) {
       if (!functionType.isPolymorphic)
         displayErrorAndTerminate(
-          `Expecting type \`${param1Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
+          `Expecting type \`${param1Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
           param1.loc
         )
       else displayErrorAndTerminate('Polymorphic type error when type checking first argument, error msg TBC', param1.loc)
@@ -194,11 +175,11 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
   }
 
   if (param2TypeVariable !== undefined && param2Type !== undefined) {
-    const result = updateTypeConstraints(param2TypeVariable, param2Type)
-    if (result !== undefined && result.constraintRhs) {
+    const errorObj = updateTypeConstraints(param2TypeVariable, param2Type)
+    if (errorObj && errorObj.constraintRhs) {
       if (!functionType.isPolymorphic)
         displayErrorAndTerminate(
-          `Expecting type \`${param2Type.name}\` but got \`${result.constraintRhs.name}\` instead`,
+          `Expecting type \`${param2Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
           param2.loc
         )
       else displayErrorAndTerminate('Polymorphic type error when type checking second argument, error msg TBC', param2.loc)
@@ -216,13 +197,6 @@ function inferBinaryExpression(binaryExpression: TypeAnnotatedNode<es.BinaryExpr
       else displayErrorAndTerminate('Polymorphic type error, error msg TBC', binaryExpression.loc)
     }
   }
-
-  // declare - TODO: do I need to declare? TBC
-  // binaryExpression.inferredType = {
-  //   kind : 'primitive',
-  //   name: resultType
-  // }
-  // binaryExpression.typability = 'Typed'
 }
 
 function inferConditionals(
@@ -236,8 +210,8 @@ function inferConditionals(
   // check that the type of the test expression is boolean
   const testTypeVariable = test.typeVariable as Variable
   if (testTypeVariable !== undefined) {
-    const result = updateTypeConstraints(testTypeVariable, booleanType)
-    if (result !== undefined) {
+    const errorObj = updateTypeConstraints(testTypeVariable, booleanType)
+    if (errorObj) {
       displayErrorAndTerminate(
         `Expecting type of test expression to be a \`boolean\` but got \` ${printType(
           testTypeVariable
@@ -251,8 +225,8 @@ function inferConditionals(
   const consequentTypeVariable = consequent.typeVariable as Variable
   const alternateTypeVariable = alternate.typeVariable as Variable
   if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
-    const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
-    if (result !== undefined) {
+    const errorObj = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
+    if (errorObj) {
       displayErrorAndTerminate(
         `Expecting consequent type \`${printType(
           consequentTypeVariable
@@ -352,30 +326,34 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   //             f^T7 (1^T6)
 
   // First, ensure arg nodes have same count as Γ(f)
-  // And try to add constraints that ensure arg nodes have same corresponding types
   // e.g. T6 = T1
   const iden = functionApplication.callee as TypeAnnotatedNode<es.Identifier>
   const applicationArgs = functionApplication.arguments as TypeAnnotatedNode<es.Node>[]
   const applicationArgCount = applicationArgs.length
 
-  const declarationFunctionType = currentTypeEnvironment.get(iden.name).types[0]
+  let declarationFunctionType = currentTypeEnvironment.get(iden.name).types[0]
   const declarationArgCount = declarationFunctionType.parameterTypes.length
 
+  // Additional logic to handle polymorphic functions
+  if (declarationFunctionType && isFunctionType(declarationFunctionType) && declarationFunctionType.isPolymorphic) {
+    declarationFunctionType = generateFunctionTypeWithFreshTypeVariables(declarationFunctionType)
+  }
+
   if (applicationArgCount !== declarationArgCount) {
-    // check arg count
+    // Check arg count
     displayErrorAndTerminate(
       `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
       functionApplication.loc
     )
   }
 
+  // Second, try to add constraints that ensure arg nodes have same corresponding types
   for (let i = 0; i < applicationArgs.length; i++) {
     const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
-    const declarationArgTypeVariable = declarationFunctionType.parameterTypes[i]
-      .typeVariable as Variable
+    const declarationArgType = declarationFunctionType.parameterTypes[i]
 
-    if (applicationArgTypeVariable && declarationArgTypeVariable) {
-      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgTypeVariable)
+    if (applicationArgTypeVariable && declarationArgType) {
+      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
       if (errorObj) {
         displayErrorAndTerminate(
           'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
@@ -419,10 +397,13 @@ function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Lite
   }
 }
 
-function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Type, Type>) {
+function generateFunctionTypeWithFreshTypeVariables(parent: Type) {
   if (isFunctionType(parent)) {
-    // Process each paramType iteratively
     const p = parent as FunctionType
+    const child = generateAndCopyFunctionType(p)
+    const tmpMap = new Map() // tracks old TVariable, new TVariable
+
+    // Process each parameterType iteratively
     for (let i = 0; i < p.parameterTypes.length; i++) {
       if (isTypeVariable(p.parameterTypes[i])) {
         let freshTypeVariable
@@ -432,7 +413,7 @@ function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Ty
         } else {
           freshTypeVariable = tmpMap.get(p.parameterTypes[i])
         }
-        if (freshTypeVariable) p.parameterTypes[i] = freshTypeVariable
+        if (freshTypeVariable) child.parameterTypes[i] = freshTypeVariable
       }
     }
 
@@ -445,8 +426,10 @@ function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Ty
       } else {
         freshTypeVariable = tmpMap.get(p.returnType)
       }
-      if (freshTypeVariable) p.returnType = freshTypeVariable
+      if (freshTypeVariable) child.returnType = freshTypeVariable
     }
+
+    return child
   }
 }
 
@@ -559,6 +542,12 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       inferBinaryExpression(statement)
       return
     }
+    case 'LogicalExpression': {
+      infer(statement.left)
+      infer(statement.right)
+      inferBinaryExpression(statement)
+      return
+    }
     case 'ConditionalExpression': {
       infer(statement.test)
       infer(statement.alternate)
@@ -599,7 +588,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       break
     }
     default: {
-      console.log('Not implemented yet!')
+      console.log('[WARNING] Not implemented yet!')
       return
     }
   }
