@@ -236,13 +236,9 @@ function inferConditionals(
   const alternateTypeVariable = alternate.typeVariable as Variable
   if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
     const errorObj = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
-    if (errorObj) {
+    if (errorObj && errorObj.constraintLhs && errorObj.constraintRhs) {
       displayErrorAndTerminate(
-        `Expecting consequent type \`${printType(
-          consequentTypeVariable
-        )}\` and alternate type \`${printType(
-          alternateTypeVariable
-        )}\` to be the same, but got different`,
+        `Expecting consequent and alternate types \`${errorObj.constraintLhs.name}\` and \`${errorObj.constraintRhs.name}\` to be the same, but got different`,
         consequent.loc
       )
     } else {
@@ -275,13 +271,13 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
   // Update type constraints in constraintStore
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
 
-  // First, try to add constraints that ensure all ReturnStatements give same type
+  // First, try to add constraints that ensure all ReturnStatements *and BlockStatements* give same type
   // e.g. T2 = T3
   const bodyNodes = functionDeclaration.body.body
   let prevReturnTypeVariable
   for (const node of bodyNodes) {
-    if (node.type === 'ReturnStatement') {
-      const currReturnTypeVariable = (node as TypeAnnotatedNode<es.ReturnStatement>)
+    if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
+      const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>)
         .typeVariable as Variable
       if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
         const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
@@ -297,7 +293,7 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
   }
 
   // If the above step executes successfully w/o any Type Error,
-  // Next, add constraint to give the FunctionDeclaration a result type corresponding to the ReturnStatement
+  // Next, add constraint to give the FunctionDeclaration a result type corresponding to the (last) ReturnStatement *or BlockStatement*
   // e.g. T4 = T3
   const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
   const blockTypeVariable = block.typeVariable as Variable
@@ -483,12 +479,15 @@ function inferBlockStatement(
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
     infer(expression, currentTypeEnvironment)
+
+    // Set block type var to ReturnStatement type var
     if (expression.type === 'ReturnStatement') {
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>)
         .typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
-        const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
-        if (result) {
+        // const errorObj = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
+        const errorObj = updateTypeConstraints(blockTypeVariable, returnStatementTypeVariable)  // Fixed order
+        if (errorObj) {
           displayErrorAndTerminate(
             'WARNING: There is a type error when checking the type of a block',
             block.loc
@@ -498,13 +497,15 @@ function inferBlockStatement(
       }
     }
 
+    // Set block type var to IfStatement type var
     if (expression.type === 'IfStatement' && ifStatementHasReturnStatements(expression)) {
       // Check if it has return statements. It has return statements when the type of the block is not undefined.
       // If it does, assign type of block to type of IfStatement.
       const ifStatementTypeVariable = (expression as TypeAnnotatedNode<es.IfStatement>).typeVariable
       if (ifStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
-        const result = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
-        if (result) {
+        // const errorObj = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
+        const errorObj = updateTypeConstraints(blockTypeVariable, ifStatementTypeVariable)  // Fixed order
+        if (errorObj) {
           displayErrorAndTerminate(
             'WARNING: There is a type error when checking the type of a block',
             block.loc
@@ -515,9 +516,10 @@ function inferBlockStatement(
     }
   }
 
+  // Todo - Add test case for coverage
   if (blockTypeVariable !== undefined) {
-    const result = updateTypeConstraints(blockTypeVariable, undefinedType)
-    if (result) {
+    const errorObj = updateTypeConstraints(blockTypeVariable, undefinedType)
+    if (errorObj) {
       displayErrorAndTerminate(
         'WARNING: There is a type error when checking the type of a block',
         block.loc
@@ -528,7 +530,7 @@ function inferBlockStatement(
 }
 
 function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap) {
-  console.log(statement.type)
+  // console.log(statement.type)
   switch (statement.type) {
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
@@ -613,7 +615,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       break
     }
     default: {
-      console.log('[WARNING] Not implemented yet!')
+      console.log(`[WARNING] Not implemented yet - Pls check! statement.type: ${statement.type}`);
       return
     }
   }

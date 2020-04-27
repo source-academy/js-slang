@@ -40,7 +40,7 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
     }
   }
 
-  console.log('\n')
+  console.log('')
   return errorObj
 }
 
