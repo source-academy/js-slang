@@ -510,11 +510,11 @@ describe('type checking overloaded unary/binary primitives', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`
-          "Line 5: Expected the test part of the conditional expression:
-            a ? ... : ...
-          to have type boolean, but instead it is type:
-            string"
-        `)
+      "Line 5: Expected the test part of the conditional expression:
+        a ? ... : ...
+      to have type boolean, but instead it is type:
+        string"
+    `)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: string
       b: number
@@ -546,6 +546,27 @@ describe('type checking overloaded unary/binary primitives', () => {
       c: string
       d: number"
     `)
+  })
+})
+
+describe('type checking if else statements', () => {
+  it('gives the correct error message even if variable in test is used correctly', () => {
+    const code = `
+      const a = 2;
+      if (a + a) {
+        3;
+      } else {
+        4;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: Expected the test part of the if statement:
+        if (a + a) { ... } else { ... }
+      to have type boolean, but instead it is type:
+        number"
+    `)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: number"`)
   })
 })
 
@@ -698,6 +719,23 @@ describe('checking while loops in source 3', () => {
         number"
     `)
   })
+
+  it('throws correct error for wrong test type even if variable used correctly', () => {
+    const code = `
+      let x = 1;
+      while(x + x) {
+        x = x + 1;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: Expected the test part of the while statement:
+        while (x + x) { ... }
+      to have type boolean, but instead it is type:
+        number"
+    `)
+  })
 })
 
 describe('Checking top level blocks', () => {
@@ -830,7 +868,7 @@ describe('Checking top level blocks', () => {
 })
 
 describe('type checking for loops', () => {
-  it('allows for correctly formed for loops with let outside', () => {
+  it('allows for correctly formed for loops with let outside and inside', () => {
     const code = `
       let a = false;
       for (let a = 3; a < 5; a = a + 1) {
@@ -843,7 +881,7 @@ describe('type checking for loops', () => {
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('allows for correctly formed for loops with let inside', () => {
+  it('allows for correctly formed for loops with let outside only', () => {
     const code = `
       let a = 200;
       for (a = 3; a < 5; a = a + 1) {
@@ -869,7 +907,7 @@ describe('type checking for loops', () => {
       "Line 3: Expected the test part of the for statement:
         for (...; a + 5; ...) { ... }
       to have type boolean, but instead it is type:
-        boolean"
+        number"
     `)
   })
 

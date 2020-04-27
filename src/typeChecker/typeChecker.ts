@@ -677,13 +677,13 @@ function _infer(
       const testType = testNode.inferredType as Variable
       const bodyNode = node.body as TypeAnnotatedNode<es.Node>
       const bodyType = bodyNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [testType, tBool])
-      newConstraints = addToConstraintList(newConstraints, [storedType, bodyType])
+      let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
       try {
         newConstraints = infer(testNode, env, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
         }
       }
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
@@ -730,7 +730,7 @@ function _infer(
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
         }
       }
       newConstraints = infer(updateNode, newEnv, newConstraints)
@@ -858,13 +858,13 @@ function _infer(
       const consType = consNode.inferredType as Variable
       const altNode = node.alternate as TypeAnnotatedNode<es.Node>
       const altType = altNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [testType, tBool])
-      newConstraints = addToConstraintList(newConstraints, [storedType, consType])
+      let newConstraints = addToConstraintList(constraints, [storedType, consType])
       try {
         newConstraints = infer(testNode, env, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
         }
       }
       newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
@@ -955,8 +955,8 @@ function _infer(
       const leftNode = node.left as TypeAnnotatedNode<es.Identifier | es.MemberExpression>
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
       const rightType = rightNode.inferredType as Variable
-      let newConstraints = infer(rightNode, env, constraints)
-      newConstraints = addToConstraintList(newConstraints, [storedType, rightType])
+      let newConstraints = addToConstraintList(constraints, [storedType, rightType])
+      newConstraints = infer(rightNode, env, newConstraints)
       if (leftNode.type === 'Identifier') {
         if (env.declKindMap.get(leftNode.name) === 'const') {
           typeErrors.push(new ReassignConstError(node))
