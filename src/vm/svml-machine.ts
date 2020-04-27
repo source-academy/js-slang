@@ -1642,7 +1642,10 @@ function getErrorType(): string {
   }
 }
 
-function convertToJsFormat(node: number): any {
+function convertToJsFormat(node: number, refs?: Map<number, any>): any {
+  if (refs !== undefined && refs.has(node)) {
+    return refs.get(node)
+  }
   const kind = node_kind(HEAP[node + TAG_SLOT])
   switch (kind) {
     case 'undefined':
@@ -1657,10 +1660,14 @@ function convertToJsFormat(node: number): any {
       return HEAP[node + BOXED_VALUE_SLOT]
 
     case 'array': {
+      if (refs === undefined) {
+        refs = new Map<number, any>()
+      }
       const arr: number[] = HEAP[node + BOXED_VALUE_SLOT]
-      const res = []
+      const res: any[] = []
+      refs.set(node, res)
       for (let i = 0; i < arr.length; i++) {
-        res[i] = convertToJsFormat(arr[i])
+        res[i] = convertToJsFormat(arr[i], refs)
       }
       return res
     }
