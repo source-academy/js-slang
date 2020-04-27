@@ -258,7 +258,7 @@ const createContext = <T>(
   variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ) => {
   const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 

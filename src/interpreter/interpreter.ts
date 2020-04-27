@@ -12,7 +12,6 @@ import Closure from './closure'
 import { LazyBuiltIn } from '../createContext'
 import { loadIIFEModule } from '../modules/moduleLoader'
 
-
 class BreakValue {}
 
 class ContinueValue {}
