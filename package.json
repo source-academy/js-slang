@@ -91,7 +91,7 @@
       "/src/typings/",
       "/src/utils/testing.ts"
     ],
-    "reporters": [
+      "reporters": [
       "default",
       [
         "./node_modules/jest-html-reporter",
