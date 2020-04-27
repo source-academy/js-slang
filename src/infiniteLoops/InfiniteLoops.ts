@@ -42,6 +42,7 @@ function getConsts(envs: SimpleEnv[]) {
         continue
       }
       if (typeof val === 'number') {
+        encountered.push(key)
         result.unshift([key, val])
       }
     }
