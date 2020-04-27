@@ -8,6 +8,8 @@ dist/
 
 *~
 
+.DS_Store
+
 # For type inferencer
 src/repl/repl.ts
 tsconfig.tsbuildinfo

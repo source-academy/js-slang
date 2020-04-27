@@ -64,11 +64,8 @@ export function updateTypeEnvironment(program: es.Program) {
     const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
 
-    // TODO: How to tell if the function declared is polymorphic? (w/o evaluating the body)
-    // From the return statement's type variable obj?
-    // Check if any param or return type is Tvar, if yes then it's polymorphic.
-    const isPolymorphic = true // set all to true for now and see what happens
-    // ...
+    // Since we are adding type variables at this point, the function type has to be polymorphic
+    const isPolymorphic = true
 
     if (idenName !== undefined && blockTypeVariable !== undefined) {
       globalTypeEnvironment.set(idenName, {
