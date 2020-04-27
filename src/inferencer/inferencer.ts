@@ -277,8 +277,7 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
   let prevReturnTypeVariable
   for (const node of bodyNodes) {
     if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
-      const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>)
-        .typeVariable as Variable
+      const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>).typeVariable as Variable
       if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
         const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
         if (errorObj) {
@@ -486,7 +485,7 @@ function inferBlockStatement(
         .typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         // const errorObj = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
-        const errorObj = updateTypeConstraints(blockTypeVariable, returnStatementTypeVariable)  // Fixed order
+        const errorObj = updateTypeConstraints(blockTypeVariable, returnStatementTypeVariable) // Fixed order
         if (errorObj) {
           displayErrorAndTerminate(
             'WARNING: There is a type error when checking the type of a block',
@@ -504,7 +503,7 @@ function inferBlockStatement(
       const ifStatementTypeVariable = (expression as TypeAnnotatedNode<es.IfStatement>).typeVariable
       if (ifStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         // const errorObj = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
-        const errorObj = updateTypeConstraints(blockTypeVariable, ifStatementTypeVariable)  // Fixed order
+        const errorObj = updateTypeConstraints(blockTypeVariable, ifStatementTypeVariable) // Fixed order
         if (errorObj) {
           displayErrorAndTerminate(
             'WARNING: There is a type error when checking the type of a block',
@@ -615,7 +614,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       break
     }
     default: {
-      console.log(`[WARNING] Not implemented yet - Pls check! statement.type: ${statement.type}`);
+      console.log(`[WARNING] Not implemented yet - Pls check! statement.type: ${statement.type}`)
       return
     }
   }
