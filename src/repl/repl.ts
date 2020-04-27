@@ -13,13 +13,7 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
-  const context = createContext(
-    chapter,
-    undefined,
-    undefined,
-    undefined,
-    evaluationMethod
-  )
+  const context = createContext(chapter, undefined, undefined, undefined, evaluationMethod)
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
     executionMethod,

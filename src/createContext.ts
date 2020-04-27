@@ -9,7 +9,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import {Context, CustomBuiltIns, EvaluationMethod, Value} from './types'
+import { Context, CustomBuiltIns, EvaluationMethod, Value } from './types'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
@@ -51,7 +51,7 @@ export const createEmptyContext = <T>(
   chapter: number,
   externalSymbols: string[],
   externalContext?: T,
-  evalMethod : EvaluationMethod = 'strict'
+  evalMethod: EvaluationMethod = 'strict'
 ): Context<T> => {
   if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
     GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
@@ -132,10 +132,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (
-  context: Context,
-  externalBuiltIns: CustomBuiltIns,
-) => {
+export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
 
   const rawDisplay = (v: Value, s: string) =>
