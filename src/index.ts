@@ -28,7 +28,6 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
-import { inferProgram } from './inferencer/inferencer'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -168,9 +167,7 @@ export async function runInContext(
   if (!program) {
     return resolvedErrorPromise
   }
-  const validated = validateAndAnnotate(program as Program, context)
-  inferProgram(validated)
-  // console.log(JSON.stringify(inferred, null, 4))
+  validateAndAnnotate(program as Program, context)
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
