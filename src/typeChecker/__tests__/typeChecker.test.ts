@@ -983,6 +983,24 @@ describe('type checking for loops', () => {
 })
 
 describe('type checking arrays', () => {
+  it('handles empty arrays', () => {
+    const code = `
+      const arr = []; 
+      const y = 1 + arr[1]; // runtime error but no type error
+      arr[0] = false;
+      const x = 1 + arr[1]; // type error
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "arr: Array<number>
+      y: number
+      x: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 4: Array expected type: Array<number>
+          but got: boolean"
+    `)
+  })
   it('asserts that arrays are used in an monomporhic manner', () => {
     const code1 = `
       const arr1 = [1,2,3,4,5];
