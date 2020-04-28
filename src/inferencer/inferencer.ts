@@ -275,7 +275,11 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
   }
 }
 
-function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration> | TypeAnnotatedNode<es.ArrowFunctionExpression>) {
+function inferFunctionDeclaration(
+  functionDeclaration:
+    | TypeAnnotatedNode<es.FunctionDeclaration>
+    | TypeAnnotatedNode<es.ArrowFunctionExpression>
+) {
   // Update type constraints in constraintStore
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
 

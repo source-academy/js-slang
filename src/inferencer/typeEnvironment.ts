@@ -25,11 +25,13 @@ export function updateTypeEnvironment(program: es.Program) {
     constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
   ) {
     // First, check if it is a function definition
-    if ((constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>).type === 'ArrowFunctionExpression') {
+    if (
+      (constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>).type ===
+      'ArrowFunctionExpression'
+    ) {
       // If so, handle separately
       updateForFunctionDefinition(constantDeclaration)
-    }
-    else {
+    } else {
       // Otherwise, should just be literals
       // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
       const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
@@ -50,7 +52,9 @@ export function updateTypeEnvironment(program: es.Program) {
     constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
   ) {
     const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
-    const func = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.ArrowFunctionExpression>
+    const func = constantDeclaration.declarations[0].init as TypeAnnotatedNode<
+      es.ArrowFunctionExpression
+    >
     const params = func.params as TypeAnnotatedNode<es.Node>[]
     const block = func.body as TypeAnnotatedNode<es.BlockStatement>
     updateForFunctionCommon(iden, params, block)
@@ -66,7 +70,11 @@ export function updateTypeEnvironment(program: es.Program) {
     updateForFunctionCommon(iden, params, block)
   }
 
-  function updateForFunctionCommon(iden: TypeAnnotatedNode<es.Identifier>, params: TypeAnnotatedNode<es.Node>[], block: TypeAnnotatedNode<es.BlockStatement>) {
+  function updateForFunctionCommon(
+    iden: TypeAnnotatedNode<es.Identifier>,
+    params: TypeAnnotatedNode<es.Node>[],
+    block: TypeAnnotatedNode<es.BlockStatement>
+  ) {
     const idenName = iden.name
 
     const paramTypeVariables = []
