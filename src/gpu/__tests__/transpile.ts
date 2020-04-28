@@ -300,3 +300,21 @@ test('many for loop case - matrix multiplication (2 transpilations)', () => {
   const cnt = transpiled.match(/__createKernel/g)?.length
   expect(cnt).toEqual(4)
 })
+
+test('resolve naming conflicts if __createKernel is used', () => {
+  const code = stripIndent`
+    const __createKernel = 10;
+
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = i;
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
+
+  // a new kernel function with name __createKernel0 should be created here
+  const cntNewName = transpiled.match(/__createKernel0/g)?.length
+  expect(cntNewName).toEqual(2)
+})
