@@ -148,8 +148,7 @@ run() {
 		 ${LIB}/list.js \
 	     ${LIB}/stream.js \
 	     ${LIB}/array.js \
-	     ${LIB}/pairmutator.js \
-	     ${LIB}/concurrency.js
+	     ${LIB}/pairmutator.js 
     
     # MISC
     
