@@ -128,11 +128,11 @@ export function generateAndCopyFunctionType(functionTypeToCopy: Type) {
 }
 
 function generateAddableType() {
-  return generateTypeVariable(false, true)  // (isPolymorphic, isAddable)
+  return generateTypeVariable(false, true) // (isPolymorphic, isAddable)
 }
 
 function generateVariableType() {
-  return generateTypeVariable(true, false)  // (isPolymorphic, isAddable)
+  return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
 }
 
 let newVariableType1
