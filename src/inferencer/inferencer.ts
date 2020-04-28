@@ -12,7 +12,6 @@ import {
   numberType,
   booleanType,
   isOverLoaded,
-  environments,
   updateTypeEnvironment,
   stringType,
   extendEnvironment,
@@ -452,15 +451,38 @@ function replaceTypeVariablesWithFreshTypeVariables(parent: Type, tmpMap: Map<Ty
   }
 }
 
+function ifStatementHasReturnStatements(ifStatement: TypeAnnotatedNode<es.IfStatement>): boolean {
+  const consequent = ifStatement.consequent as TypeAnnotatedNode<es.BlockStatement>
+  const alternate = ifStatement.alternate as TypeAnnotatedNode<es.BlockStatement>
+
+  return blockStatementHasReturnStatements(consequent) || blockStatementHasReturnStatements(alternate)
+}
+
+function blockStatementHasReturnStatements(block: TypeAnnotatedNode<es.BlockStatement>): boolean {
+  for (const statement of block.body) {
+    if (statement.type === 'ReturnStatement') {
+      return true
+    }
+    if (statement.type === 'IfStatement') {
+      if (ifStatementHasReturnStatements(statement)) {
+        return true
+      }
+    }
+    if (statement.type === 'BlockStatement') {
+      if (blockStatementHasReturnStatements(statement)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
 function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, environmentToExtend: Map<any, any>) {
-  // TODO: Implement type environment scoping
-  extendEnvironment(environmentToExtend)
-  currentTypeEnvironment = environments[0]
+  currentTypeEnvironment = extendEnvironment(environmentToExtend)
   const blockTypeVariable = block.typeVariable
   for (const expression of block.body) {
-    infer(expression)
+    infer(expression, currentTypeEnvironment)
     if (expression.type === 'ReturnStatement') {
-      // TODO: add type constraint for return statements
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>).typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
         const result = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
@@ -469,14 +491,26 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
             'WARNING: There is a type error when checking the type of a block', block.loc
           )
         }
-        popEnvironment()
-        currentTypeEnvironment = environments[0]
+        return
+      }
+    }
+
+    if (expression.type === 'IfStatement' && ifStatementHasReturnStatements(expression)) {
+      // Check if it has return statements. It has return statements when the type of the block is not undefined.
+      // If it does, assign type of block to type of IfStatement.
+      const ifStatementTypeVariable = (expression as TypeAnnotatedNode<es.IfStatement>).typeVariable
+      if (ifStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
+        const result = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
+        if (result) {
+          displayErrorAndTerminate(
+            'WARNING: There is a type error when checking the type of a block', block.loc
+          )
+        }
         return
       }
     }
   }
 
-  // TODO: else they have undefined type
   if (blockTypeVariable !== undefined) {
     const result = updateTypeConstraints(blockTypeVariable, undefinedType)
     if (result) {
@@ -484,8 +518,6 @@ function inferBlockStatement(block: TypeAnnotatedNode<es.BlockStatement>, enviro
         'WARNING: There is a type error when checking the type of a block', block.loc
       )
     }
-    popEnvironment()
-    currentTypeEnvironment = environments[0]
     return
   }
 }
@@ -495,6 +527,7 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
         inferBlockStatement(statement, environmentToExtend)
+        currentTypeEnvironment = popEnvironment()
       }
       return
     }
@@ -534,19 +567,22 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       return
     }
     case 'IfStatement': {
-      infer(statement.test)
-      infer(statement.alternate!)
-      infer(statement.consequent)
+      infer(statement.test, environmentToExtend)
+      infer(statement.alternate!, environmentToExtend)
+      infer(statement.consequent, environmentToExtend)
       inferConditionals(statement)
       return
     }
     case 'FunctionDeclaration': {
+      // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
-        parameters.set((param as es.Identifier).name, (param as TypeAnnotatedNode<es.Identifier>).typeVariable)
+        parameters.set((param as es.Identifier).name, { types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable] })
       }
-      infer(statement.body)
+      infer(statement.body, parameters)
+      currentTypeEnvironment = extendEnvironment(parameters)
       inferFunctionDeclaration(statement)
+      currentTypeEnvironment = popEnvironment()
       return
     }
     case 'CallExpression': {

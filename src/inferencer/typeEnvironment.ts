@@ -10,10 +10,12 @@ export const environments: Map<string, Type>[] = [globalTypeEnvironment]
 export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
   const newTypeEnvironment =  new Map([...environments[0], ...map])
   environments.push(newTypeEnvironment)
+  return environments[environments.length - 1]
 }
 
 export const popEnvironment = () => {
   environments.pop()
+  return environments[environments.length - 1]
 }
 
 // Main function that will update the type environment e.g. for declarations
@@ -129,6 +131,14 @@ function generateAddableType() {
   return generateTypeVariable(false, true) // (isPolymorphic, isAddable)
 }
 
+function generateVariableType() {
+  return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
+}
+
+let newVariableType1
+let newVariableType2
+let newAddableType
+
 // Initiatize Type Environment
 globalTypeEnvironment.set('-', {
   types: [
@@ -145,18 +155,27 @@ globalTypeEnvironment.set('/', {
 globalTypeEnvironment.set('%', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
+
+// LogicalExpression
+newVariableType1 = generateVariableType()
+newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('&&', {
-  types: [generateFunctionType([booleanType, variableType], variableType, true)]
+  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
+
+// LogicalExpression
+newVariableType1 = generateVariableType()
+newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('||', {
-  types: [generateFunctionType([booleanType, variableType], variableType, true)],
-  isPolymorphic: false
+  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
 globalTypeEnvironment.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
 })
 
-let newAddableType = generateAddableType()
+newAddableType = generateAddableType()
 globalTypeEnvironment.set('+', {
   types: [generateFunctionType([newAddableType, newAddableType], newAddableType, true)]
 })
@@ -211,20 +230,31 @@ globalTypeEnvironment.set('<=', {
 globalTypeEnvironment.set('Infinity', {
   types: [numberType]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_boolean', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  // types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_function', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_number', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_string', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_undefined', {
-  types: [generateFunctionType([variableType], booleanType, true)]
+  types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
 globalTypeEnvironment.set('math_abs', {
@@ -377,9 +407,12 @@ globalTypeEnvironment.set('prompt', {
 globalTypeEnvironment.set('runtime', {
   types: [generateFunctionType([], numberType)]
 })
+
+newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('stringify', {
-  types: [generateFunctionType([variableType], stringType, true)]
+  types: [generateFunctionType([newVariableType1], stringType, true)]
 })
+
 globalTypeEnvironment.set('undefined', {
   types: [undefinedType]
 })
