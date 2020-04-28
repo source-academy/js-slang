@@ -8,19 +8,19 @@
 
 /* ************ WORKINGS ************
  * 1. Annotate
- * function simple() { (return (1^T18))^T19 }^T20
- * simple^T21()^T22
+ * function simple() { (return (1^T23))^T24 }^T25
+ * simple^T26()^T27
  * 
  * 2. Type Env
- * simple <- () => T20 ~~> simple <- () => number
+ * simple <- () => T25 ~~> simple <- () => number
  * 
  * 3. Type Constraints
- * T18 = number                     // inferLiteral()
- * T19 = T18 ~~> T19 = number       // inferReturnStatement()
- * T20 = T19 ~~> T20 = number       // inferBlockStatement()
+ * T23 = number                     // inferLiteral()
+ * T24 = T23 ~~> T24 = number       // inferReturnStatement()
+ * T25 = T24 ~~> T25 = number       // inferBlockStatement()
  * 
- * T21 = () => number               // inferIdentifier()
- * T22 = number                     // inferFunctionApplication() - set return type
+ * T26 = () => number               // inferIdentifier()
+ * T27 = number                     // inferFunctionApplication() - set return type
  * ************/
 
 
@@ -40,28 +40,28 @@
 // TEST CASE - EXPECT FAIL
 // Incorrect usage of func application
 ////////////////////////////////////////////////////////////////////////////////
-// function simple() {
-//     return true;
-// }
-// simple() - 1;   // !! TYPE ERR !!
+function simple() {
+    return true;
+}
+simple() - 1;   // !! TYPE ERR !!
 
 /* ************ WORKINGS ************
  * 1. Annotate
- * function simple() { (return (true^T18))^T19 }^T20
- * (simple^T21()^T22 - 1^T23)^T24
+ * function simple() { (return (true^T23))^T24 }^T25
+ * (simple^T26()^T27 - 1^T28)^T29
  * 
  * 2. Type Env
- * simple <- () => T20 ~~> simple <- () => boolean
+ * simple <- () => T25 ~~> simple <- () => boolean
  * 
  * 3. Type Constraints
- * T18 = boolean                    // inferLiteral()
- * T19 = T18 ~~> T19 = boolean      // inferReturnStatement()
- * T20 = T19 ~~> T20 = boolean      // inferBlockStatement()
+ * T23 = boolean                    // inferLiteral()
+ * T24 = T23 ~~> T24 = boolean      // inferReturnStatement()
+ * T25 = T24 ~~> T25 = boolean      // inferBlockStatement()
  * 
- * T21 = () => boolean              // inferIdentifier()
- * T22 = boolean                    // inferFunctionApplication() - set return type
- * T23 = number                     // inferLiteral()
- * T22 = number ~~> !! TYPE ERR !!  // inferBinaryExpression()
+ * T26 = () => boolean              // inferIdentifier()
+ * T27 = boolean                    // inferFunctionApplication() - set return type
+ * T28 = number                     // inferLiteral()
+ * T27 = number ~~> !! TYPE ERR !!  // inferBinaryExpression()
  * ************/
 
 
@@ -76,21 +76,21 @@
 
 /* ************ WORKINGS ************
  * 1. Annotate
- * function identity(x^T21) { (return (x^T18))^T19 }^T20
- * identity^T23(3^T22)^T24 
+ * function identity(x^T26) { (return (x^T23))^T24 }^T25
+ * identity^T28(3^T27)^T29 
  * 
  * 2. Type Env
- * identity <- (T21) => T20 ~~> identity <- (T21) => T21
+ * identity <- (T26) => T25 ~~> identity <- (T26) => T26
  * 
  * 3. Type Constraints
- * T18 = T21                        // inferIdentifier()
- * T19 = T18 ~~> T19 = T21          // inferReturnStatement()
- * T20 = T19 ~~> T20 = T21          // inferBlockStatement()
+ * T23 = T26                        // inferIdentifier()
+ * T24 = T23 ~~> T24 = T26          // inferReturnStatement()
+ * T25 = T24 ~~> T25 = T26          // inferBlockStatement()
  * 
- * T22 = number                     // inferLiteral()
- * T23 = (T21) => T21               // inferIdentifier()
- * T22 = T25 ~~> T25 = number       // inferFunctionApplication() - check arg type (w fresh type var)
- * T24 = T25 ~~> T24 = number       // inferFunctionApplication() - set return type
+ * T27 = number                     // inferLiteral()
+ * T28 = (T26) => T26               // inferIdentifier()
+ * T27 = T30 ~~> T30 = number       // inferFunctionApplication() - check arg type (w fresh type var)
+ * T29 = T30 ~~> T29 = number       // inferFunctionApplication() - set return type
  * ************/
 
 
@@ -221,3 +221,131 @@
 //     return (x > y);
 // }
 // multarg(true, 3) && 5;  // !! TYPE ERR !!
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// function deepnest(x, y, z) {
+//     if (x) {
+//         if (y) {
+//             return 1;
+//         } else {
+//             if (z === 0) {
+//                 return 2;
+//             }
+//             else {
+//                 return 3;
+//             }
+//         }
+//     } else {
+//         return 4;
+//     }
+// }
+// deepnest(true, false, 0) + 10;   // returns 12
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+// Inconsistent return types
+////////////////////////////////////////////////////////////////////////////////
+// function deepnest(x, y, z) {
+//     if (x) {
+//         if (y) {
+//             return 1;
+//         } else {
+//             if (z === 0) {
+//                 return 2;
+//             }
+//             else {
+//                 return false;
+//             }
+//         }
+//     } else {
+//         return 4;
+//     }
+// }
+// deepnest(true, false, 0) + 10;   // !! TYPE ERR !!
+
+
+
+///////////////////
+// TEST VAR ARGS //
+///////////////////
+
+
+////////////////////////////////
+// display(...) <- var => var //
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// display('a', 'b', 'c') + 'hi';  // returns 'ahi'
+// display(1, 2, 3) + 4;           // returns 5
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+////////////////////////////////////////////////////////////////////////////////
+// display('a', 'b', 'c') + 1;
+// display(1, 2, 3) + 'hi';
+
+
+//////////////////////////////
+// error(...) <- var => var //
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// error('a', 'b') + 'hi';   // Note that Editor throws the specified error as intended
+// error(1, 2) + 3;          // Note that Editor throws the specified error as intended
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+////////////////////////////////////////////////////////////////////////////////
+// error('a', 'b') + 1;
+// error(1, 2) + 'hi';
+
+
+//////////////////////////////////////
+// math_hypot(...) <- var => number //
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// math_hypot('a', 'b') + 3;   // returns NaN
+// math_hypot(1, 2) + 3;       // returns 5.236
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+////////////////////////////////////////////////////////////////////////////////
+// math_hypot('a', 'b') + true;
+// math_hypot(1, 2) + 'hi';
+
+
+//////////////////////////////////////
+// math_max(...) <- var => number //
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// math_max('a', 'b') + 3;   // returns NaN
+// math_max(1, 2) + 3;       // returns 5
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+////////////////////////////////////////////////////////////////////////////////
+// math_max('a', 'b') + false;
+// math_max(1, 2) + 'hi';
+
+
+//////////////////////////////////////
+// math_min(...) <- var => number //
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT PASS
+////////////////////////////////////////////////////////////////////////////////
+// math_min('a', 'b') + 3;          // returns NaN
+// math_min(1, 2, 3, -2) + 3;       // returns 1
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST CASE - EXPECT FAIL
+////////////////////////////////////////////////////////////////////////////////
+// math_min('a', 'b') + false;
+// math_min(1, 2, 3) + 'hi';

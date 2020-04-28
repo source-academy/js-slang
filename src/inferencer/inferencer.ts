@@ -53,6 +53,14 @@ function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
 }
 
 function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
+  // First, ensure that Identifier exists in type env
+  if (!currentTypeEnvironment.get(identifier.name)) {
+    displayErrorAndTerminate(
+      `Identifier with name \`${identifier.name}\` not found in type environment!`,
+      identifier.loc
+    )
+  }
+
   // Update type constraints in constraintStore
   // e.g. Given: x^T2, Set: T2 = Γ[x]
   const idenTypeVariable = identifier.typeVariable as Variable
@@ -330,8 +338,6 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
   //             f^T7 (1^T6)
 
-  // First, ensure arg nodes have same count as Γ(f)
-  // e.g. T6 = T1
   const iden = functionApplication.callee as TypeAnnotatedNode<es.Identifier>
   const applicationArgs = functionApplication.arguments as TypeAnnotatedNode<es.Node>[]
   const applicationArgCount = applicationArgs.length
@@ -348,8 +354,9 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
     declarationFunctionType = generateFunctionTypeWithFreshTypeVariables(declarationFunctionType)
   }
 
-  if (applicationArgCount !== declarationArgCount) {
-    // Check arg count
+  // First, ensure arg nodes have same count as Γ(f)
+  // Note that we skip this check for functions with varArgs
+  if (!declarationFunctionType.hasVarArgs && applicationArgCount !== declarationArgCount) {
     displayErrorAndTerminate(
       `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
       functionApplication.loc
@@ -359,7 +366,14 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   // Second, try to add constraints that ensure arg nodes have same corresponding types
   for (let i = 0; i < applicationArgs.length; i++) {
     const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
-    const declarationArgType = declarationFunctionType.parameterTypes[i]
+
+    let declarationArgType
+    if (declarationFunctionType.hasVarArgs) {
+      // Note that for functions with varArgs, we check that all args have same type as the single declared type
+      declarationArgType = declarationFunctionType.parameterTypes[0]
+    } else {
+      declarationArgType = declarationFunctionType.parameterTypes[i]
+    }
 
     if (applicationArgTypeVariable && declarationArgType) {
       const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)

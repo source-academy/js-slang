@@ -98,30 +98,18 @@ export const undefinedType: Type = {
   name: 'undefined'
 }
 
-export const variableType: Type = {
-  kind: 'variable',
-  // id?: number
-  // isAddable?: boolean
-  isPolymorphic: true
-}
-
-// const addableType: Type = {
-//   kind: 'variable',
-//   // id?: number
-//   isAddable: true,
-//   isPolymorphic: true
-// }
-
 function generateFunctionType(
   parameterTypes: Type[],
   returnType: Type,
-  isPolymorphic: boolean = false
+  isPolymorphic: boolean = false,
+  hasVarArgs: boolean = false
 ) {
   const functionType: Type = {
     kind: 'function',
     parameterTypes,
     returnType,
-    isPolymorphic
+    isPolymorphic,
+    hasVarArgs
   }
   return functionType
 }
@@ -140,11 +128,11 @@ export function generateAndCopyFunctionType(functionTypeToCopy: Type) {
 }
 
 function generateAddableType() {
-  return generateTypeVariable(false, true) // (isPolymorphic, isAddable)
+  return generateTypeVariable(false, true)  // (isPolymorphic, isAddable)
 }
 
 function generateVariableType() {
-  return generateTypeVariable(true, false) // (isPolymorphic, isAddable)
+  return generateTypeVariable(true, false)  // (isPolymorphic, isAddable)
 }
 
 let newVariableType1
@@ -180,7 +168,6 @@ globalTypeEnvironment.set('&&', {
 newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('||', {
-  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
   types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
 globalTypeEnvironment.set('!', {
@@ -199,7 +186,7 @@ globalTypeEnvironment.set('===', {
 
 newAddableType = generateAddableType()
 globalTypeEnvironment.set('!==', {
-  types: [generateFunctionType([variableType, variableType], booleanType, true)]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
@@ -222,22 +209,14 @@ globalTypeEnvironment.set('<=', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
-// globalTypeEnvironment.set('display', {
-//   types: [
-//     // { argumentTypes: [numberType], resultType: undefined },
-//     // { argumentTypes: [stringType], resultType: undefined }
-//     generateFunctionType([variableType], null)  // Todo: Multiple params accepted?
-//   ],
-//   isPolymorphic: true
-// })
-// globalTypeEnvironment.set('error', {
-//   types: [
-//     // { argumentTypes: [numberType], resultType: undefined },
-//     // { argumentTypes: [stringType], resultType: undefined }
-//     generateFunctionType([variableType], null)  // Todo: Multiple params accepted?
-//   ],
-//   isPolymorphic: true
-// })
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('display', {
+  types: [generateFunctionType([newVariableType1], newVariableType1, true, true)]
+})
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('error', {
+  types: [generateFunctionType([newVariableType1], newVariableType1, true, true)]
+})
 
 globalTypeEnvironment.set('Infinity', {
   types: [numberType]
@@ -245,7 +224,6 @@ globalTypeEnvironment.set('Infinity', {
 
 newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_boolean', {
-  // types: [generateFunctionType([variableType], booleanType, true)]
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
@@ -320,11 +298,12 @@ globalTypeEnvironment.set('math_floor', {
 globalTypeEnvironment.set('math_fround', {
   types: [generateFunctionType([numberType], numberType)]
 })
-// globalTypeEnvironment.set('math_hypot', {
-// types: [{ argumentTypes: [numberType], resultType: undefined }],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
+
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_hypot', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+
 globalTypeEnvironment.set('math_imul', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
@@ -352,22 +331,16 @@ globalTypeEnvironment.set('math_log10', {
 globalTypeEnvironment.set('math_LOG10E', {
   types: [numberType]
 })
-// globalTypeEnvironment.set('math_max', {
-//   // types: [
-//   //   { argumentTypes: [numberType], resultType: undefined },
-//   //   { argumentTypes: [stringType], resultType: undefined }
-//   // ],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
-// globalTypeEnvironment.set('math_min', {
-//   // types: [
-//   //   { argumentTypes: [numberType], resultType: undefined },
-//   //   { argumentTypes: [stringType], resultType: undefined }
-//   // ],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
+
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_max', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_min', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+
 globalTypeEnvironment.set('math_PI', {
   types: [numberType]
 })
