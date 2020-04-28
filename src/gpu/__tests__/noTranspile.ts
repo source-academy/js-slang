@@ -3,6 +3,18 @@ import { parse } from '../../parser/parser'
 import { stripIndent } from '../../utils/formatters'
 import { transpile } from '../../transpiler/transpiler'
 
+test('empty for loop does not get transpiled', () => {
+  const code = stripIndent`
+    for (let i = 0; i < 10; i = i + 1) {}
+    `
+  const context = mockContext(4, 'gpu')
+  const transpiled = transpile(parse(code, context)!, context.contextId, false, context.variant)
+    .transpiled
+
+  const cnt = transpiled.match(/__createKernel/g)?.length
+  expect(cnt).toEqual(2)
+})
+
 test('simple for loop with different update does not get transpiled', () => {
   const code = stripIndent`
     let res = [];
