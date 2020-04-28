@@ -43,7 +43,7 @@
 function simple() {
     return true;
 }
-simple() - 1;   // !! TYPE ERR !!
+1 - simple();   // !! TYPE ERR !!
 
 /* ************ WORKINGS ************
  * 1. Annotate
