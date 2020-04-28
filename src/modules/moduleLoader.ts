@@ -6,7 +6,7 @@ const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttp
 let BACKEND_STATIC_URL = 'http://ec2-54-169-81-133.ap-southeast-1.compute.amazonaws.com/static'
 
 export function setBackendStaticURL(url: string) {
-  BACKEND_STATIC_URL = url;
+  BACKEND_STATIC_URL = url
 }
 
 export function loadModuleText(path: string) {
