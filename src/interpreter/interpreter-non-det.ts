@@ -301,7 +301,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
-    yield* cartesianProduct(context, node.elements as es.Expression[], [])
+    const arrayGenerator = cartesianProduct(context, node.elements as es.Expression[], [])
+    for (const array of arrayGenerator) {
+      yield array.slice() // yield a new array to avoid modifying previous ones
+    }
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
