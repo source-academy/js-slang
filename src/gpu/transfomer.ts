@@ -254,7 +254,7 @@ class GPUTransformer {
         break
       }
 
-      if (this.innerBody.body.length > 1) {
+      if (this.innerBody.body.length > 1 || this.innerBody.body.length === 0) {
         break
       }
 
