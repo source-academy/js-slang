@@ -168,8 +168,6 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       traverse(node.object, constraints)
       traverse(node.property, constraints)
       break
-    case 'Literal':
-    case 'Identifier':
     default:
       return
   }
@@ -955,43 +953,31 @@ function _infer(
       const leftNode = node.left as TypeAnnotatedNode<es.Identifier | es.MemberExpression>
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
       const rightType = rightNode.inferredType as Variable
+      const leftType = leftNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, rightType])
       newConstraints = infer(rightNode, env, newConstraints)
-      if (leftNode.type === 'Identifier') {
-        if (env.declKindMap.get(leftNode.name) === 'const') {
-          typeErrors.push(new ReassignConstError(node))
-          return newConstraints
-        }
-        const leftNodeType = env.typeMap.get(leftNode.name)!
-        const expectedType =
-          leftNodeType.kind === 'forall'
-            ? extractFreeVariablesAndGenFresh(leftNodeType)
-            : leftNodeType
-        try {
-          return addToConstraintList(newConstraints, [rightType, expectedType])
-        } catch (e) {
-          if (e instanceof UnifyError) {
+      if (leftNode.type === 'Identifier' && env.declKindMap.get(leftNode.name) === 'const') {
+        typeErrors.push(new ReassignConstError(node))
+        return newConstraints
+      }
+      newConstraints = infer(leftNode, env, newConstraints)
+      try {
+        return addToConstraintList(newConstraints, [rightType, leftType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          if (leftNode.type === 'Identifier') {
             typeErrors.push(
               new DifferentAssignmentError(
                 node,
-                expectedType,
+                applyConstraints(leftType, newConstraints),
                 applyConstraints(rightType, newConstraints)
               )
             )
-            return newConstraints
-          }
-        }
-      } else {
-        newConstraints = infer(leftNode, env, newConstraints) // catch invalid index type
-        // assert that RHS = array element type
-        try {
-          return addToConstraintList(newConstraints, [rightType, leftNode.inferredType!])
-        } catch (e) {
-          if (e instanceof UnifyError) {
+          } else {
             typeErrors.push(
               new ArrayAssignmentError(
                 node,
-                tArray(applyConstraints(leftNode.inferredType!, newConstraints)),
+                tArray(applyConstraints(leftType, newConstraints)),
                 applyConstraints(rightType, newConstraints)
               )
             )
@@ -1062,7 +1048,7 @@ function _infer(
       return addToConstraintList(newConstraints, [storedType, expectedElementType])
     }
     default:
-      return constraints
+      return addToConstraintList(constraints, [storedType, tUndef])
   }
 }
 

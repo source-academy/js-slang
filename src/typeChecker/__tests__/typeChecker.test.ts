@@ -736,6 +736,51 @@ describe('checking while loops in source 3', () => {
         number"
     `)
   })
+
+  it('works when there are continue statements in the loop', () => {
+    const code = `
+      let x = 2;
+      x = x + 3;
+      while(x <= 1) {
+        x = x + 1;
+        continue;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('works when there are break statements in the loop', () => {
+    const code = `
+      let x = 2;
+      x = x + 3;
+      while(x <= 1) {
+        x = x + 1;
+        break;
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 3))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('checking if statements inside functions', () => {
+  it('if both blocks dont have return it works and the last stmts have different types it works', () => {
+    const code = `
+      function f(x) {
+        if (x) {
+          3;
+        } else {
+          'string';
+        }
+      }
+    `
+    const [program, errors] = typeCheck(parse(code, 1))
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"f: boolean -> undefined"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
 })
 
 describe('Checking top level blocks', () => {
