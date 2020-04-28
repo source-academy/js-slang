@@ -103,10 +103,12 @@ def process_dir_globals(target):
 targets = [
     "source_1",
     "source_1_lazy",
+    "source_1_wasm",
     "source_2",
     "source_2_lazy",
     "source_3",
     "source_3_concurrent",
+    "source_3_non-det",
     "source_4",
     "External libraries",
 ]

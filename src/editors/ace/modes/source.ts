@@ -15,8 +15,28 @@ import { SourceDocumentation } from '../docTooltip'
  * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
  * 4) changed regex to mark certain operators in pink
  * 5) use SourceDocumentation to include all library functions and constants from source
+ * 6) include all external libraries
  */
-export function HighlightRulesSelector(id: number, variant: Variant = 'default') {
+
+export function HighlightRulesSelector(
+  id: number,
+  variant: Variant = 'default',
+  external: String = 'NONE',
+  externalLibraries: (
+    | {
+        caption: string
+        value: string
+        meta: any
+        docHTML: any
+      }
+    | {
+        caption: string
+        value: string
+        meta: string
+        docHTML?: undefined
+      }
+  )[] = []
+) {
   // @ts-ignore
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
@@ -27,32 +47,38 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
     var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
-    function getAllFunctionNames(chapter: string) {
+    const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
+    const builtin_lib = SourceDocumentation.builtins[chapter]
+
+    function addFromBuiltinLibrary(meta: string) {
+      if (builtin_lib === null) {
+        return ''
+      }
       let func = ''
-      for (let name in SourceDocumentation.builtins[chapter]) {
-        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'func') {
+      for (let name in builtin_lib) {
+        if (builtin_lib[name]['meta'] === meta) {
           func += '|' + name
         }
       }
-      return func.substr(1)
+      return func
     }
 
-    function getAllConstantName(chapter: string) {
-      let constants = 'null'
-      for (let name in SourceDocumentation.builtins[chapter]) {
-        if (SourceDocumentation.builtins[chapter][name]['meta'] === 'const') {
-          constants += '|' + name
+    function addFromExternalLibrary(meta: string) {
+      if (externalLibraries === null) {
+        return ''
+      }
+      let func = ''
+      externalLibraries.forEach(node => {
+        if (node.meta === meta) {
+          func += '|' + node.caption
         }
-      }
-      return constants
+      })
+      return func
     }
 
-    const ChapterFunctionNameSelector = () => {
-      if (variant === 'default') {
-        return getAllFunctionNames(id.toString())
-      } else {
-        return getAllFunctionNames(id.toString() + '_' + variant)
-      }
+    function getAllNames(meta: string) {
+      const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta)
+      return concat.substr(1)
     }
 
     const ChapterKeywordSelector = () => {
@@ -79,7 +105,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language': getAllConstantName(id.toString()),
+          'constant.language': getAllNames('const'),
 
           'constant.language.boolean': 'true|false',
 
@@ -87,7 +113,7 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
 
           'storage.type': 'const|let|function',
 
-          'support.function': ChapterFunctionNameSelector(),
+          'support.function': getAllNames('func'),
 
           'variable.language':
             'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
@@ -673,9 +699,12 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
     }
     exports.SourceHighlightRules = SourceHighlightRules
   }
+
+  const name = id.toString() + variant + external
+
   // @ts-ignore
   ace.define(
-    'ace/mode/source_highlight_rules' + id.toString(),
+    'ace/mode/source_highlight_rules' + name,
     [
       'require',
       'exports',
@@ -689,15 +718,16 @@ export function HighlightRulesSelector(id: number, variant: Variant = 'default')
 }
 
 //source mode
-export function ModeSelector(id: number) {
+export function ModeSelector(id: number, variant: Variant = 'default', external: string = 'NONE') {
+  const name = id.toString() + variant + external
+
   // @ts-ignore
   function _Mode(acequire, exports, module) {
     'use strict'
 
     var oop = acequire('../lib/oop')
     var TextMode = acequire('./text').Mode
-    var SourceHighlightRules = acequire('./source_highlight_rules' + id.toString())
-      .SourceHighlightRules
+    var SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
     var MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
     var WorkerClient = acequire('../worker/worker_client').WorkerClient
     var CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
@@ -783,14 +813,14 @@ export function ModeSelector(id: number) {
       }
 
       // @ts-ignore
-      this.$id = 'ace/mode/source' + id.toString()
+      this.$id = 'ace/mode/source' + name
     }.call(Mode.prototype))
 
     exports.Mode = Mode
   }
   // @ts-ignore
   ace.define(
-    'ace/mode/source' + id.toString(),
+    'ace/mode/source' + name,
     [
       'require',
       'exports',

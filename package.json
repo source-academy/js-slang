@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.34",
+  "version": "0.4.40",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
     "JavaScript",
@@ -91,7 +91,7 @@
       "/src/typings/",
       "/src/utils/testing.ts"
     ],
-    "reporters": [
+      "reporters": [
       "default",
       [
         "./node_modules/jest-html-reporter",

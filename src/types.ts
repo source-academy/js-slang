@@ -273,3 +273,12 @@ export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
+
+export {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
+  Address as SVMAddress,
+  Argument as SVMArgument,
+  Offset as SVMOffset,
+  SVMFunction
+} from './vm/svml-compiler'
