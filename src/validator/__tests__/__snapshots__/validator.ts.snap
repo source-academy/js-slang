@@ -42,10 +42,6 @@ Object {
         "operator": "=",
         "right": Node {
           "end": 64,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "integer",
-          },
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -58,23 +54,11 @@ Object {
           },
           "raw": "10",
           "start": 62,
-          "typability": "Typed",
           "type": "Literal",
-          "typeVariable": Object {
-            "id": 15,
-            "isPolymorphic": false,
-            "kind": "variable",
-          },
           "value": 10,
         },
         "start": 58,
-        "typability": "NotYetTyped",
         "type": "AssignmentExpression",
-        "typeVariable": Object {
-          "id": 16,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
       },
       "severity": "Error",
       "type": "Syntax",
@@ -127,10 +111,6 @@ Object {
         "operator": "=",
         "right": Node {
           "end": 45,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "integer",
-          },
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -143,23 +123,11 @@ Object {
           },
           "raw": "10",
           "start": 43,
-          "typability": "Typed",
           "type": "Literal",
-          "typeVariable": Object {
-            "id": 7,
-            "isPolymorphic": false,
-            "kind": "variable",
-          },
           "value": 10,
         },
         "start": 39,
-        "typability": "NotYetTyped",
         "type": "AssignmentExpression",
-        "typeVariable": Object {
-          "id": 8,
-          "isPolymorphic": false,
-          "kind": "variable",
-        },
       },
       "severity": "Error",
       "type": "Syntax",
