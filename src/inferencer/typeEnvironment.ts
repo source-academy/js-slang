@@ -24,18 +24,36 @@ export function updateTypeEnvironment(program: es.Program) {
   function updateForConstantDeclaration(
     constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
   ) {
-    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
-    const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
-    const idenName = iden.name
-
-    const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
-    const valueTypeVariable = value.typeVariable as Variable
-
-    if (idenName !== undefined && valueTypeVariable !== undefined) {
-      globalTypeEnvironment.set(idenName, {
-        types: [valueTypeVariable]
-      })
+    // First, check if it is a function definition
+    if ((constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>).type === 'ArrowFunctionExpression') {
+      // If so, handle separately
+      updateForFunctionDefinition(constantDeclaration)
     }
+    else {
+      // Otherwise, should just be literals
+      // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
+      const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+      const idenName = iden.name
+
+      const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
+      const valueTypeVariable = value.typeVariable as Variable
+
+      if (idenName !== undefined && valueTypeVariable !== undefined) {
+        globalTypeEnvironment.set(idenName, {
+          types: [valueTypeVariable]
+        })
+      }
+    }
+  }
+
+  function updateForFunctionDefinition(
+    constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
+  ) {
+    const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+    const func = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.ArrowFunctionExpression>
+    const params = func.params as TypeAnnotatedNode<es.Node>[]
+    const block = func.body as TypeAnnotatedNode<es.BlockStatement>
+    updateForFunctionCommon(iden, params, block)
   }
 
   function updateForFunctionDeclaration(
@@ -43,9 +61,14 @@ export function updateTypeEnvironment(program: es.Program) {
   ) {
     // e.g. Given: f^T3 (x^T1) { return (...) }^T2, Set: Γ[ f ← [T1] => T2 ]
     const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+    const params = functionDeclaration.params as TypeAnnotatedNode<es.Node>[]
+    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
+    updateForFunctionCommon(iden, params, block)
+  }
+
+  function updateForFunctionCommon(iden: TypeAnnotatedNode<es.Identifier>, params: TypeAnnotatedNode<es.Node>[], block: TypeAnnotatedNode<es.BlockStatement>) {
     const idenName = iden.name
 
-    const params = functionDeclaration.params as TypeAnnotatedNode<es.Node>[]
     const paramTypeVariables = []
     for (const p of params) {
       if (p.typeVariable) paramTypeVariables.push(p.typeVariable as Variable)
@@ -61,7 +84,6 @@ export function updateTypeEnvironment(program: es.Program) {
     //   }
     // }
 
-    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
 
     // Since we are adding type variables at this point, the function type has to be polymorphic

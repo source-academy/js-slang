@@ -275,13 +275,13 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
   }
 }
 
-function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
+function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration> | TypeAnnotatedNode<es.ArrowFunctionExpression>) {
   // Update type constraints in constraintStore
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
 
   // First, try to add constraints that ensure all ReturnStatements *and BlockStatements* give same type
   // e.g. T2 = T3
-  const bodyNodes = functionDeclaration.body.body
+  const bodyNodes = (functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>).body
   let prevReturnTypeVariable
   for (const node of bodyNodes) {
     if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
@@ -315,22 +315,24 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
     }
   }
 
-  // Finally, add constraint to give the function identifier the corresponding function type
-  // e.g. T5 = [T1] => T4
-  const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
-  const idenTypeVariable = iden.typeVariable as Variable
+  // Commented out as this does not seem to be needed.
+  // inferIdentifier() would already add the required constraint and this block seem to not be invoked (maybe because TVar not avail)
+  // // Finally, add constraint to give the function identifier the corresponding function type
+  // // e.g. T5 = [T1] => T4
+  // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+  // const idenTypeVariable = iden.typeVariable as Variable
 
-  const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
+  // const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
 
-  if (idenTypeVariable !== undefined && functionType !== undefined) {
-    const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part C - pls debug',
-        functionDeclaration.loc
-      )
-    }
-  }
+  // if (idenTypeVariable !== undefined && functionType !== undefined) {
+  //   const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
+  //   if (errorObj) {
+  //     displayErrorAndTerminate(
+  //       'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part C - pls debug',
+  //       functionDeclaration.loc
+  //     )
+  //   }
+  // }
 }
 
 function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.CallExpression>) {
@@ -600,7 +602,8 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       inferConditionals(statement)
       return
     }
-    case 'FunctionDeclaration': {
+    case 'FunctionDeclaration':
+    case 'ArrowFunctionExpression': {
       // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
