@@ -8,6 +8,7 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import { transpileToGPU, getInternalFunctionsForGPU, getInternalNamesForGPU } from '../gpu/gpu'
+import GPUTransformer from '../gpu/transfomer'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -33,7 +34,7 @@ let NATIVE_STORAGE: {
 let usedIdentifiers: Set<string>
 
 /*  BLACKLIST - any functions here will be ignored by transpiler */
-const blacklist = ['__createKernel']
+let blacklist = ['__createKernel']
 const ignoreWalker = make({
   CallExpression: (node: es.CallExpression, st: any, c: any) => {
     if (node.callee.type === 'Identifier') {
@@ -801,6 +802,9 @@ export function transpile(
 
   let gpuDisplayStatements: es.Statement[] = []
   if (variant === 'gpu') {
+    const unique = getUniqueId('__createKernel')
+    GPUTransformer.globalIds.__createKernel = create.identifier(unique)
+    blacklist = [unique]
     gpuDisplayStatements = transpileToGPU(program)
   }
 
