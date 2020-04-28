@@ -33,7 +33,7 @@ let NATIVE_STORAGE: {
 let usedIdentifiers: Set<string>
 
 /*  BLACKLIST - any functions here will be ignored by transpiler */
-const blacklist = ['__createKernel']
+const blacklist: string[] = []
 const ignoreWalker = make({
   CallExpression: (node: es.CallExpression, st: any, c: any) => {
     if (node.callee.type === 'Identifier') {
@@ -801,7 +801,9 @@ export function transpile(
 
   let gpuDisplayStatements: es.Statement[] = []
   if (variant === 'gpu') {
-    gpuDisplayStatements = transpileToGPU(program)
+    const kernelFunction = getUniqueId('__createKernel')
+    blacklist.push(kernelFunction)
+    gpuDisplayStatements = transpileToGPU(program, kernelFunction)
   }
 
   transformReturnStatementsToAllowProperTailCalls(program, variant)

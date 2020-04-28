@@ -6,7 +6,10 @@ import * as es from 'estree'
 // top-level gpu functions that call our code
 
 // transpiles if possible and returns display statements to end user
-export function transpileToGPU(program: es.Program): es.Statement[] {
+export function transpileToGPU(program: es.Program, kernelFunction: string): es.Statement[] {
+  // create unique kernel name
+  GPUTransformer.globalIds.__createKernel = create.identifier(kernelFunction)
+
   const transformer = new GPUTransformer(program)
   const res = transformer.transform()
 
