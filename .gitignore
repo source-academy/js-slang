@@ -12,3 +12,5 @@ coverage/
 .vscode/
 tsconfig.tsbuildinfo
 test-report.html
+
+.DS_Store

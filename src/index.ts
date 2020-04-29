@@ -13,7 +13,12 @@ import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
 import { parse, parseAt, parseForNames } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler, NonDeteScheduler } from './schedulers'
+import {
+  AsyncScheduler,
+  PreemptiveScheduler,
+  NonDetScheduler,
+  NonDeteScheduler
+} from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { redexify, getEvaluationSteps } from './stepper/stepper'
@@ -497,10 +502,10 @@ export async function runInContext(
     if (context.variant === 'non-det') {
       it = nonDetEvaluate(program, context)
       scheduler = new NonDetScheduler()
-    } else if(context.variant === 'nondet'){
-      it = evaluateNonDet(program,context)
+    } else if (context.variant === 'nondet') {
+      it = evaluateNonDet(program, context)
       scheduler = new NonDeteScheduler()
-    }else if (theOptions.scheduler === 'async') {
+    } else if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()
     } else {
       scheduler = new PreemptiveScheduler(theOptions.steps)
