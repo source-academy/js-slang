@@ -21,7 +21,7 @@ const CATEGORY = {
   types: /\bstorage.type\b/,
   forbidden: /\bvariable.language\b/,
   keywords: /\bkeyword\b/,
-  consts: /\bconstant.language\b/,
+  consts: /\bbuiltinconsts\b/,
   number: /\bconstant.numeric\b/,
   bool: /\bconstant.language.boolean\b/
 }
