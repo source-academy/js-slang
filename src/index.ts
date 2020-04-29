@@ -29,7 +29,8 @@ import {
   SourceError,
   Variant,
   TypeAnnotatedNode,
-  SVMProgram
+  SVMProgram,
+  TypeAnnotatedFuncDecl
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
@@ -265,7 +266,7 @@ export async function getNames(
 }
 
 function typedParse(code: any, context: Context) {
-  const program: Program | undefined = parse(code, context)
+  const program: Program | undefined = parse(code, context, true)
   if (program === undefined) {
     return null
   }
@@ -278,77 +279,81 @@ export function getTypeInformation(
   loc: { line: number; column: number },
   name: string
 ): string {
-  const lineNumber = loc.line
+  try {
+    const lineNumber = loc.line
 
-  // parse the program into typed nodes and parse error
-  const program = typedParse(code, context)
-  if (program === null) {
-    return ''
-  }
+    // parse the program into typed nodes and parse error
+    const program = typedParse(code, context)
+    if (program === null) {
+      return ''
+    }
 
-  const [typedProgram, error] = typeCheck(program)
-  const parsedError = parseError(error)
+    const [typedProgram, error] = typeCheck(program)
+    const parsedError = parseError(error)
 
-  // initialize the ans string
-  let ans = ''
-  if (parsedError) {
-    ans += parsedError + '\n'
-  }
-  if (!typedProgram) {
-    return ans
-  }
+    // initialize the ans string
+    let ans = ''
+    if (parsedError) {
+      ans += parsedError + '\n'
+    }
+    if (!typedProgram) {
+      return ans
+    }
 
-  // callback function for findNodeAt function
-  function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
-    if (!node.inferredType) {
+    // callback function for findNodeAt function
+    function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
+      if (!nd.inferredType) {
+        return false
+      }
+      const location = nd.loc
+      const nodeType = nd.type
+      if (nodeType && location) {
+        let nodeId = ''
+        if (nd.type === 'FunctionDeclaration') {
+          nodeId = nd.id?.name!
+        } else if (nd.type === 'VariableDeclaration') {
+          nodeId = (nd.declarations[0].id as es.Identifier).name
+        } else if (nd.type === 'Identifier') {
+          nodeId = nd.name
+        }
+        return nodeId === name && location.start.line <= loc.line && location.end.line >= loc.line
+      }
       return false
     }
-    const location = node.loc
-    const nodeType = node.type
-    if (nodeType && location) {
-      let id = ''
-      if (node.type === 'Identifier') {
-        id = node.name
-      } else if (node.type === 'FunctionDeclaration') {
-        id = node.id?.name!
-      } else if (node.type === 'VariableDeclaration') {
-        id = (node.declarations[0].id as es.Identifier).name
-      }
-      return id === name && location.start.line <= loc.line && location.end.line >= loc.line
-    }
-    return false
-  }
 
-  // report both as the type inference
-  return (
-    ans +
-    typedProgram.body
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
-        if (res === undefined) {
-          return undefined
-        } else {
-          return res.node
-        }
-      })
-      .filter((node: TypeAnnotatedNode<es.Node>) => {
-        return node !== undefined
-      })
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        let id = ''
-        if (node.type === 'Identifier') {
-          id = node.name
-        } else if (node.type === 'FunctionDeclaration') {
-          id = node.id?.name!
-        } else if (node.type === 'VariableDeclaration') {
-          id = (node.declarations[0].id as es.Identifier).name
-        }
-        const type = typeToString(node.inferredType!)
-        return `At Line ${lineNumber} => ${id}: ${type}`
-      })
-      .slice(0, 1)
-      .join('\n')
-  )
+    // report both as the type inference
+
+    const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+
+    if (res === undefined) {
+      return ans
+    }
+
+    const node: TypeAnnotatedNode<es.Node> = res.node
+
+    if (node === undefined) {
+      return ans
+    }
+
+    let id = ''
+    let actualNode = node
+    if (node.type === 'FunctionDeclaration') {
+      id = node.id?.name!
+    } else if (node.type === 'VariableDeclaration') {
+      id = (node.declarations[0].id as es.Identifier).name
+      actualNode = node.declarations[0].init! as TypeAnnotatedNode<es.Node>
+    } else if (node.type === 'Identifier') {
+      id = node.name
+    }
+    const type = typeToString(
+      actualNode.type === 'FunctionDeclaration'
+        ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+        : actualNode.inferredType!
+    )
+    return ans + `At Line ${lineNumber} => ${id}: ${type}`
+  } catch (error) {
+    return ''
+  }
 }
 
 export async function runInContext(

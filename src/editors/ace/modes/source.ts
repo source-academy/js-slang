@@ -105,7 +105,7 @@ export function HighlightRulesSelector(
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
-          'constant.language': getAllNames('const'),
+          builtinconsts: getAllNames('const'),
 
           'constant.language.boolean': 'true|false',
 
