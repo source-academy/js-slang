@@ -625,7 +625,7 @@ function logObjectsForDebugging() {
   printTypeConstraints(constraintStore)
 }
 // // main function that will infer a program
-export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program> {
+export function inferProgram(program: es.Program): [TypeAnnotatedNode<es.Program>, Map<any, any>, Map<Type, Type>] {
   // Step 1. Annotate program
   program = annotateProgram(program)
   annotatedProgram = program
@@ -645,5 +645,5 @@ export function inferProgram(program: es.Program): TypeAnnotatedNode<es.Program>
   // Successful run..
   logObjectsForDebugging()
   // return the AST with annotated types
-  return program
+  return [program, currentTypeEnvironment, constraintStore]
 }
