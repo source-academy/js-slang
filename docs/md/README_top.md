@@ -23,7 +23,11 @@
 
 ## <a href="source_3_concurrent/">Source §3 Concurrent</a>
 
+## <a href="source_3_non-det/">Source §3 Non-Det</a>
+
 ## <a href="source_4/">Source §4</a>
+
+## <a href="source_4_gpu/">Source §4 GPU</a>
 
 ## <a href="External libraries/">External Libraries</a>
 
