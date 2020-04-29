@@ -26,7 +26,8 @@
     "lodash": "^4.17.13",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
-    "xmlhttprequest-ts": "^1.0.1"
+    "xmlhttprequest-ts": "^1.0.1",
+    "gpu.js": "^2.9.3"
   },
   "main": "dist/index",
   "types": "dist/index",

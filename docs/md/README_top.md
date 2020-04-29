@@ -27,6 +27,8 @@
 
 ## <a href="source_4/">Source §4</a>
 
+## <a href="source_4_gpu/">Source §4 GPU</a>
+
 ## <a href="External libraries/">External Libraries</a>
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
