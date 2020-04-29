@@ -281,8 +281,6 @@ export function getTypeInformation(
   name: string
 ): string {
   try {
-    const lineNumber = loc.line
-
     // parse the program into typed nodes and parse error
     const program = typedParse(code, context)
     if (program === null) {
@@ -301,23 +299,35 @@ export function getTypeInformation(
       return ans
     }
 
+    // get name of the node
+    const getName = (typedNode: TypeAnnotatedNode<es.Node>) => {
+      let nodeId = ''
+      if (typedNode.type) {
+        if (typedNode.type === 'FunctionDeclaration') {
+          nodeId = typedNode.id?.name!
+        } else if (typedNode.type === 'VariableDeclaration') {
+          nodeId = (typedNode.declarations[0].id as es.Identifier).name
+        } else if (typedNode.type === 'Identifier') {
+          nodeId = typedNode.name
+        }
+      }
+      return nodeId
+    }
+
     // callback function for findNodeAt function
     function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
       if (!nd.inferredType) {
         return false
       }
       const location = nd.loc
-      const nodeType = nd.type
-      if (nodeType && location) {
-        let nodeId = ''
-        if (nd.type === 'FunctionDeclaration') {
-          nodeId = nd.id?.name!
-        } else if (nd.type === 'VariableDeclaration') {
-          nodeId = (nd.declarations[0].id as es.Identifier).name
-        } else if (nd.type === 'Identifier') {
-          nodeId = nd.name
-        }
-        return nodeId === name && location.start.line <= loc.line && location.end.line >= loc.line
+      if (nd.type && location) {
+        return (
+          getName(nd) === name &&
+          location.start.line <= loc.line &&
+          location.end.line >= loc.line &&
+          location.start.column <= loc.column &&
+          location.end.column >= loc.column
+        )
       }
       return false
     }
@@ -336,22 +346,16 @@ export function getTypeInformation(
       return ans
     }
 
-    let id = ''
-    let actualNode = node
-    if (node.type === 'FunctionDeclaration') {
-      id = node.id?.name!
-    } else if (node.type === 'VariableDeclaration') {
-      id = (node.declarations[0].id as es.Identifier).name
-      actualNode = node.declarations[0].init! as TypeAnnotatedNode<es.Node>
-    } else if (node.type === 'Identifier') {
-      id = node.name
-    }
+    const actualNode =
+      node.type === 'VariableDeclaration'
+        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        : node
     const type = typeToString(
       actualNode.type === 'FunctionDeclaration'
         ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
         : actualNode.inferredType!
     )
-    return ans + `At Line ${lineNumber} => ${id}: ${type}`
+    return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
   } catch (error) {
     return ''
   }
