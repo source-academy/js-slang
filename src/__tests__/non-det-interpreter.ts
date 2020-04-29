@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 import { runInContext, resume, IOptions, Result, parseError } from '../index'
 import { mockContext } from '../mocks/context'
-import { SuspendedNonDet, Finished } from '../types'
+import { SuspendedNonDet, Finished, Context } from '../types'
 
 test('Empty code returns undefined', async () => {
   await testDeterministicCode('', undefined)
@@ -380,6 +380,19 @@ test('Block statements', async () => {
   )
 })
 
+test('ambR application', async () => {
+  await testNonDeterministicCode('ambR();', [], false, true)
+
+  await testNonDeterministicCode('ambR(1, 2, 3, 4, 5);', [1, 2, 3, 4, 5], false, true)
+
+  await testNonDeterministicCode(
+    'ambR(ambR(4, 5, 6, 7), ambR(3, 8));',
+    [4, 5, 6, 7, 3, 8],
+    false,
+    true
+  )
+})
+
 test('Deterministic arrays', async () => {
   await testDeterministicCode(`[];`, [])
 
@@ -492,28 +505,61 @@ export async function testDeterministicCode(
 export async function testNonDeterministicCode(
   code: string,
   expectedValues: any[],
-  hasError: boolean = false
+  hasError: boolean = false,
+  random: boolean = false
 ) {
-  const context = makeNonDetContext()
+  const context: Context = makeNonDetContext()
   let result: Result = await runInContext(code, context, nonDetTestOptions)
 
+  const results: any[] = []
   const numOfRuns = hasError ? expectedValues.length - 1 : expectedValues.length
   for (let i = 0; i < numOfRuns; i++) {
-    expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
-    expect(result.status).toEqual('suspended-non-det')
+    if (random) {
+      results.push((result as SuspendedNonDet).value)
+    } else {
+      expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
+    }
 
+    expect(result.status).toEqual('suspended-non-det')
     result = await resume(result)
   }
 
-  if (!hasError) {
-    // all non deterministic programs have a final result whose value is undefined
-    expect(result.status).toEqual('finished')
-    expect((result as Finished).value).toEqual(undefined)
-  } else {
-    expect(result.status).toEqual('error')
-    const message: string = parseError(context.errors)
-    expect(message).toEqual(expectedValues[expectedValues.length - 1])
+  if (random) {
+    verifyRandomizedTest(results, expectedValues)
   }
+
+  if (hasError) {
+    verifyError(result, expectedValues, context)
+  } else {
+    verifyFinalResult(result)
+  }
+}
+
+/* Checks the final result obtained for a test
+ * Assumes the test is not erroneous
+ */
+function verifyFinalResult(result: Result) {
+  // all non deterministic programs have a final result whose value is undefined
+  expect(result.status).toEqual('finished')
+  expect((result as Finished).value).toEqual(undefined)
+}
+
+/* Checks the error obtained for an erroneous test
+ * The error message is captured as the test's final result
+ */
+function verifyError(result: Result, expectedValues: any[], context: Context) {
+  expect(result.status).toEqual('error')
+  const message: string = parseError(context.errors)
+  expect(message).toEqual(expectedValues[expectedValues.length - 1])
+}
+
+/* Compares expected and obtained results after a test is run
+ * Assumes the test involves randomization
+ */
+function verifyRandomizedTest(results: any[], expectedValues: any[]) {
+  results.sort()
+  expectedValues.sort()
+  expect(results).toEqual(expectedValues)
 }
 
 function makeNonDetContext() {

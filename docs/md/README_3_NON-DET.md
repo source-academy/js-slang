@@ -55,6 +55,13 @@ In the following example, we specify two possible choices for a value we want:<b
 To obtain the next value, <CODE>'bye'</CODE>, enter the command <CODE>try again</CODE> in the playground REPL.
 This will give the result <CODE>'bye world!'</CODE>.
 
+### ambR operator
+The <CODE>ambR</Code> operator functions similarly to <CODE>amb</Code> but makes choices randomly
+instead of sequentially.
+
+Upon running the above example, we may randomly obtain the result <CODE>'hello world!'</CODE> first and <CODE>'bye world!</CODE> second<br>
+or <CODE>'bye world!</CODE> first and <CODE>'hello world!'</CODE> second.
+
 ### require function
 Requirements can be specified with the <CODE>require</code> function.
 
