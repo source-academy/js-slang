@@ -109,7 +109,6 @@ const predefined = new Set([
   'integers_from',
   'eval_stream',
   'stream_ref'
-
 ])
 
 export function printType(type: Type): string {
@@ -155,7 +154,7 @@ export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
 }
 
 export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
-  let resultString = "Initial Type Annotations:\n"
+  let resultString = 'Initial Type Annotations:\n'
   function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
     return `T${(node.typeVariable as Variable).id}`
   }
@@ -246,11 +245,12 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
   }
 
   function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
-    resultString +=
-      `${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(
-        unaryExpression.argument
-      )}\n`
-    resultString += `${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}\n`
+    resultString += `${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(
+      unaryExpression.argument
+    )}\n`
+    resultString += `${getExpressionString(unaryExpression)}: ${getTypeVariableId(
+      unaryExpression
+    )}\n`
   }
 
   function printFunctionDeclaration(
@@ -310,11 +310,11 @@ export function replaceTypeVariablesInTypeEnvironment(typeContraints: any, typeE
   for (const [key, value] of typeEnvironment) {
     if (!predefined.has(key)) {
       // TODO: Replace code if object reference does not work
-    const typeVariable: Type = value.types[0];
-    const inferredType = {
-      types: [typeContraints.get(typeVariable)]
-    }
-    typeEnvironment.set(key, inferredType)
+      const typeVariable: Type = value.types[0]
+      const inferredType = {
+        types: [typeContraints.get(typeVariable)]
+      }
+      typeEnvironment.set(key, inferredType)
     }
   }
 }

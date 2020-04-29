@@ -64,8 +64,8 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
-    ((constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
-      (constraintStore.get(constraintRhs) as Primitive).name !== 'string')
+    (constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
+      (constraintStore.get(constraintRhs) as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5')
     return { constraintLhs, constraintRhs } // for error logging
@@ -75,8 +75,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     // ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintRhs) &&
-    ((constraintRhs as Primitive).name !== 'number' &&
-      (constraintRhs as Primitive).name !== 'string')
+    (constraintRhs as Primitive).name !== 'number' && (constraintRhs as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5(b)')
     return { constraintLhs, constraintRhs } // for error logging
@@ -112,13 +111,13 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     addNConstraint(constraintLhs as FunctionType, constraintStore.get(constraintRhs))
   }
   // check for mismatch base types (Rule 9)
-  else if ((
-    isBaseType(constraintLhs) &&
-    isBaseType(constraintRhs) &&
-    (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name
-   ) 
-   || (isFunctionType(constraintLhs) && isBaseType(constraintRhs)) 
-   || (isBaseType(constraintLhs) && isFunctionType(constraintRhs))) {
+  else if (
+    (isBaseType(constraintLhs) &&
+      isBaseType(constraintRhs) &&
+      (constraintLhs as Primitive).name !== (constraintRhs as Primitive).name) ||
+    (isFunctionType(constraintLhs) && isBaseType(constraintRhs)) ||
+    (isBaseType(constraintLhs) && isFunctionType(constraintRhs))
+  ) {
     console.log('[debug] Error in Rule 9')
     return { constraintLhs, constraintRhs } // for error logging
   } else {

@@ -12,10 +12,9 @@ beforeEach(() => {
 
 // TODO: Check how I can clear the type environment
 afterEach(() => {
-  (console.log as any).mockRestore()
+  ;(console.log as any).mockRestore()
   jest.restoreAllMocks()
-}
-)
+})
 
 test('Type of constant declaration is type of values assigned to it - literals', () => {
   const code = stripIndent`const x = 2;
