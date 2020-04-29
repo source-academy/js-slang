@@ -41,7 +41,7 @@ Usage: js-slang [PROGRAM_STRING] [OPTION]
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
   -s, --use-subst       use substitution
   -h, --help            display this help
-  -n, --native          use the native execution method
+  -i, --interpreter         use the interpreter for execution
   -l, --lazy            use lazy evaluation
   -e, --eval            don't show REPL, only display output of evaluation
 ```
@@ -58,6 +58,12 @@ Documentation
 
 Source is documented here: <https://sicp.comp.nus.edu.sg/source/>
 
+## Requirements
+* `bash`: known working version: GNU bash, version 5.0.16
+* `latexmk`: Version 4.52c
+* `pdflatex`: known working versions
+  * pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
+
 To build the documentation, run
 
 ``` {.}
@@ -70,6 +76,8 @@ $ cd docs/source_language_specs
 $ make        # to make the PDF documents using LaTeX
 ```
 
+Note: The documentation may not build on Windows, depending on your bash setup, [see above](https://github.com/source-academy/js-slang#requirements).
+
 Documentation on the Source libraries are generated from inline
 documentation in the library sources, a copy of which are kept in
 `docs/lib/*.js`. The command `yarn jsdoc` generates the 
@@ -77,7 +85,7 @@ documentation and places it in the folder `docs/source`. The script
 `jsdoc` provides an installation command to deploy the
 documentation via `scp` to a web server:
 ``` {.}
-$ yarn jsdoc install`
+$ yarn jsdoc install
 ```
 You can test the documentation using a local server:
 ``` {.}

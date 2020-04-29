@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
-import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
+import { createContext, IOptions, parseError, runInContext, Result, resume } from '../index'
 import { Variant, ExecutionMethod } from '../types'
 import Closure from '../interpreter/closure'
 
@@ -14,6 +14,12 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
+  // const context = createContext(chapter, undefined, undefined, undefined)
+  // const options: Partial<IOptions> = {
+  //   scheduler: 'preemptive',
+  //   executionMethod,
+  //   variant,
+  //   useSubst
   let lastResult: Result
   let context: any
   let options: Partial<IOptions>
@@ -76,7 +82,7 @@ function startRepl(
         }
       )
     } else {
-      throw new Error(parseError(context.errors))
+      console.error(parseError(context.errors))
     }
   })
 }
@@ -87,7 +93,7 @@ function main() {
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
       ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
-      ['n', 'native', 'use the native execution method'],
+      ['i', 'interpreter', 'use the interpreter for execution'],
       ['l', 'lazy', 'use lazy evaluation'],
       ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
@@ -95,8 +101,8 @@ function main() {
     .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
     .parseSystem()
 
-  const executionMethod = opt.options.native === true ? 'native' : 'interpreter'
-  const variant = opt.options.lazy === true ? 'nondet' : 'default'
+  const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
+  const variant = opt.options.lazy === true ? 'lazy' : 'default'
   const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e

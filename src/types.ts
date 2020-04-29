@@ -57,7 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'default' | 'nondet' // this might replace EvaluationMethod
+export type Variant = 'wasm' | 'lazy' | 'non-det' | 'nondet' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
 
 export interface Context<T = any> {
   /** The source version used */
@@ -178,7 +178,7 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedNonDete
+export type Result = Suspended | SuspendedNonDet | SuspendedNonDete | Finished | Error
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -275,3 +275,12 @@ export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
+
+export {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
+  Address as SVMAddress,
+  Argument as SVMArgument,
+  Offset as SVMOffset,
+  SVMFunction
+} from './vm/svml-compiler'

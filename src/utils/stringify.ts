@@ -1,5 +1,6 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
+import { forceIt } from './operators'
 import { Value, Type } from '../types'
 
 function makeIndent(indent: number | string): string {
@@ -30,6 +31,7 @@ export const stringify = (
 ): string => {
   // Used to check if there are any cyclic structures
   const ancestors = new Set()
+  value = forceIt(value)
 
   // Precompute useful strings
   const indentString = makeIndent(indent)
@@ -126,19 +128,44 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
 }
 
 export function typeToString(type: Type): string {
+  return niceTypeToString(type)
+}
+
+function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
+  function curriedTypeToString(t: Type) {
+    return niceTypeToString(t, nameMap)
+  }
+
   switch (type.kind) {
     case 'primitive':
-    case 'variable':
       return type.name
+    case 'variable':
+      if (type.constraint && type.constraint !== 'none') {
+        return type.constraint
+      }
+      if (!(type.name in nameMap)) {
+        // type name is not in map, so add it
+        nameMap[type.name] = 'T' + nameMap._next++
+      }
+      return nameMap[type.name]
     case 'list':
-      return `List<${typeToString(type.elementType)}>`
+      return `List<${curriedTypeToString(type.elementType)}>`
     case 'pair':
-      return `[${typeToString(type.headType)}, ${typeToString(type.tailType)}]`
+      const headType = curriedTypeToString(type.headType)
+      // convert [T1 , List<T1>] back to List<T1>
+      if (
+        type.tailType.kind === 'list' &&
+        headType === curriedTypeToString(type.tailType.elementType)
+      )
+        return `List<${headType}>`
+      return `[${curriedTypeToString(type.headType)}, ${curriedTypeToString(type.tailType)}]`
     case 'function':
-      let parametersString = type.parameterTypes.map(typeToString).join(', ')
+      let parametersString = type.parameterTypes.map(curriedTypeToString).join(', ')
       if (type.parameterTypes.length !== 1 || type.parameterTypes[0].kind === 'function') {
         parametersString = `(${parametersString})`
       }
-      return `${parametersString} -> ${typeToString(type.returnType)}`
+      return `${parametersString} -> ${curriedTypeToString(type.returnType)}`
+    default:
+      return 'Unable to infer type'
   }
 }

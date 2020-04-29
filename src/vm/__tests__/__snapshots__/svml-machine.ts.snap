@@ -182,6 +182,25 @@ display(array_length(p));",
 }
 `;
 
+exports[`primitive opcodes self-implemented DISPLAY works for circular references: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const p = pair(1,2);
+const q = pair(3,4);
+set_head(q,p);
+set_tail(p,q);
+display(p);",
+  "displayResult": Array [
+    "[1, [...<circular>, 4]]",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes self-implemented ERROR works: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

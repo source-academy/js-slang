@@ -11,13 +11,23 @@
 
 ## <a href="source_1/">Source §1</a>
   
+## <a href="source_1_lazy/">Source §1 Lazy</a>
+  
+## <a href="source_1_wasm/">Source §1 WebAssembly</a>
+  
 ## <a href="source_2/">Source §2</a>
+
+## <a href="source_2_lazy/">Source §2 Lazy</a>
 
 ## <a href="source_3/">Source §3</a>
 
 ## <a href="source_3_concurrent/">Source §3 Concurrent</a>
 
+## <a href="source_3_non-det/">Source §3 Non-Det</a>
+
 ## <a href="source_4/">Source §4</a>
+
+## <a href="source_4_gpu/">Source §4 GPU</a>
 
 ## <a href="External libraries/">External Libraries</a>
 

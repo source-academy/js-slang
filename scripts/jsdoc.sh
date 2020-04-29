@@ -15,8 +15,8 @@ main() {
 	prepare
     elif [ "$1" == "clean" ]; then
 	clean
-    elif [ "$1" == "tocs1101s" ]; then
-	tocs1101s
+    elif [ "$1" == "via" ]; then
+	via
     elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
         run
     else
@@ -44,12 +44,39 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
     
+    # Source §1 Lazy
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_LAZY.md \
+	     -d ${DST}/"source_1_lazy"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js
+    
+    # Source §1 WebAssembly
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_WASM.md \
+	     -d ${DST}/"source_1_wasm"/ \
+	     ${LIB}/empty.js
+    
     # Source §2
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_2.md \
 	     -d ${DST}/"source_2"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js
+    
+    # Source §2 Lazy
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_2_LAZY.md \
+	     -d ${DST}/"source_2_lazy"/ \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
@@ -80,6 +107,20 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/concurrency.js
+
+	# Source §3 Non-Det
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_3_NON-DET.md \
+	     -d ${DST}/"source_3_non-det"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+         ${LIB}/list.js \
+	     ${LIB}/stream.js \
+		 ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+		 ${LIB}/non-det.js
     
     
     # Source §4
@@ -95,6 +136,19 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/mce.js
+
+    # Source §4 GPU
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_GPU.md \
+	     -d ${DST}/"source_4_gpu"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+		 ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js 
     
     # MISC
     
@@ -151,6 +205,14 @@ run() {
 	     -R ${MD}/README_CONCURRENCY.md \
 	     -d ${DST}/CONCURRENCY/ \
 	     ${LIB}/concurrency.js
+
+	# NON-DET
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_NON-DET.md \
+	     -d ${DST}/NON-DET/ \
+	     ${LIB}/non-det.js
     
     # MCE
     
@@ -226,12 +288,11 @@ install() {
     cd docs; scp -r ${DST} sicp@web1.comp.nus.edu.sg:public_html/.
 }
 
-tocs1101s() {
+via() {
     prepare 
-    cd docs; scp -r source cs1101s@sunfire.comp.nus.edu.sg:. ; \
-    echo "now: ssh cs1101s@sunfire.comp.nus.edu.sg and: "; \
-    echo "scp -r source sicp@web1.comp.nus.edu.sg:public_html"
-
+    cd docs/source; scp -r * henz@suna.comp.nus.edu.sg:source; \
+    echo "next: ssh henz@suna.comp.nus.edu.sg"; \
+    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging/source"
 }
 
 clean() {

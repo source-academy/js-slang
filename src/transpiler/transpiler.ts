@@ -1,11 +1,13 @@
-import { ancestor, simple } from 'acorn-walk/dist/walk'
+import { ancestor, simple, make } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
 import { AllowedDeclarations, Variant, Value } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
+import { transpileToGPU, getInternalFunctionsForGPU, getInternalNamesForGPU } from '../gpu/gpu'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -29,6 +31,21 @@ let NATIVE_STORAGE: {
 }
 
 let usedIdentifiers: Set<string>
+
+/*  BLACKLIST - any functions here will be ignored by transpiler */
+const blacklist: string[] = []
+const ignoreWalker = make({
+  CallExpression: (node: es.CallExpression, st: any, c: any) => {
+    if (node.callee.type === 'Identifier') {
+      if (blacklist.includes(node.callee.name)) {
+        return
+      }
+    }
+
+    c(node.callee, st, 'Expression')
+    if (node.arguments) for (const arg of node.arguments) c(arg, st, 'Expression')
+  }
+})
 
 function getUniqueId(uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
@@ -60,6 +77,53 @@ const globalIds = {
   globals: create.identifier('dummy')
 }
 let contextId: number
+
+function prefixModule(program: es.Program): string {
+  let moduleCounter = 0
+  let prefix = ''
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break
+    }
+    const moduleText = loadModuleText(node.source.value as string)
+    prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
+    moduleCounter++
+  }
+  return prefix
+}
+
+export function transformSingleImportDeclaration(
+  moduleCounter: number,
+  node: es.ImportDeclaration
+) {
+  const result = []
+  const tempNamespace = `__MODULE_${moduleCounter}__`
+  // const yyy = __MODULE_xxx__.yyy;
+  const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
+  for (const symbol of neededSymbols) {
+    result.push(
+      create.constantDeclaration(
+        symbol,
+        create.memberExpression(create.identifier(tempNamespace), symbol)
+      )
+    )
+  }
+  return result
+}
+
+export function transformImportDeclarations(program: es.Program) {
+  const imports = []
+  let result: es.VariableDeclaration[] = []
+  let moduleCounter = 0
+  while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
+    imports.unshift(program.body.shift() as es.ImportDeclaration)
+  }
+  for (const node of imports) {
+    result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+    moduleCounter++
+  }
+  program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+}
 
 function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
@@ -233,6 +297,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
         const { line, column } = expression.loc!.start
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
+
         const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
 
         if (variant === 'lazy') {
@@ -257,16 +322,20 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
     }
   }
 
-  simple(program, {
-    ReturnStatement(node: es.ReturnStatement) {
-      node.argument = transformLogicalExpression(node.argument!)
-    },
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      if (node.expression) {
-        node.body = transformLogicalExpression(node.body as es.Expression)
+  simple(
+    program,
+    {
+      ReturnStatement(node: es.ReturnStatement) {
+        node.argument = transformLogicalExpression(node.argument!)
+      },
+      ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+        if (node.expression) {
+          node.body = transformLogicalExpression(node.body as es.Expression)
+        }
       }
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 function delayIt(expr: es.Expression) {
@@ -286,27 +355,38 @@ function delayIt(expr: es.Expression) {
 }
 
 function transformCallExpressionsToCheckIfFunction(program: es.Program, variant: Variant) {
-  simple(program, {
-    CallExpression(node: es.CallExpression) {
-      const { line, column } = node.loc!.start
-      const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
-
-      if (variant === 'lazy') {
-        for (const arg of node.arguments) {
-          args.push(delayIt(arg as es.Expression))
+  simple(
+    program,
+    {
+      CallExpression(node: es.CallExpression) {
+        // ignore this function
+        if (node.callee.type === 'Identifier') {
+          if (blacklist.includes(node.callee.name)) {
+            return
+          }
         }
+
+        const { line, column } = node.loc!.start
+        const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
+
+        if (variant === 'lazy') {
+          for (const arg of node.arguments) {
+            args.push(delayIt(arg as es.Expression))
+          }
+        }
+
+        node.arguments = [
+          node.callee as es.Expression,
+          create.literal(line),
+          create.literal(column),
+          ...args
+        ]
+
+        node.callee = globalIds.callIfFuncAndRightArgs
       }
-
-      node.arguments = [
-        node.callee as es.Expression,
-        create.literal(line),
-        create.literal(column),
-        ...args
-      ]
-
-      node.callee = globalIds.callIfFuncAndRightArgs
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
@@ -335,6 +415,18 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     variableScope = variableScope.previousScope
     variableScopeId = create.memberExpression(variableScopeId, 'previousScope')
   }
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break
+    }
+    const symbols = node.specifiers.map(specifier => specifier.local.name)
+    for (const symbol of symbols) {
+      previousVariablesToAst.set(symbol, {
+        isConstant: true,
+        variableLocationId: create.literal(-1)
+      })
+    }
+  }
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
     const identifiers = new Set<string>()
@@ -357,34 +449,39 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     )
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
-  ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
-    ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
-      }
-    },
-    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
-      identifiersToAncestors.set(identifier, [...ancestors])
-    },
-    Pattern(node: es.Pattern, ancestors: es.Node[]) {
-      if (node.type === 'Identifier') {
-        identifiersToAncestors.set(node, [...ancestors])
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiersToAncestors.set(node.object, [...ancestors])
+  ancestor(
+    program,
+    {
+      Program: processBlock,
+      BlockStatement: processBlock,
+      FunctionDeclaration: processFunction,
+      ArrowFunctionExpression: processFunction,
+      ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+        const init = forStatement.init!
+        if (init.type === 'VariableDeclaration') {
+          identifiersIntroducedByNode.set(
+            forStatement,
+            new Set([(init.declarations[0].id as es.Identifier).name])
+          )
+        }
+      },
+      Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+        identifiersToAncestors.set(identifier, [...ancestors])
+      },
+      Pattern(node: es.Pattern, ancestors: es.Node[]) {
+        if (node.type === 'Identifier') {
+          identifiersToAncestors.set(node, [...ancestors])
+        } else if (node.type === 'MemberExpression') {
+          if (node.object.type === 'Identifier') {
+            identifiersToAncestors.set(node.object, [...ancestors])
+          }
         }
       }
-    }
-  })
+    },
+    ignoreWalker
+  )
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
+
   for (const [identifier, ancestors] of identifiersToAncestors) {
     const name = identifier.name
     const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
@@ -450,7 +547,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
             )
           }
         }
-      } else if (!nativeInternalNames.has(name)) {
+      } else if (!nativeInternalNames.has(name) && !getInternalNamesForGPU().has(name)) {
         if (!skipErrors) {
           throw new UndefinedVariable(name, identifier)
         }
@@ -477,13 +574,17 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
     ])
   }
 
-  simple(program, {
-    IfStatement: transform,
-    ConditionalExpression: transform,
-    LogicalExpression: transform,
-    ForStatement: transform,
-    WhileStatement: transform
-  })
+  simple(
+    program,
+    {
+      IfStatement: transform,
+      ConditionalExpression: transform,
+      LogicalExpression: transform,
+      ForStatement: transform,
+      WhileStatement: transform
+    },
+    ignoreWalker
+  )
 }
 
 function refreshLatestIdentifiers(program: es.Program) {
@@ -569,29 +670,33 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 }
 
 function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
-  simple(program, {
-    BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = node.loc!.start
-      const { operator, left, right } = node
-      create.mutateToCallExpression(node, globalIds.binaryOp, [
-        create.literal(operator),
-        left,
-        right,
-        create.literal(line),
-        create.literal(column)
-      ])
+  simple(
+    program,
+    {
+      BinaryExpression(node: es.BinaryExpression) {
+        const { line, column } = node.loc!.start
+        const { operator, left, right } = node
+        create.mutateToCallExpression(node, globalIds.binaryOp, [
+          create.literal(operator),
+          left,
+          right,
+          create.literal(line),
+          create.literal(column)
+        ])
+      },
+      UnaryExpression(node: es.UnaryExpression) {
+        const { line, column } = node.loc!.start
+        const { operator, argument } = node as es.UnaryExpression
+        create.mutateToCallExpression(node, globalIds.unaryOp, [
+          create.literal(operator),
+          argument,
+          create.literal(line),
+          create.literal(column)
+        ])
+      }
     },
-    UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = node.loc!.start
-      const { operator, argument } = node as es.UnaryExpression
-      create.mutateToCallExpression(node, globalIds.unaryOp, [
-        create.literal(operator),
-        argument,
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+    ignoreWalker
+  )
 }
 
 function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
@@ -599,36 +704,44 @@ function getComputedProperty(computed: boolean, property: es.Expression): es.Exp
 }
 
 function transformPropertyAssignment(program: es.Program) {
-  simple(program, {
-    AssignmentExpression(node: es.AssignmentExpression) {
-      if (node.left.type === 'MemberExpression') {
-        const { object, property, computed, loc } = node.left
+  simple(
+    program,
+    {
+      AssignmentExpression(node: es.AssignmentExpression) {
+        if (node.left.type === 'MemberExpression') {
+          const { object, property, computed, loc } = node.left
+          const { line, column } = loc!.start
+          create.mutateToCallExpression(node, globalIds.setProp, [
+            object as es.Expression,
+            getComputedProperty(computed, property),
+            node.right,
+            create.literal(line),
+            create.literal(column)
+          ])
+        }
+      }
+    },
+    ignoreWalker
+  )
+}
+
+function transformPropertyAccess(program: es.Program) {
+  simple(
+    program,
+    {
+      MemberExpression(node: es.MemberExpression) {
+        const { object, property, computed, loc } = node
         const { line, column } = loc!.start
-        create.mutateToCallExpression(node, globalIds.setProp, [
+        create.mutateToCallExpression(node, globalIds.getProp, [
           object as es.Expression,
           getComputedProperty(computed, property),
-          node.right,
           create.literal(line),
           create.literal(column)
         ])
       }
-    }
-  })
-}
-
-function transformPropertyAccess(program: es.Program) {
-  simple(program, {
-    MemberExpression(node: es.MemberExpression) {
-      const { object, property, computed, loc } = node
-      const { line, column } = loc!.start
-      create.mutateToCallExpression(node, globalIds.getProp, [
-        object as es.Expression,
-        getComputedProperty(computed, property),
-        create.literal(line),
-        create.literal(column)
-      ])
-    }
-  })
+    },
+    ignoreWalker
+  )
 }
 
 function addInfiniteLoopProtection(program: es.Program) {
@@ -659,10 +772,14 @@ function addInfiniteLoopProtection(program: es.Program) {
     node.body = newStatements
   }
 
-  simple(program, {
-    Program: instrumentLoops,
-    BlockStatement: instrumentLoops
-  })
+  simple(
+    program,
+    {
+      Program: instrumentLoops,
+      BlockStatement: instrumentLoops
+    },
+    ignoreWalker
+  )
 }
 
 export function transpile(
@@ -681,6 +798,14 @@ export function transpile(
     return { transpiled: '' }
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
+
+  let gpuDisplayStatements: es.Statement[] = []
+  if (variant === 'gpu') {
+    const kernelFunction = getUniqueId('__createKernel')
+    blacklist.push(kernelFunction)
+    gpuDisplayStatements = transpileToGPU(program, kernelFunction)
+  }
+
   transformReturnStatementsToAllowProperTailCalls(program, variant)
   transformCallExpressionsToCheckIfFunction(program, variant)
   transformUnaryAndBinaryOperationsToFunctionCalls(program)
@@ -694,6 +819,8 @@ export function transpile(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
   addInfiniteLoopProtection(program)
+  const modulePrefix = prefixModule(program)
+  transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
@@ -701,8 +828,10 @@ export function transpile(
     lastStatementStoredInResult,
     evalMap
   } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+
   const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
     wrapWithPreviouslyDeclaredGlobals([
+      ...gpuDisplayStatements,
       ...statements,
       lastStatementStoredInResult,
       ...statementsToSaveDeclaredGlobals
@@ -711,10 +840,19 @@ export function transpile(
       create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
     )
   ])
+
   program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
 
+  if (variant === 'gpu') {
+    program.body = [
+      ...getDeclarationsToAccessTranspilerInternals(),
+      ...getInternalFunctionsForGPU(globalIds, contextId),
+      wrapped
+    ]
+  }
+
   const map = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap: map })
+  const transpiled = modulePrefix + generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
   return { transpiled, codeMap, evalMap }
 }

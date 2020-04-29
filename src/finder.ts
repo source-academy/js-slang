@@ -125,7 +125,7 @@ export function isInLoc(line: number, col: number, location: SourceLocation): bo
   }
 }
 
-function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
+export function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
   let foundAncestors: Node[] = []
   ancestor(root, {
     Identifier: (node: Identifier, ancestors: [Node]) => {

@@ -9,6 +9,8 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import { LazyBuiltIn } from '../createContext'
+import { loadIIFEModule } from '../modules/moduleLoader'
 
 class BreakValue {}
 
@@ -96,9 +98,9 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
   throw error
 }
 
-const HOISTED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function hoistIdentifier(context: Context, name: string, node: es.Node) {
+function declareIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -108,27 +110,30 @@ function hoistIdentifier(context: Context, name: string, node: es.Node) {
       new errors.VariableRedeclaration(node, name, descriptors[name].writable)
     )
   }
-  environment.head[name] = HOISTED_BUT_NOT_YET_ASSIGNED
+  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
   return environment
 }
 
-function hoistVariableDeclarations(context: Context, node: es.VariableDeclaration) {
+function declareVariables(context: Context, node: es.VariableDeclaration) {
   for (const declaration of node.declarations) {
-    hoistIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
   }
 }
 
-function hoistFunctionsAndVariableDeclarationsIdentifiers(
-  context: Context,
-  node: es.BlockStatement
-) {
+function declareImports(context: Context, node: es.ImportDeclaration) {
+  for (const declaration of node.specifiers) {
+    declareIdentifier(context, declaration.local.name, node)
+  }
+}
+
+function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        hoistVariableDeclarations(context, statement)
+        declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        hoistIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
         break
     }
   }
@@ -137,7 +142,7 @@ function hoistFunctionsAndVariableDeclarationsIdentifiers(
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
   const environment = context.runtime.environments[0]
 
-  if (environment.head[name] !== HOISTED_BUT_NOT_YET_ASSIGNED) {
+  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
       context,
       new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
@@ -176,7 +181,7 @@ const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         return handleRuntimeError(
           context,
           new errors.UnassignedVariable(name, context.runtime.nodes[0])
@@ -195,7 +200,7 @@ const setVariable = (context: Context, name: string, value: any) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === HOISTED_BUT_NOT_YET_ASSIGNED) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
         break
       }
       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -266,7 +271,7 @@ function* reduceIf(
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
 function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
-  hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
+  declareFunctionsAndVariables(context, node)
   let result
   for (const statement of node.body) {
     result = yield* evaluate(statement, context)
@@ -412,7 +417,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const testNode = node.test!
     const updateNode = node.update!
     if (initNode.type === 'VariableDeclaration') {
-      hoistVariableDeclarations(context, initNode)
+      declareVariables(context, initNode)
     }
     yield* actualValue(initNode, context)
 
@@ -427,7 +432,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       pushEnvironment(context, environment)
       for (const name in loopEnvironment.head) {
         if (loopEnvironment.head.hasOwnProperty(name)) {
-          hoistIdentifier(context, name, node)
+          declareIdentifier(context, name, node)
           defineVariable(context, name, loopEnvironment.head[name], true)
         }
       }
@@ -600,6 +605,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return result
   },
 
+  ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
+    const moduleName = node.source.value as string
+    const neededSymbols = node.specifiers.map(spec => spec.local.name)
+    const module = loadIIFEModule(moduleName)
+    declareImports(context, node)
+    for (const name of neededSymbols) {
+      defineVariable(context, name, module[name], true);
+    }
+    return undefined
+  },
+
   Program: function*(node: es.BlockStatement, context: Context) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
@@ -646,6 +662,33 @@ export function* apply(
       } else if (!(result instanceof ReturnValue)) {
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
+      }
+    } else if (fun instanceof LazyBuiltIn) {
+      try {
+        let finalArgs = args
+        if (fun.evaluateArgs) {
+          finalArgs = []
+          for (const arg of args) {
+            finalArgs.push(yield* forceIt(arg, context))
+          }
+        }
+        result = fun.func.apply(thisContext, finalArgs)
+        break
+      } catch (e) {
+        // Recover from exception
+        context.runtime.environments = context.runtime.environments.slice(
+          -context.numberOfOuterEnvironments
+        )
+
+        const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
+        if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
+          // The error could've arisen when the builtin called a source function which errored.
+          // If the cause was a source error, we don't want to include the error.
+          // However if the error came from the builtin itself, we need to handle it.
+          return handleRuntimeError(context, new errors.ExceptionError(e, loc))
+        }
+        result = undefined
+        throw e
       }
     } else if (typeof fun === 'function') {
       try {
