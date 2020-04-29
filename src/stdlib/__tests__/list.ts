@@ -9,26 +9,26 @@ test('list creates list', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  Array [
-    "a string \\"\\"",
-    Array [
-      [Function],
-      Array [
-        [Function],
-        Array [
-          true,
-          Array [
-            3.14,
-            null,
-          ],
-        ],
-      ],
-    ],
-  ],
-]
-`)
+            Array [
+              1,
+              Array [
+                "a string \\"\\"",
+                Array [
+                  [Function],
+                  Array [
+                    [Function],
+                    Array [
+                      true,
+                      Array [
+                        3.14,
+                        null,
+                      ],
+                    ],
+                  ],
+                ],
+              ],
+            ]
+          `)
 })
 
 test('pair creates pair', () => {
@@ -38,11 +38,11 @@ test('pair creates pair', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  "a string \\"\\"",
-]
-`)
+            Array [
+              1,
+              "a string \\"\\"",
+            ]
+          `)
 })
 
 test('head works', () => {
@@ -166,11 +166,11 @@ test('remove not found', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  null,
-]
-`)
+            Array [
+              1,
+              null,
+            ]
+          `)
 })
 
 test('remove_all', () => {

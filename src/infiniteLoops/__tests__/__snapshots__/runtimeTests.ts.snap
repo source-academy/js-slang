@@ -1,0 +1,900 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CallingNonFunctionValue does not break implementation 1`] = `"Line 3: Calling non-function value 1."`;
+
+exports[`CallingNonFunctionValue does not break implementation 2`] = `"Line 3: Calling non-function value 1."`;
+
+exports[`CallingNonFunctionValue does not break implementation: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f(x) {
+    return 1(2);
+  }
+  f(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 3,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 33,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 3,
+              },
+            },
+            "raw": "2",
+            "start": 32,
+            "type": "Literal",
+            "value": 2,
+          },
+        ],
+        "callee": Node {
+          "end": 31,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 11,
+              "line": 3,
+            },
+          },
+          "raw": "1",
+          "start": 30,
+          "type": "Literal",
+          "value": 1,
+        },
+        "end": 34,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 15,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 11,
+            "line": 3,
+          },
+        },
+        "start": 30,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Calling non-function value 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`CallingNonFunctionValue does not break implementation: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f(x) {
+    return 1(2);
+  }
+  f(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    CallingNonFunctionValue {
+      "callee": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 3,
+        },
+      },
+      "node": Node {
+        "arguments": Array [
+          Node {
+            "end": 33,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 3,
+              },
+            },
+            "raw": "2",
+            "start": 32,
+            "type": "Literal",
+            "value": 2,
+          },
+        ],
+        "callee": Node {
+          "end": 31,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 3,
+            },
+            "start": Position {
+              "column": 11,
+              "line": 3,
+            },
+          },
+          "raw": "1",
+          "start": 30,
+          "type": "Literal",
+          "value": 1,
+        },
+        "end": 34,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 15,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 11,
+            "line": 3,
+          },
+        },
+        "start": 30,
+        "type": "CallExpression",
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Calling non-function value 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`InvalidNumberOfArguments does not break implementation 1`] = `"Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\""`;
+
+exports[`InvalidNumberOfArguments does not break implementation: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f(x) {
+    return f() + f(1,2);
+  }
+  f(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fac 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fac 2 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fac 2: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function CD_fac_2(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return x*CD_fac_2(x-2);
+    }
+  }
+  CD_fac_2(5);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 30,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fac cond 1`] = `"Line 3: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fac cond: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function CD_fac_cond(x) {
+    return x===0?1:x*CD_fac_cond(x-1);
+  }
+  CD_fac_cond(-1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 37,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 21,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fac log 1`] = `"Line 7: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fac log: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function CD_fac_log(x,s) {
+    if (x===0) {
+        //display(s);
+        return 1;
+    } else {
+         x*CD_fac_log(x-1,\\"multiply by \\"+stringify(x)+\\"; \\"+s);
+    }
+  }
+  CD_fac_log(-1,\\"\\");
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 61,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 7,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 7: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fac: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function CD_fac(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return x*CD_fac(x-1);
+    }
+  }
+  CD_fac(-1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 28,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fib 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fib: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function CD_fib(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return CD_fib(x-1) + CD_fib(x-2);
+    }
+  }
+  CD_fib(-1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 40,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 29,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no base case fac 1`] = `"Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\""`;
+
+exports[`infinite loop detected: no base case fac log 1`] = `"Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\""`;
+
+exports[`infinite loop detected: no base case fac log: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NBC_fac_log(x,s) {
+    return x*NBC_fac_log(x-1,\\"multiply by \\"+stringify(x)+\\"; \\"+s);
+  }
+  NBC_fac_log(1,\\"\\");
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no base case fac: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NBC_fac(x) {
+    return x*NBC_fac(x-1);
+  }
+  NBC_fac(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no base case fib 1`] = `"Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\""`;
+
+exports[`infinite loop detected: no base case fib: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NBC_fib(x) {
+    return NBC_fib(x-1) + NBC_fib(x-2);
+  }
+  NBC_fib(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change fac 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\""`;
+
+exports[`infinite loop detected: no state change fac cond 1`] = `"Line 3: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\""`;
+
+exports[`infinite loop detected: no state change fac cond: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_fac_cond(x) {
+    return x===0?1:x*NSC_fac_cond(x);
+  }
+  NSC_fac_cond(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 36,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 21,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change fac log 1`] = `"Line 7: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\""`;
+
+exports[`infinite loop detected: no state change fac log: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_fac_log(x,s) {
+    if (x===0) {
+        //display(s);
+        return 1;
+    } else {
+         x*NSC_fac_log(x,\\"multiply by \\"+stringify(x)+\\"; \\"+s);
+    }
+  }
+  NSC_fac_log(1, \\"\\");
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 60,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 7,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 7: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change fac: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_fac(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return x*NSC_fac(x);
+    }
+  }
+  NSC_fac(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 27,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change fib 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\""`;
+
+exports[`infinite loop detected: no state change fib: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_fib(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return NSC_fib(x) + NSC_fib(x);
+    }
+  }
+  NSC_fib(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 38,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 28,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change sum 1`] = `"Line 9: Name list not declared."`;
+
+exports[`infinite loop detected: no state change sum 2`] = `"Line 5: Name list not declared."`;
+
+exports[`infinite loop detected: no state change sum: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_sum(x){
+    if(is_null(x)){
+        return 0;
+    } else {
+        return head(x)+NSC_sum(x);
+    }
+  }
+  NSC_sum(list(1,2));
+
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 9,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 9,
+        },
+      },
+      "name": "list",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 9: Name list not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: no state change sum: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NBC_sum(x){
+    return head(x)+NBC_sum(tail(x));
+  }
+  NBC_sum(list(1,2)); //terminates (error)
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 10,
+          "line": 5,
+        },
+      },
+      "name": "list",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 5: Name list not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: unreachable condition fib 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: unreachable condition fib: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function UC_fac(x) {
+    if (!(x!==0||x!==1)) {
+        return 1;
+    } else {
+        return x*UC_fac(x-1);
+    }
+  }
+  UC_fac(1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 28,
+          "line": 6,
+        },
+        "start": Position {
+          "column": 17,
+          "line": 6,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loops not detected 1`] = `6`;
+
+exports[`infinite loops not detected: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function NSC_fac(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return x*NSC_fac(x);
+    }
+  }
+  NSC_fac(0); //terminates
+
+  function NSC_fac_cond(x) {
+    return x===0?1:x*NSC_fac_cond(x);
+  }
+  NSC_fac_cond(0); //terminates
+
+  function NSC_fac_log(x,s) {
+    if (x===0) {
+        display(s);
+        return 1;
+    } else {
+         x*NSC_fac_log(x,\\"multiply by \\"+stringify(x)+\\"; \\"+s);
+    }
+  }
+  NSC_fac_log(0, \\"\\"); //terminates
+
+  function NSC_fib(x) {
+    if (x===0) {
+        return 1;
+    } else {
+        return NSC_fib(x) + NSC_fib(x);
+    }
+  }
+  NSC_fib(0); //terminates
+
+  function NSC_sum(x){
+    if(is_null(x)){
+        return 0;
+    } else {
+        return head(x)+NSC_sum(x);
+    }
+  }
+  NSC_sum(null); //terminates
+
+  function sum(x){
+    if(is_null(x)){
+        return 0;
+    } else {
+        return head(x)+sum(tail(x));
+    }
+  }
+  sum(list(1,2,3)); // sum always terminates
+      ",
+  "displayResult": Array [
+    "\\"\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 6,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`returning early does not cause false positives 1`] = `1`;
+
+exports[`returning early does not cause false positives: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f() {
+    return 1;
+    f();
+  }
+  f();
+      ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`scoping/shadowing does not cause false positives 1`] = `1`;
+
+exports[`scoping/shadowing does not cause false positives: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f() {
+    const f = () => 1;
+    return f();
+  }
+  f();
+      ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
