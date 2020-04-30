@@ -193,14 +193,14 @@ As for execution, if there is the array does contain an element in the
 corresponding index, it will load the element as such:
 
 $\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad a_i \text{ is assigned}}{
-(i.(\cdots a_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
+(i.\lbrack\cdots a_i\cdots\rbrack.\textit{os},\textit{pc},e,\textit{rs}) \transition
 (a_i.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
 Otherwise, it will load \texttt{undefined} instead, like in the case below:
 
 $\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad a_i \text{ is not assigned}}{
-(i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
+(i.\lbrack\cdots\rbrack.\textit{os},\textit{pc},e,\textit{rs}) \transition
 (\texttt{undefined}.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 \end{document}
