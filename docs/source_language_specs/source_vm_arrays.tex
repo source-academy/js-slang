@@ -2,7 +2,7 @@
 
 In order to implement arrays, we add \texttt{NEWA} (New array),
 \texttt{LDAG} (Load boxed value from array),
-\texttt{STAG} (Store boxed value into array) and \texttt{DUP} 
+\texttt{STAG} (Store boxed value into array) and \texttt{DUP}
 (Duplicate top of stack) to our instruction set. For this section,
 we will be using 0-indexing to refer to the elements instead for clarity.
 
@@ -11,13 +11,13 @@ The translation for an empty array literal is as follows.
 
 $\Rule{}{\lbrack\rbrack \translateaux \texttt{NEWA}}$
 
-Array literals typically have elements in the array as well. 
+Array literals typically have elements in the array as well.
 Each element should be stored into its respective index in the array.
 Therefore, for each element in the array, we append the instructions
-$\texttt{DUP}.\texttt{LDCI}\ i.s_i.\texttt{STAG}$. 
+$\texttt{DUP}.\texttt{LDCI}\ i.s_i.\texttt{STAG}$.
 \texttt{DUP} is to duplicate the
-array reference at the top of the stack, so that we can pop the array 
-for the store operations, while keeping a reference to the array in 
+array reference at the top of the stack, so that we can pop the array
+for the store operations, while keeping a reference to the array in
 the stack for later usage. \texttt{LDCI i} refers to the index in the array
 to store the element in. Note that $i$ refers to the $i+1$th declared element
 in the array, hence \texttt{LDCI i} for the index in the array.
@@ -35,7 +35,7 @@ array at the top of the operand stack. This is trivially done for the
 case of an empty array.
 
 $\Rule{s(\textit{pc}) = \texttt{NEWA}}{
-(\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(\textit{os},\textit{pc},e,\textit{rs}) \transition
 (().os,\textit{pc}+1,e,\textit{rs})}
 $
 
@@ -44,12 +44,12 @@ We represent our array here as a tuple of (elements).
 However, for an array literal with elements, in order to store elements
 into the array, we need to pop it from the stack. Therefore, in order
 to ensure we still have the array at the top of the stack after storing
-all the elements into the array, we have the \texttt{DUP} instruction. 
+all the elements into the array, we have the \texttt{DUP} instruction.
 Note that we simply pop the value at the top of the operand stack
 and push it back twice. The value does not need to be an array.
 
 $\Rule{s(\textit{pc}) = \texttt{DUP}}{
-(x.\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(x.\textit{os},\textit{pc},e,\textit{rs}) \transition
 (x.x.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
@@ -61,7 +61,7 @@ a value. The length of the array is defined as the largest
 index assigned in the array + 1.
 
 $\Rule{s(\textit{pc}) = \texttt{STAG}\qquad 0 \leq j < i}{
-(y.i.(\cdots x_j).\textit{os},\textit{pc},e,\textit{rs}) 
+(y.i.(\cdots x_j).\textit{os},\textit{pc},e,\textit{rs})
 \transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
@@ -82,7 +82,7 @@ $
 
 Execution works the same as it did above. Note that the new element will replace
 the element that was stored at the same index in the array previously, if any.
-\texttt{STAG} will also update the length of the array if the index to 
+\texttt{STAG} will also update the length of the array if the index to
 store the element in is larger than any previously used index for this array.
 
 $\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is not assigned}}{
@@ -97,11 +97,11 @@ $\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is assigned}}{
 \transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
-Contents of array after instruction: $(\cdots y \cdots)$ 
+Contents of array after instruction: $(\cdots y \cdots)$
 
 \paragraph{Compilation and Execution of Array Access}
 
-Lastly, to load an element from an array at an index, 
+Lastly, to load an element from an array at an index,
 and push the element to the top of the operand stack, we use \texttt{LDAG}.
 
 $\Rule{
@@ -113,14 +113,14 @@ As for execution, if there is the array does contain an element in the
 corresponding index, it will load the element as such:
 
 $\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is assigned}}{
-(i.(\cdots x_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(i.(\cdots x_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
 (x_i.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
 Otherwise, it will load \texttt{undefined} instead, like in the case below:
 
 $\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is not assigned}}{
-(i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition 
+(i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
 (\texttt{undefined}.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 

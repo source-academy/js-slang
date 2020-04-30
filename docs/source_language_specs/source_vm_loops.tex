@@ -25,7 +25,7 @@ Execution follows the rules mentioned in the previous sections.
 \paragraph{Compilation and Execution of Break statements}
 Break statements simply exit the loop and continue execution from there.
 We likewise use a \texttt{BR} instruction for this, where the offset
-is the displacement in \textit{pc} from the break instruction to the end 
+is the displacement in \textit{pc} from the break instruction to the end
 of the loop. We include a
 \texttt{POPENV} instruction to remove the environment created by loop.
 
@@ -35,13 +35,13 @@ $
 
 \paragraph{Compilation and Execution of Continue statements}
 Continue statements skip to the next iteration of the loop. For while loops,
-we can just branch to the end of the last statement of the body. However, for 
+we can just branch to the end of the last statement of the body. However, for
 for loops, as we compile them to while loops, there is an additional
 increment statement that needs to be executed after each iteration. Therefore,
 to ensure for loops are supported, we branch to the instruction which increments
 the for loop counter instead, which is the last statement in the body of the while loop.
 Therefore, the offset is displacement in \textit{pc} from the
-continue instruction to the start of the last statement of the body for for loops, 
+continue instruction to the start of the last statement of the body for for loops,
 and the continue instruction to the end of the last statement of the body for while loops.
 
 $\Rule{}
