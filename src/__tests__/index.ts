@@ -41,19 +41,19 @@ test('Arrow function definition returns itself', () => {
 
 test('Builtins hide their implementation when stringify', () => {
   return expectResult('stringify(pair);', { chapter: 2, native: true }).toMatchInlineSnapshot(`
-"function pair(left, right) {
-	[implementation hidden]
-}"
-`)
+            "function pair(left, right) {
+            	[implementation hidden]
+            }"
+          `)
 })
 
 test('Builtins hide their implementation when toString', () => {
   return expectResult('toString(pair);', { chapter: 2, native: true, testBuiltins: { toString } })
     .toMatchInlineSnapshot(`
-"function pair(left, right) {
-	[implementation hidden]
-}"
-`)
+            "function pair(left, right) {
+            	[implementation hidden]
+            }"
+          `)
 })
 
 test('Objects toString matches up with JS', () => {
@@ -117,23 +117,23 @@ test('parseError for missing semicolon', () => {
 
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
   return expectParsedErrorNoErrorSnapshot('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
-"Line 1: Maximum call stack size exceeded
-  x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
-`)
+            "Line 1: Maximum call stack size exceeded
+              x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
+          `)
 }, 30000)
 
 test('Simple function infinite recursion represents CallExpression well', () => {
   return expectParsedErrorNoErrorSnapshot('function f(x) {return x(x)(x);} f(f);')
     .toMatchInlineSnapshot(`
-"Line 1: Maximum call stack size exceeded
-  x(function f(x) {
-  return x(x)(x);
-})..  x(function f(x) {
-  return x(x)(x);
-})..  x(function f(x) {
-  return x(x)(x);
-}).."
-`)
+            "Line 1: Maximum call stack size exceeded
+              x(function f(x) {
+              return x(x)(x);
+            })..  x(function f(x) {
+              return x(x)(x);
+            })..  x(function f(x) {
+              return x(x)(x);
+            }).."
+          `)
 }, 30000)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
@@ -172,9 +172,9 @@ test('Arrow function infinite recursion with list args represents CallExpression
   `,
     { chapter: 2 }
   ).toMatchInlineSnapshot(`
-"Line 1: Maximum call stack size exceeded
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
-`)
+            "Line 1: Maximum call stack size exceeded
+              f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+          `)
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
@@ -185,9 +185,9 @@ test('Function infinite recursion with list args represents CallExpression well'
   `,
     { chapter: 2 }
   ).toMatchInlineSnapshot(`
-"Line 1: Maximum call stack size exceeded
-  f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
-`)
+            "Line 1: Maximum call stack size exceeded
+              f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
+          `)
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
@@ -204,7 +204,9 @@ test('Function infinite recursion with different args represents CallExpression 
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(
-    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
+    expect.stringMatching(
+      /^Line 1: Error: \"Infinite recursion \(or runtime error\) detected. Did you forget your base case\?\"/
+    )
   )
 }, 30000)
 

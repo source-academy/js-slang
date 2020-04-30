@@ -1,0 +1,69 @@
+\input source_header.tex
+
+\newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
+
+\newcommand{\TruE}{\textbf{\texttt{true}}}
+\newcommand{\FalsE}{\textbf{\texttt{false}}}
+\newcommand{\Rc}{\texttt{\}}}
+\newcommand{\Lc}{\texttt{\{}}
+\newcommand{\Rp}{\texttt{)}}
+\newcommand{\Lp}{\texttt{(}}
+\newcommand{\Fun}{\textbf{\texttt{function}}}
+\newcommand{\Let}{\textbf{\texttt{let}}}
+\newcommand{\Return}{\textbf{\texttt{return}}}
+\newcommand{\Const}{\textbf{\texttt{const}}}
+\newcommand{\If}{\textbf{\texttt{if}}}
+\newcommand{\Else}{\textbf{\texttt{else}}}
+\newcommand{\Bool}{\texttt{bool}}
+\newcommand{\Number}{\texttt{number}}
+\newcommand{\String}{\texttt{string}}
+\newcommand{\Undefined}{\texttt{undefined}}
+
+\newtheorem{definition}{Definition}[section]
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2021}{Source}{\S 1 WebAssembly}{Bernard Teo Zhi Yi}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This document specifies the dialect of Source \S 1 used in Sourceror, an experimental compiler from Source \S 1 to WebAssembly.  This dialect is a subset of Source \S 1.
+
+\section*{Changes compared to Vanilla Source \S 1}
+
+\subsection*{Language}  
+
+All language features of Source \S 1 are supported except for proper tail calls.
+
+\subsection*{Libraries}
+
+Libraries (MISC and MATH, and other external libraries) are not yet supported.
+
+\subsection*{Error Handling}
+
+Compilation errors produce error messages with line numbers, just like in Source \S 1.  Runtime type errors currently produce error messages without any location information.
+
+\input source_intro.tex
+
+\input source_bnf.tex
+
+\input source_1_bnf.tex
+
+\newpage
+
+\input source_boolean_operators
+
+\input source_return
+
+\input source_names_lang
+
+\input source_numbers
+
+\input source_strings
+
+\input source_typing
+
+\input source_comments
+
+\input source_js_differences
+
+\end{document}

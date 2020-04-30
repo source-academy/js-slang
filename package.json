@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.34",
+  "version": "0.4.43",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
     "JavaScript",
@@ -26,7 +26,8 @@
     "lodash": "^4.17.13",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
-    "xmlhttprequest-ts": "^1.0.1"
+    "xmlhttprequest-ts": "^1.0.1",
+    "gpu.js": "^2.9.3"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -91,7 +92,7 @@
       "/src/typings/",
       "/src/utils/testing.ts"
     ],
-    "reporters": [
+      "reporters": [
       "default",
       [
         "./node_modules/jest-html-reporter",

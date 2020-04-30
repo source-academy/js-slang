@@ -57,7 +57,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'default' // this might replace EvaluationMethod
+export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
 
 export interface Context<T = any> {
   /** The source version used */
@@ -273,3 +273,12 @@ export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
+
+export {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
+  Address as SVMAddress,
+  Argument as SVMArgument,
+  Offset as SVMOffset,
+  SVMFunction
+} from './vm/svml-compiler'

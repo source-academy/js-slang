@@ -6,7 +6,7 @@ const SVM_MAGIC = 0x5005acad
 const MAJOR_VER = 0
 const MINOR_VER = 0
 
-const UTF8_ENCODER = new TextEncoder()
+let UTF8_ENCODER: TextEncoder | undefined
 
 /**
  * A "hole" in an assembled function.
@@ -35,6 +35,9 @@ function writeHeader(b: Buffer, entrypoint: number, constantCount: number) {
 }
 
 function writeStringConstant(b: Buffer, s: string) {
+  if (UTF8_ENCODER === undefined) {
+    UTF8_ENCODER = new TextEncoder()
+  }
   const sBytes = UTF8_ENCODER.encode(s)
 
   b.align(4)
