@@ -29,7 +29,8 @@ import {
   SourceError,
   Variant,
   TypeAnnotatedNode,
-  SVMProgram
+  SVMProgram,
+  TypeAnnotatedFuncDecl
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
@@ -42,6 +43,7 @@ import { getProgramNames, getKeywords } from './name-extractor'
 import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -225,6 +227,27 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export function hasDeclaration(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): boolean {
+  const program = parse(code, context, true)
+  if (!program) {
+    return false
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return false
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (declarationNode == null || declarationNode.loc == null) {
+    return false
+  }
+
+  return true
+}
+
 export async function getNames(
   code: string,
   line: number,
@@ -244,7 +267,7 @@ export async function getNames(
 }
 
 function typedParse(code: any, context: Context) {
-  const program: Program | undefined = parse(code, context)
+  const program: Program | undefined = parse(code, context, true)
   if (program === undefined) {
     return null
   }
@@ -257,76 +280,85 @@ export function getTypeInformation(
   loc: { line: number; column: number },
   name: string
 ): string {
-  const lineNumber = loc.line
+  try {
+    // parse the program into typed nodes and parse error
+    const program = typedParse(code, context)
+    if (program === null) {
+      return ''
+    }
 
-  // parse the program into typed nodes and parse error
-  const program = typedParse(code, context)
-  if (program === null) {
-    return ''
-  }
-  const [typedProgram, error] = typeCheck(program)
-  const parsedError = parseError(error)
+    const [typedProgram, error] = typeCheck(program)
+    const parsedError = parseError(error)
 
-  // initialize the ans string
-  let ans = ''
-  if (parsedError) {
-    ans += parsedError + '\n'
-  }
-  if (!typedProgram) {
-    return ans
-  }
+    // initialize the ans string
+    let ans = ''
+    if (parsedError) {
+      ans += parsedError + '\n'
+    }
+    if (!typedProgram) {
+      return ans
+    }
 
-  // callback function for findNodeAt function
-  function findByLocationPredicate(type: string, node: TypeAnnotatedNode<es.Node>) {
-    if (!node.inferredType) {
+    // get name of the node
+    const getName = (typedNode: TypeAnnotatedNode<es.Node>) => {
+      let nodeId = ''
+      if (typedNode.type) {
+        if (typedNode.type === 'FunctionDeclaration') {
+          nodeId = typedNode.id?.name!
+        } else if (typedNode.type === 'VariableDeclaration') {
+          nodeId = (typedNode.declarations[0].id as es.Identifier).name
+        } else if (typedNode.type === 'Identifier') {
+          nodeId = typedNode.name
+        }
+      }
+      return nodeId
+    }
+
+    // callback function for findNodeAt function
+    function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
+      if (!nd.inferredType) {
+        return false
+      }
+      const location = nd.loc
+      if (nd.type && location) {
+        return (
+          getName(nd) === name &&
+          location.start.line <= loc.line &&
+          location.end.line >= loc.line &&
+          location.start.column <= loc.column &&
+          location.end.column >= loc.column
+        )
+      }
       return false
     }
-    const location = node.loc
-    const nodeType = node.type
-    if (nodeType && location) {
-      let id = ''
-      if (node.type === 'Identifier') {
-        id = node.name
-      } else if (node.type === 'FunctionDeclaration') {
-        id = node.id?.name!
-      } else if (node.type === 'VariableDeclaration') {
-        id = (node.declarations[0].id as es.Identifier).name
-      }
-      return id === name && location.start.line <= loc.line && location.end.line >= loc.line
-    }
-    return false
-  }
 
-  // report both as the type inference
-  return (
-    ans +
-    typedProgram.body
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
-        if (res === undefined) {
-          return undefined
-        } else {
-          return res.node
-        }
-      })
-      .filter((node: TypeAnnotatedNode<es.Node>) => {
-        return node !== undefined
-      })
-      .map((node: TypeAnnotatedNode<es.Node>) => {
-        let id = ''
-        if (node.type === 'Identifier') {
-          id = node.name
-        } else if (node.type === 'FunctionDeclaration') {
-          id = node.id?.name!
-        } else if (node.type === 'VariableDeclaration') {
-          id = (node.declarations[0].id as es.Identifier).name
-        }
-        const type = typeToString(node.inferredType!)
-        return `At Line ${lineNumber} => ${id}: ${type}`
-      })
-      .slice(0, 1)
-      .join('\n')
-  )
+    // report both as the type inference
+
+    const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+
+    if (res === undefined) {
+      return ans
+    }
+
+    const node: TypeAnnotatedNode<es.Node> = res.node
+
+    if (node === undefined) {
+      return ans
+    }
+
+    const actualNode =
+      node.type === 'VariableDeclaration'
+        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        : node
+    const type = typeToString(
+      actualNode.type === 'FunctionDeclaration'
+        ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+        : actualNode.inferredType!
+    )
+    return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
+  } catch (error) {
+    return ''
+  }
 }
 
 export async function runInContext(
@@ -388,6 +420,9 @@ export async function runInContext(
       status: 'finished',
       value: redexedSteps
     } as Result)
+  }
+  if (context.chapter <= 2) {
+    addInfiniteLoopProtection(program, context.chapter === 2)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
