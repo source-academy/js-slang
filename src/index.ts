@@ -319,15 +319,19 @@ export function getTypeInformation(
       if (!nd.inferredType) {
         return false
       }
+
+      const isInLoc = (nodeLoc: SourceLocation): boolean => {
+        return !(
+          nodeLoc.start.line > loc.line ||
+          nodeLoc.end.line < loc.line ||
+          (nodeLoc.start.line === loc.line && nodeLoc.start.column > loc.column) ||
+          (nodeLoc.end.line === loc.line && nodeLoc.end.column < loc.column)
+        )
+      }
+
       const location = nd.loc
       if (nd.type && location) {
-        return (
-          getName(nd) === name &&
-          location.start.line <= loc.line &&
-          location.end.line >= loc.line &&
-          location.start.column <= loc.column &&
-          location.end.column >= loc.column
-        )
+        return getName(nd) === name && isInLoc(location)
       }
       return false
     }
