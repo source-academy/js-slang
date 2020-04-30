@@ -1,7 +1,7 @@
 import { stringify } from '../utils/stringify'
 import { dethunk } from '../interpreter/thunk'
 
-// thunk_list.ts: Supporting lists in the Scheme style, using pairs made
+// thunk-list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector).
 //          Supporting lazy evaluation.
 // Author: Martin Henz & Nguyen Tien Trung Kien & Xiao Tian Yi

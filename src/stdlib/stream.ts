@@ -2,7 +2,7 @@ import { stringify } from '../utils/stringify'
 // stream_tail returns the second component of the given pair
 // throws an exception if the argument is not a pair
 
-import { head, is_null, is_pair, list, List, pair, Pair, tail } from './list' // delete List & Pair
+import { head, is_null, is_pair, list, List, pair, Pair, tail } from './list'
 
 type Stream = null | Pair<any, () => Stream>
 

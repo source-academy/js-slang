@@ -168,12 +168,6 @@ export async function runInContext(
     return undefined
   }
 
-  //   function getInterpreter(useLazyEval: boolean): Interpreter {
-  //     return useLazyEval
-  //       ? new LazyEvaluationInterpreter()
-  //       : new ApplicativeOrderEvaluationInterpreter()
-  //   }
-
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
 
