@@ -138,6 +138,42 @@ export const mutateToCallExpression = (
   node.arguments = args
 }
 
+export const mutateToAssignmentExpression = (
+  node: es.Node,
+  left: es.Pattern,
+  right: es.Expression
+) => {
+  node.type = 'AssignmentExpression'
+  node = node as es.AssignmentExpression
+  node.operator = '='
+  node.left = left
+  node.right = right
+}
+
+export const mutateToExpressionStatement = (node: es.Node, expr: es.Expression) => {
+  node.type = 'ExpressionStatement'
+  node = node as es.ExpressionStatement
+  node.expression = expr
+}
+
+export const mutateToReturnStatement = (node: es.Node, expr: es.Expression) => {
+  node.type = 'ReturnStatement'
+  node = node as es.ReturnStatement
+  node.argument = expr
+}
+
+export const mutateToMemberExpression = (
+  node: es.Node,
+  obj: es.Expression,
+  prop: es.Expression
+) => {
+  node.type = 'MemberExpression'
+  node = node as es.MemberExpression
+  node.object = obj
+  node.property = prop
+  node.computed = false
+}
+
 export const logicalExpression = (
   operator: es.LogicalOperator,
   left: es.Expression,
