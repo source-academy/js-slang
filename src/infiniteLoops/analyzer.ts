@@ -1,13 +1,9 @@
 import * as stype from './symTypes'
-import * as es from 'estree'
 
 /* if all callees = caller, no terminate symbol -> no base case
  * if caller function always calls itself no matter what -> no base case
  */
 function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
-  function makeChecker(name: string, loc: es.SourceLocation): stype.InfiniteLoopChecker {
-    return stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc)
-  }
   function getName(sym: stype.FunctionSymbol | stype.TerminateSymbol) {
     return sym.type === 'TerminateSymbol' ? '*' : sym.name
   }
@@ -17,7 +13,7 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
     const calleeNames = transitions.map(x => getName(x.callee))
     if (calleeNames.every(x => x === name)) {
       const loc = transitions[0].caller.loc
-      checkers.push(makeChecker(name, loc))
+      checkers.push(stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc))
     }
   }
 
