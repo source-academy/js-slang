@@ -1,3 +1,11 @@
+\input{source_header.tex}
+\newcommand{\qed}{$\Box$}
+\newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
+\newcommand{\Rulee}[3]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}[#3]}
+\newcommand{\transition}{\rightrightarrows_s}
+\newcommand{\translate}{\twoheadrightarrow}
+\newcommand{\translateaux}{\hookrightarrow}
+\begin{document}
 \subsection{Adding Arrays}
 
 In order to implement arrays, we add \texttt{NEWA} (New array),
@@ -123,4 +131,4 @@ $\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is not assigned}}{
 (i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
 (\texttt{undefined}.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
-
+\end{document}
