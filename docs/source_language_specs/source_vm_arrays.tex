@@ -7,6 +7,7 @@
 \newcommand{\translateaux}{\hookrightarrow}
 \begin{document}
 \subsection{Adding Arrays}
+Arrays in SVML are Javascript arrays.
 
 In order to implement arrays, we add \texttt{NEWA} (New array),
 \texttt{LDAG} (Load boxed value from array),
@@ -14,69 +15,154 @@ In order to implement arrays, we add \texttt{NEWA} (New array),
 (Duplicate top of stack) to our instruction set. For this section,
 we will be using 0-indexing to refer to the elements instead for clarity.
 
-\paragraph{Compilation of Array Literals}
-The translation for an empty array literal is as follows.
+\paragraph{Compilation and Execution of Array Literals}
+Array literals of size $n$ explicitly declares all $n$ elements of the array.
+
+An array literal of size $0$ explicitly declares $0$ elements of the array, and so does not explicitly declare any elements of the array.
+So, an array literal of size $0$ compiles to the machine instruction that declares a new empty array, \texttt{NEWA}.
 
 $\Rule{}{\lbrack\rbrack \translateaux \texttt{NEWA}}$
 
-Array literals typically have elements in the array as well.
-Each element should be stored into its respective index in the array.
-Therefore, for each element in the array, we append the instructions
-$\texttt{DUP}.\texttt{LDCI}\ i.s_i.\texttt{STAG}$.
-\texttt{DUP} is to duplicate the
-array reference at the top of the stack, so that we can pop the array
-for the store operations, while keeping a reference to the array in
-the stack for later usage. \texttt{LDCI i} refers to the index in the array
-to store the element in. Note that $i$ refers to the $i+1$th declared element
-in the array, hence \texttt{LDCI i} for the index in the array.
-We have the following rule for array literals.
+When executed, \texttt{NEWA} allocates a heap node to the array, in which contains the Javascript newly declared empty array, and then puts an array reference, $\lbrack\rbrack$, to this heap node at the top of the operand stack.
 
-$\Rule{E_0 \translateaux s_0 \qquad \cdots \qquad E_n \translateaux s_n}{
-\lbrack E_0, ..., E_n\rbrack \translateaux s_0. \texttt{NEWA}.\texttt{DUP}
-.\texttt{LDCI}\ 0.s_0.\texttt{STAG}. \cdots .\texttt{DUP}
-.\texttt{LDCI}\ n.s_n\texttt{STAG}}
-$
+\textit{(A note on notation: $\lbrack\rbrack$ is written as such to remind us of the state of the Javascript array in the referenced heap node. This notation is purely for convenience of reading.
+Although this notation represents the Javascript array, it really is just a reference to the heap node containing the Javascript array.
+Since $\lbrack\rbrack$ does not contain anything, it represents the fact that the Javascript array has length $0$.
+)}
 
-\paragraph{Execution of Array Literals}
-The execution of array literals should end with the newly declared
-array at the top of the operand stack. This is trivially done for the
-case of an empty array.
+So, \texttt{NEWA} follows this execution rule:
 
 $\Rule{s(\textit{pc}) = \texttt{NEWA}}{
 (\textit{os},\textit{pc},e,\textit{rs}) \transition
-(().os,\textit{pc}+1,e,\textit{rs})}
+(\lbrack\rbrack.os,\textit{pc}+1,e,\textit{rs})}
 $
 
-We represent our array here as a tuple of (elements).
+An array literal of size $n$, where $n$ is not $0$, does two things: it declares a new array, as well as stores each of its declared elements into the array.
 
-However, for an array literal with elements, in order to store elements
-into the array, we need to pop it from the stack. Therefore, in order
-to ensure we still have the array at the top of the stack after storing
-all the elements into the array, we have the \texttt{DUP} instruction.
-Note that we simply pop the value at the top of the operand stack
-and push it back twice. The value does not need to be an array.
+So, this non-empty array literal compiles as such: to \texttt{NEWA}, and to some other instructions (\texttt{STAG}, \texttt{DUP}, and \texttt{LDCI}) to store its declared elements into the array. Storing elements into the array involves these extra instructions because the machine state needs to be managed, due to the particular way \texttt{STAG} is executed.
+
+\texttt{STAG} stores an element at an index in an array. It pops three operands from the operand stack: the element to be stored, $y$, the index to store the element in, $i$, and the array reference, $\lbrack\cdots\rbrack$. The execution rule is:
+
+\textit{(A note on notation: we represent an array of unknown length, and unknown elements, with $\lbrack\cdots\rbrack$.
+Elements at index $j$ are denoted with $a_j$, for $j \in \mathbb{N}$ (since the array has unknown length), regardless of whether the value of $a_j$ is defined.
+However, if we know that the array has an element of value $v$ at index $i$, then the array is represented as: $\lbrack\cdots v \cdots\rbrack$. We then explicitly say that $v$ is at index $i$.
+)}
+
+$\Rule{s(\textit{pc}) = \texttt{STAG}}{
+(v.i.\lbrack\cdots\rbrack.\textit{os},\textit{pc},e,\textit{rs}) \\
+\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+where after execution, the array is $\lbrack\cdots v \cdots\rbrack$, where $v$ is at index $i$.
+
+The particular way \texttt{STAG} is executed can be seen in the rule: after execution, the array reference is no longer on the operand stack.
+This works fine for array literals of size $1$, as seen by the rules:
+
+Compilation, where the $0^{th}$ element is stored into the $0^{th}$ index of the array:
+
+$\Rule{E_0 \translateaux s_0}{
+\lbrack E_0 \rbrack \translateaux \texttt{NEWA}
+.\texttt{LDCI}\ 0.s_0.\texttt{STAG}}
+$
+
+Execution, where
+
+$\begin{aligned}
+& s(\textit{pc}) = \texttt{NEWA}\\
+& s(\textit{pc+1}) = \texttt{LDCI}\ 0\\
+& s(\textit{pc+2}) = s_0\\
+& s(\textit{pc+3}) = \texttt{STAG}\\
+\end{aligned}$
+
+we have:
+
+$\Rule{s(\textit{pc}) = \texttt{NEWA}}{
+(\textit{os},\textit{pc},e,\textit{rs}) \transition
+(\lbrack\rbrack.\textit{os},\textit{pc}+1,e,\textit{rs})}
+$
+
+$\Rule{s(\textit{pc}+1) = \texttt{LDCI}\ 0}{
+(\lbrack\rbrack.\textit{os},\textit{pc}+1,e,\textit{rs}) \transition
+(0.\lbrack\rbrack.\textit{os},\textit{pc}+2,e,\textit{rs})}
+$
+
+$\Rule{s(\textit{pc}+2) = s_0}{
+(0.\lbrack\rbrack.\textit{os},\textit{pc}+2,e,\textit{rs}) \transition
+(v.0.\lbrack\rbrack.\textit{os},\textit{pc}+3,e,\textit{rs})}
+$
+
+where $s_0$ executes to have $v$ on top of the operand stack.
+
+$\Rule{s(\textit{pc}+3) = \texttt{STAG}}{
+(v.0.\lbrack\rbrack.\textit{os},\textit{pc}+3,e,\textit{rs}) \transition
+(\textit{os},\textit{pc}+4,e,\textit{rs})}
+$
+
+where after execution, the array is $\lbrack\cdots v \cdots\rbrack$, where $v$ is at index $0$.
+
+However, this becomes problematic for array literals of size $n > 1$, as seen by the rules:
+
+Compilation:
+
+$\Rule{E_0 \translateaux s_0 \qquad E_1 \translateaux s_1}{
+\lbrack E_0, E_1 \rbrack \translateaux \texttt{NEWA}
+.\texttt{LDCI}\ 0.s_0.\texttt{STAG}
+.\texttt{LDCI}\ 1.s_1.\texttt{STAG}}
+$
+
+Execution, where
+
+$\begin{aligned}
+& s(\textit{pc}) = \texttt{NEWA}\\
+& s(\textit{pc+1}) = \texttt{LDCI}\ 0\\
+& s(\textit{pc+2}) = s_0\\
+& s(\textit{pc+3}) = \texttt{STAG}\\
+& s(\textit{pc+4}) = \texttt{LDCI}\ 1\\
+& s(\textit{pc+5}) = s_1\\
+& s(\textit{pc+6}) = \texttt{STAG}\\
+\end{aligned}$
+
+and execution proceeds as before, continuing with:
+
+$\Rule{s(\textit{pc}+4) = \texttt{LDCI}\ 1}{
+(\textit{os},\textit{pc}+4,e,\textit{rs}) \transition
+(1.\textit{os},\textit{pc}+5,e,\textit{rs})}
+$
+
+$\Rule{s(\textit{pc}+5) = s_1}{
+(1.\textit{os},\textit{pc}+5,e,\textit{rs}) \transition
+(v.1.\textit{os},\textit{pc}+6,e,\textit{rs})}
+$
+
+where $s_1$ executes to have $v$ on top of the operand stack.
+
+Here is the problem: execution cannot continue:
+
+$\Rule{s(\textit{pc}+6) = \texttt{STAG}}{
+(v.1.\textit{os},\textit{pc}+6,e,\textit{rs}) \transition \cdots}
+$
+
+because there is no array reference on the operand stack for \texttt{STAG} to pop.
+
+The solution is to compile array literals of size $n$, where $n$ is not $0$, with the \texttt{DUP} instruction.
+$\texttt{DUP}$ pops the value at the top of the operand stack
+and pushes the value back twice.
 
 $\Rule{s(\textit{pc}) = \texttt{DUP}}{
 (x.\textit{os},\textit{pc},e,\textit{rs}) \transition
 (x.x.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
-Finally, to store elements into the array, we use \texttt{STAG}, which pops the
-element to be stored, the index to store the element in, and the array
-itself, and stores the value accordingly. $x_i$ represents the element
-in index $i$ of the array. Each element in the array may or may not have
-a value. The length of the array is defined as the largest
-index assigned in the array + 1.
+The rule for compiling array literals of size $n$, where $n$ is not $0$, is thus:
 
-$\Rule{s(\textit{pc}) = \texttt{STAG}\qquad 0 \leq j < i}{
-(y.i.(\cdots x_j).\textit{os},\textit{pc},e,\textit{rs})
-\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
+$\Rule{E_0 \translateaux s_0 \qquad \cdots \qquad E_n \translateaux s_n}{
+\lbrack E_0, ..., E_n\rbrack \translateaux s_0. \texttt{NEWA}
+.\texttt{DUP}.\texttt{LDCI}\ 0.s_0.\texttt{STAG}. \cdots
+.\texttt{DUP}.\texttt{LDCI}\ n.s_n\texttt{STAG}}
 $
 
-Contents of array after instruction: $(\cdots x_j \cdots x_i)$
-
-Note that $y$ will be in index $i$ of the array. Indices with no explicit
-element assigned to it have the value \texttt{undefined}.
+where for each element of index $i$ in the array, we add the machine instructions
+$\texttt{DUP}.\texttt{LDCI}\ i.s_i.\texttt{STAG}$.
 
 \paragraph{Compilation and Execution of Array Assignment}
 We used \texttt{STAG} in the compilation of array literals
@@ -93,20 +179,6 @@ the element that was stored at the same index in the array previously, if any.
 \texttt{STAG} will also update the length of the array if the index to
 store the element in is larger than any previously used index for this array.
 
-$\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is not assigned}}{
-(y.i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \\
-\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
-$
-
-Contents of array after instruction: $(\cdots y \cdots)$
-
-$\Rule{s(\textit{pc}) = \texttt{STAG} \qquad x_i \text{ is assigned}}{
-(y.i.(\cdots x_i \cdots).\textit{os},\textit{pc},e,\textit{rs}) \\
-\transition (\textit{os},\textit{pc}+1,e,\textit{rs})}
-$
-
-Contents of array after instruction: $(\cdots y \cdots)$
-
 \paragraph{Compilation and Execution of Array Access}
 
 Lastly, to load an element from an array at an index,
@@ -120,14 +192,14 @@ $
 As for execution, if there is the array does contain an element in the
 corresponding index, it will load the element as such:
 
-$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is assigned}}{
-(i.(\cdots x_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
-(x_i.\textit{os},\textit{pc}+1,e,\textit{rs})}
+$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad a_i \text{ is assigned}}{
+(i.(\cdots a_i\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
+(a_i.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
 
 Otherwise, it will load \texttt{undefined} instead, like in the case below:
 
-$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad x_i \text{ is not assigned}}{
+$\Rule{s(\textit{pc}) = \texttt{LDAG} \qquad a_i \text{ is not assigned}}{
 (i.(\cdots).\textit{os},\textit{pc},e,\textit{rs}) \transition
 (\texttt{undefined}.\textit{os},\textit{pc}+1,e,\textit{rs})}
 $
