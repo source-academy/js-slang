@@ -1,7 +1,7 @@
 import * as es from 'estree'
 import { Context, Value } from '../types'
 
-export type EvaluateFunction = (node: es.Node, context: Context) => Generator<any>
+export type EvaluateFunction = (node: es.Node, context: Context) => IterableIterator<Value>
 
 function getContextWithIndependentEnvironment(context: Context): Context {
   const result = {

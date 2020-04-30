@@ -1,6 +1,6 @@
 import { stringify } from '../utils/stringify'
-import { head, is_null, is_pair, list, List, pair, Pair, tail } from './thunk_list'
-// try to combine thunk with stream, though may not be 
+import { head, is_null, is_pair, list, List, pair, Pair, tail } from './thunk-list'
+// try to combine thunk with stream, though may not be
 // very meaningful since in the situation, lazy-list is
 // lazier than lazy-stream.
 

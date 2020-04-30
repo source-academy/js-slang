@@ -10,11 +10,6 @@ import {
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
-import {
-  ApplicativeOrderEvaluationInterpreter,
-  LazyEvaluationInterpreter,
-  Interpreter
-} from './interpreter/interpreter'
 import { parse, parseAt } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScope, lookupDefinition, scopeVariables } from './scoped-vars'
@@ -33,6 +28,7 @@ import {
 } from './types'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
+import { forceEvaluateAndDeepDethunk } from './interpreter/interpreter'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -172,11 +168,11 @@ export async function runInContext(
     return undefined
   }
 
-  function getInterpreter(useLazyEval: boolean): Interpreter {
-    return useLazyEval
-      ? new LazyEvaluationInterpreter()
-      : new ApplicativeOrderEvaluationInterpreter()
-  }
+  //   function getInterpreter(useLazyEval: boolean): Interpreter {
+  //     return useLazyEval
+  //       ? new LazyEvaluationInterpreter()
+  //       : new ApplicativeOrderEvaluationInterpreter()
+  //   }
 
   const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
   context.errors = []
@@ -264,8 +260,9 @@ export async function runInContext(
       )
     }
   } else {
-    const interpreter = getInterpreter(context.variant === 'lazy')
-    const it = interpreter.boundedEvaluateForUser(program, context)
+    // const interpreter = getInterpreter(context.variant === 'lazy')
+    // const it = interpreter.boundedEvaluateForUser(program, context)
+    const it = forceEvaluateAndDeepDethunk(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
       scheduler = new AsyncScheduler()

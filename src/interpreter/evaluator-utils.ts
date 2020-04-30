@@ -7,7 +7,7 @@ import { Context, Value } from '../types'
 import { conditionalExpression, literal } from '../utils/astCreator'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import * as env from './environmentUtils'
+import * as env from './environment-utils'
 import { makeThunkAware } from './thunk'
 
 export class BreakValue {}
