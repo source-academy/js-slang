@@ -485,6 +485,202 @@ test('Material Biconditional', async () => {
   await testDeterministicCode(`bi_implication(false, true);`, false)
   await testDeterministicCode(`bi_implication(false, false);`, true)
 })
+
+test('While loops', async () => {
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (false) {
+      i = i - 1;
+    }
+    i;`,
+    2
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 5;
+    while (i > 0) {
+      i = i - 1;
+    }`,
+    0
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 5;
+    let j = 0;
+    while (i > 0 && j < 5) {
+      i = i - 1;
+      j = j + 2;
+    }`,
+    6
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (i) {
+      i = i - 1;
+    }
+    i;`,
+    'Line 3: Expected boolean as condition, got number.',
+    true
+  )
+})
+
+test('Let statement should be block scoped in body of while loop', async () => {
+  await testDeterministicCode(
+    `
+    let i = 2;
+    let x = 5;
+    while (i > 0) {
+      i = i - 1;
+      let x = 10;
+    }
+    x;`,
+    5
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (i > 0) {
+      i = i - 1;
+      let x = 5;
+    }
+    x;`,
+    'Line -1: Name x not declared.',
+    true
+  )
+})
+
+test('Nested while loops', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    let i = 1;
+    while (i > 0) {
+      let j = 2;
+      while (j > 0) {
+        let k = 4;
+        while (k > 0) {
+          count = count + 1;
+          k = k - 1;
+        }
+        j = j - 1;
+      }
+      i = i - 1;
+    }
+    count;`,
+    8
+  )
+})
+
+test('Break statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    let i = 5;
+    while (i > 0) {
+      i = i - 1;
+      break;
+    }
+    i;`,
+    4
+  )
+})
+
+test('Continue statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    let i = 5;
+    let j = 0;
+    while (i > 0 && j < 5) {
+      i = i - 1;
+      continue;
+      j = j + 2;
+    }
+    j;`,
+    0
+  )
+})
+
+test('Return statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    function loopTest(i, j) {
+      while (i > 0 && j > i) {
+        return i * j;
+        i = i - 1;
+        j = j + i;
+      }
+    }
+    loopTest(5, 10);`,
+    50
+  )
+})
+
+test('Non-deterministic while loop condition', async () => {
+  await testNonDeterministicCode(
+    `
+    let i = amb(3, 4);
+    let j = 0;
+    while (i > 0) {
+      i = i - 1;
+      j = j + 1;
+    }
+    j;`,
+    [3, 4]
+  )
+
+  await testNonDeterministicCode(
+    `
+    let i = 1;
+    let j = 2;
+    let count = 0;
+    while (amb(i, j) > 0) {
+      i = i - 1;
+      j = j - 1;
+
+      count = count + 1;
+    }
+    count;`,
+    [1, 2, 2, 1, 2, 2]
+  ) // chosen variables: (i,i), (i,j,i), (i,j,j), (j,i), (j,j,i), (j,j,j)
+})
+
+test('Non-deterministic while loop body', async () => {
+  /* number of total program values =
+    (number of values from cartesian product of the statements in loop body)^
+    (number of loop iterations)
+  */
+
+  await testNonDeterministicCode(
+    `
+    let i = 3;
+    let count = 0;
+    while (i > 0) {
+      count = count + amb(0, 1);
+      i = i - 1;
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3]
+  )
+
+  await testNonDeterministicCode(
+    `
+    let i = 2;
+    let count = 0;
+    while (i > 0) {
+      count = count + amb(0, 1);
+      count = count + amb(0, 1);
+
+      i = i - 1;
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]
+  )
+})
 // ---------------------------------- Helper functions  -------------------------------------------
 
 const nonDetTestOptions = {
