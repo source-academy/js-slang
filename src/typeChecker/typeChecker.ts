@@ -1,5 +1,6 @@
 import * as es from 'estree'
 import {
+  Context,
   TypeAnnotatedNode,
   Primitive,
   Variable,
@@ -214,11 +215,12 @@ let typeErrors: SourceError[] = []
  * @param program Parsed Program
  */
 export function typeCheck(
-  program: TypeAnnotatedNode<es.Program>
+  program: TypeAnnotatedNode<es.Program>,
+  context: Context
 ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
   typeIdCounter = 0
   typeErrors = []
-  const env: Env = cloneEnv(initialEnv)
+  const env: Env = createEnv(context.chapter)
   const constraints: Constraint[] = []
   traverse(program)
   infer(program, env, constraints, true)
@@ -1211,9 +1213,6 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['!', tFunc(tBool, tBool)],
   ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
   ['||', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  // NOTE for now just handle for Number === Number
-  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['<', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['<=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['>', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
@@ -1225,15 +1224,31 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['/', tFunc(tNumber, tNumber, tNumber)]
 ]
 
-const initialTypeMappings = [
-  ...predeclaredNames,
-  ...pairFuncs,
-  ...listFuncs,
-  ...arrayFuncs,
-  ...primitiveFuncs
+// Source 2 and below restricts === to addables
+const preS3equalityFuncs: [string, ForAll][] = [
+  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
 ]
 
-const initialEnv: Env = {
-  typeMap: new Map(initialTypeMappings),
-  declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+// Source 3 and above allows any values as arguments for ===
+const postS3equalityFuncs: [string, ForAll][] = [
+  ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
+  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
+]
+
+function createEnv(chapter: number): Env {
+  const equalityFuncs = chapter < 3 ? preS3equalityFuncs : postS3equalityFuncs
+  const initialTypeMappings = [
+    ...predeclaredNames,
+    ...pairFuncs,
+    ...listFuncs,
+    ...arrayFuncs,
+    ...primitiveFuncs,
+    ...equalityFuncs
+  ]
+
+  return {
+    typeMap: new Map(initialTypeMappings),
+    declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+  }
 }
