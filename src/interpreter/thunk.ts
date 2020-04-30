@@ -1,5 +1,6 @@
 import * as es from 'estree'
 import { Context, Value } from '../types'
+import { forceEvaluate } from './interpreter'
 
 export type EvaluateFunction = (node: es.Node, context: Context) => IterableIterator<Value>
 
@@ -19,14 +20,12 @@ export default class Thunk {
   public result: Value
   public originalNode: es.Node
   public context: Context
-  public evaluate: EvaluateFunction
 
-  constructor(public node: es.Node, context: Context, evaluate: EvaluateFunction) {
+  constructor(public node: es.Node, context: Context) {
     this.originalNode = node
     this.isEvaluated = false
     this.result = null
     this.context = getContextWithIndependentEnvironment(context)
-    this.evaluate = evaluate
     // @ts-ignore
     this.inspect = (_depth: any, _opts: any) => this.toString()
     this.toString = () => '[Thunk <' + this.originalNode.type + '>]'
@@ -34,7 +33,7 @@ export default class Thunk {
 
   public *dethunk(): Value {
     if (!this.isEvaluated) {
-      this.result = yield* this.evaluate(this.node, this.context)
+      this.result = yield* forceEvaluate(this.node, this.context)
       this.isEvaluated = true
     }
     return this.result instanceof Thunk ? this.result.dethunk() : this.result

@@ -9,6 +9,7 @@ import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import * as env from './environment-utils'
 import { makeThunkAware } from './thunk'
+import { forceEvaluate, evaluate } from './interpreter'
 
 export class BreakValue {}
 
@@ -47,7 +48,7 @@ function checkNumberOfArguments(
   return undefined
 }
 
-export function* getArgs(context: Context, call: es.CallExpression, evaluate: Evaluator<es.Node>) {
+export function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
     args.push(yield* evaluate(arg, context))
@@ -57,8 +58,7 @@ export function* getArgs(context: Context, call: es.CallExpression, evaluate: Ev
 
 export function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
-  context: Context,
-  forceEvaluate: Evaluator<es.Node>
+  context: Context
 ): IterableIterator<es.Node> {
   const test = yield* forceEvaluate(node.test, context)
 
@@ -70,11 +70,7 @@ export function* reduceIf(
   return test ? node.consequent : node.alternate
 }
 
-export function* evaluateBlockStatement(
-  context: Context,
-  node: es.BlockStatement,
-  forceEvaluate: Evaluator<es.Node>
-) {
+export function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   env.hoistFunctionsAndVariableDeclarationsIdentifiers(context, node)
   let result
   for (const statement of node.body) {
@@ -96,7 +92,6 @@ export function* apply(
   fun: Closure | Value,
   args: Value[],
   node: es.CallExpression,
-  forceEvaluate: Evaluator<es.Node>,
   thisContext?: Value
 ) {
   let result: Value
@@ -113,11 +108,7 @@ export function* apply(
         env.pushEnvironment(context, environment)
         total++
       }
-      result = yield* evaluateBlockStatement(
-        context,
-        fun.node.body as es.BlockStatement,
-        forceEvaluate
-      )
+      result = yield* evaluateBlockStatement(context, fun.node.body as es.BlockStatement)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee
         node = result.node

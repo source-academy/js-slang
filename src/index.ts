@@ -254,8 +254,6 @@ export async function runInContext(
       )
     }
   } else {
-    // const interpreter = getInterpreter(context.variant === 'lazy')
-    // const it = interpreter.boundedEvaluateForUser(program, context)
     const it = forceEvaluateAndDeepDethunk(program, context)
     let scheduler: Scheduler
     if (theOptions.scheduler === 'async') {
