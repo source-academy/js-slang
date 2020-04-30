@@ -1,0 +1,1043 @@
+\input source_header.tex
+
+\newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
+
+\newcommand{\TruE}{\textbf{\texttt{true}}}
+\newcommand{\FalsE}{\textbf{\texttt{false}}}
+\newcommand{\Rc}{\texttt{\}}}
+\newcommand{\Lc}{\texttt{\{}}
+\newcommand{\Rp}{\texttt{)}}
+\newcommand{\Lp}{\texttt{(}}
+\newcommand{\Fun}{\textbf{\texttt{function}}}
+\newcommand{\Let}{\textbf{\texttt{let}}}
+\newcommand{\Return}{\textbf{\texttt{return}}}
+\newcommand{\Const}{\textbf{\texttt{const}}}
+\newcommand{\If}{\textbf{\texttt{if}}}
+\newcommand{\Else}{\textbf{\texttt{else}}}
+\newcommand{\Bool}{\texttt{bool}}
+\newcommand{\Number}{\texttt{number}}
+\newcommand{\String}{\texttt{string}}
+\newcommand{\Undefined}{\texttt{undefined}}
+\newcommand{\List}{\textit{List}}
+\newcommand{\Array}{\textit{Array}}
+\newcommand{\Pair}{\textit{Pair}}
+\newcommand{\head}{\textit{head}}
+\newcommand{\tail}{\textit{tail}}
+
+\newtheorem{definition}{Definition}[section]
+
+\begin{document}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \docheader{2021}{Source}{\S 3 Type Inference}{Martin Henz, K Muruges, Raynold Ng, Daryl Tan, Tse Hiu Fung}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Notation}  
+
+\subsection{The language Source \S3}
+
+The set of expressions $E$ is the least set that satisfies the following rules, 
+where $x$ ranges over a set of names $V$, $n$ ranges over the positive integers, 
+$p_1$ ranges over the set of unary primitive operations 
+$P_1 = \{$\verb#!#$\}$, and $p_2$ ranges over the set of binary 
+primitive operations
+$P_2 = \{$\verb@||@,\verb#&&#,\verb#+#,
+\verb#-#,\verb#*#,\verb#/#, \verb#%#, \verb#===#,\verb#!==#,\verb#>#,\verb#<#, \verb#<=#, \verb#>=#$\}$.
+
+$\Rule{}{x}$
+\hfill 
+$\Rule{}{i}$
+\hfill 
+$\Rule{}{s}$
+\hfill 
+$\Rule{}{\TruE}$
+\hfill 
+$\Rule{}{\FalsE}$
+\hfill 
+$\Rule{}{\Undefined}$
+
+$\Rule{E}{p_1[E]}$
+\hfill
+$\Rule{E_1\quad E_2}{p_2[E_1, E_2]}$
+\hfill
+$\Rule{E \qquad E_1 \qquad E_2}{E\ \texttt{?}\ E_1\ \texttt{:}\ E_2}$
+\hfill
+$\Rule{E\quad E_1\quad \cdots \quad E_n}{E\ \Lp\ E_1\texttt{,}\cdots\texttt{,} E_n\Rp}$
+
+$\Rule{E_1\quad E_2\quad \cdots \quad E_n}{[E_1, E_2, \cdots, E_n]}$
+\hfill
+$\Rule{E\quad E_1}{E[E_1]}$
+
+The letters $x$, $i$ and $s$ stand for names, numbers, strings, respectively.
+The set of possible assignments $assign$ is the least set that satisfies the two following rules, 
+representing variable and array assignment.
+
+$\Rule{E}{x\ \texttt{=}\ E}$
+\hfill
+$\Rule{E \qquad E_1 \qquad E_2}{E[E_1]\ \texttt{=}\ E_2}$
+
+\noindent
+Let the set of all expressions (the union of $R$ and $E$) be denoted by $U$. Also let the term
+\textbf{\texttt{decl}} denote the two keywords for variable declaration: \Let \ and \Const .
+The set of all statements $S$ is then
+the least set that satisfies the
+following rules. 
+
+$\Rule{E}{\textbf{\texttt{decl}} \ x\ \texttt{=}\ E\ \texttt{;}}$
+\hfill
+$\Rule{E}{\Return\ E\ \texttt{;}}$
+\hfill
+$\Rule{E}{E\ \texttt{;}}$
+\hfill
+$\Rule{assign}{assign\ \texttt{;}}$
+\hfill
+$\Rule{S}{\Fun\ f \Lp x_1,\cdots, x_n\Rp\ \Lc\ S\ \Rc}$
+
+\noindent
+The identifiers $x_1,\ldots,x_n$ must be pairwise distinct.
+
+$\Rule{S_1 \qquad S_2}{S_1\ S_2}$
+\hfill
+$\Rule{S}{\Lc\ S\ \Rc}$
+\hfill
+$\Rule{E \quad S_1\ \quad S_2}{\texttt{\If (}\ E \ \texttt{) \{}\ S_1\ \texttt{\} \Else \{}\ S_2\ \texttt{\}}}$
+\hfill
+$\Rule{E \quad S}{\textbf{\texttt{while}}\texttt{ (}\ E \ \texttt{) \{}\ S\ \texttt{\}}}$
+\hfill
+$\Rule{assign_1 \quad assign_2\ \quad E \quad S}{\textbf{\texttt{for}} \texttt{ ( }assign_1\texttt{;}\ E\texttt{;}\ assign_2 \texttt{) \{}\ S\ \texttt{\}}}$
+\hfill
+$\Rule{E_1 \quad assign\ \quad E_2 \quad S}{\textbf{\texttt{for}} \texttt{( \Let }\  x\ \texttt{=}\ E_1\ \texttt{;}\ E_2\texttt{;}\ assign \texttt{) \{}\ S\ \texttt{\}}}$
+\hfill
+$\Rule{}{\textbf{\texttt{break}}\ \texttt{;}}$
+\hfill
+$\Rule{}{\textbf{\texttt{continue}}\ \texttt{;}}$
+
+\noindent
+We introduce the following additional rule for expressions, in order
+to define functions.
+
+\[ \Rule{S}{\Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ S\ \Rc} \]
+
+\noindent
+We treat function declaration statements of the form
+%
+\[ \Fun\ f \Lp x_1,\cdots, x_n\Rp\ \Lc\ S\ \Rc \]
+%
+\noindent
+as abbreviations for constant declaration statements as follows
+%
+\[ \Const\ f\ \texttt{=}\ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ S\ \Rc \texttt{;} \]
+%
+function definitions of the form 
+%
+\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ E \]
+%
+\noindent
+as abbreviations for the following
+%
+\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ \Return\ E\ \texttt{;}\ \Rc \]
+%
+Conditional statements of the form 
+\begin{lstlisting}
+if (x1) {
+    const x = 1;    
+} else if (x2) {
+    const y = 3;
+} else if (x3) {
+    const a = 3;
+} else {
+    const b = 3;
+}
+\end{lstlisting}
+\noindent
+are treated as abbreviations for the following
+\begin{lstlisting}
+if (x1) {
+    const x = 1;    
+} else {
+    if (x2) {
+        const y = 3;
+    } else {
+        if (x3) {
+            const a = 3;
+        } else {
+            const b = 3;
+        }
+    }
+}
+\end{lstlisting}
+
+For statements in the following form (having a declaration as the initialization)
+\begin{lstlisting}
+for (let x = 4; x < 20; x = x + 1) {
+  ...
+}
+\end{lstlisting}
+\noindent
+are treated as abbreviations for the following
+\begin{lstlisting}
+{
+  let x = 4;
+  for (x = x; x < 20; x = x + 1) {
+    ...
+  }
+}
+\end{lstlisting}
+  
+\subsection{A Language of Types}
+\label{simpltyped}
+
+We introduce the following language of types for type inference:
+
+\[
+\Rule{}{T_i}
+\qquad
+\Rule{}{A_i}
+\]
+
+\[
+\Rule{}{\Number}
+\qquad
+\Rule{}{\Bool}
+\qquad
+\Rule{}{\String}
+\qquad
+\Rule{}{\Undefined}
+\]
+
+\[ \Rule{t_1 \quad \cdots\quad t_n\quad t}{(t_1, \ldots t_n) \rightarrow t}
+\qquad
+\Rule{t_{head} \quad t_{tail}}{\Pair(t_\head,t_\tail)}
+\qquad
+\Rule{t}{\List(t)}
+\qquad
+\Rule{t}{\Array(t)}
+\]
+\[
+\Rule{t}{\forall ( t )} \]
+
+\noindent
+where $n \geq 1$, and $T_i$ and $A_i$ represent type variables. We will capitalize 
+type variables, as in $T_1, A_2$. We will also refer to the types in the second row (i.e. $\Bool$,
+$\Undefined$, $\Number$, $\String$) as \emph{base types}. The symbols $t_i$ in the rules above
+are meta-variables that stand for types and must not be confused with type variables
+that \emph{are} types.
+As usual, parentheses can be used in practice for grouping.
+Examples of valid types are $\Number$ and
+$(\Number, () \rightarrow \Bool, \Undefined, T_1) \rightarrow (\Bool \rightarrow A_2)$.
+Types of the form $\forall ( t )$ are called \emph{polymorphic types}, whereas
+all other are called \emph{monomorphic types}.
+
+We distinguish two kinds of type variables, $T_i$ and $A_i$, to be able to handle
+the overloading of operators such as \texttt{+} (for numbers and strings).
+A type variable $A_i$ can only
+represent ``addable'' types, i.e. 
+$\Number$ or $\String$, and
+a type variable $T_i$ can represent any type.
+
+\subsection{Type Environments}
+
+For Source, well-typedness of an statement depends on the context in which the
+statement appears. The expression \verb#x + 3# within a statement may or may 
+not be well-typed, depending on the type of \verb#x#. Thus in order 
+to formalize the notion of a context, we define a 
+\emph{type environment}, denoted by $\Gamma$, that keeps track
+of the type of names appearing in the statement. More
+formally,
+the partial function $\Gamma$ from names to types expresses a 
+context, in which a name $x$ is associated with type $\Gamma(x)$. 
+
+We define a relation $\Gamma[x \leftarrow t]\Gamma'$ on type environments 
+$\Gamma$, names $x$, types $t$, and type environments $\Gamma'$,
+which constructs a type environment that behaves like the 
+given one, except that the type of $x$ is $t$. More formally, 
+if $\Gamma[x \leftarrow t]\Gamma'$, then $\Gamma'(y)$ is $t$, 
+if $y=x$ and $\Gamma(y)$ 
+otherwise. Obviously, this uniquely identifies $\Gamma'$ for
+a given $\Gamma$, $x$, and $t$, and thus the type environment extension
+relation is functional in its first three arguments.
+
+The set of names, on which a type environment
+$\Gamma$ is defined, is called the domain of $\Gamma$, 
+denoted by $\textit{dom}(\Gamma)$.
+
+%Note that we used the same notation $\cdot [ \cdot \leftarrow \cdot ]\cdot$
+%to denote substitution in Section~6.2. It will
+%always be clear from the context, which operation is meant.
+
+For each non-overloaded primitive operator, we add a binding to our initial
+type environment $\Gamma_0$ as follows:
+
+\begin{eqnarray*}
+& &
+       \emptyset[ -_2 \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ * \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ / \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ \% \leftarrow (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ \&\& \leftarrow \forall((\Bool, T) \rightarrow T)]\\
+&& \hspace{2mm} [ || \leftarrow   \forall((\Bool, T) \rightarrow T)]\\
+&& \hspace{2mm} [ ! \leftarrow \Bool \rightarrow \Bool]\\
+&& \hspace{2mm} [ -_1 \leftarrow \Number \rightarrow \Number]\Gamma_{-2}
+\end{eqnarray*}
+
+The overloaded binary primitive are handled as follows:
+
+\begin{eqnarray*}
+ & &
+      \Gamma_{-2}
+                 [ \texttt{+} \leftarrow \forall((A, A) \rightarrow A)] \\
+&& \hspace{6mm}  [ \texttt{===} \leftarrow \forall((T1, T2) \rightarrow \Bool)] \\
+&& \hspace{6mm}  [ \texttt{!==} \leftarrow \forall((T1, T2) \rightarrow \Bool)] \\
+&& \hspace{6mm}  [ \texttt{>} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
+&& \hspace{6mm}  [ \texttt{>=} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
+&& \hspace{6mm}  [ \texttt{<} \leftarrow \forall((A, A) \rightarrow \Bool)] \\
+&& \hspace{6mm}  [ \texttt{<=} \leftarrow \forall((A, A) \rightarrow \Bool)]\Gamma_{-1}
+\end{eqnarray*}
+
+\begin{tabular}[fragile]{lllllllll}
+$\Gamma_{-1}$
+& $[$ & \texttt{display}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{error}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{Infinity}      & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{is\_boolean}      & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_function} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_number} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_string} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan2} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cbrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_ceil} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_clz32} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_exp} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_expm1} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_floor} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_fround} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_hypot} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_imul} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_max} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_min} & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
+& $[$ & \texttt{math\_PI} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_pow} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_random} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_round} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sqrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_SQRT1\_2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_SQRT2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_tan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_tanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_trunc} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{NaN} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{parse\_int} & $\leftarrow$  & $(\String, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{prompt} & $\leftarrow$  & $\String$ & $\rightarrow$ & $\String$ & $]$ \\
+& $[$ & \texttt{runtime} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{stringify} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\String)$ & $]$ \\
+& $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ & \\
+& $[$ & \texttt{null}      & $\leftarrow$  & $\forall(List(T)$ & & & $]$ \\
+& $[$ & \texttt{pair} & $\leftarrow$  & $\forall((T_1,T_2)$ & $\rightarrow$ & $Pair(T_1,T_2))$ & $]$ \\
+& $[$ & \texttt{head} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $T_1)$ & $]$ \\
+& $[$ & \texttt{tail} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $T_2)$ & $]$ \\
+& $[$ & \texttt{list} & $\leftarrow$  & $\forall(T_1,T_2,\dots,T_n$ & $\rightarrow$ & $\List(T_{n+1}))$ & $]$ \\
+& $[$ & \texttt{set\_head} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $\Undefined)$ & $]$ \\
+& $[$ & \texttt{set\_tail} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $\Undefined)$ & $]$ $\Gamma_0$ \\
+& \end{tabular}
+ 
+\subsection{Preparing Programs for Type Inference}
+
+To facilitate the process of type inference, we annotate each component of the given
+program with unique type variables and introduce a simple transformation at the toplevel.
+
+A \emph{toplevel transformation} clarifies the nature
+of the names declared outside of function definitions,
+and the type of the overall statement. The toplevel
+transformation wraps the given program into a block, and introduces \lstinline{return}
+keywords in front of expression statements, when these are the last statements in a
+sequence to be evaluated, even when they occur within conditional statements.
+
+Examples:
+
+\begin{lstlisting}
+const x = 1;
+x + 2; 
+\end{lstlisting}
+becomes
+\begin{lstlisting}
+{
+    const x = 1;
+    return x + 2;
+}    
+\end{lstlisting}
+and
+\begin{lstlisting}
+if (true) {
+    const x = 1;    
+    x + 2;
+} else {
+    const y = 3;
+    y + 4;
+}
+\end{lstlisting}
+becomes
+\begin{lstlisting}
+{
+    if (true) {
+        const x = 1;    
+        return x + 2;
+    } else {
+        const y = 3;
+        return y + 4;
+    }
+}
+\end{lstlisting}
+
+To facilitate the process of type inference, we annotate each component of the given
+program with unique type variables. We write the type variable as a superscript after
+the component, and use parentheses for clarification. For example, the Source \S 1
+program
+\begin{lstlisting}
+{ const x = 1; return x + 2; }
+\end{lstlisting}
+is represented by the annotated program
+\[ 
+\Const\ \texttt{x}^{T_1}\ \texttt{=}\ 1^{T_2}\texttt{;}\ 
+\texttt{return }\ (\texttt{x}^{T_3} \ \texttt{+} \ \texttt{2}^{T_4})^{T_5} \ \texttt{;}
+\]
+
+\subsection{Type Constraints}
+
+We introduce type constraints $\Sigma$ as conjunctions of type equations:
+
+$\Rule{}{\top}$
+\hfill 
+$\Rule{}{t_1 = t_2}$
+\hfill 
+$\Rule{\Sigma_1 \qquad \Sigma_2}{\Sigma_1 \wedge \Sigma_2}$
+
+\noindent
+We require that constraints are kept in \emph{solved form}:
+\[
+t_1 = t_1' \wedge \cdots \wedge t_i = t_i' \wedge \cdots \wedge t_n = t_n'
+\]
+where:
+\begin{itemize}
+\item all $t_i$ are type variables,
+\item for any type variable $T_i$, there is at most one equation $T_i = \cdots$,
+\item no variable $t_i$ occurs in any equation $t_j = t_j'$ if $j > i$.
+\end{itemize}
+A constraint in solved form does not have any cycles $t^{(0)} = t^{(1)}, t^{(1)} = t^{(2)}, \ldots, t^{(k)} = t^{(0)}$.
+We \emph{apply} a type constraint $\Sigma$ in solved form to a type $t$ as follows:
+
+\[
+  \Rule{\textrm{if $t_i$ is a \emph{base type} or }t_i = t_i'\textrm{ does not occur in }\Sigma}{
+    \Sigma(t_i) = t_i}
+  \qquad
+  \Rule{\textrm{if }t_i = t_i'\textrm{ occurs in }\Sigma}{
+    \Sigma(t_i) = \Sigma(t_i')}  
+\]
+
+\[
+  \Rule{t' = \Sigma(t) \qquad t_1' = \Sigma(t_1) \qquad \cdots \qquad t_n' = \Sigma(t_n) }{
+  \Sigma((t_1, \ldots, t_n) \rightarrow t) = (t_1', \ldots, t_n') \rightarrow t'}
+  \qquad
+  \Rule{t' = \Sigma(t)}{
+  \Sigma(\List(t)) = t'}
+\]
+
+\[
+  \Rule{t_\head' = \Sigma(t_\head) \qquad t_\tail' = \Sigma(t_\tail) \qquad t_\tail' = \List(t_\head') }{
+  \Sigma(\Pair(t_\head, t_\tail)) = t_\tail'}
+\]
+
+\[
+  \Rule{t_\head' = \Sigma(t_\head) \qquad t_\tail' = \Sigma(t_\tail) \qquad t_\tail' \neq \List(t_\head') }{
+  \Sigma(\Pair(t_\head, t_\tail)) = \Pair(t_\head', t_\tail')}
+\]
+
+\noindent
+Example: If $\Sigma = (T_1 = \Number \wedge T_2 = T_3 \rightarrow \Bool \wedge T_3 = \Number
+\rightarrow \Bool)$, we have $\Sigma(\Number \rightarrow T_2) = \Number \rightarrow ((\Number
+\rightarrow \Bool) \rightarrow \Bool)$.
+
+Note that in our framework, type constraints never contain any polymorphic types. Thus
+you will never see ``$\forall$'' an a type constraint.
+
+We add a constraint $t = t'$ to a solved form $\Sigma$ by applying the following rules
+in the given order:
+\begin{itemize}
+\item If $t$ is a \emph{base type} and $t'$ is also a \emph{base type} of the same kind, do nothing.
+\item If $t$ is not a type variable and $t'$ is a type variable, then we now try to add $t' = t$ to
+$\Sigma$, following the same rules.
+\item If $t$ is a type variable and $\Sigma(t')$ is a type variable with the same name as $t$, do nothing.
+\item If $t$ is a type variable and $\Sigma(t')=\Pair(t'', t)$, we now try to add the equation $t =\ List(t'')$ to $\Sigma$, following the same rules.
+\item If $t$ is a type variable and $\Sigma(t')=\Pair(t'', \List(t'''))$, we now try to add the equations $t''=t'''$ and $t=\List(t'')$ to $\Sigma$, following the same rules. 
+\item If $t$ is a type variable, $\Sigma(t')$ is a function type, list type, or pair type, and $t$ is contained in $\Sigma(t')$, then stop
+  with a type error as we will have an infinite type. (e.g. A = B $\rightarrow$ A)
+\item If $t$ is $A_i$ and $\Sigma(t')$ is not a type variable and not $\Number$ or $\String$,
+  then stop with a type error.
+\item If $t$ is a type variable and there is an equation $t = t''$ in $\Sigma$, then
+  we now try to add the equation $t' = t''$ to $\Sigma$, following the same rules.
+\item If $t$ is a type variable that does not occur on the left in any equation in $\Sigma$,
+  then add $t = \Sigma(t')$ in the front of $\Sigma$. In addition, if $\Sigma(t)$ is an "addable"
+  type variable $A_i$ and $\Sigma(t')$ is a regular type variable $T_j$, we must convert $\Sigma(t')$
+  into an "addable" type $A_j$.  
+\item If $t$ is $(t_1,\ldots, t_n) \rightarrow t''$ and
+  $t'$ is $(t_1',\ldots, t_n') \rightarrow t'''$, then add n constraints
+  $t_1 = t_1', \cdots, t_n = t_n', t'' = t'''$ to $\Sigma$, each time going through the above set of rules.
+\item If $t$ is $\Pair(t_\head,t_\tail)$ and
+  $t'$ is $\Pair(t_\head ',t_\tail ')$, then add 2 constraints
+  $t_\head = t_\head ', t_\tail = t_\tail '$ to $\Sigma$, both times going through the above set of rules.
+\item If $t$ is $\List(t_\textit{el})$ and
+  $t'$ is $\List(t_\textit{el} ')$, then add the constraint
+  $t_\textit{el} = t_\textit{el} '$ to $\Sigma$ going through the above set of rules.
+\item If $t$ is $\List(t_\textit{el})$ and
+$t'$ is a pair type, then try to add the constraint $t' = \Pair(t_\textit{el}, t)$ to $\Sigma$ going through the above set of rules.
+\item If $t'$ is $\List(t_\textit{el})$ and
+$t$ is a pair type, then try to add the constraint $t = \Pair(t_\textit{el}, t')$ to $\Sigma$ going through the above set of rules.
+\item If $t$ is $\Array(t_1)$ and $\Sigma(t')=\Array(t_2)$, add the constraint $t_1=t_2$ to $\Sigma$ going through the above set of rules.
+\item Any other case  (e.g. $\Bool = \String$) stops with a type error.
+\end{itemize}
+This process is guaranteed to terminate either with a type error or with a new solved form.
+
+\section{Typing Relation}
+
+The set of well-typed programs is defined by the binary typing relation
+written $S: \Sigma$, where $S$ is a toplevel-transformed, type-annotated program.
+The relation is defined using the quaternary typing relation
+$\Sigma, \Gamma \vdash S : \Sigma'$, as follows:
+$S: \Sigma$ holds if and only if 
+$\top, \Gamma_0 \vdash S : \Sigma$
+where $\Gamma_0$ is the intial type environment described above and $\top$ is the empty
+type constraint. The constraint $\Sigma$ can be called the constraint \emph{inferred from}
+$S$. 
+
+We define the typing relation for expressions and statements
+inductively with the following rules.
+
+\subsection{Typing Relation on Expressions}
+
+The type of a name needs to be provided by the type environment. The first rule
+applies when $\Gamma(x)$ is monomorphic, i.e. $\Gamma(x) \neq \forall t'$.
+
+\noindent
+$\Rule{\Gamma(x) \neq \forall t' \qquad
+  (\Sigma \wedge t = \Gamma(x)) = \Sigma'}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
+
+If $\Gamma(x)$ is polymorphic,  i.e. $\Gamma(x) = \forall t'$, we replace all type variables in
+$t'$ with fresh type variables:
+
+\noindent
+$\Rule{\Gamma(x) = \forall t' \qquad
+  (\Sigma \wedge t = \textit{fresh}(t')) = \Sigma'}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
+
+\noindent
+where $\textit{fresh}(t')$ results from $t'$ by replacing all type variables consistently with
+fresh type variables.
+
+Example: $\textit{fresh}(\Bool \rightarrow (T_1 \rightarrow (T_2 \rightarrow T_2)))$
+might return $\Bool \rightarrow (T_{77} \rightarrow (T_{88} \rightarrow T_{88})))$.
+
+If $\Gamma(x)$ is not defined, then neither rule is applicable.
+In this case, we say that
+there is no type for $x$ derivable from the type environment $\Gamma$. 
+
+Constants get the following types.
+
+\noindent
+\[
+  \Rule{(\Sigma \wedge t = \Number) = \Sigma'}{\Sigma, \Gamma \vdash n^t : \Sigma'}
+  \qquad
+  \Rule{(\Sigma \wedge t = \String) = \Sigma'}{\Sigma, \Gamma \vdash s^t : \Sigma'}
+\]
+\noindent
+where $n$ denotes any literal number $s$ denotes any literal string.
+
+\noindent
+\[
+  \Rule{(\Sigma \wedge t = \Bool) = \Sigma'}{\Sigma, \Gamma \vdash \TruE^t : \Sigma'}
+  \quad
+  \Rule{(\Sigma \wedge t = \Bool) = \Sigma'}{\Sigma, \Gamma \vdash \FalsE^t : \Sigma'}  
+\]
+
+\noindent
+Important for typing conditionals is that the consequent and alternative
+expressions get the same type. 
+
+\noindent
+\[
+  \Rule{(\Sigma_0 \wedge t = t_1),
+  \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
+  (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2 \quad
+  \Sigma_2, \Gamma \vdash E_1^{t_1} : \Sigma_3 \quad
+  \Sigma_3, \Gamma \vdash E_2^{t_2} : \Sigma_4 \quad
+  (\Sigma_4 \wedge t_1 = t_2) = \Sigma_{5} }{
+  \Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \texttt{?}\ E_1^{t_1}\ \texttt{:}\ E_2^{t_2})^t\ :\ \Sigma_5}  
+\]
+
+We have the following rule for function application.
+
+\[
+\Rule{  \Sigma_0, \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
+  \cdots \quad \Sigma_{n}, \Gamma \vdash E_{n}^{t_n} : \Sigma_{n+1} \quad
+  (\Sigma_{n+1} \wedge t_0 = (t_1, \ldots, t_n) \rightarrow t) = \Sigma_{n+2}}{
+  \Sigma_0, \Gamma \vdash (E_0^{t_0}\ \Lp \ E_1^{t_1}, \ldots, E_n^{t_n}\ \Rp)^t : \Sigma_{n+2}}  
+\]
+
+\noindent
+Application of the binary and unary operators are treated in the same way, with the operator
+being treated as an identifier expression.
+The type of the operator needs to be a function type with the right
+number of parameters, and the type of every argument needs to coincide
+with the corresponding parameter type of the function type. If all these
+conditions are met, the type of the function application is the same
+as the return type of the function type that is the type of the operator.
+
+The typing of function definition statements is defined as follows.
+
+\noindent
+\[
+  \Rule{\Sigma \wedge (t' = (t_1, \ldots, t_n) \rightarrow t), \Gamma[x_1 \leftarrow t_1]\cdots
+    [x_n \leftarrow t_n]
+    \vdash S^{t} : \Sigma'}{
+    \Sigma, \Gamma \vdash ( \Lp  x_1^{t_1}, \ldots, x_n^{t_n} \Rp\ \texttt{=>}\ \Lc\ S^{t}\ \Rc)^{t'} : \Sigma'}  
+\]
+
+For literal array definitions, we require all members of the array to be of the same type.
+
+\[
+\Rule{
+	\begin{minipage}{120mm}
+	$\Sigma_1, \Gamma \vdash E_1^{t_1} : \Sigma_2 \dots \Sigma_n, \Gamma \vdash E_n^{t_n} : \Sigma_{n+1}$ \\ 
+	$(\Sigma_{n+1} \wedge t = \Array(t') \wedge t' = t_1 \wedge t' = t_2 \wedge \dots \wedge t' = t_n ) = \Sigma_{n+2}$ 
+	\end{minipage}
+}{
+	\Sigma_1, \Gamma \vdash 
+	( [E_1^{t_1}, \dots, E_n^{t_n}] )^{t} : \Sigma_{n+2}
+}
+\]
+where $t'$ is a fresh type variable. If the array is empty, we simply get:
+
+\[
+\Rule{
+	\Sigma_2 = (\Sigma_1 \wedge t = \Array(t'))
+}{
+	\Sigma_1, \Gamma \vdash 
+	( [ \ ] )^{t} : \Sigma_{2}
+}
+\]
+
+Finally, for array member access, we need to infer the property and the object first. We expect the object to be an 
+$\Array$ and the property to a $\Number$. One possible type error could occur here at runtime where we try to access an 
+array with a non-integer index. This error cannot be caught by the type inferencer as we do not infer integer types.
+If we successfully add the two constraints, we then add a constraint that the type of the entire expression is the 
+element type of the array.
+\[
+	\Rule{
+		\begin{minipage}{120mm}
+		$\Sigma_1, \Gamma \vdash E_1^{t_1}: \Sigma_2 \qquad \Sigma_2, \Gamma \vdash E^{t_2}: \Sigma_3$ \\
+		$(\Sigma_3 \wedge t_1 = \Number \wedge t_2 = \Array \wedge t = t_2.elementType) = \Sigma_4$
+		\end{minipage}			
+	}{
+	\Sigma_0, \Gamma \vdash (E^{t_2}[E_1^{t_1}])^t: \Sigma_3
+}
+\]
+
+\subsection{Typing Relation on Assignments}
+For the typing of assignments, the key idea is to infer the types of the LHS and RHS and simply add a constraint that
+the two are equal. The same rule can be applied for assignment to an identifier and assignment to an array member
+expression. Collectively, we will just denote the LHS as $E_1$ to represent both scenarios.
+
+\[
+  \Rule{(\Sigma_1 \wedge t = t_0), \Gamma \vdash E^{t_0} : \Sigma_2 \quad \Sigma_2, \Gamma \vdash E_1^{t_1} : \Sigma_3 \quad (\Sigma_3 \wedge t_0 = t_1) = \Sigma_4 }{
+    \Sigma_1, \Gamma \vdash (E_1^{t_1} \ \texttt{=} \ E^{t_0} \texttt{;})^{t} : \Sigma_4}  
+\]
+
+% \Gamma(x) \neq \forall t' \qquad
+%   \Sigma' = (\Sigma \wedge t = \Gamma(x))
+
+%% \vspace{5mm}
+
+%% \begin{example}
+%% The following proof shows that the typing relation holds for the
+%% statement 
+%% \[
+%% \emptyset \vdash\ \texttt{(fun {int -> int} x -> x+1 end 2)}\ 
+%% : \Int
+%% \] 
+%% The reader may annotate each rule application with the name
+%% of the applied rule as in the previous example.
+
+%% \noindent
+%% \emph{
+%% $\Rule{\Rule{\emptyset[\X \leftarrow \Int]\Gamma\quad\Rule{\Rule{}{\Gamma \vdash \X : \Int}\quad \Rule{}{\Gamma \vdash \texttt{1} : \Int}}{\Gamma \vdash \X\texttt{+}\texttt{1} : \Int}}{\emptyset \vdash \Fun\ \Lc \Int\ \Right\ \Int\Rc\ \X\ \Right\ \X\Plus \texttt{1}\ \End : \Int\ \Right\ \Int} \qquad \Rule{}{\emptyset \vdash \texttt{2} : \Int}}%
+%% {\emptyset \vdash \Lp\Fun\ \Lc \Int\ \Right\ \Int\Rc\ \X\ \Right\ \X\Plus \texttt{1}\ \End\ \texttt{2}\Rp  : \Int}$}
+%% \end{example}
+
+%% \vspace{5mm}
+
+%% \begin{lemma}\label{typefunction}
+%% For every expression $E$ and every type assignment $\Gamma$, 
+%% there exists at most one type $t$ such that $\Gamma \vdash E : t$.
+%% \end{lemma}
+%% \begin{proof}
+%% We prove this statement using structural induction over the given expresssion
+%% $E$. That means we consider the following property $P$ of Typed Source expressions $E$:
+%% \begin{quotation}%
+%% \noindent
+%% For every type assignment $\Gamma$, there exists at most one type $t$ such
+%% that $\Gamma \vdash E : t$ holds.
+%% \end{quotation}
+%% If we are able to show that this property (taken as a set) meets all
+%% rules given for Typed Source expressions $E$, we know that $\textrm{Typed Source} \subseteq P$,
+%% which means that every element of Typed Source has the property $P$. So let us look 
+%% at the rules defining Typed Source.
+%% \begin{itemize}
+%% \item $\Rule{}{x}$\\
+%% The only typing rule that applies in this case is rule VarT 
+%% (page~\pageref{vart}). Since type environments are functions, it is
+%% immediately clear that for every type environment $\Gamma$, there
+%% can be at most one type for $x$, namely $\Gamma(x)$.
+%% \item $\Rule{}{n}$, $\Rule{}{\TruE}$, $\Rule{}{\FalsE}$\\
+%% The only typing rules that apply in these cases are the respective rules
+%% for typing of constants, NumT, TrueT and FalseT (page~\pageref{numt}).
+%% They assign a unique type (\texttt{number} for numbers, \Bool for
+%% $\TruE$ and $\FalsE$) to the constant expressions.
+%% \item 
+%% $\Rule{E}{p_1[E]}$, $\Rule{E_1\quad E_2}{p_2[E_1, E_2]}$\\
+%% We need to show that our property $P$ meets the rules for Typed Source primitive
+%% operations. For our only unary operation \verb#\#, we need to show:
+%% \begin{quotation}%
+%% \noindent
+%% If for every type assignment $\Gamma$, there exists at most one type $t$ such
+%% that $\Gamma \vdash E : t$ holds, then for every type assignment $\Gamma'$,
+%% there exists at most one type $t'$ such that $\Gamma' \vdash \texttt{!}[E] : t'$
+%% holds.
+%% \end{quotation}
+%% The only typing rule that applies in this case is the rule Prim$_1$.
+%% The only possible type for $\texttt{!}[E]$ according to this rule is
+%% \Bool.
+
+%% The argument for the binary primitive operations is similar.
+%% \item $\Rule{E \qquad E_1 \qquad E_2}{E\ \texttt{?}\ E_1\ \texttt{:}\ E_2}$\\
+%% The only typing rule that applies here is the rule IfT.
+
+%% $\Rule{\Gamma \vdash E : \Bool \qquad \Gamma \vdash E_1 : t \qquad
+%%  \Gamma \vdash E_2 : t}{\Gamma \vdash E\ \texttt{?}\ E_1\ \texttt{:}\ E_2 : t}$
+%% \textbf{[IfT]} 
+
+%% It is clear from this rule
+%% that if there is at most one type $t$ for $E_1$, then there is
+%% at most one type for the entire conditional 
+%% $E\ \texttt{?}\ E_1\ \texttt{:}\ E_2$, namely the same type $t$.
+
+%% \item $\Rule{E\quad E_1\quad \cdots \quad E_n}{E\ \Lp \ E_1,\cdots, E_n\Rp}$\\
+%% The only rule that applies here is the rule ApplT:
+
+%% $\Rule{\Gamma \vdash E : t_1\Times \cdots \Times t_n\ \Right\ t \qquad \Gamma \vdash E_1 : t_1 \quad \cdots \quad \Gamma \vdash E_n : t_n}{\Gamma \vdash E\ \Lp \ E_1,\cdots, E_n\ \Rp : t}$
+
+%% \noindent
+%% This rule applies only if $E$ has a type of the form 
+%% $t_1\Times \cdots \Times t_n\ \Right\ t$. It is clear from this rule that
+%% if there is only one such type 
+%% $t_1\Times \cdots \Times t_n\ \Right\ t$ for $E$ for any $\Gamma$, then 
+%% there is at most one type for the entire application, namely $t$.
+
+%% \end{itemize}
+%% \end{proof}
+
+%% \noindent
+%% Since for each expression, there is at most one rule that applies, we 
+%% can invert the rules and state the following theorem. 
+
+%% \begin{theorem}~ \\
+%% \emph{
+%% \begin{enumerate}
+%% \item If $\Gamma \vdash  x : t$, then $\Gamma(x) = t$. 
+%% \item If $\Gamma \vdash  n : t$, then $t = \texttt{number}$, for any integer $n$,
+%% and similarly for \texttt{true} and \texttt{false}. 
+%% \item If $\Gamma \vdash E\ \texttt{?}\ E_1\ \texttt{:}\ E_2 : t$, then 
+%% $\Gamma \vdash  E : \Bool$, 
+%% $\Gamma \vdash  E_1 : t$, and 
+%% $\Gamma \vdash  E_2 : t$. 
+%% \item If $\Gamma \vdash  E\ \Lp \ E_1, \ldots, E_n\ \Rp : t$, 
+%% then there exist types $t_1,\ldots,t_n$ 
+%% such that
+%% $\Gamma \vdash  E : t_1 \Times \cdots \Times t_n\ \Right\ t$ and 
+%% $\Gamma \vdash  E_1 : t_1, \ldots \Gamma \vdash  E_n : t_n$. 
+%% \end{enumerate}}
+%% \end{theorem}
+%% %
+%% This theorem means that we can often infer the type of a given expression
+%% by looking at the form of the expression. Some programming languages exploit
+%% this fact by avoiding (most) type declarations for the user. The programming
+%% system carries out type inference and calculates the required type declarations.
+%% Type checking for such languages is done at the same time as type inference.
+
+%% \begin{lemma}
+%% Substituting a name by an expression of the same type 
+%% does not affect typing. 
+%% If $\Gamma[x\leftarrow t']\Gamma'$, $\Gamma' \vdash E : t$, 
+%% and $\Gamma \vdash E' : t'$, then 
+%% $\Gamma \vdash E'' : t$, where $E[x\leftarrow E']E''$.
+%% \end{lemma}
+
+\subsection{Typing Relation on Statements}
+
+The following rule deals with the typing of sequences. We assume that
+whenever there is a return statement or a conditional statement with a return statement within a
+sequence, it is the last statement in the sequence.
+(One could consider a ``dead code'' error otherwise.)
+
+\[
+\Rule{
+  (\Sigma_1 \wedge t_3 = t_2), \Gamma \vdash S_1^{t_1} : \Sigma_2 \qquad 
+  \Sigma_2, \Gamma \vdash S_2^{t_2} : \Sigma_3}{
+\Sigma_1, \Gamma \vdash (S_1^{t_1}\ S_2^{t_2})^{t_3}  : \Sigma_3}
+\]
+
+\noindent
+Return statements are typed as follows.
+\[
+\Rule{
+(\Sigma \wedge t' = t), \Gamma \vdash E^{t} : \Sigma' }{
+\Sigma, \Gamma \vdash (\Return\ E^{t} \texttt{;})^{t'} : \Sigma'}
+\]
+
+\noindent
+The type of conditional statements is similar to the type of conditional expressions.
+\[\Rule{(\Sigma_0 \wedge t = t_1),
+          \Gamma \vdash E^{t_0} : \Sigma_1 \quad
+          (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2 \quad
+\Sigma_2, \Gamma \vdash \{S_1\}^{t_1} : \Sigma_3 \quad
+\Sigma_3, \Gamma \vdash \{S_2\}^{t_2} : \Sigma_4 \quad
+(\Sigma_4 \wedge t_1 = t_2) = \Sigma_5 }{
+  \Sigma_0, \Gamma \vdash (\If\ \texttt{(}\ E^{t_0}\ \texttt{)\ \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_5}
+\]
+
+
+\noindent
+The type of expression statements is $\Undefined$. Note that expression statements
+at toplevel get a return placed in front of them by the toplevel-transformation described above.
+\[
+\Rule{
+(\Sigma \wedge t' = \Undefined), \Gamma \vdash E^{t} : \Sigma' }{
+\Sigma, \Gamma \vdash (E^{t} \texttt{;})^{t'} : \Sigma'}
+\]
+
+\noindent
+Similarly, the type of break and continue statements is $\Undefined$.
+\[
+\Rule{
+(\Sigma \wedge t = \Undefined) = \Sigma' }{
+\Sigma, \Gamma \vdash (\texttt{break} \texttt{;})^{t} : \Sigma'}
+\hfill
+\Rule{
+(\Sigma \wedge t = \Undefined) = \Sigma' }{
+\Sigma, \Gamma \vdash (\texttt{continue} \texttt{;})^{t} : \Sigma'}
+\]
+
+\noindent
+For blocks (including the bodies of function definitions), we discern whether the
+block contains \Const \ or \Let \ declarations. If it does not contain any, the typing is easy:
+
+\[
+\Rule{
+  S\ \textrm{does not contain }\Const \textrm{ or } \Let \qquad
+  (\Sigma \wedge t' = t), \Gamma \vdash S^{t} : \Sigma' }{
+\Sigma, \Gamma \vdash \Lc \ S^{t} \ \Rc^{t'}  : \Sigma_3}
+\]
+
+\noindent
+Blocks (including the bodies of function definitions) that 
+contain declarations introduce polymorphism. In the following
+rule we assume that $S$ does not have any further declarations. The rule
+is a simplification of the general case, because statements other than
+declarations can appear before and between the declarations. The rule
+applies analogously in this case, without re-arranging the statements. This means
+that the body of a block has two parts:
+\begin{itemize}
+\item the part up to and including the last declaration, where all
+  declared names are monomorphically typed, and
+\item the part after the last declaration, where all declared names
+  are polymorphically typed.
+\end{itemize}
+
+\[
+\Rule{
+  \begin{minipage}{120mm}
+    $\Gamma[x_1 \leftarrow t_1]\cdots[x_n \leftarrow t_n]\Gamma' $\\
+    $(\Sigma_0 \wedge t = t' \wedge t'_1 = undefined \wedge \cdots \wedge t'_n = undefined) = \Sigma_1$ \\
+    $\Sigma_1, \Gamma' \vdash E_1^{t_1} : \Sigma_2 \cdots
+     \Sigma_n, \Gamma' \vdash E_n^{t_n} : \Sigma_{n+1}$\\
+    $\Gamma'[x_1 \leftarrow \forall \Sigma_{n+1}(t_1)]\cdots[x_n \leftarrow \forall \Sigma_{n+1}(t_n)]\Gamma'' $\\
+    $\Sigma_{n+1}, \Gamma'' \vdash S^t : \Sigma_{n+2}$
+  \end{minipage}
+}{
+  \Sigma_0, \Gamma \vdash \Lc\
+  (\textbf{\texttt{decl}}\ x_1 \ \texttt{=}\ E_1^{t_1} \texttt{;)}^{t'_1} \texttt{ } \cdots \texttt{ }
+  (\textbf{\texttt{decl}}\ x_n \ \texttt{=}\ E_n^{t_n} \texttt{;)}^{t'_n} \texttt{ } \ S^t \Rc^{t'} : \Sigma_{n+2}
+}
+\]
+
+\noindent
+For \textbf{\texttt{while}} statements, we simply have to add a constraint that the test condition evaluates to a \Bool \texttt{} type. After that we treat the while statement as a block statement.
+\[\Rule{(\Sigma_0 \wedge t = t_1),
+          \Gamma \vdash E^{t_0} : \Sigma_1 \quad
+          (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2 \quad
+\Sigma_2, \Gamma \vdash \{\ S\ \}^{t_1} : \Sigma_3 }{
+  \Sigma_0, \Gamma \vdash (\textbf{\texttt{while}}\ \texttt{(}\ E^{t_0}\ \texttt{)\ \{}\ S\ \texttt{\}}^{t_1})^t\ :\ \Sigma_3}
+\]
+
+\noindent
+For \textbf{\texttt{for}} statements, the typing rule is the same as typing a \textbf{\texttt{while}}
+statement, with the addition of checking the init and update nodes before checking the body.
+\[
+  \Rule{
+    \begin{minipage}{120mm}
+      $(\Sigma_0 \wedge t = t_3),
+                \Gamma \vdash assign_1^{t_0} : \Sigma_1 $\\
+      $\Sigma_1, \Gamma \vdash E^{t_1} : \Sigma_2$ \\
+      $(\Sigma_2 \wedge t_1 = \Bool) = \Sigma_3$\\
+      $\Sigma_3, \Gamma \vdash assign_2^{t_2} : \Sigma_4$\\
+      $\Sigma_4, \Gamma \vdash \{\ S\ \}^{t_3} : \Sigma_5 $
+    \end{minipage}}{
+  \Sigma_0, \Gamma \vdash (\textbf{\texttt{for }} \texttt{( }assign_1^{t_0}\texttt{;}\ E^{t_1}\texttt{;}\ assign_2^{t_2}\texttt{) \{}\ S\ \texttt{\}}^{t_3})^t\ :\ \Sigma_5}
+\]
+
+\section{Type Safety of Source}
+\label{simplsafe}
+
+Now we can define what it means for a statement to be well-typed. 
+
+\begin{definition}
+A statement $S$ is
+well-typed, if there is a consistent type constraint $\Sigma$ such that $S: \Sigma$.
+\end{definition}
+
+Note that this definition
+of well-typedness requires that a well-typed statement has no free 
+names.
+
+%% The following property of the typing relation are useful for 
+%% reasoning on types. 
+%% %
+%% \begin{lemma}
+%% Typing is not affected by ``junk'' in the type assignment. 
+%% If $\Sigma, \Gamma \vdash S:\Sigma'$, and $\Sigma, \Gamma \subset \Gamma'$, then 
+%% $\Sigma, \Gamma' \vdash S: \Sigma'$. 
+%% \end{lemma}
+
+
+%% \begin{definition}
+%% A programming language with a given typing relation 
+%% $\cdots \vdash\cdots :\cdots$ and one-step evaluation 
+%% $\mapsto$ is called type-safe, if the following two conditions hold: 
+%% \begin{enumerate}
+%% \item {\bf Preservation.} If $S$ is a well-typed program 
+%% with respect to $\cdots \vdash \cdots :\cdots$ and 
+%% $S \mapsto S'$, then $S'$ is also a 
+%% well-typed program with respect to $\vdash$. 
+%% \item {\bf Progress.} If $S$ is a well-typed program, 
+%% then either $S$ is a value or there exists a program $S'$ 
+%% such that $S \mapsto S'$. 
+%% \end{enumerate}
+%% \end{definition}
+%% %
+%% Is Typed Source type-safe? 
+%% Neither preservation nor progress can hold without some 
+%% assumptions on the primitive operations of the given 
+%% language. For preservation, 
+%% we must assume that if the result of applying
+%% an operation $p$ to arguments $v_1,\ldots, v_n$ is $v$ 
+%% and $p[v_1,\ldots,v_n] : t$ then $v:t$. Fortunately,
+%% this is the case for all operators of the language Typed Source.
+
+%% \begin{theorem}[Preservation]
+%% If for a Typed Source program $S$ and some type $t$ holds $S:t$ 
+%% and if $S \mapsto_{\textrm{Typed Source}} S'$, then $S':t$. 
+%% \end{theorem}
+
+%% \begin{proof}
+%% The proof could proceed by structural induction on the 
+%% rules defining Typed Source.
+%% \end{proof}
+
+%% \begin{lemma}[Canonical Forms]
+%% Suppose that the Typed Source expression 
+%% $v$ is a closed, well-typed value and $v:t$. 
+%% \emph{
+%% \begin{enumerate}
+%% \item If $t=\Bool$, then either $v=\TruE$ or $v=\FalsE$. 
+%% \item If $t=\Int$, then $v=n$ for some $n$. 
+%% \item If $t=t_1\Times\cdots\Times t_n\ \Right\ t'$, then\\
+%% $v= \Lp x_1,\ldots, x_n\Rp\ \texttt{=>}\ \Lc\ S\ \Rc$,\\
+%% for some $x_1,\ldots,x_n$ and $S$.
+%% \end{enumerate}}
+%% \end{lemma}
+%% %
+%% \begin{proof} (Sketch)
+%% The proof could proceed by inspection of the typing rules.
+%% For example for the first expression, we look at all rules that assign
+%% types to values (TrueT, FalseT, NumT, FunT and RecFunT), and find that
+%% the only cases where the type is $\Bool$ are TrueT and FalseT.
+%% \end{proof}
+
+%% For progress, 
+%% we must assume that if $p[v_1,\ldots,v_n]$ is well-typed, 
+%% then there exists a value $v$
+%% such that $v$ is the result of applying $p$ to the 
+%% arguments $v_1,\ldots,v_n$. This means that primitive 
+%% operations are not allowed to be undefined on some arguments.
+%% Unfortunately, this is not the case for all operators of
+%% Typed Source. 
+%% Division is not defined on 0 as first argument.
+%% So, let Typed Source' be the result of restricting Typed Source by excluding
+%% integer division from the set of primitive operators.
+
+%% \begin{theorem}[Progress]
+%% If for a Typed Source' statement $S$ holds $S:t$ for some type $t$, 
+%% then either $S$ is a value, or there exists a statement
+%% $S'$ such that $S \mapsto_{\textrm{Typed Source'}} S'$. 
+%% \end{theorem}
+
+%% \begin{proof} (Sketch)
+%% The proof would be by induction on the rules defining Typed Source'.
+%% \end{proof}
+
+%% \noindent
+%% The type safety of Typed Source' ensures that evaluation of a
+%% well-typed Typed Source' expression ``behaves properly'', which
+%% means does not get stuck.
+%% Can we say the reverse by claiming that any expression
+%% for which the dynamic semantics produces 
+%% a value is well-typed? If this was the case,
+%% the type system for Typed Source' would do a perfect job by 
+%% statically identifying exactly those Typed Source' expressions 
+%% that get stuck. Unfortunately, this is not the
+%% case. A simple counter-example is the statement
+%% \begin{verbatim}
+%% true ? 1 : false;
+%% \end{verbatim}
+%% This statement evaluates to \verb#1#, but is not well-typed.
+%% In Chapter~12, we shall see that it is not possible to
+%% have a perfect type system for languages like Typed Source' (or Typed Source).
+
+\end{document}
