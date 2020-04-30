@@ -1,4 +1,4 @@
-import { simple } from 'acorn-walk/dist/walk'
+import { simple, findNodeAt } from 'acorn-walk/dist/walk'
 import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
@@ -16,7 +16,7 @@ import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { getEvaluationSteps } from './stepper/stepper'
+import { redexify, getEvaluationSteps } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -27,16 +27,23 @@ import {
   Result,
   Scheduler,
   SourceError,
-  Variant
+  Variant,
+  TypeAnnotatedNode,
+  SVMProgram,
+  TypeAnnotatedFuncDecl
 } from './types'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
 import { validateAndAnnotate } from './validator/validator'
-import { compileWithPrelude } from './vm/svml-compiler'
+import { compileForConcurrent, compileToIns } from './vm/svml-compiler'
+import { assemble } from './vm/svml-assembler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import { getProgramNames, getKeywords } from './name-extractor'
 import * as es from 'estree'
+import { typeCheck } from './typeChecker/typeChecker'
+import { typeToString } from './utils/stringify'
+import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -220,6 +227,27 @@ export function getAllOccurrencesInScope(
   return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
 }
 
+export function hasDeclaration(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number }
+): boolean {
+  const program = parse(code, context, true)
+  if (!program) {
+    return false
+  }
+  const identifierNode = findIdentifierNode(program, context, loc)
+  if (!identifierNode) {
+    return false
+  }
+  const declarationNode = findDeclarationNode(program, identifierNode)
+  if (declarationNode == null || declarationNode.loc == null) {
+    return false
+  }
+
+  return true
+}
+
 export async function getNames(
   code: string,
   line: number,
@@ -236,6 +264,101 @@ export async function getNames(
   const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
+}
+
+function typedParse(code: any, context: Context) {
+  const program: Program | undefined = parse(code, context, true)
+  if (program === undefined) {
+    return null
+  }
+  return validateAndAnnotate(program, context)
+}
+
+export function getTypeInformation(
+  code: string,
+  context: Context,
+  loc: { line: number; column: number },
+  name: string
+): string {
+  try {
+    // parse the program into typed nodes and parse error
+    const program = typedParse(code, context)
+    if (program === null) {
+      return ''
+    }
+
+    const [typedProgram, error] = typeCheck(program)
+    const parsedError = parseError(error)
+
+    // initialize the ans string
+    let ans = ''
+    if (parsedError) {
+      ans += parsedError + '\n'
+    }
+    if (!typedProgram) {
+      return ans
+    }
+
+    // get name of the node
+    const getName = (typedNode: TypeAnnotatedNode<es.Node>) => {
+      let nodeId = ''
+      if (typedNode.type) {
+        if (typedNode.type === 'FunctionDeclaration') {
+          nodeId = typedNode.id?.name!
+        } else if (typedNode.type === 'VariableDeclaration') {
+          nodeId = (typedNode.declarations[0].id as es.Identifier).name
+        } else if (typedNode.type === 'Identifier') {
+          nodeId = typedNode.name
+        }
+      }
+      return nodeId
+    }
+
+    // callback function for findNodeAt function
+    function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
+      if (!nd.inferredType) {
+        return false
+      }
+      const location = nd.loc
+      if (nd.type && location) {
+        return (
+          getName(nd) === name &&
+          location.start.line <= loc.line &&
+          location.end.line >= loc.line &&
+          location.start.column <= loc.column &&
+          location.end.column >= loc.column
+        )
+      }
+      return false
+    }
+
+    // report both as the type inference
+
+    const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+
+    if (res === undefined) {
+      return ans
+    }
+
+    const node: TypeAnnotatedNode<es.Node> = res.node
+
+    if (node === undefined) {
+      return ans
+    }
+
+    const actualNode =
+      node.type === 'VariableDeclaration'
+        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        : node
+    const type = typeToString(
+      actualNode.type === 'FunctionDeclaration'
+        ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+        : actualNode.inferredType!
+    )
+    return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
+  } catch (error) {
+    return ''
+  }
 }
 
 export async function runInContext(
@@ -275,7 +398,7 @@ export async function runInContext(
     try {
       return Promise.resolve({
         status: 'finished',
-        value: runWithProgram(compileWithPrelude(program, context), context)
+        value: runWithProgram(compileForConcurrent(program, context), context)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
@@ -288,10 +411,18 @@ export async function runInContext(
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
+    const redexedSteps: [string, string, string][] = []
+    for (const step of steps) {
+      const redexed = redexify(step[0], step[1])
+      redexedSteps.push([redexed[0], redexed[1], step[2]])
+    }
     return Promise.resolve({
       status: 'finished',
-      value: steps
+      value: redexedSteps
     } as Result)
+  }
+  if (context.chapter <= 2) {
+    addInfiniteLoopProtection(program, context.chapter === 2)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
@@ -409,4 +540,22 @@ export function interrupt(context: Context) {
   context.errors.push(new InterruptedError(context.runtime.nodes[0]))
 }
 
-export { createContext, Context, Result, setBreakpointAtLine }
+export function compile(
+  code: string,
+  context: Context,
+  vmInternalFunctions?: string[]
+): SVMProgram | undefined {
+  const astProgram = parse(code, context)
+  if (!astProgram) {
+    return undefined
+  }
+
+  try {
+    return compileToIns(astProgram, undefined, vmInternalFunctions)
+  } catch (error) {
+    context.errors.push(error)
+    return undefined
+  }
+}
+
+export { createContext, Context, Result, setBreakpointAtLine, assemble }

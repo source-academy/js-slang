@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 import { runInContext, resume, IOptions, Result, parseError } from '../index'
 import { mockContext } from '../mocks/context'
-import { SuspendedNonDet, Finished } from '../types'
+import { SuspendedNonDet, Finished, Context } from '../types'
 
 test('Empty code returns undefined', async () => {
   await testDeterministicCode('', undefined)
@@ -283,13 +283,13 @@ test('Require operator', async () => {
 
 test('Cut operator', async () => {
   await testNonDeterministicCode(
-    `const f = amb(1, 2, 3); cut; f + amb(4, 5, 6);
+    `const f = amb(1, 2, 3); cut(); f + amb(4, 5, 6);
     `,
     [5, 6, 7]
   )
 
   await testNonDeterministicCode(
-    `const f = amb(1, 2, 3);  const g = amb(4, 5, 6); cut; f + g;
+    `const f = amb(1, 2, 3);  const g = amb(4, 5, 6); cut(); f + g;
     `,
     [5]
   )
@@ -380,6 +380,111 @@ test('Block statements', async () => {
   )
 })
 
+test('ambR application', async () => {
+  await testNonDeterministicCode('ambR();', [], false, true)
+
+  await testNonDeterministicCode('ambR(1, 2, 3, 4, 5);', [1, 2, 3, 4, 5], false, true)
+
+  await testNonDeterministicCode(
+    'ambR(ambR(4, 5, 6, 7), ambR(3, 8));',
+    [4, 5, 6, 7, 3, 8],
+    false,
+    true
+  )
+})
+
+test('Deterministic arrays', async () => {
+  await testDeterministicCode(`[];`, [])
+
+  await testDeterministicCode(`const a = [[1, 2], [3, [4]]]; a;`, [
+    [1, 2],
+    [3, [4]]
+  ])
+
+  await testDeterministicCode(`const a = [[[[6]]]]; a[0][0][0][0];`, 6)
+
+  await testDeterministicCode(`const f = () => 2; const a = [1, f(), 3]; a;`, [1, 2, 3])
+
+  await testDeterministicCode(
+    `[1, 1, 1][4.4];`,
+    'Line 1: Expected array index as prop, got other number.',
+    true
+  )
+
+  await testDeterministicCode(
+    `[1, 1, 1]["str"] = 2;`,
+    'Line 1: Expected array index as prop, got string.',
+    true
+  )
+
+  await testDeterministicCode(`4[0];`, 'Line 1: Expected object or array, got number.', true)
+})
+
+test('Non-deterministic array values', async () => {
+  await testNonDeterministicCode(`const a = [amb(1, 2), amb(3, 4)]; a;`, [
+    [1, 3],
+    [1, 4],
+    [2, 3],
+    [2, 4]
+  ])
+
+  await testNonDeterministicCode(`const a = [1, 2, 3, 4]; a[2] = amb(10, 11, 12); a;`, [
+    [1, 2, 10, 4],
+    [1, 2, 11, 4],
+    [1, 2, 12, 4]
+  ])
+})
+
+test('Non-deterministic array objects', async () => {
+  await testNonDeterministicCode(
+    `const a = [1, 2]; const b = [3, 4];
+     amb(a, b)[1] = 99; a;
+    `,
+    [
+      [1, 99],
+      [1, 2]
+    ]
+  )
+
+  await testNonDeterministicCode(
+    `const a = [1, 2]; const b = [3, 4];
+     amb(a, b)[1] = 99; b;
+    `,
+    [
+      [3, 4],
+      [3, 99]
+    ]
+  )
+})
+
+test('Non-deterministic array properties', async () => {
+  await testNonDeterministicCode(
+    `
+      const a = [100, 101, 102, 103];
+      a[amb(0, 1, 2, 3)] = 999; a;
+    `,
+    [
+      [999, 101, 102, 103],
+      [100, 999, 102, 103],
+      [100, 101, 999, 103],
+      [100, 101, 102, 999]
+    ]
+  )
+})
+
+test('Material Conditional', async () => {
+  await testDeterministicCode(`implication(true, true);`, true)
+  await testDeterministicCode(`implication(true, false);`, false)
+  await testDeterministicCode(`implication(false, true);`, true)
+  await testDeterministicCode(`implication(false, false);`, true)
+})
+
+test('Material Biconditional', async () => {
+  await testDeterministicCode(`bi_implication(true, true);`, true)
+  await testDeterministicCode(`bi_implication(true, false);`, false)
+  await testDeterministicCode(`bi_implication(false, true);`, false)
+  await testDeterministicCode(`bi_implication(false, false);`, true)
+})
 // ---------------------------------- Helper functions  -------------------------------------------
 
 const nonDetTestOptions = {
@@ -400,28 +505,61 @@ export async function testDeterministicCode(
 export async function testNonDeterministicCode(
   code: string,
   expectedValues: any[],
-  hasError: boolean = false
+  hasError: boolean = false,
+  random: boolean = false
 ) {
-  const context = makeNonDetContext()
+  const context: Context = makeNonDetContext()
   let result: Result = await runInContext(code, context, nonDetTestOptions)
 
+  const results: any[] = []
   const numOfRuns = hasError ? expectedValues.length - 1 : expectedValues.length
   for (let i = 0; i < numOfRuns; i++) {
-    expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
-    expect(result.status).toEqual('suspended-non-det')
+    if (random) {
+      results.push((result as SuspendedNonDet).value)
+    } else {
+      expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
+    }
 
+    expect(result.status).toEqual('suspended-non-det')
     result = await resume(result)
   }
 
-  if (!hasError) {
-    // all non deterministic programs have a final result whose value is undefined
-    expect(result.status).toEqual('finished')
-    expect((result as Finished).value).toEqual(undefined)
-  } else {
-    expect(result.status).toEqual('error')
-    const message: string = parseError(context.errors)
-    expect(message).toEqual(expectedValues[expectedValues.length - 1])
+  if (random) {
+    verifyRandomizedTest(results, expectedValues)
   }
+
+  if (hasError) {
+    verifyError(result, expectedValues, context)
+  } else {
+    verifyFinalResult(result)
+  }
+}
+
+/* Checks the final result obtained for a test
+ * Assumes the test is not erroneous
+ */
+function verifyFinalResult(result: Result) {
+  // all non deterministic programs have a final result whose value is undefined
+  expect(result.status).toEqual('finished')
+  expect((result as Finished).value).toEqual(undefined)
+}
+
+/* Checks the error obtained for an erroneous test
+ * The error message is captured as the test's final result
+ */
+function verifyError(result: Result, expectedValues: any[], context: Context) {
+  expect(result.status).toEqual('error')
+  const message: string = parseError(context.errors)
+  expect(message).toEqual(expectedValues[expectedValues.length - 1])
+}
+
+/* Compares expected and obtained results after a test is run
+ * Assumes the test involves randomization
+ */
+function verifyRandomizedTest(results: any[], expectedValues: any[]) {
+  results.sort()
+  expectedValues.sort()
+  expect(results).toEqual(expectedValues)
 }
 
 function makeNonDetContext() {

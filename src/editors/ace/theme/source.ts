@@ -84,7 +84,10 @@ function theme(acequire, exports, module) {
                         border-color: #FFFFFF\
                         }\
                         .ace-source .ace_support.ace_function {\
-                        color: #FFB054\
+                        color: #FFFFFF\
+                        }\
+                        .ace-source .ace_builtinconsts {\
+                        color: #FFFFFF\
                         }\
                         .ace-source .ace_storage {\
                         color: #FFEE80\

@@ -1,0 +1,16 @@
+\subsection*{Nondeterminism support}
+
+The following primitives and builtins are supported:
+
+\begin{itemize}
+\item \lstinline{amb(e1, e2, ..., en)}: \textit{primitive}, creates a choice point whose value is chosen, at runtime,
+from the set \lstinline{e1, e2, ..., en}. Note: although the usage of this primitive syntactically resembles a function application, \textit{amb} is not a function value. It is simply an operator, like the binary and unary operators. The values from the set \lstinline{(e1, e2, ..., en)} are chosen sequentially, from left-to-right.
+\item \lstinline{amb()}: applying \textit{amb} without any arguments forces the language processor to backtrack to the most recent \textit{amb expression}.
+\item \lstinline{ambR(e1, e2, ..., en)}: \textit{primitive}, creates a choice point. This is similar to \lstinline{amb}, but the values from the set \lstinline{(e1, e2, ..., en)} are chosen randomly and not sequentially.
+\item \lstinline{cut()}: \textit{primitive}, prevents the language processor from backtracking any further beyond the current statement. Note: \textit{cut} is also not a function value. It is simply an operator, like the binary and unary operators.
+\item \lstinline{require(pred)}: \textit{builtin}, forces the language processor to backtrack to the most recent \textit{amb expression}, if and only if \lstinline{pred} is false.
+\item \lstinline{an_element_of(xs)}: \textit{builtin}, nondeterministically returns an element from the list \lstinline{xs}.
+\item \lstinline{an_integer_between(n, m)}: \textit{builtin}, nondeterministically returns an integer between integers \lstinline{n} and \lstinline{m} (inclusively).
+\item \lstinline{implication(p, q)}: \textit{builtin} returns true if and only if the boolean values \lstinline{p} and \lstinline{q} satisfy the equation $P \Rightarrow Q$
+\item \lstinline{bi_implication(p, q)}: \textit{builtin} returns true if and only if the boolean values \lstinline{p} and \lstinline{q} satisfy the equation $P \Leftrightarrow Q$
+\end{itemize}

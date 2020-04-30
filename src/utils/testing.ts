@@ -72,7 +72,6 @@ export function createTestContext({
       alertResult: [],
       visualiseListResult: []
     }
-
     Object.entries(testBuiltins).forEach(([key, value]) => defineBuiltin(testContext, key, value))
 
     return testContext

@@ -214,7 +214,7 @@ function math_exp( x )	{}
  * computes subtracting 1 from the 
  * exponential function of <CODE>x</CODE> (e raised to the power of <CODE>x</CODE>, where e is the base of 
  * the natural logarithms). The result is computed in a way that is accurate even 
- * when the value of <CODE>x</CODE> is close 0.
+ * when the value of <CODE>x</CODE> is close to 0.
  * @param {number} <CODE>x</CODE> - given number
  * @returns {number} -1 plus e to the power of <CODE>x</CODE>
  */
