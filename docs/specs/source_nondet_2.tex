@@ -1,0 +1,10 @@
+\subsection*{Nondeterminism support}
+
+The following primitives and builtins are supported:
+
+\begin{itemize}
+\item \lstinline{amb(e1, e2, ..., en)}: \textit{primitive}, creates a list of alternatives for the 
+subsequent program, if the subsequent fails, the language processor will backtrack to the latest \lstinline{amb}
+and takes the next alternative.
+\item \lstinline{amb()}: applying \textit{amb} without any arguments implies a failure.
+\end{itemize}

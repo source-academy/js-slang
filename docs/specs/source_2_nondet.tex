@@ -1,0 +1,59 @@
+\input source_header.tex
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2021}{Source}{\S 2 Non-Det}{Martin Henz, Zhao Mingda, Cai Xiaolin}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input source_intro.tex
+
+Source \S 2 Non-Det is a nondeterministic variant of Source \S 2.
+
+\section*{Changes}
+
+% some of the description is taken from the textbook
+
+Source \S 2 Non-Det supports a programming paradigm called nondeterministic computing by building into the evaluator a facility to support automatic search. \newline
+
+Nondeterministic program evaluator will work by automatically choosing a possible value and keeping track of the choice. If a subsequent requirement is not met, the evaluator will try a different choice, and it will keep trying new choices until the evaluation succeeds, or until we run out of choices.\newline
+
+In order to support nondeterminism, we implement a new expression \textbf{\texttt{amb}}.
+This expression returns the values in parameter to the caller one by one as alternatives,
+and returns \textbf{\texttt{undefined}} when running out of choices.\newline
+
+A special command \textbf{\texttt{try\_again();}} can be executed in REPL to force trying the next alternative.\newline
+
+
+\input source_bnf.tex
+
+\newpage
+
+\input source_2_bnf.tex
+
+\newpage
+
+\input source_boolean_operators
+
+\input source_return
+
+\input source_names
+
+\input source_nondet_2
+
+\input source_lists
+
+\input source_numbers
+
+\input source_strings
+
+\input source_typing
+
+\input source_comments
+
+\input source_js_differences
+
+\newpage
+
+\input source_list_library
+
+    \end{document}
