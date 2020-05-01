@@ -34,8 +34,8 @@ Object.defineProperty(stream_tail, 'isThunkAware', { value: true })
 
 // stream makes a stream out of its arguments
 // LOW-LEVEL FUNCTION, NOT SOURCE
-// Lazy? No: In this implementation, we generate first a
-//           complete list, and then a stream using list_to_stream
+// Lazy? No: In this implementation, we generate the tail
+//           of a stream recursively using list_to_stream
 export function* stream(...elements: any[]): Generator<Stream> {
   return yield* list_to_stream(yield* list(...elements))
 }
