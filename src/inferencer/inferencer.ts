@@ -39,7 +39,7 @@ import {
 } from './typeErrors'
 
 let annotatedProgram: es.Program
-let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
+export let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   const valueOfLiteral = literal.value
