@@ -24,14 +24,22 @@ import {
 import { updateTypeConstraints, constraintStore } from './constraintStore'
 import * as es from 'estree'
 import {
-  printType,
   printTypeAnnotation,
   printTypeConstraints,
   printTypeEnvironment
 } from '../utils/inferencerUtils'
+import {
+  WrongArgumentTypeError,
+  ConditionalTestTypeError,
+  ConditionalTypeError,
+  DifferentReturnTypeError,
+  WrongNumberArgumentsError,
+  GeneralTypeError,
+  IdentifierNotFoundError
+} from './typeErrors'
 
 let annotatedProgram: es.Program
-let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
+export let currentTypeEnvironment: Map<any, any> = globalTypeEnvironment
 
 function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
   const valueOfLiteral = literal.value
@@ -55,10 +63,7 @@ function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
 function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   // First, ensure that Identifier exists in type env
   if (!currentTypeEnvironment.get(identifier.name)) {
-    displayErrorAndTerminate(
-      `Identifier with name \`${identifier.name}\` not found in type environment!`,
-      identifier.loc
-    )
+    throw new IdentifierNotFoundError(identifier.name, identifier.loc!)
   }
 
   // Update type constraints in constraintStore
@@ -66,12 +71,14 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   const idenTypeVariable = identifier.typeVariable as Variable
   const idenTypeEnvType = currentTypeEnvironment.get(identifier.name).types[0]
 
-  if (idenTypeVariable && idenTypeEnvType) {
-    const errorObj = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferIdentifier()` - pls debug',
-        identifier.loc
+  if (idenTypeVariable !== undefined && idenTypeEnvType !== undefined) {
+    const result = updateTypeConstraints(idenTypeVariable, idenTypeEnvType)
+    if (result !== undefined) {
+      throw new GeneralTypeError(
+        idenTypeVariable,
+        idenTypeEnvType,
+        'Failed in assigning the identifying the type of the identifier',
+        identifier.loc!
       )
     }
   }
@@ -86,12 +93,14 @@ function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.Vari
   const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
   const valueTypeVariable = value.typeVariable as Variable
 
-  if (idenTypeVariable && valueTypeVariable) {
-    const errorObj = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferConstantDeclaration()` - pls debug',
-        constantDeclaration.loc
+  if (idenTypeVariable !== undefined && valueTypeVariable !== undefined) {
+    const result = updateTypeConstraints(idenTypeVariable, valueTypeVariable)
+    if (result !== undefined) {
+      throw new GeneralTypeError(
+        idenTypeVariable,
+        valueTypeVariable,
+        'Failed in assigning the type of the identifier to the type of its assigned expression',
+        constantDeclaration.loc!
       )
     }
   }
@@ -112,26 +121,24 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   const argumentTypeVariable = argument.typeVariable as Variable
   const resultTypeVariable = unaryExpression.typeVariable as Variable
 
-  if (operatorArgType !== undefined && argumentTypeVariable !== undefined) {
-    const result = updateTypeConstraints(argumentTypeVariable, operatorArgType)
-    if (result !== undefined) {
-      displayErrorAndTerminate(
-        `Expecting type \`${printType(operatorArgType)}\` but got \`${printType(
-          argumentTypeVariable
-        )} + \` instead`,
-        unaryExpression.loc
-      )
-    }
+  const argumentResult = updateTypeConstraints(argumentTypeVariable, operatorArgType)
+  if (argumentResult !== undefined) {
+    throw new WrongArgumentTypeError(
+      operatorArgType,
+      constraintStore.get(argumentTypeVariable),
+      1,
+      unaryExpression.loc!
+    )
   }
 
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
-    const errorObj = updateTypeConstraints(resultTypeVariable, operatorResultType)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        `Expecting type \`${printType(operatorResultType)}\` but got \`${printType(
-          resultTypeVariable
-        )} + \` instead`,
-        unaryExpression.loc
+    const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
+    if (result !== undefined) {
+      throw new GeneralTypeError(
+        operatorResultType,
+        resultTypeVariable,
+        'Unifying result type of operator with actual result type',
+        unaryExpression.loc!
       )
     }
   }
@@ -172,47 +179,30 @@ function inferBinaryExpression(
 
   const resultTypeVariable = binaryExpression.typeVariable as Variable
 
-  if (param1TypeVariable !== undefined && param1Type !== undefined) {
-    const errorObj = updateTypeConstraints(param1TypeVariable, param1Type)
-    if (errorObj && errorObj.constraintRhs) {
-      if (!functionType.isPolymorphic)
-        displayErrorAndTerminate(
-          `Expecting type \`${param1Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
-          param1.loc
-        )
-      else
-        displayErrorAndTerminate(
-          'Polymorphic type error when type checking first argument, error msg TBC',
-          param1.loc
-        )
-    }
+  const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
+  if (resultParam1 !== undefined && resultParam1.constraintRhs) {
+    throw new WrongArgumentTypeError(
+      resultParam1.constraintLhs,
+      resultParam1.constraintRhs,
+      1,
+      param1.loc!
+    )
   }
 
-  if (param2TypeVariable !== undefined && param2Type !== undefined) {
-    const errorObj = updateTypeConstraints(param2TypeVariable, param2Type)
-    if (errorObj && errorObj.constraintRhs) {
-      if (!functionType.isPolymorphic)
-        displayErrorAndTerminate(
-          `Expecting type \`${param2Type.name}\` but got \`${errorObj.constraintRhs.name}\` instead`,
-          param2.loc
-        )
-      else
-        displayErrorAndTerminate(
-          'Polymorphic type error when type checking second argument, error msg TBC',
-          param2.loc
-        )
-    }
+  const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
+  if (resultParam2 !== undefined && resultParam2.constraintRhs) {
+    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, 2, param2.loc!)
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
     const result = updateTypeConstraints(resultTypeVariable, returnType)
     if (result !== undefined && result.constraintRhs) {
-      if (!functionType.isPolymorphic)
-        displayErrorAndTerminate(
-          `Expecting type \` ${returnType.name}\` but got \`${result.constraintRhs.name}\` instead`,
-          binaryExpression.loc
-        )
-      else displayErrorAndTerminate('Polymorphic type error, error msg TBC', binaryExpression.loc)
+      throw new GeneralTypeError(
+        returnType,
+        result.constraintRhs,
+        'Assign return type of binary operator to actual return type solved',
+        binaryExpression.loc!
+      )
     }
   }
 }
@@ -227,32 +217,20 @@ function inferConditionals(
 
   // check that the type of the test expression is boolean
   const testTypeVariable = test.typeVariable as Variable
-  if (testTypeVariable !== undefined) {
-    const errorObj = updateTypeConstraints(testTypeVariable, booleanType)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        `Expecting type of test expression to be a \`boolean\` but got \` ${printType(
-          testTypeVariable
-        )}\` instead`,
-        test.loc
-      )
-    }
+  const resultOfTypeChecking = updateTypeConstraints(testTypeVariable, booleanType)
+  if (resultOfTypeChecking !== undefined) {
+    throw new ConditionalTestTypeError(resultOfTypeChecking.constraintRhs, test.loc!)
   }
 
   // check that the types of the test expressions are the same
   const consequentTypeVariable = consequent.typeVariable as Variable
   const alternateTypeVariable = alternate.typeVariable as Variable
-  if (consequentTypeVariable !== undefined && alternateTypeVariable !== undefined) {
-    const errorObj = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
-    if (errorObj && errorObj.constraintLhs && errorObj.constraintRhs) {
-      displayErrorAndTerminate(
-        `Expecting consequent and alternate types \`${errorObj.constraintLhs.name}\` and \`${errorObj.constraintRhs.name}\` to be the same, but got different`,
-        consequent.loc
-      )
-    } else {
-      updateTypeConstraints(expressionTypeVariable, consequentTypeVariable)
-    }
+  const result = updateTypeConstraints(consequentTypeVariable, alternateTypeVariable)
+  if (result !== undefined) {
+    throw new ConditionalTypeError(result.constraintLhs, result.constraintRhs, consequent.loc!)
   }
+
+  updateTypeConstraints(expressionTypeVariable, consequentTypeVariable)
 }
 
 function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatement>) {
@@ -267,9 +245,11 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
     const errorObj = updateTypeConstraints(returnypeVariable, argTypeVariable)
     if (errorObj) {
       // type error
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferReturnStatement()` - pls debug',
-        returnStatement.loc
+      throw new GeneralTypeError(
+        returnypeVariable,
+        argTypeVariable,
+        'Failed in assigning the type of the expression to the return statement expression',
+        returnStatement.loc!
       )
     }
   }
@@ -293,10 +273,7 @@ function inferFunctionDeclaration(
       if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
         const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
         if (errorObj) {
-          displayErrorAndTerminate(
-            'Expecting all return statements to have same type, but encountered a different type',
-            node.loc
-          )
+          throw new DifferentReturnTypeError(node.loc!)
         }
       }
       prevReturnTypeVariable = currReturnTypeVariable
@@ -312,13 +289,33 @@ function inferFunctionDeclaration(
   if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
     const errorObj = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
     if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part B - pls debug',
-        functionDeclaration.loc
+      throw new GeneralTypeError(
+        blockTypeVariable,
+        prevReturnTypeVariable,
+        'Failed in assigning the return type to the block',
+        block.loc!
       )
     }
   }
 
+  // // Finally, add constraint to give the function identifier the corresponding function type
+  // // e.g. T5 = [T1] => T4
+  // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+  // const idenTypeVariable = iden.typeVariable as Variable
+
+  // const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
+
+  // if (idenTypeVariable !== undefined && functionType !== undefined) {
+  //   const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
+  //   if (errorObj) {
+  //     throw new GeneralTypeError(
+  //       idenTypeVariable,
+  //       functionType,
+  //       "Failed to assign the function type to the function identifier",
+  //       functionDeclaration.loc!
+  //     )
+  //   }
+  // }
   // Commented out as this does not seem to be needed.
   // inferIdentifier() would already add the required constraint and this block seem to not be invoked (maybe because TVar not avail)
   // // Finally, add constraint to give the function identifier the corresponding function type
@@ -363,16 +360,16 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   // First, ensure arg nodes have same count as Γ(f)
   // Note that we skip this check for functions with varArgs
   if (!declarationFunctionType.hasVarArgs && applicationArgCount !== declarationArgCount) {
-    displayErrorAndTerminate(
-      `Expecting \`${declarationArgCount}\` arguments but got \`${applicationArgCount}\` instead`,
-      functionApplication.loc
+    throw new WrongNumberArgumentsError(
+      declarationArgCount,
+      applicationArgCount,
+      functionApplication.loc!
     )
   }
 
   // Second, try to add constraints that ensure arg nodes have same corresponding types
   for (let i = 0; i < applicationArgs.length; i++) {
     const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
-
     let declarationArgType
     if (declarationFunctionType.hasVarArgs) {
       // Note that for functions with varArgs, we check that all args have same type as the single declared type
@@ -380,15 +377,14 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
     } else {
       declarationArgType = declarationFunctionType.parameterTypes[i]
     }
-
-    if (applicationArgTypeVariable && declarationArgType) {
-      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
-      if (errorObj) {
-        displayErrorAndTerminate(
-          'Expecting all arguments to have correct type as per function declaration, but encountered a wrong type',
-          applicationArgs[i].loc
-        )
-      }
+    const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
+    if (errorObj) {
+      throw new WrongArgumentTypeError(
+        errorObj.constraintLhs,
+        errorObj.constraintRhs,
+        i + 1,
+        applicationArgs[i].loc!
+      )
     }
   }
 
@@ -401,9 +397,11 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   if (applicationTypeVariable && resultTypeVariable) {
     const errorObj = updateTypeConstraints(applicationTypeVariable, resultTypeVariable)
     if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `inferFunctionApplication()` - pls debug',
-        functionApplication.loc
+      throw new GeneralTypeError(
+        applicationTypeVariable,
+        resultTypeVariable,
+        'Failed in assigning the result type of the function to the function application expression',
+        functionApplication.loc!
       )
     }
   }
@@ -418,9 +416,11 @@ function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Lite
   if (literalTypeVariable !== undefined && literalType !== undefined) {
     const result = updateTypeConstraints(literalTypeVariable, literalType)
     if (result !== undefined) {
-      displayErrorAndTerminate(
-        'WARNING: There should not be a type error here in `addTypeConstraintForLiteralPrimitive()` - pls debug',
-        literal.loc
+      throw new GeneralTypeError(
+        literalTypeVariable,
+        literalType,
+        'Failed in assigning the type of the literal to the type variable annotating the literal',
+        literal.loc!
       )
     }
   }
@@ -504,12 +504,13 @@ function inferBlockStatement(
       const returnStatementTypeVariable = (expression as TypeAnnotatedNode<es.ReturnStatement>)
         .typeVariable
       if (returnStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
-        // const errorObj = updateTypeConstraints(returnStatementTypeVariable, blockTypeVariable)
-        const errorObj = updateTypeConstraints(blockTypeVariable, returnStatementTypeVariable) // Fixed order
-        if (errorObj) {
-          displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block',
-            block.loc
+        const result = updateTypeConstraints(blockTypeVariable, returnStatementTypeVariable)
+        if (result) {
+          throw new GeneralTypeError(
+            returnStatementTypeVariable,
+            blockTypeVariable,
+            'Failed in assigning the type of the return expression to the block',
+            expression.loc!
           )
         }
         return
@@ -522,12 +523,13 @@ function inferBlockStatement(
       // If it does, assign type of block to type of IfStatement.
       const ifStatementTypeVariable = (expression as TypeAnnotatedNode<es.IfStatement>).typeVariable
       if (ifStatementTypeVariable !== undefined && blockTypeVariable !== undefined) {
-        // const errorObj = updateTypeConstraints(ifStatementTypeVariable, blockTypeVariable)
-        const errorObj = updateTypeConstraints(blockTypeVariable, ifStatementTypeVariable) // Fixed order
-        if (errorObj) {
-          displayErrorAndTerminate(
-            'WARNING: There is a type error when checking the type of a block',
-            block.loc
+        const result = updateTypeConstraints(blockTypeVariable, ifStatementTypeVariable)
+        if (result) {
+          throw new GeneralTypeError(
+            ifStatementTypeVariable,
+            blockTypeVariable,
+            'Failed in assigning the type of the if statement to the block',
+            expression.loc!
           )
         }
         return
@@ -537,11 +539,13 @@ function inferBlockStatement(
 
   // Todo - Add test case for coverage
   if (blockTypeVariable !== undefined) {
-    const errorObj = updateTypeConstraints(blockTypeVariable, undefinedType)
-    if (errorObj) {
-      displayErrorAndTerminate(
-        'WARNING: There is a type error when checking the type of a block',
-        block.loc
+    const result = updateTypeConstraints(blockTypeVariable, undefinedType)
+    if (result) {
+      throw new GeneralTypeError(
+        undefinedType,
+        blockTypeVariable,
+        'Failed in assigning the type of the block to undefined',
+        block.loc!
       )
     }
     return
@@ -549,7 +553,6 @@ function inferBlockStatement(
 }
 
 function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap) {
-  // console.log(statement.type)
   switch (statement.type) {
     case 'BlockStatement': {
       if (environmentToExtend !== undefined) {
@@ -641,17 +644,17 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
   }
 }
 
-function displayErrorAndTerminate(errorMsg: string, loc: es.SourceLocation | null | undefined) {
-  logObjectsForDebugging()
-  console.log('!!! Type check error !!!')
+// function displayErrorAndTerminate(errorMsg: string, loc: es.SourceLocation | null | undefined) {
+//   logObjectsForDebugging()
+//   console.log('!!! Type check error !!!')
 
-  // Print error msg with optional location (if exists)
-  if (loc) console.log(`${errorMsg} (line: ${loc.start.line}, char: ${loc.start.column})`)
-  else console.log(errorMsg)
+//   // Print error msg with optional location (if exists)
+//   if (loc) console.log(`${errorMsg} (line: ${loc.start.line}, char: ${loc.start.column})`)
+//   else console.log(errorMsg)
 
-  console.log('\nTerminating program..')
-  return process.exit(0)
-}
+//   console.log('\nTerminating program..')
+//   return process.exit(0)
+// }
 
 function logObjectsForDebugging() {
   // for Debugging output

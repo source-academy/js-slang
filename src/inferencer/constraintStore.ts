@@ -7,8 +7,8 @@ import {
   isTypeVariable,
   isFunctionType
 } from '../types'
-import { environments } from './typeEnvironment'
 import { printType } from '../utils/inferencerUtils'
+import { currentTypeEnvironment } from './inferencer'
 
 export const constraintStore = new Map()
 
@@ -21,20 +21,18 @@ export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: 
   if (!errorObj) {
     // Update Type Env where applicable
     // Iterate through all Type Envs and replace any TVar with their value from the constraintStore, if available
-    for (const env of environments) {
-      for (const val of env.values()) {
-        const typesArray = val.types // Todo: Consider refactor later
-        for (let i = 0; i < typesArray.length; i++) {
-          const type = typesArray[i]
+    for (const val of currentTypeEnvironment.values()) {
+      const typesArray = val.types // Todo: Consider refactor later
+      for (let i = 0; i < typesArray.length; i++) {
+        const type = typesArray[i]
 
-          if (isTypeVariable(type)) {
-            typesArray[i] = getUpdatedTypeVariable(type)
-          } else if (isFunctionType(type)) {
-            for (let j = 0; j < type.parameterTypes.length; j++) {
-              type.parameterTypes[j] = getUpdatedTypeVariable(type.parameterTypes[j])
-            }
-            type.returnType = getUpdatedTypeVariable(type.returnType)
+        if (isTypeVariable(type)) {
+          typesArray[i] = getUpdatedTypeVariable(type)
+        } else if (isFunctionType(type)) {
+          for (let j = 0; j < type.parameterTypes.length; j++) {
+            type.parameterTypes[j] = getUpdatedTypeVariable(type.parameterTypes[j])
           }
+          type.returnType = getUpdatedTypeVariable(type.returnType)
         }
       }
     }

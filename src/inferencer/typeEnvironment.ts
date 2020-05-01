@@ -191,14 +191,14 @@ newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('&&', {
   // types: [generateFunctionType([booleanType, variableType], variableType, true)],
-  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true, false)]
 })
 
 // LogicalExpression
 newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('||', {
-  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
+  types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true, false)]
 })
 globalTypeEnvironment.set('!', {
   types: [generateFunctionType([booleanType], booleanType)]
@@ -364,11 +364,11 @@ globalTypeEnvironment.set('math_LOG10E', {
 
 newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('math_max', {
-  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+  types: [generateFunctionType([newVariableType1], numberType, true, true)]
 })
 newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('math_min', {
-  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+  types: [generateFunctionType([newVariableType1], numberType, true, true)]
 })
 
 globalTypeEnvironment.set('math_PI', {
@@ -425,7 +425,7 @@ globalTypeEnvironment.set('runtime', {
 
 newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('stringify', {
-  types: [generateFunctionType([newVariableType1], stringType, true)]
+  types: [generateFunctionType([newVariableType1], stringType, true, true)]
 })
 
 globalTypeEnvironment.set('undefined', {
