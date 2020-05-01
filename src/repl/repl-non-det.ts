@@ -21,7 +21,12 @@ function _handleResult(
     if (result.value === CUT) result.value = undefined
     callback(null, result.value)
   } else {
-    callback(new Error(parseError(context.errors)), undefined)
+    const error = new Error(parseError(context.errors))
+    // we do not display the stack trace, because the stack trace points to code within this REPL
+    // program, rather than the erroneous line in the user's program. Such a trace is too low level
+    // to be helpful.
+    error.stack = undefined
+    callback(error, undefined)
     return
   }
 }
