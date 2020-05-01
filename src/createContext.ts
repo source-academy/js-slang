@@ -155,6 +155,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
+    defineBuiltin(context, 'force_it', (x: any) => x)
     // Define all Math libraries
     const props = Object.getOwnPropertyNames(Math)
     for (const prop of props) {

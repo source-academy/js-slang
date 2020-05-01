@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`infinite functions with pair: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return pair(x,f(x+1)); }
+head(f(0))+head(tail(tail(f(0))));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy evaluation mode delays arguments in function calls: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x, y) { return y; }
+f(error(), 1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy evaluation mode delays expressions in variable declarations: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = error(); // delayed",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy evaluation mode evaluates each expression at most once: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() { display(\\"this line should be printed exactly once\\"); return 1; }
+const a = f();
+a+a+a;",
+  "displayResult": Array [
+    "\\"this line should be printed exactly once\\"",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy evaluation mode evaluates each expression only when needed: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() { display(\\"f\\"); return 1; }
+function g() { display(\\"g\\"); return 2; }
+function h() { display(\\"h\\"); return 3; }
+const a=f();
+const b=g();
+const c=h();
+display(c); // \\"h\\", 3
+display(b); // \\"g\\", 2
+display(c); // 3",
+  "displayResult": Array [
+    "\\"h\\"",
+    "3",
+    "\\"g\\"",
+    "2",
+    "3",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
