@@ -179,7 +179,7 @@ function inferBinaryExpression(
 
   const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
   if (resultParam1 !== undefined && resultParam1.constraintRhs) {
-    throw new WrongArgumentTypeError(param1Type, resultParam1.constraintRhs, 1, param1.loc!)
+    throw new WrongArgumentTypeError(resultParam1.constraintLhs, resultParam1.constraintRhs, 1, param1.loc!)
   }
 
   const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
@@ -368,9 +368,9 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
     const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
     if (errorObj) {
       throw new WrongArgumentTypeError(
-        declarationArgType,
+        errorObj.constraintLhs,
         errorObj.constraintRhs,
-        i,
+        i+1,
         applicationArgs[i].loc!
       )
     }
