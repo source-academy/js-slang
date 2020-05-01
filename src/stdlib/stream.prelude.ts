@@ -1,3 +1,27 @@
+/**
+ * This file defines prelude of streams, where includes 17 functions for streams.
+ * @packageDocumentation
+ */
+
+/**
+ * `is_stream(xs)`: Checks if `xs` is a stream.<br/>
+ * `list_to_stream(xs)`: Returns a stream from list `xs`.<br/>
+ * `stream_to_list(xs)`: Returns a list from stream `xs`.<br/>
+ * `stream_length(xs)`: Returns length of stream `xs`.<br/>
+ * `stream_map(f, s)`: Applies function `f` to each element of stream `s` and return the new stream.<br/>
+ * `build_stream(n, fun)`: Returns a stream with length `n` that results from apply `fun` from 0 to n-1.<br/>
+ * `stream_for_each(fun, xs)`: Applies `fun` on each element of stream `xs` element by element.<br/>
+ * `stream_reverse(xs)`: Returns the reverse the stream `xs`.<br/>
+ * `stream_append(xs, ys)`: Appends `ys` on stream `xs`.<br/>
+ * `stream_member(x, s)`: Checks if `x` is in stream `s`.<br/>
+ * `stream_remove(v, xs)`: Removes the first occurrence of `v` from stream `xs`.<br/>
+ * `stream_remove_all(v, xs)`: Removes all instances of `v` from stream `xs`.<br/>
+ * `stream_filter(p, s)`: Returns substream of stream `s` with elements that make predicate function `p` return `true`.<br/>
+ * `enum_stream(start, end)`: Returns a stream of enumeration of number from `start` to `end` with step size of 1.<br/>
+ * `integers_from(n)`: Returns a infinite stream of integers from `n`.<br/>
+ * `eval_stream(s, n)`: Returns a list only with first `n` elements of stream `s`.<br/>
+ * `stream_ref(s, n)`: Returns the element in stream `s` at index `n` (for first element, index is 0).<br/>
+ */
 export const streamPrelude = `
 
 // Supporting streams in the Scheme style, following

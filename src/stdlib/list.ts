@@ -1,15 +1,29 @@
+/**
+ * Supporting lists in the Scheme style, using pairs made up of two-element JavaScript array (vector).<br/>
+ * Author: Martin Henz<br/>
+ * Translated to TypeScript by Evan Sebastian
+ * @packageDocumentation
+ */
+
 import { stringify } from '../utils/stringify'
 
-// list.ts: Supporting lists in the Scheme style, using pairs made
-//          up of two-element JavaScript array (vector)
-// Author: Martin Henz
-// Translated to TypeScript by Evan Sebastian
+/**
+ * Defines type `Pair` in the form of two-element JacaScript array.
+ */
 export type Pair<H, T> = [H, T]
+/**
+ * Defines type `List` to be `NonEmptyList` or `null`.
+ */
 export type List = null | NonEmptyList
 interface NonEmptyList extends Pair<any, any> {}
-
-// array test works differently for Rhino and
-// the Firefox environment (especially Web Console)
+ 
+/**
+ * Checks if `x` is an array.<br/>
+ * Works differently for Rhino and the Firefox environment (especially Web Console).<br/>
+ * Not a butin function.
+ * @param x Could be anything.
+ * @returns Retuerns true if `x` is an array.
+ */
 function array_test(x: any) {
   if (Array.isArray === undefined) {
     return x instanceof Array
@@ -18,20 +32,33 @@ function array_test(x: any) {
   }
 }
 
-// pair constructs a pair using a two-element array
+/**
+ * Constructs a pair using a two-element array.
+ * @param x First component of the pair.
+ * @param xs Second component of the pair.
+ * @returns Returns a pair (`[x, xs]`).
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function pair<H, T>(x: H, xs: T): Pair<H, T> {
   return [x, xs]
 }
 
-// is_pair returns true iff arg is a two-element array
+/**
+ * checks if `x` is a pair.
+ * @param x Could be anything.
+ * @returns Returns true iff arg is a two-element array.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_pair(x: any) {
   return array_test(x) && x.length === 2
 }
 
-// head returns the first component of the given pair,
-// throws an exception if the argument is not a pair
+/**
+ * Returns the first component of the given pair.<br/>
+ * Throws an exception if the argument is not a pair.
+ * @param xs Should be a pair.
+ * @returns Returns head of `xs`
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function head(xs: any) {
   if (is_pair(xs)) {
@@ -41,8 +68,12 @@ export function head(xs: any) {
   }
 }
 
-// tail returns the second component of the given pair
-// throws an exception if the argument is not a pair
+/**
+ * Returns the second component of the given pair.<br/>
+ * Throws an exception if the argument is not a pair.
+ * @param xs Should be a pair.
+ * @returns Returns tail of `xs`
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function tail(xs: any) {
   if (is_pair(xs)) {
@@ -52,13 +83,21 @@ export function tail(xs: any) {
   }
 }
 
-// is_null returns true if arg is exactly null
+/**
+ * Check if a list is null.
+ * @param xs Default to be a list.
+ * @returns Returns true is `xs` is null.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function is_null(xs: List) {
   return xs === null
 }
 
-// list makes a list out of its arguments
+/**
+ * Make a list out of its arguments.
+ * @param elements Could be anything.
+ * @returns Returns a list of elements in given order.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list(...elements: any[]): List {
   let theList = null
@@ -68,9 +107,12 @@ export function list(...elements: any[]): List {
   return theList
 }
 
-// list_to_vector returns vector that contains the elements of the argument list
-// in the given order.
-// list_to_vector throws an exception if the argument is not a list
+/**
+ * Convert a list into a vector.<br/>
+ * Not a butin function.
+ * @param lst Should be a list.
+ * @returns Returns vector containing elements of `lst` in given order.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function list_to_vector(lst: List) {
   const vector = []
@@ -81,18 +123,25 @@ export function list_to_vector(lst: List) {
   return vector
 }
 
-// vector_to_list returns a list that contains the elements of the argument vector
-// in the given order.
-// vector_to_list throws an exception if the argument is not a vector
+/**
+ * Convert a vector into a list.<br/>
+ * Not a butin function.
+ * @param vector Should be a vector(JavaScript type array).
+ * @returns Returns a list containing elements of input vector in given order.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function vector_to_list(vector: any[]): List {
   return list(...vector)
 }
 
-// set_head(xs,x) changes the head of given pair xs to be x,
-// throws an exception if the argument is not a pair
+/**
+ * Change value of head of the given pair.<br/>
+ * Throws an exception if `xs` is not a pair.
+ * @param xs Should be a pair.
+ * @param x Could be any value to replace head of `xs`.
+ * @returns Returns undefined.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
-
 export function set_head(xs: any, x: any) {
   if (is_pair(xs)) {
     xs[0] = x
@@ -104,10 +153,14 @@ export function set_head(xs: any, x: any) {
   }
 }
 
-// set_tail(xs,x) changes the tail of given pair xs to be x,
-// throws an exception if the argument is not a pair
+/**
+ * Change value of tail of the given pair.<br/>
+ * Throws an exception if `xs` is not a pair.
+ * @param xs Should be a pair.
+ * @param x Could be any value to replace head of `xs`.
+ * @returns Returns undefined.
+ */
 // LOW-LEVEL FUNCTION, NOT SOURCE
-
 export function set_tail(xs: any, x: any) {
   if (is_pair(xs)) {
     xs[1] = x

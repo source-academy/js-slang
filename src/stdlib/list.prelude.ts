@@ -1,3 +1,27 @@
+/**
+ * This file defines prelude for list, where includes 16 functions for list.
+ * @packageDocumentation
+ */
+
+/**
+ * `is_list(xs)`: Checks if `xs` is a list.<br/>
+ * `equal(x, y)`: Checks if list `x` and `y` are equal.<br/>
+ * `length(xs)`: Returns length of list `xs`.<br/>
+ * `map(f, s)`: Applies function `f` to each element of list `s` and return the new list.<br/>
+ * `build_list(n, fun)`: Returns a list with length `n` that results from apply `fun` from 0 to n-1.<br/>
+ * `for_each(fun, xs)`: Applies function on each element of list `xs` element by element.<br/>
+ * `list_to_string(xs)`: Returns a string that represents the argument list `xs`.<br/>
+ * `reverse(xs)`: Returns the reverse the list `xs`.<br/>
+ * `append(xs, ys)`: Appends `ys` on list `xs`.<br/>
+ * `member(x, s)`: Checks if `x` is in list `s`.<br/>
+ * `remove(v, xs)`: Removes the first occurrence of `v` from list `xs`.<br/>
+ * `remove_all(v, xs)`: Removes all instances of `v` from list `xs`.<br/>
+ * `filter(p, s)`: Returns sublist of list `s` with elements that make predicate function `p` return `true`.<br/>
+ * `enum_list(start, end)`: Returns a list of enumeration of number from `start` to `end` with step size of 1.<br/>
+ * `list_ref(s, n)`: Returns the element in list `s` at index `n` (for first element, index is 0).<br/>
+ * `accumulate(f, initial, xs)`: Applies binary function `f` first from `initial` and last element in list `xs`, then apply `f` to the previous result and second last element, recursivly apply `f` for whole list and finally return the result.
+ */
+
 export const listPrelude = `
 
 /**

@@ -1,11 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`each expression is evaluated at most once: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(){
+  display(\\"info\\");
+  return 0;
+}
+const zero = f();
+display(pair(zero, zero));",
+  "displayResult": Array [
+    "\\"info\\"",
+    "[0, 0]",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": Array [
+    0,
+    0,
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`each expression is evaluated only when needed: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const error_tail = pair(1, error());
+display(head(error_tail));",
+  "displayResult": Array [
+    "1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`filter with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x,f(x+1)); }
+  "code": "function f(x) { return pair(x, f(x+1)); }
 function h(x){return x%2===0;}
-head(filter(h,f(1)));",
+head(filter(h, f(1)));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -18,7 +58,7 @@ head(filter(h,f(1)));",
 exports[`infinite functions with list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return list(x,f(x+1)); }
+  "code": "function f(x) { return list(x, f(x+1)); }
 head(f(0))+head(head(tail(f(0))));",
   "displayResult": Array [],
   "errors": Array [],
@@ -32,7 +72,7 @@ head(f(0))+head(head(tail(f(0))));",
 exports[`infinite functions with pair: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x,f(x+1)); }
+  "code": "function f(x) { return pair(x, f(x+1)); }
 head(f(0))+head(tail(tail(f(0))));",
   "displayResult": Array [],
   "errors": Array [],
@@ -46,7 +86,7 @@ head(f(0))+head(tail(tail(f(0))));",
 exports[`is_null with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return list(x,f(x+1)); }
+  "code": "function f(x) { return list(x, f(x+1)); }
 is_null(f(0));",
   "displayResult": Array [],
   "errors": Array [],
@@ -60,7 +100,7 @@ is_null(f(0));",
 exports[`is_pair && is_list with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return list(x,f(x+1)); }
+  "code": "function f(x) { return list(x, f(x+1)); }
 is_pair(f(0)) && is_list(f(0));",
   "displayResult": Array [],
   "errors": Array [],
@@ -74,8 +114,8 @@ is_pair(f(0)) && is_list(f(0));",
 exports[`list_ref with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x,f(x+1)); }
-list_ref(f(0),3);",
+  "code": "function f(x) { return pair(x, f(x+1)); }
+list_ref(f(0), 3);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -88,7 +128,7 @@ list_ref(f(0),3);",
 exports[`map with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x,f(x+1)); }
+  "code": "function f(x) { return pair(x, f(x+1)); }
 head(tail(map((a)=>{return a*a;}, f(1))));",
   "displayResult": Array [],
   "errors": Array [],
@@ -102,8 +142,8 @@ head(tail(map((a)=>{return a*a;}, f(1))));",
 exports[`member with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x*x,f(x+1)); }
-head(member(4,f(0)));",
+  "code": "function f(x) { return pair(x*x, f(x+1)); }
+head(member(4, f(0)));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -145,13 +185,14 @@ Object {
 exports[`non-pair error for set_head: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "set_head(\\"pair\\",10);",
+  "code": "set_head(\\"pair\\", 10);",
   "displayResult": Array [],
   "errors": Array [
-    UndefinedVariable {
+    ExceptionError {
+      "error": [Error: set_head(xs,x) expects a pair as argument xs, but encountered "pair"],
       "location": SourceLocation {
         "end": Position {
-          "column": 8,
+          "column": 20,
           "line": 1,
         },
         "start": Position {
@@ -159,12 +200,11 @@ Object {
           "line": 1,
         },
       },
-      "name": "set_head",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Name set_head not declared.",
+  "parsedErrors": "Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered \\"pair\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -174,13 +214,14 @@ Object {
 exports[`non-pair error for set_tail: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "set_tail(\\"pair\\",10);",
+  "code": "set_tail(\\"pair\\", 10);",
   "displayResult": Array [],
   "errors": Array [
-    UndefinedVariable {
+    ExceptionError {
+      "error": [Error: set_tail(xs,x) expects a pair as argument xs, but encountered "pair"],
       "location": SourceLocation {
         "end": Position {
-          "column": 8,
+          "column": 20,
           "line": 1,
         },
         "start": Position {
@@ -188,12 +229,11 @@ Object {
           "line": 1,
         },
       },
-      "name": "set_tail",
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Name set_tail not declared.",
+  "parsedErrors": "Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered \\"pair\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -232,8 +272,8 @@ Object {
 exports[`remove_all with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f(x) { return pair(x,f(x+1)); }
-head(tail(remove_all(1,f(0))));",
+  "code": "function f(x) { return pair(x, f(x+1)); }
+head(tail(remove_all(1, f(0))));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -246,7 +286,7 @@ head(tail(remove_all(1,f(0))));",
 exports[`self-loop lazy list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const ones = pair(1,ones);
+  "code": "const ones = pair(1, ones);
 display(head(ones)+head(tail(ones)));",
   "displayResult": Array [
     "2",
@@ -262,8 +302,8 @@ display(head(ones)+head(tail(ones)));",
 exports[`set_head in lazy evaluation: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const a = pair(1,2);
-set_head(a,10);
+  "code": "const a = pair(1, 2);
+set_head(a, 10);
 display(head(a));",
   "displayResult": Array [
     "10",
@@ -279,8 +319,8 @@ display(head(a));",
 exports[`set_tail in lazy evaluation: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const a = pair(1,2);
-set_tail(a,10);
+  "code": "const a = pair(1, 2);
+set_tail(a, 10);
 display(tail(a));",
   "displayResult": Array [
     "10",
