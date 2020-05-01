@@ -63,10 +63,7 @@ function inferLiteral(literal: TypeAnnotatedNode<es.Literal>) {
 function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
   // First, ensure that Identifier exists in type env
   if (!currentTypeEnvironment.get(identifier.name)) {
-    throw new IdentifierNotFoundError(
-      identifier.name,
-      identifier.loc!
-    )
+    throw new IdentifierNotFoundError(identifier.name, identifier.loc!)
   }
 
   // Update type constraints in constraintStore
@@ -80,7 +77,7 @@ function inferIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
       throw new GeneralTypeError(
         idenTypeVariable,
         idenTypeEnvType,
-        "Failed in assigning the identifying the type of the identifier",
+        'Failed in assigning the identifying the type of the identifier',
         identifier.loc!
       )
     }
@@ -102,7 +99,7 @@ function inferConstantDeclaration(constantDeclaration: TypeAnnotatedNode<es.Vari
       throw new GeneralTypeError(
         idenTypeVariable,
         valueTypeVariable,
-        "Failed in assigning the type of the identifier to the type of its assigned expression",
+        'Failed in assigning the type of the identifier to the type of its assigned expression',
         constantDeclaration.loc!
       )
     }
@@ -137,7 +134,12 @@ function inferUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpress
   if (operatorResultType !== undefined && resultTypeVariable !== undefined) {
     const result = updateTypeConstraints(resultTypeVariable, operatorResultType)
     if (result !== undefined) {
-      throw new GeneralTypeError(operatorResultType, resultTypeVariable, "Unifying result type of operator with actual result type", unaryExpression.loc!)
+      throw new GeneralTypeError(
+        operatorResultType,
+        resultTypeVariable,
+        'Unifying result type of operator with actual result type',
+        unaryExpression.loc!
+      )
     }
   }
 }
@@ -179,7 +181,12 @@ function inferBinaryExpression(
 
   const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
   if (resultParam1 !== undefined && resultParam1.constraintRhs) {
-    throw new WrongArgumentTypeError(resultParam1.constraintLhs, resultParam1.constraintRhs, 1, param1.loc!)
+    throw new WrongArgumentTypeError(
+      resultParam1.constraintLhs,
+      resultParam1.constraintRhs,
+      1,
+      param1.loc!
+    )
   }
 
   const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
@@ -190,7 +197,12 @@ function inferBinaryExpression(
   if (resultTypeVariable !== undefined && returnType !== undefined) {
     const result = updateTypeConstraints(resultTypeVariable, returnType)
     if (result !== undefined && result.constraintRhs) {
-      throw new GeneralTypeError(returnType, result.constraintRhs, "Assign return type of binary operator to actual return type solved", binaryExpression.loc!)
+      throw new GeneralTypeError(
+        returnType,
+        result.constraintRhs,
+        'Assign return type of binary operator to actual return type solved',
+        binaryExpression.loc!
+      )
     }
   }
 }
@@ -236,7 +248,7 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
       throw new GeneralTypeError(
         returnypeVariable,
         argTypeVariable,
-        "Failed in assigning the type of the expression to the return statement expression",
+        'Failed in assigning the type of the expression to the return statement expression',
         returnStatement.loc!
       )
     }
@@ -280,7 +292,7 @@ function inferFunctionDeclaration(
       throw new GeneralTypeError(
         blockTypeVariable,
         prevReturnTypeVariable,
-        "Failed in assigning the return type to the block",
+        'Failed in assigning the return type to the block',
         block.loc!
       )
     }
@@ -370,7 +382,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
       throw new WrongArgumentTypeError(
         errorObj.constraintLhs,
         errorObj.constraintRhs,
-        i+1,
+        i + 1,
         applicationArgs[i].loc!
       )
     }
@@ -388,7 +400,7 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
       throw new GeneralTypeError(
         applicationTypeVariable,
         resultTypeVariable,
-        "Failed in assigning the result type of the function to the function application expression",
+        'Failed in assigning the result type of the function to the function application expression',
         functionApplication.loc!
       )
     }
@@ -407,7 +419,7 @@ function addTypeConstraintForLiteralPrimitive(literal: TypeAnnotatedNode<es.Lite
       throw new GeneralTypeError(
         literalTypeVariable,
         literalType,
-        "Failed in assigning the type of the literal to the type variable annotating the literal",
+        'Failed in assigning the type of the literal to the type variable annotating the literal',
         literal.loc!
       )
     }
@@ -497,7 +509,7 @@ function inferBlockStatement(
           throw new GeneralTypeError(
             returnStatementTypeVariable,
             blockTypeVariable,
-            "Failed in assigning the type of the return expression to the block",
+            'Failed in assigning the type of the return expression to the block',
             expression.loc!
           )
         }
@@ -516,7 +528,7 @@ function inferBlockStatement(
           throw new GeneralTypeError(
             ifStatementTypeVariable,
             blockTypeVariable,
-            "Failed in assigning the type of the if statement to the block",
+            'Failed in assigning the type of the if statement to the block',
             expression.loc!
           )
         }
@@ -532,7 +544,7 @@ function inferBlockStatement(
       throw new GeneralTypeError(
         undefinedType,
         blockTypeVariable,
-        "Failed in assigning the type of the block to undefined",
+        'Failed in assigning the type of the block to undefined',
         block.loc!
       )
     }

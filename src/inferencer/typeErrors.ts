@@ -177,10 +177,7 @@ export class IdentifierNotFoundError implements SourceError {
   public severity = ErrorSeverity.ERROR
   private message = ''
 
-  constructor(
-      public identifier: string,
-      public loc: es.SourceLocation
-  ) {
+  constructor(public identifier: string, public loc: es.SourceLocation) {
     this.message = `Identifier with name ${identifier} not found in type environment!`
   }
 
@@ -202,28 +199,28 @@ export class IdentifierNotFoundError implements SourceError {
 // */
 // tslint:disable-next-line: max-classes-per-file
 export class GeneralTypeError implements SourceError {
-    public type = ErrorType.TYPE
-    public severity = ErrorSeverity.ERROR
-    private message = ''
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  private message = ''
 
-    constructor(
-        public expectedType: Type,
-        public actualType: Type,
-        public reason: string,
-        public loc: es.SourceLocation
-    ) {
-      this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)}`
-    }
-
-    get location() {
-      return this.loc
-    }
-
-    public explain() {
-      return this.message
-    }
-
-    public elaborate() {
-      return this.message
-    }
+  constructor(
+    public expectedType: Type,
+    public actualType: Type,
+    public reason: string,
+    public loc: es.SourceLocation
+  ) {
+    this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)}`
   }
+
+  get location() {
+    return this.loc
+  }
+
+  public explain() {
+    return this.message
+  }
+
+  public elaborate() {
+    return this.message
+  }
+}
