@@ -508,6 +508,71 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     yield* loop();
   },
 
+  ForStatement: function*(node: es.ForStatement, context: Context) {
+    let value: Value
+    function* loop(): Value {
+      const testGenerator = evaluate(node.test!, context)
+      for (const test of testGenerator) {
+        const error = rttc.checkIfStatement(node.test!, test)
+        if (error) return handleRuntimeError(context, error)
+
+        if (test &&
+          !(value instanceof ReturnValue) &&
+          !(value instanceof BreakValue)
+        ) {
+          const iterationEnvironment = createBlockEnvironment(context, 'forBlockEnvironment')
+          pushEnvironment(context, iterationEnvironment)
+          for (const name in loopEnvironment.head) {
+            if (loopEnvironment.head.hasOwnProperty(name)) {
+              declareIdentifier(context, name, node)
+              defineVariable(context, name, loopEnvironment.head[name], true)
+            }
+          }
+
+          const iterationValueGenerator = evaluate(cloneDeep(node.body), context)
+          for (const iterationValue of iterationValueGenerator) {
+            value = iterationValue
+            popEnvironment(context)
+            const updateNode = evaluate(node.update!, context)
+            for (const _update of updateNode) {
+              yield* loop();
+            }
+
+            pushEnvironment(context, iterationEnvironment)
+          }
+          popEnvironment(context)
+        } else {
+          if (value instanceof BreakValue || value instanceof ContinueValue) {
+            yield undefined
+          } else {
+            yield value
+          }
+        }
+      }
+    }
+
+    // Create a new block scope for the loop variables
+    const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
+    pushEnvironment(context, loopEnvironment)
+
+    const initNode = node.init!
+    if (initNode.type === 'VariableDeclaration') {
+      declareVariables(context, initNode)
+    }
+
+    const initNodeGenerator = evaluate(node.init!, context)
+    for (const _init of initNodeGenerator) {
+      const loopGenerator = loop()
+      for (const loopValue of loopGenerator) {
+        popEnvironment(context)
+        yield loopValue
+        pushEnvironment(context, loopEnvironment)
+      }
+    }
+
+    popEnvironment(context)
+  },
+
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
     const returnExpression = node.argument!
     const returnValueGenerator = evaluate(returnExpression, context)
