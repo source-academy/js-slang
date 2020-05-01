@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectResult } from '../../utils/testing'
+import { expectParsedError, expectResult } from '../../utils/testing'
 
 test('infinite functions with pair', () => {
   return expectResult(
@@ -90,4 +90,76 @@ test('filter with infinite function', () => {
         `,
     { chapter: 2, variant: 'lazy', native: false }
   ).toMatchInlineSnapshot(`2`)
+})
+
+test('self-loop lazy list', () => {
+  return expectResult(
+    stripIndent`
+        const ones = pair(1,ones);
+        display(head(ones)+head(tail(ones)));
+        `,
+    { chapter: 3, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(`2`)
+})
+
+test('set_head in lazy evaluation', () => {
+  return expectResult(
+    stripIndent`
+        const a = pair(1,2);
+        set_head(a,10);
+        display(head(a));
+        `,
+    { chapter: 3, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(`10`)
+})
+
+test('set_tail in lazy evaluation', () => {
+  return expectResult(
+    stripIndent`
+        const a = pair(1,2);
+        set_tail(a,10);
+        display(tail(a));
+        `,
+    { chapter: 3, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(`10`)
+})
+
+test('non-pair error for head', () => {
+  return expectParsedError(
+    stripIndent`
+        head("head");
+        `,
+    { chapter: 2, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(
+    `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered \\"head\\""`
+  )
+})
+
+test('non-pair error for tail', () => {
+  return expectParsedError(
+    stripIndent`
+        tail("tail");
+        `,
+    { chapter: 2, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(
+    `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered \\"tail\\""`
+  )
+})
+
+test('non-pair error for set_head', () => {
+  return expectParsedError(
+    stripIndent`
+        set_head("pair",10);
+        `,
+    { chapter: 2, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(`"Line 1: Name set_head not declared."`)
+})
+
+test('non-pair error for set_tail', () => {
+  return expectParsedError(
+    stripIndent`
+        set_tail("pair",10);
+        `,
+    { chapter: 2, variant: 'lazy', native: false }
+  ).toMatchInlineSnapshot(`"Line 1: Name set_tail not declared."`)
 })

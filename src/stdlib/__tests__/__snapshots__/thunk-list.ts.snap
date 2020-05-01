@@ -113,6 +113,122 @@ head(member(4,f(0)));",
 }
 `;
 
+exports[`non-pair error for head: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "head(\\"head\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: head(xs) expects a pair as argument xs, but encountered "head"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered \\"head\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-pair error for set_head: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "set_head(\\"pair\\",10);",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "set_head",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Name set_head not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-pair error for set_tail: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "set_tail(\\"pair\\",10);",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 8,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "name": "set_tail",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Name set_tail not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-pair error for tail: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "tail(\\"tail\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: tail(xs) expects a pair as argument xs, but encountered "tail"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 12,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered \\"tail\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`remove_all with infinite function: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -122,6 +238,56 @@ head(tail(remove_all(1,f(0))));",
   "errors": Array [],
   "parsedErrors": "",
   "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`self-loop lazy list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1,ones);
+display(head(ones)+head(tail(ones)));",
+  "displayResult": Array [
+    "2",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`set_head in lazy evaluation: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = pair(1,2);
+set_head(a,10);
+display(head(a));",
+  "displayResult": Array [
+    "10",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`set_tail in lazy evaluation: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = pair(1,2);
+set_tail(a,10);
+display(tail(a));",
+  "displayResult": Array [
+    "10",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
