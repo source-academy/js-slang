@@ -6,7 +6,8 @@ import * as es from 'estree'
 // The Type Environment
 export const globalTypeEnvironment = new Map()
 export const emptyMap = new Map()
-export const environments: Map<string, Type>[] = [globalTypeEnvironment]
+// export const environments: Map<string, Type>[] = [globalTypeEnvironment] // Todo: Consider refactor later
+export const environments: Map<string, any>[] = [globalTypeEnvironment]
 export const extendEnvironment = (map: Map<any, any> = emptyMap) => {
   const newTypeEnvironment = new Map([...environments[0], ...map])
   environments.push(newTypeEnvironment)
@@ -23,18 +24,40 @@ export function updateTypeEnvironment(program: es.Program) {
   function updateForConstantDeclaration(
     constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
   ) {
-    // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
-    const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
-    const idenName = iden.name
+    // First, check if it is a function definition
+    if (
+      (constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node>).type ===
+      'ArrowFunctionExpression'
+    ) {
+      // If so, handle separately
+      updateForFunctionDefinition(constantDeclaration)
+    } else {
+      // Otherwise, should just be literals
+      // e.g. Given: const x^T1 = 1^T2, Set: Γ[ x ← T2 ]
+      const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+      const idenName = iden.name
 
-    const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
-    const valueTypeVariable = value.typeVariable as Variable
+      const value = constantDeclaration.declarations[0].init as TypeAnnotatedNode<es.Node> // use es.Node because rhs could be any value/expression
+      const valueTypeVariable = value.typeVariable as Variable
 
-    if (idenName !== undefined && valueTypeVariable !== undefined) {
-      globalTypeEnvironment.set(idenName, {
-        types: [valueTypeVariable]
-      })
+      if (idenName !== undefined && valueTypeVariable !== undefined) {
+        globalTypeEnvironment.set(idenName, {
+          types: [valueTypeVariable]
+        })
+      }
     }
+  }
+
+  function updateForFunctionDefinition(
+    constantDeclaration: TypeAnnotatedNode<es.VariableDeclaration>
+  ) {
+    const iden = constantDeclaration.declarations[0].id as TypeAnnotatedNode<es.Identifier>
+    const func = constantDeclaration.declarations[0].init as TypeAnnotatedNode<
+      es.ArrowFunctionExpression
+    >
+    const params = func.params as TypeAnnotatedNode<es.Node>[]
+    const block = func.body as TypeAnnotatedNode<es.BlockStatement>
+    updateForFunctionCommon(iden, params, block)
   }
 
   function updateForFunctionDeclaration(
@@ -42,9 +65,18 @@ export function updateTypeEnvironment(program: es.Program) {
   ) {
     // e.g. Given: f^T3 (x^T1) { return (...) }^T2, Set: Γ[ f ← [T1] => T2 ]
     const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+    const params = functionDeclaration.params as TypeAnnotatedNode<es.Node>[]
+    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
+    updateForFunctionCommon(iden, params, block)
+  }
+
+  function updateForFunctionCommon(
+    iden: TypeAnnotatedNode<es.Identifier>,
+    params: TypeAnnotatedNode<es.Node>[],
+    block: TypeAnnotatedNode<es.BlockStatement>
+  ) {
     const idenName = iden.name
 
-    const params = functionDeclaration.params as TypeAnnotatedNode<es.Node>[]
     const paramTypeVariables = []
     for (const p of params) {
       if (p.typeVariable) paramTypeVariables.push(p.typeVariable as Variable)
@@ -60,13 +92,10 @@ export function updateTypeEnvironment(program: es.Program) {
     //   }
     // }
 
-    const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
     const blockTypeVariable = block.typeVariable as Variable
 
-    // TODO: How to tell if the function declared is polymorphic? (w/o evaluating the body)
-    // From the return statement's type variable obj?
-    const isPolymorphic = true // set all to true for now and see what happens
-    // ...
+    // Since we are adding type variables at this point, the function type has to be polymorphic
+    const isPolymorphic = true
 
     if (idenName !== undefined && blockTypeVariable !== undefined) {
       globalTypeEnvironment.set(idenName, {
@@ -99,32 +128,33 @@ export const undefinedType: Type = {
   name: 'undefined'
 }
 
-export const variableType: Type = {
-  kind: 'variable',
-  // id?: number
-  // isAddable?: boolean
-  isPolymorphic: true
-}
-
-// const addableType: Type = {
-//   kind: 'variable',
-//   // id?: number
-//   isAddable: true,
-//   isPolymorphic: true
-// }
-
 function generateFunctionType(
   parameterTypes: Type[],
   returnType: Type,
-  isPolymorphic: boolean = false
+  isPolymorphic: boolean = false,
+  hasVarArgs: boolean = false
 ) {
   const functionType: Type = {
     kind: 'function',
     parameterTypes,
     returnType,
-    isPolymorphic
+    isPolymorphic,
+    hasVarArgs
   }
   return functionType
+}
+
+export function generateAndCopyFunctionType(functionTypeToCopy: Type) {
+  const newFunctionType = Object.create(functionTypeToCopy)
+
+  // Array still gets copied by reference, hence force replace with new
+  const newParameterTypes = []
+  for (const type of newFunctionType.parameterTypes) {
+    newParameterTypes.push(Object.create(type))
+  }
+  newFunctionType.parameterTypes = newParameterTypes
+
+  return newFunctionType
 }
 
 function generateAddableType() {
@@ -168,7 +198,6 @@ globalTypeEnvironment.set('&&', {
 newVariableType1 = generateVariableType()
 newVariableType2 = generateVariableType()
 globalTypeEnvironment.set('||', {
-  // types: [generateFunctionType([booleanType, variableType], variableType, true)],
   types: [generateFunctionType([booleanType, newVariableType1], newVariableType2, true)]
 })
 globalTypeEnvironment.set('!', {
@@ -187,7 +216,7 @@ globalTypeEnvironment.set('===', {
 
 newAddableType = generateAddableType()
 globalTypeEnvironment.set('!==', {
-  types: [generateFunctionType([variableType, variableType], booleanType, true)]
+  types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
 newAddableType = generateAddableType()
@@ -210,22 +239,14 @@ globalTypeEnvironment.set('<=', {
   types: [generateFunctionType([newAddableType, newAddableType], booleanType, true)]
 })
 
-// globalTypeEnvironment.set('display', {
-//   types: [
-//     // { argumentTypes: [numberType], resultType: undefined },
-//     // { argumentTypes: [stringType], resultType: undefined }
-//     generateFunctionType([variableType], null)  // Todo: Multiple params accepted?
-//   ],
-//   isPolymorphic: true
-// })
-// globalTypeEnvironment.set('error', {
-//   types: [
-//     // { argumentTypes: [numberType], resultType: undefined },
-//     // { argumentTypes: [stringType], resultType: undefined }
-//     generateFunctionType([variableType], null)  // Todo: Multiple params accepted?
-//   ],
-//   isPolymorphic: true
-// })
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('display', {
+  types: [generateFunctionType([newVariableType1], newVariableType1, true, true)]
+})
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('error', {
+  types: [generateFunctionType([newVariableType1], newVariableType1, true, true)]
+})
 
 globalTypeEnvironment.set('Infinity', {
   types: [numberType]
@@ -233,7 +254,6 @@ globalTypeEnvironment.set('Infinity', {
 
 newVariableType1 = generateVariableType()
 globalTypeEnvironment.set('is_boolean', {
-  // types: [generateFunctionType([variableType], booleanType, true)]
   types: [generateFunctionType([newVariableType1], booleanType, true)]
 })
 
@@ -308,11 +328,12 @@ globalTypeEnvironment.set('math_floor', {
 globalTypeEnvironment.set('math_fround', {
   types: [generateFunctionType([numberType], numberType)]
 })
-// globalTypeEnvironment.set('math_hypot', {
-// types: [{ argumentTypes: [numberType], resultType: undefined }],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
+
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_hypot', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+
 globalTypeEnvironment.set('math_imul', {
   types: [generateFunctionType([numberType, numberType], numberType)]
 })
@@ -340,22 +361,16 @@ globalTypeEnvironment.set('math_log10', {
 globalTypeEnvironment.set('math_LOG10E', {
   types: [numberType]
 })
-// globalTypeEnvironment.set('math_max', {
-//   // types: [
-//   //   { argumentTypes: [numberType], resultType: undefined },
-//   //   { argumentTypes: [stringType], resultType: undefined }
-//   // ],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
-// globalTypeEnvironment.set('math_min', {
-//   // types: [
-//   //   { argumentTypes: [numberType], resultType: undefined },
-//   //   { argumentTypes: [stringType], resultType: undefined }
-//   // ],
-//   types: [generateFunctionType([variableType], numberType)],  // Todo: Multiple params accepted?
-//   isPolymorphic: true
-// })
+
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_max', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+newVariableType1 = generateVariableType()
+globalTypeEnvironment.set('math_min', {
+  types: [generateFunctionType([newVariableType1], numberType, false, true)]
+})
+
 globalTypeEnvironment.set('math_PI', {
   types: [numberType]
 })

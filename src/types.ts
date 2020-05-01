@@ -221,6 +221,7 @@ export interface FunctionType {
   parameterTypes: Type[]
   returnType: Type
   isPolymorphic?: boolean
+  hasVarArgs?: boolean
 }
 
 export interface List {
