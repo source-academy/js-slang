@@ -149,6 +149,35 @@ export class WrongNumberArgumentsError implements SourceError {
 }
 
 // /*
+// When the identifier is not in the type environment
+// */
+// tslint:disable-next-line: max-classes-per-file
+export class IdentifierNotFoundError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  private message = ''
+
+  constructor(
+      public identifier: string,
+      public loc: es.SourceLocation
+  ) {
+    this.message = `Identifier with name ${identifier} not found in type environment!`
+  }
+
+  get location() {
+    return this.loc
+  }
+
+  public explain() {
+    return this.message
+  }
+
+  public elaborate() {
+    return this.message
+  }
+}
+
+// /*
 // For other type errors that occur due to program bugs or user errors that I can't pinpoint a reason about
 // */
 // tslint:disable-next-line: max-classes-per-file
