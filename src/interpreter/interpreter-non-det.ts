@@ -264,7 +264,7 @@ function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
 
 function* evaluateSequence(context: Context, sequence: es.Statement[]): IterableIterator<Value> {
   if (sequence.length === 0) {
-    return yield undefined // repl does not work unless we handle this case --> Why?
+    return yield undefined
   }
   const firstStatement = sequence[0]
   const sequenceValGenerator = evaluate(firstStatement, context)
@@ -288,7 +288,7 @@ function* evaluateSequence(context: Context, sequence: es.Statement[]): Iterable
 
       const res = yield* evaluateSequence(context, sequence)
       if (res === CUT) {
-        // prevent unshifting of statenents before cut
+        // prevent unshifting of statements before cut
         shouldUnshift = false
         break
       }
