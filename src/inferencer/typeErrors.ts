@@ -1,6 +1,26 @@
 import * as es from 'estree'
 import { Type, SourceError, ErrorType, ErrorSeverity } from '../types'
-import { printType } from '../utils/inferencerUtils'
+
+function printType(type: Type): string {
+  // if (type === null) return 'null'
+  switch (type.kind) {
+    case 'primitive':
+      return type.name === 'undefined' ? `undefined` : `a ${type.name}`
+    case 'variable':
+      return type.isAddable ? `an addable` : `any type`
+    case 'function':
+      let params = ''
+      for (const argument of type.parameterTypes) {
+        params += printType(argument) + ', '
+      }
+      // remove last comma
+      params = params.replace(/,\s*$/, '')
+      const returnType = printType(type.returnType)
+      return `(${params}) => ${returnType}`
+    default:
+      return 'Not included in Source 1!'
+  }
+}
 
 /*
 When argument type is wrong, eg applying a number to '!'
@@ -16,7 +36,7 @@ export class WrongArgumentTypeError implements SourceError {
     argumentIndex: number,
     public loc: es.SourceLocation
   ) {
-    this.message = `The function expects argument ${argumentIndex} to be a ${printType(
+    this.message = `The function expects argument ${argumentIndex} to be ${printType(
       nodeConstraintLhs
     )} but got ${printType(nodeConstraintRhs)}`
   }
@@ -75,8 +95,8 @@ export class ConditionalTypeError implements SourceError {
     public loc: es.SourceLocation
   ) {
     this.message = `Expected consequent and alternative to return the same types,
-        but the consequent returns a ${printType(consqeuentType)}
-        and the alternate returns a ${printType(alternateType)}`
+        but the consequent returns ${printType(consqeuentType)}
+        and the alternate returns ${printType(alternateType)}`
   }
 
   get location() {
@@ -192,7 +212,7 @@ export class GeneralTypeError implements SourceError {
         public reason: string,
         public loc: es.SourceLocation
     ) {
-      this.message = `${reason}: Expected a ${printType(expectedType)}, got a ${printType(actualType)}`
+      this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)}`
     }
 
     get location() {
