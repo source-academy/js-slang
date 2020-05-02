@@ -2,8 +2,14 @@ import * as es from 'estree'
 import { Context, Value } from '../types'
 import { forceEvaluate } from './interpreter'
 
-export type EvaluateFunction = (node: es.Node, context: Context) => IterableIterator<Value>
-
+/**
+ * Returns a copy of `context` where `context.runtime.environments` is shallow-copied.
+ *
+ * In lazy-evaluation mode, delayed evaluations are stored as a `Thunk`.
+ * A `Thunk` contains a node and a context.
+ * Because `context` is mutable, a mutation to the `context` outside a `Thunk` can mutate the context inside the `Thunk`.
+ * This function is created to resolve that issue.
+ */
 function getContextWithIndependentEnvironment(context: Context): Context {
   const result = {
     ...context,
@@ -15,6 +21,9 @@ function getContextWithIndependentEnvironment(context: Context): Context {
   return result
 }
 
+/**
+ * `Thunk` represents a delayed evaluation.
+ */
 export default class Thunk {
   public isEvaluated: boolean
   public result: Value
@@ -31,6 +40,9 @@ export default class Thunk {
     this.toString = () => '[Thunk <' + this.originalNode.type + '>]'
   }
 
+  /**
+   * Dethunks the `Thunk` and returns the dethunked result.
+   */
   public *dethunk(): Value {
     if (!this.isEvaluated) {
       this.result = yield* forceEvaluate(this.node, this.context)
@@ -40,23 +52,48 @@ export default class Thunk {
   }
 }
 
-export function* dethunk(thunk: Thunk | Value): Value {
-  return thunk instanceof Thunk ? yield* thunk.dethunk() : thunk
+/**
+ * Dethunks `value`.
+ *
+ * If `value` is not a `Thunk`, this function simply returns `value`.
+ *
+ * @param value the value to be dethunked
+ * @returns the dethunked value
+ */
+export function* dethunk(value: Value): Value {
+  return value instanceof Thunk ? yield* value.dethunk() : value
 }
 
 /**
- * deepDethunk is only needed for non-thunk-aware functions
+ * Deep-dethunks `value`.
+ *
+ * `dethunk` only checks whether its argument is a `Thunk`, it does not check the content of the argument.
+ * `deepDethunk` behaves the same as `dethunk`, except that if `value` is an array,
+ * its elements will be deep-dethunked recursively.
+ * @param value the value to be deep-dethunked
+ * @returns the deep-dethunked value
  */
-export function* deepDethunk(thunk: Thunk | Value): Value {
-  const value = thunk instanceof Thunk ? yield* thunk.dethunk() : thunk
-  if (Array.isArray(value)) {
-    for (let i = 0; i < value.length; i++) {
-      value[i] = yield* deepDethunk(value[i])
+export function* deepDethunk(value: Value): Value {
+  const result = value instanceof Thunk ? yield* value.dethunk() : value
+  if (Array.isArray(result)) {
+    for (let i = 0; i < result.length; i++) {
+      result[i] = yield* deepDethunk(result[i])
     }
   }
-  return value
+  return result
 }
 
+/**
+ * Checks whether `fun` is thunk-aware.
+ *
+ * A function is thunk-aware if it can accept a `Thunk` as an argument.
+ * Most of built-in functions are not thunk-aware.
+ * To distinguish thunk-aware functions from non-thunk-aware functions,
+ * all thunk-aware functions are required to have the property `isThunkAware`
+ * to be set to `true`.
+ * @param fun the function to be checked
+ * @returns true if `fun` is thunk-aware, `false` otherwise
+ */
 export function isThunkAware(fun: Value): boolean {
   if (fun.hasOwnProperty('isThunkAware')) {
     return fun.isThunkAware
@@ -64,9 +101,12 @@ export function isThunkAware(fun: Value): boolean {
   return false
 }
 
-type MakeThunkAwareResult = (...args: Value[]) => IterableIterator<Value>
+type ThunkAwareFuntion = (...args: Value[]) => IterableIterator<Value>
 
-export function makeThunkAware(fun: Value, thisContext?: Value): MakeThunkAwareResult {
+/**
+ * Returns the thunk-aware version of `fun`.
+ */
+export function makeThunkAware(fun: Value, thisContext?: Value): ThunkAwareFuntion {
   function* wrapper(...args: Value[]): IterableIterator<Value> {
     if (isThunkAware(fun)) {
       return yield* fun.apply(thisContext, args)

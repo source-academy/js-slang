@@ -12,16 +12,15 @@ import { transformLogicalExpression, reduceIf, evaluateBlockStatement } from './
 import { makeThunkAware } from './thunk'
 import { forceEvaluate, evaluate } from './interpreter'
 
-/**
- * WARNING: Do not use object literal shorthands, e.g.
- *   {
- *     *Literal(node: es.Literal, ...) {...},
- *     *ThisExpression(node: es.ThisExpression, ..._ {...},
- *     ...
- *   }
- * They do not minify well, raising uncaught syntax errors in production.
- * See: https://github.com/webpack/webpack/issues/7566
- */
+// WARNING: Do not use object literal shorthands, e.g.
+//   {
+//     *Literal(node: es.Literal, ...) {...},
+//     *ThisExpression(node: es.ThisExpression, ..._ {...},
+//     ...
+//   }
+// They do not minify well, raising uncaught syntax errors in production.
+// See: https://github.com/webpack/webpack/issues/7566
+
 // tslint:disable:object-literal-shorthand
 // prettier-ignore
 

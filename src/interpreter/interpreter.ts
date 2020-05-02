@@ -5,18 +5,38 @@ import { Context, Value } from '../types'
 import { evaluators } from './evaluators'
 import Thunk, { dethunk, deepDethunk } from './thunk'
 
+/**
+ * This function is called before an evaluation.
+ * @return Yields the new context, lets the scheduler
+ * decide if the execution should be continued
+ * or suspended.
+ */
 function* visit(context: Context, node: es.Node) {
   checkEditorBreakpoints(context, node)
   context.runtime.nodes.unshift(node)
   yield context
 }
 
+/**
+ * This function is called after an evaluation.
+ * @return Yields the new context, lets the scheduler
+ * decide if the execution should be continued
+ * or suspended.
+ */
 function* leave(context: Context) {
   context.runtime.break = false
   context.runtime.nodes.shift()
   yield context
 }
 
+/**
+ * Evaluates `node` given `context`.
+ *
+ * In the lazy-evaluation mode, this function is guaranteed to return a `Value` which is not a `Thunk`.
+ * Although the intermediate result might be a `Thunk`, in that case, it will be dethunked.
+ *
+ * @returns a non-thunk `Value`.
+ */
 export function* forceEvaluate(node: es.Node, context: Context): IterableIterator<Value> {
   yield* visit(context, node)
   const result = yield* evaluators[node.type](node, context)
@@ -24,6 +44,13 @@ export function* forceEvaluate(node: es.Node, context: Context): IterableIterato
   return yield* dethunk(result)
 }
 
+/**
+ * If the lazy-evaluation mode is used, this function returns a `Thunk` containing `node` and `context`.
+ * Otherwise, this function evaluates `node` given `context`, and returns a non-thunk `Value`.
+ * In other words, if the lazy-evaluation is not used, this function behaves the same as `forceEvaluate`.
+ *
+ * @returns a `Thunk` if the lazy-evaluation mode is used, or a non-thunk `Value` otherwise.
+ */
 export function* evaluate(node: es.Node, context: Context): IterableIterator<Value> {
   if (context.variant === 'lazy') {
     return new Thunk(node, context)
@@ -32,6 +59,15 @@ export function* evaluate(node: es.Node, context: Context): IterableIterator<Val
   }
 }
 
+/**
+ * This function calls `forceEvaluate(node, context)` and `deepDethunk` the result.
+ *
+ * Although `forceEvaluate` never returns a `Thunk`, it might return a data structure
+ * (e.g. pair, array) which contains a `Thunk`.
+ * In some situations, these inner `Thunk`s have to be dethunked.
+ *
+ * @returns a `Value` which is deep dethunked.
+ */
 export function* forceEvaluateAndDeepDethunk(
   node: es.Node,
   context: Context
