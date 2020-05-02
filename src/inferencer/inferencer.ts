@@ -26,8 +26,7 @@ import * as es from 'estree'
 import {
   printTypeAnnotation,
   printTypeConstraints,
-  printTypeEnvironment,
-  replaceTypeVariablesInTypeEnvironment
+  printTypeEnvironment
 } from '../utils/inferencerUtils'
 import {
   WrongArgumentTypeError,
@@ -678,10 +677,6 @@ export function inferProgram(
   for (const statement of program.body) {
     infer(statement)
   }
-
-  // TODO: Check if I can update type environment as I type check expressions
-  // Step 4. Replace type variables in type environment with inferred type
-  // replaceTypeVariablesInTypeEnvironment(constraintStore, currentTypeEnvironment)
 
   // Successful run..
   logObjectsForDebugging()
