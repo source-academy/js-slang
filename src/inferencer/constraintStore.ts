@@ -8,14 +8,46 @@ import {
   isFunctionType
 } from '../types'
 import { printType } from '../utils/inferencerUtils'
+import { currentTypeEnvironment } from './inferencer'
 
 export const constraintStore = new Map()
 
 export function updateTypeConstraints(newConstraintLhs: Type, newConstraintRhs: Type) {
-  console.log('\nconstraintStore.updateTypeConstraints:')
+  console.log('constraintStore.updateTypeConstraints:')
 
   // Note: If no error, returns undefined (i.e. nothing), else return error obj for logging
-  return solveConstraint(newConstraintLhs, newConstraintRhs)
+  const errorObj = solveConstraint(newConstraintLhs, newConstraintRhs)
+
+  if (!errorObj) {
+    // Update Type Env where applicable
+    // Iterate through all Type Envs and replace any TVar with their value from the constraintStore, if available
+    for (const val of currentTypeEnvironment.values()) {
+      const typesArray = val.types // Todo: Consider refactor later
+      for (let i = 0; i < typesArray.length; i++) {
+        const type = typesArray[i]
+
+        if (isTypeVariable(type)) {
+          typesArray[i] = getUpdatedTypeVariable(type)
+        } else if (isFunctionType(type)) {
+          for (let j = 0; j < type.parameterTypes.length; j++) {
+            type.parameterTypes[j] = getUpdatedTypeVariable(type.parameterTypes[j])
+          }
+          type.returnType = getUpdatedTypeVariable(type.returnType)
+        }
+      }
+    }
+  }
+
+  console.log('')
+  return errorObj
+}
+
+function getUpdatedTypeVariable(typeVariable: Type) {
+  if (isTypeVariable(typeVariable) && constraintStore.get(typeVariable)) {
+    return constraintStore.get(typeVariable)
+  } else {
+    return typeVariable
+  }
 }
 
 function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefined {
@@ -39,10 +71,13 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
   }
   // check if both sides are type variables and they have the same name (Rule 3)
   else if (
-    isTypeVariable(constraintLhs) &&
-    ifConstraintStoreHas(constraintRhs) &&
-    isTypeVariable(constraintStore.get(constraintRhs)) &&
-    (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id
+    (isTypeVariable(constraintLhs) &&
+      ifConstraintStoreHas(constraintRhs) &&
+      isTypeVariable(constraintStore.get(constraintRhs)) &&
+      (constraintStore.get(constraintRhs) as Variable).id === (constraintLhs as Variable).id) ||
+    (isTypeVariable(constraintLhs) &&
+      isTypeVariable(constraintRhs) &&
+      (constraintLhs as Variable).id === (constraintRhs as Variable).id)
   ) {
     // do nothing
     return
@@ -65,7 +100,7 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintStore.get(constraintRhs)) &&
     (constraintStore.get(constraintRhs) as Primitive).name !== 'number' &&
-      (constraintStore.get(constraintRhs) as Primitive).name !== 'string'
+    (constraintStore.get(constraintRhs) as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5')
     return { constraintLhs, constraintRhs } // for error logging
@@ -75,7 +110,8 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     (constraintLhs as Variable).isAddable &&
     // ifConstraintStoreHas(constraintRhs) &&
     !isTypeVariable(constraintRhs) &&
-    (constraintRhs as Primitive).name !== 'number' && (constraintRhs as Primitive).name !== 'string'
+    (constraintRhs as Primitive).name !== 'number' &&
+    (constraintRhs as Primitive).name !== 'string'
   ) {
     console.log('[debug] Error in Rule 5(b)')
     return { constraintLhs, constraintRhs } // for error logging
