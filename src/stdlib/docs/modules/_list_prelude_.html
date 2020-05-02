@@ -1,0 +1,196 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;list.prelude&quot; | js-slang</title>
+	<meta name="description" content="Documentation for js-slang">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">js-slang</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../index.html">Globals</a>
+				</li>
+				<li>
+					<a href="_list_prelude_.html">&quot;list.prelude&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;list.prelude&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>This file defines prelude for list, where includes 16 functions for list.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_list_prelude_.html#listprelude" class="tsd-kind-icon">list<wbr>Prelude</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="listprelude" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> list<wbr>Prelude</h3>
+					<div class="tsd-signature tsd-kind-icon">list<wbr>Prelude<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"/*** recurses down the list and checks that it ends with the empty list null* @param {value} xs - given candidate* @returns {boolean} indicating whether {xs} is a list*/function is_list(xs) {return is_null(xs) || (is_pair(xs) &amp;&amp; is_list(tail(xs)));}// equal computes the structural equality// over its argumentsfunction equal(x, y) {return is_pair(x) &amp;&amp; is_pair(y) ? equal(head(x), head(y)) &amp;&amp; equal(tail(x), tail(y)) : x &#x3D;&#x3D;&#x3D; y;}// returns the length of a given argument list// assumes that the argument is a listfunction length(xs) {return is_null(xs) ? 0 : 1 + length(tail(xs));}// map applies first arg f, assumed to be a unary function,// to the elements of the second argument, assumed to be a list.// f is applied element-by-element:// map(f, list(1, 2)) results in list(f(1), f(2))function map(f, xs) {return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));}// build_list takes a non-negative integer n as first argument,// and a function fun as second argument.// build_list returns a list of n elements, that results from// applying fun to the numbers from 0 to n-1.function build_list(n, fun) {function build(i, fun, already_built) {return i &lt; 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));}return build(n - 1, fun, null);}// for_each applies first arg fun, assumed to be a unary function,// to the elements of the second argument, assumed to be a list.// fun is applied element-by-element:// for_each(fun, list(1, 2)) results in the calls fun(1) and fun(2).// for_each returns true.function for_each(fun, xs) {if (is_null(xs)) {return true;} else {fun(head(xs));return for_each(fun, tail(xs));}}// list_to_string returns a string that represents the argument list.// It applies itself recursively on the elements of the given list.// When it encounters a non-list, it applies to_string to it.function list_to_string(xs) {return is_null(xs)? &quot;null&quot;: is_pair(xs)? &quot;[&quot; + list_to_string(head(xs)) + &quot;,&quot; +list_to_string(tail(xs)) + &quot;]&quot;: stringify(xs);}// reverse reverses the argument, assumed to be a listfunction reverse(xs) {function rev(original, reversed) {return is_null(original) ? reversed : rev(tail(original), pair(head(original), reversed));}return rev(xs, null);}// append first argument, assumed to be a list, to the second argument.// In the result null at the end of the first argument list// is replaced by the second argument, regardless what the second// argument consists of.function append(xs, ys) {return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));}// member looks for a given first-argument element in the// second argument, assumed to be a list. It returns the first// postfix sublist that starts with the given element. It returns null if the// element does not occur in the listfunction member(v, xs) {return is_null(xs) ? null : v &#x3D;&#x3D;&#x3D; head(xs) ? xs : member(v, tail(xs));}// removes the first occurrence of a given first-argument element// in second-argument, assmed to be a list. Returns the original// list if there is no occurrence.function remove(v, xs) {return is_null(xs) ? null : v &#x3D;&#x3D;&#x3D; head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));}// Similar to remove, but removes all instances of v// instead of just the firstfunction remove_all(v, xs) {return is_null(xs)? null: v &#x3D;&#x3D;&#x3D; head(xs)? remove_all(v, tail(xs)): pair(head(xs), remove_all(v, tail(xs)));}// filter returns the sublist of elements of the second argument// (assumed to be a list), for which the given predicate function// returns true.function filter(pred, xs) {return is_null(xs)? xs: pred(head(xs))? pair(head(xs), filter(pred, tail(xs))): filter(pred, tail(xs));}// enumerates numbers starting from start, assumed to be a number,// using a step size of 1, until the number exceeds end, assumed// to be a numberfunction enum_list(start, end) {return start &gt; end ? null : pair(start, enum_list(start + 1, end));}// Returns the item in xs (assumed to be a list) at index n,// assumed to be a non-negative integer.// Note: the first item is at position 0function list_ref(xs, n) {return n &#x3D;&#x3D;&#x3D; 0 ? head(xs) : list_ref(tail(xs), n - 1);}// accumulate applies an operation op (assumed to be a binary function)// to elements of sequence (assumed to be a list) in a right-to-left order.// first apply op to the last element and initial, resulting in r1, then to// the  second-last element and r1, resulting in r2, etc, and finally// to the first element and r_n-1, where n is the length of the// list.// accumulate(op, zero, list(1, 2, 3)) results in// op(1, op(2, op(3, zero)))function accumulate(f, initial, xs) {return is_null(xs) ? initial : f(head(xs), accumulate(f, initial, tail(xs)));}"</span><span class="tsd-signature-symbol"> = &#x60;/*** recurses down the list and checks that it ends with the empty list null* @param {value} xs - given candidate* @returns {boolean} indicating whether {xs} is a list*/function is_list(xs) {return is_null(xs) || (is_pair(xs) &amp;&amp; is_list(tail(xs)));}// equal computes the structural equality// over its argumentsfunction equal(x, y) {return is_pair(x) &amp;&amp; is_pair(y) ? equal(head(x), head(y)) &amp;&amp; equal(tail(x), tail(y)) : x &#x3D;&#x3D;&#x3D; y;}// returns the length of a given argument list// assumes that the argument is a listfunction length(xs) {return is_null(xs) ? 0 : 1 + length(tail(xs));}// map applies first arg f, assumed to be a unary function,// to the elements of the second argument, assumed to be a list.// f is applied element-by-element:// map(f, list(1, 2)) results in list(f(1), f(2))function map(f, xs) {return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));}// build_list takes a non-negative integer n as first argument,// and a function fun as second argument.// build_list returns a list of n elements, that results from// applying fun to the numbers from 0 to n-1.function build_list(n, fun) {function build(i, fun, already_built) {return i &lt; 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));}return build(n - 1, fun, null);}// for_each applies first arg fun, assumed to be a unary function,// to the elements of the second argument, assumed to be a list.// fun is applied element-by-element:// for_each(fun, list(1, 2)) results in the calls fun(1) and fun(2).// for_each returns true.function for_each(fun, xs) {if (is_null(xs)) {return true;} else {fun(head(xs));return for_each(fun, tail(xs));}}// list_to_string returns a string that represents the argument list.// It applies itself recursively on the elements of the given list.// When it encounters a non-list, it applies to_string to it.function list_to_string(xs) {return is_null(xs)? &quot;null&quot;: is_pair(xs)? &quot;[&quot; + list_to_string(head(xs)) + &quot;,&quot; +list_to_string(tail(xs)) + &quot;]&quot;: stringify(xs);}// reverse reverses the argument, assumed to be a listfunction reverse(xs) {function rev(original, reversed) {return is_null(original) ? reversed : rev(tail(original), pair(head(original), reversed));}return rev(xs, null);}// append first argument, assumed to be a list, to the second argument.// In the result null at the end of the first argument list// is replaced by the second argument, regardless what the second// argument consists of.function append(xs, ys) {return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));}// member looks for a given first-argument element in the// second argument, assumed to be a list. It returns the first// postfix sublist that starts with the given element. It returns null if the// element does not occur in the listfunction member(v, xs) {return is_null(xs) ? null : v &#x3D;&#x3D;&#x3D; head(xs) ? xs : member(v, tail(xs));}// removes the first occurrence of a given first-argument element// in second-argument, assmed to be a list. Returns the original// list if there is no occurrence.function remove(v, xs) {return is_null(xs) ? null : v &#x3D;&#x3D;&#x3D; head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));}// Similar to remove, but removes all instances of v// instead of just the firstfunction remove_all(v, xs) {return is_null(xs)? null: v &#x3D;&#x3D;&#x3D; head(xs)? remove_all(v, tail(xs)): pair(head(xs), remove_all(v, tail(xs)));}// filter returns the sublist of elements of the second argument// (assumed to be a list), for which the given predicate function// returns true.function filter(pred, xs) {return is_null(xs)? xs: pred(head(xs))? pair(head(xs), filter(pred, tail(xs))): filter(pred, tail(xs));}// enumerates numbers starting from start, assumed to be a number,// using a step size of 1, until the number exceeds end, assumed// to be a numberfunction enum_list(start, end) {return start &gt; end ? null : pair(start, enum_list(start + 1, end));}// Returns the item in xs (assumed to be a list) at index n,// assumed to be a non-negative integer.// Note: the first item is at position 0function list_ref(xs, n) {return n &#x3D;&#x3D;&#x3D; 0 ? head(xs) : list_ref(tail(xs), n - 1);}// accumulate applies an operation op (assumed to be a binary function)// to elements of sequence (assumed to be a list) in a right-to-left order.// first apply op to the last element and initial, resulting in r1, then to// the  second-last element and r1, resulting in r2, etc, and finally// to the first element and r_n-1, where n is the length of the// list.// accumulate(op, zero, list(1, 2, 3)) results in// op(1, op(2, op(3, zero)))function accumulate(f, initial, xs) {return is_null(xs) ? initial : f(head(xs), accumulate(f, initial, tail(xs)));}&#x60;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in home/spring/Documents/js-slang/src/stdlib/list.prelude.ts:25</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p><code>is_list(xs)</code>: Checks if <code>xs</code> is a list.<br/>
+								<code>equal(x, y)</code>: Checks if list <code>x</code> and <code>y</code> are equal.<br/>
+								<code>length(xs)</code>: Returns length of list <code>xs</code>.<br/>
+								<code>map(f, s)</code>: Applies function <code>f</code> to each element of list <code>s</code> and return the new list.<br/>
+								<code>build_list(n, fun)</code>: Returns a list with length <code>n</code> that results from apply <code>fun</code> from 0 to n-1.<br/>
+								<code>for_each(fun, xs)</code>: Applies function on each element of list <code>xs</code> element by element.<br/>
+								<code>list_to_string(xs)</code>: Returns a string that represents the argument list <code>xs</code>.<br/>
+								<code>reverse(xs)</code>: Returns the reverse the list <code>xs</code>.<br/>
+								<code>append(xs, ys)</code>: Appends <code>ys</code> on list <code>xs</code>.<br/>
+								<code>member(x, s)</code>: Checks if <code>x</code> is in list <code>s</code>.<br/>
+								<code>remove(v, xs)</code>: Removes the first occurrence of <code>v</code> from list <code>xs</code>.<br/>
+								<code>remove_all(v, xs)</code>: Removes all instances of <code>v</code> from list <code>xs</code>.<br/>
+								<code>filter(p, s)</code>: Returns sublist of list <code>s</code> with elements that make predicate function <code>p</code> return <code>true</code>.<br/>
+								<code>enum_list(start, end)</code>: Returns a list of enumeration of number from <code>start</code> to <code>end</code> with step size of 1.<br/>
+								<code>list_ref(s, n)</code>: Returns the element in list <code>s</code> at index <code>n</code> (for first element, index is 0).<br/>
+							<code>accumulate(f, initial, xs)</code>: Applies binary function <code>f</code> first from <code>initial</code> and last element in list <code>xs</code>, then apply <code>f</code> to the previous result and second last element, recursivly apply <code>f</code> for whole list and finally return the result.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../index.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_inspector_.html">&quot;inspector&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_list_.html">&quot;list&quot;</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_list_prelude_.html">&quot;list.prelude&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_misc_.html">&quot;misc&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_object_.html">&quot;object&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_parser_.html">&quot;parser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_stream_.html">&quot;stream&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_stream_prelude_.html">&quot;stream.prelude&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_thunk_list_.html">&quot;thunk-<wbr>list&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_thunk_stream_.html">&quot;thunk-<wbr>stream&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="_list_prelude_.html#listprelude" class="tsd-kind-icon">list<wbr>Prelude</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
