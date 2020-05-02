@@ -2132,3 +2132,13 @@ export function getEvaluationSteps(
     return steps
   }
 }
+
+export interface IStepperPropContents {
+  code: string
+  redex: string
+  explanation: string
+}
+
+export function isStepperOutput(output: any): output is IStepperPropContents {
+  return 'code' in output
+}
