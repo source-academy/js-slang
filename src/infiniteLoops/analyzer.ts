@@ -50,6 +50,25 @@ function getArg(sym: stype.FunctionSymbol, name: string) {
   return -1
 }
 
+function oneControlVar(transitions: stype.Transition[]) {
+  if (transitions.length === 0) {
+    return true // vacuously true?
+  }
+  const firstCond = transitions[0].condition
+  if (firstCond?.type === 'InequalitySymbol') {
+    const name = firstCond.name
+    for (const transition of transitions) {
+      const cond = transition.condition
+      if (cond?.type === 'InequalitySymbol' && cond.name === name) {
+        continue
+      }
+      return false
+    }
+    return true
+  }
+  return false
+}
+
 /* checks for countdown functions, see documentation
  * for more details
  */
@@ -83,10 +102,12 @@ function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] 
   }
   const checkers: stype.InfiniteLoopChecker[] = []
   for (const transitions of tset.values()) {
-    for (const transition of transitions) {
-      const checker = check1(transition)
-      if (checker) {
-        checkers.push(checker)
+    if (oneControlVar(transitions)) {
+      for (const transition of transitions) {
+        const checker = check1(transition)
+        if (checker) {
+          checkers.push(checker)
+        }
       }
     }
   }
