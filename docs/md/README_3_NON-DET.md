@@ -39,7 +39,7 @@ order. Click on a name to see how it is used.
 ## What can you do in Source §3 Non-Det?
 
 You can use all features of
-<a href="../source_3/">Source §3</a>, with the exception of loops, and all
+<a href="../source_3/">Source §3</a> and all
 features that are introduced in
 <a href="https://sicp.comp.nus.edu.sg/chapters/85">chapter 4.3</a> of the
 textbook.

@@ -11,6 +11,10 @@ import Closure from './closure'
 import { cloneDeep, assignIn } from 'lodash'
 import { CUT } from '../constants'
 
+class BreakValue {}
+
+class ContinueValue {}
+
 class ReturnValue {
   constructor(public value: Value) {}
 }
@@ -260,7 +264,7 @@ function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
 
 function* evaluateSequence(context: Context, sequence: es.Statement[]): IterableIterator<Value> {
   if (sequence.length === 0) {
-    return yield undefined // repl does not work unless we handle this case --> Why?
+    return yield undefined
   }
   const firstStatement = sequence[0]
   const sequenceValGenerator = evaluate(firstStatement, context)
@@ -273,14 +277,18 @@ function* evaluateSequence(context: Context, sequence: es.Statement[]): Iterable
       // prevent unshifting of cut operator
       shouldUnshift = sequenceValue !== CUT
 
-      if (sequenceValue instanceof ReturnValue) {
+      if (
+        sequenceValue instanceof ReturnValue ||
+        sequenceValue instanceof BreakValue ||
+        sequenceValue instanceof ContinueValue
+      ) {
         yield sequenceValue
         continue
       }
 
       const res = yield* evaluateSequence(context, sequence)
       if (res === CUT) {
-        // prevent unshifting of statenents before cut
+        // prevent unshifting of statements before cut
         shouldUnshift = false
         break
       }
@@ -462,6 +470,108 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* evaluate(node.expression, context)
   },
 
+  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+    yield new ContinueValue()
+  },
+
+  BreakStatement: function*(node: es.BreakStatement, context: Context) {
+    yield new BreakValue()
+  },
+
+  WhileStatement: function*(node: es.WhileStatement, context: Context) {
+    let value: Value // tslint:disable-line
+    function* loop(): Value {
+      const testGenerator = evaluate(node.test, context)
+      for (const test of testGenerator) {
+        const error = rttc.checkIfStatement(node.test, test)
+        if (error) return handleRuntimeError(context, error)
+
+        if (test &&
+          !(value instanceof ReturnValue) &&
+          !(value instanceof BreakValue)
+        ) {
+          const iterationValueGenerator = evaluate(cloneDeep(node.body), context)
+          for (const iterationValue of iterationValueGenerator) {
+            value = iterationValue
+            yield* loop();
+          }
+        } else {
+          if (value instanceof BreakValue || value instanceof ContinueValue) {
+            yield undefined
+          } else {
+            yield value
+          }
+        }
+      }
+    }
+
+    yield* loop();
+  },
+
+  ForStatement: function*(node: es.ForStatement, context: Context) {
+    let value: Value
+    function* loop(): Value {
+      const testGenerator = evaluate(node.test!, context)
+      for (const test of testGenerator) {
+        const error = rttc.checkIfStatement(node.test!, test)
+        if (error) return handleRuntimeError(context, error)
+
+        if (test &&
+          !(value instanceof ReturnValue) &&
+          !(value instanceof BreakValue)
+        ) {
+          const iterationEnvironment = createBlockEnvironment(context, 'forBlockEnvironment')
+          pushEnvironment(context, iterationEnvironment)
+          for (const name in loopEnvironment.head) {
+            if (loopEnvironment.head.hasOwnProperty(name)) {
+              declareIdentifier(context, name, node)
+              defineVariable(context, name, loopEnvironment.head[name], true)
+            }
+          }
+
+          const iterationValueGenerator = evaluate(cloneDeep(node.body), context)
+          for (const iterationValue of iterationValueGenerator) {
+            value = iterationValue
+            popEnvironment(context)
+            const updateNode = evaluate(node.update!, context)
+            for (const _update of updateNode) {
+              yield* loop();
+            }
+
+            pushEnvironment(context, iterationEnvironment)
+          }
+          popEnvironment(context)
+        } else {
+          if (value instanceof BreakValue || value instanceof ContinueValue) {
+            yield undefined
+          } else {
+            yield value
+          }
+        }
+      }
+    }
+
+    // Create a new block scope for the loop variables
+    const loopEnvironment = createBlockEnvironment(context, 'forLoopEnvironment')
+    pushEnvironment(context, loopEnvironment)
+
+    const initNode = node.init!
+    if (initNode.type === 'VariableDeclaration') {
+      declareVariables(context, initNode)
+    }
+
+    const initNodeGenerator = evaluate(node.init!, context)
+    for (const _init of initNodeGenerator) {
+      const loopGenerator = loop()
+      for (const loopValue of loopGenerator) {
+        popEnvironment(context)
+        yield loopValue
+        pushEnvironment(context, loopEnvironment)
+      }
+    }
+
+    popEnvironment(context)
+  },
 
   ReturnStatement: function*(node: es.ReturnStatement, context: Context) {
     const returnExpression = node.argument!

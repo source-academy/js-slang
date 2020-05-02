@@ -114,6 +114,9 @@ function unTree(node: stype.SSymbol): stype.SSymbol[][] {
   return []
 }
 
+/* TODO add some checking if the function
+ *      has returned already.
+ */
 export function serialize(
   firstCall: stype.FunctionSymbol,
   node: stype.SSymbol

@@ -124,18 +124,19 @@ test('infinite loop detected: countdown fib', () => {
   return expectParsedError(code).toMatchSnapshot()
 })
 
-test('infinite loop detected: unreachable condition fib', () => {
+test('no false positive detected: countdown fn', () => {
   const code = `
-  function UC_fac(x) {
-    if (!(x!==0||x!==1)) {
+  function fac(x,n) {
+    if(n>10){return 0;} else {}
+    if (x===0) {
         return 1;
     } else {
-        return x*UC_fac(x-1);
+        return 2*fac(x+1,n+1);
     }
   }
-  UC_fac(1);
+  fac(1,0);
       `
-  return expectParsedError(code).toMatchSnapshot()
+  return expectResult(code).toMatchSnapshot()
 })
 
 test('infinite loop detected: no base case fac', () => {
