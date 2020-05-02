@@ -3,13 +3,29 @@ import * as es from 'estree'
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Environment, Frame, Value } from '../types'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+import { Context, Environment, Value } from '../types'
+import { conditionalExpression, literal } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { loadIIFEModule } from '../modules/moduleLoader'
+import {
+  createBlockEnvironment,
+  createEnvironment,
+  currentEnvironment,
+  DECLARED_BUT_NOT_YET_ASSIGNED,
+  declareFunctionsAndVariables,
+  declareIdentifier,
+  declareImports,
+  declareVariables,
+  defineVariable,
+  handleRuntimeError,
+  leave,
+  popEnvironment,
+  pushEnvironment,
+  replaceEnvironment,
+  visit
+} from './environment-management'
 
 class BreakValue {}
 
@@ -22,129 +38,6 @@ class ReturnValue {
 class TailCallReturnValue {
   constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
 }
-
-const createEnvironment = (
-  closure: Closure,
-  args: Value[],
-  callExpression?: es.CallExpression
-): Environment => {
-  const environment: Environment = {
-    name: closure.functionName, // TODO: Change this
-    tail: closure.environment,
-    head: {}
-  }
-  if (callExpression) {
-    environment.callExpression = {
-      ...callExpression,
-      arguments: args.map(primitive)
-    }
-  }
-  closure.node.params.forEach((param, index) => {
-    const ident = param as es.Identifier
-    environment.head[ident.name] = args[index]
-  })
-  return environment
-}
-
-const createBlockEnvironment = (
-  context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
-): Environment => {
-  return {
-    name,
-    tail: currentEnvironment(context),
-    head,
-    thisContext: context
-  }
-}
-
-const handleRuntimeError = (context: Context, error: RuntimeSourceError): never => {
-  context.errors.push(error)
-  context.runtime.environments = context.runtime.environments.slice(
-    -context.numberOfOuterEnvironments
-  )
-  throw error
-}
-
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
-
-function declareIdentifier(context: Context, name: string, node: es.Node) {
-  const environment = currentEnvironment(context)
-  if (environment.head.hasOwnProperty(name)) {
-    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
-
-    return handleRuntimeError(
-      context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
-    )
-  }
-  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
-  return environment
-}
-
-function declareVariables(context: Context, node: es.VariableDeclaration) {
-  for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
-  }
-}
-
-function declareImports(context: Context, node: es.ImportDeclaration) {
-  for (const declaration of node.specifiers) {
-    declareIdentifier(context, declaration.local.name, node)
-  }
-}
-
-function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
-  for (const statement of node.body) {
-    switch (statement.type) {
-      case 'VariableDeclaration':
-        declareVariables(context, statement)
-        break
-      case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
-        break
-    }
-  }
-}
-
-function defineVariable(context: Context, name: string, value: Value, constant = false) {
-  const environment = context.runtime.environments[0]
-
-  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
-    return handleRuntimeError(
-      context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
-    )
-  }
-
-  Object.defineProperty(environment.head, name, {
-    value,
-    writable: !constant,
-    enumerable: true
-  })
-
-  return environment
-}
-
-function* visit(context: Context, node: es.Node) {
-  checkEditorBreakpoints(context, node)
-  context.runtime.nodes.unshift(node)
-  yield context
-}
-
-function* leave(context: Context) {
-  context.runtime.break = false
-  context.runtime.nodes.shift()
-  yield context
-}
-
-const currentEnvironment = (context: Context) => context.runtime.environments[0]
-const replaceEnvironment = (context: Context, environment: Environment) =>
-  (context.runtime.environments[0] = environment)
-const popEnvironment = (context: Context) => context.runtime.environments.shift()
-const pushEnvironment = (context: Context, environment: Environment) =>
-  context.runtime.environments.unshift(environment)
 
 const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]
@@ -235,7 +128,7 @@ function* reduceIf(
 
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
-function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
+function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   declareFunctionsAndVariables(context, node)
   let result
   for (const statement of node.body) {
@@ -565,7 +458,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    result = yield* evaluateBlockSatement(context, node)
+    result = yield* evaluateBlockStatement(context, node)
     popEnvironment(context)
     return result
   },
@@ -585,7 +478,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-    return yield* evaluateBlockSatement(context, node)
+    return yield* evaluateBlockStatement(context, node)
   }
 }
 // tslint:enable:object-literal-shorthand
@@ -618,7 +511,7 @@ export function* apply(
         pushEnvironment(context, environment)
         total++
       }
-      result = yield* evaluateBlockSatement(context, fun.node.body as es.BlockStatement)
+      result = yield* evaluateBlockStatement(context, fun.node.body as es.BlockStatement)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee
         node = result.node
