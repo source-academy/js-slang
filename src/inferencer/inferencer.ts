@@ -19,6 +19,7 @@ import {
   popEnvironment,
   undefinedType,
   emptyMap,
+  generateFunctionType,
   generateAndCopyFunctionType
 } from './typeEnvironment'
 import { updateTypeConstraints, constraintStore } from './constraintStore'
@@ -32,7 +33,7 @@ import {
   WrongArgumentTypeError,
   ConditionalTestTypeError,
   ConditionalTypeError,
-  DifferentReturnTypeError,
+  // DifferentReturnTypeError,
   WrongNumberArgumentsError,
   GeneralTypeError,
   IdentifierNotFoundError
@@ -179,19 +180,38 @@ function inferBinaryExpression(
 
   const resultTypeVariable = binaryExpression.typeVariable as Variable
 
-  const resultParam1 = updateTypeConstraints(param1TypeVariable, param1Type)
-  if (resultParam1 !== undefined && resultParam1.constraintRhs) {
-    throw new WrongArgumentTypeError(
-      resultParam1.constraintLhs,
-      resultParam1.constraintRhs,
-      1,
-      param1.loc!
-    )
+  const errorObj1 = updateTypeConstraints(param1TypeVariable, param1Type)
+  if (errorObj1) {
+    let expectedType = errorObj1.constraintLhs // set default
+    let receivedType = errorObj1.constraintRhs // set default
+
+    // Try to use inferredType to ensure we print the correct error msg
+    // Especially since constraint lhs/rhs order does not always coincide with expected/received type order
+    if (param1.inferredType) {
+      receivedType = param1.inferredType
+      if (receivedType && receivedType.name && receivedType.name !== errorObj1.constraintRhs.name) {
+        expectedType = errorObj1.constraintRhs
+      }
+    }
+
+    throw new WrongArgumentTypeError(expectedType, receivedType, 1, param1.loc!)
   }
 
-  const resultParam2 = updateTypeConstraints(param2TypeVariable, param2Type)
-  if (resultParam2 !== undefined && resultParam2.constraintRhs) {
-    throw new WrongArgumentTypeError(param2Type, resultParam2.constraintRhs, 2, param2.loc!)
+  const errorObj2 = updateTypeConstraints(param2TypeVariable, param2Type)
+  if (errorObj2) {
+    let expectedType = errorObj2.constraintLhs // set default
+    let receivedType = errorObj2.constraintRhs // set default
+
+    // Try to use inferredType to ensure we print the correct error msg
+    // Especially since constraint lhs/rhs order does not always coincide with expected/received type order
+    if (param2.inferredType) {
+      receivedType = param2.inferredType
+      if (receivedType && receivedType.name && receivedType.name !== errorObj2.constraintRhs.name) {
+        expectedType = errorObj2.constraintRhs
+      }
+    }
+
+    throw new WrongArgumentTypeError(expectedType, receivedType, 2, param2.loc!)
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
@@ -255,85 +275,96 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
   }
 }
 
-function inferFunctionDeclaration(
-  functionDeclaration:
-    | TypeAnnotatedNode<es.FunctionDeclaration>
-    | TypeAnnotatedNode<es.ArrowFunctionExpression>
-) {
+function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
   // Update type constraints in constraintStore
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
-
   // First, try to add constraints that ensure all ReturnStatements *and BlockStatements* give same type
   // e.g. T2 = T3
-  const bodyNodes = (functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>).body
-  let prevReturnTypeVariable
-  for (const node of bodyNodes) {
-    if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
-      const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>).typeVariable as Variable
-      if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
-        const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
-        if (errorObj) {
-          throw new DifferentReturnTypeError(node.loc!)
-        }
-      }
-      prevReturnTypeVariable = currReturnTypeVariable
-    }
-  }
+  // const bodyNodes = (functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>).body
+  // let prevReturnTypeVariable
+  // for (const node of bodyNodes) {
+  //   if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
+  //     const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>).typeVariable as Variable
+  //     if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
+  //       const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
+  //       if (errorObj) {
+  //         throw new DifferentReturnTypeError(node.loc!)
+  //       }
+  //     }
+  //     prevReturnTypeVariable = currReturnTypeVariable
+  //   }
+  // }
+  // **** ^ DONE BY BLOCK ****
 
   // If the above step executes successfully w/o any Type Error,
   // Next, add constraint to give the FunctionDeclaration a result type corresponding to the (last) ReturnStatement *or BlockStatement*
   // e.g. T4 = T3
-  const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
-  const blockTypeVariable = block.typeVariable as Variable
+  // const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
+  // const blockTypeVariable = block.typeVariable as Variable
+  // if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
+  //   const errorObj = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
+  //   if (errorObj) {
+  //     throw new GeneralTypeError(
+  //       blockTypeVariable,
+  //       prevReturnTypeVariable,
+  //       'Failed in assigning the return type to the block',
+  //       block.loc!
+  //     )
+  //   }
+  // }
+  // **** ^ DONE BY BLOCK ****
 
-  if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
-    const errorObj = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
+  // Add constraint to give the function identifier the corresponding function type
+  // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
+  //      Add: T5 = [T1] => T4
+  const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
+  const idenTypeVariable = iden.typeVariable as Variable
+
+  const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
+
+  if (idenTypeVariable !== undefined && functionType !== undefined) {
+    const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
     if (errorObj) {
       throw new GeneralTypeError(
-        blockTypeVariable,
-        prevReturnTypeVariable,
-        'Failed in assigning the return type to the block',
-        block.loc!
+        idenTypeVariable,
+        functionType,
+        'Failed to assign the function type to the function identifier',
+        functionDeclaration.loc!
       )
     }
   }
+}
 
-  // // Finally, add constraint to give the function identifier the corresponding function type
-  // // e.g. T5 = [T1] => T4
-  // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
-  // const idenTypeVariable = iden.typeVariable as Variable
+function inferFunctionDefinition(
+  functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>
+) {
+  // Add constraint to give the function result the corresponding function type
+  // e.g. Given: ( (x^T1) => { S }^T2 )^T3
+  //      Add: T3 = [T1] => T2
+  const params = functionDefinition.params as TypeAnnotatedNode<es.Node>[]
+  const paramTypeVariables = []
+  for (const p of params) {
+    if (p.typeVariable) paramTypeVariables.push(p.typeVariable as Variable)
+  }
 
-  // const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
+  const bodyTypeVariable = (functionDefinition.body as TypeAnnotatedNode<es.Node>)
+    .typeVariable as Variable
+  const resultTypeVariable = functionDefinition.typeVariable as Variable
 
-  // if (idenTypeVariable !== undefined && functionType !== undefined) {
-  //   const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
-  //   if (errorObj) {
-  //     throw new GeneralTypeError(
-  //       idenTypeVariable,
-  //       functionType,
-  //       "Failed to assign the function type to the function identifier",
-  //       functionDeclaration.loc!
-  //     )
-  //   }
-  // }
-  // Commented out as this does not seem to be needed.
-  // inferIdentifier() would already add the required constraint and this block seem to not be invoked (maybe because TVar not avail)
-  // // Finally, add constraint to give the function identifier the corresponding function type
-  // // e.g. T5 = [T1] => T4
-  // const iden = functionDeclaration.id as TypeAnnotatedNode<es.Identifier>
-  // const idenTypeVariable = iden.typeVariable as Variable
+  const isPolymorphic = true // because using type variables
+  const functionType = generateFunctionType(paramTypeVariables, bodyTypeVariable, isPolymorphic)
 
-  // const functionType = currentTypeEnvironment.get(iden.name) // Get function type from Type Env since it was added there
-
-  // if (idenTypeVariable !== undefined && functionType !== undefined) {
-  //   const errorObj = updateTypeConstraints(idenTypeVariable, functionType)
-  //   if (errorObj) {
-  //     displayErrorAndTerminate(
-  //       'WARNING: There should not be a type error here in `inferFunctionDeclaration()` Part C - pls debug',
-  //       functionDeclaration.loc
-  //     )
-  //   }
-  // }
+  if (resultTypeVariable !== undefined && functionType !== undefined) {
+    const errorObj = updateTypeConstraints(resultTypeVariable, functionType)
+    if (errorObj) {
+      throw new GeneralTypeError(
+        resultTypeVariable,
+        functionType,
+        "Failed to assign the function type to the function definition's type variable",
+        functionDefinition.loc!
+      )
+    }
+  }
 }
 
 function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.CallExpression>) {
@@ -346,45 +377,60 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
   const applicationArgCount = applicationArgs.length
 
   let declarationFunctionType = currentTypeEnvironment.get(iden.name).types[0]
-  const declarationArgCount = declarationFunctionType.parameterTypes.length
 
-  // Additional logic to handle polymorphic functions
-  if (
-    declarationFunctionType &&
-    isFunctionType(declarationFunctionType) &&
-    declarationFunctionType.isPolymorphic
-  ) {
-    declarationFunctionType = generateFunctionTypeWithFreshTypeVariables(declarationFunctionType)
-  }
+  // Only handle functions that have already been declared
+  if (isFunctionType(declarationFunctionType)) {
+    const declarationArgCount = declarationFunctionType.parameterTypes.length
 
-  // First, ensure arg nodes have same count as Γ(f)
-  // Note that we skip this check for functions with varArgs
-  if (!declarationFunctionType.hasVarArgs && applicationArgCount !== declarationArgCount) {
-    throw new WrongNumberArgumentsError(
-      declarationArgCount,
-      applicationArgCount,
-      functionApplication.loc!
-    )
-  }
-
-  // Second, try to add constraints that ensure arg nodes have same corresponding types
-  for (let i = 0; i < applicationArgs.length; i++) {
-    const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
-    let declarationArgType
-    if (declarationFunctionType.hasVarArgs) {
-      // Note that for functions with varArgs, we check that all args have same type as the single declared type
-      declarationArgType = declarationFunctionType.parameterTypes[0]
-    } else {
-      declarationArgType = declarationFunctionType.parameterTypes[i]
+    // Additional logic to handle polymorphic functions
+    if (
+      declarationFunctionType &&
+      isFunctionType(declarationFunctionType) &&
+      declarationFunctionType.isPolymorphic
+    ) {
+      declarationFunctionType = generateFunctionTypeWithFreshTypeVariables(declarationFunctionType)
     }
-    const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
-    if (errorObj) {
-      throw new WrongArgumentTypeError(
-        errorObj.constraintLhs,
-        errorObj.constraintRhs,
-        i + 1,
-        applicationArgs[i].loc!
+
+    // First, ensure arg nodes have same count as Γ(f)
+    // Note that we skip this check for functions with varArgs
+    if (!declarationFunctionType.hasVarArgs && applicationArgCount !== declarationArgCount) {
+      throw new WrongNumberArgumentsError(
+        declarationArgCount,
+        applicationArgCount,
+        functionApplication.loc!
       )
+    }
+
+    // Second, try to add constraints that ensure arg nodes have same corresponding types
+    for (let i = 0; i < applicationArgs.length; i++) {
+      const applicationArgTypeVariable = applicationArgs[i].typeVariable as Variable
+      let declarationArgType
+      if (declarationFunctionType.hasVarArgs) {
+        // Note that for functions with varArgs, we check that all args have same type as the single declared type
+        declarationArgType = declarationFunctionType.parameterTypes[0]
+      } else {
+        declarationArgType = declarationFunctionType.parameterTypes[i]
+      }
+      const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
+      if (errorObj) {
+        let expectedType = errorObj.constraintLhs // set default
+        let receivedType = errorObj.constraintRhs // set default
+
+        // Try to use inferredType to ensure we print the correct error msg
+        // Especially since constraint lhs/rhs order does not always coincide with expected/received type order
+        if (applicationArgs[i].inferredType) {
+          receivedType = applicationArgs[i].inferredType
+          if (
+            receivedType &&
+            receivedType.name &&
+            receivedType.name !== errorObj.constraintRhs.name
+          ) {
+            expectedType = errorObj.constraintRhs
+          }
+        }
+
+        throw new WrongArgumentTypeError(expectedType, receivedType, i + 1, applicationArgs[i].loc!)
+      }
     }
   }
 
@@ -609,8 +655,8 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       inferConditionals(statement)
       return
     }
-    case 'FunctionDeclaration':
-    case 'ArrowFunctionExpression': {
+    case 'FunctionDeclaration': {
+      // FIXME: Environment does not seem to be scoped with respect to argument parameters.
       const parameters = new Map()
       for (const param of statement.params) {
         parameters.set((param as es.Identifier).name, {
@@ -620,6 +666,23 @@ function infer(statement: es.Node, environmentToExtend: Map<any, any> = emptyMap
       infer(statement.body, parameters)
       currentTypeEnvironment = extendEnvironment(parameters)
       inferFunctionDeclaration(statement)
+      currentTypeEnvironment = popEnvironment()
+      return
+    }
+    case 'ArrowFunctionExpression': {
+      // FIXME: Environment does not seem to be scoped with respect to argument parameters.
+      const parameters = new Map()
+      for (const param of statement.params) {
+        parameters.set((param as es.Identifier).name, {
+          types: [(param as TypeAnnotatedNode<es.Pattern>).typeVariable]
+        })
+      }
+      // Note: order swapped wrt function declaration because function definition does not have a block statement to extend the env
+      // Hence, env needs to be extended here first
+      currentTypeEnvironment = extendEnvironment(parameters)
+      infer(statement.body, parameters)
+
+      inferFunctionDefinition(statement)
       currentTypeEnvironment = popEnvironment()
       return
     }
