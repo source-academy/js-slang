@@ -10,9 +10,8 @@ beforeEach(() => {
   jest.resetModules()
 })
 
-// TODO: Check how I can clear the type environment
 afterEach(() => {
-  ;(console.log as any).mockRestore()
+  (console.log as any).mockRestore()
   jest.restoreAllMocks()
 })
 
@@ -64,55 +63,3 @@ T29 = undefined
 "
 `)
 })
-
-// test('Infer unary operators correctly', async () => {
-//   const code = stripIndent`const num = 2;
-//   const bool = true;
-//   const negative = -2;
-//   const applyMinusToVariable = -num;
-//   const negated = !bool;
-//   const applyNegationToVariable = !bool;
-//   `
-//   const [program, typeEnvironment, constraintStore] = toTypeInferredAst(code)
-//   printTypeEnvironment(typeEnvironment)
-//   expect((console.log as any).mock.calls[(console.log as any).mock.calls.length - 1][0])
-//     .toMatchInlineSnapshot(`
-// "Printing Type Environment:
-// x <- number
-// y <- boolean
-// z <- string
-// a <- undefined
-// "
-// `)
-
-//   printTypeAnnotation(program)
-//   expect((console.log as any).mock.calls[(console.log as any).mock.calls.length - 1][0])
-//     .toMatchInlineSnapshot(`
-// "Initial Type Annotations:
-// 2: T18
-// x: T19
-// true: T20
-// y: T21
-// \\"something\\": T22
-// z: T23
-// undefined: T25
-// a: T24
-// "
-// `)
-
-//   printTypeConstraints(constraintStore)
-//   expect((console.log as any).mock.calls[(console.log as any).mock.calls.length - 1][0])
-//     .toMatchInlineSnapshot(`
-// "Printing Type Constraints:
-// T18 = number
-// T19 = number
-// T20 = boolean
-// T21 = boolean
-// T22 = string
-// T23 = string
-// T25 = undefined
-// T24 = undefined
-
-// "
-// `)
-// })
