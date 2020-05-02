@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 import { runInContext, resume, IOptions, Result, parseError } from '../index'
 import { mockContext } from '../mocks/context'
-import { SuspendedNonDet, Finished } from '../types'
+import { SuspendedNonDet, Finished, Context } from '../types'
 
 test('Empty code returns undefined', async () => {
   await testDeterministicCode('', undefined)
@@ -380,6 +380,19 @@ test('Block statements', async () => {
   )
 })
 
+test('ambR application', async () => {
+  await testNonDeterministicCode('ambR();', [], false, true)
+
+  await testNonDeterministicCode('ambR(1, 2, 3, 4, 5);', [1, 2, 3, 4, 5], false, true)
+
+  await testNonDeterministicCode(
+    'ambR(ambR(4, 5, 6, 7), ambR(3, 8));',
+    [4, 5, 6, 7, 3, 8],
+    false,
+    true
+  )
+})
+
 test('Deterministic arrays', async () => {
   await testDeterministicCode(`[];`, [])
 
@@ -472,6 +485,433 @@ test('Material Biconditional', async () => {
   await testDeterministicCode(`bi_implication(false, true);`, false)
   await testDeterministicCode(`bi_implication(false, false);`, true)
 })
+
+test('While loops', async () => {
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (false) {
+      i = i - 1;
+    }
+    i;`,
+    2
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 5;
+    while (i > 0) {
+      i = i - 1;
+    }`,
+    0
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 5;
+    let j = 0;
+    while (i > 0 && j < 5) {
+      i = i - 1;
+      j = j + 2;
+    }`,
+    6
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (i) {
+      i = i - 1;
+    }
+    i;`,
+    'Line 3: Expected boolean as condition, got number.',
+    true
+  )
+})
+
+test('Let statement should be block scoped in body of while loop', async () => {
+  await testDeterministicCode(
+    `
+    let i = 2;
+    let x = 5;
+    while (i > 0) {
+      i = i - 1;
+      let x = 10;
+    }
+    x;`,
+    5
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 2;
+    while (i > 0) {
+      i = i - 1;
+      let x = 5;
+    }
+    x;`,
+    'Line -1: Name x not declared.',
+    true
+  )
+})
+
+test('Nested while loops', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    let i = 1;
+    while (i > 0) {
+      let j = 2;
+      while (j > 0) {
+        let k = 4;
+        while (k > 0) {
+          count = count + 1;
+          k = k - 1;
+        }
+        j = j - 1;
+      }
+      i = i - 1;
+    }
+    count;`,
+    8
+  )
+})
+
+test('Break statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    let i = 5;
+    while (i > 0) {
+      i = i - 1;
+      break;
+    }
+    i;`,
+    4
+  )
+})
+
+test('Continue statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    let i = 5;
+    let j = 0;
+    while (i > 0 && j < 5) {
+      i = i - 1;
+      continue;
+      j = j + 2;
+    }
+    j;`,
+    0
+  )
+})
+
+test('Return statement in while loop body', async () => {
+  await testDeterministicCode(
+    `
+    function loopTest(i, j) {
+      while (i > 0 && j > i) {
+        return i * j;
+        i = i - 1;
+        j = j + i;
+      }
+    }
+    loopTest(5, 10);`,
+    50
+  )
+})
+
+test('Non-deterministic while loop condition', async () => {
+  await testNonDeterministicCode(
+    `
+    let i = amb(3, 4);
+    let j = 0;
+    while (i > 0) {
+      i = i - 1;
+      j = j + 1;
+    }
+    j;`,
+    [3, 4]
+  )
+
+  await testNonDeterministicCode(
+    `
+    let i = 1;
+    let j = 2;
+    let count = 0;
+    while (amb(i, j) > 0) {
+      i = i - 1;
+      j = j - 1;
+      count = count + 1;
+    }
+    count;`,
+    [1, 2, 2, 1, 2, 2]
+  ) // chosen variables: (i,i), (i,j,i), (i,j,j), (j,i), (j,j,i), (j,j,j)
+})
+
+test('Non-deterministic while loop body', async () => {
+  /* number of total program values =
+    (number of values from cartesian product of the statements in loop body)^
+    (number of loop iterations)
+  */
+
+  await testNonDeterministicCode(
+    `
+    let i = 3;
+    let count = 0;
+    while (i > 0) {
+      count = count + amb(0, 1);
+      i = i - 1;
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3]
+  )
+
+  await testNonDeterministicCode(
+    `
+    let i = 2;
+    let count = 0;
+    while (i > 0) {
+      count = count + amb(0, 1);
+      count = count + amb(0, 1);
+      i = i - 1;
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]
+  )
+})
+
+test('For loops', async () => {
+  await testDeterministicCode(
+    `
+    let i = 0;
+    for (i; i < 0; i = i + 1) {
+    }
+    i;
+  `,
+    0
+  )
+
+  await testDeterministicCode(
+    `
+    for (let i = 0; i < 5; i = i + 1) {
+      i;
+    }
+  `,
+    4
+  )
+
+  await testDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 5; i > 0; i = i - 2) {
+      count = count + 1;
+    }
+    count;
+  `,
+    3
+  )
+
+  await testDeterministicCode(
+    `
+    for (let i = 0; 2; i = i + 1) {
+    }
+  `,
+    'Line 2: Expected boolean as condition, got number.',
+    true
+  )
+})
+
+test('Let statement should be block scoped in head of for loop', async () => {
+  await testDeterministicCode(
+    `
+    for (let i = 2; i > 0; i = i - 1) {
+    }
+    i;
+  `,
+    'Line -1: Name i not declared.',
+    true
+  )
+})
+
+test('Let statement should be block scoped in body of for loop', async () => {
+  await testDeterministicCode(
+    `
+    let x = 0;
+    for (x; x < 10; x = x + 1) {
+      let x = 1;
+    }
+    x;`,
+    10
+  )
+
+  await testDeterministicCode(
+    `
+    for (let i = 2; i > 0; i = i - 1) {
+      let x = 5;
+    }
+    x;
+  `,
+    'Line -1: Name x not declared.',
+    true
+  )
+})
+
+test('Loop control variable should be copied into for loop body', async () => {
+  await testDeterministicCode(
+    `
+    let arr = [];
+    for (let i = 0; i < 5; i = i + 1) {
+      arr[i] = () => i;
+    }
+    arr[3]();`,
+    3
+  )
+})
+
+test('Assignment to loop control variable', async () => {
+  await testDeterministicCode(
+    `
+    for (let i = 0; i < 2; i = i + 1){
+      i = i + 1;
+    }
+  `,
+    'Line 3: Assignment to a for loop variable in the for loop is not allowed.',
+    true
+  )
+
+  await testDeterministicCode(
+    `
+    let i = 0;
+    for (i; i < 2; i = i + 1){
+      i = i + 1;
+    }
+  i;`,
+    2
+  )
+})
+
+test('Nested for loops', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 0; i < 1; i = i + 1) {
+      for (let j = 0; j < 2; j = j + 1) {
+        for (let k = 0; k < 4; k = k + 1) {
+          count = count + 1;
+        }
+      }
+    }
+    count;
+  `,
+    8
+  )
+})
+
+test('Break statement in for loop body', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 0; i < 5; i = i + 1) {
+      break;
+      count = count + 1;
+    }
+    count;`,
+    0
+  )
+})
+
+test('Continue statement in for loop body', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 0; i < 5; i = i + 1) {
+      continue;
+      count = count + 1;
+    }
+    count;`,
+    0
+  )
+})
+
+test('Return statement in for loop body', async () => {
+  await testDeterministicCode(
+    `
+    let count = 0;
+    function loopTest(x) {
+      for (let i = 0; i < 5; i = i + 1) {
+        return x;
+        count = count + 1;
+      }
+    }
+    loopTest(10);`,
+    10
+  )
+})
+
+test('Non-deterministic for loop initializer', async () => {
+  await testNonDeterministicCode(
+    `
+    let j = 0;
+    for (let i = amb(3, 4); i > 0; i = i - 1) {
+      j = j + 1;
+    }
+    j;`,
+    [3, 4]
+  )
+})
+
+test('Non-deterministic for loop condition', async () => {
+  await testNonDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 2; i > amb(0, 1); i = i - 1) {
+      count = count + 1;
+    }
+    count;`,
+    [2, 2, 1, 2, 2, 1]
+  ) // chosen conditions: (0, 0, 0), (0, 0, 1), (0, 1), (1, 0, 0), (1, 0, 1), (1, 1)
+})
+
+test('Non-deterministic for loop update', async () => {
+  await testNonDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 2; i > 0; i = i - amb(1, 2)) {
+      count = count + 1;
+    }
+    count;`,
+    [2, 2, 1]
+  ) // chosen updates: (1, 1), (1, 2), (2)
+})
+
+test('Non-deterministic for loop body', async () => {
+  /* number of total program values =
+    (number of values from cartesian product of the statements in loop body)^
+    (number of loop iterations)
+  */
+
+  await testNonDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 3; i > 0; i = i - 1) {
+      count = count + amb(0, 1);
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3]
+  )
+
+  await testNonDeterministicCode(
+    `
+    let count = 0;
+    for (let i = 2; i > 0; i = i - 1) {
+      count = count + amb(0, 1);
+      count = count + amb(0, 1);
+    }
+    count;`,
+    [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]
+  )
+})
+
 // ---------------------------------- Helper functions  -------------------------------------------
 
 const nonDetTestOptions = {
@@ -492,28 +932,61 @@ export async function testDeterministicCode(
 export async function testNonDeterministicCode(
   code: string,
   expectedValues: any[],
-  hasError: boolean = false
+  hasError: boolean = false,
+  random: boolean = false
 ) {
-  const context = makeNonDetContext()
+  const context: Context = makeNonDetContext()
   let result: Result = await runInContext(code, context, nonDetTestOptions)
 
+  const results: any[] = []
   const numOfRuns = hasError ? expectedValues.length - 1 : expectedValues.length
   for (let i = 0; i < numOfRuns; i++) {
-    expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
-    expect(result.status).toEqual('suspended-non-det')
+    if (random) {
+      results.push((result as SuspendedNonDet).value)
+    } else {
+      expect((result as SuspendedNonDet).value).toEqual(expectedValues[i])
+    }
 
+    expect(result.status).toEqual('suspended-non-det')
     result = await resume(result)
   }
 
-  if (!hasError) {
-    // all non deterministic programs have a final result whose value is undefined
-    expect(result.status).toEqual('finished')
-    expect((result as Finished).value).toEqual(undefined)
-  } else {
-    expect(result.status).toEqual('error')
-    const message: string = parseError(context.errors)
-    expect(message).toEqual(expectedValues[expectedValues.length - 1])
+  if (random) {
+    verifyRandomizedTest(results, expectedValues)
   }
+
+  if (hasError) {
+    verifyError(result, expectedValues, context)
+  } else {
+    verifyFinalResult(result)
+  }
+}
+
+/* Checks the final result obtained for a test
+ * Assumes the test is not erroneous
+ */
+function verifyFinalResult(result: Result) {
+  // all non deterministic programs have a final result whose value is undefined
+  expect(result.status).toEqual('finished')
+  expect((result as Finished).value).toEqual(undefined)
+}
+
+/* Checks the error obtained for an erroneous test
+ * The error message is captured as the test's final result
+ */
+function verifyError(result: Result, expectedValues: any[], context: Context) {
+  expect(result.status).toEqual('error')
+  const message: string = parseError(context.errors)
+  expect(message).toEqual(expectedValues[expectedValues.length - 1])
+}
+
+/* Compares expected and obtained results after a test is run
+ * Assumes the test involves randomization
+ */
+function verifyRandomizedTest(results: any[], expectedValues: any[]) {
+  results.sort()
+  expectedValues.sort()
+  expect(results).toEqual(expectedValues)
 }
 
 function makeNonDetContext() {

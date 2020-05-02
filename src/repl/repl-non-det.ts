@@ -6,8 +6,10 @@ import { CUT, TRY_AGAIN } from '../constants'
 import { inspect } from 'util'
 import Closure from '../interpreter/closure'
 
-// stores the result obtained when execution is suspended
-let previousResult: Result
+const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
+let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program
+let previousResult: Result // stores the result obtained when execution is suspended
+
 function _handleResult(
   result: Result,
   context: Context,
@@ -19,8 +21,24 @@ function _handleResult(
     if (result.value === CUT) result.value = undefined
     callback(null, result.value)
   } else {
-    callback(new Error(parseError(context.errors)), undefined)
+    const error = new Error(parseError(context.errors))
+    // we do not display the stack trace, because the stack trace points to code within this REPL
+    // program, rather than the erroneous line in the user's program. Such a trace is too low level
+    // to be helpful.
+    error.stack = undefined
+    callback(error, undefined)
     return
+  }
+}
+
+function _try_again_message(): string | undefined {
+  if (previousInput) {
+    const message: string = NO_MORE_VALUES_MESSAGE + previousInput
+    previousInput = undefined
+
+    return message
+  } else {
+    return undefined
   }
 }
 
@@ -30,6 +48,7 @@ function _resume(
   callback: (err: Error | null, result: any) => void
 ) {
   Promise.resolve(resume(toResume)).then((result: Result) => {
+    if (result.status === 'finished') result.value = _try_again_message()
     _handleResult(result, context, callback)
   })
 }
@@ -38,7 +57,7 @@ function _try_again(context: Context, callback: (err: Error | null, result: any)
   if (previousResult && previousResult.status === 'suspended-non-det') {
     _resume(previousResult, context, callback)
   } else {
-    callback(null, undefined)
+    callback(null, _try_again_message())
   }
 }
 
@@ -51,6 +70,7 @@ function _run(
   if (cmd.trim() === TRY_AGAIN) {
     _try_again(context, callback)
   } else {
+    previousInput = cmd.trim()
     runInContext(cmd, context, options).then(result => {
       _handleResult(result, context, callback)
     })
