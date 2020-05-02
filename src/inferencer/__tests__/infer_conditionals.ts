@@ -8,15 +8,10 @@ import { toTypeInferredAst } from '../../utils/testing'
 import { parseError } from '../..'
 import { SourceError } from '../../types'
 
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-// TODO: Check how I can clear the type environment
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-})
-// why is there an error here
+afterEach(() => (console.log as any).mockRestore())
+
 test('Infer conditional expressions correctly', async () => {
   const code = stripIndent`const x = 1 === 2 ? 1 : 2;
     const y = 6 !== 5 ? 'string1' : 'string2';
@@ -130,7 +125,7 @@ test('Infer conditional statements correctly', async () => {
 x <- number
 y <- number
 cond <- number
-someFunction2 <- (number) => number
+someFunction2 <- (A72) => number
 "
 `)
 
@@ -194,10 +189,9 @@ T46 = number
 T48 = number
 T49 = number
 T50 = number
-T56 = T72
+T56 = A72
 T55 = number
-A73 = T72
-T72 = number
+A73 = number
 T69 = boolean
 T62 = number
 T63 = number
@@ -236,7 +230,7 @@ test('Infer conditional statements correctly -- polymorphic types', async () => 
 x <- number
 y <- number
 cond <- number
-someFunction2 <- (number) => number
+someFunction2 <- (A72) => number
 polyMorphicTypeConditional <- (T86) => T86
 "
 `)
@@ -295,10 +289,9 @@ T46 = number
 T48 = number
 T49 = number
 T50 = number
-T56 = T72
+T56 = A72
 T55 = number
-A73 = T72
-T72 = number
+A73 = number
 T69 = boolean
 T62 = number
 T63 = number
@@ -343,11 +336,9 @@ test('Throws errors when a different type is returned', async () => {
     errors.push(err)
   }
   expect(errors).toHaveLength(1)
-  expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 1: Expected consequent and alternative to return the same types,
-        but the consequent returns a number
-        and the alternate returns a string"
-`)
+  expect(parseError(errors)).toMatchInlineSnapshot(
+    `"Line 1: Expected consequent and alternative to return the same types, but the consequent returns a number and the alternative returns a string instead."`
+  )
 })
 
 test('Conditional statement throws errors when a different type is returned', async () => {
@@ -367,9 +358,7 @@ test('Conditional statement throws errors when a different type is returned', as
     errors.push(err)
   }
   expect(errors).toHaveLength(1)
-  expect(parseError(errors)).toMatchInlineSnapshot(`
-"Line 2: Expected consequent and alternative to return the same types,
-        but the consequent returns a number
-        and the alternate returns a boolean"
-`)
+  expect(parseError(errors)).toMatchInlineSnapshot(
+    `"Line 2: Expected consequent and alternative to return the same types, but the consequent returns a number and the alternative returns a boolean instead."`
+  )
 })

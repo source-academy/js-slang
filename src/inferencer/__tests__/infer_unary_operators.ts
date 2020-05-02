@@ -8,14 +8,9 @@ import { toTypeInferredAst } from '../../utils/testing'
 import { parseError } from '../..'
 import { SourceError } from '../../types'
 
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-// TODO: Check how I can clear the type environment
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-})
+afterEach(() => (console.log as any).mockRestore())
 
 test('Infer unary operators correctly', async () => {
   const code = stripIndent`const num = 2;
@@ -101,7 +96,7 @@ test(`Throws an error when '-' applied to the wrong type`, async () => {
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects argument 1 to be a number but got a boolean"`
+    `"Line 1: The function expects argument #1 to be a number but got a boolean instead."`
   )
 })
 
@@ -115,6 +110,6 @@ test(`Throws an error when '!' applied to the wrong type`, async () => {
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects argument 1 to be a boolean but got a number"`
+    `"Line 1: The function expects argument #1 to be a boolean but got a number instead."`
   )
 })

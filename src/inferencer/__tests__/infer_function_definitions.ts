@@ -7,15 +7,9 @@ import {
 import { toTypeInferredAst } from '../../utils/testing'
 import { SourceError } from '../../types'
 import { parseError } from '../..'
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-  jest.resetModules()
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-  jest.restoreAllMocks()
-})
+afterEach(() => (console.log as any).mockRestore())
 
 test('Function definitions are type checked', () => {
   const code = stripIndent`function compose(f) {

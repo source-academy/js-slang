@@ -5,15 +5,9 @@ import {
   printTypeAnnotation
 } from '../../utils/inferencerUtils'
 import { toTypeInferredAst } from '../../utils/testing'
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-  jest.resetModules()
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-  jest.restoreAllMocks()
-})
+afterEach(() => (console.log as any).mockRestore())
 
 test('Type of constant declaration is type of values assigned to it - literals', () => {
   const code = stripIndent`const x = 2;

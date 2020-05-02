@@ -8,13 +8,9 @@ import { toTypeInferredAst } from '../../utils/testing'
 import { SourceError } from '../../types'
 import { parseError } from '../..'
 
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-})
+afterEach(() => (console.log as any).mockRestore())
 
 test('Infer binary arithmetic operators correctly', async () => {
   const code = stripIndent`const x = 1;
@@ -119,7 +115,7 @@ test('Binary operators should be applied to addables of the same type', async ()
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects argument 2 to be an addable but got a number"`
+    `"Line 1: The function expects argument #2 to be a number but got a string instead."`
   )
 })
 
@@ -134,6 +130,6 @@ test('Binary operators are applied to the wrong types', async () => {
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects argument 1 to be a boolean but got a number"`
+    `"Line 1: The function expects argument #1 to be a boolean but got a number instead."`
   )
 })

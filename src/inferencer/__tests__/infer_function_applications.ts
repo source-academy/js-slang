@@ -8,15 +8,9 @@ import { toTypeInferredAst } from '../../utils/testing'
 import { parseError } from '../..'
 import { SourceError } from '../../types'
 
-beforeEach(() => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => {})
-  jest.resetModules()
-})
+beforeEach(() => jest.spyOn(console, 'log').mockImplementationOnce(() => {}))
 
-afterEach(() => {
-  ;(console.log as any).mockRestore()
-  jest.restoreAllMocks()
-})
+afterEach(() => (console.log as any).mockRestore())
 
 test('Function is correctly applied', async () => {
   const code = stripIndent`function simple(x) {
@@ -101,7 +95,7 @@ test('Incorrect number of arguments supplied', async () => {
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects 1 argument(s) but 2 argument(s) are supplied"`
+    `"Line 1: The function expects 1 argument(s) but 2 argument(s) are supplied."`
   )
 })
 
@@ -115,6 +109,6 @@ test('Incorrect type of arguments supplied', async () => {
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(
-    `"Line 1: The function expects argument 1 to be a number but got a boolean"`
+    `"Line 1: The function expects argument #1 to be a number but got a boolean instead."`
   )
 })
