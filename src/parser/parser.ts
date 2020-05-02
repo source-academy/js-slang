@@ -6,6 +6,7 @@ import {
   Position
 } from 'acorn'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
+import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
@@ -156,6 +157,14 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
     )
   }
 })
+
+export function looseParse(source: string, context: Context) {
+  const program = (acornLooseParse(
+    source,
+    createAcornParserOptions(context)
+  ) as unknown) as es.Program
+  return program
+}
 
 function createWalkers(
   allowedSyntaxes: { [nodeName: string]: number },
