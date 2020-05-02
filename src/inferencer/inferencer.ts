@@ -194,12 +194,7 @@ function inferBinaryExpression(
       }
     }
 
-    throw new WrongArgumentTypeError(
-      expectedType,
-      receivedType,
-      1,
-      param1.loc!
-    )
+    throw new WrongArgumentTypeError(expectedType, receivedType, 1, param1.loc!)
   }
 
   const errorObj2 = updateTypeConstraints(param2TypeVariable, param2Type)
@@ -216,12 +211,7 @@ function inferBinaryExpression(
       }
     }
 
-    throw new WrongArgumentTypeError(
-      expectedType,
-      receivedType,
-      2,
-      param2.loc!
-    )
+    throw new WrongArgumentTypeError(expectedType, receivedType, 2, param2.loc!)
   }
 
   if (resultTypeVariable !== undefined && returnType !== undefined) {
@@ -338,14 +328,16 @@ function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.Func
       throw new GeneralTypeError(
         idenTypeVariable,
         functionType,
-        "Failed to assign the function type to the function identifier",
+        'Failed to assign the function type to the function identifier',
         functionDeclaration.loc!
       )
     }
   }
 }
 
-function inferFunctionDefinition(functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>) {
+function inferFunctionDefinition(
+  functionDefinition: TypeAnnotatedNode<es.ArrowFunctionExpression>
+) {
   // Add constraint to give the function result the corresponding function type
   // e.g. Given: ( (x^T1) => { S }^T2 )^T3
   //      Add: T3 = [T1] => T2
@@ -355,10 +347,11 @@ function inferFunctionDefinition(functionDefinition: TypeAnnotatedNode<es.ArrowF
     if (p.typeVariable) paramTypeVariables.push(p.typeVariable as Variable)
   }
 
-  const bodyTypeVariable = (functionDefinition.body as TypeAnnotatedNode<es.Node>).typeVariable as Variable
+  const bodyTypeVariable = (functionDefinition.body as TypeAnnotatedNode<es.Node>)
+    .typeVariable as Variable
   const resultTypeVariable = functionDefinition.typeVariable as Variable
 
-  const isPolymorphic = true  // because using type variables
+  const isPolymorphic = true // because using type variables
   const functionType = generateFunctionType(paramTypeVariables, bodyTypeVariable, isPolymorphic)
 
   if (resultTypeVariable !== undefined && functionType !== undefined) {
@@ -427,17 +420,16 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
         // Especially since constraint lhs/rhs order does not always coincide with expected/received type order
         if (applicationArgs[i].inferredType) {
           receivedType = applicationArgs[i].inferredType
-          if (receivedType && receivedType.name && receivedType.name !== errorObj.constraintRhs.name) {
+          if (
+            receivedType &&
+            receivedType.name &&
+            receivedType.name !== errorObj.constraintRhs.name
+          ) {
             expectedType = errorObj.constraintRhs
           }
         }
 
-        throw new WrongArgumentTypeError(
-          expectedType,
-          receivedType,
-          i + 1,
-          applicationArgs[i].loc!
-        )
+        throw new WrongArgumentTypeError(expectedType, receivedType, i + 1, applicationArgs[i].loc!)
       }
     }
   }

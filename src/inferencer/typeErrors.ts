@@ -96,9 +96,7 @@ export class ConditionalTypeError implements SourceError {
   ) {
     this.message = `Expected consequent and alternative to return the same types, but the consequent returns ${printType(
       consqeuentType
-      )} and the alternative returns ${printType(
-        alternateType
-        )} instead.`
+    )} and the alternative returns ${printType(alternateType)} instead.`
   }
 
   get location() {

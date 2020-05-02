@@ -140,17 +140,17 @@ function solveConstraint(constraintLhs: Type, constraintRhs: Type): any | undefi
     isTypeVariable(constraintLhs) &&
     (constraintLhs as Variable).isAddable &&
     isTypeVariable(constraintRhs) &&
-    !(constraintRhs as Variable).isAddable) {
-      console.log('@@@ 7B')
-      // Convert (all occurrences of) Σ(t′) into an addable type
-      constraintStore.forEach((value: Type, key: Type) => {
-        if (isTypeVariable(key) && (key as Variable).id === (constraintRhs as Variable).id) {
-          (key as Variable).isAddable = true
-        }
-        if (isTypeVariable(value) && (value as Variable).id === (constraintRhs as Variable).id) {
-          (value as Variable).isAddable = true
-        }
-      });
+    !(constraintRhs as Variable).isAddable
+  ) {
+    // Convert (all occurrences of) Σ(t′) into an addable type
+    constraintStore.forEach((value: Type, key: Type) => {
+      if (isTypeVariable(key) && (key as Variable).id === (constraintRhs as Variable).id) {
+        ;(key as Variable).isAddable = true
+      }
+      if (isTypeVariable(value) && (value as Variable).id === (constraintRhs as Variable).id) {
+        ;(value as Variable).isAddable = true
+      }
+    })
   }
   // Rule 8
   else if (
