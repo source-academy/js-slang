@@ -182,7 +182,7 @@ test('Infinite recursion with a block bodied function', () => {
   `,
     { chapter: 4 }
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
-}, 15000)
+}, 25000)
 
 test('Infinite recursion with function calls in argument', () => {
   return expectParsedErrorNoSnapshot(
@@ -199,7 +199,7 @@ test('Infinite recursion with function calls in argument', () => {
   ).toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
-}, 10000)
+}, 20000)
 
 test('Infinite recursion of mutually recursive functions', () => {
   return expectParsedErrorNoSnapshot(
@@ -218,7 +218,7 @@ test('Infinite recursion of mutually recursive functions', () => {
       /Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/
     )
   )
-})
+}, 10000)
 
 const callingNonFunctionValueUndefined = stripIndent`
 undefined();

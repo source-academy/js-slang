@@ -1,4 +1,4 @@
-import { stringify } from '../utils/eager-stringify'
+import { stringify } from '../utils/lazy-stringify'
 import Thunk from '../interpreter/thunk'
 import { Value } from '../types'
 

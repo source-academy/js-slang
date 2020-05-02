@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import * as misc from '../stdlib/misc'
+import * as misc from '../stdlib/eager-misc'
 import { substituterNodes } from '../types'
 import * as ast from '../utils/astCreator'
 import { nodeToValue, valueToExpression } from './converter'

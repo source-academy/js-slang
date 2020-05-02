@@ -1,6 +1,6 @@
 import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
-import { runtime, parse_int } from './misc'
+import { runtime, parse_int } from './eager-misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.

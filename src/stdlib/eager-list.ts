@@ -1,6 +1,6 @@
-import { stringify } from '../utils/eager-stringify'
+import { stringify } from '../utils/stringify'
 
-// list.ts: Supporting lists in the Scheme style, using pairs made
+// eager-list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
 // Author: Martin Henz
 // Translated to TypeScript by Evan Sebastian

@@ -12,6 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
+import { evaluate as lazyEvaluate } from './interpreter/lazy-interpreter'
 import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
@@ -440,7 +441,11 @@ export async function runInContext(
     return runInContext(code, context, options)
   }
   if (context.variant === 'lazy') {
-    console.log('lazy detected')
+    const thunk = lazyEvaluate(program, context)
+    return Promise.resolve({
+      status: 'finished',
+      value: thunk.value
+    } as Result)
   }
   if (isNativeRunnable) {
     if (previousCode === code) {

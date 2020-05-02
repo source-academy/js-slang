@@ -4,7 +4,7 @@ import { parse as sourceParse } from '../parser/parser'
 import { libraryParserLanguage } from '../parser/syntaxBlacklist'
 import { Context, Value } from '../types'
 import { oneLine } from '../utils/formatters'
-import { vector_to_list } from './list'
+import { vector_to_list } from './eager-list'
 
 class ParseError extends Error {
   constructor(message: string) {

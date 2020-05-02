@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Numeric 5 resolves to 5 on lazy: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "5;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Ternary true ? 1 : head(null) resolves to 1 on lazy: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true ? 1 : head(null);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`const ones = pair(1, ones) resolves to an infinite list of ones.: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const ones = pair(1, ones);
+list_ref(ones, 1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy flip_flops: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "// const flip_flops = pair(0, flop_flips);
+// const flop_flips = pair(1, flip_flops);
+// list_ref(flip_flops, 0);
+2;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

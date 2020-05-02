@@ -31,7 +31,7 @@ Array [
     `,
       { chapter: 3, native: true }
     ).toMatch(/(Maximum call stack size exceeded){1,2}/)
-  }, 15000)
+  }, 20000)
 
   test('stream is properly created', () => {
     return expectResult(
