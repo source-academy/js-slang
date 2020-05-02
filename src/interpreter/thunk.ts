@@ -28,3 +28,5 @@ class Thunk {
     return Thunk.valueOf(this.evaluate())
   }
 }
+
+export default Thunk

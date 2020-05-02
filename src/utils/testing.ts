@@ -1,4 +1,5 @@
-import { default as createContext, defineBuiltin } from '../createContext'
+import { default as createContext } from '../createContext'
+import { defineBuiltin } from '../eager-builtins'
 import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'

@@ -432,6 +432,7 @@ export async function runInContext(
   if (context.chapter <= 2) {
     addInfiniteLoopProtection(program, context.chapter === 2)
   }
+  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
@@ -441,7 +442,6 @@ export async function runInContext(
   if (context.variant === 'lazy') {
     console.log('lazy detected')
   }
-  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (isNativeRunnable) {
     if (previousCode === code) {
       JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
