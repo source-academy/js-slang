@@ -73,7 +73,12 @@ function main() {
   const opt = require('node-getopt')
     .create([
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
-      ['v', 'variant=VARIANT', 'set the Source variant (i.e., default, lazy, non-det, concurrent, wasm, gpu)', 'default'],
+      [
+        'v',
+        'variant=VARIANT',
+        'set the Source variant (i.e., default, lazy, non-det, concurrent, wasm, gpu)',
+        'default'
+      ],
       ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
       ['i', 'interpreter', 'use the interpreter for execution'],
@@ -85,9 +90,11 @@ function main() {
 
   const variant = opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
-  const areValidChapterVariant:boolean = validChapterVariant(chapter, variant);
+  const areValidChapterVariant: boolean = validChapterVariant(chapter, variant)
   if (!areValidChapterVariant) {
-    throw new Error("The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.")
+    throw new Error(
+      'The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.'
+    )
   }
 
   const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'

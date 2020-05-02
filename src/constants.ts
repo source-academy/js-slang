@@ -32,4 +32,4 @@ export const sourceLanguages: SourceLanguage[] = [
   { chapter: 3, variant: 'non-det' },
   { chapter: 4, variant: 'default' },
   { chapter: 4, variant: 'gpu' }
-];
+]
