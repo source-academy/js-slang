@@ -621,19 +621,19 @@ describe('Type checking reassignment for Source 3', () => {
       xs: List<number>"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 6: Expected reassignment of z:
+      "Line 6: Expected assignment of z:
         false || true
       to get a value of type:
         number
       but got a value of type:
         boolean
-      Line 7: Expected reassignment of f:
+      Line 7: Expected assignment of f:
         x => x || fals ... e
       to get a value of type:
         number -> number
       but got a value of type:
         boolean -> boolean
-      Line 10: Expected reassignment of xs:
+      Line 10: Expected assignment of xs:
         pair(false, pa ... ir(false, null))
       to get a value of type:
         List<number>

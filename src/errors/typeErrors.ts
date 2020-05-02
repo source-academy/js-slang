@@ -86,7 +86,7 @@ export class DifferentAssignmentError implements SourceError {
   public explain() {
     const [varName, assignmentStr] = formatAssignment(this.node)
     return stripIndent`
-    Expected reassignment of ${varName}:
+    Expected assignment of ${varName}:
       ${assignmentStr}
     to get a value of type:
       ${typeToString(this.expectedType)}
