@@ -4,6 +4,7 @@ import { inspect } from 'util'
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import { Variant, ExecutionMethod } from '../types'
 import Closure from '../interpreter/closure'
+import { sourceLanguages } from '../constants'
 
 function startRepl(
   chapter = 1,
@@ -14,7 +15,7 @@ function startRepl(
   prelude = ''
 ) {
   // use defaults for everything
-  const context = createContext(chapter, undefined, undefined, undefined)
+  const context = createContext(chapter, variant, undefined, undefined)
   const options: Partial<IOptions> = {
     scheduler: 'preemptive',
     executionMethod,
@@ -22,7 +23,7 @@ function startRepl(
     useSubst
   }
   runInContext(prelude, context, options).then(preludeResult => {
-    if (preludeResult.status === 'finished') {
+    if (preludeResult.status === 'finished' || preludeResult.status === 'suspended-non-det') {
       console.dir(preludeResult.value, { depth: null })
       if (!useRepl) {
         return
@@ -32,7 +33,7 @@ function startRepl(
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
             runInContext(cmd, context, options).then(obj => {
-              if (obj.status === 'finished') {
+              if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
                 callback(null, obj.value)
               } else {
                 callback(new Error(parseError(context.errors)), undefined)
@@ -57,24 +58,39 @@ function startRepl(
   })
 }
 
+/**
+ * Returns true iff the given chapter and variant combination is supported.
+ */
+function validChapterVariant(chapter: any, variant: any) {
+  for (const lang of sourceLanguages) {
+    if (lang.chapter === chapter && lang.variant === variant) return true
+  }
+
+  return false
+}
+
 function main() {
   const opt = require('node-getopt')
     .create([
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
-      ['v', 'variant=VARIANT', 'set the Source variant (i.e., lazy, non-det, concurrent, wasm)', 'default'],
+      ['v', 'variant=VARIANT', 'set the Source variant (i.e., default, lazy, non-det, concurrent, wasm, gpu)', 'default'],
       ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
       ['i', 'interpreter', 'use the interpreter for execution'],
-      ['l', 'lazy', 'use lazy evaluation'],
       ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
     .bindHelp()
     .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
     .parseSystem()
 
-  const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
-  const variant = opt.options.lazy === true ? 'lazy' : opt.options.variant
+  const variant = opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
+  const areValidChapterVariant:boolean = validChapterVariant(chapter, variant);
+  if (!areValidChapterVariant) {
+    throw new Error("The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.")
+  }
+
+  const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
