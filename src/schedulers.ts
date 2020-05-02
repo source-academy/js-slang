@@ -77,7 +77,6 @@ export class PreemptiveScheduler implements Scheduler {
           while (!itValue.done && step < this.steps) {
             step++
             itValue = it.next()
-
             actuallyBreak = context.runtime.break && context.runtime.debuggerOn
             if (actuallyBreak) {
               itValue.done = true

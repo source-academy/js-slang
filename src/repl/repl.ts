@@ -72,7 +72,7 @@ function main() {
     .parseSystem()
 
   const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
-  const variant = opt.options.lazy === true ? 'lazy' : 'default'
+  const variant = 'default'
   const chapter = parseInt(opt.options.chapter, 10)
   const useSubst = opt.options.s
   const useRepl = !opt.options.e
