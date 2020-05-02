@@ -618,7 +618,7 @@ function reduceMain(
         ' declared and substituted into rest of block',
 
       ArrayExpression: (target: es.ArrayExpression): string =>
-        target.elements.map(bodify).toString()
+        '[' + bodify(target.elements[0]) + ', ' + bodify(target.elements[1]) + ']'
     }
 
     const bodifier = bodifiers[target.type]
