@@ -31,14 +31,14 @@ export class WrongArgumentTypeError implements SourceError {
   private message = ''
 
   constructor(
-    public nodeConstraintLhs: Type,
-    nodeConstraintRhs: Type,
+    public expectedType: Type,
+    receivedType: Type,
     argumentIndex: number,
     public loc: es.SourceLocation
   ) {
-    this.message = `The function expects argument ${argumentIndex} to be ${printType(
-      nodeConstraintLhs
-    )} but got ${printType(nodeConstraintRhs)}`
+    this.message = `The function expects argument #${argumentIndex} to be ${printType(
+      expectedType
+    )} but got ${printType(receivedType)} instead.`
   }
 
   get location() {
@@ -64,7 +64,7 @@ export class ConditionalTestTypeError implements SourceError {
   constructor(public nodeType: Type, public loc: es.SourceLocation) {
     this.message = `Test expressions of conditionals should be a boolean, but got ${printType(
       nodeType
-    )}`
+    )} instead.`
   }
 
   get location() {
@@ -96,7 +96,7 @@ export class ConditionalTypeError implements SourceError {
   ) {
     this.message = `Expected consequent and alternative to return the same types,
         but the consequent returns ${printType(consqeuentType)}
-        and the alternate returns ${printType(alternateType)}`
+        and the alternative returns ${printType(alternateType)} instead.`
   }
 
   get location() {
@@ -122,7 +122,7 @@ export class DifferentReturnTypeError implements SourceError {
   private message = ''
 
   constructor(public loc: es.SourceLocation) {
-    this.message = `All return statements in a function should return the same type`
+    this.message = `All return statements in a function should return the same type.`
   }
 
   get location() {
@@ -152,7 +152,7 @@ export class WrongNumberArgumentsError implements SourceError {
     public applicationArgCount: number,
     public loc: es.SourceLocation
   ) {
-    this.message = `The function expects ${declarationArgCount} argument(s) but ${applicationArgCount} argument(s) are supplied`
+    this.message = `The function expects ${declarationArgCount} argument(s) but ${applicationArgCount} argument(s) are supplied.`
   }
 
   get location() {
@@ -209,7 +209,7 @@ export class GeneralTypeError implements SourceError {
     public reason: string,
     public loc: es.SourceLocation
   ) {
-    this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)}`
+    this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)} instead.`
   }
 
   get location() {

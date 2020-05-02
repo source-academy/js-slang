@@ -380,8 +380,8 @@ function inferFunctionApplication(functionApplication: TypeAnnotatedNode<es.Call
     const errorObj = updateTypeConstraints(applicationArgTypeVariable, declarationArgType)
     if (errorObj) {
       throw new WrongArgumentTypeError(
-        errorObj.constraintLhs,
         errorObj.constraintRhs,
+        errorObj.constraintLhs,
         i + 1,
         applicationArgs[i].loc!
       )
