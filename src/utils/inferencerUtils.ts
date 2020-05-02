@@ -72,7 +72,43 @@ const predefined = new Set([
   'prompt',
   'runtime',
   'stringify',
-  'undefined'
+  'undefined',
+  // Source 4 functions
+  'is_list',
+  'equal',
+  'length',
+  'map',
+  'build',
+  'build_list',
+  'for_each',
+  'list_to_string',
+  'rev',
+  'reverse',
+  'append',
+  'member',
+  'remove',
+  'remove_all',
+  'filter',
+  'enum_list',
+  'list_ref',
+  'accumulate',
+  'is_stream',
+  'list_to_stream',
+  'stream_to_list',
+  'stream_length',
+  'stream_map',
+  'build_stream',
+  'stream_for_each',
+  'stream_reverse',
+  'stream_append',
+  'stream_member',
+  'stream_remove',
+  'stream_remove_all',
+  'stream_filter',
+  'enum_stream',
+  'integers_from',
+  'eval_stream',
+  'stream_ref'
 ])
 
 export function printType(type: Type): string {
@@ -97,25 +133,28 @@ export function printType(type: Type): string {
 }
 
 export function printTypeConstraints(typeContraints: Map<Type, Type>) {
-  console.log('Printing Type Constraints:')
+  let typeConstraintString = 'Printing Type Constraints:\n'
   for (const [key, value] of typeContraints) {
-    console.log(`${printType(key)} = ${printType(value)}`)
+    typeConstraintString += `${printType(key)} = ${printType(value)}\n`
   }
-  console.log('\n')
+  typeConstraintString += '\n'
+  console.log(typeConstraintString)
 }
 
 export function printTypeEnvironment(typeEnvironment: Map<string, any>) {
-  console.log('Printing Type Environment:')
+  // Put everything in one string so test cases can monitor the string in the console.
+  let typeEnvironmentString = 'Printing Type Environment:\n'
   for (const [key, value] of typeEnvironment) {
     if (predefined.has(key)) {
       continue
     }
-    console.log(`${key} <- ${printType(value.types[0])}`)
+    typeEnvironmentString += `${key} <- ${printType(value.types[0])}\n`
   }
-  console.log('\n')
+  console.log(typeEnvironmentString)
 }
 
 export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
+  let resultString = 'Initial Type Annotations:\n'
   function getTypeVariableId(node: TypeAnnotatedNode<es.Node>): string {
     return `T${(node.typeVariable as Variable).id}`
   }
@@ -197,21 +236,21 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
 
   function printConstantDeclaration(declaration: TypeAnnotatedNode<es.VariableDeclarator>) {
     const id: TypeAnnotatedNode<es.Pattern> = declaration.id
-    console.log(`${(id as es.Identifier).name}: ${getTypeVariableId(id)}`)
+    resultString += `${(id as es.Identifier).name}: ${getTypeVariableId(id)}\n`
   }
 
   // Q: Why does printIdentifier only handle usage `x^T4` but not declaration `const x^T2` even tho there is an Identifier node in VariableDeclarator
   function printIdentifier(identifier: TypeAnnotatedNode<es.Identifier>) {
-    console.log(`${identifier.name}: ${getTypeVariableId(identifier)}`)
+    resultString += `${identifier.name}: ${getTypeVariableId(identifier)}\n`
   }
 
   function printUnaryExpression(unaryExpression: TypeAnnotatedNode<es.UnaryExpression>) {
-    console.log(
-      `${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(
-        unaryExpression.argument
-      )}`
-    )
-    console.log(`${getExpressionString(unaryExpression)}: ${getTypeVariableId(unaryExpression)}`)
+    resultString += `${getExpressionString(unaryExpression.argument)}: ${getTypeVariableId(
+      unaryExpression.argument
+    )}\n`
+    resultString += `${getExpressionString(unaryExpression)}: ${getTypeVariableId(
+      unaryExpression
+    )}\n`
   }
 
   function printFunctionDeclaration(
@@ -226,7 +265,7 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     res += ') => '
     const result = (functionDeclaration as es.FunctionDeclaration).body
     res += getTypeVariableId(result)
-    console.log(`${getExpressionString(functionDeclaration)}: ${res}`)
+    resultString += `${getExpressionString(functionDeclaration)}: ${res}`
   }
 
   function printFunctionDefinition(
@@ -241,15 +280,14 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     res += ') => '
     const result = (functionDefinition as es.ArrowFunctionExpression).body
     res += getTypeVariableId(result)
-    console.log(`${getTypeVariableId(functionDefinition)}: ${res}`)
+    resultString += `${getTypeVariableId(functionDefinition)}: ${res}\n`
   }
 
   // generic function to print
   function printExpression(node: TypeAnnotatedNode<es.Node>) {
-    console.log(`${getExpressionString(node)}: ${getTypeVariableId(node)}`)
+    resultString += `${getExpressionString(node)}: ${getTypeVariableId(node)}\n`
   }
 
-  console.log('Initial Type Annotations:')
   ancestor(program as es.Node, {
     Literal: printExpression,
     VariableDeclarator: printConstantDeclaration,
@@ -265,5 +303,5 @@ export function printTypeAnnotation(program: TypeAnnotatedNode<es.Program>) {
     IfStatement: printExpression,
     ReturnStatement: printExpression
   })
-  console.log('\n')
+  console.log(resultString)
 }

@@ -3,10 +3,11 @@ import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, SourceError, Value, TypeAnnotatedNode, Type } from '../types'
 import { stringify } from './stringify'
 import { validateAndAnnotate } from '../validator/validator'
 import * as es from 'estree'
+import { inferProgram } from '../inferencer/inferencer'
 
 export interface TestContext extends Context {
   displayResult: string[]
@@ -317,4 +318,15 @@ export async function toValidatedAst(code: string) {
   const ast = parse(code, context)
   expect(ast).not.toBeUndefined()
   return validateAndAnnotate(ast as es.Program, context)
+}
+
+export function toTypeInferredAst(
+  code: string
+): [TypeAnnotatedNode<es.Program>, Map<any, any>, Map<Type, Type>] {
+  const context = mockContext(1)
+  const program = parse(code, context)
+  const [ast, typeEnvironment, constraintStore] = inferProgram(
+    program as TypeAnnotatedNode<es.Program>
+  )
+  return [ast, typeEnvironment, constraintStore]
 }
