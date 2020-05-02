@@ -5,6 +5,8 @@ import {
   printTypeAnnotation
 } from '../../utils/inferencerUtils'
 import { toTypeInferredAst } from '../../utils/testing'
+import { parseError } from '../..'
+import { SourceError } from '../../types'
 
 beforeEach(() => {
   jest.spyOn(console, 'log').mockImplementationOnce(() => {})
@@ -87,4 +89,32 @@ T37 = boolean
 
 "
 `)
+})
+
+test(`Throws an error when '-' applied to the wrong type`, async () => {
+  const code = stripIndent`const wrongApplicationOfMinus = -bool;`
+  const errors: SourceError[] = []
+  try {
+    toTypeInferredAst(code)
+  } catch (err) {
+    errors.push(err)
+  }
+  expect(errors).toHaveLength(1)
+  expect(parseError(errors)).toMatchInlineSnapshot(
+    `"Line 1: The function expects argument 1 to be a number but got a boolean"`
+  )
+})
+
+test(`Throws an error when '!' applied to the wrong type`, async () => {
+  const code = stripIndent`!2;`
+  const errors: SourceError[] = []
+  try {
+    toTypeInferredAst(code)
+  } catch (err) {
+    errors.push(err)
+  }
+  expect(errors).toHaveLength(1)
+  expect(parseError(errors)).toMatchInlineSnapshot(
+    `"Line 1: The function expects argument 1 to be a boolean but got a number"`
+  )
 })
