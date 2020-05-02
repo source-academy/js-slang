@@ -7,7 +7,7 @@ function printType(type: Type): string {
     case 'primitive':
       return type.name === 'undefined' ? `undefined` : `a ${type.name}`
     case 'variable':
-      return type.isAddable ? `an addable` : `any type`
+      return type.isAddable ? `an addable (number or string)` : `any type`
     case 'function':
       let params = ''
       for (const argument of type.parameterTypes) {
@@ -94,9 +94,11 @@ export class ConditionalTypeError implements SourceError {
     public alternateType: Type,
     public loc: es.SourceLocation
   ) {
-    this.message = `Expected consequent and alternative to return the same types,
-        but the consequent returns ${printType(consqeuentType)}
-        and the alternative returns ${printType(alternateType)} instead.`
+    this.message = `Expected consequent and alternative to return the same types, but the consequent returns ${printType(
+      consqeuentType
+      )} and the alternative returns ${printType(
+        alternateType
+        )} instead.`
   }
 
   get location() {
