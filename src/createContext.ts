@@ -9,7 +9,7 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { Context, CustomBuiltIns, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
-// import { importBuiltins as importLazyBuiltins } from './lazy-builtins'
+import { importBuiltins as importLazyBuiltins } from './lazy-builtins'
 import { importBuiltins as importEagerBuiltins } from './eager-builtins'
 
 const createEmptyRuntime = () => ({
@@ -104,11 +104,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  * Imports builtins from standard and external libraries.
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
-  // if (context.variant === 'lazy') {
-  //   importLazyBuiltins(context, externalBuiltIns)
-  // } else {
-  importEagerBuiltins(context, externalBuiltIns)
-  // }
+  if (context.variant === 'lazy') {
+    importLazyBuiltins(context, externalBuiltIns)
+  } else {
+    importEagerBuiltins(context, externalBuiltIns)
+  }
 }
 
 function importPrelude(context: Context) {
