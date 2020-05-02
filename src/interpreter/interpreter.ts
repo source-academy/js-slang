@@ -44,18 +44,30 @@ export function* forceEvaluate(node: es.Node, context: Context): IterableIterato
   return yield* dethunk(result)
 }
 
+function isForceIt(node: es.Node) {
+  return (
+    node.type === 'CallExpression' &&
+    node.callee.type === 'Identifier' &&
+    node.callee.name === 'force_it'
+  )
+}
+
 /**
  * If the lazy-evaluation mode is used, this function returns a `Thunk` containing `node` and `context`.
- * Otherwise, this function evaluates `node` given `context`, and returns a non-thunk `Value`.
- * In other words, if the lazy-evaluation is not used, this function behaves the same as `forceEvaluate`.
+ * If the lazy-evaluation is not used, this function behaves the same as `forceEvaluate`.
+ *
+ * There is only one exception: if the node is a call expression in the form of `force_it(...)`,
+ * the result will be deep-dethunked.
  *
  * @returns a `Thunk` if the lazy-evaluation mode is used, or a non-thunk `Value` otherwise.
  */
 export function* evaluate(node: es.Node, context: Context): IterableIterator<Value> {
-  if (context.variant === 'lazy') {
-    return new Thunk(node, context)
-  } else {
+  if (context.variant !== 'lazy') {
     return yield* forceEvaluate(node, context)
+  } else if (isForceIt(node)) {
+    return yield* forceEvaluateAndDeepDethunk(node, context)
+  } else {
+    return new Thunk(node, context)
   }
 }
 

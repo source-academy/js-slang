@@ -25,19 +25,19 @@ function getContextWithIndependentEnvironment(context: Context): Context {
  * `Thunk` represents a delayed evaluation.
  */
 export default class Thunk {
+  public node: es.Node
+  public context: Context
   public isEvaluated: boolean
   public result: Value
-  public originalNode: es.Node
-  public context: Context
 
-  constructor(public node: es.Node, context: Context) {
-    this.originalNode = node
+  constructor(node: es.Node, context: Context) {
+    this.node = node
+    this.context = getContextWithIndependentEnvironment(context)
     this.isEvaluated = false
     this.result = null
-    this.context = getContextWithIndependentEnvironment(context)
     // @ts-ignore
     this.inspect = (_depth: any, _opts: any) => this.toString()
-    this.toString = () => '[Thunk <' + this.originalNode.type + '>]'
+    this.toString = () => '[Thunk <' + this.node.type + '>]'
   }
 
   /**

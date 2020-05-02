@@ -1,5 +1,98 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`force_it function forces evaluation in function calls: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) { return 0; }
+f(error());
+f(force_it(error()));",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: undefined],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 11,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Error: undefined",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`force_it function forces evaluation in variable declarations: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = error();
+const b = force_it(error());",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: undefined],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 26,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 19,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: undefined",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`force_it function forces evaluation of elements in array expressions: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = [0, error()];
+a[0];
+const b = [0, force_it(error())];
+b[0];",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: undefined],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 30,
+          "line": 3,
+        },
+        "start": Position {
+          "column": 23,
+          "line": 3,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 3: Error: undefined",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`infinite functions with pair: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -14,7 +107,7 @@ head(f(0))+head(tail(tail(f(0))));",
 }
 `;
 
-exports[`lazy evaluation mode delays arguments in function calls: expectResult 1`] = `
+exports[`lazy evaluation mode delays arguments in a function call: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "function f(x, y) { return y; }
@@ -28,10 +121,24 @@ f(error(), 1);",
 }
 `;
 
-exports[`lazy evaluation mode delays expressions in variable declarations: expectResult 1`] = `
+exports[`lazy evaluation mode delays elements in an array: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const a = error(); // delayed",
+  "code": "const a = [1, error(), 2];
+a[0] + a[2];",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`lazy evaluation mode delays expressions in a variable declaration: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = error();",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -44,11 +151,11 @@ Object {
 exports[`lazy evaluation mode evaluates each expression at most once: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "function f() { display(\\"this line should be printed exactly once\\"); return 1; }
+  "code": "function f() { display(\\"print once\\"); return 1; }
 const a = f();
 a+a+a;",
   "displayResult": Array [
-    "\\"this line should be printed exactly once\\"",
+    "\\"print once\\"",
   ],
   "errors": Array [],
   "parsedErrors": "",

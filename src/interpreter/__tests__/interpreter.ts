@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectResult } from '../../utils/testing'
+import { expectResult, expectParsedError } from '../../utils/testing'
 
 /**
  * Testing plan
@@ -14,7 +14,7 @@ describe('lazy evaluation mode', () => {
   it('evaluates each expression at most once', () => {
     return expectResult(
       stripIndent`
-        function f() { display("this line should be printed exactly once"); return 1; }
+        function f() { display("print once"); return 1; }
         const a = f();
         a+a+a;
       `,
@@ -39,16 +39,16 @@ describe('lazy evaluation mode', () => {
     ).toMatchInlineSnapshot(`3`)
   })
 
-  it('delays expressions in variable declarations', () => {
+  it('delays expressions in a variable declaration', () => {
     return expectResult(
       stripIndent`
-        const a = error(); // delayed
+        const a = error();
       `,
       { chapter: 2, variant: 'lazy', native: false }
     ).toMatchInlineSnapshot(`undefined`)
   })
 
-  it('delays arguments in function calls', () => {
+  it('delays arguments in a function call', () => {
     return expectResult(
       stripIndent`
         function f(x, y) { return y; }
@@ -56,6 +56,16 @@ describe('lazy evaluation mode', () => {
       `,
       { chapter: 2, variant: 'lazy', native: false }
     ).toMatchInlineSnapshot(`1`)
+  })
+
+  it('delays elements in an array', () => {
+    return expectResult(
+      stripIndent`
+        const a = [1, error(), 2];
+        a[0] + a[2];
+      `,
+      { chapter: 3, variant: 'lazy', native: false }
+    ).toMatchInlineSnapshot(`3`)
   })
 })
 
@@ -67,4 +77,39 @@ test('infinite functions with pair', () => {
     `,
     { chapter: 2, variant: 'lazy', native: false }
   ).toMatchInlineSnapshot(`2`)
+})
+
+describe('force_it function', () => {
+  it('forces evaluation in variable declarations', () => {
+    return expectParsedError(
+      stripIndent`
+        const a = error();
+        const b = force_it(error());
+      `,
+      { chapter: 2, variant: 'lazy', native: false }
+    ).toMatchInlineSnapshot(`"Line 2: Error: undefined"`)
+  })
+
+  it('forces evaluation in function calls', () => {
+    return expectParsedError(
+      stripIndent`
+        function f(x) { return 0; }
+        f(error());
+        f(force_it(error()));
+      `,
+      { chapter: 2, variant: 'lazy', native: false }
+    ).toMatchInlineSnapshot(`"Line 3: Error: undefined"`)
+  })
+
+  it('forces evaluation of elements in array expressions', () => {
+    return expectParsedError(
+      stripIndent`
+        const a = [0, error()];
+        a[0];
+        const b = [0, force_it(error())];
+        b[0];
+      `,
+      { chapter: 3, variant: 'lazy', native: false }
+    ).toMatchInlineSnapshot(`"Line 3: Error: undefined"`)
+  })
 })
