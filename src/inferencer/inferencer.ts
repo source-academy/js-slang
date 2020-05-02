@@ -276,44 +276,6 @@ function inferReturnStatement(returnStatement: TypeAnnotatedNode<es.ReturnStatem
 }
 
 function inferFunctionDeclaration(functionDeclaration: TypeAnnotatedNode<es.FunctionDeclaration>) {
-  // Update type constraints in constraintStore
-  // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
-  // First, try to add constraints that ensure all ReturnStatements *and BlockStatements* give same type
-  // e.g. T2 = T3
-  // const bodyNodes = (functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>).body
-  // let prevReturnTypeVariable
-  // for (const node of bodyNodes) {
-  //   if (node.type === 'ReturnStatement' || node.type === 'BlockStatement') {
-  //     const currReturnTypeVariable = (node as TypeAnnotatedNode<es.Node>).typeVariable as Variable
-  //     if (prevReturnTypeVariable !== undefined && currReturnTypeVariable !== undefined) {
-  //       const errorObj = updateTypeConstraints(prevReturnTypeVariable, currReturnTypeVariable)
-  //       if (errorObj) {
-  //         throw new DifferentReturnTypeError(node.loc!)
-  //       }
-  //     }
-  //     prevReturnTypeVariable = currReturnTypeVariable
-  //   }
-  // }
-  // **** ^ DONE BY BLOCK ****
-
-  // If the above step executes successfully w/o any Type Error,
-  // Next, add constraint to give the FunctionDeclaration a result type corresponding to the (last) ReturnStatement *or BlockStatement*
-  // e.g. T4 = T3
-  // const block = functionDeclaration.body as TypeAnnotatedNode<es.BlockStatement>
-  // const blockTypeVariable = block.typeVariable as Variable
-  // if (blockTypeVariable !== undefined && prevReturnTypeVariable !== undefined) {
-  //   const errorObj = updateTypeConstraints(blockTypeVariable, prevReturnTypeVariable)
-  //   if (errorObj) {
-  //     throw new GeneralTypeError(
-  //       blockTypeVariable,
-  //       prevReturnTypeVariable,
-  //       'Failed in assigning the return type to the block',
-  //       block.loc!
-  //     )
-  //   }
-  // }
-  // **** ^ DONE BY BLOCK ****
-
   // Add constraint to give the function identifier the corresponding function type
   // e.g. Given: f^T5 (x^T1) { (return (...))^T2 ... (return (...))^T3 }^T4
   //      Add: T5 = [T1] => T4

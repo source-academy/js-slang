@@ -9,14 +9,8 @@ function notAnnotated(node: TypeAnnotatedNode<es.Node>): boolean {
 
 function annotateNode(node: TypeAnnotatedNode<es.Node>, isPolymorphic: boolean = false) {
   if (notAnnotated(node)) {
-    // node.typeVariable = {
-    //   kind: 'variable',
-    //   id: typeVariableId,
-    //   isPolymorphic
-    // }
     node.typeVariable = generateTypeVariable(isPolymorphic, false)
     node.typability = 'NotYetTyped'
-    // typeVariableId += 1
   }
 }
 
