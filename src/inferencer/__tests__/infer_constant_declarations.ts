@@ -11,7 +11,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  (console.log as any).mockRestore()
+  ;(console.log as any).mockRestore()
   jest.restoreAllMocks()
 })
 

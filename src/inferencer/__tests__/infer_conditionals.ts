@@ -360,7 +360,7 @@ test('Conditional statement throws errors when a different type is returned', as
         }
     }
     `
-    const errors: SourceError[] = []
+  const errors: SourceError[] = []
   try {
     toTypeInferredAst(code)
   } catch (err) {
@@ -368,9 +368,8 @@ test('Conditional statement throws errors when a different type is returned', as
   }
   expect(errors).toHaveLength(1)
   expect(parseError(errors)).toMatchInlineSnapshot(`
-  "Line 2: Expected consequent and alternative to return the same types,
-          but the consequent returns a number
-          and the alternate returns a boolean"
-  `)
+"Line 2: Expected consequent and alternative to return the same types,
+        but the consequent returns a number
+        and the alternate returns a boolean"
+`)
 })
-
