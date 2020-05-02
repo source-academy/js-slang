@@ -41,26 +41,26 @@ applyNegationToVariable <- boolean
   expect((console.log as any).mock.calls[(console.log as any).mock.calls.length - 1][0])
     .toMatchInlineSnapshot(`
 "Initial Type Annotations:
-2: T18
-num: T19
-true: T20
-bool: T21
-2: T22
-2: T22
--2: T24
-negative: T23
-num: T25
-num: T25
--num: T27
-applyMinusToVariable: T26
-bool: T28
-bool: T28
-!bool: T30
-negated: T29
-bool: T31
-bool: T31
-!bool: T33
-applyNegationToVariable: T32
+2: T23
+num: T24
+true: T25
+bool: T26
+2: T27
+2: T27
+-2: T29
+negative: T28
+num: T30
+num: T30
+-num: T32
+applyMinusToVariable: T31
+bool: T33
+bool: T33
+!bool: T35
+negated: T34
+bool: T36
+bool: T36
+!bool: T38
+applyNegationToVariable: T37
 "
 `)
 
@@ -68,22 +68,22 @@ applyNegationToVariable: T32
   expect((console.log as any).mock.calls[(console.log as any).mock.calls.length - 1][0])
     .toMatchInlineSnapshot(`
 "Printing Type Constraints:
-T18 = number
-T19 = number
-T20 = boolean
-T21 = boolean
-T22 = number
-T24 = number
 T23 = number
-T25 = number
+T24 = number
+T25 = boolean
+T26 = boolean
 T27 = number
-T26 = number
-T28 = boolean
-T30 = boolean
-T29 = boolean
-T31 = boolean
+T29 = number
+T28 = number
+T30 = number
+T32 = number
+T31 = number
 T33 = boolean
-T32 = boolean
+T35 = boolean
+T34 = boolean
+T36 = boolean
+T38 = boolean
+T37 = boolean
 
 "
 `)
