@@ -209,7 +209,9 @@ export class GeneralTypeError implements SourceError {
     public reason: string,
     public loc: es.SourceLocation
   ) {
-    this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(actualType)} instead.`
+    this.message = `${reason}: Expected ${printType(expectedType)}, got ${printType(
+      actualType
+    )} instead.`
   }
 
   get location() {
