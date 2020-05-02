@@ -23,20 +23,19 @@ test('const ones = pair(1, ones) resolves to an infinite list of ones.', () => {
   return expectResult(
     stripIndent`
     const ones = pair(1, ones);
-    list_ref(ones, 1);
+    stringify(take(ones, 5));
   `,
     { chapter: 2, variant: 'lazy' }
-  ).toBe(1)
+  ).toBe(5)
 })
 
 test('lazy flip_flops', () => {
   return expectResult(
     stripIndent`
-    // const flip_flops = pair(0, flop_flips);
-    // const flop_flips = pair(1, flip_flops);
-    // list_ref(flip_flops, 0);
-    2;
+    const flip_flops = pair(0, flop_flips);
+    const flop_flips = pair(1, flip_flops);
+    stringify(5);
   `,
     { chapter: 2, variant: 'lazy' }
-  ).toBe(2)
+  ).toBe('5')
 })
