@@ -3,7 +3,7 @@ import { stripIndent } from '../../utils/formatters'
 import { Value } from '../../types'
 
 const prelude = stripIndent`
-  const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+  const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
 `
 
 function expect(code: string, result: Value) {

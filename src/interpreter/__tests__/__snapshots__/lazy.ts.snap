@@ -1,17 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Flip flops work!: expectResult 1`] = `
+exports[`Infinite flip flops: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
-      const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
-const nat = (n) => pair(n, nat(n+1));
-const primes = sieve(nat(2));
-stringify(take(primes, 5));",
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
+      const flips = pair(0, flops);
+const flops = pair(1, flips);
+stringify(take(flips, 6));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[2, [3, [5, [7, [11, null]]]]]",
+  "result": "[0, [1, [0, [1, [0, [1, null]]]]]]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -20,7 +19,7 @@ stringify(take(primes, 5));",
 exports[`Infinite prime list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
       const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
 const nat = (n) => pair(n, nat(n+1));
 const primes = sieve(nat(2));
@@ -37,7 +36,7 @@ stringify(take(primes, 5));",
 exports[`Numeric 5 resolves to 5 on lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
 5;",
   "displayResult": Array [],
   "errors": Array [],
@@ -51,7 +50,7 @@ Object {
 exports[`Ternary true ? 1 : head(null) resolves to 1 on lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
 true ? 1 : head(null);",
   "displayResult": Array [],
   "errors": Array [],
@@ -65,7 +64,7 @@ true ? 1 : head(null);",
 exports[`const ones = pair(1, ones) resolves to an infinite list of ones.: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
       const ones = pair(1, ones);
 stringify(take(ones, 5));",
   "displayResult": Array [],
