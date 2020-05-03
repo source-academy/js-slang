@@ -44,15 +44,14 @@ test('const ones = pair(1, ones) resolves to an infinite list of ones.', () => {
   )
 })
 
-test('Flip flops work!', () => {
+test('Infinite flip flops', () => {
   return expect(
     stripIndent`
-    const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
-    const nat = (n) => pair(n, nat(n+1));
-    const primes = sieve(nat(2));
-    stringify(take(primes, 5));
+    const flips = pair(0, flops);
+    const flops = pair(1, flips);
+    stringify(take(flips, 6));
   `,
-    '[2, [3, [5, [7, [11, null]]]]]'
+    '[0, [1, [0, [1, [0, [1, null]]]]]]'
   )
 })
 

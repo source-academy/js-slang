@@ -147,10 +147,6 @@ function list_ref(xs, n) {
   return n === 0 ? head(xs) : list_ref(tail(xs), n - 1);
 }
 
-function take(xs, n) {
-  return n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-}
-
 // accumulate applies an operation op (assumed to be a binary function)
 // to elements of sequence (assumed to be a list) in a right-to-left order.
 // first apply op to the last element and initial, resulting in r1, then to
