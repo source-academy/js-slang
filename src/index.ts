@@ -441,10 +441,10 @@ export async function runInContext(
     return runInContext(code, context, options)
   }
   if (context.variant === 'lazy') {
-    const thunk = lazyEvaluate(program, context)
+    const value = lazyEvaluate(program, context).value
     return Promise.resolve({
       status: 'finished',
-      value: thunk.value
+      value
     } as Result)
   }
   if (isNativeRunnable) {

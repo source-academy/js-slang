@@ -33,10 +33,6 @@ function map(f, xs) {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
 }
 
-function take(xs, n) {
-  return n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n));
-}
-
 // build_list takes a non-negative integer n as first argument,
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from

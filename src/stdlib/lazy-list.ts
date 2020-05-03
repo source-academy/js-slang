@@ -30,7 +30,7 @@ export function* is_pair(x: Thunk) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function* head(xs: Thunk) {
   if (yield* is_pair(xs)) {
-    const [h] = yield* xs.evaluate()
+    const h = (yield* xs.evaluate())[0]
     return yield* h.evaluate()
   } else {
     throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
@@ -42,7 +42,7 @@ export function* head(xs: Thunk) {
 // LOW-LEVEL FUNCTION, NOT SOURCE
 export function* tail(xs: Thunk) {
   if (yield* is_pair(xs)) {
-    const [, t] = yield* xs.evaluate()
+    const t = (yield* xs.evaluate())[1]
     return yield* t.evaluate()
   } else {
     throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs))

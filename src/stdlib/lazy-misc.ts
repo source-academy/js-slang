@@ -1,20 +1,6 @@
 import { stringify } from '../utils/lazy-stringify'
 import Thunk from '../interpreter/thunk'
 
-/**
- * A function that displays to console.log by default (for a REPL).
- *
- * @param value the value to be represented and displayed.
- * @param externalContext a property of Context that can hold
- *   any information required for external use (optional).
- */
-// export function* rawDisplay(t: Thunk, str: string, externalContext: any) {
-//   const v = yield* t.evaluate()
-//   // tslint:disable-next-line:no-console
-//   console.log((str === undefined ? '' : str + ' ') + v.toString())
-//   return v
-// }
-
 export function* error_message(t: Thunk, str?: string) {
   const v = yield* t.evaluate()
   const output = (str === undefined ? '' : str + ' ') + stringify(v)

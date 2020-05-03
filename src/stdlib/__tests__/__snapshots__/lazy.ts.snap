@@ -1,9 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Flip flops work!: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+      const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
+const nat = (n) => pair(n, nat(n+1));
+const primes = sieve(nat(2));
+stringify(take(primes, 5));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[2, [3, [5, [7, [11, null]]]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Infinite prime list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+      const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
+const nat = (n) => pair(n, nat(n+1));
+const primes = sieve(nat(2));
+stringify(take(primes, 5));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[2, [3, [5, [7, [11, null]]]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Numeric 5 resolves to 5 on lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "5;",
+  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+5;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -16,7 +51,8 @@ Object {
 exports[`Ternary true ? 1 : head(null) resolves to 1 on lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "true ? 1 : head(null);",
+  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+true ? 1 : head(null);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -26,16 +62,16 @@ Object {
 }
 `;
 
-exports[`lazy flip_flops: expectResult 1`] = `
+exports[`const ones = pair(1, ones) resolves to an infinite list of ones.: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const flip_flops = pair(0, flop_flips);
-const flop_flips = pair(1, flip_flops);
-stringify(5);",
+  "code": "const take = (xs, n) => n === 0 ? null : pair(head(xs), take(tail(xs), n - 1));
+      const ones = pair(1, ones);
+stringify(take(ones, 5));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "5",
+  "result": "[1, [1, [1, [1, [1, null]]]]]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
