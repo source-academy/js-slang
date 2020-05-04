@@ -16,7 +16,7 @@ import { parse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { redexify, getEvaluationSteps } from './stepper/stepper'
+import { redexify, getEvaluationSteps, IStepperPropContents } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import {
@@ -415,10 +415,14 @@ export async function runInContext(
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context)
-    const redexedSteps: [string, string, string][] = []
+    const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
       const redexed = redexify(step[0], step[1])
-      redexedSteps.push([redexed[0], redexed[1], step[2]])
+      redexedSteps.push({
+        code: redexed[0],
+        redex: redexed[1],
+        explanation: step[2]
+      })
     }
     return Promise.resolve({
       status: 'finished',

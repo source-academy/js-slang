@@ -618,7 +618,7 @@ function reduceMain(
         ' declared and substituted into rest of block',
 
       ArrayExpression: (target: es.ArrayExpression): string =>
-        target.elements.map(bodify).toString()
+        '[' + bodify(target.elements[0]) + ', ' + bodify(target.elements[1]) + ']'
     }
 
     const bodifier = bodifiers[target.type]
@@ -2131,4 +2131,14 @@ export function getEvaluationSteps(
     context.errors.push(error)
     return steps
   }
+}
+
+export interface IStepperPropContents {
+  code: string
+  redex: string
+  explanation: string
+}
+
+export function isStepperOutput(output: any): output is IStepperPropContents {
+  return 'code' in output
 }
