@@ -749,46 +749,6 @@ Object {
 }
 `;
 
-exports[`infinite loop detected: unreachable condition fib 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
-
-exports[`infinite loop detected: unreachable condition fib: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "
-  function UC_fac(x) {
-    if (!(x!==0||x!==1)) {
-        return 1;
-    } else {
-        return x*UC_fac(x-1);
-    }
-  }
-  UC_fac(1);
-      ",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 28,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 17,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`infinite loops not detected 1`] = `6`;
 
 exports[`infinite loops not detected: expectResult 1`] = `
@@ -852,6 +812,31 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "result": 6,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no false positive detected: countdown fn 1`] = `0`;
+
+exports[`no false positive detected: countdown fn: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function fac(x,n) {
+    if(n>10){return 0;} else {}
+    if (x===0) {
+        return 1;
+    } else {
+        return 2*fac(x+1,n+1);
+    }
+  }
+  fac(1,0);
+      ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 0,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

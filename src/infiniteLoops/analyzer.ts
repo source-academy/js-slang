@@ -1,13 +1,9 @@
 import * as stype from './symTypes'
-import * as es from 'estree'
 
 /* if all callees = caller, no terminate symbol -> no base case
  * if caller function always calls itself no matter what -> no base case
  */
 function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
-  function makeChecker(name: string, loc: es.SourceLocation): stype.InfiniteLoopChecker {
-    return stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc)
-  }
   function getName(sym: stype.FunctionSymbol | stype.TerminateSymbol) {
     return sym.type === 'TerminateSymbol' ? '*' : sym.name
   }
@@ -17,7 +13,7 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
     const calleeNames = transitions.map(x => getName(x.callee))
     if (calleeNames.every(x => x === name)) {
       const loc = transitions[0].caller.loc
-      checkers.push(makeChecker(name, loc))
+      checkers.push(stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc))
     }
   }
 
@@ -54,6 +50,25 @@ function getArg(sym: stype.FunctionSymbol, name: string) {
   return -1
 }
 
+function oneControlVar(transitions: stype.Transition[]) {
+  if (transitions.length === 0) {
+    return true // vacuously true?
+  }
+  const firstCond = transitions[0].condition
+  if (firstCond?.type === 'InequalitySymbol') {
+    const name = firstCond.name
+    for (const transition of transitions) {
+      const cond = transition.condition
+      if (cond?.type === 'InequalitySymbol' && cond.name === name) {
+        continue
+      }
+      return false
+    }
+    return true
+  }
+  return false
+}
+
 /* checks for countdown functions, see documentation
  * for more details
  */
@@ -87,10 +102,12 @@ function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] 
   }
   const checkers: stype.InfiniteLoopChecker[] = []
   for (const transitions of tset.values()) {
-    for (const transition of transitions) {
-      const checker = check1(transition)
-      if (checker) {
-        checkers.push(checker)
+    if (oneControlVar(transitions)) {
+      for (const transition of transitions) {
+        const checker = check1(transition)
+        if (checker) {
+          checkers.push(checker)
+        }
       }
     }
   }

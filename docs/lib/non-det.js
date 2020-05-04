@@ -6,9 +6,21 @@
  * If <CODE>n</CODE> is 0, it forces the language processor to backtrack to
  * the most recent <CODE>amb</CODE> expression without returning a value.
  * @param {value} e1,e2,...en - given values
- * @returns {value} a value from the given values
+ * @returns {value} a value from the given values chosen sequentially
  */
 function amb(e1, e2, ...en) {}
+
+/**
+ * Given <CODE>n</CODE> values, creates a choice point whose value is chosen, 
+ * at run-time, randomly from the set <CODE>e1, e2, ..., en<CODE>.<br>
+ * If <CODE>n</CODE> is 0, it forces the language processor to backtrack to 
+ * the most recent <CODE>amb</CODE> expression without returning a value.<br>
+ * Functions similarly to the <CODE>amb</CODE> operator but makes choices randomly 
+ * instead of sequentially.
+ * @param {value} e1,e2,...en - given values
+ * @returns {value} a value from the given values chosen randomly
+ */
+function ambR(e1, e2, ...en) {}
 
 /**
  * Prevents the language processor from backtracking any further

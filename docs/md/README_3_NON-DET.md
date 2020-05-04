@@ -39,7 +39,7 @@ order. Click on a name to see how it is used.
 ## What can you do in Source §3 Non-Det?
 
 You can use all features of
-<a href="../source_3/">Source §3</a>, with the exception of loops, and all
+<a href="../source_3/">Source §3</a> and all
 features that are introduced in
 <a href="https://sicp.comp.nus.edu.sg/chapters/85">chapter 4.3</a> of the
 textbook.
@@ -54,6 +54,13 @@ In the following example, we specify two possible choices for a value we want:<b
 
 To obtain the next value, <CODE>'bye'</CODE>, enter the command <CODE>try again</CODE> in the playground REPL.
 This will give the result <CODE>'bye world!'</CODE>.
+
+### ambR operator
+The <CODE>ambR</Code> operator functions similarly to <CODE>amb</Code> but makes choices randomly
+instead of sequentially.
+
+Upon running the above example, we may randomly obtain the result <CODE>'hello world!'</CODE> first and <CODE>'bye world!</CODE> second<br>
+or <CODE>'bye world!</CODE> first and <CODE>'hello world!'</CODE> second.
 
 ### require function
 Requirements can be specified with the <CODE>require</code> function.
