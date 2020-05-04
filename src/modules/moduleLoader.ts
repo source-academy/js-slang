@@ -15,7 +15,7 @@ export function loadModuleText(path: string) {
   req.open('GET', scriptPath, false)
   req.send(null)
   if (req.status !== 200 && req.status !== 304) {
-    throw new ModuleNotFound(`module ${path} not found.`)
+    throw new ModuleNotFound(path)
   }
   return req.responseText
 }
