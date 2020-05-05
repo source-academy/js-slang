@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse_int with valid args is ok, but invalid str for radix: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int('uu1', 2);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": NaN,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`parse_int with valid args is ok, radix 2: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int('1100101010101', 2);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 6485,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`parse_int with valid args is ok, radix 36: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int('uu1', 36);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 39961,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

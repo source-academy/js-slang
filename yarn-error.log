@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/bin/node /usr/bin/yarn install
+  /usr/bin/node /usr/bin/yarn install --force
 
 PATH: 
   /home/henryj/Documents/node-env/lazy-source/node_modules/.bin:/home/henryj/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/var/lib/snapd/snap/bin

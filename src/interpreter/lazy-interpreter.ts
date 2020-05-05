@@ -220,7 +220,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    result = evaluateBlockStatement(context, node)
+    result = yield* evaluateBlockStatement(context, node)
     popEnvironment(context)
     return result
   },
@@ -288,7 +288,7 @@ export function* apply(
       }
     } else if (typeof fun === 'function') {
       try {
-        result = yield* fun.apply(thisContext, args)
+        result = yield* fun.apply(context, args)
         break
       } catch (e) {
         // Recover from exception

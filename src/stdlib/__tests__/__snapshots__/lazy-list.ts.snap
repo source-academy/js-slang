@@ -1,0 +1,1525 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error accumulate: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 30,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 29,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 29,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 33,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 33,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 32,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 32,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 36,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 36,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 35,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 35,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 37,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 37,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 28,
+            "line": 1,
+          },
+        },
+        "start": 28,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error accumulate: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 30,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 30,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 29,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 29,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 33,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 33,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 32,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 32,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 36,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 36,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 35,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 35,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 37,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 37,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 28,
+            "line": 1,
+          },
+        },
+        "start": 28,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error append: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "append([1, 2, 3], list(1, 2, 3));",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 9,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 8,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 11,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 14,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 16,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 7,
+            "line": 1,
+          },
+        },
+        "start": 7,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error assoc: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "assoc(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 11,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 10,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 14,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 13,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 13,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 17,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 16,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 16,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 18,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 18,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 9,
+            "line": 1,
+          },
+        },
+        "start": 9,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error filter: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "filter(x => true, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 20,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 20,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 19,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 19,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 23,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 23,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 22,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 22,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 26,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 26,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 25,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 25,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 27,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 27,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 18,
+            "line": 1,
+          },
+        },
+        "start": 18,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error for_each: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "for_each(x=>x, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 17,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 16,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 16,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 20,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 20,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 19,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 19,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 23,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 23,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 22,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 22,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 24,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 24,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 15,
+            "line": 1,
+          },
+        },
+        "start": 15,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error length: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "length([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 9,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 8,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 11,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 14,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 16,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 7,
+            "line": 1,
+          },
+        },
+        "start": 7,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error map: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "map(x=>x, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 11,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 14,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 18,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 17,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 17,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 19,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 10,
+            "line": 1,
+          },
+        },
+        "start": 10,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error member: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "member(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 11,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 14,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 18,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 17,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 17,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 19,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 10,
+            "line": 1,
+          },
+        },
+        "start": 10,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error remove: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 11,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 11,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 15,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 15,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 14,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 14,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 18,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 17,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 17,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 19,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 19,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 10,
+            "line": 1,
+          },
+        },
+        "start": 10,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error remove_all: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove_all(1, [1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 16,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 16,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 15,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 19,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 18,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 18,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 22,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 22,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 21,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 21,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 23,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 23,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 14,
+            "line": 1,
+          },
+        },
+        "start": 14,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. non-list error reverse: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "reverse([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 9,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 13,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 12,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 16,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 16,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 15,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 15,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 17,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 8,
+            "line": 1,
+          },
+        },
+        "start": 8,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 10,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`append: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(append(list(\\"string\\", 123), list(456, null, undefined)), list(\\"string\\", 123, 456, null, undefined));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`build_list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`empty list is null: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list();",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": null,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`enum_list with floats: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`enum_list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(enum_list(1, 5), list(1, 2, 3, 4, 5));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`for_each: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "for_each(display, list(1, 2, 3));",
+  "displayResult": Array [
+    "1",
+    "2",
+    "3",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`head works: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "head(pair(1, 'a string \\"\\"'));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`list creates list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() { return 1; }
+stringify(list(1, 'a string \\"\\"', () => f, f, true, 3.14));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[ 1,
+[ \\"a string \\\\\\"\\\\\\"\\",
+[ () => f,
+[ function f() {
+    return 1;
+  },
+[true, [3.14, null]] ] ] ] ]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`list_ref: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_ref(list(1, 2, 3, \\"4\\", 4), 4);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`list_to_string: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list_to_string(list(1, 2, 3));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[1,[2,[3,null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`map: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`member: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(
+  member(\\"string\\", list(1, 2, 3, \\"string\\", 123, 456, null, undefined)),
+  list(\\"string\\", 123, 456, null, undefined));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-list error head: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "head([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 7,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 6,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 9,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 13,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 12,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 14,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+        "start": 5,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`non-list error tail: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "tail([1, 2, 3]);",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "elements": Array [
+          Node {
+            "end": 7,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 7,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 6,
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "raw": "2",
+            "start": 9,
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "end": 13,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 1,
+              },
+            },
+            "raw": "3",
+            "start": 12,
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "end": 14,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+        "start": 5,
+        "type": "ArrayExpression",
+      },
+      "nodeType": "Array expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Array expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`pair creates pair: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(pair(1, 'a string \\"\\"'));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[1, \\"a string \\\\\\"\\\\\\"\\"]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove not found: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove(2, list(1));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": Array [
+    Thunk {
+      "supplier": [Function],
+    },
+    Thunk {
+      "supplier": [Function],
+    },
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "remove(1, list(1));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": null,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove_all not found: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(remove_all(1, list(2, 3, \\"1\\")), list(2, 3, \\"1\\"));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove_all: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, \\"1\\", 5, 1, 1, 6)), list(2, 3, 4, \\"1\\", 5, 6));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`reverse: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(reverse(list(\\"string\\", null, undefined, null, 123)), list(123, null, undefined, null, \\"string\\"));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`tail of a 1 element list is null: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "tail(list(1));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": null,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`tail works: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "tail(pair(1, 'a string \\"\\"'));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "a string \\"\\"",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
