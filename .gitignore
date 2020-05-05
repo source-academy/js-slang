@@ -1,6 +1,7 @@
 node_modules
 *.js
-!*.prelude.js
+!docs/jsdoc/templates/**/*.js
+!docs/lib/**/*.js
 *.map
 dist/
 .idea/
