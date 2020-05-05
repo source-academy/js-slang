@@ -28,7 +28,7 @@ class ReturnValue {
   constructor(public value: Value) {}
 }
 
-const getVariable = (context: Context, name: string) => {
+const getVariable = (context: Context, name: string): Thunk => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {

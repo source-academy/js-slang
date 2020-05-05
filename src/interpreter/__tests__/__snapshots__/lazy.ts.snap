@@ -1,10 +1,55 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Delayed evaluation of operation until required: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = display(1);
+const f = (a) => {
+  display(2);
+  display(a + 3);
+};
+f(display(a + 4));",
+  "displayResult": Array [
+    "2",
+    "1",
+    "5",
+    "8",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Delayed execution of display until required: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = display(1);
+const f = (a) => {
+  display(2);
+  display(a + 3);
+};
+f(a);",
+  "displayResult": Array [
+    "2",
+    "1",
+    "4",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Infinite flip flops: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-      const flips = pair(0, flops);
+const flips = pair(0, flops);
 const flops = pair(1, flips);
 stringify(take(flips, 6));",
   "displayResult": Array [],
@@ -16,11 +61,26 @@ stringify(take(flips, 6));",
 }
 `;
 
+exports[`Infinite list works.: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
+const ones = pair(1, ones);
+stringify(take(ones, 5));",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "[1, [1, [1, [1, [1, null]]]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Infinite prime list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-      const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
+const sieve = (l) => pair(head(l), sieve(filter((x) => x % head(l) !== 0, l)));
 const nat = (n) => pair(n, nat(n+1));
 const primes = sieve(nat(2));
 stringify(take(primes, 5));",
@@ -33,11 +93,73 @@ stringify(take(primes, 5));",
 }
 `;
 
+exports[`No evaluation of unused argument: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = (a, b) => b + 5;
+const a = display(20);
+f(a, 10);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 15,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No evaluation of unused argument: expectDisplayResult 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = (a, b) => b + 5;
+const a = display(20);
+f(a + 3, 10);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 15,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No evaluation of unused variable: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = display(1);
+display(2);",
+  "displayResult": Array [
+    "2",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Not stuck at resolving unused value: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = (x) => f(display(x));
+const a = f(0);
+display(2);",
+  "displayResult": Array [
+    "2",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Numeric 5 resolves to 5 on lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-5;",
+  "code": "5;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -47,30 +169,40 @@ Object {
 }
 `;
 
-exports[`Ternary true ? 1 : head(null) resolves to 1 on lazy: expectResult 1`] = `
+exports[`Plain list works: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-true ? 1 : head(null);",
+  "code": "stringify(list(1, 2, 3, 4, 5));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": 1,
+  "result": "[1, [2, [3, [4, [5, null]]]]]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
 
-exports[`const ones = pair(1, ones) resolves to an infinite list of ones.: expectResult 1`] = `
+exports[`Plain pair works: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const take = (xs, n) => n === 0 || is_null(xs) ? null : pair(head(xs), take(tail(xs), n - 1));
-      const ones = pair(1, ones);
-stringify(take(ones, 5));",
+  "code": "stringify(pair(1, 2));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "result": "[1, [1, [1, [1, [1, null]]]]]",
+  "result": "[1, 2]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Ternary true ? 1 : head(null) resolves to 1 on lazy: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true ? 1 : head(null);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
