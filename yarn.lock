@@ -307,7 +307,7 @@
     jest-util "^25.5.0"
     slash "^3.0.0"
 
-"@jest/core@^25.2.7", "@jest/core@^25.5.4":
+"@jest/core@^25.5.4":
   version "25.5.4"
   resolved "https://registry.yarnpkg.com/@jest/core/-/core-25.5.4.tgz#3ef7412f7339210f003cdf36646bbca786efe7b4"
   integrity sha512-3uSo7laYxF00Dg/DMgbn4xMJKmDdWvZnf89n8Xj/5/AeQ2dOQmn6b6Hkj/MleyzZWXpwv+WSdYWl4cLsy2JsoA==
@@ -2252,7 +2252,7 @@ jest-changed-files@^25.5.0:
     execa "^3.2.0"
     throat "^5.0.0"
 
-jest-cli@^25.2.7:
+jest-cli@^25.5.4:
   version "25.5.4"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-25.5.4.tgz#b9f1a84d1301a92c5c217684cb79840831db9f0d"
   integrity sha512-rG8uJkIiOUpnREh1768/N3n27Cm+xPFkSNFO91tgg+8o2rXeVLStz+vkXkGr4UtzH6t1SNbjwoiswd7p4AhHTw==
@@ -2618,14 +2618,14 @@ jest-worker@^25.5.0:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
-jest@25.2.7:
-  version "25.2.7"
-  resolved "https://registry.yarnpkg.com/jest/-/jest-25.2.7.tgz#3929a5f35cdd496f7756876a206b99a94e1e09ae"
-  integrity sha512-XV1n/CE2McCikl4tfpCY950RytHYvxdo/wvtgmn/qwA8z1s16fuvgFL/KoPrrmkqJTaPMUlLVE58pwiaTX5TdA==
+jest@^25.2.7:
+  version "25.5.4"
+  resolved "https://registry.yarnpkg.com/jest/-/jest-25.5.4.tgz#f21107b6489cfe32b076ce2adcadee3587acb9db"
+  integrity sha512-hHFJROBTqZahnO+X+PMtT6G2/ztqAZJveGqz//FnWWHurizkD05PQGzRZOhF3XP6z7SJmL+5tCfW8qV06JypwQ==
   dependencies:
-    "@jest/core" "^25.2.7"
+    "@jest/core" "^25.5.4"
     import-local "^3.0.2"
-    jest-cli "^25.2.7"
+    jest-cli "^25.5.4"
 
 js-tokens@^4.0.0:
   version "4.0.0"
@@ -4295,10 +4295,10 @@ tr46@^2.0.0:
   dependencies:
     punycode "^2.1.1"
 
-ts-jest@25.3.1:
-  version "25.3.1"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-25.3.1.tgz#58e2ed3506e4e4487c0b9b532846a5cade9656ba"
-  integrity sha512-O53FtKguoMUByalAJW+NWEv7c4tus5ckmhfa7/V0jBb2z8v5rDSLFC1Ate7wLknYPC1euuhY6eJjQq4FtOZrkg==
+ts-jest@^25.3.1:
+  version "25.4.0"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-25.4.0.tgz#5ad504299f8541d463a52e93e5e9d76876be0ba4"
+  integrity sha512-+0ZrksdaquxGUBwSdTIcdX7VXdwLIlSRsyjivVA9gcO+Cvr6ByqDhu/mi5+HCcb6cMkiQp5xZ8qRO7/eCqLeyw==
   dependencies:
     bs-logger "0.x"
     buffer-from "1.x"
