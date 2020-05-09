@@ -52,6 +52,7 @@ export class NonDetScheduler implements Scheduler {
           } as Result)
         }
       } catch (e) {
+        checkForStackOverflow(e, context)
         resolve({ status: 'error' })
       } finally {
         context.runtime.isRunning = false
@@ -84,22 +85,7 @@ export class PreemptiveScheduler implements Scheduler {
           }
           saveState(context, it, this)
         } catch (e) {
-          if (/Maximum call stack/.test(e.toString())) {
-            const environments = context.runtime.environments
-            const stacks: any = []
-            let counter = 0
-            for (
-              let i = 0;
-              counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < environments.length;
-              i++
-            ) {
-              if (environments[i].callExpression) {
-                stacks.unshift(environments[i].callExpression)
-                counter++
-              }
-            }
-            context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
-          }
+          checkForStackOverflow(e, context)
           context.runtime.isRunning = false
           clearInterval(interval)
           resolve({ status: 'error' })
@@ -120,5 +106,26 @@ export class PreemptiveScheduler implements Scheduler {
         }
       })
     })
+  }
+}
+
+/* Checks if the error is a stackoverflow error, and captures it in the
+   context if this is the case */
+function checkForStackOverflow(error: any, context: Context) {
+  if (/Maximum call stack/.test(error.toString())) {
+    const environments = context.runtime.environments
+    const stacks: any = []
+    let counter = 0
+    for (
+      let i = 0;
+      counter < MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW && i < environments.length;
+      i++
+    ) {
+      if (environments[i].callExpression) {
+        stacks.unshift(environments[i].callExpression)
+        counter++
+      }
+    }
+    context.errors.push(new MaximumStackLimitExceeded(context.runtime.nodes[0], stacks))
   }
 }

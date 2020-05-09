@@ -192,9 +192,6 @@ export const callIteratively = (f: any, ...args: any[]) => {
   const pastCalls: [string, any[]][] = []
   while (true) {
     const dummy = locationDummyNode(line, column)
-    if (Date.now() - startTime > MAX_TIME) {
-      throw new PotentialInfiniteRecursionError(dummy, pastCalls)
-    }
     f = forceIt(f)
     if (typeof f === 'function') {
       if (f.transformedFunction !== undefined) {
@@ -223,6 +220,9 @@ export const callIteratively = (f: any, ...args: any[]) => {
     let res
     try {
       res = f(...args)
+      if (Date.now() - startTime > MAX_TIME) {
+        throw new PotentialInfiniteRecursionError(dummy, pastCalls)
+      }
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
