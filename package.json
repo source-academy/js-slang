@@ -14,7 +14,7 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
-    "@types/estree": "0.0.39",
+    "@types/estree": "0.0.44",
     "@types/lodash.assignin": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
     "ace-builds": "^1.4.9",
