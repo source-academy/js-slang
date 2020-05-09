@@ -210,6 +210,64 @@ Object {
 }
 `;
 
+exports[`Short-circuiting logicals does not raise false positives 1`] = `true`;
+
+exports[`Short-circuiting logicals does not raise false positives: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function fac(x) {
+    if (x===0) {
+        return false;
+    } else {
+        return true || fac(x-1);
+    }
+  }
+  fac(-2);
+      ",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`infinite loop detected: countdown fac (short-circuit) 1`] = `"Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
+
+exports[`infinite loop detected: countdown fac (short-circuit): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+  function f(x){return x===0 || f(x-1);}
+  f(-1);
+      ",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 38,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 32,
+          "line": 2,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`infinite loop detected: countdown fac 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
 
 exports[`infinite loop detected: countdown fac 2 1`] = `"Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`;
