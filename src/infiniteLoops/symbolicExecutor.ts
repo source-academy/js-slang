@@ -80,38 +80,6 @@ function execBinarySymbol(
   return stype.skipSymbol
 }
 
-function execLogicalSymbol(
-  node1: stype.SymbolicExecutable,
-  node2: stype.SymbolicExecutable,
-  op: string
-): stype.SSymbol {
-  if (node1.type === 'LiteralValueSymbol') {
-    if (node2.type === 'LiteralValueSymbol') {
-      return stype.skipSymbol
-    } else {
-      return execLogicalSymbol(node2, node1, op)
-    }
-  } else if (stype.isBooleanSymbol(node1)) {
-    if (node2.type === 'LiteralValueSymbol' && typeof node2.value === 'boolean') {
-      const val = node2.value
-      if ((val && op === '&&') || op === '||') {
-        return node1
-      }
-    } else if (stype.isBooleanSymbol(node2)) {
-      return stype.makeLogicalSymbol(node1, node2, op === '&&')
-    }
-  } else if (node1.type === 'FunctionSymbol') {
-    if (node2.type === 'FunctionSymbol') {
-      return stype.makeSequenceSymbol([node1, node2])
-    } else {
-      return node1
-    }
-  } else if (node2.type === 'FunctionSymbol') {
-    return node2
-  }
-  return stype.skipSymbol
-}
-
 function getFromStore(name: string, store: Map<string, stype.SSymbol>[]) {
   for (const st of store) {
     if (st.has(name)) {
@@ -252,7 +220,10 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
   LogicalExpression(node: es.LogicalExpression, store: Map<string, stype.SSymbol>[]) {
     const lhs = symEx(node.left, store)
     const rhs = symEx(node.right, store)
-    return execLogicalSymbol(lhs, rhs, node.operator)
+    if (node.operator === '&&') {
+      return stype.makeBranchSymbol(lhs, rhs, stype.makeLiteralValueSymbol(false))
+    } // else op is '||'
+    return stype.makeBranchSymbol(lhs, stype.makeLiteralValueSymbol(true), rhs)
   },
   CallExpression(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
     if (node.callee.type === 'Identifier') {
