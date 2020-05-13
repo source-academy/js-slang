@@ -40,8 +40,7 @@ Usage: js-slang [PROGRAM_STRING] [OPTION]
 
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
   -v, --variant=VARIANT set the variant, any of: 
-                  `default`, `wasm`, `lazy`, `concurrent`, `non-det`, `gpu` 
-                                                          (default: `default`)
+                  default wasm lazy concurrent non-det gpu  (default: default)
   -s, --use-subst       use substitution
   -h, --help            display this help
   -i, --interpreter     use the interpreter for execution
