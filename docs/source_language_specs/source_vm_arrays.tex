@@ -98,7 +98,10 @@ $\Rule{s(\textit{pc}+3) = \texttt{STAG}}{
 (\textit{os},\textit{pc}+4,e,\textit{rs})}
 $
 
-where after execution, the array is $\lbrack\cdots v \cdots\rbrack$, where $v$ is at index $0$.
+where after execution, the array is $\lbrack v \rbrack$, where $v$ is at index $0$.
+
+\textit{(A note on notation: here, since we know that the array has length $1$ and an element of value $v$ at index $0$, we do not explicitly write the $\cdots$, and so the array is represented as: $\lbrack v \rbrack$. This is to avoid confusion with standard array notation.
+)}
 
 However, this becomes problematic for array literals of size $n > 1$, as seen by the rules:
 
