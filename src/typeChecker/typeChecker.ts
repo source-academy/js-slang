@@ -186,7 +186,12 @@ export function typeCheck(
   const env: Env = new Map(initialEnv)
   const constraints: Constraint[] = []
   traverse(program)
-  infer(program, env, constraints, true)
+  try {
+    infer(program, env, constraints, true)
+  } catch {
+    // we ignore the errors here since
+    // they would have already been processed
+  }
   traverse(program, constraints)
   return [program, typeErrors]
 }
