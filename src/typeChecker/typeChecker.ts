@@ -499,7 +499,7 @@ function infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isLastStatementInBlock = false
 ): Constraint[] {
   try {
     return _infer(node, env, constraints, isLastStatementInBlock)
@@ -518,7 +518,7 @@ function _infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isLastStatementInBlock = false
 ): Constraint[] {
   const storedType = node.inferredType as Variable
   switch (node.type) {

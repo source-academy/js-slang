@@ -304,6 +304,7 @@ export function getTypeInformation(
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           nodeId = typedNode.id?.name!
         } else if (typedNode.type === 'VariableDeclaration') {
           nodeId = (typedNode.declarations[0].id as es.Identifier).name

@@ -79,6 +79,7 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const stringifyObject = (obj: object, indentLevel: number) => {
     ancestors.add(obj)
     const valueStrs = Object.entries(obj).map(entry => {
@@ -102,7 +103,7 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
     }
   }
 
-  const stringifyValue = (v: Value, indentLevel: number = 0): string => {
+  const stringifyValue = (v: Value, indentLevel = 0): string => {
     if (v === null) {
       return 'null'
     } else if (v === undefined) {

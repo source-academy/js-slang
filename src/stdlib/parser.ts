@@ -35,8 +35,7 @@ function makeSequenceIfNeeded(exs: es.Node[]) {
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
-let transformers: ASTTransformers
-transformers = new Map([
+const transformers: ASTTransformers = new Map([
   [
     'Program',
     (node: es.Node) => {
@@ -424,9 +423,8 @@ function transform(node: es.Node) {
 }
 
 export function parse(x: string, context: Context): Value {
-  let program
   context.chapter = libraryParserLanguage
-  program = sourceParse(x, context)
+  const program = sourceParse(x, context)
   if (context.errors.length > 0) {
     throw new ParseError(context.errors[0].explain())
   }

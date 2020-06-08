@@ -26,6 +26,7 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
         const id =
           node.type === 'VariableDeclaration'
             ? (node.declarations[0].id as es.Identifier).name
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             : node.id?.name!
         const actualNode =
           node.type === 'VariableDeclaration'

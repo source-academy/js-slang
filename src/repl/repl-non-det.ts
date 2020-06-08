@@ -6,7 +6,7 @@ import { CUT, TRY_AGAIN } from '../constants'
 import { inspect } from 'util'
 import Closure from '../interpreter/closure'
 
-const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
+const NO_MORE_VALUES_MESSAGE = 'There are no more values of: '
 let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program
 let previousResult: Result // stores the result obtained when execution is suspended
 

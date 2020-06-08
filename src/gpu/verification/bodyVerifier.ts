@@ -39,7 +39,7 @@ class GPUBodyVerifier {
    * 4. Assigning to an array at specific indices (i, j, k from for loop counters)
    */
   checkBody = (node: es.Statement) => {
-    let ok: boolean = true
+    let ok = true
 
     // 1. check illegal statements
     simple(node, {
@@ -187,7 +187,7 @@ class GPUBodyVerifier {
   // e.g. returns i, j for res[i][j]
   getPropertyAccess = (node: es.MemberExpression): string[] => {
     const res: string[] = []
-    let ok: boolean = true
+    let ok = true
     let curr: any = node
     while (curr.type === 'MemberExpression') {
       if (curr.property.type !== 'Identifier') {

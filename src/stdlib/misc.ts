@@ -21,7 +21,7 @@ export function error_message(value: Value, str?: string) {
 
 export function timed(
   context: Context,
-  // tslint:disable-next-line:ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   f: Function,
   externalContext: any,
   displayBuiltin: (value: Value, str: string, externalContext: any) => Value

@@ -10,7 +10,7 @@ function startRepl(
   chapter = 1,
   executionMethod: ExecutionMethod = 'interpreter',
   variant: Variant = 'default',
-  useSubst: boolean = false,
+  useSubst = false,
   useRepl: boolean,
   prelude = ''
 ) {
@@ -70,6 +70,7 @@ function validChapterVariant(chapter: any, variant: any) {
 }
 
 function main() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const opt = require('node-getopt')
     .create([
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],

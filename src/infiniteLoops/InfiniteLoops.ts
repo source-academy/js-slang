@@ -250,11 +250,9 @@ const evaluators: { [nodeType: string]: (node: es.Node, envs: SimpleEnv[]) => an
   },
 
   BlockStatement(node: es.BlockStatement, envs: SimpleEnv[]) {
-    let result: Value
-
-    // Create a new environment (block scoping)
+        // Create a new environment (block scoping)
     envs.unshift(newEnv())
-    result = evaluateBlockSatement(envs, node)
+    const result: Value = evaluateBlockSatement(envs, node)
     envs.shift()
     return result
   },

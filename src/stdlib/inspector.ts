@@ -26,8 +26,8 @@ export const manualToggleDebugger = (context: Context): Result => {
 }
 
 let breakpoints: string[] = []
-let moved: boolean = true
-let prevStoppedLine: number = -1
+let moved = true
+let prevStoppedLine = -1
 
 export const checkEditorBreakpoints = (context: Context, node: Node): void => {
   if (node.loc) {

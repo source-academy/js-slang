@@ -108,7 +108,7 @@ export function parseAt(source: string, num: number) {
   return theNode
 }
 
-export function parse(source: string, context: Context, fallbackToLooseParse: boolean = false) {
+export function parse(source: string, context: Context, fallbackToLooseParse = false) {
   let program: es.Program | undefined
   try {
     program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program

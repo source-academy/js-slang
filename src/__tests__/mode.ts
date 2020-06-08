@@ -10,7 +10,7 @@ console.warn = () => {
 
 // default chapter variant and external library
 const defaultVariant: Variant = 'default'
-const defaultExternal: string = 'NONE'
+const defaultExternal = 'NONE'
 
 // define session
 const session = ace.createEditSession('', DefaultMode)

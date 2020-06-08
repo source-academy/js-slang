@@ -209,7 +209,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
-      // tslint:disable-next-line:ban-types
+      // eslint-disable-next-line @typescript-eslint/ban-types
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
   }
@@ -219,7 +219,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
-    // tslint:disable-next-line:ban-types
+    // eslint-disable-next-line @typescript-eslint/ban-types
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )

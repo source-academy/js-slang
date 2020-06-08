@@ -547,7 +547,7 @@ const compilers = {
     node: es.Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
-    isTailCallPosition: boolean = false
+    isTailCallPosition = false
   ) {
     node = node as es.CallExpression
     let maxStackOperator = 0
@@ -619,7 +619,7 @@ const compilers = {
     node: es.Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
-    isTailCallPosition: boolean = false
+    isTailCallPosition = false
   ) {
     node = node as es.LogicalExpression
     if (node.operator === '&&') {
@@ -646,7 +646,7 @@ const compilers = {
     node: es.Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
-    isTailCallPosition: boolean = false
+    isTailCallPosition = false
   ) {
     const { test, consequent, alternate } = node as es.ConditionalExpression
     const { maxStackSize: m1 } = compile(test, indexTable, false)
@@ -892,7 +892,7 @@ function compile(
   expr: es.Node,
   indexTable: Map<string, EnvEntry>[],
   insertFlag: boolean,
-  isTailCallPosition: boolean = false
+  isTailCallPosition = false
 ) {
   const compiler = compilers[expr.type]
   if (!compiler) {

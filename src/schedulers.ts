@@ -69,7 +69,7 @@ export class PreemptiveScheduler implements Scheduler {
       context.runtime.isRunning = true
       // This is used in the evaluation of the REPL during a paused state.
       // The debugger is turned off while the code evaluates just above the debugger statement.
-      let actuallyBreak: boolean = false
+      let actuallyBreak = false
       let itValue = it.next()
       const interval: number = setInterval(() => {
         let step = 0

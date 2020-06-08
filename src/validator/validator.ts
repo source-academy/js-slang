@@ -6,7 +6,7 @@ import { Context, TypeAnnotatedNode } from '../types'
 import { getVariableDecarationName } from '../utils/astCreator'
 
 class Declaration {
-  public accessedBeforeDeclaration: boolean = false
+  public accessedBeforeDeclaration = false
   constructor(public isConstant: boolean) {}
 }
 

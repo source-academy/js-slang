@@ -921,7 +921,7 @@ const nonDetTestOptions = {
 export async function testDeterministicCode(
   code: string,
   expectedValue: any,
-  hasError: boolean = false
+  hasError = false
 ) {
   /* a deterministic program is equivalent to a non deterministic program
      that returns a single value */
@@ -932,8 +932,8 @@ export async function testDeterministicCode(
 export async function testNonDeterministicCode(
   code: string,
   expectedValues: any[],
-  hasError: boolean = false,
-  random: boolean = false
+  hasError = false,
+  random = false
 ) {
   const context: Context = makeNonDetContext()
   let result: Result = await runInContext(code, context, nonDetTestOptions)

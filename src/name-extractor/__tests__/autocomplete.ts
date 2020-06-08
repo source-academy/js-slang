@@ -4,7 +4,7 @@ import { NameDeclaration } from '../index'
 import { createContext } from '../..'
 
 test('Test empty program does not generate names', async () => {
-  const code: string = 'f'
+  const code = 'f'
   const line = 1
   const col = 1
   const [extractedNames] = await getNames(code, line, col, createContext(0))
@@ -13,7 +13,7 @@ test('Test empty program does not generate names', async () => {
 })
 
 test('Test simple extraction of constant and variable names', async () => {
-  const code: string = '\
+  const code = '\
     const foo1 = 1;\n\
     let foo2 = 2;\n\
     f\
@@ -29,7 +29,7 @@ test('Test simple extraction of constant and variable names', async () => {
 })
 
 test('Test simple extraction of function names', async () => {
-  const code: string =
+  const code =
     '\
     function foo1() {\n\
       return true;\n\
@@ -50,7 +50,7 @@ test('Test simple extraction of function names', async () => {
 })
 
 test('Test that names in smaller scope are not extracted', async () => {
-  const code: string =
+  const code =
     '\
     function baz1() {\n\
       let bar1 = 1;\n\
@@ -73,7 +73,7 @@ test('Test that names in smaller scope are not extracted', async () => {
 })
 
 test('Test that names in larger scope are extracted', async () => {
-  const code: string =
+  const code =
     '\
     let bar1 = 1;\n\
     function foo1() {\n\
@@ -103,7 +103,7 @@ test('Test that names in larger scope are extracted', async () => {
 })
 
 test('Test nested global scope', async () => {
-  const code: string =
+  const code =
     '\
     let bar = 1;\n\
     function foo1() {\n\
@@ -128,7 +128,7 @@ test('Test nested global scope', async () => {
 // Function declarations
 
 test('Test that local and global variables are available in function declaration', async () => {
-  const code: string =
+  const code =
     '\
     let bar1 = 1;\n\
     function foo1(){\n\
@@ -150,7 +150,7 @@ test('Test that local and global variables are available in function declaration
 })
 
 test('Test accessing parameter names inside function', async () => {
-  const code: string =
+  const code =
     '\
     function foo1(bar1, baz1) {\n\
       b\n\
@@ -175,7 +175,7 @@ test('Test accessing parameter names inside function', async () => {
 // For-loops
 
 test('Test accessing local block in for-loop parameter', async () => {
-  const code: string = '\
+  const code = '\
     let bar = 1;\n\
     let baz = 2;\n\
     for (b) {\
@@ -191,7 +191,7 @@ test('Test accessing local block in for-loop parameter', async () => {
 })
 
 test('Test accessing for-loop parameter in for-loop body', async () => {
-  const code: string = '\
+  const code = '\
     for (let foo=10;) {\n\
       f\n\
     }\
@@ -204,7 +204,7 @@ test('Test accessing for-loop parameter in for-loop body', async () => {
 })
 
 test('Test that for-loop local variable cannot be accessed outside loop', async () => {
-  const code: string = '\
+  const code = '\
     for (let x=1; x<10; x=x+1) {\n\
       let foo = x;\n\
     }\n\
@@ -220,7 +220,7 @@ test('Test that for-loop local variable cannot be accessed outside loop', async 
 // While-loops
 
 test('Test accessing local block in while-loop parameter', async () => {
-  const code: string = '\
+  const code = '\
     let bar = 1;\n\
     let baz = 2;\n\
     while (b) {\
@@ -236,7 +236,7 @@ test('Test accessing local block in while-loop parameter', async () => {
 })
 
 test('Test that while-loop local variable cannot be accessed outside loop', async () => {
-  const code: string = '\
+  const code = '\
     while (let x=1; x<10; x=x+1) {\n\
       let foo = x;\n\
     }\n\
@@ -252,7 +252,7 @@ test('Test that while-loop local variable cannot be accessed outside loop', asyn
 // Conditionals
 
 test('Test accessing local block in if-else parameter', async () => {
-  const code: string = '\
+  const code = '\
     let bar = 1;\n\
     let baz = 2;\n\
     if (b) {\
@@ -268,7 +268,7 @@ test('Test accessing local block in if-else parameter', async () => {
 })
 
 test('Test that local variable in if-block cannot be accessed in else-block', async () => {
-  const code: string = '\
+  const code = '\
     if (true) {\n\
       let foo = x;\n\
     } else {\n\
@@ -283,7 +283,7 @@ test('Test that local variable in if-block cannot be accessed in else-block', as
 })
 
 test('Test that variable in if- and else- cannot be accessed outside either block', async () => {
-  const code: string =
+  const code =
     '\
     if (true) {\n\
       let foo = 2;\n\
@@ -300,7 +300,7 @@ test('Test that variable in if- and else- cannot be accessed outside either bloc
 })
 
 test('Test that variable in if cannot be accessed outside if-statement', async () => {
-  const code: string =
+  const code =
     '\
     function foo(baz) {\n\
       if (baz) {\n\
@@ -322,7 +322,7 @@ test('Test that variable in if cannot be accessed outside if-statement', async (
 // Blocks
 
 test('Test that declaration in blocks cannot be accessed outside block', async () => {
-  const code: string = '\
+  const code = '\
     {\n\
       let foo = 1;\n\
     }\n\
@@ -336,7 +336,7 @@ test('Test that declaration in blocks cannot be accessed outside block', async (
 })
 
 test('Test that declaration outside blocks can be accessed inside block', async () => {
-  const code: string = '\
+  const code = '\
     let bar = 1;\n\
     {\n\
       let baz = 1;\n\
@@ -356,7 +356,7 @@ test('Test that declaration outside blocks can be accessed inside block', async 
 // Anonymous functions
 
 test('Test that declaration outside of anonymous functions can be accessed inside', async () => {
-  const code: string =
+  const code =
     '\
     let foo = () => { \n\
       let baz = 1;\n\
@@ -376,7 +376,7 @@ test('Test that declaration outside of anonymous functions can be accessed insid
 })
 
 test('Test that declaration inside anonymous functions can be accessed in body', async () => {
-  const code: string =
+  const code =
     '\
     let foo = (bar1, bar2) => { \n\
       let baz = 1;\n\
@@ -396,7 +396,7 @@ test('Test that declaration inside anonymous functions can be accessed in body',
 })
 
 test('Test that declaration inside anonymous functions cannot be accessed outside', async () => {
-  const code: string = '\
+  const code = '\
     let foo = (bar1, bar2) => { \n\
       let baz = 1;\n\
     }\n\
@@ -412,7 +412,7 @@ test('Test that declaration inside anonymous functions cannot be accessed outsid
 // Return statements
 
 test('Test that local and global variables are available in return statements', async () => {
-  const code: string =
+  const code =
     '\
     let bar1 = 1;\n\
     function foo1(){\n\
@@ -433,7 +433,7 @@ test('Test that local and global variables are available in return statements', 
 
 // Declarations
 test('Test that no prompts are returned when user is declaring variable', async () => {
-  const code: string = '\
+  const code = '\
     let bar = 1;\n\
     let b\n\
   '
@@ -446,7 +446,7 @@ test('Test that no prompts are returned when user is declaring variable', async 
 
 // Builtins
 test('Test that builtins are prompted', async () => {
-  const code: string = 'w'
+  const code = 'w'
   const line = 1
   const col = 1
   const [extractedNames] = await getNames(code, line, col, createContext(4))
@@ -463,7 +463,7 @@ test('Test that builtins are prompted', async () => {
 })
 
 test('Test that unavailable builtins are not prompted', async () => {
-  const code: string = 'w'
+  const code = 'w'
   const line = 1
   const col = 1
   const [extractedNames] = await getNames(code, line, col, createContext(1))
@@ -477,7 +477,7 @@ test('Test that unavailable builtins are not prompted', async () => {
 })
 
 test('Test keywords in function', async () => {
-  const code: string = 'function foo() {r}'
+  const code = 'function foo() {r}'
   const line = 1
   const col = 17
   const [extractedNames] = await getNames(code, line, col, createContext(4))
@@ -496,7 +496,7 @@ test('Test keywords in function', async () => {
 })
 
 test('Test keywords in while loop', async () => {
-  const code: string = 'while (true) {r}'
+  const code = 'while (true) {r}'
   const line = 1
   const col = 15
   const [extractedNames] = await getNames(code, line, col, createContext(4))
@@ -515,7 +515,7 @@ test('Test keywords in while loop', async () => {
 })
 
 test('Test keywords in for loop', async () => {
-  const code: string = 'for(;;){r}'
+  const code = 'for(;;){r}'
   const line = 1
   const col = 9
   const [extractedNames] = await getNames(code, line, col, createContext(4))

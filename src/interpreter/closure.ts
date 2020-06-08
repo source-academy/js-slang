@@ -13,6 +13,7 @@ import { apply } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
+    // eslint-disable-next-line prefer-rest-params
     const args: Value[] = Array.prototype.slice.call(arguments)
     const gen = apply(context, value, args, callExpression(identifier(klass), args), this)
     let it = gen.next()
@@ -76,7 +77,7 @@ export default class Closure extends Callable {
   public functionName: string
 
   /** Fake closure function */
-  // tslint:disable-next-line:ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public fun: Function
 
   /** The original node that created this Closure */

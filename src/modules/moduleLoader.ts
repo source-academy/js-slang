@@ -26,7 +26,7 @@ export function loadIIFEModule(path: string, moduleText?: string) {
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
     }
-    return eval(moduleText) as object
+    return eval(moduleText) as any
   } catch (_error) {
     throw new ModuleInternalError(path)
   }
