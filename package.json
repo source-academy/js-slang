@@ -39,7 +39,7 @@
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
     "test": "jest",
-    "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test-coveralls": "./scripts/test-coveralls.sh",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
     "jsdoc": "./scripts/jsdoc.sh",
     "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
