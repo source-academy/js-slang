@@ -10,5 +10,4 @@ script:
   - yarn autocomplete
   - yarn format:ci
   - yarn tslint
-  - yarn test
   - yarn test-coveralls

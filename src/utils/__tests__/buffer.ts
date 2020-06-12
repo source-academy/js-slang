@@ -117,7 +117,7 @@ describe('writing', () => {
   test('large array', () => {
     buffer.putA(
       new Uint8Array(
-        (function*() {
+        (function* () {
           for (let i = 0; i < 256; i++) {
             yield i
           }

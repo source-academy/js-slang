@@ -582,7 +582,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
     const obj = {}
-    for (const prop of node.properties) {
+    for (const propUntyped of node.properties) {
+      // node.properties: es.Property | es.SpreadExpression, but
+      // our Acorn is set to ES6 which cannot have a es.SpreadExpression
+      // at this point. Force the type.
+      const prop = propUntyped as es.Property
       let key
       if (prop.key.type === 'Identifier') {
         key = prop.key.name

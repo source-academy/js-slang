@@ -101,7 +101,7 @@ export function HighlightRulesSelector(
     }
 
     // @ts-ignore
-    var SourceHighlightRules = function(options) {
+    var SourceHighlightRules = function (options) {
       // @ts-ignore
       let keywordMapper = this.createKeywordMapper(
         {
@@ -513,7 +513,7 @@ export function HighlightRulesSelector(
           {
             regex: '[{}]',
             // @ts-ignore
-            onMatch: function(val, state, stack) {
+            onMatch: function (val, state, stack) {
               this.next = val == '{' ? this.nextState : ''
               if (val == '{' && stack.length) {
                 stack.unshift('start', state)
@@ -570,7 +570,7 @@ export function HighlightRulesSelector(
       var tagRegex = identifierRegex.replace('\\d', '\\d\\-')
       var jsxTag = {
         // @ts-ignore
-        onMatch: function(val, state, stack) {
+        onMatch: function (val, state, stack) {
           var offset = val.charAt(1) == '/' ? 2 : 1
           if (offset == 1) {
             if (state != this.nextState) stack.unshift(this.next, this.nextState, 0)
@@ -615,7 +615,7 @@ export function HighlightRulesSelector(
           token: 'meta.tag.punctuation.tag-close.xml',
           regex: '/?>',
           // @ts-ignore
-          onMatch: function(value, currentState, stack) {
+          onMatch: function (value, currentState, stack) {
             if (currentState == stack[0]) stack.shift()
             if (value.length == 2) {
               if (stack[0] == this.nextState) stack[1]--
@@ -733,7 +733,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
     var CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
     var CStyleFoldMode = acequire('./folding/cstyle').FoldMode
 
-    var Mode = function() {
+    var Mode = function () {
       // @ts-ignore
       this.HighlightRules = SourceHighlightRules
       // @ts-ignore
@@ -744,7 +744,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
       this.foldingRules = new CStyleFoldMode()
     }
     oop.inherits(Mode, TextMode)
-    ;(function() {
+    ;(function () {
       // @ts-ignore
       this.lineCommentStart = '//'
       // @ts-ignore
@@ -753,7 +753,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
       this.$quotes = { '"': '"', "'": "'", '`': '`' }
 
       // @ts-ignore
-      this.getNextLineIndent = function(state, line, tab) {
+      this.getNextLineIndent = function (state, line, tab) {
         var indent = this.$getIndent(line)
 
         var tokenizedLine = this.getTokenizer().getLineTokens(line, state)
@@ -786,26 +786,26 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
       }
 
       // @ts-ignore
-      this.checkOutdent = function(state, line, input) {
+      this.checkOutdent = function (state, line, input) {
         return this.$outdent.checkOutdent(line, input)
       }
 
       // @ts-ignore
-      this.autoOutdent = function(state, doc, row) {
+      this.autoOutdent = function (state, doc, row) {
         this.$outdent.autoOutdent(doc, row)
       }
 
       // @ts-ignore
-      this.createWorker = function(session) {
+      this.createWorker = function (session) {
         var worker = new WorkerClient(['ace'], require('../worker/javascript'), 'JavaScriptWorker')
         worker.attachToDocument(session.getDocument())
 
         // @ts-ignore
-        worker.on('annotate', function(results) {
+        worker.on('annotate', function (results) {
           session.setAnnotations(results.data)
         })
 
-        worker.on('terminate', function() {
+        worker.on('terminate', function () {
           session.clearAnnotations()
         })
 
