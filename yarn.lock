@@ -1164,10 +1164,18 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^25.1.4", "@types/jest@^25.2.3":
+"@types/jest@^25.1.4":
   version "25.2.3"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.2.3.tgz#33d27e4c4716caae4eced355097a47ad363fdcaf"
   integrity sha512-JXc1nK/tXHiDhV55dvfzqtmP4S3sy3T3ouV2tkViZgxY/zeUkcpQcQPGRlgF4KmWzWW5oiWYSZwtCB+2RsE4Fw==
+  dependencies:
+    jest-diff "^25.2.1"
+    pretty-format "^25.2.1"
+
+"@types/jest@^26.0.0":
+  version "26.0.0"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.0.tgz#a6d7573dffa9c68cbbdf38f2e0de26f159e11134"
+  integrity sha512-/yeMsH9HQ1RLORlXAwoLXe8S98xxvhNtUz3yrgrwbaxYjT+6SFPZZRksmRKRA6L5vsUtSHeN71viDOTTyYAD+g==
   dependencies:
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
@@ -1198,7 +1206,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^14.0.11":
+"@types/node@*":
   version "14.0.11"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.11.tgz#61d4886e2424da73b7b25547f59fdcb534c165a3"
   integrity sha512-lCvvI24L21ZVeIiyIUHZ5Oflv1hhHQ5E1S25IRlKIXaRkVgmXpJMI3wUJkmym2bTbCe+WoIibQnMVAU3FguaOg==
@@ -1207,6 +1215,11 @@
   version "12.12.44"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.44.tgz#0d400a1453adcb359b133acceae4dd8bb0e0a159"
   integrity sha512-jM6QVv0Sm5d3nW+nUD5jSzPcO6oPqboitSNcwgBay9hifVq/Rauq1PYnROnsmuw45JMBiTnsPAno0bKu2e2xrg==
+
+"@types/node@^14.0.13":
+  version "14.0.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.13.tgz#ee1128e881b874c371374c1f72201893616417c9"
+  integrity sha512-rouEWBImiRaSJsVA+ITTFM6ZxibuAlTuNOCyxVbwreu6k6+ujs7DfnU9o+PShFhET78pMBl3eH+AGSI5eOTkPA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1268,10 +1281,10 @@ acorn-globals@^6.0.0:
     acorn "^7.1.1"
     acorn-walk "^7.1.1"
 
-acorn-loose@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-7.0.0.tgz#a4a6e8d2ae51dd5a8bdbc274b7ce3dd84964d13a"
-  integrity sha512-TIqpAWkqpdBXfj1XDVBQ/jNbAb6ByGfoqkcz2Pwd8mEHUndxOCw9FR6TqkMCMAr5XV8zYx0+m9GcGjxZzQuA2w==
+acorn-loose@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-7.1.0.tgz#2c87dc71c0ca759ec2a110eee43a5057c07ae857"
+  integrity sha512-QBHr9xhpJfVvuJNqKaE0V2DcXJ9UOthhqgKKsr5O8fV553jVW8VoyndfsuBpTsRTAX0BnYt/PamrNj9SLkbSHA==
   dependencies:
     acorn "^7.0.0"
 
@@ -1280,10 +1293,15 @@ acorn-walk@^7.1.1:
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.1.1.tgz#345f0dffad5c735e7373d2fec9a1023e6a44b83e"
   integrity sha512-wdlPY2tm/9XBr7QkKlq0WQVgiuGTX6YWPyRyBviSoScBuLfTVQhvwg6wJ369GJ/1nPfTLMfnrFIfjqVg6d+jQQ==
 
-acorn@^7.0.0, acorn@^7.1.1, acorn@^7.2.0:
+acorn@^7.0.0, acorn@^7.1.1:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.2.0.tgz#17ea7e40d7c8640ff54a694c889c26f31704effe"
   integrity sha512-apwXVmYVpQ34m/i71vrApRrRKCWQnZZF1+npOD0WV5xZFfwWOmKGQ2RWlfdy9vWITsenisM8M0Qeq8agcFHNiQ==
+
+acorn@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.3.1.tgz#85010754db53c3fbaf3b9ea3e083aa5c5d147ffd"
+  integrity sha512-tLc0wSnatxAQHVHUapaHdz72pi9KUyHjq5KyHjGg9Y8Ifdc79pTh2XvI6I1/chZbnM7QtNKzh66ooDogPZSleA==
 
 ajv@^6.5.5:
   version "6.12.2"
