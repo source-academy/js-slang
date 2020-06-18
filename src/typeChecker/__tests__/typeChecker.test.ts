@@ -412,11 +412,15 @@ describe('type checking overloaded unary/binary primitives', () => {
       foo(4, false);
       !3;
       !(3+4);
+      1();
+      const x = y => y;
+      x(1)(2);
     `
     const [program, errors] = typeCheck(parse(code, 2))
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"foo: (number, number) -> number"`
-    )
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "foo: (number, number) -> number
+      x: T0 -> T0"
+    `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 5: Expected the test part of the conditional expression:
         1 ? ... : ...
@@ -447,6 +451,18 @@ describe('type checking overloaded unary/binary primitives', () => {
       The unary operator (!) expected its operand to be of type:
         boolean
       but instead it received an operand of type:
+        number
+      Line 11: In
+        (1)()
+      expected
+        1
+      to be a function type, but instead it is type:
+        number
+      Line 13: In
+        x(1)(2)
+      expected
+        x(1)
+      to be a function type, but instead it is type:
         number"
     `)
   })
@@ -510,11 +526,11 @@ describe('type checking overloaded unary/binary primitives', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`
-    "Line 5: Expected the test part of the conditional expression:
-      a ? ... : ...
-    to have type boolean, but instead it is type:
-      string"
-    `)
+          "Line 5: Expected the test part of the conditional expression:
+            a ? ... : ...
+          to have type boolean, but instead it is type:
+            string"
+        `)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: string
       b: number
@@ -532,14 +548,14 @@ describe('type checking overloaded unary/binary primitives', () => {
     `
     const [program, errors] = typeCheck(parse(code, 1))
     expect(parseError(errors)).toMatchInlineSnapshot(`
-    "Line 5: The two branches of the conditional expression:
-      a ? ... : ...
-    produce different types!
-    The true branch has type:
-      number
-    but the false branch has type:
-      string"
-    `)
+          "Line 5: The two branches of the conditional expression:
+            a ? ... : ...
+          produce different types!
+          The true branch has type:
+            number
+          but the false branch has type:
+            string"
+        `)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: boolean
       b: number
@@ -1047,22 +1063,22 @@ describe('typing some SICP Chapter 1 programs', () => {
     // note: our type inferencer simply doesn't work for trees, because of the way we store
     // list internally
     expect(parseError(errors)).toMatchInlineSnapshot(`
-    "Line 10: A type mismatch was detected in the binary expression:
-      tree * factor
-    The binary operator (*) expected two operands with types:
-      number * number
-    but instead it received two operands of types:
-      [T0, T1] * T0
-    Line 14: A type mismatch was detected in the function call:
-      pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
-    The function expected 2 arguments of types:
-      T0, T0
-    but instead received 2 arguments of types:
-      List<number>, List<number>
-    Line 2: count_leaves contains cyclic reference to itself
-    Line 6: scale_tree contains cyclic reference to itself
-    Line 14: Error: Failed to unify types"
-    `)
+          "Line 10: A type mismatch was detected in the binary expression:
+            tree * factor
+          The binary operator (*) expected two operands with types:
+            number * number
+          but instead it received two operands of types:
+            [T0, T1] * T0
+          Line 14: A type mismatch was detected in the function call:
+            pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
+          The function expected 2 arguments of types:
+            T0, T0
+          but instead received 2 arguments of types:
+            List<number>, List<number>
+          Line 2: count_leaves contains cyclic reference to itself
+          Line 6: scale_tree contains cyclic reference to itself
+          Line 14: Error: Failed to unify types"
+        `)
   })
 
   it('2.2.3', () => {
