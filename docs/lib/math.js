@@ -1,5 +1,15 @@
 /**
  * 
+ * The Number value for e, Euler's number,
+ * which is approximately 2.718281828459045.
+ * @const {number}
+ * 
+ */
+const math_E = 2.718281828459045;
+
+
+/**
+ * 
  * The Number value for the natural logarithm of 10, 
  * which is approximately 2.302585092994046.
  * @const {number}
