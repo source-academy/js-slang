@@ -214,3 +214,29 @@ export class ConsequentAlternateMismatchError implements SourceError {
     return this.explain()
   }
 }
+
+export class CallingNonFunctionType implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.CallExpression>, public callerType: Type) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return stripIndent`
+    In
+      ${simplify(generate(this.node))}
+    expected
+      ${simplify(generate(this.node.callee))}
+    to be a function type, but instead it is type:
+      ${typeToString(this.callerType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
