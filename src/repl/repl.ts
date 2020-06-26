@@ -62,6 +62,12 @@ function startRepl(
  * Returns true iff the given chapter and variant combination is supported.
  */
 function validChapterVariant(chapter: any, variant: any) {
+  if (variant === 'interpreter') {
+    return true
+  }
+  if (variant === 'substituter' && (chapter === 1 || chapter === 2)) {
+    return true
+  }
   for (const lang of sourceLanguages) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
@@ -76,12 +82,10 @@ function main() {
       [
         'v',
         'variant=VARIANT',
-        'set the Source variant (i.e., default, lazy, non-det, concurrent, wasm, gpu)',
+        'set the Source variant (i.e., default, interpreter, substituter, lazy, non-det, concurrent, wasm, gpu)',
         'default'
       ],
-      ['s', 'use-subst', 'use substitution'],
       ['h', 'help', 'display this help'],
-      ['i', 'interpreter', 'use the interpreter for execution'],
       ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
     .bindHelp()
@@ -97,8 +101,8 @@ function main() {
     )
   }
 
-  const executionMethod = opt.options.interpreter === true ? 'interpreter' : 'native'
-  const useSubst = opt.options.s
+  const executionMethod = opt.options.variant === 'interpreter' ? 'interpreter' : 'native'
+  const useSubst = opt.options.variant === 'substituter'
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
   startRepl(chapter, executionMethod, variant, useSubst, useRepl, prelude)
