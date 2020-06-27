@@ -1,6 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
+import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, JSSLANG_PROPERTIES } from './constants'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -141,8 +141,17 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const rawDisplay = (v: Value, s: string) =>
     externalBuiltIns.rawDisplay(v, s, context.externalContext)
   const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
-  const prompt = (v: Value) => externalBuiltIns.prompt(v, '', context.externalContext)
-  const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
+  const prompt = (v: Value) => {
+    const start = Date.now()
+    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
+    JSSLANG_PROPERTIES.maxExecTime += Date.now() - start
+    return promptResult
+  }
+  const alert = (v: Value) => {
+    const start = Date.now()
+    externalBuiltIns.alert(v, '', context.externalContext)
+    JSSLANG_PROPERTIES.maxExecTime += Date.now() - start
+  }
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
