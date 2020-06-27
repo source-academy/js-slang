@@ -4,11 +4,11 @@ import { __createKernel } from '../lib'
 test('__createKernel with 1 loop returns correct result', () => {
   const bounds = [5]
   const extern = {}
-  const f1 = function() {
+  const f1 = function () {
     return 1
   }
   const arr: number[] = []
-  const f2 = function(i: any) {
+  const f2 = function (i: any) {
     return 1
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -18,7 +18,7 @@ test('__createKernel with 1 loop returns correct result', () => {
 test('__createKernel with 2 loops returns correct result', () => {
   const bounds = [5, 4]
   const extern = {}
-  const f1 = function(this: any) {
+  const f1 = function (this: any) {
     return this.thread.y * this.thread.x
   }
 
@@ -27,7 +27,7 @@ test('__createKernel with 2 loops returns correct result', () => {
     arr[i] = []
   }
 
-  const f2 = function(i: any, j: any) {
+  const f2 = function (i: any, j: any) {
     return i * j
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -43,7 +43,7 @@ test('__createKernel with 2 loops returns correct result', () => {
 test('__createKernel with 3 loop returns correct result', () => {
   const bounds = [5, 4, 3]
   const extern = {}
-  const f1 = function(this: any) {
+  const f1 = function (this: any) {
     return this.thread.z * this.thread.y * this.thread.x
   }
 
@@ -55,7 +55,7 @@ test('__createKernel with 3 loop returns correct result', () => {
     }
   }
 
-  const f2 = function(i: any, j: any, k: any) {
+  const f2 = function (i: any, j: any, k: any) {
     return i * j * k
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -96,11 +96,11 @@ test('__createKernel with 3 loop returns correct result', () => {
 test('__createKernel with 1 loop + return string returns correct result', () => {
   const bounds = [5]
   const extern = {}
-  const f1 = function() {
+  const f1 = function () {
     return 'a'
   }
   const arr: number[] = []
-  const f2 = function() {
+  const f2 = function () {
     return 'a'
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -110,11 +110,11 @@ test('__createKernel with 1 loop + return string returns correct result', () => 
 test('__createKernel with 1 loop + return number array returns correct result', () => {
   const bounds = [5]
   const extern = {}
-  const f1 = function() {
+  const f1 = function () {
     return [1, 2, 3]
   }
   const arr: number[] = []
-  const f2 = function() {
+  const f2 = function () {
     return [1, 2, 3]
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -130,11 +130,11 @@ test('__createKernel with 1 loop + return number array returns correct result', 
 test('__createKernel with 1 loop + return string array returns correct result', () => {
   const bounds = [5]
   const extern = {}
-  const f1 = function() {
+  const f1 = function () {
     return ['a', 'a']
   }
   const arr: number[] = []
-  const f2 = function() {
+  const f2 = function () {
     return ['a', 'a']
   }
   __createKernel(bounds, extern, f1, arr, f2)
@@ -150,11 +150,11 @@ test('__createKernel with 1 loop + return string array returns correct result', 
 test('__createKernel with 1 loop + external variable returns correct result', () => {
   const bounds = [3]
   const extern = { y: 100 }
-  const f1 = function(this: any) {
+  const f1 = function (this: any) {
     return this.constants.y + this.thread.x
   }
   const arr: number[] = []
-  const f2 = function() {
+  const f2 = function () {
     return 1 + y
   }
 
@@ -166,7 +166,7 @@ test('__createKernel with 1 loop + external variable returns correct result', ()
 test('__createKernel with 1 loop + external variable + math function returns correct result', () => {
   const bounds = [3]
   const extern = { y: 100 }
-  const f1 = function(this: any) {
+  const f1 = function (this: any) {
     return Math.abs(-this.constants.y + this.thread.x)
   }
   const arr: number[] = []
@@ -175,7 +175,7 @@ test('__createKernel with 1 loop + external variable + math function returns cor
 
   // tslint:disable-next-line
   const math_abs = Math.abs
-  const f2 = function(i: any) {
+  const f2 = function (i: any) {
     return math_abs(-y + i)
   }
 

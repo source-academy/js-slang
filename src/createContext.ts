@@ -36,7 +36,7 @@ const createEmptyDebugger = () => ({
   observers: { callbacks: Array<() => void>() },
   status: false,
   state: {
-    it: (function*(): any {
+    it: (function* (): any {
       return
     })(),
     scheduler: new AsyncScheduler()

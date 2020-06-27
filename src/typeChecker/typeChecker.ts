@@ -24,7 +24,8 @@ import {
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
   CyclicReferenceError,
-  UndefinedIdentifierError
+  UndefinedIdentifierError,
+  CallingNonFunctionType
 } from '../errors/typeErrors'
 /* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
 
@@ -186,7 +187,12 @@ export function typeCheck(
   const env: Env = new Map(initialEnv)
   const constraints: Constraint[] = []
   traverse(program)
-  infer(program, env, constraints, true)
+  try {
+    infer(program, env, constraints, true)
+  } catch {
+    // we ignore the errors here since
+    // they would have already been processed
+  }
   traverse(program, constraints)
   return [program, typeErrors]
 }
@@ -788,10 +794,14 @@ function _infer(
         newConstraints = addToConstraintList(constraints, [tFunc(...argTypes), calleeType])
       } catch (e) {
         if (e instanceof UnifyError) {
-          const expectedTypes = (calledFunctionType as FunctionType).parameterTypes
-          typeErrors.push(
-            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
-          )
+          if (calledFunctionType.kind === 'function') {
+            const expectedTypes = calledFunctionType.parameterTypes
+            typeErrors.push(
+              new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
+            )
+          } else {
+            typeErrors.push(new CallingNonFunctionType(node, calledFunctionType))
+          }
         } else if (e instanceof InternalDifferentNumberArgumentsError) {
           typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
