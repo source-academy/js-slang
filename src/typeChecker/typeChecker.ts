@@ -882,6 +882,7 @@ const predeclaredNames: [string, Type | ForAll][] = [
   ['Infinity', tNumber],
   ['NaN', tNumber],
   ['undefined', tUndef],
+  ['math_E', tNumber],
   ['math_LN2', tNumber],
   ['math_LN10', tNumber],
   ['math_LOG2E', tNumber],
