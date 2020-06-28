@@ -436,7 +436,11 @@ export async function runInContext(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
+    const oldPreviousCode = previousCode
+    const oldTimeout = JSSLANG_PROPERTIES.maxExecTime
     await runInContext(prelude, context, options)
+    previousCode = oldPreviousCode
+    JSSLANG_PROPERTIES.maxExecTime = oldTimeout
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {

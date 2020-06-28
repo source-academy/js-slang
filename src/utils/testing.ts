@@ -315,7 +315,6 @@ export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
   const start = Date.now()
   const context = mockContext(4)
-  context.prelude = null
   const promise = runInContext(code, context, {
     scheduler: 'preemptive',
     executionMethod: 'native'
