@@ -35,18 +35,13 @@ export function getInternalNamesForGPU(): Set<string> {
   return new Set(Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => key))
 }
 
-export function getInternalFunctionsForGPU(info: any, cid: any) {
+export function getInternalFunctionsForGPU(globalIds: any) {
   return Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => {
     const kind: AllowedDeclarations = 'const'
     const value: es.Expression = create.callExpression(
       create.memberExpression(
         create.memberExpression(
-          {
-            type: 'MemberExpression',
-            object: info.native,
-            property: create.literal(cid),
-            computed: true
-          },
+          globalIds.native,
           'gpu'
         ),
         'get'

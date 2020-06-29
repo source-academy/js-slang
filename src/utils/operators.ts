@@ -1,5 +1,4 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
-import { JSSLANG_PROPERTIES } from '../constants'
 import {
   CallingNonFunctionValue,
   ExceptionError,
@@ -16,8 +15,8 @@ import * as create from './astCreator'
 import * as rttc from './rttc'
 import { LazyBuiltIn } from '../createContext'
 
-export function throwIfTimeout(start: number, current: number, line: number, column: number) {
-  if (current - start > JSSLANG_PROPERTIES.maxExecTime) {
+export function throwIfTimeout(maxExecTime: number, start: number, current: number, line: number, column: number) {
+  if (current - start > maxExecTime) {
     throw new PotentialInfiniteLoopError(create.locationDummyNode(line, column))
   }
 }
@@ -184,10 +183,9 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
  * as isTail and transformedFunctions are properties
  * and may be added by Source code.
  */
-export const callIteratively = (f: any, ...args: any[]) => {
+export const callIteratively = (f: any, maxExecTime: number, ...args: any[]) => {
   let line = -1
   let column = -1
-  const MAX_TIME = JSSLANG_PROPERTIES.maxExecTime
   const startTime = Date.now()
   const pastCalls: [string, any[]][] = []
   while (true) {
@@ -220,7 +218,7 @@ export const callIteratively = (f: any, ...args: any[]) => {
     let res
     try {
       res = f(...args)
-      if (Date.now() - startTime > MAX_TIME) {
+      if (Date.now() - startTime > maxExecTime) {
         throw new PotentialInfiniteRecursionError(dummy, pastCalls)
       }
     } catch (error) {
@@ -247,8 +245,8 @@ export const callIteratively = (f: any, ...args: any[]) => {
   }
 }
 
-export const wrap = (f: (...args: any[]) => any, stringified: string) => {
-  const wrapped = (...args: any[]) => callIteratively(f, ...args)
+export const wrap = (f: (...args: any[]) => any, stringified: string, maxExecTime: number) => {
+  const wrapped = (...args: any[]) => callIteratively(f, maxExecTime, ...args)
   wrapped.transformedFunction = f
   wrapped[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified

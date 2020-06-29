@@ -454,16 +454,17 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.variant)
+      const temp = transpile(program, context, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled)
+        value: sandboxedEval(transpiled, context.nativeStorage)
       } as Result)
     } catch (error) {
+      console.log(error)
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         return resolvedErrorPromise

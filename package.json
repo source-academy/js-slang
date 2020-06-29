@@ -38,7 +38,7 @@
     "js-slang": "dist/repl/repl.js"
   },
   "scripts": {
-    "ci": "yarn jsdoc && yarn autocomplete && yarn format:ci && yarn tslint && yarn test",
+    "ci": "yarnpkg jsdoc && yarnpkg autocomplete && yarnpkg format:ci && yarnpkg tslint && yarnpkg test",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
@@ -47,8 +47,8 @@
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
     "jsdoc": "./scripts/jsdoc.sh",
     "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
-    "docs": "yarn jsdoc && yarn autocomplete",
-    "build": "yarn docs && yarn tsc"
+    "docs": "yarnpkg jsdoc && yarnpkg autocomplete",
+    "build": "yarnpkg docs && yarnpkg tsc"
   },
   "repository": {
     "type": "git",
@@ -106,8 +106,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn tslint --fix && yarn format && yarn tslint",
-      "pre-push": "yarn ci"
+      "pre-commit": "yarnpkg tslint --fix && yarnpkg format && yarnpkg tslint",
+      "pre-push": "yarnpkg ci"
     }
   }
 }
