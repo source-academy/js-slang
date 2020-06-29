@@ -4,9 +4,14 @@ const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttp
 
 // TODO: Change this URL to actual Backend URL
 let BACKEND_STATIC_URL = 'http://ec2-54-169-81-133.ap-southeast-1.compute.amazonaws.com/static'
+let BACKEND_PARAMS = {}
 
 export function setBackendStaticURL(url: string) {
   BACKEND_STATIC_URL = url
+}
+
+export function setBackendParams(params: any) {
+  BACKEND_PARAMS = params
 }
 
 export function loadModuleText(path: string) {
@@ -26,7 +31,8 @@ export function loadIIFEModule(path: string, moduleText?: string) {
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
     }
-    return eval(moduleText) as object
+    const moduleLib = eval(moduleText)
+    return moduleLib(BACKEND_PARAMS)
   } catch (_error) {
     throw new ModuleInternalError(path)
   }
