@@ -104,7 +104,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let transpiled: string
     try {
       const parsed = parse(code, nativeTestContext)!
-      transpiled = transpile(parsed, nativeTestContext.contextId, true, options.variant).transpiled
+      transpiled = transpile(parsed, nativeTestContext, true, options.variant).transpiled
       // replace native[<number>] as they may be inconsistent
       const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
       // replace the line hiding globals as they may differ between environments

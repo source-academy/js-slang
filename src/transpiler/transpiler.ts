@@ -1,13 +1,12 @@
-import { ancestor, simple, make } from 'acorn-walk/dist/walk'
+import { ancestor, make, RecursiveVisitors, simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from '../constants'
-import { AllowedDeclarations, Variant, Value } from '../types'
+import { AllowedDeclarations, Context, NativeStorage, ValueWrapper, Variant } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
-import { transpileToGPU, getInternalFunctionsForGPU, getInternalNamesForGPU } from '../gpu/gpu'
+import { transpileToGPU } from '../gpu/gpu'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -15,39 +14,7 @@ import { transpileToGPU, getInternalFunctionsForGPU, getInternalNamesForGPU } fr
  * There should be an explanation on it coming up soon.
  */
 
-interface ValueWrapper {
-  kind: AllowedDeclarations
-  value: Value
-}
-
-interface Globals {
-  variables: Map<string, ValueWrapper>
-  previousScope: Globals | null
-}
-
-let NATIVE_STORAGE: {
-  globals: Globals
-  operators: Map<string, (...operands: Value[]) => Value>
-}
-
-let usedIdentifiers: Set<string>
-
-/*  BLACKLIST - any functions here will be ignored by transpiler */
-const blacklist: string[] = []
-const ignoreWalker = make({
-  CallExpression: (node: es.CallExpression, st: any, c: any) => {
-    if (node.callee.type === 'Identifier') {
-      if (blacklist.includes(node.callee.name)) {
-        return
-      }
-    }
-
-    c(node.callee, st, 'Expression')
-    if (node.arguments) for (const arg of node.arguments) c(arg, st, 'Expression')
-  }
-})
-
-function getUniqueId(uniqueId = 'unique') {
+function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
     const start = uniqueId.slice(0, -1)
     const end = uniqueId[uniqueId.length - 1]
@@ -62,21 +29,22 @@ function getUniqueId(uniqueId = 'unique') {
   return uniqueId
 }
 
-const globalIds = {
-  native: create.identifier('dummy'),
-  forceIt: create.identifier('dummy'),
-  callIfFuncAndRightArgs: create.identifier('dummy'),
-  boolOrErr: create.identifier('dummy'),
-  wrap: create.identifier('dummy'),
-  unaryOp: create.identifier('dummy'),
-  binaryOp: create.identifier('dummy'),
-  throwIfTimeout: create.identifier('dummy'),
-  setProp: create.identifier('dummy'),
-  getProp: create.identifier('dummy'),
-  lastStatementResult: create.identifier('dummy'),
-  globals: create.identifier('dummy')
-}
-let contextId: number
+const globalIdNames = [
+  'native',
+  'forceIt',
+  'callIfFuncAndRightArgs',
+  'boolOrErr',
+  'wrap',
+  'unaryOp',
+  'binaryOp',
+  'throwIfTimeout',
+  'setProp',
+  'getProp',
+  'lastStatementResult',
+  'globals'
+] as const
+
+export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
 function prefixModule(program: es.Program): string {
   let moduleCounter = 0
@@ -127,9 +95,11 @@ export function transformImportDeclarations(program: es.Program) {
 
 function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   name: string,
-  kind: AllowedDeclarations
+  kind: AllowedDeclarations,
+  globalIds: NativeIds,
+  usedIdentifiers: Set<string>
 ): es.ExpressionStatement {
-  const paramName = create.identifier(getUniqueId())
+  const paramName = create.identifier(getUniqueId(usedIdentifiers))
   const variableIdentifier = create.identifier(name)
   const properties = [
     create.property('kind', create.literal(kind)),
@@ -157,8 +127,12 @@ function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
   )
 }
 
-function wrapWithPreviouslyDeclaredGlobals(statements: es.Statement[]) {
-  let currentVariableScope = NATIVE_STORAGE[contextId].globals.previousScope
+function wrapWithPreviouslyDeclaredGlobals(
+  statements: es.Statement[],
+  nativeStorage: NativeStorage,
+  globalIds: NativeIds
+) {
+  let currentVariableScope = nativeStorage.globals!.previousScope
   let timesToGoUp = 1
   let wrapped = create.blockStatement(statements)
   while (currentVariableScope !== null) {
@@ -187,13 +161,19 @@ function wrapWithPreviouslyDeclaredGlobals(statements: es.Statement[]) {
   return wrapped
 }
 
-function createStatementsToStoreCurrentlyDeclaredGlobals(program: es.Program) {
+function createStatementsToStoreCurrentlyDeclaredGlobals(
+  program: es.Program,
+  globalIds: NativeIds,
+  usedIdentifiers: Set<string>
+) {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
     .map(({ declarations: { 0: { id } }, kind }: es.VariableDeclaration) =>
       createStatementAstToStoreBackCurrentlyDeclaredGlobal(
         (id as es.Identifier).name,
-        kind as AllowedDeclarations
+        kind as AllowedDeclarations,
+        globalIds,
+        usedIdentifiers
       )
     )
 }
@@ -249,7 +229,9 @@ function transformFunctionDeclarationsToArrowFunctions(
 
 function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
-  functionsToStringMap: Map<es.Node, string>
+  functionsToStringMap: Map<es.Node, string>,
+  globalIds: NativeIds,
+  maxExecTime: number
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
@@ -257,7 +239,8 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       if (functionsToStringMap.get(node)! !== undefined) {
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
-          create.literal(functionsToStringMap.get(node)!)
+          create.literal(functionsToStringMap.get(node)!),
+          create.literal(maxExecTime)
         ])
       }
     }
@@ -275,7 +258,11 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(program: es.Program, variant: Variant) {
+function transformReturnStatementsToAllowProperTailCalls(
+  program: es.Program,
+  variant: Variant,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -345,16 +332,21 @@ function delayIt(expr: es.Expression) {
     expr.loc === null ? undefined : expr.loc
   )
 
-  const obj = create.objectExpression([
+  return create.objectExpression([
     create.property('isThunk', create.literal(true)),
     create.property('memoizedValue', create.literal(0)),
     create.property('isMemoized', create.literal(false)),
     create.property('expr', exprThunked)
   ])
-  return obj
 }
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program, variant: Variant) {
+function transformCallExpressionsToCheckIfFunction(
+  program: es.Program,
+  variant: Variant,
+  globalIds: NativeIds,
+  ignoreWalker: RecursiveVisitors<any>,
+  blacklist: string[]
+) {
   simple(
     program,
     {
@@ -365,7 +357,6 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, variant:
             return
           }
         }
-
         const { line, column } = node.loc!.start
         const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
 
@@ -391,9 +382,13 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, variant:
 
 export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
   program: es.Program,
-  skipErrors = false
+  skipErrors = false,
+  nativeStorage: NativeStorage,
+  globalIds: NativeIds,
+  gpuInternalNames: Set<string>,
+  ignoreWalker: RecursiveVisitors<any>
 ) {
-  const globalEnvironment = NATIVE_STORAGE[contextId].globals
+  const globalEnvironment = nativeStorage.globals
   const previousVariablesToAst = new Map<
     string,
     { isConstant: boolean; variableLocationId: es.Expression }
@@ -428,7 +423,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     }
   }
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
-  function processBlock(node: es.Program | es.BlockStatement, ancestors: es.Node[]) {
+  function processBlock(node: es.Program | es.BlockStatement) {
     const identifiers = new Set<string>()
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
@@ -547,7 +542,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
             )
           }
         }
-      } else if (!nativeInternalNames.has(name) && !getInternalNamesForGPU().has(name)) {
+      } else if (!nativeInternalNames.has(name) && !gpuInternalNames.has(name)) {
         if (!skipErrors) {
           throw new UndefinedVariable(name, identifier)
         }
@@ -556,7 +551,11 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
 }
 
-function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
+function transformSomeExpressionsToCheckIfBoolean(
+  program: es.Program,
+  globalIds: NativeIds,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   function transform(
     node:
       | es.IfStatement
@@ -587,17 +586,17 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program) {
   )
 }
 
-function refreshLatestIdentifiers(program: es.Program) {
-  NATIVE_STORAGE = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE]
-  usedIdentifiers = getAllIdentifiersUsed(program)
-  for (const identifier of Object.getOwnPropertyNames(globalIds)) {
-    globalIds[identifier] = create.identifier(getUniqueId(identifier))
+function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
+  const globalIds = {}
+  for (const identifier of globalIdNames) {
+    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }
+  return globalIds as NativeIds
 }
 
-function getAllIdentifiersUsed(program: es.Program) {
+function getAllIdentifiersUsed(program: es.Program, nativeStorage: NativeStorage) {
   const identifiers = new Set<string>()
-  let variableScope = NATIVE_STORAGE[contextId].globals
+  let variableScope = nativeStorage.globals
   while (variableScope !== null) {
     for (const name of variableScope.variables.keys()) {
       identifiers.add(name)
@@ -646,7 +645,8 @@ function getAllIdentifiersUsed(program: es.Program) {
  */
 
 function splitLastStatementIntoStorageOfResultAndAccessorPair(
-  lastStatement: es.Statement
+  lastStatement: es.Statement,
+  globalIds: NativeIds
 ): { lastStatementStoredInResult: es.Statement; evalMap?: RawSourceMap } {
   if (lastStatement.type === 'VariableDeclaration') {
     return {
@@ -669,7 +669,11 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
   }
 }
 
-function transformUnaryAndBinaryOperationsToFunctionCalls(program: es.Program) {
+function transformUnaryAndBinaryOperationsToFunctionCalls(
+  program: es.Program,
+  globalIds: NativeIds,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   simple(
     program,
     {
@@ -703,7 +707,11 @@ function getComputedProperty(computed: boolean, property: es.Expression): es.Exp
   return computed ? property : create.literal((property as es.Identifier).name)
 }
 
-function transformPropertyAssignment(program: es.Program) {
+function transformPropertyAssignment(
+  program: es.Program,
+  globalIds: NativeIds,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   simple(
     program,
     {
@@ -725,7 +733,11 @@ function transformPropertyAssignment(program: es.Program) {
   )
 }
 
-function transformPropertyAccess(program: es.Program) {
+function transformPropertyAccess(
+  program: es.Program,
+  globalIds: NativeIds,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   simple(
     program,
     {
@@ -744,20 +756,27 @@ function transformPropertyAccess(program: es.Program) {
   )
 }
 
-function addInfiniteLoopProtection(program: es.Program) {
+function addInfiniteLoopProtection(
+  program: es.Program,
+  globalIds: NativeIds,
+  usedIdentifiers: Set<string>,
+  maxExecTime: number,
+  ignoreWalker: RecursiveVisitors<any>
+) {
   const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
 
   function instrumentLoops(node: es.Program | es.BlockStatement) {
     const newStatements = []
     for (const statement of node.body) {
       if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
-        const startTimeConst = getUniqueId('startTime')
+        const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
         newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
         if (statement.body.type === 'BlockStatement') {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
             create.expressionStatement(
               create.callExpression(globalIds.throwIfTimeout, [
+                create.literal(maxExecTime),
                 create.identifier(startTimeConst),
                 getRuntimeAst(),
                 create.literal(line),
@@ -784,15 +803,15 @@ function addInfiniteLoopProtection(program: es.Program) {
 
 export function transpile(
   program: es.Program,
-  id: number,
+  context: Context,
   skipUndefinedVariableErrors = false,
   variant: Variant = 'default'
 ) {
-  contextId = id
-  refreshLatestIdentifiers(program)
-  NATIVE_STORAGE[contextId].globals = {
+  const usedIdentifiers = getAllIdentifiersUsed(program, context.nativeStorage)
+  const globalIds = getNativeIds(program, usedIdentifiers)
+  context.nativeStorage.globals = {
     variables: new Map(),
-    previousScope: NATIVE_STORAGE[contextId].globals
+    previousScope: context.nativeStorage.globals
   }
   if (program.body.length === 0) {
     return { transpiled: '' }
@@ -800,56 +819,97 @@ export function transpile(
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
   let gpuDisplayStatements: es.Statement[] = []
+  let gpuInternalNames: Set<string> = new Set()
+  let gpuInternalFunctions: es.Statement[] = []
+
+  /*  BLACKLIST - any functions here will be ignored by transpiler */
+  const blacklist: string[] = []
+  const ignoreWalker: RecursiveVisitors<any> = make({
+    CallExpression: (node: es.CallExpression, st: any, c: any) => {
+      if (node.callee.type === 'Identifier') {
+        if (blacklist.includes(node.callee.name)) {
+          return
+        }
+      }
+
+      c(node.callee, st, 'Expression')
+      if (node.arguments) for (const arg of node.arguments) c(arg, st, 'Expression')
+    }
+  })
+
   if (variant === 'gpu') {
-    const kernelFunction = getUniqueId('__createKernel')
+    const kernelFunction = getUniqueId(usedIdentifiers, '__createKernel')
     blacklist.push(kernelFunction)
-    gpuDisplayStatements = transpileToGPU(program, kernelFunction)
+    ;({ gpuDisplayStatements, gpuInternalNames, gpuInternalFunctions } = transpileToGPU(
+      program,
+      globalIds,
+      kernelFunction
+    ))
   }
 
-  transformReturnStatementsToAllowProperTailCalls(program, variant)
-  transformCallExpressionsToCheckIfFunction(program, variant)
-  transformUnaryAndBinaryOperationsToFunctionCalls(program)
-  transformSomeExpressionsToCheckIfBoolean(program)
-  transformPropertyAssignment(program)
-  transformPropertyAccess(program)
+  transformReturnStatementsToAllowProperTailCalls(program, variant, ignoreWalker)
+  transformCallExpressionsToCheckIfFunction(program, variant, globalIds, ignoreWalker, blacklist)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, ignoreWalker)
+  transformSomeExpressionsToCheckIfBoolean(program, globalIds, ignoreWalker)
+  transformPropertyAssignment(program, globalIds, ignoreWalker)
+  transformPropertyAccess(program, globalIds, ignoreWalker)
   checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
     program,
-    skipUndefinedVariableErrors
+    skipUndefinedVariableErrors,
+    context.nativeStorage,
+    globalIds,
+    gpuInternalNames,
+    ignoreWalker
   )
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap)
-  addInfiniteLoopProtection(program)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
+    program,
+    functionsToStringMap,
+    globalIds,
+    context.nativeStorage.maxExecTime
+  )
+  addInfiniteLoopProtection(
+    program,
+    globalIds,
+    usedIdentifiers,
+    context.nativeStorage.maxExecTime,
+    ignoreWalker
+  )
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
-  const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(program)
+  const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(
+    program,
+    globalIds,
+    usedIdentifiers
+  )
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
   const {
     lastStatementStoredInResult,
     evalMap
-  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement)
+  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement, globalIds)
 
-  const wrapped = wrapInAnonymousFunctionToBlockExternalGlobals([
-    wrapWithPreviouslyDeclaredGlobals([
-      ...gpuDisplayStatements,
-      ...statements,
-      lastStatementStoredInResult,
-      ...statementsToSaveDeclaredGlobals
-    ]),
-    create.returnStatement(
+  const body = [
+    wrapWithPreviouslyDeclaredGlobals(
+      [
+        ...gpuDisplayStatements,
+        ...statements,
+        lastStatementStoredInResult,
+        ...statementsToSaveDeclaredGlobals
+      ],
+      context.nativeStorage,
+      globalIds
+    ),
+    create.expressionStatement(
       create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
     )
-  ])
+  ]
 
-  program.body = [...getDeclarationsToAccessTranspilerInternals(), wrapped]
-
-  if (variant === 'gpu') {
-    program.body = [
-      ...getDeclarationsToAccessTranspilerInternals(),
-      ...getInternalFunctionsForGPU(globalIds, contextId),
-      wrapped
-    ]
-  }
+  program.body = [
+    ...getDeclarationsToAccessTranspilerInternals(globalIds),
+    ...gpuInternalFunctions,
+    ...body
+  ]
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
@@ -857,82 +917,25 @@ export function transpile(
   return { transpiled, codeMap, evalMap }
 }
 
-function getDeclarationsToAccessTranspilerInternals(): es.VariableDeclaration[] {
+function getDeclarationsToAccessTranspilerInternals(
+  globalIds: NativeIds
+): es.VariableDeclaration[] {
   return Object.entries(globalIds).map(([key, { name }]) => {
     let value: es.Expression
     let kind: AllowedDeclarations = 'const'
     if (key === 'native') {
-      value = create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE)
+      value = create.identifier('nativeStorage')
     } else if (key === 'lastStatementResult') {
       value = create.primitive(undefined)
       kind = 'let'
     } else if (key === 'globals') {
-      value = create.memberExpression(
-        {
-          type: 'MemberExpression',
-          object: create.identifier(GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE),
-          property: create.literal(contextId),
-          computed: true
-        },
-        'globals'
-      )
+      value = create.memberExpression(globalIds.native, 'globals')
     } else {
       value = create.callExpression(
-        create.memberExpression(
-          create.memberExpression(
-            {
-              type: 'MemberExpression',
-              object: globalIds.native,
-              property: create.literal(contextId),
-              computed: true
-            },
-            'operators'
-          ),
-          'get'
-        ),
+        create.memberExpression(create.memberExpression(globalIds.native, 'operators'), 'get'),
         [create.literal(key)]
       )
     }
     return create.declaration(name, kind, value)
   })
-}
-
-/**
- * Restricts the access of external global variables in Source
- *
- * statement;
- * statement2;
- * statement3;
- * =>
- * ((window, Number, Function, alert, ...other globals) => {
- *  statement;
- *  statement2;
- *  statement3;
- * })();
- *
- */
-function wrapInAnonymousFunctionToBlockExternalGlobals(statements: es.Statement[]): es.Statement {
-  function isValidIdentifier(candidate: string) {
-    try {
-      // tslint:disable-next-line:no-eval
-      eval(`"use strict";{const ${candidate} = 1;}`)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  const globalsArray = Object.getOwnPropertyNames(GLOBAL)
-  const globalsWithValidIdentifiers = globalsArray.filter(isValidIdentifier)
-  const validGlobalsAsIdentifierAsts = globalsWithValidIdentifiers.map(globalName =>
-    create.identifier(globalName)
-  )
-  return create.expressionStatement(
-    create.callExpression(
-      create.blockArrowFunction(validGlobalsAsIdentifierAsts, [
-        create.returnStatement(create.callExpression(create.blockArrowFunction([], statements), []))
-      ]),
-      []
-    )
-  )
 }
