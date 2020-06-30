@@ -20,6 +20,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -333,6 +334,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -2212,6 +2216,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -2525,6 +2530,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -4025,6 +4033,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -4338,6 +4347,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -4816,6 +4828,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -5129,6 +5142,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -5488,6 +5504,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -5801,6 +5818,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -6896,6 +6916,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -7209,6 +7230,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -8069,6 +8093,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -8382,6 +8407,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -10336,6 +10364,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -10649,6 +10678,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -25479,6 +25511,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -25792,6 +25825,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -27318,6 +27354,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -27631,6 +27668,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -29157,6 +29197,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -29470,6 +29511,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -30996,6 +31040,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -31309,6 +31354,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -32835,6 +32883,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -33148,6 +33197,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -33505,6 +33557,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -33818,6 +33871,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -34528,6 +34584,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -34841,6 +34898,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -35766,6 +35826,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -36079,6 +36140,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -36438,6 +36502,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -36751,6 +36816,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -37394,6 +37462,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -37707,6 +37776,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -38862,6 +38934,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -39175,6 +39248,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -40330,6 +40406,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -40643,6 +40720,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -41798,6 +41878,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -42111,6 +42192,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -43283,6 +43367,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -43596,6 +43681,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -43955,6 +44043,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -44268,6 +44357,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -45439,6 +45531,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -45752,6 +45845,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -46923,6 +47019,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -47236,6 +47333,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -47595,6 +47695,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -47908,6 +48009,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -49048,6 +49152,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -49361,6 +49466,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -50631,6 +50739,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -50944,6 +51053,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -52084,6 +52196,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -52397,6 +52510,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
@@ -53667,6 +53783,7 @@ Object {
     "executionMethod": "interpreter",
     "externalContext": undefined,
     "externalSymbols": Array [],
+<<<<<<< HEAD
     "nativeStorage": Object {
       "globals": Object {
         "previousScope": null,
@@ -53980,6 +54097,9 @@ Object {
         "getProp" => [Function],
       },
     },
+=======
+    "moduleParams": undefined,
+>>>>>>> b780781... Modify snaps
     "numberOfOuterEnvironments": 3,
     "prelude": null,
     "runtime": Object {
