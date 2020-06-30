@@ -154,7 +154,7 @@ Object {
   "parsedErrors": "",
   "result": NaN,
   "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -165,17 +165,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -190,7 +186,7 @@ Object {
   "parsedErrors": "",
   "result": 6485,
   "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -201,17 +197,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -226,7 +218,7 @@ Object {
   "parsedErrors": "",
   "result": 39961,
   "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -237,17 +229,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }

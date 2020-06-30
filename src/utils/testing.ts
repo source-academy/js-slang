@@ -105,17 +105,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     try {
       const parsed = parse(code, nativeTestContext)!
       transpiled = transpile(parsed, nativeTestContext, true, options.variant).transpiled
-      // replace native[<number>] as they may be inconsistent
-      const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
-      // replace the line hiding globals as they may differ between environments
-      const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
       // replace declaration of builtins since they're repetitive
-      const replacedBuiltins = replacedGlobalsLine.replace(
-        /\n      const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
+      transpiled = transpiled.replace(
+        /\n  const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
         ''
       )
-      // replace the line globals = $$NATIVE_STORAGE[xxx].globals to remove [xxx]
-      transpiled = replacedBuiltins.replace(/\$\$NATIVE_STORAGE\[\d+]/, '$$NATIVE_STORAGE')
     } catch {
       transpiled = 'parseError'
     }
