@@ -60,13 +60,15 @@ export const createEmptyContext = <T>(
   chapter: number,
   variant: Variant = 'default',
   externalSymbols: string[],
-  externalContext?: T
+  externalContext?: T,
+  moduleParams?: any
 ): Context<T> => {
   return {
     chapter,
     externalSymbols,
     errors: [],
     externalContext,
+    moduleParams,
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
     prelude: null,
@@ -268,9 +270,16 @@ const createContext = <T>(
   variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
+  moduleParams?: any
 ) => {
-  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
+  const context = createEmptyContext(
+    chapter,
+    variant,
+    externalSymbols,
+    externalContext,
+    moduleParams
+  )
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)

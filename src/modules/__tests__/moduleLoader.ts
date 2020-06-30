@@ -5,6 +5,7 @@
 import { loadModuleText, loadIIFEModule } from '../moduleLoader'
 import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
+import { createEmptyContext } from '../../createContext'
 
 test('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
@@ -17,5 +18,7 @@ test('Try executing a wrongly implemented module', () => {
   const wrongModuleText = stripIndent`
     export function es6_function(params) {}
   `
-  expect(() => loadIIFEModule(path, wrongModuleText)).toThrow(ModuleInternalError)
+  expect(() => loadIIFEModule(path, createEmptyContext(1, 'default', []), wrongModuleText)).toThrow(
+    ModuleInternalError
+  )
 })

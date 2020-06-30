@@ -1,5 +1,6 @@
 import { ModuleNotFound, ModuleInternalError } from '../errors/errors'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
+import { Context } from '..'
 const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttpRequest
 
 // TODO: Change this URL to actual Backend URL
@@ -21,12 +22,17 @@ export function loadModuleText(path: string) {
 }
 
 /* tslint:disable */
-export function loadIIFEModule(path: string, moduleText?: string) {
+export function loadIIFEModule(path: string, context: Context, moduleText?: string) {
   try {
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
     }
-    return eval(moduleText) as object
+    const moduleLib = eval(moduleText)
+    if (context.moduleParams) {
+      return moduleLib(context.moduleParams)
+    } else {
+      return moduleLib
+    }
   } catch (_error) {
     throw new ModuleInternalError(path)
   }
