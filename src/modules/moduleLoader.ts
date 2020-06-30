@@ -29,9 +29,9 @@ export function loadIIFEModule(path: string, context: Context, moduleText?: stri
     }
     const moduleLib = eval(moduleText)
     if (context.moduleParams) {
-      return moduleLib(context.moduleParams)
+      return moduleLib({ runes: {}, ...context.moduleParams })
     } else {
-      return moduleLib
+      return moduleLib({})
     }
   } catch (_error) {
     throw new ModuleInternalError(path)
