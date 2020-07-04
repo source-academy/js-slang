@@ -461,7 +461,7 @@ export async function runInContext(
       lastStatementSourceMapJson = temp.evalMap
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled, context.nativeStorage)
+        value: sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {

@@ -147,6 +147,7 @@ Array [
         "executionMethod": "auto",
         "externalContext": undefined,
         "externalSymbols": Array [],
+        "moduleParams": undefined,
         "nativeStorage": Object {
           "globals": Object {
             "previousScope": null,
@@ -948,6 +949,7 @@ Array [
       "executionMethod": "auto",
       "externalContext": undefined,
       "externalSymbols": Array [],
+      "moduleParams": undefined,
       "nativeStorage": Object {
         "globals": Object {
           "previousScope": null,

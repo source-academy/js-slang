@@ -108,6 +108,8 @@ export interface Context<T = any> {
     nodes: es.Node[]
   }
 
+  moduleParams?: any
+
   numberOfOuterEnvironments: number
 
   prelude: string | null
