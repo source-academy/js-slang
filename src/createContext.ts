@@ -1,6 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, JSSLANG_PROPERTIES } from './constants'
+import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -49,20 +49,19 @@ const createGlobalEnvironment = () => ({
   head: {}
 })
 
+const createNativeStorage = () => ({
+  globals: { variables: new Map(), previousScope: null },
+  operators: new Map(Object.entries(operators)),
+  gpu: new Map(Object.entries(gpu_lib)),
+  maxExecTime: JSSLANG_PROPERTIES.maxExecTime
+})
+
 export const createEmptyContext = <T>(
   chapter: number,
   variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
-  if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
-    GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
-  }
-  const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
-    globals: { variables: new Map(), previousScope: null },
-    operators: new Map(Object.entries(operators)),
-    gpu: new Map(Object.entries(gpu_lib))
-  })
   return {
     chapter,
     externalSymbols,
@@ -72,7 +71,7 @@ export const createEmptyContext = <T>(
     numberOfOuterEnvironments: 1,
     prelude: null,
     debugger: createEmptyDebugger(),
-    contextId: length - 1,
+    nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant
   }
@@ -97,7 +96,7 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables.set(name, {
+  context.nativeStorage.globals!.variables.set(name, {
     kind: 'const',
     getValue: () => value
   })
