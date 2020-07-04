@@ -26,12 +26,9 @@ export function loadModule(path: string, context: Context, moduleText?: string) 
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
     }
+    // tslint:disable-next-line:no-eval
     const moduleLib = eval(moduleText)
-    if (context.moduleParams) {
-      return moduleLib({ runes: {}, ...context.moduleParams })
-    } else {
-      return moduleLib({})
-    }
+    return moduleLib({ runes: {}, ...context.moduleParams })
   } catch (_error) {
     throw new ModuleInternalError(path)
   }
