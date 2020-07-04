@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { loadModuleText, loadIIFEModule } from '../moduleLoader'
+import { loadModuleText, loadModule } from '../moduleLoader'
 import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
 import { createEmptyContext } from '../../createContext'
@@ -18,7 +18,7 @@ test('Try executing a wrongly implemented module', () => {
   const wrongModuleText = stripIndent`
     export function es6_function(params) {}
   `
-  expect(() => loadIIFEModule(path, createEmptyContext(1, 'default', []), wrongModuleText)).toThrow(
+  expect(() => loadModule(path, createEmptyContext(1, 'default', []), wrongModuleText)).toThrow(
     ModuleInternalError
   )
 })

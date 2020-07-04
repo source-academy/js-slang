@@ -21,8 +21,7 @@ export function loadModuleText(path: string) {
   return req.responseText
 }
 
-/* tslint:disable */
-export function loadIIFEModule(path: string, context: Context, moduleText?: string) {
+export function loadModule(path: string, context: Context, moduleText?: string) {
   try {
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
