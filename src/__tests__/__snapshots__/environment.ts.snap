@@ -147,7 +147,7 @@ Array [
         "executionMethod": "auto",
         "externalContext": undefined,
         "externalSymbols": Array [],
-<<<<<<< HEAD
+        "moduleParams": undefined,
         "nativeStorage": Object {
           "globals": Object {
             "previousScope": null,
@@ -469,9 +469,6 @@ Array [
             "getProp" => [Function],
           },
         },
-=======
-        "moduleParams": undefined,
->>>>>>> b780781... Modify snaps
         "numberOfOuterEnvironments": 2,
         "prelude": null,
         "runtime": Object {
@@ -952,7 +949,7 @@ Array [
       "executionMethod": "auto",
       "externalContext": undefined,
       "externalSymbols": Array [],
-<<<<<<< HEAD
+      "moduleParams": undefined,
       "nativeStorage": Object {
         "globals": Object {
           "previousScope": null,
@@ -1274,9 +1271,6 @@ Array [
           "getProp" => [Function],
         },
       },
-=======
-      "moduleParams": undefined,
->>>>>>> b780781... Modify snaps
       "numberOfOuterEnvironments": 2,
       "prelude": null,
       "runtime": Object {
