@@ -28,7 +28,8 @@ export const dummyCallExpression = (): es.CallExpression => ({
   type: 'CallExpression',
   callee: dummyExpression(),
   arguments: [],
-  loc: dummyLocation()
+  loc: dummyLocation(),
+  optional: false
 })
 
 export const dummyExpressionStatement = (): es.ExpressionStatement => ({
