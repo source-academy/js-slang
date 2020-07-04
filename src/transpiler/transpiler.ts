@@ -7,6 +7,7 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import { transpileToGPU } from '../gpu/gpu'
+import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -54,7 +55,7 @@ function prefixModule(program: es.Program): string {
       break
     }
     const moduleText = loadModuleText(node.source.value as string)
-    prefix += `const __MODULE_${moduleCounter}__ = ${moduleText};\n`
+    prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.trim()})(${MODULE_PARAMS_ID});\n`
     moduleCounter++
   }
   return prefix
@@ -924,7 +925,7 @@ function getDeclarationsToAccessTranspilerInternals(
     let value: es.Expression
     let kind: AllowedDeclarations = 'const'
     if (key === 'native') {
-      value = create.identifier('nativeStorage')
+      value = create.identifier(NATIVE_STORAGE_ID)
     } else if (key === 'lastStatementResult') {
       value = create.primitive(undefined)
       kind = 'let'
