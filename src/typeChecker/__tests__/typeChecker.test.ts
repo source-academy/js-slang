@@ -35,10 +35,10 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
           actualNode.typability === 'Untypable'
             ? "Couldn't infer type"
             : typeToString(
-              actualNode.type === 'FunctionDeclaration'
-                ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
-                : actualNode.inferredType!
-            )
+                actualNode.type === 'FunctionDeclaration'
+                  ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+                  : actualNode.inferredType!
+              )
         return `${id}: ${type}`
       }
     )
