@@ -1,9 +1,9 @@
 import { ModuleNotFound, ModuleInternalError } from '../errors/errors'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
+import { Context } from '..'
 const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttpRequest
 
-// TODO: Change this URL to actual Backend URL
-let BACKEND_STATIC_URL = 'http://ec2-54-169-81-133.ap-southeast-1.compute.amazonaws.com/static'
+let BACKEND_STATIC_URL = 'https://source-academy.github.io/modules'
 
 export function setBackendStaticURL(url: string) {
   BACKEND_STATIC_URL = url
@@ -20,13 +20,14 @@ export function loadModuleText(path: string) {
   return req.responseText
 }
 
-/* tslint:disable */
-export function loadIIFEModule(path: string, moduleText?: string) {
+export function loadModule(path: string, context: Context, moduleText?: string) {
   try {
     if (moduleText === undefined) {
       moduleText = loadModuleText(path)
     }
-    return eval(moduleText) as object
+    // tslint:disable-next-line:no-eval
+    const moduleLib = eval(moduleText)
+    return moduleLib({ runes: {}, ...context.moduleParams })
   } catch (_error) {
     throw new ModuleInternalError(path)
   }

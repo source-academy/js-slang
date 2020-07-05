@@ -10,7 +10,7 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { LazyBuiltIn } from '../createContext'
-import { loadIIFEModule } from '../modules/moduleLoader'
+import { loadModule } from '../modules/moduleLoader'
 
 class BreakValue {}
 
@@ -582,7 +582,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
     const obj = {}
-    for (const prop of node.properties) {
+    for (const propUntyped of node.properties) {
+      // node.properties: es.Property | es.SpreadExpression, but
+      // our Acorn is set to ES6 which cannot have a es.SpreadExpression
+      // at this point. Force the type.
+      const prop = propUntyped as es.Property
       let key
       if (prop.key.type === 'Identifier') {
         key = prop.key.name
@@ -608,7 +612,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
     const moduleName = node.source.value as string
     const neededSymbols = node.specifiers.map(spec => spec.local.name)
-    const module = loadIIFEModule(moduleName)
+    const module = loadModule(moduleName, context)
     declareImports(context, node)
     for (const name of neededSymbols) {
       defineVariable(context, name, module[name], true);

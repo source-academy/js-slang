@@ -35,10 +35,10 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
           actualNode.typability === 'Untypable'
             ? "Couldn't infer type"
             : typeToString(
-                actualNode.type === 'FunctionDeclaration'
-                  ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
-                  : actualNode.inferredType!
-              )
+              actualNode.type === 'FunctionDeclaration'
+                ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+                : actualNode.inferredType!
+            )
         return `${id}: ${type}`
       }
     )
@@ -412,11 +412,15 @@ describe('type checking overloaded unary/binary primitives', () => {
       foo(4, false);
       !3;
       !(3+4);
+      1();
+      const x = y => y;
+      x(1)(2);
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
-      `"foo: (number, number) -> number"`
-    )
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "foo: (number, number) -> number
+      x: T0 -> T0"
+    `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 5: Expected the test part of the conditional expression:
         1 ? ... : ...
@@ -447,6 +451,18 @@ describe('type checking overloaded unary/binary primitives', () => {
       The unary operator (!) expected its operand to be of type:
         boolean
       but instead it received an operand of type:
+        number
+      Line 11: In
+        (1)()
+      expected
+        1
+      to be a function type, but instead it is type:
+        number
+      Line 13: In
+        x(1)(2)
+      expected
+        x(1)
+      to be a function type, but instead it is type:
         number"
     `)
   })
@@ -997,8 +1013,8 @@ describe('type checking arrays', () => {
       x: number"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 4: Array expected type: Array<number>
-          but got: boolean"
+      "Line 4: Expected array type: Array<number>
+          but got: Array<boolean>"
     `)
   })
   it('asserts that arrays are used in an monomporhic manner', () => {
@@ -1048,12 +1064,12 @@ describe('type checking arrays', () => {
     `)
     expect(errors.length).toEqual(7)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 3: Array expected type: Array<number>
-          but got: boolean
+      "Line 3: Expected array type: Array<number>
+          but got: Array<boolean>
       Line 13: Expected array index as number, got boolean instead
       Line 14: Expected array index as number, got string instead
-      Line 17: Array expected type: Array<number>
-          but got: boolean
+      Line 17: Expected array type: Array<number>
+          but got: Array<boolean>
       Line 18: A type mismatch was detected in the binary expression:
         arr1[1] || false
       The binary operator (||) expected two operands with types:

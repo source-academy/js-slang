@@ -10,7 +10,7 @@ import {
   INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
-import { GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE, GLOBAL, JSSLANG_PROPERTIES } from '../constants'
+import { JSSLANG_PROPERTIES } from '../constants'
 import { stringify } from '../utils/stringify'
 import { PotentialInfiniteLoopError } from '../errors/timeoutErrors'
 import { locationDummyNode } from '../utils/astCreator'
@@ -1716,7 +1716,7 @@ export function runWithProgram(p: Program, context: Context): any {
   // setup externalBuiltins
   // certain functions are imported from cadet-frontend
   // so import them first every time
-  const externals = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables
+  const externals = context.nativeStorage.globals!.variables
   if (externals.size > 0) {
     EXTERNAL_PRIMITIVES.forEach(func => extractExternalBuiltin(func, externals))
   }

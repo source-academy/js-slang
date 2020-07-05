@@ -10,7 +10,7 @@ export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) { }
 
   get location() {
     return this.node.loc!
@@ -32,15 +32,15 @@ export class ArrayAssignmentError implements SourceError {
   constructor(
     public node: TypeAnnotatedNode<es.Node>,
     public arrayType: SArray,
-    public receivedType: Type
-  ) {}
+    public receivedType: SArray
+  ) { }
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    return stripIndent`Array expected type: ${typeToString(this.arrayType)}
+    return stripIndent`Expected array type: ${typeToString(this.arrayType)}
     but got: ${typeToString(this.receivedType)}`
   }
 
@@ -53,7 +53,7 @@ export class ReassignConstError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) {}
+  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) { }
 
   get location() {
     return this.node.loc!
@@ -77,7 +77,7 @@ export class DifferentAssignmentError implements SourceError {
     public node: TypeAnnotatedNode<es.AssignmentExpression>,
     public expectedType: Type,
     public receivedType: Type
-  ) {}
+  ) { }
 
   get location() {
     return this.node.loc!
@@ -110,7 +110,7 @@ export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>) {}
+  constructor(public node: TypeAnnotatedNode<es.Node>) { }
 
   get location() {
     return this.node.loc!
@@ -131,8 +131,8 @@ function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
       ? (node.declarations[0].id as es.Identifier).name
       : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
     : node.type === 'Identifier'
-    ? node.name
-    : JSON.stringify(node) // might not be a good idea
+      ? node.name
+      : JSON.stringify(node) // might not be a good idea
 }
 
 export class DifferentNumberArgumentsError implements SourceError {
@@ -143,7 +143,7 @@ export class DifferentNumberArgumentsError implements SourceError {
     public node: TypeAnnotatedNode<es.Node>,
     public numExpectedArgs: number,
     public numReceived: number
-  ) {}
+  ) { }
 
   get location() {
     return this.node.loc!
@@ -166,7 +166,7 @@ export class InvalidArgumentTypesError implements SourceError {
     public args: TypeAnnotatedNode<es.Node>[],
     public expectedTypes: Type[],
     public receivedTypes: Type[]
-  ) {}
+  ) { }
 
   get location() {
     return this.node.loc!
@@ -263,7 +263,7 @@ export class InvalidTestConditionError implements SourceError {
       es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
     >,
     public receivedType: Type
-  ) {}
+  ) { }
 
   get location() {
     return this.node.loc!
@@ -288,7 +288,7 @@ export class UndefinedIdentifierError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) {}
+  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) { }
 
   get location() {
     return this.node.loc!
@@ -313,7 +313,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
     public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
     public consequentType: Type,
     public alternateType: Type
-  ) {}
+  ) { }
 
   get location() {
     return this.node.loc!
@@ -329,6 +329,32 @@ export class ConsequentAlternateMismatchError implements SourceError {
       ${typeToString(this.consequentType)}
     but the false branch has type:
       ${typeToString(this.alternateType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class CallingNonFunctionType implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.CallExpression>, public callerType: Type) { }
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return stripIndent`
+    In
+      ${simplify(generate(this.node))}
+    expected
+      ${simplify(generate(this.node.callee))}
+    to be a function type, but instead it is type:
+      ${typeToString(this.callerType)}
     `
   }
 

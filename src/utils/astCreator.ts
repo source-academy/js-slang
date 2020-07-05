@@ -25,6 +25,7 @@ export const memberExpression = (
   type: 'MemberExpression',
   object,
   computed: false,
+  optional: false,
   property: identifier(propertyString)
 })
 
@@ -57,6 +58,7 @@ export const callExpression = (
   type: 'CallExpression',
   callee,
   arguments: args,
+  optional: false,
   loc
 })
 

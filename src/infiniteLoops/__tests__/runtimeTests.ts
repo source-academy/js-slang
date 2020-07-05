@@ -57,6 +57,28 @@ test('InvalidNumberOfArguments does not break implementation', () => {
   return expectParsedError(code).toMatchSnapshot()
 })
 
+test('Short-circuiting logicals does not raise false positives', () => {
+  const code = `
+  function fac(x) {
+    if (x===0) {
+        return false;
+    } else {
+        return true || fac(x-1);
+    }
+  }
+  fac(-2);
+      `
+  return expectResult(code).toMatchSnapshot()
+})
+
+test('infinite loop detected: countdown fac (short-circuit)', () => {
+  const code = `
+  function f(x){return x===0 || f(x-1);}
+  f(-1);
+      `
+  return expectParsedError(code).toMatchSnapshot()
+})
+
 test('infinite loop detected: countdown fac', () => {
   const code = `
   function CD_fac(x) {

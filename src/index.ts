@@ -394,9 +394,9 @@ export async function runInContext(
   }
   if (context.variant === 'concurrent') {
     if (previousCode === code) {
-      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
-      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     previousCode = code
     try {
@@ -436,28 +436,32 @@ export async function runInContext(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
+    const oldPreviousCode = previousCode
+    const oldTimeout = context.nativeStorage.maxExecTime
     await runInContext(prelude, context, options)
+    previousCode = oldPreviousCode
+    context.nativeStorage.maxExecTime = oldTimeout
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
     if (previousCode === code) {
-      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
-      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     previousCode = code
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.variant)
+      const temp = transpile(program, context, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled)
+        value: sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {

@@ -596,13 +596,13 @@ For convenience, we define the function \(neg : BoolSym \to BoolSym\) to allow u
 \]
 
 \noindent
-For logical symbols, our job is much simpler since both arguments can only be boolean symbols, we only need to wrap both of them up in a logical symbol.
+For logical symbols, we have to take into account short-circuiting. We do this by explicitly creating a branch symbol with the desired behaviour.
 
 \[    
 \Rule{E_1 \eval B_1 \qquad E_2 \eval B_2}
-      {E_1\ \&\&\ E_2 \eval L(B_1,B_2,conjunction)} \hfill
+      {E_1\ \&\&\ E_2 \eval Br(B_1,B_2,LV(false))} \hfill
 \Rule{E_1 \eval B_1 \qquad E_2 \eval B_2}
-      {E_1\ ||\ E_2 \eval L(B_1,B_2,disjunction)}
+      {E_1\ ||\ E_2 \eval Br(B_1,LV(true),B_2)}
 \]
 
 \noindent

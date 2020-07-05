@@ -83,7 +83,7 @@ export default class Closure extends Callable {
   public originalNode: es.Function
 
   constructor(public node: es.Function, public environment: Environment, context: Context) {
-    super(function(this: any, ...args: any[]) {
+    super(function (this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
     this.originalNode = node

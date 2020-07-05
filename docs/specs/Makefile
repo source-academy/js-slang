@@ -1,6 +1,6 @@
 PDFLATEX = latexmk
 
-SPECSNUMS = 1 1_lazy 1_infinite_loop_detection 2 2_lazy 3 3_concurrent 4 4_gpu styleguide 1_type_inference 1_wasm 3_nondet 
+SPECSNUMS = 1 1_lazy 1_wasm 1_type_inference 1_infinite_loop_detection 2 2_lazy 2_type_inference 3 3_nondet 3_concurrent 4 4_gpu styleguide 
 
 SPECS = $(SPECSNUMS:%=source_%)
 
