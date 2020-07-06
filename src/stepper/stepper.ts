@@ -1664,7 +1664,11 @@ function pathifyMain(
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
-          left = redexMarker as es.Expression
+          if (redex.type === 'BinaryExpression' || redex.type === 'ConditionalExpression') {
+            left = withBrackets as es.Expression
+          } else {
+            left = redexMarker as es.Expression
+          }
         } else {
           pathIndex++
           left = pathify(target.left) as es.Expression
@@ -1672,7 +1676,11 @@ function pathifyMain(
       } else if (path[pathIndex] === 'right') {
         if (pathIndex === endIndex) {
           redex = right
-          right = redexMarker as es.Expression
+          if (redex.type === 'BinaryExpression' || redex.type === 'ConditionalExpression') {
+            right = withBrackets as es.Expression
+          } else {
+            right = redexMarker as es.Expression
+          }
         } else {
           pathIndex++
           right = pathify(target.right) as es.Expression
