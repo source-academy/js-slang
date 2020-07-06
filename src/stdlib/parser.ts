@@ -33,6 +33,21 @@ function makeSequenceIfNeeded(exs: es.Node[]) {
     : vector_to_list(['sequence', vector_to_list(exs.map(transform))])
 }
 
+function makeBlockIfNeeded(exs: es.Node[]) {
+  return hasDeclarationAtToplevel(exs)
+    ? vector_to_list(['block', makeSequenceIfNeeded(exs)])
+    : makeSequenceIfNeeded(exs)
+}
+
+// checks if sequence has declaration at toplevel
+// (outside of any block)
+function hasDeclarationAtToplevel(exs: es.Node[]) {
+  return exs.reduce(
+    (b, ex) => b || ex.type === 'VariableDeclaration' || ex.type === 'FunctionDeclaration',
+    false
+  )
+}
+
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
 let transformers: ASTTransformers
@@ -48,7 +63,7 @@ transformers = new Map([
   [
     'BlockStatement',
     (node: es.BlockStatement) => {
-      return vector_to_list(['block', makeSequenceIfNeeded(node.body)])
+      return makeBlockIfNeeded(node.body)
     }
   ],
 
@@ -78,12 +93,12 @@ transformers = new Map([
         'constant_declaration',
         transform(node.id as es.Identifier),
         vector_to_list([
-          'function_definition',
+          'lambda_expression',
           vector_to_list(node.params.map(transform)),
           // body.body: strip away one layer of block:
           // The body of a function is the statement
           // inside the curly braces.
-          makeSequenceIfNeeded(node.body.body)
+          makeBlockIfNeeded(node.body.body)
         ])
       ])
     }
@@ -178,13 +193,13 @@ transformers = new Map([
     'ArrowFunctionExpression',
     (node: es.ArrowFunctionExpression) => {
       return vector_to_list([
-        'function_definition',
+        'lambda_expression',
         vector_to_list(node.params.map(transform)),
         node.body.type === 'BlockStatement'
           ? // body.body: strip away one layer of block:
             // The body of a function is the statement
             // inside the curly braces.
-            makeSequenceIfNeeded(node.body.body)
+            makeBlockIfNeeded(node.body.body)
           : vector_to_list(['return_statement', transform(node.body)])
       ])
     }
@@ -361,9 +376,9 @@ transformers = new Map([
     'FunctionExpression',
     (node: es.FunctionExpression) => {
       return vector_to_list([
-        'function_definition',
+        'lambda_expression',
         vector_to_list(node.params.map(transform)),
-        makeSequenceIfNeeded(node.body.body)
+        makeBlockIfNeeded(node.body.body)
       ])
     }
   ],

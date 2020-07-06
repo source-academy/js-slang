@@ -75,7 +75,7 @@ Object {
             ],
             Array [
               Array [
-                "function_definition",
+                "lambda_expression",
                 Array [
                   Array [
                     Array [
@@ -98,93 +98,93 @@ Object {
                   ],
                   Array [
                     Array [
-                      "sequence",
+                      "block",
                       Array [
                         Array [
+                          "sequence",
                           Array [
-                            "constant_declaration",
                             Array [
                               Array [
-                                "name",
+                                "constant_declaration",
                                 Array [
-                                  "sum",
-                                  null,
-                                ],
-                              ],
-                              Array [
-                                Array [
-                                  "application",
+                                  Array [
+                                    "name",
+                                    Array [
+                                      "sum",
+                                      null,
+                                    ],
+                                  ],
                                   Array [
                                     Array [
-                                      "name",
-                                      Array [
-                                        "+",
-                                        null,
-                                      ],
-                                    ],
-                                    Array [
+                                      "application",
                                       Array [
                                         Array [
                                           "name",
                                           Array [
-                                            "a",
+                                            "+",
                                             null,
                                           ],
                                         ],
                                         Array [
                                           Array [
-                                            "name",
                                             Array [
-                                              "b",
+                                              "name",
+                                              Array [
+                                                "a",
+                                                null,
+                                              ],
+                                            ],
+                                            Array [
+                                              Array [
+                                                "name",
+                                                Array [
+                                                  "b",
+                                                  null,
+                                                ],
+                                              ],
                                               null,
                                             ],
                                           ],
                                           null,
                                         ],
                                       ],
-                                      null,
                                     ],
+                                    null,
                                   ],
                                 ],
-                                null,
                               ],
-                            ],
-                          ],
-                          Array [
-                            Array [
-                              "conditional_statement",
                               Array [
                                 Array [
-                                  "application",
+                                  "conditional_statement",
                                   Array [
                                     Array [
-                                      "name",
-                                      Array [
-                                        ">",
-                                        null,
-                                      ],
-                                    ],
-                                    Array [
+                                      "application",
                                       Array [
                                         Array [
                                           "name",
                                           Array [
-                                            "sum",
+                                            ">",
                                             null,
                                           ],
                                         ],
                                         Array [
-                                          1,
+                                          Array [
+                                            Array [
+                                              "name",
+                                              Array [
+                                                "sum",
+                                                null,
+                                              ],
+                                            ],
+                                            Array [
+                                              1,
+                                              null,
+                                            ],
+                                          ],
                                           null,
                                         ],
                                       ],
-                                      null,
                                     ],
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    "block",
                                     Array [
                                       Array [
                                         "return_statement",
@@ -199,12 +199,6 @@ Object {
                                           null,
                                         ],
                                       ],
-                                      null,
-                                    ],
-                                  ],
-                                  Array [
-                                    Array [
-                                      "block",
                                       Array [
                                         Array [
                                           "conditional_statement",
@@ -260,31 +254,25 @@ Object {
                                             ],
                                             Array [
                                               Array [
-                                                "block",
+                                                "return_statement",
                                                 Array [
                                                   Array [
-                                                    "return_statement",
+                                                    "application",
                                                     Array [
                                                       Array [
-                                                        "application",
+                                                        "name",
                                                         Array [
-                                                          Array [
-                                                            "name",
-                                                            Array [
-                                                              "-",
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          Array [
-                                                            Array [
-                                                              1,
-                                                              null,
-                                                            ],
-                                                            null,
-                                                          ],
+                                                          "-",
+                                                          null,
                                                         ],
                                                       ],
-                                                      null,
+                                                      Array [
+                                                        Array [
+                                                          1,
+                                                          null,
+                                                        ],
+                                                        null,
+                                                      ],
                                                     ],
                                                   ],
                                                   null,
@@ -345,27 +333,55 @@ Object {
                                                     ],
                                                     Array [
                                                       Array [
-                                                        "block",
+                                                        "return_statement",
                                                         Array [
-                                                          Array [
-                                                            "return_statement",
-                                                            Array [
-                                                              1,
-                                                              null,
-                                                            ],
-                                                          ],
+                                                          1,
                                                           null,
                                                         ],
                                                       ],
                                                       Array [
                                                         Array [
-                                                          "block",
+                                                          "return_statement",
                                                           Array [
                                                             Array [
-                                                              "return_statement",
+                                                              "conditional_expression",
                                                               Array [
                                                                 Array [
-                                                                  "conditional_expression",
+                                                                  "application",
+                                                                  Array [
+                                                                    Array [
+                                                                      "name",
+                                                                      Array [
+                                                                        ">",
+                                                                        null,
+                                                                      ],
+                                                                    ],
+                                                                    Array [
+                                                                      Array [
+                                                                        Array [
+                                                                          "name",
+                                                                          Array [
+                                                                            "a",
+                                                                            null,
+                                                                          ],
+                                                                        ],
+                                                                        Array [
+                                                                          Array [
+                                                                            "name",
+                                                                            Array [
+                                                                              "b",
+                                                                              null,
+                                                                            ],
+                                                                          ],
+                                                                          null,
+                                                                        ],
+                                                                      ],
+                                                                      null,
+                                                                    ],
+                                                                  ],
+                                                                ],
+                                                                Array [
+                                                                  0,
                                                                   Array [
                                                                     Array [
                                                                       "application",
@@ -373,62 +389,22 @@ Object {
                                                                         Array [
                                                                           "name",
                                                                           Array [
-                                                                            ">",
+                                                                            "-",
                                                                             null,
                                                                           ],
                                                                         ],
                                                                         Array [
                                                                           Array [
-                                                                            Array [
-                                                                              "name",
-                                                                              Array [
-                                                                                "a",
-                                                                                null,
-                                                                              ],
-                                                                            ],
-                                                                            Array [
-                                                                              Array [
-                                                                                "name",
-                                                                                Array [
-                                                                                  "b",
-                                                                                  null,
-                                                                                ],
-                                                                              ],
-                                                                              null,
-                                                                            ],
+                                                                            2,
+                                                                            null,
                                                                           ],
                                                                           null,
                                                                         ],
                                                                       ],
                                                                     ],
-                                                                    Array [
-                                                                      0,
-                                                                      Array [
-                                                                        Array [
-                                                                          "application",
-                                                                          Array [
-                                                                            Array [
-                                                                              "name",
-                                                                              Array [
-                                                                                "-",
-                                                                                null,
-                                                                              ],
-                                                                            ],
-                                                                            Array [
-                                                                              Array [
-                                                                                2,
-                                                                                null,
-                                                                              ],
-                                                                              null,
-                                                                            ],
-                                                                          ],
-                                                                        ],
-                                                                        null,
-                                                                      ],
-                                                                    ],
+                                                                    null,
                                                                   ],
                                                                 ],
-                                                                null,
                                                               ],
                                                             ],
                                                             null,
@@ -447,9 +423,9 @@ Object {
                                         null,
                                       ],
                                     ],
-                                    null,
                                   ],
                                 ],
+                                null,
                               ],
                             ],
                             null,
@@ -611,7 +587,7 @@ Object {
     "application",
     Array [
       Array [
-        "function_definition",
+        "lambda_expression",
         Array [
           null,
           Array [
@@ -699,7 +675,7 @@ Object {
     "application",
     Array [
       Array [
-        "function_definition",
+        "lambda_expression",
         Array [
           Array [
             Array [
@@ -2353,52 +2329,46 @@ Object {
               ],
               Array [
                 Array [
-                  "block",
+                  "assignment",
                   Array [
                     Array [
-                      "assignment",
+                      "name",
                       Array [
+                        "i",
+                        null,
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "application",
                         Array [
-                          "name",
                           Array [
-                            "i",
-                            null,
+                            "name",
+                            Array [
+                              "+",
+                              null,
+                            ],
                           ],
-                        ],
-                        Array [
                           Array [
-                            "application",
                             Array [
                               Array [
                                 "name",
                                 Array [
-                                  "+",
+                                  "i",
                                   null,
                                 ],
                               ],
                               Array [
-                                Array [
-                                  Array [
-                                    "name",
-                                    Array [
-                                      "i",
-                                      null,
-                                    ],
-                                  ],
-                                  Array [
-                                    1,
-                                    null,
-                                  ],
-                                ],
+                                1,
                                 null,
                               ],
                             ],
+                            null,
                           ],
-                          null,
                         ],
                       ],
+                      null,
                     ],
-                    null,
                   ],
                 ],
                 null,
@@ -3068,15 +3038,9 @@ Object {
                   ],
                   Array [
                     Array [
-                      "block",
+                      "sequence",
                       Array [
-                        Array [
-                          "sequence",
-                          Array [
-                            null,
-                            null,
-                          ],
-                        ],
+                        null,
                         null,
                       ],
                     ],
@@ -4244,167 +4208,137 @@ Object {
                   ],
                   Array [
                     Array [
-                      "block",
+                      "conditional_statement",
                       Array [
                         Array [
-                          "conditional_statement",
+                          "application",
                           Array [
                             Array [
-                              "application",
+                              "name",
                               Array [
-                                Array [
-                                  "name",
-                                  Array [
-                                    "<",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    Array [
-                                      "name",
-                                      Array [
-                                        "j",
-                                        null,
-                                      ],
-                                    ],
-                                    Array [
-                                      1,
-                                      null,
-                                    ],
-                                  ],
-                                  null,
-                                ],
+                                "<",
+                                null,
                               ],
                             ],
                             Array [
                               Array [
-                                "block",
                                 Array [
+                                  "name",
                                   Array [
-                                    "continue_statement",
+                                    "j",
                                     null,
                                   ],
+                                ],
+                                Array [
+                                  1,
                                   null,
                                 ],
                               ],
+                              null,
+                            ],
+                          ],
+                        ],
+                        Array [
+                          Array [
+                            "continue_statement",
+                            null,
+                          ],
+                          Array [
+                            Array [
+                              "sequence",
                               Array [
                                 Array [
-                                  "block",
                                   Array [
+                                    "assignment",
                                     Array [
-                                      "sequence",
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "i",
+                                          null,
+                                        ],
+                                      ],
                                       Array [
                                         Array [
+                                          "application",
                                           Array [
-                                            "assignment",
                                             Array [
+                                              "name",
                                               Array [
-                                                "name",
-                                                Array [
-                                                  "i",
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  "application",
-                                                  Array [
-                                                    Array [
-                                                      "name",
-                                                      Array [
-                                                        "+",
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      Array [
-                                                        Array [
-                                                          "name",
-                                                          Array [
-                                                            "i",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          1,
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      null,
-                                                    ],
-                                                  ],
-                                                ],
+                                                "+",
                                                 null,
                                               ],
                                             ],
-                                          ],
-                                          Array [
                                             Array [
-                                              "conditional_statement",
                                               Array [
                                                 Array [
-                                                  "application",
+                                                  "name",
                                                   Array [
-                                                    Array [
-                                                      "name",
-                                                      Array [
-                                                        ">",
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      Array [
-                                                        Array [
-                                                          "name",
-                                                          Array [
-                                                            "j",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          2,
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      null,
-                                                    ],
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    "block",
-                                                    Array [
-                                                      Array [
-                                                        "break_statement",
-                                                        null,
-                                                      ],
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  Array [
-                                                    Array [
-                                                      "block",
-                                                      Array [
-                                                        Array [
-                                                          "sequence",
-                                                          Array [
-                                                            null,
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        null,
-                                                      ],
-                                                    ],
+                                                    "i",
                                                     null,
                                                   ],
                                                 ],
+                                                Array [
+                                                  1,
+                                                  null,
+                                                ],
+                                              ],
+                                              null,
+                                            ],
+                                          ],
+                                        ],
+                                        null,
+                                      ],
+                                    ],
+                                  ],
+                                  Array [
+                                    Array [
+                                      "conditional_statement",
+                                      Array [
+                                        Array [
+                                          "application",
+                                          Array [
+                                            Array [
+                                              "name",
+                                              Array [
+                                                ">",
+                                                null,
+                                              ],
+                                            ],
+                                            Array [
+                                              Array [
+                                                Array [
+                                                  "name",
+                                                  Array [
+                                                    "j",
+                                                    null,
+                                                  ],
+                                                ],
+                                                Array [
+                                                  2,
+                                                  null,
+                                                ],
+                                              ],
+                                              null,
+                                            ],
+                                          ],
+                                        ],
+                                        Array [
+                                          Array [
+                                            "break_statement",
+                                            null,
+                                          ],
+                                          Array [
+                                            Array [
+                                              "sequence",
+                                              Array [
+                                                null,
+                                                null,
                                               ],
                                             ],
                                             null,
                                           ],
                                         ],
-                                        null,
                                       ],
                                     ],
                                     null,
@@ -4413,9 +4347,9 @@ Object {
                                 null,
                               ],
                             ],
+                            null,
                           ],
                         ],
-                        null,
                       ],
                     ],
                     null,
