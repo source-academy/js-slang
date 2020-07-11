@@ -231,8 +231,7 @@ function transformFunctionDeclarationsToArrowFunctions(
 function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
   functionsToStringMap: Map<es.Node, string>,
-  globalIds: NativeIds,
-  maxExecTime: number
+  globalIds: NativeIds
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
@@ -241,7 +240,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
           create.literal(functionsToStringMap.get(node)!),
-          create.literal(maxExecTime)
+          globalIds.native
         ])
       }
     }
@@ -761,7 +760,6 @@ function addInfiniteLoopProtection(
   program: es.Program,
   globalIds: NativeIds,
   usedIdentifiers: Set<string>,
-  maxExecTime: number,
   ignoreWalker: RecursiveVisitors<any>
 ) {
   const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
@@ -777,7 +775,7 @@ function addInfiniteLoopProtection(
           statement.body.body.unshift(
             create.expressionStatement(
               create.callExpression(globalIds.throwIfTimeout, [
-                create.literal(maxExecTime),
+                globalIds.native,
                 create.identifier(startTimeConst),
                 getRuntimeAst(),
                 create.literal(line),
@@ -866,14 +864,12 @@ export function transpile(
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
     program,
     functionsToStringMap,
-    globalIds,
-    context.nativeStorage.maxExecTime
+    globalIds
   )
   addInfiniteLoopProtection(
     program,
     globalIds,
     usedIdentifiers,
-    context.nativeStorage.maxExecTime,
     ignoreWalker
   )
   const modulePrefix = prefixModule(program)

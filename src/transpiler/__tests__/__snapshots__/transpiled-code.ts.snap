@@ -103,7 +103,7 @@ const globals = native0.globals;
       wrap7;
       wrap8;
       wrap9;
-    }, \\"function f(callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) {\\\\n  let wrap = 2;\\\\n  wrap0;\\\\n  wrap1;\\\\n  wrap2;\\\\n  wrap3;\\\\n  wrap4;\\\\n  wrap5;\\\\n  wrap6;\\\\n  wrap7;\\\\n  wrap8;\\\\n  wrap9;\\\\n}\\", 1000);
+    }, \\"function f(callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) {\\\\n  let wrap = 2;\\\\n  wrap0;\\\\n  wrap1;\\\\n  wrap2;\\\\n  wrap3;\\\\n  wrap4;\\\\n  wrap5;\\\\n  wrap6;\\\\n  wrap7;\\\\n  wrap8;\\\\n  wrap9;\\\\n}\\", native0);
     const native = 123;
     globals.variables.set(\\"boolOrErr\\", {
       kind: \\"const\\",

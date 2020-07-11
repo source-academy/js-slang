@@ -28,8 +28,8 @@ const globals = native.globals;
         isTail: false,
         value: binaryOp(\\"+\\", x, y, 1, 28)
       };
-    }, \\"function add(x, y) {\\\\n  return x + y;\\\\n}\\", 1000);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(add, 1, 37, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", 1000), 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", x, 1, 1, 64)     }), \\\\\\"x => x + 1\\\\\\", 1000), 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     });   } });\\");
+    }, \\"function add(x, y) {\\\\n  return x + y;\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(add, 1, 37, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", native), 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", x, 1, 1, 64)     }), \\\\\\"x => x + 1\\\\\\", native), 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     });   } });\\");
     globals.variables.set(\\"add\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -99,8 +99,8 @@ const globals = native.globals;
         line: 3,
         column: 49
       });
-    }, \\"function f(a, b) {\\\\n  return (a ? true : head(null)) && (!b ? true : head(null));\\\\n}\\", 1000);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 6, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: b     }), \\\\\\"b => b\\\\\\", 1000), 6, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: unaryOp(\\\\\\"!\\\\\\", b, 6, 28)     }), \\\\\\"b => !b\\\\\\", 1000), 6, 20, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } });\\");
+    }, \\"function f(a, b) {\\\\n  return (a ? true : head(null)) && (!b ? true : head(null));\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 6, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: b     }), \\\\\\"b => b\\\\\\", native), 6, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(b => ({       isTail: false,       value: unaryOp(\\\\\\"!\\\\\\", b, 6, 28)     }), \\\\\\"b => !b\\\\\\", native), 6, 20, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return true;       }     });   } });\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -152,7 +152,7 @@ const globals = native.globals;
         isTail: false,
         value: b
       };
-    }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\", 1000);
+    }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\", native);
     const test2 = wrap(a => {
       return {
         isTail: true,
@@ -183,7 +183,7 @@ const globals = native.globals;
         line: 4,
         column: 27
       };
-    }, \\"function test2(a) {\\\\n  return test(a, head(null));\\\\n}\\", 1000);
+    }, \\"function test2(a) {\\\\n  return test(a, head(null));\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(test2, 6, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } });\\");
     globals.variables.set(\\"test\\", {
       kind: \\"const\\",
@@ -247,13 +247,13 @@ const globals = native.globals;
         isTail: false,
         value: x
       };
-    }, \\"function incX() {\\\\n  x = x + 1;\\\\n  return x;\\\\n}\\", 1000);
+    }, \\"function incX() {\\\\n  x = x + 1;\\\\n  return x;\\\\n}\\", native);
     const square = wrap(n => {
       return {
         isTail: false,
         value: binaryOp(\\"*\\", n, n, 10, 9)
       };
-    }, \\"function square(n) {\\\\n  return n * n;\\\\n}\\", 1000);
+    }, \\"function square(n) {\\\\n  return n * n;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(square, 13, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(incX, 13, 7);   } });\\");
     globals.variables.set(\\"x\\", {
       kind: \\"let\\",
@@ -323,9 +323,9 @@ const globals = native.globals;
         value: wrap(z => ({
           isTail: false,
           value: binaryOp(\\"+\\", y, z, 4, 14)
-        }), \\"z => y + z\\", 1000)
+        }), \\"z => y + z\\", native)
       };
-    }, \\"function addSome(x) {\\\\n  const y = x + 1;\\\\n  return z => y + z;\\\\n}\\", 1000);
+    }, \\"function addSome(x) {\\\\n  const y = x + 1;\\\\n  return z => y + z;\\\\n}\\", native);
     const addSome2 = callIfFuncAndRightArgs(addSome, 7, 17, {
       isThunk: true,
       memoizedValue: 0,
@@ -383,8 +383,8 @@ const globals = native.globals;
         isTail: false,
         value: unaryOp(\\"!\\", b, 1, 25)
       };
-    }, \\"function neg(b) {\\\\n  return !b;\\\\n}\\", 1000);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(neg, 1, 31, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", 1000), 1, 35, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return false;       }     });   } });\\");
+    }, \\"function neg(b) {\\\\n  return !b;\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(neg, 1, 31, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", native), 1, 35, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return false;       }     });   } });\\");
     globals.variables.set(\\"neg\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -430,7 +430,7 @@ const globals = native.globals;
         isTail: false,
         value: b
       };
-    }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\", 1000);
+    }, \\"function test(a, b) {\\\\n  return a === 1 ? a : b;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 1, 48, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     });   } });\\");
     globals.variables.set(\\"test\\", {
       kind: \\"const\\",

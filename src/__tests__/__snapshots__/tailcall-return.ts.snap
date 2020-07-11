@@ -46,7 +46,7 @@ const globals = native.globals;
           column: 11
         };
       }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -108,7 +108,7 @@ const globals = native.globals;
           column: 20
         });
       }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return false || f(x - 1, y + 1);\\\\n  }\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return false || f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -162,7 +162,7 @@ const globals = native.globals;
         line: 2,
         column: 22
       };
-    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : f(x - 1, y + 1);\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : f(x - 1, y + 1);\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -219,7 +219,7 @@ const globals = native.globals;
         isTail: false,
         value: 'unreachable'
       };
-    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : false || x > 0 ? f(x - 1, y + 1) : 'unreachable';\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : false || x > 0 ? f(x - 1, y + 1) : 'unreachable';\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -281,7 +281,7 @@ const globals = native.globals;
           column: 11
         };
       }
-    }, \\"(x, y) => {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", 1000);
+    }, \\"(x, y) => {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -331,7 +331,7 @@ const globals = native.globals;
       arguments: [binaryOp(\\"-\\", x, 1, 1, 35), binaryOp(\\"+\\", y, 1, 1, 40)],
       line: 1,
       column: 33
-    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", 1000);
+    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -393,7 +393,7 @@ const globals = native.globals;
           column: 11
         };
       }
-    }, \\"function f(x, y, z) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + f(0, z, 0), z);\\\\n  }\\\\n}\\", 1000);
+    }, \\"function f(x, y, z) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + f(0, z, 0), z);\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000, 2);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -444,7 +444,7 @@ const globals = native.globals;
       arguments: [binaryOp(\\"-\\", x, 1, 1, 35), binaryOp(\\"+\\", y, 1, 1, 40)],
       line: 1,
       column: 33
-    }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\", 1000);
+    }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\", native);
     const g = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", x, 0, 2, 20), 2, 20) ? {
       isTail: false,
       value: y
@@ -455,7 +455,7 @@ const globals = native.globals;
       arguments: [binaryOp(\\"-\\", x, 1, 2, 35), binaryOp(\\"+\\", y, 1, 2, 40)],
       line: 2,
       column: 33
-    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", 1000);
+    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -530,7 +530,7 @@ const globals = native.globals;
           column: 11
         };
       }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return g(x - 1, y + 1);\\\\n  }\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return g(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
     const g = wrap((x, y) => {
       if (boolOrErr(binaryOp(\\"<=\\", x, 0, 9, 6), 9, 2)) {
         return {
@@ -547,7 +547,7 @@ const globals = native.globals;
           column: 11
         };
       }
-    }, \\"function g(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", 1000);
+    }, \\"function g(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 15, 0, 5000, 5000);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
