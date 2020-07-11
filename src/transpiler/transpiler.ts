@@ -861,17 +861,8 @@ export function transpile(
     ignoreWalker
   )
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
-    program,
-    functionsToStringMap,
-    globalIds
-  )
-  addInfiniteLoopProtection(
-    program,
-    globalIds,
-    usedIdentifiers,
-    ignoreWalker
-  )
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
+  addInfiniteLoopProtection(program, globalIds, usedIdentifiers, ignoreWalker)
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(
