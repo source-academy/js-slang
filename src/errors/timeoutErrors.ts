@@ -7,8 +7,8 @@ import { ErrorSeverity, ErrorType } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { RuntimeSourceError } from './runtimeSourceError'
 
-function getWarningMessage() {
-  const from = JSSLANG_PROPERTIES.maxExecTime / 1000
+function getWarningMessage(maxExecTime: number) {
+  const from = maxExecTime / 1000
   const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy
   return stripIndent`If you are certain your program is correct, press run again without editing your program.
       The time limit will be increased from ${from} to ${to} seconds.
@@ -19,13 +19,13 @@ export class PotentialInfiniteLoopError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
-  constructor(node?: es.Node) {
+  constructor(node: es.Node, private maxExecTime: number) {
     super(node)
   }
 
   public explain() {
     return stripIndent`Potential infinite loop detected.
-    ${getWarningMessage()}`
+    ${getWarningMessage(this.maxExecTime)}`
   }
 
   public elaborate() {
@@ -37,7 +37,7 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
-  constructor(node: es.Node, private calls: [string, any[]][]) {
+  constructor(node: es.Node, private calls: [string, any[]][], private maxExecTime: number) {
     super(node)
     this.calls = this.calls.slice(-3)
   }
@@ -48,7 +48,7 @@ export class PotentialInfiniteRecursionError extends RuntimeSourceError {
         `${executedName}(${executedArguments.map(arg => stringify(arg)).join(', ')})`
     )
     return stripIndent`Potential infinite recursion detected: ${formattedCalls.join(' ... ')}.
-      ${getWarningMessage()}`
+      ${getWarningMessage(this.maxExecTime)}`
   }
 
   public elaborate() {

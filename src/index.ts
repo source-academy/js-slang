@@ -52,6 +52,7 @@ export interface IOptions {
   variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
+  isPrelude: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
@@ -60,7 +61,8 @@ const DEFAULT_OPTIONS: IOptions = {
   executionMethod: 'auto',
   variant: 'default',
   originalMaxExecTime: 1000,
-  useSubst: false
+  useSubst: false,
+  isPrelude: false
 }
 
 // needed to work on browsers
@@ -436,20 +438,18 @@ export async function runInContext(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
-    const oldPreviousCode = previousCode
-    const oldTimeout = context.nativeStorage.maxExecTime
-    await runInContext(prelude, context, options)
-    previousCode = oldPreviousCode
-    context.nativeStorage.maxExecTime = oldTimeout
+    await runInContext(prelude, context, { ...options, isPrelude: true })
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
     if (previousCode === code) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
+    } else if (!options.isPrelude) {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
-    previousCode = code
+    if (!options.isPrelude) {
+      previousCode = code
+    }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
