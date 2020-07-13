@@ -10,7 +10,9 @@ function times(x, y) {
 apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \end{lstlisting}
 \item \lstinline{parse(x)}: \textit{primitive}, returns the parse tree that results from parsing
-the string \lstinline{x} as a Source program. The following two pages describe the shape of the parse tree.
+  the string \lstinline{x} as a Source program. The following two pages describe the shape of the parse tree.
+  The tree is represented by the tagged lists on the right; the angle brackets denote recursive application
+  of the transformation rules.
 \end{itemize}
 
 \newpage
@@ -19,37 +21,35 @@ the string \lstinline{x} as a Source program. The following two pages describe t
 
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
-                                                           && \texttt{list("sequence", list of <statement>)} \\[1mm]
+                                                           && \texttt{list("sequence", list of  } \langle \textit{statement}\rangle \textit{)} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \texttt{list("constant\_declaration", <name>, <expression>)} \\
+                                                           && \texttt{list("constant\_declaration",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
                                                            &&  \textrm{see below}\\
 &&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
                                                            && \textrm{see below}\\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \texttt{list("array\_assignment", <expression>, <expression>)} \\
+&&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
+                                          \textit{expression}_2 \textbf{\texttt{]}} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\ 
+                                                           && \texttt{list("array\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            &&  \textrm{treat as}:\ \textbf{\texttt{const}}\  \textit{name} \ 
                                    \textbf{\texttt{=}}\  \textit{parameters} \ \textbf{\texttt{=>}}\ \textit{block} \textbf{\texttt{;}} \\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \texttt{list("return\_statement", <expression>)} \\
+                                                           && \texttt{list("return\_statement",  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{see below}\\
 &&                       && |   &\quad && \textbf{\texttt{while}}\  
                                    \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
                                    \textit{block}
-                                                           && \texttt{list("while\_loop", <expression>, <statement>)} \\
+                                                           && \texttt{list("while\_loop",  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
-                                          (\ \textit{\hyperlink{for}{assignment}} \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
-                                            \textit{block}
-                                            && \texttt{list("for\_loop", <statement>, <expression>, <statement>,}\\
-                                            &&&&&&&&&\ \ \ \ \ \ \texttt{ <statement>)} \\
+                                          (\ \textit{\hyperlink{for}{assignment}}_1 \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} && \texttt{list("for\_loop",  } \langle \textit{assignment}_1\rangle\ \textrm{or}\ \langle \textit{let}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{assignment}_2\rangle \textit{,}\\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment}_2 \ \textbf{\texttt{)}} \  \textit{block}
+                                            && \texttt{ }\ \ \ \ \ \ \ \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
                                                            && \texttt{list("break\_statement")} \\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
@@ -60,24 +60,24 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                                            && \textrm{see below}\\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
-                                                            && \texttt{list of <name>} \\
+                                                            && \texttt{list of  } \langle \textit{name}\rangle  \\
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
-                                   \textit{block} \\
+                                   \textit{block}_1 \\
 &&                       &&     &      && \textbf{\texttt{else}}\
-                                          (\ \textit{block}
+                                          (\ \textit{block}_2
                                           \ | \
                                           \textit{\href{https://sicp.comp.nus.edu.sg/chapters/21\#footnote-1}{if-statement}} \ )
-                                          && \texttt{list("conditional\_statement", <expression>, } \\
-                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<statement>, <statement>)} \\
+                                          && \texttt{list("conditional\_statement",  } \langle \textit{expression}\rangle \textit{, } \\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{ } \langle \textit{block}_1\rangle \textit{,  } \langle \textit{block}_2\rangle \ \textrm{or}\ \langle \textit{if-statement} \rangle \texttt{)} \\
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
-                                                           && \texttt{list("block", <statement>)} \\
+                                                           && \texttt{list("block",  } \langle \textit{program}\rangle \textit{)} \\
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \texttt{list("variable\_declaration", <name>, <expression>)} \\
+                                                            && \texttt{list("variable\_declaration",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \texttt{list("assignment", <name>, <expression>)} \\
+                                                            && \texttt{list("assignment",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 \end{alignat*}
 
 \begin{alignat*}{9}
@@ -87,47 +87,47 @@ the string \lstinline{x} as a Source program. The following two pages describe t
 &&                       && |   &\quad && \textbf{\texttt{null}}
                                                            && \textrm{self-evaluating} \\
 &&                       && |   &\quad &&  \textit{string}   && \textrm{self-evaluating} \\
-&&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)} \ \textrm{or}\ \texttt{list("name", string, location)} \\
+&&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)}  \\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
                                             \textit{expression} \qquad
-                                                           && \texttt{list("application", <name>, list of <expression>)} \\
+                                                           && \texttt{list("application",  } \langle \textit{binary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{unary-operator} \ 
                                             \textit{expression}
-                                                           && \texttt{list("application", <name>, list of <expression>)} \\
+                                                           && \texttt{list("application",  } \langle \textit{unary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \texttt{list("application", <expression>, list of <expression>)} \\
+                                                           && \texttt{list("application",  } \langle \textit{expression}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                            && \texttt{list("function\_definition", <parameters>,}  \\
-                                              && && & && && \texttt{list("return\_statement", <expression>))} \\
+                                            && \texttt{list("lambda\_expression",  } \langle \textit{parameters}\rangle \textit{,}  \\
+                                              && && & && && \texttt{list("return\_statement",  } \langle \textit{expression}\rangle \textit{))} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \texttt{list("function\_definition", <parameters>, <statement>)} \\
-&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
-                                            \textit{expression}
+                                                           && \texttt{list("lambda\_expression",  } \langle \textit{parameters}\rangle \textit{,  } \langle \textit{statement}\rangle \textit{)} \\
+&&                       && |   &\quad &&   \textit{expression}_1 \ \textbf{\texttt{?}}\ 
+                                            \textit{expression}_2
                                             \ \textbf{\texttt{:}}\
-                                            \textit{expression}\
-                                                           && \texttt{list("conditional\_expression", <expression>,} \\
-                                            &&&&&&&&&\ \ \ \ \ \ \texttt{<expression>, <expression>)} \\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}}
-                                                           && \texttt{list("array\_access", <expression>, <expression>)} \\
+                                            \textit{expression}_3\
+                                                           && \texttt{list("conditional\_expression",  } \langle \textit{expression}_1\rangle \textit{,} \\
+                                            &&&&&&&&&\ \ \ \ \ \ \texttt{ } \langle \textit{expression}_2\rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
+&&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
+                                          \textit{expression}_2 \textbf{\texttt{]}}
+                                                           && \texttt{list("array\_access",  } \langle \textit{expression}_1\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
-                                                           && \texttt{list("array\_expression", list of <expression>)} \\
+                                                           && \texttt{list("array\_expression", list of  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
 && \textit{binary-operator}    \ 
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
-&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+&&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
                                           && \texttt{list("name", string)} \\[1mm]
 && \textit{unary-operator}    
@@ -137,7 +137,7 @@ the string \lstinline{x} as a Source program. The following two pages describe t
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
-                                                            && \texttt{list of <expression>} \\
+                                                            && \texttt{list of  } \langle \textit{expression}\rangle  \\
 \end{alignat*}
 
 
