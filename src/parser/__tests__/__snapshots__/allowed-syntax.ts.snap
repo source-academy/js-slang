@@ -560,7 +560,7 @@ const globals = native.globals;
           };
         }
       }
-    }, \\"function name(a, b) {\\\\n  const sum = a + b;\\\\n  if (sum > 1) {\\\\n    return sum;\\\\n  } else {\\\\n    if (a % 2 === 0) {\\\\n      return -1;\\\\n    } else if (b % 2 === 0) {\\\\n      return 1;\\\\n    } else {\\\\n      return a > b ? 0 : -2;\\\\n    }\\\\n  }\\\\n}\\", 1000);
+    }, \\"function name(a, b) {\\\\n  const sum = a + b;\\\\n  if (sum > 1) {\\\\n    return sum;\\\\n  } else {\\\\n    if (a % 2 === 0) {\\\\n      return -1;\\\\n    } else if (b % 2 === 0) {\\\\n      return 1;\\\\n    } else {\\\\n      return a > b ? 0 : -2;\\\\n    }\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(name, 15, 0, 1, 2);\\");
     globals.variables.set(\\"name\\", {
       kind: \\"const\\",
@@ -655,7 +655,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap(() => ({   isTail: false,   value: true }), \\\\\\"() => true\\\\\\", 1000), 1, 0);\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap(() => ({   isTail: false,   value: true }), \\\\\\"() => true\\\\\\", native), 1, 0);\\");
   }
 }
 forceIt(lastStatementResult);
@@ -800,7 +800,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap((x, y) => {   return {     isTail: false,     value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 20)   }; }, \\\\\\"(x, y) => {\\\\\\\\n  return x + y;\\\\\\\\n}\\\\\\", 1000), 1, 0, 1, 2);\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap((x, y) => {   return {     isTail: false,     value: binaryOp(\\\\\\"+\\\\\\", x, y, 1, 20)   }; }, \\\\\\"(x, y) => {\\\\\\\\n  return x + y;\\\\\\\\n}\\\\\\", native), 1, 0, 1, 2);\\");
   }
 }
 forceIt(lastStatementResult);
@@ -2444,7 +2444,7 @@ const globals = native.globals;
     let i = 1;
     const startTime = runtime();
     while (boolOrErr(binaryOp(\\"<\\", i, 5, 2, 7), 2, 0)) {
-      throwIfTimeout(1000, startTime, runtime(), 2, 0);
+      throwIfTimeout(native, startTime, runtime(), 2, 0);
       i = binaryOp(\\"+\\", i, 1, 3, 6);
     }
     lastStatementResult = eval(\\"i;\\");
@@ -3118,7 +3118,7 @@ const globals = native.globals;
     let i = 1;
     const startTime = runtime();
     for (i = 1; boolOrErr(binaryOp(\\"<\\", i, 5, 2, 12), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 23)) {
-      throwIfTimeout(1000, startTime, runtime(), 2, 0);
+      throwIfTimeout(native, startTime, runtime(), 2, 0);
     }
     lastStatementResult = eval(\\"i;\\");
     globals.variables.set(\\"i\\", {
@@ -4435,7 +4435,7 @@ const globals = native.globals;
     let i = 1;
     const startTime = runtime();
     for (let j = 0; boolOrErr(binaryOp(\\"<\\", j, 5, 2, 16), 2, 0); j = binaryOp(\\"+\\", j, 1, 2, 27)) {
-      throwIfTimeout(1000, startTime, runtime(), 2, 0);
+      throwIfTimeout(native, startTime, runtime(), 2, 0);
       if (boolOrErr(binaryOp(\\"<\\", j, 1, 3, 6), 3, 2)) {
         continue;
       } else {

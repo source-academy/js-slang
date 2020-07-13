@@ -14,16 +14,20 @@ import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
 import { LazyBuiltIn } from '../createContext'
+import { NativeStorage } from '../types'
 
 export function throwIfTimeout(
-  maxExecTime: number,
+  nativeStorage: NativeStorage,
   start: number,
   current: number,
   line: number,
   column: number
 ) {
-  if (current - start > maxExecTime) {
-    throw new PotentialInfiniteLoopError(create.locationDummyNode(line, column))
+  if (current - start > nativeStorage.maxExecTime) {
+    throw new PotentialInfiniteLoopError(
+      create.locationDummyNode(line, column),
+      nativeStorage.maxExecTime
+    )
   }
 }
 
@@ -189,7 +193,7 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
  * as isTail and transformedFunctions are properties
  * and may be added by Source code.
  */
-export const callIteratively = (f: any, maxExecTime: number, ...args: any[]) => {
+export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: any[]) => {
   let line = -1
   let column = -1
   const startTime = Date.now()
@@ -224,8 +228,8 @@ export const callIteratively = (f: any, maxExecTime: number, ...args: any[]) => 
     let res
     try {
       res = f(...args)
-      if (Date.now() - startTime > maxExecTime) {
-        throw new PotentialInfiniteRecursionError(dummy, pastCalls)
+      if (Date.now() - startTime > nativeStorage.maxExecTime) {
+        throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime)
       }
     } catch (error) {
       // if we already handled the error, simply pass it on
@@ -251,8 +255,12 @@ export const callIteratively = (f: any, maxExecTime: number, ...args: any[]) => 
   }
 }
 
-export const wrap = (f: (...args: any[]) => any, stringified: string, maxExecTime: number) => {
-  const wrapped = (...args: any[]) => callIteratively(f, maxExecTime, ...args)
+export const wrap = (
+  f: (...args: any[]) => any,
+  stringified: string,
+  nativeStorage: NativeStorage
+) => {
+  const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
   wrapped.transformedFunction = f
   wrapped[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified

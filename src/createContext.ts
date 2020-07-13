@@ -145,13 +145,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const prompt = (v: Value) => {
     const start = Date.now()
     const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
-    JSSLANG_PROPERTIES.maxExecTime += Date.now() - start
+    context.nativeStorage.maxExecTime += Date.now() - start
     return promptResult
   }
   const alert = (v: Value) => {
     const start = Date.now()
     externalBuiltIns.alert(v, '', context.externalContext)
-    JSSLANG_PROPERTIES.maxExecTime += Date.now() - start
+    context.nativeStorage.maxExecTime += Date.now() - start
   }
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 

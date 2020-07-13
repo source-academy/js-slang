@@ -126,11 +126,11 @@ const globals = native.globals;
           arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
           line: 2,
           column: 34
-        }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\", 1000)],
+        }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\", native)],
         line: 2,
         column: 9
       };
-    }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\", 1000);
+    }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\", native);
     const negate_whole_stream = wrap(stream => {
       return {
         isTail: true,
@@ -143,15 +143,15 @@ const globals = native.globals;
           arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
           line: 8,
           column: 37
-        }), \\"() => negate_whole_stream(stream_tail(stream))\\", 1000)],
+        }), \\"() => negate_whole_stream(stream_tail(stream))\\", native)],
         line: 8,
         column: 11
       };
-    }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\", 1000);
+    }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\", native);
     const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
       isTail: false,
       value: ones
-    }), \\"() => ones\\", 1000));
+    }), \\"() => ones\\", native));
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
     globals.variables.set(\\"make_alternating_stream\\", {
       kind: \\"const\\",
@@ -231,7 +231,7 @@ const globals = native.globals;
         line: 2,
         column: 9
       };
-    }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\", 1000);
+    }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
     globals.variables.set(\\"h\\", {
       kind: \\"const\\",
@@ -500,7 +500,7 @@ const globals = native.globals;
     const g = wrap(() => ({
       isTail: false,
       value: 1
-    }), \\"() => 1\\", 1000);
+    }), \\"() => 1\\", native);
     const f = wrap(x => ({
       isTail: true,
       function: g,
@@ -508,7 +508,7 @@ const globals = native.globals;
       arguments: [x],
       line: 2,
       column: 15
-    }), \\"x => g(x)\\", 1000);
+    }), \\"x => g(x)\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
     globals.variables.set(\\"g\\", {
       kind: \\"const\\",
@@ -610,7 +610,7 @@ const globals = native.globals;
     const f = wrap(x => ({
       isTail: false,
       value: x
-    }), \\"x => x\\", 1000);
+    }), \\"x => x\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -706,7 +706,7 @@ const globals = native.globals;
     const f = wrap(x => ({
       isTail: false,
       value: x
-    }), \\"x => x\\", 1000);
+    }), \\"x => x\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -802,7 +802,7 @@ const globals = native.globals;
     const f = [wrap(x => ({
       isTail: false,
       value: x
-    }), \\"x => x\\", 1000)];
+    }), \\"x => x\\", native)];
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -904,7 +904,7 @@ const globals = native.globals;
         isTail: false,
         value: x
       };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", 1000);
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -1006,7 +1006,7 @@ const globals = native.globals;
         isTail: false,
         value: x
       };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", 1000);
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -2966,7 +2966,7 @@ const globals = native.globals;
         isTail: false,
         value: 1
       };
-    }, \\"function f() {\\\\n  return 1;\\\\n}\\", 1000);
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
     lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -3131,7 +3131,7 @@ const globals = native.globals;
         isTail: false,
         value: 1
       };
-    }, \\"function f() {\\\\n  return 1;\\\\n}\\", 1000);
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
     lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
