@@ -1658,6 +1658,7 @@ Object {
           "line": -1,
         },
       },
+      "maxExecTime": 1000,
       "severity": "Error",
       "type": "Runtime",
     },

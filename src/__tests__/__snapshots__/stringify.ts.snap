@@ -27,7 +27,7 @@ const globals = native.globals;
     const xs = [1, 'true', true, wrap(() => ({
       isTail: false,
       value: 1
-    }), \\"() => 1\\", 1000)];
+    }), \\"() => 1\\", native)];
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
     globals.variables.set(\\"xs\\", {
       kind: \\"const\\",
@@ -70,7 +70,7 @@ const globals = native.globals;
     const f = wrap((x, y) => ({
       isTail: false,
       value: x
-    }), \\"(x, y) => x\\", 1000);
+    }), \\"(x, y) => x\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, f);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -127,7 +127,7 @@ const globals = native.globals;
       c: wrap(() => ({
         isTail: false,
         value: 1
-      }), \\"() => 1\\", 1000),
+      }), \\"() => 1\\", native),
       d: {
         e: 5,
         f: 6
@@ -295,7 +295,7 @@ const globals = native.globals;
         isTail: false,
         value: x
       };
-    }, \\"function f(x, y) {\\\\n  return x;\\\\n}\\", 1000);
+    }, \\"function f(x, y) {\\\\n  return x;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 4, 0, f);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -440,7 +440,7 @@ const globals = native.globals;
     const arr = [];
     const startTime = runtime();
     for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
-      throwIfTimeout(1000, startTime, runtime(), 2, 0);
+      throwIfTimeout(native, startTime, runtime(), 2, 0);
       setProp(arr, i, i, 3, 2);
     }
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 5, 0, arr);\\");
@@ -643,7 +643,7 @@ const globals = native.globals;
     const xs = [1, 'true', [true, wrap(() => ({
       isTail: false,
       value: 1
-    }), \\"() => 1\\", 1000), [[]]]];
+    }), \\"() => 1\\", native), [[]]]];
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, xs);\\");
     globals.variables.set(\\"xs\\", {
       kind: \\"const\\",
@@ -689,7 +689,7 @@ const globals = native.globals;
       c: wrap(() => ({
         isTail: false,
         value: 1
-      }), \\"() => 1\\", 1000),
+      }), \\"() => 1\\", native),
       d: {
         e: 5,
         f: 6
@@ -849,7 +849,7 @@ const globals = native.globals;
       c: wrap(() => ({
         isTail: false,
         value: 1
-      }), \\"() => 1\\", 1000)
+      }), \\"() => 1\\", native)
     };
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
     globals.variables.set(\\"o\\", {

@@ -726,7 +726,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\", 1000));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\", native));\\");
   }
 }
 forceIt(lastStatementResult);
@@ -766,7 +766,7 @@ const globals = native.globals;
         isTail: false,
         value: x
       };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", 1000);
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 4, 0, f);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
@@ -1294,7 +1294,7 @@ const globals = native.globals;
           value: true
         };
       }
-    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === runtime()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", 1000);
+    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === runtime()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
     globals.variables.set(\\"start\\", {
       kind: \\"const\\",
