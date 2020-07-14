@@ -14,7 +14,7 @@ const getProp = native0.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native0.globals;
 {
-  const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+  const get_time = globals.previousScope.variables.get(\\"get_time\\").getValue();
   const display = globals.previousScope.variables.get(\\"display\\").getValue();
   const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
   const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
@@ -145,7 +145,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+  const get_time = globals.previousScope.variables.get(\\"get_time\\").getValue();
   const display = globals.previousScope.variables.get(\\"display\\").getValue();
   const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
   const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();

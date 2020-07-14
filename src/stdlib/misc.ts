@@ -27,9 +27,9 @@ export function timed(
   displayBuiltin: (value: Value, str: string, externalContext: any) => Value
 ) {
   return (...args: any[]) => {
-    const start = runtime()
+    const start = get_time()
     const result = f(...args)
-    const diff = runtime() - start
+    const diff = get_time() - start
     displayBuiltin('Duration: ' + Math.round(diff) + 'ms', '', externalContext)
     return result
   }
@@ -100,6 +100,6 @@ export function parse_int(str: string, radix: number) {
   }
 }
 
-export function runtime() {
+export function get_time() {
   return new Date().getTime()
 }

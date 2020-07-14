@@ -471,7 +471,7 @@ test.each([
   [
     1,
     `
-    is_number(runtime());
+    is_number(get_time());
     `,
     true,
     true
@@ -480,9 +480,9 @@ test.each([
   [
     1,
     `
-    const start = runtime();
+    const start = get_time();
     function repeatUntilDifferentTime() {
-      if (start === runtime()) {
+      if (start === get_time()) {
         return repeatUntilDifferentTime();
       } else {
         return true;

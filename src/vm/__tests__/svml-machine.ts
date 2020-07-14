@@ -778,7 +778,7 @@ describe('primitive opcodes', () => {
   })
 
   test('nullary handler', () => {
-    return snapshotSuccess('runtime();', { chapter: 3, variant: 'concurrent' })
+    return snapshotSuccess('get_time();', { chapter: 3, variant: 'concurrent' })
   })
 
   test('unary handler', () => {

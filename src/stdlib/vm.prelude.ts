@@ -1,6 +1,6 @@
 import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
-import { runtime, parse_int } from './misc'
+import { get_time, parse_int } from './misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.
@@ -377,7 +377,7 @@ function _reverse(xs) {
 }
 
 // 73 placeholder
-function _runtime(x) {}
+function _get_time(x) {}
 
 // 74
 function _set_head(xs,x) {
@@ -623,7 +623,7 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'remove',
   'remove_all',
   'reverse',
-  'runtime',
+  'get_time',
   'set_head',
   'set_tail',
   'stream',
@@ -668,7 +668,7 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
 // primitives without a function should be manually implemented
 export const NULLARY_PRIMITIVES: [string, number, any?][] = [
   ['math_random', OpCodes.MATH_RANDOM, Math.random],
-  ['runtime', OpCodes.RUNTIME, runtime]
+  ['get_time', OpCodes.RUNTIME, get_time]
 ]
 
 export const UNARY_PRIMITIVES: [string, number, any?][] = [
