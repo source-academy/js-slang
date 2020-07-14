@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - master
-      - thw/deploy-docs
+
 jobs:
   deploy:
     runs-on: ubuntu-18.04
