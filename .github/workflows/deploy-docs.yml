@@ -15,7 +15,7 @@ jobs:
       - name: Install TeX Live
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y texlive texlive-fonts-extra latexmk
+          sudo apt-get install -y texlive texlive-fonts-extra texlive-lang-cjk latexmk
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
