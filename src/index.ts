@@ -288,9 +288,15 @@ export function getTypeInformation(
     if (program === null) {
       return ''
     }
-
+    if (context.prelude !== null) {
+      typeCheck(typedParse(context.prelude, context)!, context)
+    }
     const [typedProgram, error] = typeCheck(program, context)
     const parsedError = parseError(error)
+    if (context.prelude !== null) {
+      // the env of the prelude was added, we now need to remove it
+      context.typeEnvironment.pop()
+    }
 
     // initialize the ans string
     let ans = ''
