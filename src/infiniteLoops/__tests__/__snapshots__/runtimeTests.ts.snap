@@ -31,6 +31,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 33,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 14,
@@ -43,12 +47,17 @@ Object {
             },
             "raw": "2",
             "start": 32,
+            "typability": "Typed",
             "type": "Literal",
             "value": 2,
           },
         ],
         "callee": Node {
           "end": 31,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 12,
@@ -61,10 +70,16 @@ Object {
           },
           "raw": "1",
           "start": 30,
+          "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
         "end": 34,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T6",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 15,
@@ -76,6 +91,7 @@ Object {
           },
         },
         "start": 30,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -116,6 +132,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 33,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 14,
@@ -128,12 +148,17 @@ Object {
             },
             "raw": "2",
             "start": 32,
+            "typability": "Typed",
             "type": "Literal",
             "value": 2,
           },
         ],
         "callee": Node {
           "end": 31,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 12,
@@ -146,10 +171,16 @@ Object {
           },
           "raw": "1",
           "start": 30,
+          "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
         "end": 34,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T6",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 15,
@@ -161,6 +192,7 @@ Object {
           },
         },
         "start": 30,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",

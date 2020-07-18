@@ -16,8 +16,16 @@ test();",
     NoAssignmentToForVariable {
       "node": Node {
         "end": 84,
+        "inferredType": Object {
+          "kind": "primitive",
+          "name": "number",
+        },
         "left": Node {
           "end": 80,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -30,6 +38,7 @@ test();",
           },
           "name": "x",
           "start": 79,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "loc": SourceLocation {
@@ -45,6 +54,10 @@ test();",
         "operator": "=",
         "right": Node {
           "end": 84,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -57,10 +70,12 @@ test();",
           },
           "raw": "1",
           "start": 83,
+          "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
         "start": 79,
+        "typability": "Typed",
         "type": "AssignmentExpression",
       },
       "severity": "Error",

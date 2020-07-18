@@ -843,6 +843,1320 @@ Array [
           ],
           "value": undefined,
         },
+        "typeEnvironment": Array [
+          Object {
+            "declKindMap": Map {
+              "Infinity" => "const",
+              "NaN" => "const",
+              "undefined" => "const",
+              "math_E" => "const",
+              "math_LN2" => "const",
+              "math_LN10" => "const",
+              "math_LOG2E" => "const",
+              "math_LOG10E" => "const",
+              "math_PI" => "const",
+              "math_SQRT1_2" => "const",
+              "math_SQRT2" => "const",
+              "is_boolean" => "const",
+              "is_number" => "const",
+              "is_string" => "const",
+              "is_undefined" => "const",
+              "math_abs" => "const",
+              "math_acos" => "const",
+              "math_acosh" => "const",
+              "math_asin" => "const",
+              "math_asinh" => "const",
+              "math_atan" => "const",
+              "math_atan2" => "const",
+              "math_atanh" => "const",
+              "math_cbrt" => "const",
+              "math_ceil" => "const",
+              "math_clz32" => "const",
+              "math_cos" => "const",
+              "math_cosh" => "const",
+              "math_exp" => "const",
+              "math_expm1" => "const",
+              "math_floor" => "const",
+              "math_fround" => "const",
+              "math_hypot" => "const",
+              "math_imul" => "const",
+              "math_log" => "const",
+              "math_log1p" => "const",
+              "math_log2" => "const",
+              "math_log10" => "const",
+              "math_max" => "const",
+              "math_min" => "const",
+              "math_pow" => "const",
+              "math_random" => "const",
+              "math_round" => "const",
+              "math_sign" => "const",
+              "math_sin" => "const",
+              "math_sinh" => "const",
+              "math_sqrt" => "const",
+              "math_tan" => "const",
+              "math_tanh" => "const",
+              "math_trunc" => "const",
+              "parse_int" => "const",
+              "prompt" => "const",
+              "runtime" => "const",
+              "stringify" => "const",
+              "display" => "const",
+              "error" => "const",
+              "-_1" => "const",
+              "!" => "const",
+              "&&" => "const",
+              "||" => "const",
+              "<" => "const",
+              "<=" => "const",
+              ">" => "const",
+              ">=" => "const",
+              "+" => "const",
+              "%" => "const",
+              "-" => "const",
+              "*" => "const",
+              "/" => "const",
+              "pair" => "const",
+              "head" => "const",
+              "tail" => "const",
+              "is_pair" => "const",
+              "is_null" => "const",
+              "list" => "const",
+              "===" => "const",
+              "!==" => "const",
+              "set_head" => "const",
+              "set_tail" => "const",
+              "is_array" => "const",
+              "array_length" => "const",
+              "raw_display" => "const",
+              "is_function" => "const",
+              "draw_data" => "const",
+              "stream_tail" => "const",
+              "stream" => "const",
+              "list_to_stream" => "const",
+              "parse" => "const",
+              "apply_in_underlying_javascript" => "const",
+            },
+            "typeMap": Map {
+              "Infinity" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "NaN" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "undefined" => Object {
+                "kind": "primitive",
+                "name": "undefined",
+              },
+              "math_E" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_LN2" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_LN10" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_LOG2E" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_LOG10E" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_PI" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_SQRT1_2" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "math_SQRT2" => Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+              "is_boolean" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "is_number" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "is_string" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "is_undefined" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "math_abs" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_acos" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_acosh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_asin" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_asinh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_atan" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_atan2" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_atanh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_cbrt" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_ceil" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_clz32" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_cos" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_cosh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_exp" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_expm1" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_floor" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_fround" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_hypot" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+              "math_imul" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_log" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_log1p" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_log2" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_log10" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_max" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+              "math_min" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+              "math_pow" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_random" => Object {
+                "kind": "function",
+                "parameterTypes": Array [],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_round" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_sign" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_sin" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_sinh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_sqrt" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_tan" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_tanh" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "math_trunc" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "parse_int" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "string",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "prompt" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "string",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "string",
+                },
+              },
+              "runtime" => Object {
+                "kind": "function",
+                "parameterTypes": Array [],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "stringify" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "string",
+                  },
+                },
+              },
+              "display" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+              "error" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+              "-_1" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "!" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+              "&&" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "primitive",
+                      "name": "boolean",
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                },
+              },
+              "||" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "kind": "primitive",
+                      "name": "boolean",
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                },
+              },
+              "<" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "<=" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              ">" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              ">=" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "+" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                    Object {
+                      "constraint": "addable",
+                      "kind": "variable",
+                      "name": "A",
+                    },
+                  ],
+                  "returnType": Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                },
+              },
+              "%" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "-" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "*" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "/" => Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                  Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+              "pair" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  ],
+                  "returnType": Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                },
+              },
+              "head" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "headType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TheadType",
+                      },
+                      "kind": "pair",
+                      "tailType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TtailType",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TheadType",
+                  },
+                },
+              },
+              "tail" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "headType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TheadType",
+                      },
+                      "kind": "pair",
+                      "tailType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TtailType",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TtailType",
+                  },
+                },
+              },
+              "is_pair" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "is_null" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "headType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TheadType",
+                      },
+                      "kind": "pair",
+                      "tailType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TtailType",
+                      },
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "list" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "===" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT1",
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT2",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "!==" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT1",
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT2",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "set_head" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "headType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TheadType",
+                      },
+                      "kind": "pair",
+                      "tailType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TtailType",
+                      },
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "undefined",
+                  },
+                },
+              },
+              "set_tail" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "headType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TheadType",
+                      },
+                      "kind": "pair",
+                      "tailType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TtailType",
+                      },
+                    },
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "undefined",
+                  },
+                },
+              },
+              "is_array" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                },
+              },
+              "array_length" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "kind": "function",
+                  "parameterTypes": Array [
+                    Object {
+                      "elementType": Object {
+                        "constraint": "none",
+                        "kind": "variable",
+                        "name": "TT",
+                      },
+                      "kind": "array",
+                    },
+                  ],
+                  "returnType": Object {
+                    "kind": "primitive",
+                    "name": "number",
+                  },
+                },
+              },
+              "raw_display" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "is_function" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "draw_data" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "stream_tail" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "stream" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "list_to_stream" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "parse" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+              "apply_in_underlying_javascript" => Object {
+                "kind": "forall",
+                "polyType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT1",
+                },
+              },
+            },
+          },
+        ],
         "variant": "default",
       },
     },
@@ -1645,6 +2959,1320 @@ Array [
         ],
         "value": undefined,
       },
+      "typeEnvironment": Array [
+        Object {
+          "declKindMap": Map {
+            "Infinity" => "const",
+            "NaN" => "const",
+            "undefined" => "const",
+            "math_E" => "const",
+            "math_LN2" => "const",
+            "math_LN10" => "const",
+            "math_LOG2E" => "const",
+            "math_LOG10E" => "const",
+            "math_PI" => "const",
+            "math_SQRT1_2" => "const",
+            "math_SQRT2" => "const",
+            "is_boolean" => "const",
+            "is_number" => "const",
+            "is_string" => "const",
+            "is_undefined" => "const",
+            "math_abs" => "const",
+            "math_acos" => "const",
+            "math_acosh" => "const",
+            "math_asin" => "const",
+            "math_asinh" => "const",
+            "math_atan" => "const",
+            "math_atan2" => "const",
+            "math_atanh" => "const",
+            "math_cbrt" => "const",
+            "math_ceil" => "const",
+            "math_clz32" => "const",
+            "math_cos" => "const",
+            "math_cosh" => "const",
+            "math_exp" => "const",
+            "math_expm1" => "const",
+            "math_floor" => "const",
+            "math_fround" => "const",
+            "math_hypot" => "const",
+            "math_imul" => "const",
+            "math_log" => "const",
+            "math_log1p" => "const",
+            "math_log2" => "const",
+            "math_log10" => "const",
+            "math_max" => "const",
+            "math_min" => "const",
+            "math_pow" => "const",
+            "math_random" => "const",
+            "math_round" => "const",
+            "math_sign" => "const",
+            "math_sin" => "const",
+            "math_sinh" => "const",
+            "math_sqrt" => "const",
+            "math_tan" => "const",
+            "math_tanh" => "const",
+            "math_trunc" => "const",
+            "parse_int" => "const",
+            "prompt" => "const",
+            "runtime" => "const",
+            "stringify" => "const",
+            "display" => "const",
+            "error" => "const",
+            "-_1" => "const",
+            "!" => "const",
+            "&&" => "const",
+            "||" => "const",
+            "<" => "const",
+            "<=" => "const",
+            ">" => "const",
+            ">=" => "const",
+            "+" => "const",
+            "%" => "const",
+            "-" => "const",
+            "*" => "const",
+            "/" => "const",
+            "pair" => "const",
+            "head" => "const",
+            "tail" => "const",
+            "is_pair" => "const",
+            "is_null" => "const",
+            "list" => "const",
+            "===" => "const",
+            "!==" => "const",
+            "set_head" => "const",
+            "set_tail" => "const",
+            "is_array" => "const",
+            "array_length" => "const",
+            "raw_display" => "const",
+            "is_function" => "const",
+            "draw_data" => "const",
+            "stream_tail" => "const",
+            "stream" => "const",
+            "list_to_stream" => "const",
+            "parse" => "const",
+            "apply_in_underlying_javascript" => "const",
+          },
+          "typeMap": Map {
+            "Infinity" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "NaN" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "undefined" => Object {
+              "kind": "primitive",
+              "name": "undefined",
+            },
+            "math_E" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_LN2" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_LN10" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_LOG2E" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_LOG10E" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_PI" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_SQRT1_2" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "math_SQRT2" => Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "is_boolean" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "is_number" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "is_string" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "is_undefined" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "math_abs" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_acos" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_acosh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_asin" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_asinh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_atan" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_atan2" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_atanh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_cbrt" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_ceil" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_clz32" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_cos" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_cosh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_exp" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_expm1" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_floor" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_fround" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_hypot" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT",
+              },
+            },
+            "math_imul" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_log" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_log1p" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_log2" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_log10" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_max" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT",
+              },
+            },
+            "math_min" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT",
+              },
+            },
+            "math_pow" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_random" => Object {
+              "kind": "function",
+              "parameterTypes": Array [],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_round" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_sign" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_sin" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_sinh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_sqrt" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_tan" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_tanh" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "math_trunc" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "parse_int" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "string",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "prompt" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "string",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "string",
+              },
+            },
+            "runtime" => Object {
+              "kind": "function",
+              "parameterTypes": Array [],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "stringify" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "string",
+                },
+              },
+            },
+            "display" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT",
+              },
+            },
+            "error" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT",
+              },
+            },
+            "-_1" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "!" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "boolean",
+              },
+            },
+            "&&" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+            },
+            "||" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "kind": "primitive",
+                    "name": "boolean",
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TT",
+                },
+              },
+            },
+            "<" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "<=" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            ">" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            ">=" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "+" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                  Object {
+                    "constraint": "addable",
+                    "kind": "variable",
+                    "name": "A",
+                  },
+                ],
+                "returnType": Object {
+                  "constraint": "addable",
+                  "kind": "variable",
+                  "name": "A",
+                },
+              },
+            },
+            "%" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "-" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "*" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "/" => Object {
+              "kind": "function",
+              "parameterTypes": Array [
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+                Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              ],
+              "returnType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
+            },
+            "pair" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TheadType",
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TtailType",
+                  },
+                ],
+                "returnType": Object {
+                  "headType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TheadType",
+                  },
+                  "kind": "pair",
+                  "tailType": Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TtailType",
+                  },
+                },
+              },
+            },
+            "head" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TheadType",
+                },
+              },
+            },
+            "tail" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "constraint": "none",
+                  "kind": "variable",
+                  "name": "TtailType",
+                },
+              },
+            },
+            "is_pair" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "is_null" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "list" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "===" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT1",
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT2",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "!==" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT1",
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT2",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "set_head" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TheadType",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "undefined",
+                },
+              },
+            },
+            "set_tail" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "headType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TheadType",
+                    },
+                    "kind": "pair",
+                    "tailType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TtailType",
+                    },
+                  },
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TtailType",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "undefined",
+                },
+              },
+            },
+            "is_array" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "constraint": "none",
+                    "kind": "variable",
+                    "name": "TT",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "boolean",
+                },
+              },
+            },
+            "array_length" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "kind": "function",
+                "parameterTypes": Array [
+                  Object {
+                    "elementType": Object {
+                      "constraint": "none",
+                      "kind": "variable",
+                      "name": "TT",
+                    },
+                    "kind": "array",
+                  },
+                ],
+                "returnType": Object {
+                  "kind": "primitive",
+                  "name": "number",
+                },
+              },
+            },
+            "raw_display" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "is_function" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "draw_data" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "stream_tail" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "stream" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "list_to_stream" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "parse" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+            "apply_in_underlying_javascript" => Object {
+              "kind": "forall",
+              "polyType": Object {
+                "constraint": "none",
+                "kind": "variable",
+                "name": "TT1",
+              },
+            },
+          },
+        },
+      ],
       "variant": "default",
     },
   },
