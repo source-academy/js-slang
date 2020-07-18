@@ -11,29 +11,16 @@
 
 ## <a href="source_1/">Source §1</a>
   
-## <a href="source_1_lazy/">Source §1 Lazy</a>
-  
-## <a href="source_1_wasm/">Source §1 WebAssembly</a>
-  
 ## <a href="source_2/">Source §2</a>
-
-## <a href="source_2_lazy/">Source §2 Lazy</a>
 
 ## <a href="source_3/">Source §3</a>
 
-## <a href="source_3_concurrent/">Source §3 Concurrent</a>
-
-## <a href="source_3_non-det/">Source §3 Non-Det</a>
-
 ## <a href="source_4/">Source §4</a>
-
-## <a href="source_4_gpu/">Source §4 GPU</a>
 
 ## <a href="External libraries/">External Libraries</a>
 
-The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
-a learning environment that uses SICP JS and Source, comes with the following 
-<a href="External libraries/">external libraries</a>:
+The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>
+comes with the following <a href="External libraries/">external libraries</a>:
 
 <ul>
 <li>
@@ -52,3 +39,17 @@ a learning environment that uses SICP JS and Source, comes with the following
 <a href="PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
 </li>
 </ul>
+
+### Language variants:
+
+#### <a href="source_1_lazy/">Source §1 Lazy</a>
+  
+#### <a href="source_1_wasm/">Source §1 WebAssembly</a>
+  
+#### <a href="source_2_lazy/">Source §2 Lazy</a>
+
+#### <a href="source_3_non-det/">Source §3 Non-Det</a>
+
+#### <a href="source_3_concurrent/">Source §3 Concurrent</a>
+
+#### <a href="source_4_gpu/">Source §4 GPU</a>

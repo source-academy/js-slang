@@ -404,7 +404,7 @@ test('String representation with no indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(
-    `"[\\"function_definition\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"`
+    `"[\\"lambda_expression\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"`
   )
 })
 
@@ -415,7 +415,7 @@ test('String representation with 1 space indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-            "[\\"function_definition\\",
+            "[\\"lambda_expression\\",
             [[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
@@ -428,7 +428,7 @@ test('String representation with default (2 space) indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-            "[ \\"function_definition\\",
+            "[ \\"lambda_expression\\",
             [ [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]"
           `)
@@ -441,7 +441,7 @@ test('String representation with more than 10 space indent should trim to 10 spa
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-            "[         \\"function_definition\\",
+            "[         \\"lambda_expression\\",
             [         [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]"
           `)
@@ -454,7 +454,7 @@ test('String representation with custom indent', () => {
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-            "[... \\"function_definition\\",
+            "[... \\"lambda_expression\\",
             [... [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]"
           `)
@@ -467,7 +467,7 @@ test('String representation with long custom indent gets trimmed to 10 character
   `,
     { chapter: 4, native: true }
   ).toMatchInlineSnapshot(`
-            "[.........\\"function_definition\\",
+            "[.........\\"lambda_expression\\",
             [.........[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]"
           `)

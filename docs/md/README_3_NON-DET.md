@@ -52,7 +52,7 @@ A set of values can be specified with the <CODE>amb</CODE> operator.
 In the following example, we specify two possible choices for a value we want:<br>
 <CODE>amb('hello', 'bye') + 'world!'; // 'hello world!'</CODE>
 
-To obtain the next value, <CODE>'bye'</CODE>, enter the command <CODE>try again</CODE> in the playground REPL.
+To obtain the next value, <CODE>'bye'</CODE>, enter the command <CODE>try_again</CODE> in the playground REPL.
 This will give the result <CODE>'bye world!'</CODE>.
 
 ### ambR operator
@@ -68,8 +68,8 @@ Requirements can be specified with the <CODE>require</code> function.
 In the following example, we add the requirement that the number chosen should be greater than 3:<br/>
 <CODE>const f = amb(1, 2, 3, 4, 5, 6); require(f > 3); f; // 4</CODE>
 
-To obtain the next value <CODE>5</CODE>, enter the command <CODE>try again</CODE> in the playground REPL.<br>
-Entering <CODE>try again</CODE> once more will give the final value of <CODE>6</CODE>.
+To obtain the next value <CODE>5</CODE>, enter the command <CODE>try_again</CODE> in the playground REPL.<br>
+Entering <CODE>try_again</CODE> once more will give the final value of <CODE>6</CODE>.
 
 ### cut operator
 In order to obtain only the first possible value which satisfies given requirements,<br>
@@ -78,7 +78,7 @@ the <CODE>cut</CODE> operator can be used to prevent backtracking beyond the cur
 In the following example, we are able to obtain only a single value:<br>
 <CODE>const f = amb(1, 2, 3, 4, 5, 6); require(f > 3); cut(); f; // 4</CODE>
 
-Entering <CODE>try again</CODE> in the playground REPL will not give the subsequent values that were specified, 
+Entering <CODE>try_again</CODE> in the playground REPL will not give the subsequent values that were specified, 
 <CODE>5</CODE> and <CODE>6</CODE>.
 
 ### implication function
