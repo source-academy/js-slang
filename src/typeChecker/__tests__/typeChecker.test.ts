@@ -3,13 +3,14 @@ import { parse as __parse } from '../../parser/parser'
 import { typeCheck } from '../typeChecker'
 import { mockContext } from '../../mocks/context'
 import { validateAndAnnotate } from '../../validator/validator'
-import { TypeAnnotatedNode, TypeAnnotatedFuncDecl } from '../../types'
+import { TypeAnnotatedNode, TypeAnnotatedFuncDecl, Context } from '../../types'
 import { typeToString } from '../../utils/stringify'
-import { parseError } from '../../index'
+import { parseError, runInContext } from '../../index'
 import * as es from 'estree'
 
-function parseAndTypeCheck(code: any, chapter = 1) {
-  const context = mockContext(chapter)
+function parseAndTypeCheck(code: string, chapterOrContext: number | Context = 1) {
+  const context =
+    typeof chapterOrContext === 'number' ? mockContext(chapterOrContext) : chapterOrContext
   const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
   const validatedProgram = validateAndAnnotate(program, context)
@@ -367,7 +368,7 @@ describe('type checking of functions with variable number of arguments', () => {
       display(1+1);
       display(true, 'hello');
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, 2)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "xs: T0
@@ -1918,6 +1919,59 @@ describe('primitive functions differences between S2 and S3', () => {
     `
     const [program, errors] = parseAndTypeCheck(code, 3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`""`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('Type context from previous executions get saved', () => {
+  it('source 1', () => {
+    const code1 = `
+      const num = 1;
+      const f = x => x;
+    `
+    const context = mockContext(1)
+    let [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "num: number
+      f: T0 -> T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+
+    // next eval
+
+    const code2 = `
+      const doubleNum = num * 2;
+      const g = f;
+      const h = f(true);
+      const i = f(123);
+    `
+    ;[program, errors] = parseAndTypeCheck(code2, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "doubleNum: number
+      g: T0 -> T0
+      h: boolean
+      i: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('source 2 list functions', async () => {
+    const code1 = `
+      const xs = pair(true, null);
+      const a = map(x=>1, xs);
+      const len = length(xs);
+
+      const err = equal(xs, null);
+    `
+    const context = mockContext(2)
+    await runInContext('', context) // we run an empty program to simulate execution of prelude
+    const [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "xs: List<boolean>
+      a: List<number>
+      len: number
+      err: T0"
+    `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 })

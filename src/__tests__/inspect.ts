@@ -14,7 +14,7 @@ test('debugger; statement basic test', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -33,7 +33,7 @@ test('debugger; statement in function', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -52,7 +52,7 @@ test('debugger; statement execution sequence', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -82,7 +82,7 @@ test('debugger; statement test function scope', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -104,7 +104,7 @@ test('debugger; statement hoisting', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -124,7 +124,7 @@ test('debugger; pauses for', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -145,7 +145,7 @@ test('debugger; pauses while', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -172,7 +172,7 @@ test('setBreakpointAtLine basic', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -193,7 +193,7 @@ test('setBreakpointAtLine function 1', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -214,7 +214,7 @@ test('setBreakpointAtLine function 2', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -237,7 +237,7 @@ test('setBreakpointAtLine function 3', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -258,7 +258,7 @@ test('setBreakpointAtLine function 4', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -285,17 +285,17 @@ test('setBreakpointAtLine granularity 1', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
       return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
+        expect((obj3 as any).context!.runtime).toMatchSnapshot()
         expect(obj3.status).toBe('suspended')
         expect(parseError(context.errors)).toMatchSnapshot()
         return (resume(obj3) as Promise<Result>).then(obj4 => {
           return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
+            expect((obj5 as any).context!.runtime).toMatchSnapshot()
             expect(obj5.status).toBe('suspended')
             expect(parseError(context.errors)).toMatchSnapshot()
           })
@@ -323,11 +323,11 @@ test('setBreakpointAtLine granularity 2', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
+      expect((obj2 as any).context!.runtime).toMatchSnapshot()
       expect(obj2.status).toBe('finished')
       expect(parseError(context.errors)).toMatchSnapshot()
     })
@@ -353,15 +353,15 @@ test('setBreakpointAtLine granularity 3', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
+      expect((obj2 as any).context!.runtime).toMatchSnapshot()
       expect(obj2.status).toBe('suspended')
       expect(parseError(context.errors)).toMatchSnapshot()
       return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
+        expect((obj3 as any).context!.runtime).toMatchSnapshot()
         expect(obj3.status).toBe('finished')
         expect(parseError(context.errors)).toMatchSnapshot()
       })
@@ -385,23 +385,23 @@ test('setBreakpointAtLine for loops', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
+      expect((obj2 as any).context!.runtime).toMatchSnapshot()
       expect(obj2.status).toBe('suspended')
       expect(parseError(context.errors)).toMatchSnapshot()
       return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
+        expect((obj3 as any).context!.runtime).toMatchSnapshot()
         expect(obj3.status).toBe('suspended')
         expect(parseError(context.errors)).toMatchSnapshot()
         return (resume(obj3) as Promise<Result>).then(obj4 => {
-          expect(obj4).toMatchSnapshot()
+          expect((obj4 as any).context!.runtime).toMatchSnapshot()
           expect(obj4.status).toBe('suspended')
           expect(parseError(context.errors)).toMatchSnapshot()
           return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
+            expect((obj5 as any).context!.runtime).toMatchSnapshot()
             expect(obj5.status).toBe('finished')
             expect(parseError(context.errors)).toMatchSnapshot()
           })
@@ -428,23 +428,23 @@ test('setBreakpointAtLine while loops', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(obj1).toMatchSnapshot()
+    expect((obj1 as any).context!.runtime).toMatchSnapshot()
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
-      expect(obj2).toMatchSnapshot()
+      expect((obj2 as any).context!.runtime).toMatchSnapshot()
       expect(obj2.status).toBe('suspended')
       expect(parseError(context.errors)).toMatchSnapshot()
       return (resume(obj2) as Promise<Result>).then(obj3 => {
-        expect(obj3).toMatchSnapshot()
+        expect((obj3 as any).context!.runtime).toMatchSnapshot()
         expect(obj3.status).toBe('suspended')
         expect(parseError(context.errors)).toMatchSnapshot()
         return (resume(obj3) as Promise<Result>).then(obj4 => {
-          expect(obj4).toMatchSnapshot()
+          expect((obj4 as any).context!.runtime).toMatchSnapshot()
           expect(obj4.status).toBe('suspended')
           expect(parseError(context.errors)).toMatchSnapshot()
           return (resume(obj4) as Promise<Result>).then(obj5 => {
-            expect(obj5).toMatchSnapshot()
+            expect((obj5 as any).context!.runtime).toMatchSnapshot()
             expect(obj5.status).toBe('finished')
             expect(parseError(context.errors)).toMatchSnapshot()
           })

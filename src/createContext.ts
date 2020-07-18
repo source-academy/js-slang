@@ -15,6 +15,7 @@ import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
+import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
@@ -75,7 +76,8 @@ export const createEmptyContext = <T>(
     debugger: createEmptyDebugger(),
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
-    variant
+    variant,
+    typeEnvironment: createTypeEnvironment(chapter)
   }
 }
 
@@ -102,6 +104,13 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     kind: 'const',
     getValue: () => value
   })
+  const typeEnv = context.typeEnvironment[0]
+  // if the global type env doesn't already have the imported symbol,
+  // we set it to a type var T that can typecheck with anything.
+  if (!typeEnv.declKindMap.has(name)) {
+    typeEnv.typeMap.set(name, tForAll(tVar('T1')))
+    typeEnv.declKindMap.set(name, 'const')
+  }
 }
 
 // Defines a builtin in the given context
