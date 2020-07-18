@@ -289,7 +289,7 @@ export function getTypeInformation(
       return ''
     }
 
-    const [typedProgram, error] = typeCheck(program)
+    const [typedProgram, error] = typeCheck(program, context)
     const parsedError = parseError(error)
 
     // initialize the ans string

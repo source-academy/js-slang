@@ -1,10 +1,110 @@
 import * as es from 'estree'
-import { ErrorSeverity, ErrorType, SourceError, Type, TypeAnnotatedNode } from '../types'
+import { ErrorSeverity, ErrorType, SourceError, SArray, Type, TypeAnnotatedNode } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
+
+export class InvalidArrayIndexType implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Expected array index as number, got ${typeToString(this.receivedType)} instead`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ArrayAssignmentError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.Node>,
+    public arrayType: SArray,
+    public receivedType: SArray
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return stripIndent`Expected array type: ${typeToString(this.arrayType)}
+    but got: ${typeToString(this.receivedType)}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ReassignConstError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const [varName] = formatAssignment(this.node)
+    return `Reassignment of constant ${varName}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class DifferentAssignmentError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.AssignmentExpression>,
+    public expectedType: Type,
+    public receivedType: Type
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const [varName, assignmentStr] = formatAssignment(this.node)
+    return stripIndent`
+    Expected assignment of ${varName}:
+      ${assignmentStr}
+    to get a value of type:
+      ${typeToString(this.expectedType)}
+    but got a value of type:
+      ${typeToString(this.receivedType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+function formatAssignment(node: TypeAnnotatedNode<es.AssignmentExpression>): [string, string] {
+  const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+  const assignmentStr = simplify(generate(node.right))
+  return [leftNode.name, assignmentStr]
+}
 
 export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
@@ -30,6 +130,8 @@ function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
     ? node.type === 'VariableDeclaration'
       ? (node.declarations[0].id as es.Identifier).name
       : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
+    : node.type === 'Identifier'
+    ? node.name
     : JSON.stringify(node) // might not be a good idea
 }
 
@@ -121,17 +223,35 @@ export class InvalidArgumentTypesError implements SourceError {
   }
 }
 
-function formatIf(node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>) {
-  let ifString = simplify(generate(node.test))
-  let type
-  if (node.type === 'IfStatement') {
-    ifString = `if (${ifString}) { ... } else { ... }`
-    type = 'if statement'
-  } else {
-    ifString = `${ifString} ? ... : ...`
-    type = 'conditional expression'
+function formatNodeWithTest(
+  node: TypeAnnotatedNode<
+    es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
+  >
+) {
+  let exprString = simplify(generate(node.test))
+  let kind: string
+  switch (node.type) {
+    case 'IfStatement': {
+      exprString = `if (${exprString}) { ... } else { ... }`
+      kind = 'if statement'
+      break
+    }
+    case 'ConditionalExpression': {
+      exprString = `${exprString} ? ... : ...`
+      kind = 'conditional expression'
+      break
+    }
+    case 'WhileStatement': {
+      exprString = `while (${exprString}) { ... }`
+      kind = 'while statement'
+      break
+    }
+    case 'ForStatement': {
+      exprString = `for (...; ${exprString}; ...) { ... }`
+      kind = 'for statement'
+    }
   }
-  return { ifString, type }
+  return { exprString, kind }
 }
 
 export class InvalidTestConditionError implements SourceError {
@@ -139,7 +259,9 @@ export class InvalidTestConditionError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+    public node: TypeAnnotatedNode<
+      es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
+    >,
     public receivedType: Type
   ) {}
 
@@ -148,10 +270,10 @@ export class InvalidTestConditionError implements SourceError {
   }
 
   public explain() {
-    const { ifString, type } = formatIf(this.node)
+    const { exprString, kind } = formatNodeWithTest(this.node)
     return stripIndent`
-    Expected the test part of the ${type}:
-      ${ifString}
+    Expected the test part of the ${kind}:
+      ${exprString}
     to have type boolean, but instead it is type:
       ${typeToString(this.receivedType)}
     `
@@ -198,10 +320,10 @@ export class ConsequentAlternateMismatchError implements SourceError {
   }
 
   public explain() {
-    const { ifString, type } = formatIf(this.node)
+    const { exprString, kind } = formatNodeWithTest(this.node)
     return stripIndent`
-    The two branches of the ${type}:
-      ${ifString}
+    The two branches of the ${kind}:
+      ${exprString}
     produce different types!
     The true branch has type:
       ${typeToString(this.consequentType)}

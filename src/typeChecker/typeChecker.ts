@@ -1,15 +1,18 @@
 import * as es from 'estree'
 import {
+  Context,
   TypeAnnotatedNode,
   Primitive,
   Variable,
   Pair,
   List,
   ForAll,
+  SArray,
   Type,
   FunctionType,
   TypeAnnotatedFuncDecl,
-  SourceError
+  SourceError,
+  AllowedDeclarations
 } from '../types'
 import {
   TypeError,
@@ -24,10 +27,14 @@ import {
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
   CyclicReferenceError,
+  DifferentAssignmentError,
+  ReassignConstError,
+  ArrayAssignmentError,
+  InvalidArrayIndexType,
   UndefinedIdentifierError,
   CallingNonFunctionType
 } from '../errors/typeErrors'
-/* tslint:disable:object-literal-key-quotes no-console no-string-literal*/
+import { typeToString } from '../utils/stringify'
 
 /** Name of Unary negative builtin operator */
 const NEGATIVE_OP = '-_1'
@@ -80,6 +87,18 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.body.forEach(nodeBody => {
         traverse(nodeBody, constraints)
       })
+      break
+    }
+    case 'WhileStatement': {
+      traverse(node.test, constraints)
+      traverse(node.body, constraints)
+      break
+    }
+    case 'ForStatement': {
+      traverse(node.init!, constraints)
+      traverse(node.test!, constraints)
+      traverse(node.update!, constraints)
+      traverse(node.body, constraints)
       break
     }
     case 'ConditionalExpression': // both cases are the same
@@ -138,9 +157,19 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
         traverse(param, constraints)
       })
       traverse(funcDeclNode.body, constraints)
+      break
     }
-    case 'Literal':
-    case 'Identifier':
+    case 'AssignmentExpression':
+      traverse(node.left, constraints)
+      traverse(node.right, constraints)
+      break
+    case 'ArrayExpression':
+      node.elements.forEach(element => traverse(element, constraints))
+      break
+    case 'MemberExpression':
+      traverse(node.object, constraints)
+      traverse(node.property, constraints)
+      break
     default:
       return
   }
@@ -167,10 +196,17 @@ function isInternalTypeError(error: any) {
 
 // Type Definitions
 // Our type environment maps variable names to types.
-type Env = Map<string, Type | ForAll>
+// it also remembers if names weer declared as const or let
+interface Env {
+  typeMap: Map<string, Type | ForAll>
+  declKindMap: Map<string, AllowedDeclarations>
+}
 
-function cloneEnv(env: Env) {
-  return new Map(env.entries())
+function cloneEnv(env: Env): Env {
+  return {
+    typeMap: new Map(env.typeMap.entries()),
+    declKindMap: new Map(env.declKindMap.entries())
+  }
 }
 
 type Constraint = [Variable, Type]
@@ -180,11 +216,12 @@ let typeErrors: SourceError[] = []
  * @param program Parsed Program
  */
 export function typeCheck(
-  program: TypeAnnotatedNode<es.Program>
+  program: TypeAnnotatedNode<es.Program>,
+  context: Context
 ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
   typeIdCounter = 0
   typeErrors = []
-  const env: Env = new Map(initialEnv)
+  const env: Env = createEnv(context.chapter)
   const constraints: Constraint[] = []
   traverse(program)
   try {
@@ -222,6 +259,11 @@ function fresh(monoType: Type, subst: { [typeName: string]: Variable }): Type {
         kind: 'list',
         elementType: fresh(monoType.elementType, subst)
       }
+    case 'array':
+      return {
+        kind: 'array',
+        elementType: fresh(monoType.elementType, subst)
+      }
     case 'pair':
       return {
         kind: 'pair',
@@ -256,6 +298,8 @@ function freeTypeVarsInType(type: Type): Variable[] {
       return []
     case 'list':
       return freeTypeVarsInType(type.elementType)
+    case 'array':
+      return freeTypeVarsInType(type.elementType)
     case 'pair':
       return union(freeTypeVarsInType(type.headType), freeTypeVarsInType(type.tailType))
     case 'variable':
@@ -282,54 +326,34 @@ function extractFreeVariablesAndGenFresh(polyType: ForAll): Type {
 
 /**
  * Going down the DAG that is the constraint list
- * Apply the following normalizations
- * List<T1> ==> Pair<T1, List<T1>>
- * Pair<T1, Pair<T2, List<T3>> -> Pair<T4, List<T4>>
  */
 function applyConstraints(type: Type, constraints: Constraint[]): Type {
-  const result = __applyConstraints(type, constraints)
-  if (isList(result)) {
-    const list = result
-    return {
-      kind: 'pair',
-      headType: getListType(list) as Type,
-      tailType: list
-    }
-  } else if (isPair(result)) {
-    const pair = result
-    const _tail = pair.tailType
-    if (isPair(_tail)) {
-      const tail = _tail
-      if (getListType(tail.tailType) !== null) {
-        addToConstraintList(constraints, [tail.headType, getListType(tail.tailType) as Type])
-        addToConstraintList(constraints, [tail.headType, pair.headType])
-        return __applyConstraints(tail, constraints)
-      }
-    }
-  }
-  return result
-}
-
-/**
- * Going down the DAG that is the constraint list
- */
-function __applyConstraints(type: Type, constraints: Constraint[]): Type {
   switch (type.kind) {
     case 'primitive': {
       return type
     }
     case 'pair': {
-      return {
-        kind: 'pair',
-        headType: __applyConstraints(type.headType, constraints),
-        tailType: __applyConstraints(type.tailType, constraints)
+      const pairHeadType = applyConstraints(type.headType, constraints)
+      const pairTailType = applyConstraints(type.tailType, constraints)
+      if (pairTailType.kind === 'list' && pairHeadType === getListType(pairTailType)) {
+        return tList(pairHeadType)
+      } else {
+        return tPair(pairHeadType, pairTailType)
       }
+      return type
     }
     case 'list': {
-      const listType = __applyConstraints(type.elementType, constraints)
+      const elementType = applyConstraints(type.elementType, constraints)
       return {
         kind: 'list',
-        elementType: listType
+        elementType
+      }
+    }
+    case 'array': {
+      const elementType = applyConstraints(type.elementType, constraints)
+      return {
+        kind: 'array',
+        elementType
       }
     }
     case 'variable': {
@@ -380,6 +404,7 @@ function contains(type: Type, name: string): boolean {
       return false
     case 'pair':
       return contains(type.headType, name) || contains(type.tailType, name)
+    case 'array':
     case 'list':
       return contains(type.elementType, name)
     case 'variable':
@@ -425,36 +450,35 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
 
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
+    // if t is base type and t' also base type of the same kind, do nothing
     return constraints
-  } else if (LHS.kind === 'list' && RHS.kind === 'list') {
-    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
-  } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
-    let newConstraints = constraints
-    newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
-    newConstraints = addToConstraintList(constraints, [LHS.tailType, RHS.tailType])
-    return newConstraints
+  } else if (LHS.kind !== 'variable' && RHS.kind === 'variable') {
+    // if t is not a type var and t' is type var, then swap order
+    return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'variable') {
-    // case when we have a new constraint like T_1 = T_1
-    if (RHS.kind === 'variable' && RHS.name === LHS.name) {
+    RHS = applyConstraints(RHS, constraints)
+    if ((RHS.kind === 'primitive' || RHS.kind === 'variable') && LHS.name === RHS.name) {
+      // if t is type var and S(t') is a type var with same name, do nothing
       return constraints
+    } else if (RHS.kind === 'pair' && LHS === RHS.tailType) {
+      // if t is type var and S(t') = Pair(t'',t), add t = List(t'')
+      addToConstraintList(constraints, [LHS, tList(RHS.headType)])
+    } else if (RHS.kind === 'pair' && RHS.tailType.kind === 'list') {
+      // if t = type var and t' = Pair(T1, List<T2>), add T1 = T2 and t = List(T1)
+      const newConstraints = addToConstraintList(constraints, [
+        RHS.headType,
+        getListType(RHS.tailType)!
+      ])
+      return addToConstraintList(newConstraints, [LHS, tList(RHS.headType)])
     } else if (contains(RHS, LHS.name)) {
-      if (isPair(RHS) && (LHS === RHS.tailType || LHS === getListType(RHS.tailType))) {
-        // T1 = Pair<T2, T1> ===> T1 = List<T2>
-        return addToConstraintList(constraints, [LHS, tList(RHS.headType)])
-      } else if (LHS.kind === 'variable' && LHS === getListType(RHS)) {
-        constraints.push([LHS, RHS])
-        return constraints
-      }
+      // if t is tpye var and S(t') is function, list or pair type and t contained in S(t'), throw
+      // recursive definition error
       throw new InternalCyclicReferenceError(LHS.name)
     }
     if (cannotBeResolvedIfAddable(LHS, RHS)) {
       throw new UnifyError(LHS, RHS)
     }
-    // call to apply constraints ensures that there is no term in RHS that occurs earlier in constraint list on LHS
     return occursOnLeftInConstraintList(LHS, constraints, applyConstraints(RHS, constraints))
-  } else if (RHS.kind === 'variable') {
-    // swap around so the type var is on the left hand side
-    return addToConstraintList(constraints, [RHS, LHS])
   } else if (LHS.kind === 'function' && RHS.kind === 'function') {
     if (LHS.parameterTypes.length !== RHS.parameterTypes.length) {
       throw new InternalDifferentNumberArgumentsError(
@@ -471,33 +495,97 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
     }
     newConstraints = addToConstraintList(newConstraints, [LHS.returnType, RHS.returnType])
     return newConstraints
-  } else {
-    throw new UnifyError(LHS, RHS)
+  } else if (LHS.kind === 'pair' && RHS.kind === 'pair') {
+    // if t = Pair<T1, T2> and t' = Pair<T3, T4>, add T1 = T3 and T2 = T4
+    const newConstraints = addToConstraintList(constraints, [LHS.headType, RHS.headType])
+    return addToConstraintList(newConstraints, [LHS.tailType, RHS.tailType])
+  } else if (LHS.kind === 'list' && RHS.kind === 'list') {
+    // if t = List<T1> and t' = List<T2>, add T1 = T2
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
+  } else if (LHS.kind === 'list' && RHS.kind === 'pair') {
+    // if t = List<T1> and t' = Pair<T2, T3>, add t' = Pair<T1, List<T1>>
+    return addToConstraintList(constraints, [RHS, tPair(LHS.elementType, LHS)])
+  } else if (RHS.kind === 'list' && LHS.kind === 'pair') {
+    // if t = Pair<T1, T2> and t' = List<T3>, add t = Pair<T3, List<T3>>
+    return addToConstraintList(constraints, [LHS, tPair(RHS.elementType, RHS)])
+  } else if (LHS.kind === 'array' && RHS.kind === 'array') {
+    // if t = Array<T1> and t' = Array<T2>, add T1 = T2
+    return addToConstraintList(constraints, [LHS.elementType, RHS.elementType])
   }
+  throw new UnifyError(LHS, RHS)
 }
 
-function ifStatementHasReturn(node: es.IfStatement): boolean {
-  const consNode = node.consequent as es.BlockStatement // guaranteed that they are block statements
-  const altNode = node.alternate as es.BlockStatement // guaranteed to be a block and exist
-  return blockStatementHasReturn(consNode) || blockStatementHasReturn(altNode)
-}
-
-function blockStatementHasReturn(node: es.BlockStatement): boolean {
-  const body = node.body
-  for (const stmt of body) {
-    if (stmt.type === 'ReturnStatement') {
+function statementHasReturn(node: es.Node): boolean {
+  switch (node.type) {
+    case 'IfStatement': {
+      return statementHasReturn(node.consequent) || statementHasReturn(node.alternate!)
+    }
+    case 'BlockStatement': {
+      return node.body.some(stmt => statementHasReturn(stmt))
+    }
+    case 'ForStatement':
+    case 'WhileStatement': {
+      return statementHasReturn(node.body)
+    }
+    case 'ReturnStatement': {
       return true
-    } else if (stmt.type === 'IfStatement') {
-      if (ifStatementHasReturn(stmt)) {
-        return true
-      }
-    } else if (stmt.type === 'BlockStatement') {
-      if (blockStatementHasReturn(stmt)) {
-        return true
-      }
+    }
+    default: {
+      return false
     }
   }
-  return false
+}
+
+// These are the only two possible kinds of value returning statements when excluding return statements
+function stmtHasValueReturningStmt(node: es.Node): boolean {
+  switch (node.type) {
+    case 'ExpressionStatement': {
+      return true
+    }
+    case 'IfStatement': {
+      return (
+        stmtHasValueReturningStmt(node.consequent) || stmtHasValueReturningStmt(node.alternate!)
+      )
+    }
+    case 'BlockStatement': {
+      return node.body.some(stmt => stmtHasValueReturningStmt(stmt))
+    }
+    case 'ForStatement':
+    case 'WhileStatement': {
+      return stmtHasValueReturningStmt(node.body)
+    }
+    default: {
+      return false
+    }
+  }
+}
+
+/**
+ * The following is the index of the node whose value will be the value of the block itself.
+ * At the top level and if we are currently in the last value returning stmt of the parent block stmt,
+ * we will use the last value returning statement of the current block. Anywhere else, we will use
+ * either the first return statement or the last statement in the block otherwise
+ */
+function returnBlockValueNodeIndexFor(
+  node: es.Program | es.BlockStatement,
+  isTopLevelAndLastValStmt: boolean
+): number {
+  const lastStatementIndex = node.body.length - 1
+  if (isTopLevelAndLastValStmt) {
+    let index = lastStatementIndex
+    for (index = lastStatementIndex; index >= 0; index--) {
+      if (stmtHasValueReturningStmt(node.body[index])) {
+        return index
+      }
+    }
+    // in the case there are no value returning statements in the body
+    // return the last statement
+    return lastStatementIndex
+  } else {
+    return node.body.findIndex((currentNode, index) => {
+      return index === lastStatementIndex || statementHasReturn(currentNode)
+    })
+  }
 }
 
 /* tslint:disable cyclomatic-complexity */
@@ -505,14 +593,13 @@ function infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
   try {
-    return _infer(node, env, constraints, isLastStatementInBlock)
+    return _infer(node, env, constraints, isTopLevelAndLastValStmt)
   } catch (e) {
     if (e instanceof InternalCyclicReferenceError) {
-      // cyclic reference errors only happen in function declarations
-      // which would have been caught when inferring it
+      typeErrors.push(new CyclicReferenceError(node))
       return constraints
     }
     throw e
@@ -524,18 +611,17 @@ function _infer(
   node: TypeAnnotatedNode<es.Node>,
   env: Env,
   constraints: Constraint[],
-  isLastStatementInBlock: boolean = false
+  isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
   const storedType = node.inferredType as Variable
   switch (node.type) {
     case 'UnaryExpression': {
       const op = node.operator === '-' ? NEGATIVE_OP : node.operator
-      const funcType = env.get(op) as FunctionType // in either case its a monomorphic type
+      const funcType = env.typeMap.get(op) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
-      let newConstraints = constraints
       const receivedTypes: Type[] = []
-      newConstraints = infer(argNode, env, newConstraints)
+      let newConstraints = infer(argNode, env, constraints)
       receivedTypes.push(applyConstraints(argNode.inferredType!, newConstraints))
       try {
         newConstraints = addToConstraintList(newConstraints, [tFunc(argType, storedType), funcType])
@@ -545,13 +631,14 @@ function _infer(
           typeErrors.push(
             new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes)
           )
+          return newConstraints
         }
       }
       return newConstraints
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
-      const envType = env.get(node.operator)!
+      const envType = env.typeMap.get(node.operator)!
       const opType = envType.kind === 'forall' ? extractFreeVariablesAndGenFresh(envType) : envType
       const leftNode = node.left as TypeAnnotatedNode<es.Node>
       const leftType = leftNode.inferredType as Variable
@@ -591,19 +678,75 @@ function _infer(
         addToConstraintList(constraints, [storedType, argNode.inferredType as Variable])
       )
     }
+    case 'WhileStatement': {
+      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testType = testNode.inferredType as Variable
+      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyType = bodyNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
+      try {
+        newConstraints = infer(testNode, env, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
+        }
+      }
+      return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
+    }
+    case 'ForStatement': {
+      let newEnv = env
+      const initNode = node.init as TypeAnnotatedNode<es.Node>
+      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testType = testNode.inferredType as Variable
+      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyType = bodyNode.inferredType as Variable
+      const updateNode = node.update as TypeAnnotatedNode<es.Node>
+      let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
+      if (
+        initNode.type === 'VariableDeclaration' &&
+        initNode.kind !== 'var' &&
+        initNode.declarations[0].id.type === 'Identifier'
+      ) {
+        // we need to introduce it into the scope and do something similar to what we do when
+        // evaluating a block statement
+        newEnv = cloneEnv(env)
+        const initName = initNode.declarations[0].id.name
+        newEnv.typeMap.set(
+          initName,
+          (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+        )
+        newEnv.declKindMap.set(initName, initNode.kind)
+        newConstraints = infer(initNode, newEnv, newConstraints)
+        newEnv.typeMap.set(
+          initName,
+          tForAll(
+            applyConstraints(
+              (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
+                .inferredType as Variable,
+              newConstraints
+            )
+          )
+        )
+      } else {
+        newConstraints = infer(initNode, newEnv, newConstraints)
+      }
+      try {
+        newConstraints = infer(testNode, newEnv, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
+        }
+      }
+      newConstraints = infer(updateNode, newEnv, newConstraints)
+      return infer(bodyNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
+    }
     case 'Program':
     case 'BlockStatement': {
       const newEnv = cloneEnv(env) // create new scope
       const lastStatementIndex = node.body.length - 1
-      const lastCheckedNodeIndex = isLastStatementInBlock
-        ? lastStatementIndex
-        : node.body.findIndex((currentNode, index) => {
-            return (
-              index === lastStatementIndex ||
-              currentNode.type === 'ReturnStatement' ||
-              (currentNode.type === 'IfStatement' && ifStatementHasReturn(currentNode))
-            )
-          })
+      const returnValNodeIndex = returnBlockValueNodeIndexFor(node, isTopLevelAndLastValStmt)
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
       let n = lastStatementIndex
@@ -612,8 +755,7 @@ function _infer(
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
           // in the event we havent yet found our last decl
-          // and we are not after our first return statement
-          if (!lastDeclFound && n <= lastCheckedNodeIndex) {
+          if (!lastDeclFound) {
             lastDeclFound = true
             lastDeclNodeIndex = n
           }
@@ -623,28 +765,37 @@ function _infer(
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
-          newEnv.set(declNode.id.name, declNode.functionInferredType as Variable)
+          const declName = declNode.id.name
+          newEnv.typeMap.set(declName, declNode.functionInferredType!)
+          newEnv.declKindMap.set(declName, 'const')
         } else if (
           declNode.type === 'VariableDeclaration' &&
+          declNode.kind !== 'var' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          newEnv.set(
-            declNode.declarations[0].id.name,
+          const declName = declNode.declarations[0].id.name
+          newEnv.typeMap.set(
+            declName,
             (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
           )
+          newEnv.declKindMap.set(declName, declNode.kind)
         }
       })
-      const lastNode = node.body[lastCheckedNodeIndex] as TypeAnnotatedNode<es.Node>
-      const lastNodeType = (isLastStatementInBlock && lastNode.type === 'ExpressionStatement'
+      const lastNode = node.body[returnValNodeIndex] as TypeAnnotatedNode<es.Node>
+      const lastNodeType = (isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
         ? (lastNode.expression as TypeAnnotatedNode<es.Node>).inferredType
         : lastNode.inferredType) as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
-        newConstraints = infer(node.body[i], newEnv, newConstraints)
+        if (i === returnValNodeIndex) {
+          newConstraints = infer(node.body[i], newEnv, newConstraints, isTopLevelAndLastValStmt)
+        } else {
+          newConstraints = infer(node.body[i], newEnv, newConstraints)
+        }
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
-          newEnv.set(
+          newEnv.typeMap.set(
             declNode.id.name,
             tForAll(applyConstraints(declNode.functionInferredType as Variable, newConstraints))
           )
@@ -652,7 +803,7 @@ function _infer(
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          newEnv.set(
+          newEnv.typeMap.set(
             declNode.declarations[0].id.name,
             tForAll(
               applyConstraints(
@@ -664,11 +815,11 @@ function _infer(
           )
         }
       })
-      for (let i = lastDeclNodeIndex + 1; i <= lastCheckedNodeIndex; i++) {
+      for (let i = lastDeclNodeIndex + 1; i <= lastStatementIndex; i++) {
         // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
         const checkedNode = node.body[i]
-        if (i === lastCheckedNodeIndex && checkedNode.type === 'IfStatement') {
-          newConstraints = infer(checkedNode, newEnv, newConstraints, isLastStatementInBlock)
+        if (i === returnValNodeIndex) {
+          newConstraints = infer(checkedNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
         } else {
           newConstraints = infer(checkedNode, newEnv, newConstraints)
         }
@@ -691,8 +842,8 @@ function _infer(
     }
     case 'Identifier': {
       const identifierName = node.name
-      if (env.has(identifierName)) {
-        const envType = env.get(identifierName)!
+      if (env.typeMap.has(identifierName)) {
+        const envType = env.typeMap.get(identifierName)!
         if (envType.kind === 'forall') {
           return addToConstraintList(constraints, [
             storedType,
@@ -711,28 +862,24 @@ function _infer(
       const testType = testNode.inferredType as Variable
       const consNode = node.consequent as TypeAnnotatedNode<es.Node>
       const consType = consNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [testType, tBool])
-      newConstraints = addToConstraintList(newConstraints, [storedType, consType])
       const altNode = node.alternate as TypeAnnotatedNode<es.Node>
-      if (altNode) {
-        const altType = altNode.inferredType as Variable
-        newConstraints = addToConstraintList(newConstraints, [consType, altType])
-      }
+      const altType = altNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [storedType, consType])
       try {
         newConstraints = infer(testNode, env, newConstraints)
+        newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.LHS))
+          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
         }
       }
-      newConstraints = infer(consNode, env, newConstraints, isLastStatementInBlock)
-      if (altNode) {
-        try {
-          newConstraints = infer(altNode, env, newConstraints, isLastStatementInBlock)
-        } catch (e) {
-          if (e instanceof UnifyError) {
-            typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
-          }
+      newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
+      try {
+        newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
+        newConstraints = addToConstraintList(newConstraints, [consType, altType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
         }
       }
       return newConstraints
@@ -747,7 +894,7 @@ function _infer(
       paramTypes.push(bodyNode.inferredType as Variable)
       const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv.set(paramNode.name, paramNode.inferredType as Variable)
+        newEnv.typeMap.set(paramNode.name, paramNode.inferredType as Variable)
       })
       return infer(bodyNode, newEnv, newConstraints)
     }
@@ -769,7 +916,7 @@ function _infer(
         tFunc(...paramTypes)
       ])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv.set(paramNode.name, paramNode.inferredType as Variable)
+        newEnv.typeMap.set(paramNode.name, paramNode.inferredType as Variable)
       })
       return infer(bodyNode, newEnv, newConstraints)
     }
@@ -808,8 +955,112 @@ function _infer(
       }
       return newConstraints
     }
+    case 'AssignmentExpression': {
+      // need to handle array item assignment
+      // Two cases:
+      // 1. LHS is identifier
+      // 2. LHS is member expression
+      // x = ...., need to check that x is not const
+      // arr[x]
+      const leftNode = node.left as TypeAnnotatedNode<es.Identifier | es.MemberExpression>
+      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const rightType = rightNode.inferredType as Variable
+      const leftType = leftNode.inferredType as Variable
+      let newConstraints = addToConstraintList(constraints, [storedType, rightType])
+      newConstraints = infer(rightNode, env, newConstraints)
+      if (leftNode.type === 'Identifier' && env.declKindMap.get(leftNode.name) === 'const') {
+        typeErrors.push(new ReassignConstError(node))
+        return newConstraints
+      }
+      newConstraints = infer(leftNode, env, newConstraints)
+      try {
+        return addToConstraintList(newConstraints, [rightType, leftType])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          if (leftNode.type === 'Identifier') {
+            typeErrors.push(
+              new DifferentAssignmentError(
+                node,
+                applyConstraints(leftType, newConstraints),
+                applyConstraints(rightType, newConstraints)
+              )
+            )
+          } else {
+            typeErrors.push(
+              new ArrayAssignmentError(
+                node,
+                tArray(applyConstraints(leftType, newConstraints)),
+                tArray(applyConstraints(rightType, newConstraints))
+              )
+            )
+          }
+        }
+      }
+      return newConstraints
+    }
+    case 'ArrayExpression': {
+      let newConstraints = constraints
+      const elements = node.elements as TypeAnnotatedNode<es.Node>[]
+      // infer the types of array elements
+      elements.forEach(element => {
+        newConstraints = infer(element, env, newConstraints)
+      })
+      const arrayElementType = tVar(typeIdCounter++)
+      newConstraints = addToConstraintList(newConstraints, [storedType, tArray(arrayElementType)])
+      elements.forEach(element => {
+        try {
+          newConstraints = addToConstraintList(newConstraints, [
+            arrayElementType,
+            element.inferredType!
+          ])
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            typeErrors.push(
+              new ArrayAssignmentError(
+                node,
+                applyConstraints(node.inferredType!, newConstraints) as SArray,
+                tArray(applyConstraints(element.inferredType!, newConstraints))
+              )
+            )
+          }
+        }
+      })
+      return newConstraints
+    }
+    case 'MemberExpression': {
+      // object and property
+      // need to check that property is number and add constraints that inferredType is array
+      // element type
+      const obj = node.object as TypeAnnotatedNode<es.Identifier>
+      const objName = obj.name
+      const property = node.property as TypeAnnotatedNode<es.Node>
+      const propertyType = property.inferredType as Variable
+      let newConstraints = infer(property, env, constraints)
+      // Check that property is of type number
+      // type in env can be either var or forall
+      const envType = env.typeMap.get(objName)!
+      const arrayType =
+        envType.kind === 'forall'
+          ? extractFreeVariablesAndGenFresh(envType)
+          : applyConstraints(envType, newConstraints)
+      if (arrayType.kind !== 'array')
+        throw new InternalTypeError(
+          `Expected ${objName} to be an array, got ${typeToString(arrayType)}`
+        )
+      const expectedElementType = arrayType.elementType
+      try {
+        newConstraints = addToConstraintList(constraints, [propertyType, tNumber])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          typeErrors.push(
+            new InvalidArrayIndexType(node, applyConstraints(propertyType, newConstraints))
+          )
+        }
+      }
+      return addToConstraintList(newConstraints, [storedType, expectedElementType])
+    }
     default:
-      return constraints
+      return addToConstraintList(constraints, [storedType, tUndef])
   }
 }
 
@@ -859,6 +1110,13 @@ function tForAll(type: Type): ForAll {
   return {
     kind: 'forall',
     polyType: type
+  }
+}
+
+function tArray(var1: Type): SArray {
+  return {
+    kind: 'array',
+    elementType: var1
   }
 }
 
@@ -948,7 +1206,15 @@ const pairFuncs: [string, Type | ForAll][] = [
   ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
+  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))],
+  // Only for Source 3 and above (TODO make it hidden if less then Source 3)
+  ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
+  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
+]
+
+const arrayFuncs: [string, Type | ForAll][] = [
+  ['is_array', tForAll(tFunc(tVar('T'), tBool))],
+  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
 ]
 
 const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
@@ -958,9 +1224,6 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['!', tFunc(tBool, tBool)],
   ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
   ['||', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  // NOTE for now just handle for Number === Number
-  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['<', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['<=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['>', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
@@ -972,4 +1235,31 @@ const primitiveFuncs: [string, Type | ForAll][] = [
   ['/', tFunc(tNumber, tNumber, tNumber)]
 ]
 
-const initialEnv = [...predeclaredNames, ...pairFuncs, ...listFuncs, ...primitiveFuncs]
+// Source 2 and below restricts === to addables
+const preS3equalityFuncs: [string, ForAll][] = [
+  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
+  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
+]
+
+// Source 3 and above allows any values as arguments for ===
+const postS3equalityFuncs: [string, ForAll][] = [
+  ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
+  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
+]
+
+function createEnv(chapter: number): Env {
+  const equalityFuncs = chapter < 3 ? preS3equalityFuncs : postS3equalityFuncs
+  const initialTypeMappings = [
+    ...predeclaredNames,
+    ...pairFuncs,
+    ...listFuncs,
+    ...arrayFuncs,
+    ...primitiveFuncs,
+    ...equalityFuncs
+  ]
+
+  return {
+    typeMap: new Map(initialTypeMappings),
+    declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+  }
+}
