@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.54",
+  "version": "0.4.55",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
     "JavaScript",
