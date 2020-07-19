@@ -264,9 +264,7 @@ describe('type checking functions', () => {
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 3: Undefined identifier 'append' detected"`
-    )
+    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undeclared name 'append' detected"`)
   })
 })
 
@@ -2027,18 +2025,18 @@ describe('imported vars have any type', () => {
       import {show, heart} from 'runes';
       const a = show;
       const b = heart;
-      
+
       // error
       const c = not_imported;
     `
-    let [program, errors] = parseAndTypeCheck(code1, 1)
+    const [program, errors] = parseAndTypeCheck(code1, 1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: T0
       b: T0
       c: T0"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 7: Undefined identifier 'not_imported' detected"`
+      `"Line 7: Undeclared name 'not_imported' detected"`
     )
   })
 })
