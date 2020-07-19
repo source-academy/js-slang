@@ -1045,6 +1045,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 28,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -1057,10 +1061,16 @@ Object {
           },
           "raw": "'string'",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": "string",
         },
         "end": 30,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 12,
@@ -1072,6 +1082,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1109,6 +1120,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 8,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -1121,10 +1136,16 @@ Object {
           },
           "raw": "'string'",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": "string",
         },
         "end": 10,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1136,6 +1157,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1191,6 +1213,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 21,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1203,10 +1229,16 @@ Object {
           },
           "raw": "0",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
         "end": 23,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1218,6 +1250,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1255,6 +1288,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 1,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -1267,10 +1304,16 @@ Object {
           },
           "raw": "0",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
         "end": 3,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -1282,6 +1325,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1341,6 +1385,10 @@ Object {
           "elements": Array [
             Node {
               "end": 20,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1353,11 +1401,19 @@ Object {
               },
               "raw": "1",
               "start": 19,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
           ],
           "end": 21,
+          "inferredType": Object {
+            "elementType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "kind": "array",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1369,9 +1425,15 @@ Object {
             },
           },
           "start": 18,
+          "typability": "Typed",
           "type": "ArrayExpression",
         },
         "end": 23,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1383,6 +1445,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1424,6 +1487,10 @@ Object {
           "elements": Array [
             Node {
               "end": 2,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1436,11 +1503,19 @@ Object {
               },
               "raw": "1",
               "start": 1,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
           ],
           "end": 3,
+          "inferredType": Object {
+            "elementType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "kind": "array",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1452,9 +1527,15 @@ Object {
             },
           },
           "start": 0,
+          "typability": "Typed",
           "type": "ArrayExpression",
         },
         "end": 5,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1466,6 +1547,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1596,6 +1678,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 25,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1661,9 +1747,15 @@ Object {
             },
           ],
           "start": 19,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 28,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1675,6 +1767,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1715,6 +1808,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 25,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1780,9 +1877,15 @@ Object {
             },
           ],
           "start": 19,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 28,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1794,6 +1897,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1833,6 +1937,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 7,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1898,9 +2006,15 @@ Object {
             },
           ],
           "start": 1,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 10,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1912,6 +2026,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1948,6 +2063,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 24,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 6,
@@ -1960,10 +2079,16 @@ Object {
           },
           "raw": "true",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": true,
         },
         "end": 26,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 8,
@@ -1975,6 +2100,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2012,6 +2138,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 4,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 4,
@@ -2024,10 +2154,16 @@ Object {
           },
           "raw": "true",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": true,
         },
         "end": 6,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 6,
@@ -2039,6 +2175,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2094,6 +2231,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 29,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2106,9 +2247,15 @@ Object {
           },
           "name": "undefined",
           "start": 20,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 31,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 13,
@@ -2120,6 +2267,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2158,6 +2306,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 31,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -2170,11 +2322,16 @@ Object {
             },
             "raw": "1",
             "start": 30,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
           Node {
             "end": 37,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "boolean",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 19,
@@ -2187,12 +2344,17 @@ Object {
             },
             "raw": "true",
             "start": 33,
+            "typability": "Typed",
             "type": "Literal",
             "value": true,
           },
         ],
         "callee": Node {
           "end": 29,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2205,9 +2367,15 @@ Object {
           },
           "name": "undefined",
           "start": 20,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 38,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 20,
@@ -2219,6 +2387,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2256,6 +2425,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 11,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2268,11 +2441,16 @@ Object {
             },
             "raw": "1",
             "start": 10,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
           Node {
             "end": 17,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "boolean",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 17,
@@ -2285,12 +2463,17 @@ Object {
             },
             "raw": "true",
             "start": 13,
+            "typability": "Typed",
             "type": "Literal",
             "value": true,
           },
         ],
         "callee": Node {
           "end": 9,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 9,
@@ -2303,9 +2486,15 @@ Object {
           },
           "name": "undefined",
           "start": 0,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 18,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 18,
@@ -2317,6 +2506,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2352,6 +2542,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 9,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 9,
@@ -2364,9 +2558,15 @@ Object {
           },
           "name": "undefined",
           "start": 0,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 11,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 11,
@@ -2378,6 +2578,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",

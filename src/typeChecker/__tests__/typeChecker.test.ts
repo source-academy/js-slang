@@ -3,13 +3,14 @@ import { parse as __parse } from '../../parser/parser'
 import { typeCheck } from '../typeChecker'
 import { mockContext } from '../../mocks/context'
 import { validateAndAnnotate } from '../../validator/validator'
-import { TypeAnnotatedNode, TypeAnnotatedFuncDecl } from '../../types'
+import { TypeAnnotatedNode, TypeAnnotatedFuncDecl, Context } from '../../types'
 import { typeToString } from '../../utils/stringify'
-import { parseError } from '../../index'
+import { parseError, runInContext } from '../../index'
 import * as es from 'estree'
 
-function parseAndTypeCheck(code: any, chapter = 1) {
-  const context = mockContext(chapter)
+function parseAndTypeCheck(code: string, chapterOrContext: number | Context = 1) {
+  const context =
+    typeof chapterOrContext === 'number' ? mockContext(chapterOrContext) : chapterOrContext
   const program: any = __parse(code, context)
   expect(program).not.toBeUndefined()
   const validatedProgram = validateAndAnnotate(program, context)
@@ -263,9 +264,7 @@ describe('type checking functions', () => {
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 3: Undefined identifier 'append' detected"`
-    )
+    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undeclared name 'append' detected"`)
   })
 })
 
@@ -367,7 +366,7 @@ describe('type checking of functions with variable number of arguments', () => {
       display(1+1);
       display(true, 'hello');
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, 2)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "xs: T0
@@ -1919,5 +1918,125 @@ describe('primitive functions differences between S2 and S3', () => {
     const [program, errors] = parseAndTypeCheck(code, 3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`""`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('Type context from previous executions get saved', () => {
+  it('source 1', () => {
+    const code1 = `
+      const num = 1;
+      const f = x => x;
+    `
+    const context = mockContext(1)
+    let [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "num: number
+      f: T0 -> T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+
+    // next eval
+
+    const code2 = `
+      const doubleNum = num * 2;
+      const g = f;
+      const h = f(true);
+      const i = f(123);
+    `
+    ;[program, errors] = parseAndTypeCheck(code2, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "doubleNum: number
+      g: T0 -> T0
+      h: boolean
+      i: number"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('source 2 list functions', async () => {
+    const code1 = `
+      const xs = pair(true, null);
+      const a = map(x=>1, xs);
+      const len = length(xs);
+
+      const err = equal(xs, null);
+    `
+    const context = mockContext(2)
+    await runInContext('', context) // we run an empty program to simulate execution of prelude
+    const [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "xs: List<boolean>
+      a: List<number>
+      len: number
+      err: T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('source 3 stream functions', async () => {
+    const code1 = `
+      const __is_stream = is_stream;
+      const __list_to_stream = list_to_stream;
+      const __stream_to_list = stream_to_list;
+      const __stream_length = stream_length;
+      const __stream_map = stream_map;
+      const __build_stream = build_stream;
+      const __stream_for_each = stream_for_each;
+      const __stream_reverse = stream_reverse;
+      const __stream_append = stream_append;
+      const __stream_member = stream_member;
+      const __stream_remove = stream_remove;
+      const __stream_remove_all = stream_remove_all;
+      const __stream_filter = stream_filter;
+      const __enum_stream = enum_stream;
+      const __integers_from = integers_from;
+      const __eval_stream = eval_stream;
+      const __stream_ref = stream_ref;
+    `
+    const context = mockContext(3)
+    await runInContext('', context) // we run an empty program to simulate execution of prelude
+    const [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "__is_stream: T0 -> boolean
+      __list_to_stream: List<T0> -> T1
+      __stream_to_list: T0 -> List<T1>
+      __stream_length: T0 -> number
+      __stream_map: T0 -> T1
+      __build_stream: (number, number -> T0) -> T1
+      __stream_for_each: (T0 -> T1) -> boolean
+      __stream_reverse: T0 -> T0
+      __stream_append: (T0, T0) -> T0
+      __stream_member: (T0, T1) -> T1
+      __stream_remove: (T0, T1) -> T1
+      __stream_remove_all: (T0, T1) -> T1
+      __stream_filter: (T0 -> boolean, T1) -> T1
+      __enum_stream: (number, number) -> T0
+      __integers_from: number -> T0
+      __eval_stream: (T0, number) -> List<T1>
+      __stream_ref: (T0, number) -> T1"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('imported vars have any type', () => {
+  it('import', () => {
+    const code1 = `
+      import {show, heart} from 'runes';
+      const a = show;
+      const b = heart;
+
+      // error
+      const c = not_imported;
+    `
+    const [program, errors] = parseAndTypeCheck(code1, 1)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "a: T0
+      b: T0
+      c: T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(
+      `"Line 7: Undeclared name 'not_imported' detected"`
+    )
   })
 })

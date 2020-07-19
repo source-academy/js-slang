@@ -146,6 +146,8 @@ export interface Context<T = any> {
    * Examples: lazy, concurrent or non-deterministic
    */
   variant: Variant
+
+  typeEnvironment: TypeEnvironment
 }
 
 export interface BlockFrame {
@@ -305,6 +307,11 @@ export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
+
+export type TypeEnvironment = {
+  typeMap: Map<string, Type | ForAll>
+  declKindMap: Map<string, AllowedDeclarations>
+}[]
 
 export {
   Instruction as SVMInstruction,

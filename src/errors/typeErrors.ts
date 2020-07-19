@@ -296,7 +296,7 @@ export class UndefinedIdentifierError implements SourceError {
 
   public explain() {
     return stripIndent`
-    Undefined identifier '${this.name}' detected
+    Undeclared name '${this.name}' detected
     `
   }
 

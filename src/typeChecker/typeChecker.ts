@@ -12,7 +12,8 @@ import {
   FunctionType,
   TypeAnnotatedFuncDecl,
   SourceError,
-  AllowedDeclarations
+  AllowedDeclarations,
+  TypeEnvironment
 } from '../types'
 import {
   TypeError,
@@ -49,6 +50,10 @@ let typeIdCounter = 0
  */
 /* tslint:disable cyclomatic-complexity */
 function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) {
+  if (node === null) {
+    // this happens in a holey array [,,,,,]
+    return
+  }
   if (constraints && node.typability !== 'Untypable') {
     try {
       node.inferredType = applyConstraints(node.inferredType as Type, constraints)
@@ -197,17 +202,7 @@ function isInternalTypeError(error: any) {
 // Type Definitions
 // Our type environment maps variable names to types.
 // it also remembers if names weer declared as const or let
-interface Env {
-  typeMap: Map<string, Type | ForAll>
-  declKindMap: Map<string, AllowedDeclarations>
-}
-
-function cloneEnv(env: Env): Env {
-  return {
-    typeMap: new Map(env.typeMap.entries()),
-    declKindMap: new Map(env.declKindMap.entries())
-  }
-}
+type Env = TypeEnvironment
 
 type Constraint = [Variable, Type]
 let typeErrors: SourceError[] = []
@@ -221,7 +216,16 @@ export function typeCheck(
 ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
   typeIdCounter = 0
   typeErrors = []
-  const env: Env = createEnv(context.chapter)
+  const env: Env = context.typeEnvironment
+  if (context.chapter >= 3 && env.length === 3) {
+    // TODO: this is a hack since we don't infer streams properly yet
+    // if chapter is 3 and the prelude was just loaded, we change all the stream functions
+    const latestEnv = env[2].typeMap
+    console.log(env)
+    for (const [name, type] of temporaryStreamFuncs) {
+      latestEnv.set(name, type)
+    }
+  }
   const constraints: Constraint[] = []
   traverse(program)
   try {
@@ -588,6 +592,36 @@ function returnBlockValueNodeIndexFor(
   }
 }
 
+function lookupType(name: string, env: Env): Type | ForAll | undefined {
+  for (let i = env.length - 1; i >= 0; i--) {
+    if (env[i].typeMap.has(name)) {
+      return env[i].typeMap.get(name)
+    }
+  }
+  return undefined
+}
+
+function lookupDeclKind(name: string, env: Env): AllowedDeclarations | undefined {
+  for (let i = env.length - 1; i >= 0; i--) {
+    if (env[i].declKindMap.has(name)) {
+      return env[i].declKindMap.get(name)
+    }
+  }
+  return undefined
+}
+
+function setType(name: string, type: Type | ForAll, env: Env) {
+  env[env.length - 1].typeMap.set(name, type)
+}
+
+function setDeclKind(name: string, kind: AllowedDeclarations, env: Env) {
+  env[env.length - 1].declKindMap.set(name, kind)
+}
+
+function pushEnv(env: Env) {
+  env.push({ typeMap: new Map(), declKindMap: new Map() })
+}
+
 /* tslint:disable cyclomatic-complexity */
 function infer(
   node: TypeAnnotatedNode<es.Node>,
@@ -617,7 +651,7 @@ function _infer(
   switch (node.type) {
     case 'UnaryExpression': {
       const op = node.operator === '-' ? NEGATIVE_OP : node.operator
-      const funcType = env.typeMap.get(op) as FunctionType // in either case its a monomorphic type
+      const funcType = lookupType(op, env) as FunctionType // in either case its a monomorphic type
       const argNode = node.argument as TypeAnnotatedNode<es.Node>
       const argType = argNode.inferredType as Variable
       const receivedTypes: Type[] = []
@@ -638,7 +672,7 @@ function _infer(
     }
     case 'LogicalExpression': // both cases are the same
     case 'BinaryExpression': {
-      const envType = env.typeMap.get(node.operator)!
+      const envType = lookupType(node.operator, env)!
       const opType = envType.kind === 'forall' ? extractFreeVariablesAndGenFresh(envType) : envType
       const leftNode = node.left as TypeAnnotatedNode<es.Node>
       const leftType = leftNode.inferredType as Variable
@@ -695,7 +729,6 @@ function _infer(
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
     }
     case 'ForStatement': {
-      let newEnv = env
       const initNode = node.init as TypeAnnotatedNode<es.Node>
       const testNode = node.test as TypeAnnotatedNode<es.Node>
       const testType = testNode.inferredType as Variable
@@ -703,6 +736,7 @@ function _infer(
       const bodyType = bodyNode.inferredType as Variable
       const updateNode = node.update as TypeAnnotatedNode<es.Node>
       let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
+      pushEnv(env)
       if (
         initNode.type === 'VariableDeclaration' &&
         initNode.kind !== 'var' &&
@@ -710,15 +744,15 @@ function _infer(
       ) {
         // we need to introduce it into the scope and do something similar to what we do when
         // evaluating a block statement
-        newEnv = cloneEnv(env)
         const initName = initNode.declarations[0].id.name
-        newEnv.typeMap.set(
+        setType(
           initName,
-          (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+          (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable,
+          env
         )
-        newEnv.declKindMap.set(initName, initNode.kind)
-        newConstraints = infer(initNode, newEnv, newConstraints)
-        newEnv.typeMap.set(
+        setDeclKind(initName, initNode.kind, env)
+        newConstraints = infer(initNode, env, newConstraints)
+        setType(
           initName,
           tForAll(
             applyConstraints(
@@ -726,25 +760,38 @@ function _infer(
                 .inferredType as Variable,
               newConstraints
             )
-          )
+          ),
+          env
         )
       } else {
-        newConstraints = infer(initNode, newEnv, newConstraints)
+        newConstraints = infer(initNode, env, newConstraints)
       }
       try {
-        newConstraints = infer(testNode, newEnv, newConstraints)
+        newConstraints = infer(testNode, env, newConstraints)
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
           typeErrors.push(new InvalidTestConditionError(node, e.RHS))
         }
       }
-      newConstraints = infer(updateNode, newEnv, newConstraints)
-      return infer(bodyNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
+      newConstraints = infer(updateNode, env, newConstraints)
+      const result = infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
+      env.pop()
+      return result
     }
     case 'Program':
     case 'BlockStatement': {
-      const newEnv = cloneEnv(env) // create new scope
+      pushEnv(env)
+      for (const statement of node.body) {
+        if (statement.type === 'ImportDeclaration') {
+          for (const specifier of statement.specifiers) {
+            if (specifier.type === 'ImportSpecifier' && specifier.imported.type === 'Identifier') {
+              setType(specifier.imported.name, tForAll(tVar('T1')), env)
+              setDeclKind(specifier.imported.name, 'const', env)
+            }
+          }
+        }
+      }
       const lastStatementIndex = node.body.length - 1
       const returnValNodeIndex = returnBlockValueNodeIndexFor(node, isTopLevelAndLastValStmt)
       let lastDeclNodeIndex = -1
@@ -766,19 +813,20 @@ function _infer(
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
           const declName = declNode.id.name
-          newEnv.typeMap.set(declName, declNode.functionInferredType!)
-          newEnv.declKindMap.set(declName, 'const')
+          setType(declName, declNode.functionInferredType!, env)
+          setDeclKind(declName, 'const', env)
         } else if (
           declNode.type === 'VariableDeclaration' &&
           declNode.kind !== 'var' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
           const declName = declNode.declarations[0].id.name
-          newEnv.typeMap.set(
+          setType(
             declName,
-            (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable
+            (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable,
+            env
           )
-          newEnv.declKindMap.set(declName, declNode.kind)
+          setDeclKind(declName, declNode.kind, env)
         }
       })
       const lastNode = node.body[returnValNodeIndex] as TypeAnnotatedNode<es.Node>
@@ -788,22 +836,23 @@ function _infer(
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         if (i === returnValNodeIndex) {
-          newConstraints = infer(node.body[i], newEnv, newConstraints, isTopLevelAndLastValStmt)
+          newConstraints = infer(node.body[i], env, newConstraints, isTopLevelAndLastValStmt)
         } else {
-          newConstraints = infer(node.body[i], newEnv, newConstraints)
+          newConstraints = infer(node.body[i], env, newConstraints)
         }
       }
       declNodes.forEach(declNode => {
         if (declNode.type === 'FunctionDeclaration' && declNode.id !== null) {
-          newEnv.typeMap.set(
+          setType(
             declNode.id.name,
-            tForAll(applyConstraints(declNode.functionInferredType as Variable, newConstraints))
+            tForAll(applyConstraints(declNode.functionInferredType as Variable, newConstraints)),
+            env
           )
         } else if (
           declNode.type === 'VariableDeclaration' &&
           declNode.declarations[0].id.type === 'Identifier'
         ) {
-          newEnv.typeMap.set(
+          setType(
             declNode.declarations[0].id.name,
             tForAll(
               applyConstraints(
@@ -811,7 +860,8 @@ function _infer(
                   .inferredType as Variable,
                 newConstraints
               )
-            )
+            ),
+            env
           )
         }
       })
@@ -819,10 +869,14 @@ function _infer(
         // for the last statement, if it is an if statement, pass down isLastStatementinBlock variable
         const checkedNode = node.body[i]
         if (i === returnValNodeIndex) {
-          newConstraints = infer(checkedNode, newEnv, newConstraints, isTopLevelAndLastValStmt)
+          newConstraints = infer(checkedNode, env, newConstraints, isTopLevelAndLastValStmt)
         } else {
-          newConstraints = infer(checkedNode, newEnv, newConstraints)
+          newConstraints = infer(checkedNode, env, newConstraints)
         }
+      }
+      if (node.type === 'BlockStatement') {
+        // if program, we want to save the types there, so only pop for blocks
+        env.pop()
       }
       return newConstraints
     }
@@ -842,8 +896,8 @@ function _infer(
     }
     case 'Identifier': {
       const identifierName = node.name
-      if (env.typeMap.has(identifierName)) {
-        const envType = env.typeMap.get(identifierName)!
+      const envType = lookupType(identifierName, env)
+      if (envType !== undefined) {
         if (envType.kind === 'forall') {
           return addToConstraintList(constraints, [
             storedType,
@@ -885,7 +939,7 @@ function _infer(
       return newConstraints
     }
     case 'ArrowFunctionExpression': {
-      const newEnv = cloneEnv(env) // create new scope
+      pushEnv(env)
       const paramNodes = node.params
       const paramTypes: Variable[] = paramNodes.map(
         paramNode => (paramNode as TypeAnnotatedNode<es.Node>).inferredType as Variable
@@ -894,9 +948,11 @@ function _infer(
       paramTypes.push(bodyNode.inferredType as Variable)
       const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv.typeMap.set(paramNode.name, paramNode.inferredType as Variable)
+        setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
-      return infer(bodyNode, newEnv, newConstraints)
+      const result = infer(bodyNode, env, newConstraints)
+      env.pop()
+      return result
     }
     case 'VariableDeclaration': {
       const initNode = node.declarations[0].init!
@@ -905,7 +961,7 @@ function _infer(
     case 'FunctionDeclaration': {
       const funcDeclNode = node as TypeAnnotatedFuncDecl
       let newConstraints = addToConstraintList(constraints, [storedType, tUndef])
-      const newEnv = cloneEnv(env) // create new scope
+      pushEnv(env)
       const storedFunctionType = funcDeclNode.functionInferredType as Variable
       const paramNodes = node.params as TypeAnnotatedNode<es.Pattern>[]
       const paramTypes = paramNodes.map(paramNode => paramNode.inferredType as Variable)
@@ -916,9 +972,11 @@ function _infer(
         tFunc(...paramTypes)
       ])
       paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
-        newEnv.typeMap.set(paramNode.name, paramNode.inferredType as Variable)
+        setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
-      return infer(bodyNode, newEnv, newConstraints)
+      const result = infer(bodyNode, env, newConstraints)
+      env.pop()
+      return result
     }
     case 'CallExpression': {
       const calleeNode = node.callee as TypeAnnotatedNode<es.Node>
@@ -968,7 +1026,7 @@ function _infer(
       const leftType = leftNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, rightType])
       newConstraints = infer(rightNode, env, newConstraints)
-      if (leftNode.type === 'Identifier' && env.declKindMap.get(leftNode.name) === 'const') {
+      if (leftNode.type === 'Identifier' && lookupDeclKind(leftNode.name, env) === 'const') {
         typeErrors.push(new ReassignConstError(node))
         return newConstraints
       }
@@ -1038,7 +1096,7 @@ function _infer(
       let newConstraints = infer(property, env, constraints)
       // Check that property is of type number
       // type in env can be either var or forall
-      const envType = env.typeMap.get(objName)!
+      const envType = lookupType(objName, env)!
       const arrayType =
         envType.kind === 'forall'
           ? extractFreeVariablesAndGenFresh(envType)
@@ -1075,7 +1133,7 @@ function tPrimitive(name: Primitive['name']): Primitive {
   }
 }
 
-function tVar(name: string | number): Variable {
+export function tVar(name: string | number): Variable {
   return {
     kind: 'variable',
     name: `T${name}`,
@@ -1106,7 +1164,7 @@ function tList(var1: Type): List {
   }
 }
 
-function tForAll(type: Type): ForAll {
+export function tForAll(type: Type): ForAll {
   return {
     kind: 'forall',
     polyType: type
@@ -1206,8 +1264,10 @@ const pairFuncs: [string, Type | ForAll][] = [
   ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))],
-  // Only for Source 3 and above (TODO make it hidden if less then Source 3)
+  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
+]
+
+const mutatingPairFuncs: [string, Type | ForAll][] = [
   ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
   ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
 ]
@@ -1247,19 +1307,41 @@ const postS3equalityFuncs: [string, ForAll][] = [
   ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
 ]
 
-function createEnv(chapter: number): Env {
-  const equalityFuncs = chapter < 3 ? preS3equalityFuncs : postS3equalityFuncs
-  const initialTypeMappings = [
-    ...predeclaredNames,
-    ...pairFuncs,
-    ...listFuncs,
-    ...arrayFuncs,
-    ...primitiveFuncs,
-    ...equalityFuncs
-  ]
+const temporaryStreamFuncs: [string, ForAll][] = [
+  ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
+  ['list_to_stream', tForAll(tFunc(tList(tVar('T1')), tVar('T2')))],
+  ['stream_to_list', tForAll(tFunc(tVar('T1'), tList(tVar('T2'))))],
+  ['stream_length', tForAll(tFunc(tVar('T1'), tNumber))],
+  ['stream_map', tForAll(tFunc(tVar('T1'), tVar('T2')))],
+  ['build_stream', tForAll(tFunc(tNumber, tFunc(tNumber, tVar('T1')), tVar('T2')))],
+  ['stream_for_each', tForAll(tFunc(tFunc(tVar('T1'), tVar('T2')), tBool))],
+  ['stream_reverse', tForAll(tFunc(tVar('T1'), tVar('T1')))],
+  ['stream_append', tForAll(tFunc(tVar('T1'), tVar('T1'), tVar('T1')))],
+  ['stream_member', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_remove', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_remove_all', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_filter', tForAll(tFunc(tFunc(tVar('T1'), tBool), tVar('T2'), tVar('T2')))],
+  ['enum_stream', tForAll(tFunc(tNumber, tNumber, tVar('T1')))],
+  ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
+  ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
+  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
+]
 
-  return {
-    typeMap: new Map(initialTypeMappings),
-    declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+export function createTypeEnvironment(chapter: number): Env {
+  const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
+  if (chapter >= 2) {
+    initialTypeMappings.push(...pairFuncs, ...listFuncs)
   }
+  if (chapter >= 3) {
+    initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
+  } else {
+    initialTypeMappings.push(...preS3equalityFuncs)
+  }
+
+  return [
+    {
+      typeMap: new Map(initialTypeMappings),
+      declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+    }
+  ]
 }
