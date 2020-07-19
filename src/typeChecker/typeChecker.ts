@@ -221,7 +221,7 @@ export function typeCheck(
     // TODO: this is a hack since we don't infer streams properly yet
     // if chapter is 3 and the prelude was just loaded, we change all the stream functions
     const latestEnv = env[2].typeMap
-    console.log(env);
+    console.log(env)
     for (const [name, type] of temporaryStreamFuncs) {
       latestEnv.set(name, type)
     }
