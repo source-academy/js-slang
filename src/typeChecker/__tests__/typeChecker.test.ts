@@ -1974,4 +1974,71 @@ describe('Type context from previous executions get saved', () => {
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
+
+  it('source 3 stream functions', async () => {
+    const code1 = `
+      const __is_stream = is_stream;
+      const __list_to_stream = list_to_stream;
+      const __stream_to_list = stream_to_list;
+      const __stream_length = stream_length;
+      const __stream_map = stream_map;
+      const __build_stream = build_stream;
+      const __stream_for_each = stream_for_each;
+      const __stream_reverse = stream_reverse;
+      const __stream_append = stream_append;
+      const __stream_member = stream_member;
+      const __stream_remove = stream_remove;
+      const __stream_remove_all = stream_remove_all;
+      const __stream_filter = stream_filter;
+      const __enum_stream = enum_stream;
+      const __integers_from = integers_from;
+      const __eval_stream = eval_stream;
+      const __stream_ref = stream_ref;
+    `
+    const context = mockContext(3)
+    await runInContext('', context) // we run an empty program to simulate execution of prelude
+    const [program, errors] = parseAndTypeCheck(code1, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "__is_stream: T0 -> boolean
+      __list_to_stream: List<T0> -> T1
+      __stream_to_list: T0 -> List<T1>
+      __stream_length: T0 -> number
+      __stream_map: T0 -> T1
+      __build_stream: (number, number -> T0) -> T1
+      __stream_for_each: (T0 -> T1) -> boolean
+      __stream_reverse: T0 -> T0
+      __stream_append: (T0, T0) -> T0
+      __stream_member: (T0, T1) -> T1
+      __stream_remove: (T0, T1) -> T1
+      __stream_remove_all: (T0, T1) -> T1
+      __stream_filter: (T0 -> boolean, T1) -> T1
+      __enum_stream: (number, number) -> T0
+      __integers_from: number -> T0
+      __eval_stream: (T0, number) -> List<T1>
+      __stream_ref: (T0, number) -> T1"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('imported vars have any type', () => {
+  it('import', () => {
+    const code1 = `
+      import {show, heart} from 'runes';
+      const a = show;
+      const b = heart;
+      
+      // error
+      const c = not_imported;
+    `
+    let [program, errors] = parseAndTypeCheck(code1, 1)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "a: T0
+      b: T0
+      c: T0"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(
+      `"Line 7: Undefined identifier 'not_imported' detected"`
+    )
+  })
 })

@@ -217,6 +217,15 @@ export function typeCheck(
   typeIdCounter = 0
   typeErrors = []
   const env: Env = context.typeEnvironment
+  if (context.chapter >= 3 && env.length === 3) {
+    // TODO: this is a hack since we don't infer streams properly yet
+    // if chapter is 3 and the prelude was just loaded, we change all the stream functions
+    const latestEnv = env[2].typeMap
+    console.log(env);
+    for (const [name, type] of temporaryStreamFuncs) {
+      latestEnv.set(name, type)
+    }
+  }
   const constraints: Constraint[] = []
   traverse(program)
   try {
@@ -773,6 +782,16 @@ function _infer(
     case 'Program':
     case 'BlockStatement': {
       pushEnv(env)
+      for (const statement of node.body) {
+        if (statement.type === 'ImportDeclaration') {
+          for (const specifier of statement.specifiers) {
+            if (specifier.type === 'ImportSpecifier' && specifier.imported.type === 'Identifier') {
+              setType(specifier.imported.name, tForAll(tVar('T1')), env)
+              setDeclKind(specifier.imported.name, 'const', env)
+            }
+          }
+        }
+      }
       const lastStatementIndex = node.body.length - 1
       const returnValNodeIndex = returnBlockValueNodeIndexFor(node, isTopLevelAndLastValStmt)
       let lastDeclNodeIndex = -1
@@ -1286,6 +1305,26 @@ const preS3equalityFuncs: [string, ForAll][] = [
 const postS3equalityFuncs: [string, ForAll][] = [
   ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
   ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
+]
+
+const temporaryStreamFuncs: [string, ForAll][] = [
+  ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
+  ['list_to_stream', tForAll(tFunc(tList(tVar('T1')), tVar('T2')))],
+  ['stream_to_list', tForAll(tFunc(tVar('T1'), tList(tVar('T2'))))],
+  ['stream_length', tForAll(tFunc(tVar('T1'), tNumber))],
+  ['stream_map', tForAll(tFunc(tVar('T1'), tVar('T2')))],
+  ['build_stream', tForAll(tFunc(tNumber, tFunc(tNumber, tVar('T1')), tVar('T2')))],
+  ['stream_for_each', tForAll(tFunc(tFunc(tVar('T1'), tVar('T2')), tBool))],
+  ['stream_reverse', tForAll(tFunc(tVar('T1'), tVar('T1')))],
+  ['stream_append', tForAll(tFunc(tVar('T1'), tVar('T1'), tVar('T1')))],
+  ['stream_member', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_remove', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_remove_all', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
+  ['stream_filter', tForAll(tFunc(tFunc(tVar('T1'), tBool), tVar('T2'), tVar('T2')))],
+  ['enum_stream', tForAll(tFunc(tNumber, tNumber, tVar('T1')))],
+  ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
+  ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
+  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
 ]
 
 export function createTypeEnvironment(chapter: number): Env {

@@ -308,12 +308,10 @@ export interface ForAll {
   polyType: Type
 }
 
-export type TypeEnvironment = [
-  {
-    typeMap: Map<string, Type | ForAll>
-    declKindMap: Map<string, AllowedDeclarations>
-  }
-]
+export type TypeEnvironment = {
+  typeMap: Map<string, Type | ForAll>
+  declKindMap: Map<string, AllowedDeclarations>
+}[]
 
 export {
   Instruction as SVMInstruction,
