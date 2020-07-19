@@ -16,7 +16,7 @@
 
 ## <a href="source_4/">Source §4</a>
 
-### <a href="External libraries/">External Libraries</a>
+### External libraries
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>
 comes with the following <a href="External libraries/">external libraries</a>:
@@ -71,8 +71,6 @@ the Source Academy.
 #### <a href="source_3.pdf">Specification of Source §3</a>
   
 #### <a href="source_4.pdf">Specification of Source §4</a>
-  
-#### <a href="source_1.pdf">Specification of Source §1</a>
   
 #### <a href="source_1_lazy.pdf">Specification of Source §1 Lazy</a>
   
