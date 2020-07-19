@@ -85,8 +85,7 @@ const createBlockEnvironment = (
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    thisContext: context
+    head
   }
 }
 
