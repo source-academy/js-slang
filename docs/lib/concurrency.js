@@ -7,7 +7,7 @@
  * The thread that called <CODE>concurrent_execute</CODE>
  * runs concurrently with all <CODE>t_i</CODE>. Returns
  * <CODE>undefined</CODE>. This is an atomic operation.
- * @param {function} f_1,f_2,...,f_n - given nullary functions
+ * @param {function} f_1,f_2,...,f_n - given functions
  * @returns {undefined} undefined
  */
 function concurrent_execute() {}
