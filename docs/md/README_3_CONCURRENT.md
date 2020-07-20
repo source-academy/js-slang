@@ -43,11 +43,11 @@ Below are the features that Source §3 Concurrent adds to Source §3.
 ### Concurrency
 
 To introduce concurrency into your programs, you can use the
-functions in the <a href="../CONCURRENCY/">CONCURRENCY</a> group
-of predeclared functions, already mentioned above. All programs
-run in Source §3 Concurrent are concurrent programs, and they return
-`undefined`. To get feedback from your programs, use the `display` predeclared
-function.
+functions in the <a href="../CONCURRENCY/">CONCURRENCY</a> library. The program
+runs concurrently with the threads that it creates. The program terminates when
+all threads terminate. Any result value from any of the threads, including the
+program's thread, are ignored. Use the predeclared `display` function to display
+result values.
 
 ## You want the definitive specs?
 
