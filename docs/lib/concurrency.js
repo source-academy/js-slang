@@ -1,9 +1,11 @@
 /**
  * Setup multiple threads for concurrent execution. For each
- * nullary function <CODE>f_i</CODE> that returns <CODE>undefined</CODE>,
- * setup a thread <CODE>t_i</CODE> that executes the code in the body of
- * <CODE>f_i</CODE>. The thread that called <CODE>concurrent_execute</CODE>
- * also executes concurrently with all <CODE>t_i</CODE>. Returns
+ * function <CODE>f_i</CODE>, 
+ * setup a thread <CODE>t_i</CODE> that executes the body of
+ * <CODE>f_i</CODE>. Any parameters of <CODE>f_i</CODE> refer
+ * to <CODE>undefined</CODE> during execution.
+ * The thread that called <CODE>concurrent_execute</CODE>
+ * runs concurrently with all <CODE>t_i</CODE>. Returns
  * <CODE>undefined</CODE>. This is an atomic operation.
  * @param {function} f_1,f_2,...,f_n - given nullary functions
  * @returns {undefined} undefined
