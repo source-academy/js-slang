@@ -84,8 +84,8 @@ the Source Academy.
 
 #### <a href="source_4_gpu.pdf">Specification of Source §4 GPU</a>
 
-#### <a href="source_2_type_inference.pdf">Specification of Source §2 Type Inference</a>
-
 #### <a href="source_1_infinite_loop_detection.pdf">Specification of Source §1 Infinite Loop Detection</a>
 
 #### <a href="source_1_stepper.pdf">Specification of Source §1 Stepper</a>
+
+#### <a href="source_3_type_inference.pdf">Specification of Source §3 Type Inference</a>
