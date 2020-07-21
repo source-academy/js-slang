@@ -88,3 +88,4 @@ the Source Academy.
 
 #### <a href="source_1_infinite_loop_detection.pdf">Specification of Source §1 Infinite Loop Detection</a>
 
+#### <a href="source_1_stepper.pdf">Specification of Source §1 Stepper</a>
