@@ -1,7 +1,8 @@
 
-\section*{Typing}
+\section{Typing}
 
-Expressions evaluate to numbers, boolean values, strings or function values. 
+Expressions evaluate to numbers, boolean values, strings or function values. Implementations
+of Source generate error messages when unexpected values are used as follows.
 
 Only function values can be applied using the syntax:
 
@@ -12,8 +13,12 @@ Only function values can be applied using the syntax:
                                                \texttt{\textbf{)}}\\ 
 \end{eqnarray*}
 
+For compound functions, implementations need to check that the number of \textit{expressions}
+matches the number of parameters.
+
 The following table specifies what arguments Source's operators
-take and what results they return.
+take and what results they return. Implementations need to check the types of arguments and
+generate an error message when the types do not match.
 
 \begin{center}
 \begin{tabular}{c|c|c|c}
