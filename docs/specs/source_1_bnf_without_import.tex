@@ -1,0 +1,77 @@
+\begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p6}{program}} \\[1mm]
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.2.html\#p2}{constant declaration}} \\
+&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{function declaration}}\\
+&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{return statement}}\\
+&&                       && |   &\quad && \textit{if-statement} \quad
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.3.2.html\#p13}{conditional statement}}\\
+&&                       && |   &\quad &&  \textit{block} 
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.8.html\#p14}{block statement}}\\
+&&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p3}{expression statement}} \\[1mm]
+&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
+                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{function parameters}}   \\[1mm]
+&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
+                                   \textit{block} \\
+&&                       &&     &      && \textbf{\texttt{else}}\
+                                          (\ \textit{block}
+                                          \ | \
+                                          \textit{\href{https://source-academy.github.io/sicp/chapters/1.3.3.html\#footnote-1}{if-statement}} \ )
+                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.3.2.html\#p12}{conditional statement}}   \\[1mm]
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}\ \ldots   \ \textbf{\texttt{\}}} \quad
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.8.html\#p14}{block statement}}\\[1mm]         
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p3}{primitive number expression}}\\
+&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.6.html\#p1}{primitive boolean expression}}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://source-academy.github.io/sicp/chapters/2.3.1.html}{primitive string expression}}\\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.2.html}{name expression}}\\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p5}{binary operator combination}}\\
+&&                       && |   &\quad &&   \textit{unary-operator} \ 
+                                            \textit{expression}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.6.html\#p4}{unary operator combination}}\\
+&&                       && |   &\quad &&   \textit{expression} \ 
+                                            \textbf{\texttt{(}}\ \textit{expressions}\
+                                            \textbf{\texttt{)}}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p5}{function application}}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{expression}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.3.2.html}{lambda expression (expr. body)}}\\
+&&                       && |   &\quad &&   (\ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                            )\    
+                                            \texttt{\textbf{=>}}\ \textit{block}
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/2.2.4.html\#footnote-3}{lambda expression (block body)}}\\
+&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
+                                            \textit{expression}
+                                            \ \textbf{\texttt{:}}\
+                                            \textit{expression}\
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.6.html\#p1}{conditional expression}}\\
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+                                            \textbf{\texttt{)}} && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p6}{parenthesised expression}}\\[1mm]
+&& \textit{binary-operator}    \ 
+                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
+&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
+                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
+                                          && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p4}{binary operator}}\\[1mm]
+&& \textit{unary-operator}    
+                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
+                        && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.6.html\#p4}{unary operator}}\\[1mm]
+&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{expression} \ 
+                                                                      )\ \ldots
+                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p5}{argument expressions}} 
+\end{alignat*}
