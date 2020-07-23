@@ -32,7 +32,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
                                           \textit{expression}_2 \textbf{\texttt{]}} \ 
                                            \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\ 
-                                                           && \texttt{list("array\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
+                                                           && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            &&  \textrm{treat as}:\ \textbf{\texttt{const}}\  \textit{name} \ 
@@ -56,6 +56,10 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("continue\_statement")} \\
 &&                       && |   &\quad &&  \textit{block} 
                                                            && \textrm{see below}\\
+&&                       && |   &\quad &&  \textbf{\texttt{try}}\ \textit{block}_1 \ \textbf{\texttt{catch (}}\ \textit{name}\ \textbf{\texttt{)}}\ \textit{block}_2
+                                                           && \texttt{list("try\_statement",}\ \langle  \textit{block}_1 \rangle \texttt{,}\ \langle  \textit{name} \rangle \texttt{,}\ \langle  \textit{block}_2 \rangle \texttt{)} \\
+&&                       && |   &\quad &&  \textbf{\texttt{throw}}\ \textit{expression}
+                                                           && \texttt{list("throw\_statement",}\ \langle  \textit{expression} \rangle \texttt{)} \\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{see below}\\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
@@ -78,6 +82,10 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
                                                             && \texttt{list("assignment",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
+&&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
+                                          \textit{expression}_2 \textbf{\texttt{]}} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\ 
+                                                           && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} 
 \end{alignat*}
 
 \begin{alignat*}{9}
@@ -117,11 +125,15 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                             &&&&&&&&&\ \ \ \ \ \ \texttt{ } \langle \textit{expression}_2\rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
                                           \textit{expression}_2 \textbf{\texttt{]}}
-                                                           && \texttt{list("array\_access",  } \langle \textit{expression}_1\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{)} \\
+                                                           && \texttt{list("object\_access",  } \langle \textit{expression}_1\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
                                                            && \texttt{list("array\_expression", list of  } \langle \textit{expression}\rangle \textit{)} \\
+&&                       && |   &\quad &&  \textbf{\texttt{new}}\ \textit{expression}
+                                                           && \texttt{list("new\_expression",}\ \langle  \textit{expression} \rangle \texttt{)} \\
+&&                       && |   &\quad &&  \textit{expression}\ \textbf{\texttt{.}}\ \textit{name}
+                                                           && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
 && \textit{binary-operator}    \ 

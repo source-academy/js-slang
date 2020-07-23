@@ -237,7 +237,7 @@ transformers = new Map([
         ])
       } else if (node.left.type === 'MemberExpression') {
         return vector_to_list([
-          'array_assignment',
+          'object_assignment',
           transform(node.left as es.Expression),
           transform(node.right)
         ])

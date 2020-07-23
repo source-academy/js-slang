@@ -22,6 +22,7 @@ In the Source Academy implementation, the Source \S 3 Non-Det evaluator can only
 
 Unlike the implementations of Source \S 3,  the implementation of Source \S 3 Non-Det does not use a constant amount of memory for loops. Instead, memory usage increases linearly with the number of iterations. This is because each iteration can be nondeterministic. Each iteration's state must be kept in memory so that the language processor can backtrack to every iteration. Similarly, no tail call optimization is done, because every function application's state must be kept in memory to allow backtracking.
 
+Source \S 3 Non-Det currently does not support import directives.
 
 \input source_bnf.tex
 
