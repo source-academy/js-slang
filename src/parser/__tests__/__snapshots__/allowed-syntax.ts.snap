@@ -5820,7 +5820,7 @@ Object {
         ],
         Array [
           Array [
-            "array_assignment",
+            "object_assignment",
             Array [
               Array [
                 "object_access",
@@ -7939,7 +7939,7 @@ Object {
         ],
         Array [
           Array [
-            "array_assignment",
+            "object_assignment",
             Array [
               Array [
                 "object_access",
@@ -8213,7 +8213,7 @@ Object {
         ],
         Array [
           Array [
-            "array_assignment",
+            "object_assignment",
             Array [
               Array [
                 "object_access",
@@ -8499,7 +8499,7 @@ Object {
           ],
           Array [
             Array [
-              "array_assignment",
+              "object_assignment",
               Array [
                 Array [
                   "object_access",
