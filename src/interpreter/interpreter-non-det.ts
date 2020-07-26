@@ -226,10 +226,8 @@ function* cartesianProduct(
 }
 
 function* getAmbArgs(context: Context, call: es.CallExpression) {
-  const originalContext = cloneDeep(context)
   for (const arg of call.arguments) {
     yield* evaluate(arg, context)
-    assignIn(context, cloneDeep(originalContext)) // reset context
   }
 }
 
