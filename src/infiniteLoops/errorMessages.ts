@@ -6,7 +6,7 @@ export enum InfiniteLoopErrorMessage {
   source_protection_recursion = 'Potential infinite recursion detected'
 }
 
-enum StackOverflowMessages {
+export enum StackOverflowMessages {
   firefox = 'InternalError: too much recursion',
   // webkit: chrome + safari
   webkit = 'RangeError: Maximum call stack size exceeded',
