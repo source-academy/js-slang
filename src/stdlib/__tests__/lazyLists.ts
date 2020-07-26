@@ -276,7 +276,9 @@ test('bad index error list_ref', () => {
 list_ref(list(1, 2, 3), '1');
 `,
     { chapter: 2, native: true, variant: 'lazy' }
-  ).toMatchInlineSnapshot(`"Line 149: Expected number on left hand side of operation, got string."`)
+  ).toMatchInlineSnapshot(
+    `"Line 149: Expected string on right hand side of operation, got number."`
+  )
 })
 
 test('arguments are not evaluated for pair', () => {

@@ -218,7 +218,7 @@ test('Functions passed into non-source functions remain equal', () => {
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: 1, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
+    { chapter: 3, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
   ).toBe(true)
 })
 

@@ -316,7 +316,7 @@ const globals = native.globals;
     const test = wrap(() => {
       let z = [];
       const startTime = runtime();
-      for (let x = 0; boolOrErr(binaryOp(\\"<\\", x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", x, 1, 3, 30)) {
+      for (let x = 0; boolOrErr(binaryOp(\\"<\\", 4, x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", 4, x, 1, 3, 30)) {
         throwIfTimeout(native, startTime, runtime(), 3, 2);
         setProp(z, x, wrap(() => ({
           isTail: false,
@@ -379,7 +379,7 @@ const globals = native.globals;
     const test = wrap(() => {
       let x = true;
       const startTime = runtime();
-      for (let x = 1; boolOrErr(binaryOp(\\">\\", x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", x, 1, 3, 29)) {
+      for (let x = 1; boolOrErr(binaryOp(\\">\\", 3, x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", 3, x, 1, 3, 29)) {
         throwIfTimeout(native, startTime, runtime(), 3, 2);
       }
       return {

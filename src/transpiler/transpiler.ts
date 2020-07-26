@@ -672,7 +672,8 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 function transformUnaryAndBinaryOperationsToFunctionCalls(
   program: es.Program,
   globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>
+  ignoreWalker: RecursiveVisitors<any>,
+  chapter: number
 ) {
   simple(
     program,
@@ -682,6 +683,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
         const { operator, left, right } = node
         create.mutateToCallExpression(node, globalIds.binaryOp, [
           create.literal(operator),
+          create.literal(chapter),
           left,
           right,
           create.literal(line),
@@ -848,7 +850,7 @@ export function transpile(
 
   transformReturnStatementsToAllowProperTailCalls(program, variant, ignoreWalker)
   transformCallExpressionsToCheckIfFunction(program, variant, globalIds, ignoreWalker, blacklist)
-  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, ignoreWalker)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, ignoreWalker, context.chapter)
   transformSomeExpressionsToCheckIfBoolean(program, globalIds, ignoreWalker)
   transformPropertyAssignment(program, globalIds, ignoreWalker)
   transformPropertyAccess(program, globalIds, ignoreWalker)

@@ -1968,7 +1968,7 @@ describe('Type context from previous executions get saved', () => {
       "xs: List<boolean>
       a: List<number>
       len: number
-      err: T0"
+      err: boolean"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
