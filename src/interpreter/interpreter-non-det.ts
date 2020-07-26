@@ -118,7 +118,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
 }
 
 function undefineVariable(context: Context, name: string) {
-  const environment = context.runtime.environments[0];
+  const environment = context.runtime.environments[0]
 
   Object.defineProperty(environment.head, name, {
     value: DECLARED_BUT_NOT_YET_ASSIGNED,
@@ -455,10 +455,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     const id = node.left as es.Identifier
+    const originalValue = getVariable(context, id.name)
     const valueGenerator = evaluate(node.right, context)
     for (const value of valueGenerator) {
       setVariable(context, id.name, value)
       yield value
+      setVariable(context, id.name, originalValue)
     }
     return
   },
