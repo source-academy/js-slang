@@ -471,6 +471,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     yield undefined
+    undefineVariable(context, id.name)
   },
 
   IfStatement: function*(node: es.IfStatement, context: Context) {
