@@ -21,9 +21,7 @@ class GPUTransformer {
   program: es.Program
 
   // helps reference the main function
-  static globalIds = {
-    __createKernel: create.identifier('__createKernel')
-  }
+  globalIds: { __createKernel: es.Identifier }
 
   outputArray: es.Identifier
   innerBody: any
@@ -34,8 +32,11 @@ class GPUTransformer {
   outerVariables: any
   targetBody: any
 
-  constructor(program: es.Program) {
+  constructor(program: es.Program, createKernel: es.Identifier) {
     this.program = program
+    this.globalIds = {
+      __createKernel: createKernel
+    }
   }
 
   // transforms away top-level for loops if possible
@@ -222,7 +223,7 @@ class GPUTransformer {
     create.mutateToExpressionStatement(
       node,
       create.callExpression(
-        GPUTransformer.globalIds.__createKernel,
+        this.globalIds.__createKernel,
         [
           create.arrayExpression(this.end),
           create.objectExpression(externObject),

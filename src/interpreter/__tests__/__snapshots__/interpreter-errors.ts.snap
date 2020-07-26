@@ -9,7 +9,7 @@ Object {
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -20,17 +20,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"getProp({   a: 0 }, \\\\\\"a\\\\\\", 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"getProp({   a: 0 }, \\\\\\"a\\\\\\", 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -104,7 +100,7 @@ eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
   "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -115,73 +111,69 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const make_alternating_stream = wrap(stream => {
-          return {
-            isTail: true,
-            function: pair,
-            functionName: \\"pair\\",
-            arguments: [callIfFuncAndRightArgs(head, 2, 14, stream), wrap(() => ({
-              isTail: true,
-              function: make_alternating_stream,
-              functionName: \\"make_alternating_stream\\",
-              arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
-              line: 2,
-              column: 34
-            }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\")],
-            line: 2,
-            column: 9
-          };
-        }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\");
-        const negate_whole_stream = wrap(stream => {
-          return {
-            isTail: true,
-            function: pair,
-            functionName: \\"pair\\",
-            arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
-              isTail: true,
-              function: negate_whole_stream,
-              functionName: \\"negate_whole_stream\\",
-              arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
-              line: 8,
-              column: 37
-            }), \\"() => negate_whole_stream(stream_tail(stream))\\")],
-            line: 8,
-            column: 11
-          };
-        }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\");
-        const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
-          isTail: false,
-          value: ones
-        }), \\"() => ones\\"));
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
-        globals.variables.set(\\"make_alternating_stream\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return make_alternating_stream;
-          }
-        });
-        globals.variables.set(\\"negate_whole_stream\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return negate_whole_stream;
-          }
-        });
-        globals.variables.set(\\"ones\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return ones;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const make_alternating_stream = wrap(stream => {
+      return {
+        isTail: true,
+        function: pair,
+        functionName: \\"pair\\",
+        arguments: [callIfFuncAndRightArgs(head, 2, 14, stream), wrap(() => ({
+          isTail: true,
+          function: make_alternating_stream,
+          functionName: \\"make_alternating_stream\\",
+          arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
+          line: 2,
+          column: 34
+        }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\", native)],
+        line: 2,
+        column: 9
+      };
+    }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\", native);
+    const negate_whole_stream = wrap(stream => {
+      return {
+        isTail: true,
+        function: pair,
+        functionName: \\"pair\\",
+        arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
+          isTail: true,
+          function: negate_whole_stream,
+          functionName: \\"negate_whole_stream\\",
+          arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
+          line: 8,
+          column: 37
+        }), \\"() => negate_whole_stream(stream_tail(stream))\\", native)],
+        line: 8,
+        column: 11
+      };
+    }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\", native);
+    const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
+      isTail: false,
+      value: ones
+    }), \\"() => ones\\", native));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
+    globals.variables.set(\\"make_alternating_stream\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return make_alternating_stream;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+    globals.variables.set(\\"negate_whole_stream\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return negate_whole_stream;
+      }
+    });
+    globals.variables.set(\\"ones\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return ones;
+      }
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -216,7 +208,7 @@ h(null);",
   "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -227,33 +219,29 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const h = wrap(p => {
-          return {
-            isTail: true,
-            function: head,
-            functionName: \\"head\\",
-            arguments: [p],
-            line: 2,
-            column: 9
-          };
-        }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
-        globals.variables.set(\\"h\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return h;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const h = wrap(p => {
+      return {
+        isTail: true,
+        function: head,
+        functionName: \\"head\\",
+        arguments: [p],
+        line: 2,
+        column: 9
+      };
+    }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
+    globals.variables.set(\\"h\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return h;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -285,7 +273,7 @@ Object {
   "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -296,17 +284,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"getProp({}, \\\\\\"valueOf\\\\\\", 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"getProp({}, \\\\\\"valueOf\\\\\\", 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -499,7 +483,7 @@ f(1);",
   "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -510,41 +494,37 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const g = wrap(() => ({
-          isTail: false,
-          value: 1
-        }), \\"() => 1\\");
-        const f = wrap(x => ({
-          isTail: true,
-          function: g,
-          functionName: \\"g\\",
-          arguments: [x],
-          line: 2,
-          column: 15
-        }), \\"x => g(x)\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
-        globals.variables.set(\\"g\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return g;
-          }
-        });
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const g = wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native);
+    const f = wrap(x => ({
+      isTail: true,
+      function: g,
+      functionName: \\"g\\",
+      arguments: [x],
+      line: 2,
+      column: 15
+    }), \\"x => g(x)\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
+    globals.variables.set(\\"g\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return g;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
+      }
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -613,7 +593,7 @@ f();",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -624,27 +604,23 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(x => ({
-          isTail: false,
-          value: x
-        }), \\"x => x\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(x => ({
+      isTail: false,
+      value: x
+    }), \\"x => x\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -713,7 +689,7 @@ f(1, 2);",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -724,27 +700,23 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(x => ({
-          isTail: false,
-          value: x
-        }), \\"x => x\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(x => ({
+      isTail: false,
+      value: x
+    }), \\"x => x\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -813,7 +785,7 @@ f[0](1, 2);",
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -824,27 +796,23 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = [wrap(x => ({
-          isTail: false,
-          value: x
-        }), \\"x => x\\")];
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = [wrap(x => ({
+      isTail: false,
+      value: x
+    }), \\"x => x\\", native)];
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -917,7 +885,7 @@ f();",
   "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -928,29 +896,25 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(x => {
-          return {
-            isTail: false,
-            value: x
-          };
-        }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -1023,7 +987,7 @@ f(1, 2);",
   "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -1034,29 +998,25 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(x => {
-          return {
-            isTail: false,
-            value: x
-          };
-        }, \\"function f(x) {\\\\n  return x;\\\\n}\\");
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(x => {
+      return {
+        isTail: false,
+        value: x
+      };
+    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -1085,6 +1045,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 28,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -1097,10 +1061,16 @@ Object {
           },
           "raw": "'string'",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": "string",
         },
         "end": 30,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 12,
@@ -1112,6 +1082,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1149,6 +1120,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 8,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "string",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 8,
@@ -1161,10 +1136,16 @@ Object {
           },
           "raw": "'string'",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": "string",
         },
         "end": 10,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1176,6 +1157,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1185,7 +1167,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -1196,17 +1178,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs('string', 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs('string', 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -1235,6 +1213,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 21,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1247,10 +1229,16 @@ Object {
           },
           "raw": "0",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
         "end": 23,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1262,6 +1250,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1299,6 +1288,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 1,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "number",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -1311,10 +1304,16 @@ Object {
           },
           "raw": "0",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
         "end": 3,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -1326,6 +1325,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1335,7 +1335,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value 0.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -1346,17 +1346,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(0, 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(0, 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -1389,6 +1385,10 @@ Object {
           "elements": Array [
             Node {
               "end": 20,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1401,11 +1401,19 @@ Object {
               },
               "raw": "1",
               "start": 19,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
           ],
           "end": 21,
+          "inferredType": Object {
+            "elementType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "kind": "array",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1417,9 +1425,15 @@ Object {
             },
           },
           "start": 18,
+          "typability": "Typed",
           "type": "ArrayExpression",
         },
         "end": 23,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1431,6 +1445,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1472,6 +1487,10 @@ Object {
           "elements": Array [
             Node {
               "end": 2,
+              "inferredType": Object {
+                "kind": "primitive",
+                "name": "number",
+              },
               "loc": SourceLocation {
                 "end": Position {
                   "column": 2,
@@ -1484,11 +1503,19 @@ Object {
               },
               "raw": "1",
               "start": 1,
+              "typability": "Typed",
               "type": "Literal",
               "value": 1,
             },
           ],
           "end": 3,
+          "inferredType": Object {
+            "elementType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
+            "kind": "array",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -1500,9 +1527,15 @@ Object {
             },
           },
           "start": 0,
+          "typability": "Typed",
           "type": "ArrayExpression",
         },
         "end": 5,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 5,
@@ -1514,6 +1547,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1523,7 +1557,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value [1].",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -1534,17 +1568,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs([1], 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs([1], 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -1648,6 +1678,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 25,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1713,9 +1747,15 @@ Object {
             },
           ],
           "start": 19,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 28,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1727,6 +1767,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1767,6 +1808,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 25,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1832,9 +1877,15 @@ Object {
             },
           ],
           "start": 19,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 28,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1846,6 +1897,7 @@ Object {
           },
         },
         "start": 18,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -1885,6 +1937,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 7,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1950,9 +2006,15 @@ Object {
             },
           ],
           "start": 1,
+          "typability": "Typed",
           "type": "ObjectExpression",
         },
         "end": 10,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -1964,6 +2026,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2000,6 +2063,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 24,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 6,
@@ -2012,10 +2079,16 @@ Object {
           },
           "raw": "true",
           "start": 20,
+          "typability": "Typed",
           "type": "Literal",
           "value": true,
         },
         "end": 26,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 8,
@@ -2027,6 +2100,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2064,6 +2138,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 4,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "boolean",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 4,
@@ -2076,10 +2154,16 @@ Object {
           },
           "raw": "true",
           "start": 0,
+          "typability": "Typed",
           "type": "Literal",
           "value": true,
         },
         "end": 6,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 6,
@@ -2091,6 +2175,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2100,7 +2185,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value true.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -2111,17 +2196,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -2150,6 +2231,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 29,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2162,9 +2247,15 @@ Object {
           },
           "name": "undefined",
           "start": 20,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 31,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 13,
@@ -2176,6 +2267,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2214,6 +2306,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 31,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -2226,11 +2322,16 @@ Object {
             },
             "raw": "1",
             "start": 30,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
           Node {
             "end": 37,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "boolean",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 19,
@@ -2243,12 +2344,17 @@ Object {
             },
             "raw": "true",
             "start": 33,
+            "typability": "Typed",
             "type": "Literal",
             "value": true,
           },
         ],
         "callee": Node {
           "end": 29,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2261,9 +2367,15 @@ Object {
           },
           "name": "undefined",
           "start": 20,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 38,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T4",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 20,
@@ -2275,6 +2387,7 @@ Object {
           },
         },
         "start": 20,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2312,6 +2425,10 @@ Object {
         "arguments": Array [
           Node {
             "end": 11,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "number",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2324,11 +2441,16 @@ Object {
             },
             "raw": "1",
             "start": 10,
+            "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
           Node {
             "end": 17,
+            "inferredType": Object {
+              "kind": "primitive",
+              "name": "boolean",
+            },
             "loc": SourceLocation {
               "end": Position {
                 "column": 17,
@@ -2341,12 +2463,17 @@ Object {
             },
             "raw": "true",
             "start": 13,
+            "typability": "Typed",
             "type": "Literal",
             "value": true,
           },
         ],
         "callee": Node {
           "end": 9,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 9,
@@ -2359,9 +2486,15 @@ Object {
           },
           "name": "undefined",
           "start": 0,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 18,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 18,
@@ -2373,6 +2506,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2408,6 +2542,10 @@ Object {
         "arguments": Array [],
         "callee": Node {
           "end": 9,
+          "inferredType": Object {
+            "kind": "primitive",
+            "name": "undefined",
+          },
           "loc": SourceLocation {
             "end": Position {
               "column": 9,
@@ -2420,9 +2558,15 @@ Object {
           },
           "name": "undefined",
           "start": 0,
+          "typability": "Typed",
           "type": "Identifier",
         },
         "end": 11,
+        "inferredType": Object {
+          "constraint": "none",
+          "kind": "variable",
+          "name": "T2",
+        },
         "loc": SourceLocation {
           "end": Position {
             "column": 11,
@@ -2434,6 +2578,7 @@ Object {
           },
         },
         "start": 0,
+        "typability": "Typed",
         "type": "CallExpression",
       },
       "severity": "Error",
@@ -2443,7 +2588,7 @@ Object {
   "parsedErrors": "Line 1: Calling non-function value undefined.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -2454,17 +2599,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(undefined, 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(undefined, 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3007,7 +3148,7 @@ f.prototype;",
   "parsedErrors": "Line 4: Expected object or array, got function.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3018,29 +3159,25 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(() => {
-          return {
-            isTail: false,
-            value: 1
-          };
-        }, \\"function f() {\\\\n  return 1;\\\\n}\\");
-        lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: 1
+      };
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
+    lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3073,7 +3210,7 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got null.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3084,17 +3221,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"getProp(null, \\\\\\"prop\\\\\\", 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"getProp(null, \\\\\\"prop\\\\\\", 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3127,7 +3260,7 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got string.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3138,17 +3271,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"getProp('hi', \\\\\\"length\\\\\\", 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"getProp('hi', \\\\\\"length\\\\\\", 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3184,7 +3313,7 @@ f.prop = 5;",
   "parsedErrors": "Line 4: Expected object or array, got function.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3195,29 +3324,25 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        const f = wrap(() => {
-          return {
-            isTail: false,
-            value: 1
-          };
-        }, \\"function f() {\\\\n  return 1;\\\\n}\\");
-        lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
-        globals.variables.set(\\"f\\", {
-          kind: \\"const\\",
-          getValue: () => {
-            return f;
-          }
-        });
+const globals = native.globals;
+{
+  {
+    const f = wrap(() => {
+      return {
+        isTail: false,
+        value: 1
+      };
+    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
+    lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
+    globals.variables.set(\\"f\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return f;
       }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+    });
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3250,7 +3375,7 @@ Object {
   "parsedErrors": "Line 1: Expected object or array, got string.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3261,17 +3386,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"setProp('hi', \\\\\\"prop\\\\\\", 5, 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"setProp('hi', \\\\\\"prop\\\\\\", 5, 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3306,7 +3427,7 @@ Object {
   "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3317,17 +3438,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 12, 'string', 1, 0);\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 12, 'string', 1, 0);\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }
@@ -3364,7 +3481,7 @@ Object {
   "parsedErrors": "Line 1: Expected boolean as condition, got number.",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = $$NATIVE_STORAGE;
+  "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
@@ -3375,17 +3492,13 @@ const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
 const setProp = native.operators.get(\\"setProp\\");
 const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
-const globals = $NATIVE_STORAGE.globals;
-(( <globals redacted> ) => {
-  return (() => {
-    {
-      {
-        lastStatementResult = eval(\\"if (boolOrErr(1, 1, 0)) {   2; } else {}\\");
-      }
-    }
-    return forceIt(lastStatementResult);
-  })();
-})();
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"if (boolOrErr(1, 1, 0)) {   2; } else {}\\");
+  }
+}
+forceIt(lastStatementResult);
 ",
   "visualiseListResult": Array [],
 }

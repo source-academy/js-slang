@@ -1,13 +1,22 @@
-\section*{Restrictions}
+\subsection*{Restrictions}
 
 \begin{itemize}
 \item Return statements are only allowed in bodies of functions.
 \item There cannot be any newline character between
-$\textbf{\texttt{return}}$ and $\textit{expression}$ in return statements.
+  $\textbf{\texttt{return}}$ and $\textit{expression}$ in return statements.\footnote{
+  Source inherits this syntactic quirk of JavaScript.}
 \item There cannot be any newline character between
   $(\ \textit{name}\ | \ \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\ )$
-                                               and
-$\texttt{\textbf{=>}}$ in function definition expressions.
-\item Functions must not be called before their corresponding function declaration
-   is evaluated.
+  and
+  $\texttt{\textbf{=>}}$ in function definition expressions.\footnote{ditto}
+\item Implementations of Source are allowed to treat function
+  declaration as \href{https://source-academy.github.io/sicp/chapters/1.3.2.html\#footnote-2}{
+    syntactic sugar for constant declaration}.\footnote{ECMAScript prescribes ``hoisting''
+    of function declarations to the beginning of the surrounding block. Programs that rely
+    on this feature will run fine in JavaScript but might encounter a runtime error ``Cannot
+    access name before initialization'' in a Source implementation.}
+  Source programmers need
+  to make sure that functions are not called before their corresponding function declaration
+  is evaluated.
+
 \end{itemize}

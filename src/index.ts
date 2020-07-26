@@ -52,6 +52,7 @@ export interface IOptions {
   variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
+  isPrelude: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
@@ -60,7 +61,8 @@ const DEFAULT_OPTIONS: IOptions = {
   executionMethod: 'auto',
   variant: 'default',
   originalMaxExecTime: 1000,
-  useSubst: false
+  useSubst: false,
+  isPrelude: false
 }
 
 // needed to work on browsers
@@ -286,9 +288,15 @@ export function getTypeInformation(
     if (program === null) {
       return ''
     }
-
-    const [typedProgram, error] = typeCheck(program)
+    if (context.prelude !== null) {
+      typeCheck(typedParse(context.prelude, context)!, context)
+    }
+    const [typedProgram, error] = typeCheck(program, context)
     const parsedError = parseError(error)
+    if (context.prelude !== null) {
+      // the env of the prelude was added, we now need to remove it
+      context.typeEnvironment.pop()
+    }
 
     // initialize the ans string
     let ans = ''
@@ -389,14 +397,15 @@ export async function runInContext(
     return resolvedErrorPromise
   }
   validateAndAnnotate(program as Program, context)
+  typeCheck(program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
   if (context.variant === 'concurrent') {
     if (previousCode === code) {
-      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
-      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     previousCode = code
     try {
@@ -436,28 +445,30 @@ export async function runInContext(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
-    await runInContext(prelude, context, options)
+    await runInContext(prelude, context, { ...options, isPrelude: true })
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
     if (previousCode === code) {
-      JSSLANG_PROPERTIES.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
-      JSSLANG_PROPERTIES.maxExecTime = theOptions.originalMaxExecTime
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else if (!options.isPrelude) {
+      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
-    previousCode = code
+    if (!options.isPrelude) {
+      previousCode = code
+    }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context.contextId, false, context.variant)
+      const temp = transpile(program, context, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled)
+        value: sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {

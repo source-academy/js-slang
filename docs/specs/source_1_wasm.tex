@@ -28,11 +28,12 @@
 
 This document specifies the dialect of Source \S 1 used in Sourceror, an experimental compiler from Source \S 1 to WebAssembly.  This dialect is a subset of Source \S 1.
 
-\section*{Changes compared to Vanilla Source \S 1}
+\section{Changes compared to Vanilla Source \S 1}
 
 \subsection*{Language}  
 
-All language features of Source \S 1 are supported except for proper tail calls.
+All language features of Source \S 1 are supported except for proper tail calls and
+import directives.
 
 \subsection*{Libraries}
 
@@ -46,13 +47,13 @@ Compilation errors produce error messages with line numbers, just like in Source
 
 \input source_bnf.tex
 
-\input source_1_bnf.tex
+\input source_1_bnf_without_import.tex
 
 \newpage
 
-\input source_boolean_operators
-
 \input source_return
+
+\input source_boolean_operators
 
 \input source_names_lang
 
@@ -60,9 +61,15 @@ Compilation errors produce error messages with line numbers, just like in Source
 
 \input source_strings
 
+\input source_comments
+
 \input source_typing
 
-\input source_comments
+\section{Standard Libraries}
+
+The following library is always available in this language.
+
+\input source_misc
 
 \input source_js_differences
 

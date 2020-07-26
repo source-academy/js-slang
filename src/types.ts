@@ -64,6 +64,31 @@ export interface SourceLanguage {
   variant: Variant
 }
 
+export type ValueWrapper = LetWrapper | ConstWrapper
+
+export interface LetWrapper {
+  kind: 'let'
+  getValue: () => Value
+  assignNewValue: <T>(newValue: T) => T
+}
+
+export interface ConstWrapper {
+  kind: 'const'
+  getValue: () => Value
+}
+
+export interface Globals {
+  variables: Map<string, ValueWrapper>
+  previousScope: Globals | null
+}
+
+export interface NativeStorage {
+  globals: Globals | null
+  operators: Map<string, (...operands: Value[]) => Value>
+  gpu: Map<string, (...operands: Value[]) => Value>
+  maxExecTime: number
+}
+
 export interface Context<T = any> {
   /** The source version used */
   chapter: number
@@ -82,6 +107,8 @@ export interface Context<T = any> {
     environments: Environment[]
     nodes: es.Node[]
   }
+
+  moduleParams?: any
 
   numberOfOuterEnvironments: number
 
@@ -105,9 +132,9 @@ export interface Context<T = any> {
   externalContext?: T
 
   /**
-   * Used for storing id of the context to be referenced by native
+   * Used for storing the native context and other values
    */
-  contextId: number
+  nativeStorage: NativeStorage
 
   /**
    * Describes the language processor to be used for evaluation
@@ -119,6 +146,8 @@ export interface Context<T = any> {
    * Examples: lazy, concurrent or non-deterministic
    */
   variant: Variant
+
+  typeEnvironment: TypeEnvironment
 }
 
 export interface BlockFrame {
@@ -237,7 +266,7 @@ export interface Typed {
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List | Pair
+export type Type = Primitive | Variable | FunctionType | List | Pair | SArray
 export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
@@ -263,6 +292,11 @@ export interface List {
   elementType: Type
 }
 
+export interface SArray {
+  kind: 'array'
+  elementType: Type
+}
+
 export interface Pair {
   kind: 'pair'
   headType: Type
@@ -273,6 +307,11 @@ export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
+
+export type TypeEnvironment = {
+  typeMap: Map<string, Type | ForAll>
+  declKindMap: Map<string, AllowedDeclarations>
+}[]
 
 export {
   Instruction as SVMInstruction,

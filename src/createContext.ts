@@ -1,6 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE } from './constants'
+import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -15,6 +15,7 @@ import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
+import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
@@ -36,7 +37,7 @@ const createEmptyDebugger = () => ({
   observers: { callbacks: Array<() => void>() },
   status: false,
   state: {
-    it: (function*(): any {
+    it: (function* (): any {
       return
     })(),
     scheduler: new AsyncScheduler()
@@ -49,32 +50,34 @@ const createGlobalEnvironment = () => ({
   head: {}
 })
 
+const createNativeStorage = () => ({
+  globals: { variables: new Map(), previousScope: null },
+  operators: new Map(Object.entries(operators)),
+  gpu: new Map(Object.entries(gpu_lib)),
+  maxExecTime: JSSLANG_PROPERTIES.maxExecTime
+})
+
 export const createEmptyContext = <T>(
   chapter: number,
   variant: Variant = 'default',
   externalSymbols: string[],
-  externalContext?: T
+  externalContext?: T,
+  moduleParams?: any
 ): Context<T> => {
-  if (!Array.isArray(GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE])) {
-    GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE] = []
-  }
-  const length = GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE].push({
-    globals: { variables: new Map(), previousScope: null },
-    operators: new Map(Object.entries(operators)),
-    gpu: new Map(Object.entries(gpu_lib))
-  })
   return {
     chapter,
     externalSymbols,
     errors: [],
     externalContext,
+    moduleParams,
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
     prelude: null,
     debugger: createEmptyDebugger(),
-    contextId: length - 1,
+    nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
-    variant
+    variant,
+    typeEnvironment: createTypeEnvironment(chapter)
   }
 }
 
@@ -97,10 +100,17 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  GLOBAL[GLOBAL_KEY_TO_ACCESS_NATIVE_STORAGE][context.contextId].globals.variables.set(name, {
+  context.nativeStorage.globals!.variables.set(name, {
     kind: 'const',
     getValue: () => value
   })
+  const typeEnv = context.typeEnvironment[0]
+  // if the global type env doesn't already have the imported symbol,
+  // we set it to a type var T that can typecheck with anything.
+  if (!typeEnv.declKindMap.has(name)) {
+    typeEnv.typeMap.set(name, tForAll(tVar('T1')))
+    typeEnv.declKindMap.set(name, 'const')
+  }
 }
 
 // Defines a builtin in the given context
@@ -141,8 +151,17 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const rawDisplay = (v: Value, s: string) =>
     externalBuiltIns.rawDisplay(v, s, context.externalContext)
   const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
-  const prompt = (v: Value) => externalBuiltIns.prompt(v, '', context.externalContext)
-  const alert = (v: Value) => externalBuiltIns.alert(v, '', context.externalContext)
+  const prompt = (v: Value) => {
+    const start = Date.now()
+    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
+    context.nativeStorage.maxExecTime += Date.now() - start
+    return promptResult
+  }
+  const alert = (v: Value) => {
+    const start = Date.now()
+    externalBuiltIns.alert(v, '', context.externalContext)
+    context.nativeStorage.maxExecTime += Date.now() - start
+  }
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
@@ -260,9 +279,16 @@ const createContext = <T>(
   variant: Variant = 'default',
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
+  moduleParams?: any
 ) => {
-  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
+  const context = createEmptyContext(
+    chapter,
+    variant,
+    externalSymbols,
+    externalContext,
+    moduleParams
+  )
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)

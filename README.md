@@ -38,15 +38,31 @@ You can set additional options:
 ``` {.}
 Usage: js-slang [PROGRAM_STRING] [OPTION]
 
-  -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4) (default: 1)
-  -s, --use-subst       use substitution
+  -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4)                                                              (default: 1)
+  -v, --variant=VARIANT set the Source variant (i.e., default, interpreter, substituter, lazy, non-det, concurrent, wasm, gpu) (default: default)
   -h, --help            display this help
-  -i, --interpreter         use the interpreter for execution
-  -l, --lazy            use lazy evaluation
   -e, --eval            don't show REPL, only display output of evaluation
 ```
 
-Hint: In `bash` you can take the [\[PROGRAM\_STRING\]]{.title-ref} out
+Currently, valid CHAPTER/VARIANT combinations are:
+* `--chapter=1 --variant=default`
+* `--chapter=1 --variant=wasm`
+* `--chapter=1 --variant=lazy`
+* `--chapter=1 --variant=substituter`
+* `--chapter=1 --variant=interpreter`
+* `--chapter=2 --variant=default`
+* `--chapter=2 --variant=lazy`
+* `--chapter=2 --variant=substituter`
+* `--chapter=2 --variant=interpreter`
+* `--chapter=3 --variant=default`
+* `--chapter=3 --variant=concurrent`
+* `--chapter=3 --variant=non-det`
+* `--chapter=3 --variant=interpreter`
+* `--chapter=4 --variant=default`
+* `--chapter=4 --variant=gpu`
+* `--chapter=4 --variant=interpreter`
+
+Hint: In `bash` you can take the `PROGRAM_STRING` out
 of a file as follows:
 
 ``` {.}

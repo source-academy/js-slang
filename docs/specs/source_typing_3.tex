@@ -1,7 +1,8 @@
 
-\section*{Typing}
+\section{Dynamic Type Checking}
 
-Expressions evaluate to numbers, boolean values, strings or function values. 
+Expressions evaluate to numbers, boolean values, strings, arrays or function values. Implementations
+of Source generate error messages when unexpected values are used as follows.
 
 Only function values can be applied using the syntax:
 
@@ -12,8 +13,12 @@ Only function values can be applied using the syntax:
                                                \texttt{\textbf{)}}\\ 
 \end{eqnarray*}
 
+For compound functions, implementations need to check that the number of \textit{expressions}
+matches the number of parameters.
+
 The following table specifies what arguments Source's operators
-take and what results they return.
+take and what results they return. Implementations need to check the types of arguments and
+generate an error message when the types do not match.
 
 \begin{center}
 \begin{tabular}{c|c|c|c}
@@ -44,4 +49,21 @@ operator & argument 1 & argument 2 & result\\ \hline
 Preceding \texttt{\textbf{?}} and following \texttt{\textbf{if}}, Source only allows
 boolean expressions.
 
-Only numbers are allowed in the key of member expressions of arrays (\texttt{\textbf{arr[key]}}).
+In array access \texttt{\textbf{arr[key]}},
+only arrays are allowed as \texttt{\textbf{arr}} and
+only integers are allowed as \texttt{\textbf{key}}.
+
+Array indices in Source are limited to integers $i$ in the range $0 \le i < 2^{32} - 1$.
+
+Pairs in Source are represented by arrays with two elements. Therefore,
+\begin{lstlisting}
+is_pair([1, 2]);
+\end{lstlisting}
+and
+\begin{lstlisting}
+equal(pair(1, 2), [1, 2]);
+\end{lstlisting}
+evaluate to \texttt{true}.
+
+Access of an array with an array index to which no prior assignment has been
+made on the array returns \texttt{undefined}.

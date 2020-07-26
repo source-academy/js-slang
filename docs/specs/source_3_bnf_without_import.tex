@@ -1,15 +1,6 @@
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} \ \ldots\ \textit{statement} \ \ldots
+&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p6}{program}} \\[1mm]
-&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
-                                                           && \textrm{import directive} \\[1mm]
-&& \textit{import-names}  && ::= &\quad && \epsilon\ | \ \textit{name}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{name} \ 
-                                                                      )\ \ldots
-                                                            && \textrm{import name declarations} \\[1mm]
-%&& \textit{import-name}  && ::= &\quad && \textit{name}\ | \ \textit{name}\ \textbf{\texttt{as}}\ \textit{name}
-%                                                            && \textrm{import name declaration}} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.2.html\#p2}{constant declaration}} \\

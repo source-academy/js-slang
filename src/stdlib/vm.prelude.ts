@@ -730,6 +730,7 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['undefined', undefined],
   ['Infinity', Infinity],
   ['NaN', NaN],
+  ['math_E', Math.E],
   ['math_LN2', Math.LN2],
   ['math_LN10', Math.LN10],
   ['math_LOG2E', Math.LOG2E],

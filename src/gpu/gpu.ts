@@ -2,15 +2,21 @@ import GPUTransformer from './transfomer'
 import { AllowedDeclarations } from '../types'
 import * as create from '../utils/astCreator'
 import * as es from 'estree'
+import { NativeIds } from '../transpiler/transpiler'
 
 // top-level gpu functions that call our code
 
 // transpiles if possible and returns display statements to end user
-export function transpileToGPU(program: es.Program, kernelFunction: string): es.Statement[] {
-  // create unique kernel name
-  GPUTransformer.globalIds.__createKernel = create.identifier(kernelFunction)
-
-  const transformer = new GPUTransformer(program)
+export function transpileToGPU(
+  program: es.Program,
+  globalIds: NativeIds,
+  kernelFunction: string
+): {
+  gpuDisplayStatements: es.Statement[]
+  gpuInternalNames: Set<string>
+  gpuInternalFunctions: es.Statement[]
+} {
+  const transformer = new GPUTransformer(program, create.identifier(kernelFunction))
   const res = transformer.transform()
 
   const gpuDisplayStatements = []
@@ -28,29 +34,22 @@ export function transpileToGPU(program: es.Program, kernelFunction: string): es.
       )
     }
   }
-  return gpuDisplayStatements
+  return {
+    gpuDisplayStatements,
+    gpuInternalNames: getInternalNamesForGPU(transformer),
+    gpuInternalFunctions: getInternalFunctionsForGPU(globalIds, transformer)
+  }
 }
 
-export function getInternalNamesForGPU(): Set<string> {
-  return new Set(Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => key))
+export function getInternalNamesForGPU(gpuTransformer: GPUTransformer): Set<string> {
+  return new Set(Object.entries(gpuTransformer.globalIds).map(([key, { name }]) => key))
 }
 
-export function getInternalFunctionsForGPU(info: any, cid: any) {
-  return Object.entries(GPUTransformer.globalIds).map(([key, { name }]) => {
+export function getInternalFunctionsForGPU(globalIds: NativeIds, gpuTransformer: GPUTransformer) {
+  return Object.entries(gpuTransformer.globalIds).map(([key, { name }]) => {
     const kind: AllowedDeclarations = 'const'
     const value: es.Expression = create.callExpression(
-      create.memberExpression(
-        create.memberExpression(
-          {
-            type: 'MemberExpression',
-            object: info.native,
-            property: create.literal(cid),
-            computed: true
-          },
-          'gpu'
-        ),
-        'get'
-      ),
+      create.memberExpression(create.memberExpression(globalIds.native, 'gpu'), 'get'),
       [create.literal(key)]
     )
     return create.declaration(name, kind, value)

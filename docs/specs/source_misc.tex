@@ -1,11 +1,12 @@
-\input source_names_lang
+\subsection*{MISC Library}
+
 
 In addition to names that
 are declared using \texttt{\textbf{const}}, \texttt{\textbf{function}},
 $\texttt{\textbf{=>}}$ (and \texttt{\textbf{let}} in Source \S3 and 4), the following
 names refer to primitive functions and constants:
 \begin{itemize}
-\item \href{https://sicp.comp.nus.edu.sg/chapters/6\#footnote-link-4}{\lstinline{math_}$\textit{name}$},
+\item \href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p8}{\lstinline{math_}$\textit{name}$},
 where $\textit{name}$ is any name specified in the
 JavaScript
 \texttt{Math} library, see\\
@@ -14,15 +15,15 @@ JavaScript
 \item \verb#math_PI#: Refers to the mathematical constant $\pi$,
 \item \verb#math_sqrt#\texttt{(n)}: Returns the square root of the \emph{number} \texttt{n}.
 \end{itemize}
-\item \texttt{\href{https://sicp.comp.nus.edu.sg/chapters/17\#ex_1.22}{runtime()}}: Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
+\item \href{https://source-academy.github.io/sicp/chapters/1.2.6.html\#ex_1.22}{\lstinline{get_time()}}: Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
 \item \verb#parse_int#\texttt{(s, i)}:
 interprets the \emph{string} \texttt{s} as an integer, using the positive integer \texttt{i} as radix, and returns the respective value,
 see \href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
-\item \href{https://sicp.comp.nus.edu.sg/chapters/4}{\texttt{undefined}},
+\item \href{https://source-academy.github.io/sicp/chapters/2.4.3.html\#p6}{\texttt{undefined}},
   \texttt{\href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-value-properties-of-the-global-object-nan}{\color{DarkBlue}NaN}}, \texttt{\href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-value-properties-of-the-global-object-infinity}{\color{DarkBlue}Infinity}}: Refer to JavaScript's undefined,
 NaN (``Not a Number'') and Infinity values, respectively.
-\item \verb#is_boolean#\texttt{(x)}, \href{https://sicp.comp.nus.edu.sg/chapters/36}{\lstinline{is_number(x)}},
-  \href{https://sicp.comp.nus.edu.sg/chapters/36}{\lstinline{is_string(x)}}, \verb#is_function#\texttt{(x)}:
+\item \href{https://source-academy.github.io/sicp/chapters/4.1.2.html\#p2}{\lstinline{is_boolean(x)}}, \href{https://source-academy.github.io/sicp/chapters/2.3.2.html\#p5}{\lstinline{is_number(x)}},
+  \href{https://source-academy.github.io/sicp/chapters/2.3.2.html\#p7}{\lstinline{is_string(x)}}, \href{https://source-academy.github.io/sicp/chapters/4.1.2.html\#p2}{\lstinline{is_undefined(x)}}, \verb#is_function#\texttt{(x)}:
         return \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. Following
         JavaScript, we specify that \verb#is_number# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
 \item \texttt{prompt(s)}: Pops up a window that displays the \emph{string} \texttt{s}, provides
@@ -30,15 +31,15 @@ an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' bu
 suspends execution of the program until one of the two buttons is pressed. If 
 the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
 If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
-\item \href{https://sicp.comp.nus.edu.sg/chapters/17\#footnote-6}{\texttt{display(x)}}: Displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{\color{DarkBlue}JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{a}.
+\item \href{https://source-academy.github.io/sicp/chapters/1.2.6.html\#footnote-7}{\texttt{display(x)}}: Displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{\color{DarkBlue}JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{a}.
 \item \texttt{display(x, s)}: Displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}]; returns the argument \texttt{x}.
-\item \href{https://sicp.comp.nus.edu.sg/chapters/21\#footnote-3}{\texttt{error(x)}}: Displays the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+\item \href{https://source-academy.github.io/sicp/chapters/1.2.6.html\#footnote-7}{\texttt{error(x)}}: Displays the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
   of any call of \texttt{error} aborts the running program immediately.
-\item \texttt{error(x, s)}: Displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+\item \href{https://source-academy.github.io/sicp/chapters/2.1.3.html\#footnote-2}{\texttt{error(x, s)}}: Displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
   of any call of \texttt{error} aborts the running program immediately.
-\item \href{https://sicp.comp.nus.edu.sg/chapters/62}{\lstinline{stringify(x)}}: returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
+\item \href{https://source-academy.github.io/sicp/chapters/3.3.4.html\#p24}{\lstinline{stringify(x)}}: returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
 \end{itemize}
-All Source primitive functions, except \verb#stringify#, can be assumed to run
+All Source primitive functions can be assumed to run
 in $O(1)$ time, except \texttt{display}, \texttt{error} and \texttt{stringify}, 
 which run in $O(n)$ time, where $n$ is
-the size (number of components such as pairs) of their argument.
+the size (number of components such as pairs) of their first argument.

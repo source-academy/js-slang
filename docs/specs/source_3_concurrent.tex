@@ -9,7 +9,7 @@
 
 Source \S 3 Concurrent is a concurrent extension of Source \S 3.
 
-\section*{Changes}
+\section{Changes}
 
 Source \S 3 Concurrent modifies Source \S 3 in the following ways:
 \begin{itemize}
@@ -19,6 +19,7 @@ Source \S 3 Concurrent modifies Source \S 3 in the following ways:
 \item Neither the thread of the give program nor any other threads produce
   any values as results. Their effect is observable through \emph{side effects}
   such as calls of the \lstinline{display} primitive.
+  \item Import directives are currently not supported.
 \end{itemize}
 \noindent
 The concurrency of Source \S 3 Concurrent is thread-based and deviates
@@ -29,7 +30,7 @@ motivated by Section 3.4 of the textbook
 \href{https://sicp.comp.nus.edu.sg}{\color{DarkBlue}\emph{Structure and Interpretation
 of Computer Programs}, JavaScript Adaptation}.
 
-\section*{Concurrency}
+\section{Concurrency}
 
 We specify \emph{interleaving semantics} for Source \S 3 Concurrent.
 The effect of executing a Source \S 3 Concurrent program
@@ -54,17 +55,31 @@ of the concurrency.
 
 \newpage
 
-\input source_3_bnf.tex
+\input source_3_bnf_without_import.tex
 
 \newpage
+
+\input source_return
 
 \input source_boolean_operators
 
 \input source_loops
 
-\input source_return_3
+\input source_names_lang
 
-\input source_names
+\input source_numbers
+
+\input source_strings
+
+\input source_arrays
+
+\input source_comments
+
+\input source_typing_3
+
+\section{Standard Libraries}
+
+\input source_misc
 
 \input source_concurrency
 
@@ -75,16 +90,6 @@ of the concurrency.
 \input source_array_support
 
 \input source_streams
-
-\input source_numbers
-
-\input source_strings
-
-\input source_arrays
-
-\input source_typing_3
-
-\input source_comments
 
 \input source_js_differences
 

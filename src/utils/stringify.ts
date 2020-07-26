@@ -150,6 +150,8 @@ function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
       return nameMap[type.name]
     case 'list':
       return `List<${curriedTypeToString(type.elementType)}>`
+    case 'array':
+      return `Array<${curriedTypeToString(type.elementType)}>`
     case 'pair':
       const headType = curriedTypeToString(type.headType)
       // convert [T1 , List<T1>] back to List<T1>
