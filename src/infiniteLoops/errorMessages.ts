@@ -13,6 +13,13 @@ enum StackOverflowMessages {
   edge = 'Error: Out of stack space'
 }
 
+/**
+ * Parses the error and determines whether it is an infinite loop and
+ * if so, what kind of infinite loop.
+ *
+ * @returns {string} string containing the infinite loop classification.
+ * @returns {string} empty string, if the error is not an infinite loop.
+ */
 export function infiniteLoopErrorType(errorString: string): string {
   const infiniteLoopTypes = Object.keys(InfiniteLoopErrorMessage)
   const stackOverflowStrings = Object.keys(StackOverflowMessages).map(x => StackOverflowMessages[x])
