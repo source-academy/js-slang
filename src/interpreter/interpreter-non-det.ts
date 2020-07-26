@@ -117,6 +117,16 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
+function undefineVariable(context: Context, name: string) {
+  const environment = context.runtime.environments[0];
+
+  Object.defineProperty(environment.head, name, {
+    value: DECLARED_BUT_NOT_YET_ASSIGNED,
+    writable: true,
+    enumerable: true
+  })
+}
+
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 const pushEnvironment = (context: Context, environment: Environment) =>
@@ -402,6 +412,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     for (const value of valueGenerator) {
       defineVariable(context, id.name, value, constant)
       yield value
+      undefineVariable(context, id.name)
     }
     return undefined
   },
