@@ -133,9 +133,9 @@ function wrapWithPreviouslyDeclaredGlobals(
   nativeStorage: NativeStorage,
   globalIds: NativeIds
 ) {
-  let currentVariableScope = nativeStorage.globals!.previousScope
-  let timesToGoUp = 1
-  let wrapped = create.blockStatement(statements)
+  let currentVariableScope = nativeStorage.globals!
+  let timesToGoUp = 0
+  let wrapped = statements
   while (currentVariableScope !== null) {
     const initialisingStatements: es.Statement[] = []
     currentVariableScope.variables.forEach(({ kind }: ValueWrapper, name: string) => {
@@ -156,10 +156,10 @@ function wrapWithPreviouslyDeclaredGlobals(
       initialisingStatements.push(create.declaration(name, kind, unwrappedValueAst))
     })
     timesToGoUp += 1
-    currentVariableScope = currentVariableScope.previousScope
-    wrapped = create.blockStatement([...initialisingStatements, wrapped])
+    currentVariableScope = currentVariableScope.previousScope!
+    wrapped = [...initialisingStatements, ...wrapped]
   }
-  return wrapped
+  return create.blockStatement(wrapped)
 }
 
 function createStatementsToStoreCurrentlyDeclaredGlobals(
@@ -808,10 +808,6 @@ export function transpile(
 ) {
   const usedIdentifiers = getAllIdentifiersUsed(program, context.nativeStorage)
   const globalIds = getNativeIds(program, usedIdentifiers)
-  context.nativeStorage.globals = {
-    variables: new Map(),
-    previousScope: context.nativeStorage.globals
-  }
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
