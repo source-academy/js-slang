@@ -8,7 +8,7 @@ import { primitive, conditionalExpression, literal } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { cloneDeep, assignIn } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { CUT } from '../constants'
 
 class BreakValue {}
@@ -201,15 +201,12 @@ function randomInt(min: number, max: number): number {
 }
 
 function* getAmbRArgs(context: Context, call: es.CallExpression) {
-  const originalContext = cloneDeep(context)
-
   const args: es.Node[] = cloneDeep(call.arguments)
   while (args.length > 0) {
     const r = randomInt(0, args.length - 1)
     const arg: es.Node = args.splice(r, 1)[0]
 
     yield* evaluate(arg, context)
-    assignIn(context, cloneDeep(originalContext))
   }
 }
 
