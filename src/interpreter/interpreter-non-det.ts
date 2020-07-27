@@ -447,9 +447,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         if (error) {
           return yield handleRuntimeError(context, error)
         }
-
+        const originalElementValue = obj[prop]
         obj[prop] = val
         yield val
+        obj[prop] = originalElementValue
       }
 
       return
@@ -649,7 +650,7 @@ export function* apply(
         return defaultValue
       }
     }
-    
+
     for (const applicationValue of applicationValueGenerator) {
       popEnvironment(context)
       yield unwrapReturnValue(applicationValue, undefined)
