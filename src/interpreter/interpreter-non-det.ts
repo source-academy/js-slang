@@ -132,15 +132,19 @@ const popEnvironment = (context: Context) => context.runtime.environments.shift(
 const pushEnvironment = (context: Context, environment: Environment) =>
   context.runtime.environments.unshift(environment)
 
-const getVariable = (context: Context, name: string) => {
+const getVariable = (context: Context, name: string, ensureVariableAssigned: boolean) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-        return handleRuntimeError(
-          context,
-          new errors.UnassignedVariable(name, context.runtime.nodes[0])
-        )
+        if (ensureVariableAssigned) {
+          return handleRuntimeError(
+            context,
+            new errors.UnassignedVariable(name, context.runtime.nodes[0])
+          )
+        } else {
+          return DECLARED_BUT_NOT_YET_ASSIGNED
+        }
       } else {
         return environment.head[name]
       }
@@ -344,7 +348,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    return yield getVariable(context, node.name)
+    return yield getVariable(context, node.name, true)
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
@@ -455,7 +459,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     const id = node.left as es.Identifier
-    const originalValue = getVariable(context, id.name)
+    const originalValue = getVariable(context, id.name, false)
     const valueGenerator = evaluate(node.right, context)
     for (const value of valueGenerator) {
       setVariable(context, id.name, value)
