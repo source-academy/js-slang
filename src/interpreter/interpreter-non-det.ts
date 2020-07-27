@@ -648,12 +648,14 @@ export function* apply(
         return defaultValue
       }
     }
-
+    
     for (const applicationValue of applicationValueGenerator) {
       popEnvironment(context)
       yield unwrapReturnValue(applicationValue, undefined)
       pushEnvironment(context, environment)
     }
+
+    popEnvironment(context)
   } else if (typeof fun === 'function') {
     try {
       yield fun.apply(thisContext, args)
@@ -676,7 +678,6 @@ export function* apply(
     return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
   }
 
-  popEnvironment(context)
   return
 }
 
