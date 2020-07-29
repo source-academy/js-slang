@@ -59,22 +59,29 @@ const INTERNAL_OPCODE_SLOT = 1
 const INTERNAL_NUM_ARGS_SLOT = 2
 const INTERNAL_HAS_RETURN_VAL_SLOT = 3
 
-// P contains the instructions to be executed in the current function call
-let P: Instruction[]
 // GLOBAL_ENV is the env that contains all the primitive functions
 let GLOBAL_ENV = -1
-// PC is program counter: index of the next instruction in P
-let PC = 0
 // HEAP is array containing all dynamically allocated data structures
 let HEAP: any[] = []
 // next free slot in heap
 let FREE = 0
+// temporary value, used by PUSH and POP; initially a dummy value
+let RES = -Infinity
+
+// THREAD STATE
+
+// P contains the instructions to be executed in the current function call
+let P: Instruction[]
+// PC is program counter: index of the next instruction in P
+let PC = 0
 // ENV is address of current environment in HEAP; initially a dummy value
 let ENV = -1
 // OS is address of current operand stack in HEAP; initially a dummy value
 let OS = -Infinity
-// temporary value, used by PUSH and POP; initially a dummy value
-let RES = -Infinity
+// RTS contains the call stack
+let RTS: any[] = []
+// top index of RTS stack
+let TOP_RTS = -1
 
 /**
  * when executing concurrent code
@@ -402,9 +409,6 @@ function NEW_RTS_FRAME() {
   HEAP[RES + RTS_FRAME_OS_SLOT] = OS
   HEAP[RES + RTS_FRAME_FUNC_INS_SLOT] = P
 }
-
-let RTS: any[] = []
-let TOP_RTS = -1
 
 // expects stack frame in A
 function PUSH_RTS() {
