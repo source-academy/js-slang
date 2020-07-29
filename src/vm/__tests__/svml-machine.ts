@@ -1261,3 +1261,34 @@ test('concurrent program execution interleaves', () => {
     fail('Did not interleave')
   })
 })
+
+// Still fails when TO is so large that this program takes more than a second to run
+test('concurrent program execution interleaves (busy wait)', () => {
+  const code = stripIndent`
+    let state = 0;
+    const t1 = () => {
+      while (state < 10) {
+        if (state % 3 === 0) {
+          state = state + 1;
+        } else {}
+        display('t1');
+      }
+    };
+    const t2 = () => {
+      while (state < 10) {
+        if (state % 3 === 1) {
+          state = state + 1;
+        } else {}
+        display('t2');
+      }
+    };
+    concurrent_execute(t1, t2);
+    while (state < 10) {
+      if (state % 3 === 2) {
+        state = state + 1;
+      } else {}
+      display('main');
+    }
+  `
+  return getDisplayResult(code, { chapter: 3, variant: 'concurrent' })
+})
