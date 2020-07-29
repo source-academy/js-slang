@@ -1,4 +1,5 @@
 import * as stype from './symTypes'
+import { InfiniteLoopErrorMessage } from './errorMessages'
 
 /* if all callees = caller, no terminate symbol -> no base case
  * if caller function always calls itself no matter what -> no base case
@@ -13,7 +14,7 @@ function checkBaseCase(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] {
     const calleeNames = transitions.map(x => getName(x.callee))
     if (calleeNames.every(x => x === name)) {
       const loc = transitions[0].caller.loc
-      checkers.push(stype.makeLoopChecker(name, 'Did you forget your base case?', null, loc))
+      checkers.push(stype.makeLoopChecker(name, InfiniteLoopErrorMessage.no_base_case, null, loc))
     }
   }
 
@@ -90,7 +91,7 @@ function checkCountdown(tset: stype.TransitionSet): stype.InfiniteLoopChecker[] 
           if (arg?.isPositive && arg.constant * cond.direction > 0) {
             return stype.makeLoopChecker(
               caller.name,
-              'Did you call a value that is outside the range of your function?',
+              InfiniteLoopErrorMessage.input_out_of_domain,
               cond,
               callee.loc
             )
@@ -165,7 +166,7 @@ function checkStateChange(tset: stype.TransitionSet): stype.InfiniteLoopChecker[
         const name = transition.caller.name
         const checker = stype.makeLoopChecker(
           name,
-          'Check your recursive function calls.',
+          InfiniteLoopErrorMessage.no_state_change,
           cond,
           callee.loc
         )
