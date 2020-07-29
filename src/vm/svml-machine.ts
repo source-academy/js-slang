@@ -1,4 +1,5 @@
 import { Program, Instruction, SVMFunction, Address } from './svml-compiler'
+import { ThreadId, RoundRobinScheduler, Scheduler } from './svml-scheduler'
 import { getName } from './util'
 import OpCodes from './opcodes'
 import {
@@ -86,12 +87,8 @@ let TOP_RTS = -1
 /**
  * when executing concurrent code
  */
-// TQ is array of threads, each thread is a pair of (runtime stack, index to top of runtime stack)
-let TQ: any[] = []
 // TO is timeout counter: how many instructions are left for a thread to run
 let TO = 0
-// TO_MAX is max amount to timeout by
-const TO_MAX = 15
 
 // some general-purpose registers
 let A: any = 0
@@ -135,8 +132,8 @@ export function show_registers(s: string, isShowExecuting = true) {
   str += 'ENV:' + ENV + '\n'
   str += 'RTS:' + RTS + '\n'
   str += 'TOP_RTS:' + TOP_RTS + '\n'
-  str += 'TQ:' + TQ + '\n'
   str += 'TO:' + TO + '\n'
+  str += 'scheduler_state:' + scheduler_state_string() + '\n'
   return str
 }
 
@@ -588,8 +585,68 @@ function INTERNAL_FUNCTION_CALL() {
   }
 }
 
-function SET_TO() {
-  TO = Math.ceil((0.5 + Math.random() * 0.5) * TO_MAX)
+type Thread = [
+  number, // OS
+  number, // ENV
+  number, // PC
+  Instruction[], // P
+  any[], // RTS
+  number // TOP_RTS
+]
+
+let scheduler: Scheduler = new RoundRobinScheduler()
+const threads: Map<ThreadId, Thread> = new Map()
+let currentThreadId: ThreadId = -1
+
+// Initialize the scheduler (do this before running code)
+function INIT_SCHEDULER() {
+  scheduler = new RoundRobinScheduler()
+  threads.clear()
+}
+
+// Schedule new thread for later execution using the thread state currently in VM
+// You will want to pop another thread, restore thread state, etc.
+// after calling this, as the current thread state should not be running
+function NEW_THREAD() {
+  const newId = scheduler.newThread()
+  threads.set(newId, [OS, ENV, PC, P, RTS, TOP_RTS])
+}
+
+// Schedule current thread for later execution
+// You will want to pop another thread, restore thread state, etc.
+// after calling this, as the current thread state should not be running
+function PAUSE_THREAD() {
+  // Save state to threads map
+  threads.set(currentThreadId, [OS, ENV, PC, P, RTS, TOP_RTS])
+
+  // Pause thread in scheduler
+  scheduler.pauseThread(currentThreadId)
+}
+
+function DELETE_CURRENT_THREAD() {
+  // Clear state from threads map
+  threads.delete(currentThreadId)
+
+  // Delete thread from scheduler
+  scheduler.deleteCurrentThread(currentThreadId)
+  currentThreadId = -1
+}
+
+// Get thread from scheduler and run it
+function RUN_THREAD() {
+  ;[currentThreadId, TO] = scheduler.runThread()!
+
+  // Load thread state
+  ;[OS, ENV, PC, P, RTS, TOP_RTS] = threads.get(currentThreadId)!
+}
+
+// Returns the number of threads in the scheduler
+function GET_NUM_IDLE_THREADS() {
+  RES = scheduler.numIdle()
+}
+
+function scheduler_state_string() {
+  return new Array(scheduler.idleThreads).toString()
 }
 
 // debugging: show current heap
@@ -1495,7 +1552,8 @@ M[OpCodes.EXECUTE] = () => {
     ENV = RES
     P = F[FUNC_CODE_OFFSET]
     // enqueue to thread queue
-    TQ.push([OS, ENV, 0, P, RTS, TOP_RTS])
+    PC = 0
+    NEW_THREAD()
   }
   ;[OS, ENV, PC, P, RTS, TOP_RTS] = G // restore state
 }
@@ -1561,33 +1619,24 @@ function RUN_INSTRUCTION() {
     }
     M[P[PC][INS_OPCODE_OFFSET]]()
     TO = TO - 1
-  } else if (TQ.length === 0) {
-    // end if no more threads and end of current thread
-    RUNNING = false
   } else {
-    // setup next thread
-    SETUP_THREAD()
+    // end of current thread, try to setup another thread
+    DELETE_CURRENT_THREAD()
+    GET_NUM_IDLE_THREADS()
+    if (RES === 0) {
+      // end if no more threads
+      RUNNING = false
+    } else {
+      // setup next thread
+      RUN_THREAD()
+    }
   }
 }
 
 function TIMEOUT_THREAD() {
-  if (TQ.length === 0) {
-    // if no other threads, no need to timeout
-    // differ from Source 3 Concurrent spec: to reduce overhead
-    SET_TO()
-  } else {
-    // timeout only if no other threads
-    // enqueue to thread queue
-    TQ.push([OS, ENV, PC, P, RTS, TOP_RTS])
-    SETUP_THREAD()
-  }
-}
-
-function SETUP_THREAD() {
-  // dequeue from thread queue
-  G = TQ.shift()
-  ;[OS, ENV, PC, P, RTS, TOP_RTS] = G
-  SET_TO()
+  // enqueue to thread queue
+  PAUSE_THREAD()
+  RUN_THREAD()
 }
 
 function run(): any {
@@ -1698,12 +1747,13 @@ export function runWithProgram(p: Program, context: Context): any {
   OS = -Infinity
   RES = -Infinity
   RTS = []
-  TQ = []
   TO = 0
   TOP_RTS = -1
   STATE = NORMAL
   RUNNING = true
   ERROR_MSG_ARGS = []
+
+  INIT_SCHEDULER()
 
   A = 0
   B = 0
