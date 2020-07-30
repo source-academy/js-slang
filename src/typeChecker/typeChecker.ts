@@ -343,7 +343,6 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
       } else {
         return tPair(pairHeadType, pairTailType)
       }
-      return type
     }
     case 'list': {
       const elementType = applyConstraints(type.elementType, constraints)
