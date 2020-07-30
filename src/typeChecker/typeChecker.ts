@@ -343,7 +343,6 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
       } else {
         return tPair(pairHeadType, pairTailType)
       }
-      return type
     }
     case 'list': {
       const elementType = applyConstraints(type.elementType, constraints)
@@ -575,8 +574,7 @@ function returnBlockValueNodeIndexFor(
 ): number {
   const lastStatementIndex = node.body.length - 1
   if (isTopLevelAndLastValStmt) {
-    let index = lastStatementIndex
-    for (index = lastStatementIndex; index >= 0; index--) {
+    for (let index = lastStatementIndex; index >= 0; index--) {
       if (stmtHasValueReturningStmt(node.body[index])) {
         return index
       }

@@ -67,7 +67,7 @@ function processFunction(namespace, element, document) {
   descriptionDiv.appendChild(descriptionNode);
   const html = buildDescriptionHtml(descriptionDiv);
 
-  namespace[name] = { title, description: html, meta: FUNC_DECL }
+  namespace[name] = { title, description: html, meta: FUNC_DECL };
 }
 
 function processDirGlobals(target) {
