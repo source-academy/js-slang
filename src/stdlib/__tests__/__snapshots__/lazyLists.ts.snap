@@ -23,7 +23,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return wrap((curr, acc) => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", curr, acc, 1, 26)     }), \\\\\\"(curr, acc) => curr + acc\\\\\\", native);   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 0;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return wrap((curr, acc) => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", 2, curr, acc, 1, 26)     }), \\\\\\"(curr, acc) => curr + acc\\\\\\", native);   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 0;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -215,7 +215,7 @@ forceIt(lastStatementResult);
 exports[`append: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(append(list(\\"string\\", 123), list(456, null, undefined)), list(\\"string\\", 123, 456, null, undefined));",
+  "code": "equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -235,7 +235,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(append, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 13, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 34, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 63, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(append, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 13, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 29, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 51, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -319,18 +319,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -367,18 +367,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -415,18 +415,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -459,24 +459,24 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     TypeError {
-      "expected": "number",
-      "got": "string",
+      "expected": "string",
+      "got": "number",
       "location": SourceLocation {
         "end": Position {
-          "column": 50,
-          "line": 149,
+          "column": 16,
+          "line": 159,
         },
         "start": Position {
-          "column": 45,
-          "line": 149,
+          "column": 9,
+          "line": 159,
         },
       },
       "severity": "Error",
-      "side": " on left hand side of operation",
+      "side": " on right hand side of operation",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 149: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 159: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -514,11 +514,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 45,
+          "line": 55,
         },
         "start": Position {
           "column": 15,
-          "line": 45,
+          "line": 55,
         },
       },
       "severity": "Error",
@@ -526,7 +526,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 45: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 55: Expected number on left hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -564,11 +564,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 28,
-          "line": 139,
+          "line": 149,
         },
         "start": Position {
           "column": 19,
-          "line": 139,
+          "line": 149,
         },
       },
       "severity": "Error",
@@ -576,7 +576,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -614,11 +614,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 28,
-          "line": 139,
+          "line": 149,
         },
         "start": Position {
           "column": 19,
-          "line": 139,
+          "line": 149,
         },
       },
       "severity": "Error",
@@ -626,7 +626,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -664,11 +664,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 140,
+          "line": 150,
         },
         "start": Position {
           "column": 9,
-          "line": 140,
+          "line": 150,
         },
       },
       "severity": "Error",
@@ -676,7 +676,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 140: Expected number on right hand side of operation, got string.",
+  "parsedErrors": "Line 150: Expected number on right hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
@@ -725,7 +725,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(build_list, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", x, x, 1, 25)         }), \\\\\\"x => x * x\\\\\\", native);       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 33, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 0;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 16;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(build_list, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", 2, x, x, 1, 25)         }), \\\\\\"x => x * x\\\\\\", native);       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 33, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 0;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 16;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -891,7 +891,7 @@ const globals = native.globals;
       expr: () => {
         return wrap(x => ({
           isTail: false,
-          value: binaryOp(\\"===\\", binaryOp(\\"%\\", x, 2, 2, 22), 0, 2, 22)
+          value: binaryOp(\\"===\\", 2, binaryOp(\\"%\\", 2, x, 2, 2, 22), 0, 2, 22)
         }), \\"x => x % 2 === 0\\", native);
       }
     }, {
@@ -946,7 +946,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(filter, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"<=\\\\\\", x, 4, 1, 18)         }), \\\\\\"x => x <= 4\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 26, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 10;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 100;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 72, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(filter, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"<=\\\\\\", 2, x, 4, 1, 18)         }), \\\\\\"x => x <= 4\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 26, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 10;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 100;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 72, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -989,7 +989,7 @@ const globals = native.globals;
       isMemoized: false,
       expr: () => {
         return wrap(x => {
-          sum = binaryOp(\\"+\\", sum, x, 3, 8);
+          sum = binaryOp(\\"+\\", 3, sum, x, 3, 8);
         }, \\"x => {\\\\n  sum = sum + x;\\\\n}\\", native);
       }
     }, {
@@ -1290,7 +1290,7 @@ const globals = native.globals;
       expr: () => {
         return wrap(x => ({
           isTail: false,
-          value: binaryOp(\\"*\\", 2, x, 2, 19)
+          value: binaryOp(\\"*\\", 2, 2, x, 2, 19)
         }), \\"x => 2 * x\\", native);
       }
     }, {
@@ -1369,7 +1369,7 @@ const globals = native.globals;
       expr: () => {
         return wrap(x => ({
           isTail: false,
-          value: binaryOp(\\"*\\", 2, x, 2, 19)
+          value: binaryOp(\\"*\\", 2, 2, x, 2, 19)
         }), \\"x => 2 * x\\", native);
       }
     }, {
@@ -1424,7 +1424,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(map, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", 2, x, 1, 15)         }), \\\\\\"x => 2 * x\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 22, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 12;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 11;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 40, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 24;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 22;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(map, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", 2, 2, x, 1, 15)         }), \\\\\\"x => 2 * x\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 22, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 12;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 11;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 40, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 24;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 22;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -1437,8 +1437,8 @@ exports[`member: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "equal(
-  member(\\"string\\", list(1, 2, 3, \\"string\\", 123, 456, null, undefined)),
-  list(\\"string\\", 123, 456, null, undefined));",
+  member(4, list(1, 2, 3, 4, 123, 456, 789)),
+  list(4, 123, 456, 789));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1458,7 +1458,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(member, 2, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 2, 19, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 3, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(member, 2, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 2, 12, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 789;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 3, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 789;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -1538,7 +1538,7 @@ const globals = native.globals;
         return a;
       }
     });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(tail, 2, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return a;           }         });       }     });   } }), 2, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(tail, 2, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return a;           }         });       }     });   } }), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1592,7 +1592,7 @@ const globals = native.globals;
         return 1;
       }
     });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(tail, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(tail, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(tail, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(tail, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1646,7 +1646,7 @@ const globals = native.globals;
         return a;
       }
     });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(tail, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(tail, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1894,7 +1894,7 @@ forceIt(lastStatementResult);
 exports[`remove_all not found: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(remove_all(1, list(2, 3, \\"1\\")), list(2, 3, \\"1\\"));",
+  "code": "equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1914,7 +1914,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"1\\\\\\";           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 38, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"1\\\\\\";       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 36, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -1926,7 +1926,7 @@ forceIt(lastStatementResult);
 exports[`remove_all: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, \\"1\\", 5, 1, 1, 6)), list(2, 3, 4, \\"1\\", 5, 6));",
+  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1946,7 +1946,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"1\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 6;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 62, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"1\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 6;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 60, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);
@@ -1958,7 +1958,7 @@ forceIt(lastStatementResult);
 exports[`reverse: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(reverse(list(\\"string\\", null, undefined, null, 123)), list(123, null, undefined, null, \\"string\\"));",
+  "code": "equal(reverse(list(\\"string\\", \\"null\\", \\"undefined\\", \\"null\\", 123)), list(123, \\"null\\", \\"undefined\\", \\"null\\", \\"string\\"));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1978,7 +1978,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(reverse, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 14, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 59, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(reverse, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 14, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"null\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"undefined\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"null\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 65, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"null\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"undefined\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"null\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     });   } });\\");
   }
 }
 forceIt(lastStatementResult);

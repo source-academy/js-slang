@@ -22,6 +22,12 @@ Array [
     "tail": null,
   },
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -84,7 +90,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -145,6 +150,12 @@ Array [
     "tail": null,
   },
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -207,7 +218,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -369,6 +379,16 @@ exports[`debugger; statement execution sequence 2`] = `""`;
 exports[`debugger; statement hoisting 1`] = `
 Array [
   Object {
+    "head": Object {
+      "b": Symbol(Used to implement hoisting),
+      "c": Symbol(Used to implement hoisting),
+      "z": Symbol(Used to implement hoisting),
+    },
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -427,14 +447,10 @@ Array [
       "type": "CallExpression",
     },
     "head": Object {
-      "b": Symbol(Used to implement hoisting),
-      "c": Symbol(Used to implement hoisting),
       "x": 10,
-      "z": Symbol(Used to implement hoisting),
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -489,6 +505,12 @@ exports[`debugger; statement hoisting 2`] = `""`;
 
 exports[`debugger; statement in function 1`] = `
 Array [
+  Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -552,7 +574,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -607,6 +628,24 @@ exports[`debugger; statement in function 2`] = `""`;
 
 exports[`debugger; statement test function scope 1`] = `
 Array [
+  Object {
+    "head": Object {
+      "b": 100,
+      "c": 200,
+      "d": 300,
+      "e": 30000,
+      "f": 60000,
+      "g": 2000,
+      "h": 2300,
+      "i": 666.6666666666666,
+      "j": 600,
+      "k": 0.0033333333333333335,
+      "l": 0.5,
+    },
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -666,22 +705,10 @@ Array [
       "type": "CallExpression",
     },
     "head": Object {
-      "b": 100,
-      "c": 200,
-      "d": 300,
-      "e": 30000,
-      "f": 60000,
-      "g": 2000,
-      "h": 2300,
-      "i": 666.6666666666666,
-      "j": 600,
-      "k": 0.0033333333333333335,
-      "l": 0.5,
       "x": 10,
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1183,6 +1210,12 @@ exports[`setBreakpointAtLine function 1 2`] = `""`;
 exports[`setBreakpointAtLine function 2 1`] = `
 Array [
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -1245,7 +1278,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1407,6 +1439,12 @@ exports[`setBreakpointAtLine function 4 2`] = `""`;
 exports[`setBreakpointAtLine granularity 1 1`] = `
 Array [
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -1469,7 +1507,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1524,6 +1561,12 @@ exports[`setBreakpointAtLine granularity 1 2`] = `""`;
 
 exports[`setBreakpointAtLine granularity 1 3`] = `
 Array [
+  Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -1587,7 +1630,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1643,6 +1685,12 @@ exports[`setBreakpointAtLine granularity 1 4`] = `""`;
 exports[`setBreakpointAtLine granularity 1 5`] = `
 Array [
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -1705,7 +1753,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1761,6 +1808,12 @@ exports[`setBreakpointAtLine granularity 1 6`] = `""`;
 exports[`setBreakpointAtLine granularity 2 1`] = `
 Array [
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -1823,7 +1876,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -1932,6 +1984,12 @@ exports[`setBreakpointAtLine granularity 2 4`] = `""`;
 exports[`setBreakpointAtLine granularity 3 1`] = `
 Array [
   Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
+  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -1994,7 +2052,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {
@@ -2049,6 +2106,12 @@ exports[`setBreakpointAtLine granularity 3 2`] = `""`;
 
 exports[`setBreakpointAtLine granularity 3 3`] = `
 Array [
+  Object {
+    "head": Object {},
+    "name": "functionBodyEnvironment",
+    "tail": null,
+    "thisContext": undefined,
+  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -2112,7 +2175,6 @@ Array [
     },
     "name": "a",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "head": Object {

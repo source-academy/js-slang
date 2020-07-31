@@ -89,7 +89,7 @@ test('build_list', () => {
 test('reverse', () => {
   return expectResult(
     stripIndent`
-    equal(reverse(list("string", null, undefined, null, 123)), list(123, null, undefined, null, "string"));
+    equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string"));
   `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -98,7 +98,7 @@ test('reverse', () => {
 test('append', () => {
   return expectResult(
     stripIndent`
-    equal(append(list("string", 123), list(456, null, undefined)), list("string", 123, 456, null, undefined));
+    equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));
   `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -108,8 +108,8 @@ test('member', () => {
   return expectResult(
     stripIndent`
     equal(
-      member("string", list(1, 2, 3, "string", 123, 456, null, undefined)),
-      list("string", 123, 456, null, undefined));
+      member(4, list(1, 2, 3, 4, 123, 456, 789)),
+      list(4, 123, 456, 789));
   `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -136,7 +136,7 @@ test('remove not found', () => {
 test('remove_all', () => {
   return expectResult(
     stripIndent`
-    equal(remove_all(1, list(1, 2, 3, 4, 1, 1, "1", 5, 1, 1, 6)), list(2, 3, 4, "1", 5, 6));
+    equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));
   `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -145,7 +145,7 @@ test('remove_all', () => {
 test('remove_all not found', () => {
   return expectResult(
     stripIndent`
-    equal(remove_all(1, list(2, 3, "1")), list(2, 3, "1"));
+    equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
   `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -201,7 +201,7 @@ test('bad number error build_list', () => {
         build_list('1', x => x);
 `,
     { chapter: 2, native: true, variant: 'lazy' }
-  ).toMatchInlineSnapshot(`"Line 45: Expected number on left hand side of operation, got string."`)
+  ).toMatchInlineSnapshot(`"Line 55: Expected number on left hand side of operation, got string."`)
 })
 
 test('bad number error enum_list', () => {
@@ -211,7 +211,7 @@ enum_list('1', '5');
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 139: Expected string on right hand side of operation, got number."`
+    `"Line 149: Expected string on right hand side of operation, got number."`
   )
 })
 
@@ -222,7 +222,7 @@ enum_list('1', 5);
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 139: Expected string on right hand side of operation, got number."`
+    `"Line 149: Expected string on right hand side of operation, got number."`
   )
 })
 
@@ -233,7 +233,7 @@ enum_list(1, '5');
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 140: Expected number on right hand side of operation, got string."`
+    `"Line 150: Expected number on right hand side of operation, got string."`
   )
 })
 
@@ -244,7 +244,7 @@ list_ref(list(1, 2, 3), 3);
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -255,7 +255,7 @@ list_ref(list(1, 2, 3), -1);
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -266,7 +266,7 @@ list_ref(list(1, 2, 3), 1.5);
 `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -276,7 +276,9 @@ test('bad index error list_ref', () => {
 list_ref(list(1, 2, 3), '1');
 `,
     { chapter: 2, native: true, variant: 'lazy' }
-  ).toMatchInlineSnapshot(`"Line 149: Expected number on left hand side of operation, got string."`)
+  ).toMatchInlineSnapshot(
+    `"Line 159: Expected string on right hand side of operation, got number."`
+  )
 })
 
 test('arguments are not evaluated for pair', () => {
