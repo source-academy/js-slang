@@ -8,7 +8,7 @@ import { primitive, conditionalExpression, literal } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { cloneDeep, assignIn } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { CUT } from '../constants'
 
 class BreakValue {}
@@ -117,20 +117,34 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
+function undefineVariable(context: Context, name: string) {
+  const environment = context.runtime.environments[0]
+
+  Object.defineProperty(environment.head, name, {
+    value: DECLARED_BUT_NOT_YET_ASSIGNED,
+    writable: true,
+    enumerable: true
+  })
+}
+
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 const pushEnvironment = (context: Context, environment: Environment) =>
   context.runtime.environments.unshift(environment)
 
-const getVariable = (context: Context, name: string) => {
+const getVariable = (context: Context, name: string, ensureVariableAssigned: boolean) => {
   let environment: Environment | null = context.runtime.environments[0]
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-        return handleRuntimeError(
-          context,
-          new errors.UnassignedVariable(name, context.runtime.nodes[0])
-        )
+        if (ensureVariableAssigned) {
+          return handleRuntimeError(
+            context,
+            new errors.UnassignedVariable(name, context.runtime.nodes[0])
+          )
+        } else {
+          return DECLARED_BUT_NOT_YET_ASSIGNED
+        }
       } else {
         return environment.head[name]
       }
@@ -187,15 +201,12 @@ function randomInt(min: number, max: number): number {
 }
 
 function* getAmbRArgs(context: Context, call: es.CallExpression) {
-  const originalContext = cloneDeep(context)
-
   const args: es.Node[] = cloneDeep(call.arguments)
   while (args.length > 0) {
     const r = randomInt(0, args.length - 1)
     const arg: es.Node = args.splice(r, 1)[0]
 
     yield* evaluate(arg, context)
-    assignIn(context, cloneDeep(originalContext))
   }
 }
 
@@ -226,10 +237,8 @@ function* cartesianProduct(
 }
 
 function* getAmbArgs(context: Context, call: es.CallExpression) {
-  const originalContext = cloneDeep(context)
   for (const arg of call.arguments) {
     yield* evaluate(arg, context)
-    assignIn(context, cloneDeep(originalContext)) // reset context
   }
 }
 
@@ -336,7 +345,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Identifier: function*(node: es.Identifier, context: Context) {
-    return yield getVariable(context, node.name)
+    return yield getVariable(context, node.name, true)
   },
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
@@ -404,6 +413,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     for (const value of valueGenerator) {
       defineVariable(context, id.name, value, constant)
       yield value
+      undefineVariable(context, id.name)
     }
     return undefined
   },
@@ -437,19 +447,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         if (error) {
           return yield handleRuntimeError(context, error)
         }
-
+        const originalElementValue = obj[prop]
         obj[prop] = val
         yield val
+        obj[prop] = originalElementValue
       }
 
       return
     }
 
     const id = node.left as es.Identifier
+    const originalValue = getVariable(context, id.name, false)
     const valueGenerator = evaluate(node.right, context)
     for (const value of valueGenerator) {
       setVariable(context, id.name, value)
       yield value
+      setVariable(context, id.name, originalValue)
     }
     return
   },
@@ -460,6 +473,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     yield undefined
+    undefineVariable(context, id.name)
   },
 
   IfStatement: function*(node: es.IfStatement, context: Context) {
@@ -642,6 +656,8 @@ export function* apply(
       yield unwrapReturnValue(applicationValue, undefined)
       pushEnvironment(context, environment)
     }
+
+    popEnvironment(context)
   } else if (typeof fun === 'function') {
     try {
       yield fun.apply(thisContext, args)
@@ -664,7 +680,6 @@ export function* apply(
     return handleRuntimeError(context, new errors.CallingNonFunctionValue(fun, node))
   }
 
-  popEnvironment(context)
   return
 }
 

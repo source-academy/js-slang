@@ -4,7 +4,7 @@ import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { stripIndent } from '../utils/formatters'
 
-test('Function params and body identifiers are in the same environment', () => {
+test('Function params and body identifiers are in different environment', () => {
   const code = stripIndent`
   function f(x) {
     const y = 1;
@@ -22,5 +22,5 @@ test('Function params and body identifiers are in the same environment', () => {
     it.next()
   }
   expect(context.runtime.environments).toMatchSnapshot()
-  expect(context.runtime.environments[0].head).toMatchObject({ x: 2, y: 1 })
+  expect(context.runtime.environments[0].head).toMatchObject({ y: 1 })
 })
