@@ -1,4 +1,19 @@
-import { expectDisplayResult } from '../utils/testing'
+import { expectDisplayResult, expectParsedError } from '../utils/testing'
+
+test('display throw error if second argument is non-string when used', () => {
+  return expectParsedError(`display(31072020, 0xDEADC0DE);`).toMatchInlineSnapshot(
+    `"Line 1: Error: display expects the second argument to be a string"`
+  )
+})
+
+test('display second argument can be a string', () => {
+  return expectDisplayResult(`display(31072020, "my_first_String");`, { native: true })
+    .toMatchInlineSnapshot(`
+            Array [
+              "my_first_String 31072020",
+            ]
+          `)
+})
 
 test('display can be used to display numbers', () => {
   return expectDisplayResult(`display(0);`, { native: true }).toMatchInlineSnapshot(`
