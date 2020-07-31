@@ -26,10 +26,10 @@ const globals = native.globals;
     const add = wrap((x, y) => {
       return {
         isTail: false,
-        value: binaryOp(\\"+\\", x, y, 1, 28)
+        value: binaryOp(\\"+\\", 1, x, y, 1, 28)
       };
     }, \\"function add(x, y) {\\\\n  return x + y;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(add, 1, 37, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", native), 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", x, 1, 1, 64)     }), \\\\\\"x => x + 1\\\\\\", native), 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(add, 1, 37, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", native), 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", 1, x, 1, 1, 64)     }), \\\\\\"x => x + 1\\\\\\", native), 1, 56, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     });   } });\\");
     globals.variables.set(\\"add\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -145,7 +145,7 @@ const globals = native.globals;
 {
   {
     const test = wrap((a, b) => {
-      return boolOrErr(binaryOp(\\"===\\", a, 1, 2, 29), 2, 29) ? {
+      return boolOrErr(binaryOp(\\"===\\", 2, a, 1, 2, 29), 2, 29) ? {
         isTail: false,
         value: a
       } : {
@@ -242,7 +242,7 @@ const globals = native.globals;
   {
     let x = 1;
     const incX = wrap(() => {
-      x = binaryOp(\\"+\\", x, 1, 5, 6);
+      x = binaryOp(\\"+\\", 3, x, 1, 5, 6);
       return {
         isTail: false,
         value: x
@@ -251,7 +251,7 @@ const globals = native.globals;
     const square = wrap(n => {
       return {
         isTail: false,
-        value: binaryOp(\\"*\\", n, n, 10, 9)
+        value: binaryOp(\\"*\\", 3, n, n, 10, 9)
       };
     }, \\"function square(n) {\\\\n  return n * n;\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(square, 13, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(incX, 13, 7);   } });\\");
@@ -317,12 +317,12 @@ const globals = native.globals;
 {
   {
     const addSome = wrap(x => {
-      const y = binaryOp(\\"+\\", x, 1, 3, 12);
+      const y = binaryOp(\\"+\\", 1, x, 1, 3, 12);
       return {
         isTail: false,
         value: wrap(z => ({
           isTail: false,
-          value: binaryOp(\\"+\\", y, z, 4, 14)
+          value: binaryOp(\\"+\\", 1, y, z, 4, 14)
         }), \\"z => y + z\\", native)
       };
     }, \\"function addSome(x) {\\\\n  const y = x + 1;\\\\n  return z => y + z;\\\\n}\\", native);
@@ -423,7 +423,7 @@ const globals = native.globals;
 {
   {
     const test = wrap((a, b) => {
-      return boolOrErr(binaryOp(\\"===\\", a, 1, 1, 29), 1, 29) ? {
+      return boolOrErr(binaryOp(\\"===\\", 2, a, 1, 1, 29), 1, 29) ? {
         isTail: false,
         value: a
       } : {

@@ -13,8 +13,18 @@ function is_list(xs) {
 // equal computes the structural equality
 // over its arguments
 
-function equal(x, y) {
-  return is_pair(x) && is_pair(y) ? equal(head(x), head(y)) && equal(tail(x), tail(y)) : x === y;
+function equal(xs, ys) {
+    return is_pair(xs)
+        ? (is_pair(ys) &&
+           equal(head(xs), head(ys)) &&
+           equal(tail(xs), tail(ys)))
+        : is_null(xs)
+        ? is_null(ys)
+        : is_number(xs)
+        ? (is_number(ys) && xs === ys)
+        : is_string(xs)
+        ? (is_string(xs) && xs === ys)
+        :  xs === ys;
 }
 
 // returns the length of a given argument list
