@@ -650,14 +650,17 @@ export function* apply(
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
       const environment = createEnvironment(fun, args, node)
-      environment.thisContext = thisContext
       if (result instanceof TailCallReturnValue) {
         replaceEnvironment(context, environment)
       } else {
         pushEnvironment(context, environment)
         total++
       }
+      const bodyEnvironment = createBlockEnvironment(context, 'functionBodyEnvironment')
+      bodyEnvironment.thisContext = thisContext
+      pushEnvironment(context, bodyEnvironment)
       result = yield* evaluateBlockSatement(context, fun.node.body as es.BlockStatement)
+      popEnvironment(context)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee
         node = result.node
