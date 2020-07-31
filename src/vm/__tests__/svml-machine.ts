@@ -1229,32 +1229,66 @@ test('concurrent program execution interleaves', () => {
     for (let i = 0; i < displayResult.length; i++) {
       const currentResult = displayResult[i]
       switch (currentResult) {
-        case 'main': {
+        case '"main"': {
           if (firstMain === -1) {
             firstMain = i
             continue
           }
           if (foundT1 && foundT2) {
-            return true
+            return
           }
           continue
         }
-        case 't1': {
+        case '"t1"': {
           if (firstMain === -1) {
             continue
           }
           foundT1 = true
           continue
         }
-        case 't2': {
+        case '"t2"': {
           if (firstMain === -1) {
             continue
           }
           foundT2 = true
           continue
         }
+        default: {
+          fail('Did not expect "' + currentResult + '" in output')
+        }
       }
     }
-    return false
+    fail('Did not interleave')
   })
+})
+
+// Still fails when TO is so large that this program takes more than a second to run
+test('concurrent program execution interleaves (busy wait)', () => {
+  const code = stripIndent`
+    let state = 0;
+    const t1 = () => {
+      while (state < 10) {
+        if (state % 3 === 0) {
+          state = state + 1;
+        } else {}
+        display('t1');
+      }
+    };
+    const t2 = () => {
+      while (state < 10) {
+        if (state % 3 === 1) {
+          state = state + 1;
+        } else {}
+        display('t2');
+      }
+    };
+    concurrent_execute(t1, t2);
+    while (state < 10) {
+      if (state % 3 === 2) {
+        state = state + 1;
+      } else {}
+      display('main');
+    }
+  `
+  return getDisplayResult(code, { chapter: 3, variant: 'concurrent' })
 })
