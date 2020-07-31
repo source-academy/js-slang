@@ -147,10 +147,15 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
-
+  const placeholder = Symbol()
   const rawDisplay = (v: Value, s: string) =>
     externalBuiltIns.rawDisplay(v, s, context.externalContext)
-  const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
+  const display = (v: Value, s: any = placeholder) => {
+    if (s !== placeholder && typeof s !== 'string') {
+      throw new Error('display expects the second argument to be a string')
+    }
+    return rawDisplay(stringify(v), s === placeholder ? undefined : s), v
+  }
   const prompt = (v: Value) => {
     const start = Date.now()
     const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
