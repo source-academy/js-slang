@@ -755,7 +755,13 @@ function reduceMain(
             return [valueToExpression(left === right), context, paths, explain(node)]
           }
           const [leftValue, rightValue] = [left, right].map(nodeToValue)
-          const error = rttc.checkBinaryExpression(node, operator, leftValue, rightValue)
+          const error = rttc.checkBinaryExpression(
+            node,
+            operator,
+            context.chapter,
+            leftValue,
+            rightValue
+          )
           if (error === undefined) {
             const lit = evaluateBinaryExpression(operator, leftValue, rightValue)
             return [valueToExpression(lit, context), context, paths, explain(node)]

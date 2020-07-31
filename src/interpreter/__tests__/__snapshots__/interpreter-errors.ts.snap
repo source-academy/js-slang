@@ -3441,7 +3441,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 12, 'string', 1, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 1, 12, 'string', 1, 0);\\");
   }
 }
 forceIt(lastStatementResult);

@@ -75,20 +75,37 @@ function draw_data(x) {}
 /**
  * Returns <CODE>true</CODE> if both
  * have the same structure with respect to <CODE>pair</CODE>,
- * and the same numbers, boolean values, functions or empty list
- * at corresponding leave positions (places that are not themselves pairs),
- * and <CODE>false</CODE> otherwise; time, space:
+ * and identical values at corresponding leave positions (places that are not 
+ * themselves pairs), and <CODE>false</CODE> otherwise. For the "identical",
+ * the values need to have the same type, otherwise the result is 
+ * <CODE>false</CODE. If corresponding leaves are boolean values, these values
+ * need to be that same. If both are <CODE>undefined</CODE> or both are
+ * <CODE>null</CODE>, the result is <CODE>true. Otherwise they are compared
+ * with <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the
+ * respective Source language in use. Time, space:
  * <CODE>O(n)</CODE>, where <CODE>n</CODE> is the number of pairs in
  * <CODE>x</CODE>.
  * @param {value} x - given value
  * @param {value} y - given value
  * @returns {boolean} whether <CODE>x</CODE> is structurally equal to <CODE>y</CODE>
  */
-function equal(x, y) {
-    return (is_pair(x) && is_pair(y))
-        ? (equal(head(x), head(y)) &&
-            equal(tail(x), tail(y)))
-        : x === y;
+function equal(xs, ys) {
+    return is_pair(xs)
+        ? (is_pair(ys) &&
+           equal(head(xs), head(ys)) && 
+           equal(tail(xs), tail(ys)))
+        : is_null(xs)
+        ? is_null(ys)
+        : is_number(xs)
+        ? (is_number(ys) && xs === ys)
+        : is_boolean(xs)
+        ? (is_boolean(ys) && ((xs && ys) || (!xs && !ys)))
+        : is_string(xs)
+        ? (is_string(xs) && xs === ys)
+        : is_undefined(xs)
+        ? is_undefined(ys)
+        : // we know now that xs is a function
+          (is_function(ys) && xs === ys);
 }
 
 /**

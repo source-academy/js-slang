@@ -137,6 +137,7 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
 
 export function binaryOp(
   operator: BinaryOperator,
+  chapter: number,
   left: any,
   right: any,
   line: number,
@@ -147,6 +148,7 @@ export function binaryOp(
   const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column),
     operator,
+    chapter,
     left,
     right
   )
