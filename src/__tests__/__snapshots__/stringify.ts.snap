@@ -439,7 +439,7 @@ const globals = native.globals;
   {
     const arr = [];
     const startTime = runtime();
-    for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", i, 1, 2, 29)) {
+    for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", 3, i, 1, 2, 29)) {
       throwIfTimeout(native, startTime, runtime(), 2, 0);
       setProp(arr, i, i, 3, 2);
     }

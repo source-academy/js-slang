@@ -1279,7 +1279,7 @@ const globals = native.globals;
   {
     const start = callIfFuncAndRightArgs(runtime, 1, 14);
     const repeatUntilDifferentTime = wrap(() => {
-      if (boolOrErr(binaryOp(\\"===\\", start, callIfFuncAndRightArgs(runtime, 3, 16), 3, 6), 3, 2)) {
+      if (boolOrErr(binaryOp(\\"===\\", 1, start, callIfFuncAndRightArgs(runtime, 3, 16), 3, 6), 3, 2)) {
         return {
           isTail: true,
           function: repeatUntilDifferentTime,
@@ -1708,18 +1708,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 46,
-          "line": 24,
+          "line": 34,
         },
         "start": Position {
           "column": 38,
-          "line": 24,
+          "line": 34,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 24: Error: tail(xs) expects a pair as argument xs, but encountered 1",
+  "parsedErrors": "Line 34: Error: tail(xs) expects a pair as argument xs, but encountered 1",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

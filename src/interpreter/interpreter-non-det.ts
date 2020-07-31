@@ -387,7 +387,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     for (const pair of pairGenerator) {
       const leftValue = pair[0]
       const rightValue = pair[1]
-      const error = rttc.checkBinaryExpression(node, node.operator, leftValue, rightValue)
+      const error = rttc.checkBinaryExpression(node, node.operator, context.chapter, leftValue, rightValue)
       if (error) {
         return handleRuntimeError(context, error)
       }
