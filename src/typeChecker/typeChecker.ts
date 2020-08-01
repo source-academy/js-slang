@@ -1247,7 +1247,7 @@ const predeclaredNames: [string, Type | ForAll][] = [
   // misc functions
   ['parse_int', tFunc(tString, tNumber, tNumber)],
   ['prompt', tFunc(tString, tString)],
-  ['runtime', tFunc(tNumber)],
+  ['get_time', tFunc(tNumber)],
   ['stringify', tForAll(tFunc(tVar('T'), tString))],
   ['display', tForAll(tVar('T'))],
   ['error', tForAll(tVar('T'))]

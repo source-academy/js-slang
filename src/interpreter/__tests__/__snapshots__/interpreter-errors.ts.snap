@@ -722,6 +722,106 @@ forceIt(lastStatementResult);
 }
 `;
 
+exports[`Error when calling builtin function in with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int(\\"\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "parse_int",
+      "expected": 2,
+      "got": 1,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, \\\\\\"\\\\\\");\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling builtin function in with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(1, 2, 3);",
+  "displayResult": Array [],
+  "errors": Array [
+    InvalidNumberOfArguments {
+      "calleeStr": "is_number",
+      "expected": 1,
+      "got": 3,
+      "location": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Expected 1 arguments, but got 3.",
+  "result": undefined,
+  "resultStatus": "error",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 1, 2, 3);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -3066,8 +3166,10 @@ Object {
   "code": "parse_int(\\"10\\");",
   "displayResult": Array [],
   "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
+    InvalidNumberOfArguments {
+      "calleeStr": "parse_int",
+      "expected": 2,
+      "got": 1,
       "location": SourceLocation {
         "end": Position {
           "column": 15,
@@ -3082,7 +3184,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
+  "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -3114,6 +3216,213 @@ Object {
   "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
   "result": undefined,
   "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling display function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display();
+display(1, 2);
+display(1, 2, 3);",
+  "displayResult": Array [
+    "undefined",
+    "2 1",
+    "2 1",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    callIfFuncAndRightArgs(display, 1, 0);
+    callIfFuncAndRightArgs(display, 2, 0, 1, 2);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 3, 0, 1, 2, 3);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling list function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list();
+list(1);
+list(1, 2, 3);
+list(1, 2, 3, 4, 5, 6, 6);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": Array [
+    1,
+    Array [
+      2,
+      Array [
+        3,
+        Array [
+          4,
+          Array [
+            5,
+            Array [
+              6,
+              Array [
+                6,
+                null,
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+  ],
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    callIfFuncAndRightArgs(list, 1, 0);
+    callIfFuncAndRightArgs(list, 2, 0, 1);
+    callIfFuncAndRightArgs(list, 3, 0, 1, 2, 3);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 4, 0, 1, 2, 3, 4, 5, 6, 6);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling math_max function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_max();
+math_max(1, 2);
+math_max(1, 2, 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    callIfFuncAndRightArgs(math_max, 1, 0);
+    callIfFuncAndRightArgs(math_max, 2, 0, 1, 2);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(math_max, 3, 0, 1, 2, 3);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling math_min function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_min();
+math_min(1, 2);
+math_min(1, 2, 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    callIfFuncAndRightArgs(math_min, 1, 0);
+    callIfFuncAndRightArgs(math_min, 2, 0, 1, 2);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(math_min, 3, 0, 1, 2, 3);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling stringify function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify();
+stringify(1, 2);
+stringify(1, 2, 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "1",
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    callIfFuncAndRightArgs(stringify, 1, 0);
+    callIfFuncAndRightArgs(stringify, 2, 0, 1, 2);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 3, 0, 1, 2, 3);\\");
+  }
+}
+forceIt(lastStatementResult);
+",
   "visualiseListResult": Array [],
 }
 `;

@@ -76,7 +76,7 @@ for (let r = 0; r < size; r = r + 1) {
     res[r] = [];
 }
 
-const startTime = runtime();
+const startTime = get_time();
 for (let r = 0; r < size; r = r + 1) {
     for (let c = 0; c < size; c = c + 1) {
         let sum = 0;
@@ -87,7 +87,7 @@ for (let r = 0; r < size; r = r + 1) {
     }
 }
 
-const endTime = runtime();
+const endTime = get_time();
 const elapsed = endTime - startTime;
 
 display(res);
