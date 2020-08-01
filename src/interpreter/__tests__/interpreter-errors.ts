@@ -146,9 +146,7 @@ test('Nice errors when errors occur inside builtins', () => {
     parse_int("10");
   `,
     { chapter: 4 }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
+  ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
 test('Nice errors when errors occur inside builtins', () => {
@@ -622,6 +620,103 @@ test('Error when calling arrow function in tail call with too many arguments', (
   `,
     { native: true }
   ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
+})
+
+test('Error when calling builtin function in with too many arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    is_number(1, 2, 3);
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 3."`)
+})
+
+test('Error when calling builtin function in with too few arguments', () => {
+  return expectParsedError(
+    stripIndent`
+    parse_int("");
+  `,
+    { native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
+})
+
+test('No error when calling list function in with variable arguments', () => {
+  return expectResult(
+    stripIndent`
+    list();
+    list(1);
+    list(1, 2, 3);
+    list(1, 2, 3, 4, 5, 6, 6);
+  `,
+    { native: true, chapter: 2 }
+  ).toMatchInlineSnapshot(`
+Array [
+  1,
+  Array [
+    2,
+    Array [
+      3,
+      Array [
+        4,
+        Array [
+          5,
+          Array [
+            6,
+            Array [
+              6,
+              null,
+            ],
+          ],
+        ],
+      ],
+    ],
+  ],
+]
+`)
+})
+
+test('No error when calling display function in with variable arguments', () => {
+  return expectResult(
+    stripIndent`
+    display();
+    display(1, 2);
+    display(1, 2, 3);
+  `,
+    { native: true, chapter: 2 }
+  ).toMatchInlineSnapshot(`1`)
+})
+
+test('No error when calling stringify function in with variable arguments', () => {
+  return expectResult(
+    stripIndent`
+    stringify();
+    stringify(1, 2);
+    stringify(1, 2, 3);
+  `,
+    { native: true, chapter: 2 }
+  ).toMatchInlineSnapshot(`"1"`)
+})
+
+test('No error when calling math_max function in with variable arguments', () => {
+  return expectResult(
+    stripIndent`
+    math_max();
+    math_max(1, 2);
+    math_max(1, 2, 3);
+  `,
+    { native: true, chapter: 2 }
+  ).toMatchInlineSnapshot(`3`)
+})
+
+test('No error when calling math_min function in with variable arguments', () => {
+  return expectResult(
+    stripIndent`
+    math_min();
+    math_min(1, 2);
+    math_min(1, 2, 3);
+  `,
+    { native: true, chapter: 2 }
+  ).toMatchInlineSnapshot(`1`)
 })
 
 test('Error when redeclaring constant', () => {
