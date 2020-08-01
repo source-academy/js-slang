@@ -9,9 +9,9 @@ import { isBuiltinFunction, isNumber } from './util'
 // define builtins that takes in AST, and return AST
 //
 // if (context.chapter >= 1) {
-//   defineBuiltin(context, 'runtime()', misc.runtime)
-export function runtime(): es.Literal {
-  return ast.literal(misc.runtime())
+//   defineBuiltin(context, 'get_time()', misc.get_time)
+export function get_time(): es.Literal {
+  return ast.literal(misc.get_time())
 }
 
 //   defineBuiltin(context, 'display(val)', display)

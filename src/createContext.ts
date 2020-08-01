@@ -165,7 +165,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
-    defineBuiltin(context, 'runtime()', misc.runtime)
+    defineBuiltin(context, 'get_time()', misc.get_time)
     defineBuiltin(context, 'display(val)', display)
     defineBuiltin(context, 'raw_display(str)', rawDisplay)
     defineBuiltin(context, 'stringify(val)', stringify)

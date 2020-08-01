@@ -1217,7 +1217,7 @@ forceIt(lastStatementResult);
 exports[`Builtins work as expected 47: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "is_number(runtime());",
+  "code": "is_number(get_time());",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
@@ -1237,7 +1237,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, callIfFuncAndRightArgs(runtime, 1, 10));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, callIfFuncAndRightArgs(get_time, 1, 10));\\");
   }
 }
 forceIt(lastStatementResult);
@@ -1249,9 +1249,9 @@ forceIt(lastStatementResult);
 exports[`Builtins work as expected 48: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const start = runtime();
+  "code": "const start = get_time();
 function repeatUntilDifferentTime() {
-  if (start === runtime()) {
+  if (start === get_time()) {
     return repeatUntilDifferentTime();
   } else {
     return true;
@@ -1277,9 +1277,9 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const start = callIfFuncAndRightArgs(runtime, 1, 14);
+    const start = callIfFuncAndRightArgs(get_time, 1, 14);
     const repeatUntilDifferentTime = wrap(() => {
-      if (boolOrErr(binaryOp(\\"===\\", 1, start, callIfFuncAndRightArgs(runtime, 3, 16), 3, 6), 3, 2)) {
+      if (boolOrErr(binaryOp(\\"===\\", 1, start, callIfFuncAndRightArgs(get_time, 3, 16), 3, 6), 3, 2)) {
         return {
           isTail: true,
           function: repeatUntilDifferentTime,
@@ -1294,7 +1294,7 @@ const globals = native.globals;
           value: true
         };
       }
-    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === runtime()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", native);
+    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === get_time()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
     globals.variables.set(\\"start\\", {
       kind: \\"const\\",
