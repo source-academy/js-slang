@@ -152,7 +152,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     externalBuiltIns.rawDisplay(v, s, context.externalContext)
   const display = (v: Value, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
-      throw new Error('display expects the second argument to be a string')
+      throw new TypeError('display expects the second argument to be a string')
     }
     return rawDisplay(stringify(v), s === placeholder ? undefined : s), v
   }
