@@ -315,7 +315,7 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   })
   await promise
   const timeTaken = Date.now() - start
-  expect(timeTaken).toBeLessThan(timeout * 2)
+  expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
 }
