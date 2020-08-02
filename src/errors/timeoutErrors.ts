@@ -16,7 +16,9 @@ function getWarningMessage(maxExecTime: number) {
       This page may be unresponsive for up to ${to} seconds if you do so.`
 }
 
-export class PotentialInfiniteLoopError extends RuntimeSourceError {
+export class TimeoutError extends RuntimeSourceError {}
+
+export class PotentialInfiniteLoopError extends TimeoutError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
@@ -34,7 +36,7 @@ export class PotentialInfiniteLoopError extends RuntimeSourceError {
   }
 }
 
-export class PotentialInfiniteRecursionError extends RuntimeSourceError {
+export class PotentialInfiniteRecursionError extends TimeoutError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
