@@ -44,6 +44,7 @@ import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
+import { TimeoutError } from './errors/timeoutErrors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -139,6 +140,7 @@ function convertNativeErrorToSourceError(
 }
 
 let previousCode = ''
+let isPreviousCodeTimeoutError = false
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
   let isNativeRunnable
@@ -449,7 +451,7 @@ export async function runInContext(
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
-    if (previousCode === code) {
+    if (previousCode === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else if (!options.isPrelude) {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
@@ -466,13 +468,20 @@ export async function runInContext(
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
+      const value = sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+      if (!options.isPrelude) {
+        isPreviousCodeTimeoutError = false
+      }
       return Promise.resolve({
         status: 'finished',
-        value: sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+        value
       } as Result)
     } catch (error) {
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
+        if (error instanceof TimeoutError) {
+          isPreviousCodeTimeoutError = true
+        }
         return resolvedErrorPromise
       }
       if (error instanceof ExceptionError) {
