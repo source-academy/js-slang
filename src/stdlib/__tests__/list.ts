@@ -91,7 +91,10 @@ test('for_each', () => {
     sum;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`6`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:6"
+          `)
 })
 
 test('map', () => {
@@ -264,7 +267,10 @@ test('set_head', () => {
     p === q && equal(p, pair(3, 2));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('set_tail', () => {
@@ -276,7 +282,10 @@ test('set_tail', () => {
     p === q && equal(p, pair(1, 3));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('non-list error head', () => {
@@ -308,9 +317,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     length([1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 34: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name length not declared.\\"
+              interpreted:\\"Line 34: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error map', () => {
@@ -319,9 +329,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     map(x=>x, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 43: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name map not declared.\\"
+              interpreted:\\"Line 43: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error for_each', () => {
@@ -330,9 +341,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     for_each(x=>x, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 68: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name for_each not declared.\\"
+              interpreted:\\"Line 68: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error reverse', () => {
@@ -341,9 +353,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     reverse([1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 90: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name reverse not declared.\\"
+              interpreted:\\"Line 90: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error append', () => {
@@ -352,9 +365,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     append([1, 2, 3], list(1, 2, 3));
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 101: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name append not declared.\\"
+              interpreted:\\"Line 101: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error member', () => {
@@ -363,9 +377,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     member(1, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 110: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name member not declared.\\"
+              interpreted:\\"Line 110: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error remove', () => {
@@ -374,9 +389,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     remove(1, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 118: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name remove not declared.\\"
+              interpreted:\\"Line 118: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error remove_all', () => {
@@ -385,9 +401,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     remove_all(1, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 127: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name remove_all not declared.\\"
+              interpreted:\\"Line 127: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error assoc', () => {
@@ -405,9 +422,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     filter(x => true, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 139: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name filter not declared.\\"
+              interpreted:\\"Line 139: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error accumulate', () => {
@@ -416,7 +434,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name accumulate not declared.\\"
+              interpreted:\\"Line 1: Expected 3 arguments, but got 2.\\""
+            `)
   })
 
   test('non-list error accumulate', () => {
@@ -425,7 +446,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 1: Name accumulate not declared.\\"
+              interpreted:\\"Line 1: Expected 3 arguments, but got 2.\\""
+            `)
   })
 
   test('non-list error set_head', () => {

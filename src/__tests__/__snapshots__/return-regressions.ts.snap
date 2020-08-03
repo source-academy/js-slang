@@ -36,44 +36,42 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 6, 22), 6, 6); i = binaryOp(\\"+\\", 3, i, 1, 6, 35)) {
+      throwIfTimeout(native, startTime, get_time(), 6, 6);
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        value: binaryOp(\\"+\\", 3, i, 1, 7, 15)
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 6, 22), 6, 6); i = binaryOp(\\"+\\", 3, i, 1, 6, 35)) {
-        throwIfTimeout(native, startTime, get_time(), 6, 6);
-        return {
-          isTail: false,
-          value: binaryOp(\\"+\\", 3, i, 1, 7, 15)
-        };
-        callIfFuncAndRightArgs(unreachable, 8, 8);
-      }
-      callIfFuncAndRightArgs(unreachable, 10, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 12, 6);
-    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return i + 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 8, 8);
+    }
+    callIfFuncAndRightArgs(unreachable, 10, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 12, 6);
+  }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return i + 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -117,42 +115,40 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const f = wrap(() => {
+    if (boolOrErr(true, 6, 6)) {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+        value: 1
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const f = wrap(() => {
-      if (boolOrErr(true, 6, 6)) {
-        return {
-          isTail: false,
-          value: 1
-        };
-        callIfFuncAndRightArgs(unreachable, 8, 8);
-      } else {}
-      callIfFuncAndRightArgs(unreachable, 10, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 12, 6);
-    }, \\"function f() {\\\\n  if (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 8, 8);
+    } else {}
+    callIfFuncAndRightArgs(unreachable, 10, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 12, 6);
+  }, \\"function f() {\\\\n  if (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -196,44 +192,42 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    while (boolOrErr(true, 6, 6)) {
+      throwIfTimeout(native, startTime, get_time(), 6, 6);
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        value: 1
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      while (boolOrErr(true, 6, 6)) {
-        throwIfTimeout(native, startTime, get_time(), 6, 6);
-        return {
-          isTail: false,
-          value: 1
-        };
-        callIfFuncAndRightArgs(unreachable, 8, 8);
-      }
-      callIfFuncAndRightArgs(unreachable, 10, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 12, 6);
-    }, \\"function f() {\\\\n  while (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 8, 8);
+    }
+    callIfFuncAndRightArgs(unreachable, 10, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 12, 6);
+  }, \\"function f() {\\\\n  while (true) {\\\\n    return 1;\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -274,39 +268,37 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
-      };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const f = wrap(() => {
-      return {
-        isTail: false,
-        value: 1
-      };
-      callIfFuncAndRightArgs(unreachable, 7, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 9, 6);
-    }, \\"function f() {\\\\n  return 1;\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const f = wrap(() => {
+    return {
+      isTail: false,
+      value: 1
+    };
+    callIfFuncAndRightArgs(unreachable, 7, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 9, 6);
+  }, \\"function f() {\\\\n  return 1;\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 11, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -390,53 +382,51 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
+      throwIfTimeout(native, startTime, get_time(), 9, 6);
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, binaryOp(\\"+\\", 3, i, 1, 10, 18)), callIfFuncAndRightArgs(id, 10, 25, binaryOp(\\"+\\", 3, i, 2, 10, 28)), 10, 15)
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
-        throwIfTimeout(native, startTime, get_time(), 9, 6);
-        return {
-          isTail: false,
-          value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, binaryOp(\\"+\\", 3, i, 1, 10, 18)), callIfFuncAndRightArgs(id, 10, 25, binaryOp(\\"+\\", 3, i, 2, 10, 28)), 10, 15)
-        };
-      }
-      return {
-        isTail: false,
-        value: 0
-      };
-    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1) + id(i + 2);\\\\n  }\\\\n  return 0;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+    }
+    return {
+      isTail: false,
+      value: 0
+    };
+  }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1) + id(i + 2);\\\\n  }\\\\n  return 0;\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -483,54 +473,52 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    if (boolOrErr(true, 9, 6)) {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+        value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      if (boolOrErr(true, 9, 6)) {
-        return {
-          isTail: false,
-          value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
-        };
-        callIfFuncAndRightArgs(unreachable, 11, 8);
-      } else {}
-      callIfFuncAndRightArgs(unreachable, 13, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 15, 6);
-    }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 11, 8);
+    } else {}
+    callIfFuncAndRightArgs(unreachable, 13, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 15, 6);
+  }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -577,56 +565,54 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    while (boolOrErr(true, 9, 6)) {
+      throwIfTimeout(native, startTime, get_time(), 9, 6);
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      while (boolOrErr(true, 9, 6)) {
-        throwIfTimeout(native, startTime, get_time(), 9, 6);
-        return {
-          isTail: false,
-          value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
-        };
-        callIfFuncAndRightArgs(unreachable, 11, 8);
-      }
-      callIfFuncAndRightArgs(unreachable, 13, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 15, 6);
-    }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 11, 8);
+    }
+    callIfFuncAndRightArgs(unreachable, 13, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 15, 6);
+  }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1) + id(2);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -670,51 +656,49 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
-      };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 9, 13, 1), callIfFuncAndRightArgs(id, 9, 21, 2), 9, 13)
-      };
-      callIfFuncAndRightArgs(unreachable, 10, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 12, 6);
-    }, \\"function f() {\\\\n  return id(1) + id(2);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 9, 13, 1), callIfFuncAndRightArgs(id, 9, 21, 2), 9, 13)
+    };
+    callIfFuncAndRightArgs(unreachable, 10, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 12, 6);
+  }, \\"function f() {\\\\n  return id(1) + id(2);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -761,60 +745,58 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
+      throwIfTimeout(native, startTime, get_time(), 9, 6);
       return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        isTail: true,
+        function: id,
+        functionName: \\"id\\",
+        arguments: [binaryOp(\\"+\\", 3, i, 1, 10, 18)],
+        line: 10,
+        column: 15
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
-        throwIfTimeout(native, startTime, get_time(), 9, 6);
-        return {
-          isTail: true,
-          function: id,
-          functionName: \\"id\\",
-          arguments: [binaryOp(\\"+\\", 3, i, 1, 10, 18)],
-          line: 10,
-          column: 15
-        };
-        callIfFuncAndRightArgs(unreachable, 11, 8);
-      }
-      callIfFuncAndRightArgs(unreachable, 13, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 15, 6);
-    }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 11, 8);
+    }
+    callIfFuncAndRightArgs(unreachable, 13, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 15, 6);
+  }, \\"function f() {\\\\n  for (let i = 0; i < 100; i = i + 1) {\\\\n    return id(i + 1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -861,58 +843,56 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    if (boolOrErr(true, 9, 6)) {
       return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+        isTail: true,
+        function: id,
+        functionName: \\"id\\",
+        arguments: [1],
+        line: 10,
+        column: 15
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      if (boolOrErr(true, 9, 6)) {
-        return {
-          isTail: true,
-          function: id,
-          functionName: \\"id\\",
-          arguments: [1],
-          line: 10,
-          column: 15
-        };
-        callIfFuncAndRightArgs(unreachable, 11, 8);
-      } else {}
-      callIfFuncAndRightArgs(unreachable, 13, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 15, 6);
-    }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 11, 8);
+    } else {}
+    callIfFuncAndRightArgs(unreachable, 13, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 15, 6);
+  }, \\"function f() {\\\\n  if (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  } else {}\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -959,60 +939,58 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    const startTime = get_time();
+    while (boolOrErr(true, 9, 6)) {
+      throwIfTimeout(native, startTime, get_time(), 9, 6);
       return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
+        isTail: true,
+        function: id,
+        functionName: \\"id\\",
+        arguments: [1],
+        line: 10,
+        column: 15
       };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      const startTime = get_time();
-      while (boolOrErr(true, 9, 6)) {
-        throwIfTimeout(native, startTime, get_time(), 9, 6);
-        return {
-          isTail: true,
-          function: id,
-          functionName: \\"id\\",
-          arguments: [1],
-          line: 10,
-          column: 15
-        };
-        callIfFuncAndRightArgs(unreachable, 11, 8);
-      }
-      callIfFuncAndRightArgs(unreachable, 13, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 15, 6);
-    }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+      callIfFuncAndRightArgs(unreachable, 11, 8);
+    }
+    callIfFuncAndRightArgs(unreachable, 13, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 15, 6);
+  }, \\"function f() {\\\\n  while (true) {\\\\n    return id(1);\\\\n    unreachable();\\\\n  }\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 17, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -1056,55 +1034,53 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const unreachable = wrap(() => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
-      };
-    }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
-    const id = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
-    const f = wrap(() => {
-      return {
-        isTail: true,
-        function: id,
-        functionName: \\"id\\",
-        arguments: [1],
-        line: 9,
-        column: 13
-      };
-      callIfFuncAndRightArgs(unreachable, 10, 6);
-      return {
-        isTail: false,
-        value: 0
-      };
-      callIfFuncAndRightArgs(unreachable, 12, 6);
-    }, \\"function f() {\\\\n  return id(1);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
-    globals.variables.set(\\"unreachable\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return unreachable;
-      }
-    });
-    globals.variables.set(\\"id\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return id;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+  const unreachable = wrap(() => {
+    return {
+      isTail: false,
+      value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
+    };
+  }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
+  const id = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
+  const f = wrap(() => {
+    return {
+      isTail: true,
+      function: id,
+      functionName: \\"id\\",
+      arguments: [1],
+      line: 9,
+      column: 13
+    };
+    callIfFuncAndRightArgs(unreachable, 10, 6);
+    return {
+      isTail: false,
+      value: 0
+    };
+    callIfFuncAndRightArgs(unreachable, 12, 6);
+  }, \\"function f() {\\\\n  return id(1);\\\\n  unreachable();\\\\n  return 0;\\\\n  unreachable();\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 14, 4);\\");
+  globals.variables.set(\\"unreachable\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return unreachable;
+    }
+  });
+  globals.variables.set(\\"id\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return id;
+    }
+  });
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",

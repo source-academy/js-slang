@@ -56,7 +56,10 @@ test('for_each', () => {
     sum;
   `,
     { chapter: 3, native: true, variant: 'lazy' }
-  ).toMatchInlineSnapshot(`6`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:6"
+          `)
 })
 
 test('map', () => {

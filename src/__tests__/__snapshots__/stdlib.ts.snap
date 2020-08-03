@@ -24,9 +24,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 'message');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 'message');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -85,9 +83,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_undefined, 1, 0, undefined);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_undefined, 1, 0, undefined);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -117,9 +113,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_undefined, 1, 0, null);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_undefined, 1, 0, null);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -149,9 +143,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_null, 1, 0, undefined);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_null, 1, 0, undefined);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -181,9 +173,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_null, 1, 0, null);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_null, 1, 0, null);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -213,9 +203,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 'string');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 'string');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -245,9 +233,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 'true');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 'true');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -277,9 +263,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, '1');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, '1');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -309,9 +293,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, true);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, true);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -341,9 +323,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_string, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -373,9 +353,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 'string');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 'string');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -405,9 +383,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 'true');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 'true');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -437,9 +413,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, '1');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, '1');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -469,9 +443,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, true);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, true);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -501,9 +473,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -533,9 +503,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 'string');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 'string');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -565,9 +533,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 'true');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 'true');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -597,9 +563,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, '1');\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, '1');\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -629,9 +593,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, true);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, true);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -661,9 +623,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_boolean, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -693,9 +653,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, display);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, display);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -725,9 +683,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\", native));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, wrap(x => ({   isTail: false,   value: x }), \\\\\\"x => x\\\\\\", native));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -760,21 +716,19 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const f = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 4, 0, f);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
+  const f = wrap(x => {
+    return {
+      isTail: false,
+      value: x
+    };
+  }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 4, 0, f);\\");
+  globals.variables.set(\\"f\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return f;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -804,9 +758,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_function, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -836,9 +788,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -868,9 +818,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, callIfFuncAndRightArgs(pair, 1, 9, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, callIfFuncAndRightArgs(pair, 1, 9, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -900,9 +848,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, [1]);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_array, 1, 0, [1]);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1140,9 +1086,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(array_length, 1, 0, [1]);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(array_length, 1, 0, [1]);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1172,9 +1116,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '10', 10);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '10', 10);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1204,9 +1146,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '10', 2);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '10', 2);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1236,9 +1176,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, callIfFuncAndRightArgs(get_time, 1, 10));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, callIfFuncAndRightArgs(get_time, 1, 10));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1276,39 +1214,37 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    const start = callIfFuncAndRightArgs(get_time, 1, 14);
-    const repeatUntilDifferentTime = wrap(() => {
-      if (boolOrErr(binaryOp(\\"===\\", 1, start, callIfFuncAndRightArgs(get_time, 3, 16), 3, 6), 3, 2)) {
-        return {
-          isTail: true,
-          function: repeatUntilDifferentTime,
-          functionName: \\"repeatUntilDifferentTime\\",
-          arguments: [],
-          line: 4,
-          column: 11
-        };
-      } else {
-        return {
-          isTail: false,
-          value: true
-        };
-      }
-    }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === get_time()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
-    globals.variables.set(\\"start\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return start;
-      }
-    });
-    globals.variables.set(\\"repeatUntilDifferentTime\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return repeatUntilDifferentTime;
-      }
-    });
-  }
+  const start = callIfFuncAndRightArgs(get_time, 1, 14);
+  const repeatUntilDifferentTime = wrap(() => {
+    if (boolOrErr(binaryOp(\\"===\\", 1, start, callIfFuncAndRightArgs(get_time, 3, 16), 3, 6), 3, 2)) {
+      return {
+        isTail: true,
+        function: repeatUntilDifferentTime,
+        functionName: \\"repeatUntilDifferentTime\\",
+        arguments: [],
+        line: 4,
+        column: 11
+      };
+    } else {
+      return {
+        isTail: false,
+        value: true
+      };
+    }
+  }, \\"function repeatUntilDifferentTime() {\\\\n  if (start === get_time()) {\\\\n    return repeatUntilDifferentTime();\\\\n  } else {\\\\n    return true;\\\\n  }\\\\n}\\", native);
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(repeatUntilDifferentTime, 9, 0);\\");
+  globals.variables.set(\\"start\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return start;
+    }
+  });
+  globals.variables.set(\\"repeatUntilDifferentTime\\", {
+    kind: \\"const\\",
+    getValue: () => {
+      return repeatUntilDifferentTime;
+    }
+  });
 }
 forceIt(lastStatementResult);
 ",
@@ -1341,9 +1277,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(pair, 1, 0, 1, 2);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(pair, 1, 0, 1, 2);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1379,9 +1313,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 1, 0, 1, 2);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 1, 0, 1, 2);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1411,9 +1343,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, 1);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, 1);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1443,9 +1373,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, callIfFuncAndRightArgs(pair, 1, 8, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, callIfFuncAndRightArgs(pair, 1, 8, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1475,9 +1403,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, callIfFuncAndRightArgs(list, 1, 8, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 1, 0, callIfFuncAndRightArgs(list, 1, 8, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1507,9 +1433,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, callIfFuncAndRightArgs(pair, 1, 5, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, callIfFuncAndRightArgs(pair, 1, 5, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1539,9 +1463,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(tail, 1, 0, callIfFuncAndRightArgs(pair, 1, 5, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(tail, 1, 0, callIfFuncAndRightArgs(pair, 1, 5, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -1687,9 +1609,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(length, 1, 0, callIfFuncAndRightArgs(list, 1, 7, 1, 2));\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(length, 1, 0, callIfFuncAndRightArgs(list, 1, 7, 1, 2));\\");
 }
 forceIt(lastStatementResult);
 ",

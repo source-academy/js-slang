@@ -17,11 +17,9 @@ describe('primitive stream functions', () => {
     `),
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(`
-Array [
-  1,
-  [Function],
-]
-`)
+              "native:undefined
+              interpreted:[1, () => integers_from(n + 1)]"
+            `)
   })
 
   test('infinite stream is infinite', () => {
@@ -42,14 +40,20 @@ Array [
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
       { chapter: 3, native: true }
-    ).toMatchInlineSnapshot(`false`)
+    ).toMatchInlineSnapshot(`
+              "native:undefined
+              interpreted:false"
+            `)
   })
 
   test('stream_to_list works for null', () => {
     return expectResult(`stream_to_list(null);`, {
       chapter: 3,
       native: true
-    }).toMatchInlineSnapshot(`null`)
+    }).toMatchInlineSnapshot(`
+              "native:undefined
+              interpreted:null"
+            `)
   })
 
   test('stream_to_list works', () => {
@@ -57,26 +61,9 @@ Array [
       chapter: 3,
       native: true
     }).toMatchInlineSnapshot(`
-Array [
-  1,
-  Array [
-    true,
-    Array [
-      3,
-      Array [
-        4.4,
-        Array [
-          Array [
-            1,
-            2,
-          ],
-          null,
-        ],
-      ],
-    ],
-  ],
-]
-`)
+              "native:undefined
+              interpreted:[1, [true, [3, [4.4, [[1, 2], null]]]]]"
+            `)
   })
 })
 
@@ -90,7 +77,10 @@ test('for_each', () => {
     sum;
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`6`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:6"
+          `)
 })
 
 test('map', () => {
@@ -99,7 +89,10 @@ test('map', () => {
     equal(stream_to_list(stream_map(x => 2 * x, stream(12, 11, 3))), list(24, 22, 6));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('filter', () => {
@@ -112,7 +105,10 @@ test('filter', () => {
     , list(2, 1, 3, 4, 2));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('build_list', () => {
@@ -121,7 +117,10 @@ test('build_list', () => {
     equal(stream_to_list(build_stream(5, x => x * x)), list(0, 1, 4, 9, 16));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('reverse', () => {
@@ -133,7 +132,10 @@ test('reverse', () => {
     list(123, null, undefined, null, "string"));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('append', () => {
@@ -143,7 +145,10 @@ test('append', () => {
       , list("string", 123, 456, null, undefined));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('member', () => {
@@ -154,7 +159,10 @@ test('member', () => {
       list("string", 123, 456, null, undefined));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('remove', () => {
@@ -163,7 +171,10 @@ test('remove', () => {
     stream_remove(1, stream(1));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`null`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:null"
+          `)
 })
 
 test('remove not found', () => {
@@ -173,11 +184,9 @@ test('remove not found', () => {
   `,
     { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`
-Array [
-  1,
-  null,
-]
-`)
+            "native:undefined
+            interpreted:[1, null]"
+          `)
 })
 
 test('remove_all', () => {
@@ -187,7 +196,10 @@ test('remove_all', () => {
       list(2, 3, 4, "1", 5, 6));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('remove_all not found', () => {
@@ -196,7 +208,10 @@ test('remove_all not found', () => {
     equal(stream_to_list(stream_remove_all(1, stream(2, 3, "1"))), list(2, 3, "1"));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('enum_list', () => {
@@ -205,7 +220,10 @@ test('enum_list', () => {
     equal(stream_to_list(enum_stream(1, 5)), list(1, 2, 3, 4, 5));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('enum_list with floats', () => {
@@ -214,7 +232,10 @@ test('enum_list with floats', () => {
     equal(stream_to_list(enum_stream(1.5, 5)), list(1.5, 2.5, 3.5, 4.5));
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`true`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:true"
+          `)
 })
 
 test('list_ref', () => {
@@ -223,5 +244,8 @@ test('list_ref', () => {
     stream_ref(stream(1, 2, 3, "4", 4), 4);
   `,
     { chapter: 3, native: true }
-  ).toMatchInlineSnapshot(`4`)
+  ).toMatchInlineSnapshot(`
+            "native:undefined
+            interpreted:4"
+          `)
 })

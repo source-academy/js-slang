@@ -167,9 +167,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 2);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -199,9 +197,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, '1100101010101', 2);\\");
 }
 forceIt(lastStatementResult);
 ",
@@ -231,9 +227,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
-  }
+  lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, 'uu1', 36);\\");
 }
 forceIt(lastStatementResult);
 ",
