@@ -378,7 +378,8 @@ export function getTypeInformation(
 export async function runInContext(
   code: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: Partial<IOptions> = {},
+  useSameEnv: boolean = false
 ): Promise<Result> {
   function getFirstLine(theCode: string) {
     const theProgramFirstExpression = parseAt(theCode, 0)
@@ -447,8 +448,8 @@ export async function runInContext(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
-    await runInContext(prelude, context, { ...options, isPrelude: true })
-    return runInContext(code, context, options)
+    await runInContext(prelude, context, { ...options, isPrelude: true }, useSameEnv)
+    return runInContext(code, context, options, useSameEnv)
   }
   if (isNativeRunnable) {
     if (previousCode === code && isPreviousCodeTimeoutError) {
@@ -463,7 +464,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      const temp = transpile(program, context, false, context.variant)
+      const temp = transpile(program, context, false, context.variant, !useSameEnv)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
