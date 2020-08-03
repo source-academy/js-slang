@@ -24,8 +24,7 @@ test('Undefined variable error is thrown', () => {
 test('Undefined variable error is thrown - verbose', () => {
   return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
             "Line 2, Column 0: Name im_undefined not declared.
-            Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this \
-            using the let or const keywords.
+            Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
             "
           `)
 })
@@ -355,8 +354,7 @@ test('Error when calling non function value 0', () => {
 test('Error when calling non function value 0 - verbose', () => {
   return expectParsedError(callingNonFunctionValue0Verbose).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value 0.
-            Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use \
-            the * operator.
+            Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
             "
           `)
 })
