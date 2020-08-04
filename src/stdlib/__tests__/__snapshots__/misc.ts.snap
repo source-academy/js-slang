@@ -156,6 +156,7 @@ Object {
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -188,6 +189,7 @@ Object {
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -220,6 +222,7 @@ Object {
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");

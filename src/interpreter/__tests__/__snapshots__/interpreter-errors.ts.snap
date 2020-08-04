@@ -11,6 +11,7 @@ Object {
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -102,6 +103,7 @@ eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -210,6 +212,7 @@ h(null);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -275,6 +278,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -485,6 +489,7 @@ f(1);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -595,6 +600,7 @@ f();",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -691,6 +697,7 @@ f(1, 2);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -751,6 +758,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -801,6 +809,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -887,6 +896,7 @@ f[0](1, 2);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -987,6 +997,7 @@ f();",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1089,6 +1100,7 @@ f(1, 2);",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1269,6 +1281,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1437,6 +1450,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1659,6 +1673,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -2287,6 +2302,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -2690,6 +2706,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3237,6 +3254,7 @@ display(1, 2, 3);",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3295,6 +3313,7 @@ list(1, 2, 3, 4, 5, 6, 6);",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3332,6 +3351,7 @@ math_max(1, 2, 3);",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3368,6 +3388,7 @@ math_min(1, 2, 3);",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3404,6 +3425,7 @@ stringify(1, 2, 3);",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3459,6 +3481,7 @@ f.prototype;",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3521,6 +3544,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3571,6 +3595,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3624,6 +3649,7 @@ f.prop = 5;",
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3686,6 +3712,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3738,6 +3765,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -3792,6 +3820,7 @@ Object {
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
 const forceIt = native.operators.get(\\"forceIt\\");
+const __createKernel = native.operators.get(\\"__createKernel\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
