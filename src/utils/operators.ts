@@ -48,6 +48,8 @@ export function forceIt(val: any): any {
   }
 }
 
+export { __createKernel } from '../gpu/lib'
+
 export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,

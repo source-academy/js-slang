@@ -45,7 +45,7 @@ function main() {
   const variant = opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
   const valid = validChapterVariant(chapter, variant)
-  if (!valid || !(variant === 'default' || variant === 'lazy')) {
+  if (!valid || !(variant === 'default' || variant === 'lazy' || variant === 'gpu')) {
     throw new Error(
       'The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.'
     )

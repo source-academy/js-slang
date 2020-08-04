@@ -33,6 +33,7 @@ function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
 const globalIdNames = [
   'native',
   'forceIt',
+  '__createKernel',
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
@@ -385,7 +386,6 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   skipErrors = false,
   nativeStorage: NativeStorage,
   globalIds: NativeIds,
-  gpuInternalNames: Set<string>,
   ignoreWalker: RecursiveVisitors<any>
 ) {
   const globalEnvironment = nativeStorage.globals
@@ -542,7 +542,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
             )
           }
         }
-      } else if (!nativeInternalNames.has(name) && !gpuInternalNames.has(name)) {
+      } else if (!nativeInternalNames.has(name)) {
         if (!skipErrors) {
           throw new UndefinedVariable(name, identifier)
         }
@@ -819,10 +819,6 @@ export function transpile(
   }
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
-  let gpuDisplayStatements: es.Statement[] = []
-  let gpuInternalNames: Set<string> = new Set()
-  let gpuInternalFunctions: es.Statement[] = []
-
   /*  BLACKLIST - any functions here will be ignored by transpiler */
   const blacklist: string[] = []
   const ignoreWalker: RecursiveVisitors<any> = make({
@@ -839,13 +835,9 @@ export function transpile(
   })
 
   if (variant === 'gpu') {
-    const kernelFunction = getUniqueId(usedIdentifiers, '__createKernel')
+    const kernelFunction = globalIds.__createKernel.name
     blacklist.push(kernelFunction)
-    ;({ gpuDisplayStatements, gpuInternalNames, gpuInternalFunctions } = transpileToGPU(
-      program,
-      globalIds,
-      kernelFunction
-    ))
+    transpileToGPU(program, globalIds)
   }
 
   transformReturnStatementsToAllowProperTailCalls(program, variant, ignoreWalker)
@@ -864,7 +856,6 @@ export function transpile(
     skipUndefinedVariableErrors,
     context.nativeStorage,
     globalIds,
-    gpuInternalNames,
     ignoreWalker
   )
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
@@ -886,12 +877,7 @@ export function transpile(
 
   const body = [
     wrapWithPreviouslyDeclaredGlobals(
-      [
-        ...gpuDisplayStatements,
-        ...statements,
-        lastStatementStoredInResult,
-        ...statementsToSaveDeclaredGlobals
-      ],
+      [...statements, lastStatementStoredInResult, ...statementsToSaveDeclaredGlobals],
       context.nativeStorage,
       globalIds
     ),
@@ -900,11 +886,7 @@ export function transpile(
     )
   ]
 
-  program.body = [
-    ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    ...gpuInternalFunctions,
-    ...body
-  ]
+  program.body = [...getDeclarationsToAccessTranspilerInternals(globalIds), ...body]
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
