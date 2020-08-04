@@ -49,6 +49,7 @@ import { TimeoutError } from './errors/timeoutErrors'
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
+  stepLimit: number
   executionMethod: ExecutionMethod
   variant: Variant
   originalMaxExecTime: number
@@ -59,6 +60,7 @@ export interface IOptions {
 const DEFAULT_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
+  stepLimit: 1000,
   executionMethod: 'auto',
   variant: 'default',
   originalMaxExecTime: 1000,
@@ -425,7 +427,7 @@ export async function runInContext(
     }
   }
   if (options.useSubst) {
-    const steps = getEvaluationSteps(program, context)
+    const steps = getEvaluationSteps(program, context, options.stepLimit)
     const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
       const redexed = redexify(step[0], step[1])
