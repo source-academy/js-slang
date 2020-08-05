@@ -15,15 +15,15 @@
   },
   "dependencies": {
     "@types/estree": "0.0.45",
-    "acorn": "^7.3.1",
+    "acorn": "^7.4.0",
     "acorn-loose": "^7.1.0",
     "acorn-walk": "^7.2.0",
     "astring": "^1.4.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
     "xmlhttprequest-ts": "^1.0.1",
-    "gpu.js": "^2.9.4"
+    "gpu.js": "^2.9.5"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -55,22 +55,22 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/jest": "^26.0.3",
+    "@types/jest": "^26.0.8",
     "@types/lodash.assignin": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
-    "@types/node": "^14.0.14",
-    "ace-builds": "^1.4.11",
+    "@types/node": "^14.0.27",
+    "ace-builds": "^1.4.12",
     "coveralls": "^3.1.0",
     "escodegen": "^1.14.3",
     "husky": "^4.2.5",
-    "jest": "^26.1.0",
+    "jest": "^26.2.2",
     "jest-html-reporter": "^3.1.3",
-    "jsdoc": "3.6.4",
-    "jsdom": "^16.2.2",
+    "jsdoc": "3.6.5",
+    "jsdom": "^16.3.0",
     "prettier": "^2.0.5",
-    "ts-jest": "^26.1.1",
-    "tslint": "^6.1.2",
-    "typescript": "^3.9.6"
+    "ts-jest": "^26.1.4",
+    "tslint": "^6.1.3",
+    "typescript": "^3.9.7"
   },
   "jest": {
     "moduleFileExtensions": [
