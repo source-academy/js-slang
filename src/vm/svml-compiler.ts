@@ -1001,20 +1001,16 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       if (init!.type === 'VariableDeclaration') {
         const loopVarName = ((init as es.VariableDeclaration).declarations[0].id as es.Identifier)
           .name
+        const newLoopVarName = loopVarName + '-loop-control-var' // use '-' for invalid name
+        const copyOfNewLoopVarName = 'copy-of-' + newLoopVarName
         const innerBlock = create.blockStatement([
-          create.constantDeclaration(
-            loopVarName,
-            create.identifier('copy-of-loop-control-var') // purposely long to reduce unintentional clash
-          ),
+          create.constantDeclaration(loopVarName, create.identifier(copyOfNewLoopVarName)),
           body
         ])
         // rename the loop control variable to access it from the for loop expressions
-        renameLoopControlVar(node as es.ForStatement, loopVarName, 'loop-control-var')
+        renameLoopControlVar(node as es.ForStatement, loopVarName, newLoopVarName)
         forLoopBody = create.blockStatement([
-          create.constantDeclaration(
-            'copy-of-loop-control-var',
-            create.identifier('loop-control-var')
-          ),
+          create.constantDeclaration(copyOfNewLoopVarName, create.identifier(newLoopVarName)),
           innerBlock
         ])
       }
