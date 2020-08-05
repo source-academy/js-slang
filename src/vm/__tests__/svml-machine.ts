@@ -1225,6 +1225,20 @@ describe('standard program execution', () => {
               ]
             `)
   })
+
+  test('nested for loops with same identifier work', () => {
+    return expectDisplayResult(
+      stripIndent`
+        for (let i = 0; i < 3; i = i + 1) {
+          for (let i = 0; i < 3; i = i + 1) {
+            display(i, "inner");
+          }
+          display(i, "outer");
+        }
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot()
+  })
 })
 
 // fails with a large enough TO
