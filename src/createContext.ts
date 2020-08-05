@@ -249,6 +249,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       // tslint:disable-next-line:ban-types
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
+
+    if (context.variant === 'gpu') {
+      defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
+      defineBuiltin(
+        context,
+        '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
+        gpu_lib.__createKernelSource
+      )
+    }
   }
 
   if (context.chapter >= 100) {

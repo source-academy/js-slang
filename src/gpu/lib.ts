@@ -1,6 +1,10 @@
 import { GPU } from 'gpu.js'
 import { TypeError } from '../utils/rttc'
 import { isArray } from 'util'
+import { parse } from 'acorn'
+import { generate } from 'astring'
+import * as es from 'estree'
+import { gpuRuntimeTranspile } from './transfomer'
 
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200
@@ -190,4 +194,44 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
   if (end.length === 1) buildArray(res, end, arr)
   if (end.length === 2) build2DArray(res, end, arr)
   if (end.length === 3) build3DArray(res, end, arr)
+}
+
+function entriesToObject(entries: [string, any][]): any {
+  const res = {}
+  entries.forEach(([key, value]) => (res[key] = value))
+  return res
+}
+
+/* tslint:disable-next-line:ban-types */
+const kernels: Map<number, Function> = new Map()
+
+export function __clearKernelCache() {
+  kernels.clear()
+}
+
+export function __createKernelSource(
+  end: number[],
+  externSource: [string, any][],
+  localNames: string[],
+  arr: any,
+  f: any,
+  kernelId: number
+) {
+  const extern = entriesToObject(externSource)
+
+  const memoizedf = kernels.get(kernelId)
+  if (memoizedf !== undefined) {
+    return __createKernel(end, extern, memoizedf, arr, f)
+  }
+
+  const code = f.toString()
+  // We don't need the full source parser here because it's already validated at transpile time.
+  const ast = (parse(code) as unknown) as es.Program
+  const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
+  const newBody = gpuRuntimeTranspile(body, new Set(localNames))
+  const kernel = new Function(generate(newBody))
+
+  kernels.set(kernelId, kernel)
+
+  return __createKernel(end, extern, kernel, arr, f)
 }

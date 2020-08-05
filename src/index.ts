@@ -19,6 +19,7 @@ import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import { redexify, getEvaluationSteps, IStepperPropContents } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
+import { transpileToGPU } from './gpu/gpu'
 import {
   Context,
   Error as ResultError,
@@ -465,6 +466,11 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
+      if (context.variant === 'gpu') {
+        // Mutates program
+        transpileToGPU(program)
+      }
+
       const temp = transpile(program, context, false, context.variant)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
