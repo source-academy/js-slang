@@ -3224,12 +3224,12 @@ exports[`No error when calling display function in with variable arguments: expe
 Object {
   "alertResult": Array [],
   "code": "display();
-display(1, 2);
-display(1, 2, 3);",
+display(1);
+display(1, \\"test\\");",
   "displayResult": Array [
     "undefined",
-    "2 1",
-    "2 1",
+    "1",
+    "test 1",
   ],
   "errors": Array [],
   "parsedErrors": "",
@@ -3250,8 +3250,8 @@ const globals = native.globals;
 {
   {
     callIfFuncAndRightArgs(display, 1, 0);
-    callIfFuncAndRightArgs(display, 2, 0, 1, 2);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 3, 0, 1, 2, 3);\\");
+    callIfFuncAndRightArgs(display, 2, 0, 1);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 3, 0, 1, \\\\\\"test\\\\\\");\\");
   }
 }
 forceIt(lastStatementResult);

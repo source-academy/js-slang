@@ -679,8 +679,8 @@ test('No error when calling display function in with variable arguments', () => 
   return expectResult(
     stripIndent`
     display();
-    display(1, 2);
-    display(1, 2, 3);
+    display(1);
+    display(1, "test");
   `,
     { native: true, chapter: 2 }
   ).toMatchInlineSnapshot(`1`)
