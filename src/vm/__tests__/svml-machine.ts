@@ -1237,7 +1237,22 @@ describe('standard program execution', () => {
         }
       `,
       { chapter: 3, variant: 'concurrent' }
-    ).toMatchInlineSnapshot()
+    ).toMatchInlineSnapshot(`
+              Array [
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 0",
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 1",
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 2",
+              ]
+            `)
   })
 })
 
