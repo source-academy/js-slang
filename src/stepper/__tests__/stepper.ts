@@ -13,7 +13,7 @@ test('Test basic substitution', () => {
     (1 + 2) * (3 + 4);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * (3 + 4);
@@ -41,7 +41,7 @@ test('Test binary operator error', () => {
   `
   const context = mockContext()
   const program = parse(code, context)!
-  const steps = getEvaluationSteps(program, context)
+  const steps = getEvaluationSteps(program, context, 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * ('a' + 'string');
@@ -65,7 +65,7 @@ test('Test two statement substitution', () => {
     3 * 5;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(4))
+  const steps = getEvaluationSteps(program, mockContext(4), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "(1 + 2) * (3 + 4);
@@ -108,7 +108,7 @@ test('Test unary and binary boolean operations', () => {
   !!!true || true;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "!!!true || true;
@@ -141,7 +141,7 @@ test('Test ternary operator', () => {
     : anotherGarbage;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
@@ -175,7 +175,7 @@ test('Test basic function', () => {
   f(5+1*6-40);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "function f(n) {
@@ -219,7 +219,7 @@ test('Test basic bifunction', () => {
   f(5+1*6-40, 2-5);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "function f(n, m) {
@@ -273,7 +273,7 @@ test('Test "recursive" function calls', () => {
   factorial(5);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "function factorial(n) {
@@ -411,7 +411,7 @@ test('undefined || 1', () => {
   undefined || 1;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "undefined || 1;
@@ -427,7 +427,7 @@ test('1 + math_sin', () => {
   1 + math_sin;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "1 + math_sin;
@@ -443,7 +443,7 @@ test('plus undefined', () => {
   math_sin(1) + undefined;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "math_sin(1) + undefined;
@@ -463,7 +463,7 @@ test('math_pow', () => {
   math_pow(2, 20) || NaN;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "math_pow(2, 20) || NaN;
@@ -500,7 +500,7 @@ function expmod(base, exp, m) {
 expmod(4, 3, 5);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
@@ -513,7 +513,7 @@ test('Infinite recursion', () => {
 f();
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
@@ -532,7 +532,7 @@ test('subsets', () => {
  subsets(list(1, 2, 3));
   `
   const program = parse(code, mockContext(2))!
-  const steps = getEvaluationSteps(program, mockContext(2))
+  const steps = getEvaluationSteps(program, mockContext(2), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
@@ -544,7 +544,7 @@ test('even odd mutual', () => {
   even(1);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('false;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
@@ -604,7 +604,7 @@ test('assign undefined', () => {
   a;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('undefined;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
@@ -626,7 +626,7 @@ test('builtins return identifiers', () => {
   math_sin();
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('NaN;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
@@ -646,7 +646,7 @@ test('negative numbers as arguments', () => {
   math_sin(-1);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "math_sin(-1);
@@ -665,7 +665,7 @@ test('is_function checks for builtin', () => {
     is_function(is_function);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "is_function(is_function);
@@ -687,7 +687,7 @@ test('triple equals work on function', () => {
     f === g;
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "function f() {
@@ -775,7 +775,7 @@ function f(g) {
 f(y => y + z);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps).toMatchSnapshot()
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 "const z = 1;
@@ -863,7 +863,7 @@ repeat_pattern(5, plus_one, 0);
 
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('5;')
 })
@@ -878,7 +878,7 @@ test('const declarations in blocks subst into call expressions', () => {
   f(undefined);
   `
   const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext())
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
