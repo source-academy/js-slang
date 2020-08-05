@@ -224,6 +224,69 @@ Object {
 }
 `;
 
+exports[`display second argument can be a string: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(31072020, \\"my_first_String\\");",
+  "displayResult": Array [
+    "my_first_String 31072020",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 31072020,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 31072020, \\\\\\"my_first_String\\\\\\");\\");
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`display throw error if second argument is non-string when used: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(31072020, 0xDEADC0DE);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [TypeError: display expects the second argument to be a string],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: TypeError: display expects the second argument to be a string",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`raw_display can be used to display (unescaped) strings directly: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
