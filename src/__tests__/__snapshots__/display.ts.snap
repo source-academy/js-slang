@@ -265,7 +265,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [Error: display expects the second argument to be a string],
+      "error": [TypeError: display expects the second argument to be a string],
       "location": SourceLocation {
         "end": Position {
           "column": 29,
@@ -280,7 +280,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: Error: display expects the second argument to be a string",
+  "parsedErrors": "Line 1: TypeError: display expects the second argument to be a string",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
