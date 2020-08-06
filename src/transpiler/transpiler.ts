@@ -7,6 +7,7 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import { transpileToGPU } from '../gpu/gpu'
+import { getUniqueId, getIdentifiersInProgram, getIdentifiersInNativeStorage } from '../utils/uniqueIds'
 import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 /**
@@ -14,21 +15,6 @@ import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
  * Order in which certain functions are called matter as well.
  * There should be an explanation on it coming up soon.
  */
-
-function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
-  while (usedIdentifiers.has(uniqueId)) {
-    const start = uniqueId.slice(0, -1)
-    const end = uniqueId[uniqueId.length - 1]
-    const endToDigit = Number(end)
-    if (Number.isNaN(endToDigit) || endToDigit === 9) {
-      uniqueId += '0'
-    } else {
-      uniqueId = start + String(endToDigit + 1)
-    }
-  }
-  usedIdentifiers.add(uniqueId)
-  return uniqueId
-}
 
 const globalIdNames = [
   'native',
@@ -594,32 +580,6 @@ function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): Native
   return globalIds as NativeIds
 }
 
-function getAllIdentifiersUsed(program: es.Program, nativeStorage: NativeStorage) {
-  const identifiers = new Set<string>()
-  let variableScope = nativeStorage.globals
-  while (variableScope !== null) {
-    for (const name of variableScope.variables.keys()) {
-      identifiers.add(name)
-    }
-    variableScope = variableScope.previousScope
-  }
-  simple(program, {
-    Identifier(node: es.Identifier) {
-      identifiers.add(node.name)
-    },
-    Pattern(node: es.Pattern) {
-      if (node.type === 'Identifier') {
-        identifiers.add(node.name)
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiers.add(node.object.name)
-        }
-      }
-    }
-  })
-  return identifiers
-}
-
 /**
  * statement1;
  * statement2;
@@ -808,7 +768,10 @@ export function transpile(
   skipUndefinedVariableErrors = false,
   variant: Variant = 'default'
 ) {
-  const usedIdentifiers = getAllIdentifiersUsed(program, context.nativeStorage)
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage),
+  ])
   const globalIds = getNativeIds(program, usedIdentifiers)
   context.nativeStorage.globals = {
     variables: new Map(),
