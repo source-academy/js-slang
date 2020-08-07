@@ -866,6 +866,51 @@ forceIt(lastStatementResult);
 }
 `;
 
+exports[`String representation of objects with toReplString member calls toReplString: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const o = { toReplString: () => '<RUNE>' };
+stringify(o);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "<RUNE>",
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const forceIt = native.operators.get(\\"forceIt\\");
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    const o = {
+      toReplString: wrap(() => ({
+        isTail: false,
+        value: '<RUNE>'
+      }), \\"() => '<RUNE>'\\", native)
+    };
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 2, 0, o);\\");
+    globals.variables.set(\\"o\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return o;
+      }
+    });
+  }
+}
+forceIt(lastStatementResult);
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`String representation of strings are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],

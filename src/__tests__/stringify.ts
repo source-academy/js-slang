@@ -319,6 +319,16 @@ test('String representation of objects are nice', () => {
   ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
 })
 
+test('String representation of objects with toReplString member calls toReplString', () => {
+  return expectResult(
+    stripIndent`
+  const o = { toReplString: () => '<RUNE>' };
+  stringify(o);
+  `,
+    { chapter: 100, native: true }
+  ).toMatchInlineSnapshot(`"<RUNE>"`)
+})
+
 test('String representation of nested objects are nice', () => {
   return expectResult(
     stripIndent`
