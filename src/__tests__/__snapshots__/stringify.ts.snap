@@ -438,9 +438,9 @@ const globals = native.globals;
 {
   {
     const arr = [];
-    const startTime = runtime();
+    const startTime = get_time();
     for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 2, 16), 2, 0); i = binaryOp(\\"+\\", 3, i, 1, 2, 29)) {
-      throwIfTimeout(native, startTime, runtime(), 2, 0);
+      throwIfTimeout(native, startTime, get_time(), 2, 0);
       setProp(arr, i, i, 3, 2);
     }
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 5, 0, arr);\\");

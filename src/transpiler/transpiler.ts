@@ -764,14 +764,14 @@ function addInfiniteLoopProtection(
   usedIdentifiers: Set<string>,
   ignoreWalker: RecursiveVisitors<any>
 ) {
-  const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
+  const getTimeAst = () => create.callExpression(create.identifier('get_time'), [])
 
   function instrumentLoops(node: es.Program | es.BlockStatement) {
     const newStatements = []
     for (const statement of node.body) {
       if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
         const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
-        newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
+        newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
@@ -779,7 +779,7 @@ function addInfiniteLoopProtection(
               create.callExpression(globalIds.throwIfTimeout, [
                 globalIds.native,
                 create.identifier(startTimeConst),
-                getRuntimeAst(),
+                getTimeAst(),
                 create.literal(line),
                 create.literal(column)
               ])

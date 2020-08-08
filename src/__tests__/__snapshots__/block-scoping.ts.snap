@@ -315,9 +315,9 @@ const globals = native.globals;
   {
     const test = wrap(() => {
       let z = [];
-      const startTime = runtime();
+      const startTime = get_time();
       for (let x = 0; boolOrErr(binaryOp(\\"<\\", 4, x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", 4, x, 1, 3, 30)) {
-        throwIfTimeout(native, startTime, runtime(), 3, 2);
+        throwIfTimeout(native, startTime, get_time(), 3, 2);
         setProp(z, x, wrap(() => ({
           isTail: false,
           value: x
@@ -378,9 +378,9 @@ const globals = native.globals;
   {
     const test = wrap(() => {
       let x = true;
-      const startTime = runtime();
+      const startTime = get_time();
       for (let x = 1; boolOrErr(binaryOp(\\">\\", 3, x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", 3, x, 1, 3, 29)) {
-        throwIfTimeout(native, startTime, runtime(), 3, 2);
+        throwIfTimeout(native, startTime, get_time(), 3, 2);
       }
       return {
         isTail: false,
@@ -549,9 +549,9 @@ const globals = native.globals;
   {
     const test = wrap(() => {
       let x = true;
-      const startTime = runtime();
+      const startTime = get_time();
       while (boolOrErr(true, 3, 2)) {
-        throwIfTimeout(native, startTime, runtime(), 3, 2);
+        throwIfTimeout(native, startTime, get_time(), 3, 2);
         let x = false;
         break;
       }

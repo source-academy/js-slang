@@ -45,7 +45,7 @@ function is_undefined(v) {
  * See also <a href="https://sicp.comp.nus.edu.sg/chapters/17#ex_1.22">textbook example</a>.
  * @returns {number} current time in milliseconds
  */
-export function runtime() {
+export function get_time() {
   return new Date().getTime()
 }
 
@@ -130,7 +130,6 @@ function display(v, s) {
  * but also displays <CODE>undefined</CODE> and function objects.
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>
- * @returns {value} v, the first argument value
  */
 function error(v, s) {
 }

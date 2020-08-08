@@ -274,11 +274,11 @@ test('examples from chapter1 no false positives 3', () => {
         fast_is_prime(91, 3);
 
         function timed_prime_test(n) {
-            return start_prime_test(n, runtime());
+            return start_prime_test(n, get_time());
         }
         function start_prime_test(n, start_time) {
             return is_prime(n)
-                   ? report_prime(runtime() - start_time)
+                   ? report_prime(get_time() - start_time)
                    : true;
         }
         function report_prime(elapsed_time) {
