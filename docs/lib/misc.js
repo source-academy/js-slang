@@ -130,7 +130,6 @@ function display(v, s) {
  * but also displays <CODE>undefined</CODE> and function objects.
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>
- * @returns {value} v, the first argument value
  */
 function error(v, s) {
 }
