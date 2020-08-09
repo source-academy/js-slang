@@ -242,7 +242,6 @@ function extractAndRenameNames(
   renameVariables(baseNode, namesToRename)
 
   // recurse for blocks. Need to manually add all cases to recurse
-  // loops will have their own environment, so no need to recurse
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
@@ -258,6 +257,9 @@ function extractAndRenameNames(
         nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
       extractAndRenameNames(nextAlt as es.BlockStatement, names)
+    }
+    if (stmt.type === 'WhileStatement') {
+      extractAndRenameNames(stmt.body as es.BlockStatement, names)
     }
   }
   return names
@@ -329,10 +331,12 @@ function renameVariables(
       }
     },
     IfStatement(node: es.IfStatement, inactive, c) {
+      c(node.test, inactive)
       let nextAlt = node as es.IfStatement | es.BlockStatement
       while (nextAlt.type === 'IfStatement') {
         const { consequent, alternate } = node
         recurseBlock(consequent as es.BlockStatement, inactive, c)
+        c(nextAlt.test, inactive)
         nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
       recurseBlock(nextAlt! as es.BlockStatement, inactive, c)
@@ -361,6 +365,10 @@ function renameVariables(
         }
         inactive.delete(name) // delete if not in old scope
       }
+    },
+    WhileStatement(node: es.WhileStatement, inactive, c) {
+      c(node.test, inactive)
+      recurseBlock(node.body as es.BlockStatement, inactive, c)
     }
   })
 }
@@ -976,23 +984,6 @@ export function compileToIns(
 
 // transform according to Source 3 spec. Refer to spec for the way of transformation
 function transformForLoopsToWhileLoops(program: es.Program) {
-  function renameLoopControlVar(node: es.ForStatement, name: string, newName: string) {
-    const walkers = {
-      Identifier(id: es.Identifier) {
-        if (id.name === name) {
-          id.name = newName
-        }
-      },
-      Pattern(id: es.Identifier) {
-        if (id.name === name) {
-          id.name = newName
-        }
-      }
-    }
-    simple(node.init!, walkers)
-    simple(node.test!, walkers)
-    simple(node.update!, walkers)
-  }
   simple(program, {
     ForStatement(node) {
       const { test, body, init, update } = node as es.ForStatement
@@ -1001,20 +992,17 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       if (init!.type === 'VariableDeclaration') {
         const loopVarName = ((init as es.VariableDeclaration).declarations[0].id as es.Identifier)
           .name
+        // loc is used for renaming. It doesn't matter if we use the same location, as the
+        // renaming function will notice that they are the same, and rename it further so that
+        // there aren't any clashes.
+        const loc = init!.loc!
+        const copyOfLoopVarName = 'copy-of-' + loopVarName
         const innerBlock = create.blockStatement([
-          create.constantDeclaration(
-            loopVarName,
-            create.identifier('copy-of-loop-control-var') // purposely long to reduce unintentional clash
-          ),
+          create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), loc),
           body
         ])
-        // rename the loop control variable to access it from the for loop expressions
-        renameLoopControlVar(node as es.ForStatement, loopVarName, 'loop-control-var')
         forLoopBody = create.blockStatement([
-          create.constantDeclaration(
-            'copy-of-loop-control-var',
-            create.identifier('loop-control-var')
-          ),
+          create.constantDeclaration(copyOfLoopVarName, create.identifier(loopVarName), loc),
           innerBlock
         ])
       }

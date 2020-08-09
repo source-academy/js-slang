@@ -1200,6 +1200,60 @@ describe('standard program execution', () => {
               ]
             `)
   })
+
+  test('nested for loops work', () => {
+    return expectDisplayResult(
+      stripIndent`
+        for (let i = 0; i < 10; i = i + 1) {
+          for (let j = 0; j < 10; j = j + 1) {}
+          display(i);
+        }
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+              ]
+            `)
+  })
+
+  test('nested for loops with same identifier work', () => {
+    return expectDisplayResult(
+      stripIndent`
+        for (let i = 0; i < 3; i = i + 1) {
+          for (let i = 0; i < 3; i = i + 1) {
+            display(i, "inner");
+          }
+          display(i, "outer");
+        }
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 0",
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 1",
+                "inner 0",
+                "inner 1",
+                "inner 2",
+                "outer 2",
+              ]
+            `)
+  })
 })
 
 // fails with a large enough TO
