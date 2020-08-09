@@ -13,7 +13,6 @@ Object {
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -29,7 +28,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, \\\\\\"Tom's assisstant said: \\\\\\\\\\\\\\"tuna.\\\\\\\\\\\\\\"\\\\\\");\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -55,7 +54,6 @@ Object {
   ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -71,7 +69,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, [1, 2, [4, 5]]);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -108,7 +106,6 @@ Object {
   "result": Infinity,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -126,7 +123,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 29, Infinity);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -151,7 +148,6 @@ Object {
   ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -167,7 +163,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, callIfFuncAndRightArgs(list, 1, 8, 1, 2));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -186,7 +182,6 @@ Object {
   "result": 0,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -202,7 +197,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 0);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -242,7 +237,6 @@ Object {
   "result": 31072020,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -258,7 +252,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 31072020, \\\\\\"my_first_String\\\\\\");\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -306,7 +300,6 @@ Object {
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -322,7 +315,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(raw_display, 1, 0, \\\\\\"Tom's assisstant said: \\\\\\\\\\\\\\"tuna.\\\\\\\\\\\\\\"\\\\\\");\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }

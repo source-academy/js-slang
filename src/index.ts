@@ -45,6 +45,7 @@ import { getProgramNames, getKeywords } from './name-extractor'
 import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
 
@@ -482,7 +483,10 @@ export async function runInContext(
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
-      const value = sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+      let value = sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+      if (context.variant === 'lazy') {
+        value = forceIt(value)
+      }
       if (!options.isPrelude) {
         isPreviousCodeTimeoutError = false
       }

@@ -12,7 +12,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -28,7 +27,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_append, 1, 21, callIfFuncAndRightArgs(stream, 1, 35, \\\\\\"string\\\\\\", 123), callIfFuncAndRightArgs(stream, 1, 58, 456, null, undefined))), callIfFuncAndRightArgs(list, 2, 4, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -45,7 +44,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -61,7 +59,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(build_stream, 1, 21, 5, wrap(x => ({   isTail: false,   value: binaryOp(\\\\\\"*\\\\\\", 3, x, x, 1, 42) }), \\\\\\"x => x * x\\\\\\", native))), callIfFuncAndRightArgs(list, 1, 51, 0, 1, 4, 9, 16));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -78,7 +76,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -94,7 +91,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(enum_stream, 1, 21, 1.5, 5)), callIfFuncAndRightArgs(list, 1, 43, 1.5, 2.5, 3.5, 4.5));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -111,7 +108,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -127,7 +123,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(enum_stream, 1, 21, 1, 5)), callIfFuncAndRightArgs(list, 1, 41, 1, 2, 3, 4, 5));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -148,7 +144,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -164,7 +159,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 2, callIfFuncAndRightArgs(stream_filter, 3, 4, wrap(x => ({   isTail: false,   value: binaryOp(\\\\\\"<=\\\\\\", 3, x, 4, 3, 23) }), \\\\\\"x => x <= 4\\\\\\", native), callIfFuncAndRightArgs(stream, 3, 31, 2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000))), callIfFuncAndRightArgs(list, 5, 2, 2, 1, 3, 4, 2));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -185,7 +180,6 @@ sum;",
   "result": 6,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -214,7 +208,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -231,7 +225,6 @@ Object {
   "result": 4,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -247,7 +240,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_ref, 1, 0, callIfFuncAndRightArgs(stream, 1, 11, 1, 2, 3, \\\\\\"4\\\\\\", 4), 4);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -264,7 +257,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -280,7 +272,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_map, 1, 21, wrap(x => ({   isTail: false,   value: binaryOp(\\\\\\"*\\\\\\", 3, 2, x, 1, 37) }), \\\\\\"x => 2 * x\\\\\\", native), callIfFuncAndRightArgs(stream, 1, 44, 12, 11, 3))), callIfFuncAndRightArgs(list, 1, 65, 24, 22, 6));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -299,7 +291,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -315,7 +306,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 2, callIfFuncAndRightArgs(stream_member, 2, 17, \\\\\\"string\\\\\\", callIfFuncAndRightArgs(stream, 2, 41, 1, 2, 3, \\\\\\"string\\\\\\", 123, 456, null, undefined))), callIfFuncAndRightArgs(list, 3, 2, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -332,7 +323,6 @@ Object {
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -348,7 +338,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream, 1, 0);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -368,7 +358,6 @@ stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;"
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -404,7 +393,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -424,7 +413,6 @@ Object {
   ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -440,7 +428,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_tail, 1, 0, callIfFuncAndRightArgs(integers_from, 1, 12, 0));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -457,7 +445,6 @@ Object {
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -473,7 +460,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, callIfFuncAndRightArgs(stream_tail, 1, 5, callIfFuncAndRightArgs(stream, 1, 17, 1, 2)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -490,7 +477,6 @@ Object {
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -506,7 +492,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_to_list, 1, 0, null);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -541,7 +527,6 @@ Object {
   ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -557,7 +542,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_to_list, 1, 0, callIfFuncAndRightArgs(stream, 1, 15, 1, true, 3, 4.4, [1, 2]));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -577,7 +562,6 @@ Object {
   ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -593,7 +577,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_to_list, 1, 0, callIfFuncAndRightArgs(stream_remove, 1, 15, 2, callIfFuncAndRightArgs(stream, 1, 32, 1)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -610,7 +594,6 @@ Object {
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -626,7 +609,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(stream_remove, 1, 0, 1, callIfFuncAndRightArgs(stream, 1, 17, 1));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -643,7 +626,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -659,7 +641,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_remove_all, 1, 21, 1, callIfFuncAndRightArgs(stream, 1, 42, 2, 3, \\\\\\"1\\\\\\"))), callIfFuncAndRightArgs(list, 1, 63, 2, 3, \\\\\\"1\\\\\\"));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -677,7 +659,6 @@ Object {
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -693,7 +674,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_remove_all, 1, 21, 1, callIfFuncAndRightArgs(stream, 1, 42, 1, 2, 3, 4, 1, 1, \\\\\\"1\\\\\\", 5, 1, 1, 6))), callIfFuncAndRightArgs(list, 2, 2, 2, 3, 4, \\\\\\"1\\\\\\", 5, 6));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -713,7 +694,6 @@ list(123, null, undefined, null, \\"string\\"));",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -729,7 +709,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_reverse, 2, 2, callIfFuncAndRightArgs(stream, 3, 4, \\\\\\"string\\\\\\", null, undefined, null, 123))), callIfFuncAndRightArgs(list, 4, 0, 123, null, undefined, null, \\\\\\"string\\\\\\"));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }

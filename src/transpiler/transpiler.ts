@@ -21,7 +21,6 @@ import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 const globalIdNames = [
   'native',
-  'forceIt',
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
@@ -729,9 +728,7 @@ export function transpile(
       context.nativeStorage,
       globalIds
     ),
-    create.expressionStatement(
-      create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
-    )
+    create.expressionStatement(globalIds.lastStatementResult)
   ]
 
   program.body = [...getDeclarationsToAccessTranspilerInternals(globalIds), ...body]
