@@ -4,6 +4,7 @@ import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import { transpileToGPU } from '../gpu/gpu'
+import { transpileToLazy } from '../lazy/lazy'
 import { Context, CustomBuiltIns, Variant, SourceError, Value } from '../types'
 import { stringify } from './stringify'
 import { generate } from 'astring'
@@ -108,13 +109,19 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let parsed
     try {
       parsed = parse(code, nativeTestContext)!
-      if (options.variant === 'gpu') {
-        // Mutates program
-        transpileToGPU(parsed)
-        pretranspiled = generate(parsed)
+      // Mutates program
+      switch (options.variant) {
+        case 'gpu':
+          transpileToGPU(parsed)
+          pretranspiled = generate(parsed)
+          break
+        case 'lazy':
+          transpileToLazy(parsed)
+          pretranspiled = generate(parsed)
+          break
       }
       try {
-        transpiled = transpile(parsed, nativeTestContext, true, options.variant).transpiled
+        transpiled = transpile(parsed, nativeTestContext, true).transpiled
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(
           /\n  const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,

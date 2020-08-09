@@ -20,6 +20,7 @@ import { redexify, getEvaluationSteps, IStepperPropContents } from './stepper/st
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import { transpileToGPU } from './gpu/gpu'
+import { transpileToLazy } from './lazy/lazy'
 import {
   Context,
   Error as ResultError,
@@ -466,12 +467,17 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      if (context.variant === 'gpu') {
-        // Mutates program
-        transpileToGPU(program)
+      // Mutates program
+      switch (context.variant) {
+        case 'gpu':
+          transpileToGPU(program)
+          break
+        case 'lazy':
+          transpileToLazy(program)
+          break
       }
 
-      const temp = transpile(program, context, false, context.variant)
+      const temp = transpile(program, context, false)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap

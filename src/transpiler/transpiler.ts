@@ -2,7 +2,7 @@ import { ancestor, simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { AllowedDeclarations, Context, NativeStorage, ValueWrapper, Variant } from '../types'
+import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
@@ -247,7 +247,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(program: es.Program, variant: Variant) {
+function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -270,13 +270,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
 
-        const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
-
-        if (variant === 'lazy') {
-          for (const arg of expression.arguments) {
-            args.push(delayIt(arg as es.Expression))
-          }
-        }
+        const args = expression.arguments
 
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
@@ -306,36 +300,11 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program, va
   })
 }
 
-function delayIt(expr: es.Expression) {
-  const exprThunked = create.blockArrowFunction(
-    [],
-    [create.returnStatement(expr)],
-    expr.loc === null ? undefined : expr.loc
-  )
-
-  return create.objectExpression([
-    create.property('isThunk', create.literal(true)),
-    create.property('memoizedValue', create.literal(0)),
-    create.property('isMemoized', create.literal(false)),
-    create.property('expr', exprThunked)
-  ])
-}
-
-function transformCallExpressionsToCheckIfFunction(
-  program: es.Program,
-  variant: Variant,
-  globalIds: NativeIds
-) {
+function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
-      const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
-
-      if (variant === 'lazy') {
-        for (const arg of node.arguments) {
-          args.push(delayIt(arg as es.Expression))
-        }
-      }
+      const args = node.arguments
 
       node.arguments = [
         node.callee as es.Expression,
@@ -708,8 +677,7 @@ function addInfiniteLoopProtection(
 export function transpile(
   program: es.Program,
   context: Context,
-  skipUndefinedVariableErrors = false,
-  variant: Variant = 'default'
+  skipUndefinedVariableErrors = false
 ) {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -726,8 +694,8 @@ export function transpile(
 
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
-  transformReturnStatementsToAllowProperTailCalls(program, variant)
-  transformCallExpressionsToCheckIfFunction(program, variant, globalIds)
+  transformReturnStatementsToAllowProperTailCalls(program)
+  transformCallExpressionsToCheckIfFunction(program, globalIds)
   transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter)
   transformSomeExpressionsToCheckIfBoolean(program, globalIds)
   transformPropertyAssignment(program, globalIds)
