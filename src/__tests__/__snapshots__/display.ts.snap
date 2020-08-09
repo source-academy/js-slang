@@ -9,6 +9,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -43,6 +44,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": Array [
     1,
     2,
@@ -102,6 +104,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": Infinity,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -138,6 +141,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": Array [
     1,
     Array [
@@ -178,6 +182,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 0,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -233,6 +238,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 31072020,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -296,6 +302,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;

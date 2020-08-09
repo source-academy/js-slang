@@ -152,6 +152,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": NaN,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -184,6 +185,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 6485,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -216,6 +218,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 39961,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;

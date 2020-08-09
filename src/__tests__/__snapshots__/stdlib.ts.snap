@@ -9,6 +9,7 @@ Object {
   ],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": "message",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -70,6 +71,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -102,6 +104,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -134,6 +137,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -166,6 +170,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -198,6 +203,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -230,6 +236,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -262,6 +269,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -294,6 +302,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -326,6 +335,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -358,6 +368,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -390,6 +401,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -422,6 +434,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -454,6 +467,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -486,6 +500,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -518,6 +533,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -550,6 +566,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -582,6 +599,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -614,6 +632,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -646,6 +665,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -678,6 +698,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -710,6 +731,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -745,6 +767,7 @@ is_function(f);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -789,6 +812,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -821,6 +845,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -853,6 +878,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -885,6 +911,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1125,6 +1152,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1157,6 +1185,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 10,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1189,6 +1218,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1221,6 +1251,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1261,6 +1292,7 @@ repeatUntilDifferentTime();",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1323,6 +1355,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": Array [
     1,
     2,
@@ -1358,6 +1391,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": Array [
     1,
     Array [
@@ -1396,6 +1430,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1428,6 +1463,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": false,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1460,6 +1496,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1492,6 +1529,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1524,6 +1562,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
@@ -1672,6 +1711,7 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
