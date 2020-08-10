@@ -117,6 +117,8 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       return v.toString()
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return '...<truncated>'
+    } else if (typeof v.toReplString === 'function') {
+      return v.toReplString()
     } else if (Array.isArray(v)) {
       return stringifyArray(v, indentLevel)
     } else {

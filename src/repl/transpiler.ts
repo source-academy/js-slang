@@ -4,6 +4,7 @@ import { Variant } from '../types'
 import { sourceLanguages } from '../constants'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
+import { transpileToGPU } from '../gpu/gpu'
 import { validateAndAnnotate } from '../validator/validator'
 import { Program } from 'estree'
 
@@ -11,7 +12,13 @@ function transpileCode(chapter = 1, variant: Variant = 'default', code = '') {
   // use defaults for everything
   const context = createContext(chapter, variant, undefined, undefined)
   const program = parse(code, context)
+  if (program === undefined) {
+    throw Error('Parse error')
+  }
   validateAndAnnotate(program as Program, context)
+  if (variant === 'gpu') {
+    transpileToGPU(program)
+  }
   return transpile(program as Program, context, false, context.variant).transpiled
 }
 
@@ -45,7 +52,7 @@ function main() {
   const variant = opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
   const valid = validChapterVariant(chapter, variant)
-  if (!valid || !(variant === 'default' || variant === 'lazy')) {
+  if (!valid || !(variant === 'default' || variant === 'lazy' || variant === 'gpu')) {
     throw new Error(
       'The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.'
     )
