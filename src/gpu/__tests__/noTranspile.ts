@@ -1,17 +1,20 @@
+import { generate } from 'astring'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { stripIndent } from '../../utils/formatters'
-import { transpile } from '../../transpiler/transpiler'
+import { transpileToGPU } from '../../gpu/gpu'
 
 test('empty for loop does not get transpiled', () => {
   const code = stripIndent`
     for (let i = 0; i < 10; i = i + 1) {}
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with different update does not get transpiled', () => {
@@ -22,10 +25,12 @@ test('simple for loop with different update does not get transpiled', () => {
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with different loop variables does not get transpiled', () => {
@@ -37,10 +42,12 @@ test('simple for loop with different loop variables does not get transpiled', ()
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with const initialization does not get transpiled', () => {
@@ -52,10 +59,12 @@ test('simple for loop with const initialization does not get transpiled', () => 
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with non-zero initialization does not get transpiled', () => {
@@ -66,10 +75,12 @@ test('simple for loop with non-zero initialization does not get transpiled', () 
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with a function end counter does not get transpiled', () => {
@@ -81,10 +92,12 @@ test('simple for loop with a function end counter does not get transpiled', () =
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with different initialization does not get transpiled', () => {
@@ -96,10 +109,12 @@ test('simple for loop with different initialization does not get transpiled', ()
       }
       `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with global variable update does not get transpiled', () => {
@@ -112,10 +127,12 @@ test('simple for loop with global variable update does not get transpiled', () =
       }
       `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with function call does not get transpiled', () => {
@@ -128,10 +145,12 @@ test('simple for loop with function call does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('simple for loop with double update does not get transpiled', () => {
@@ -143,10 +162,12 @@ test('simple for loop with double update does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('2 for loops with wrong indice order does not get transpiled', () => {
@@ -159,10 +180,12 @@ test('2 for loops with wrong indice order does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('2 for loops with wrong indices order does not get transpiled', () => {
@@ -175,10 +198,12 @@ test('2 for loops with wrong indices order does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('2 for loop case with 2 indices being written + use of result variable[i-1][j] does not get transpiled', () => {
@@ -200,9 +225,11 @@ test('2 for loop case with 2 indices being written + use of result variable[i-1]
     }
     `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('3 for loops with wrong indice order does not get transpiled', () => {
@@ -217,10 +244,12 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
 
 test('3 for loops with wrong indice order does not get transpiled', () => {
@@ -235,8 +264,10 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
         }
         `
   const context = mockContext(4, 'gpu')
-  const transpiled = transpile(parse(code, context)!, context, false, context.variant).transpiled
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
 
-  const cnt = transpiled.match(/__createKernel/g)?.length
-  expect(cnt).toEqual(2)
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
 })
