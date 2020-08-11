@@ -729,7 +729,8 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
     var TextMode = acequire('./text').Mode
     var SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
     var MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
-    var WorkerClient = acequire('../worker/worker_client').WorkerClient
+    // For JSHint background worker
+    // var WorkerClient = acequire('../worker/worker_client').WorkerClient
     var CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
     var CStyleFoldMode = acequire('./folding/cstyle').FoldMode
 
@@ -795,22 +796,32 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
         this.$outdent.autoOutdent(doc, row)
       }
 
-      // @ts-ignore
-      this.createWorker = function (session) {
-        var worker = new WorkerClient(['ace'], require('../worker/javascript'), 'JavaScriptWorker')
-        worker.attachToDocument(session.getDocument())
+      // This is the JSHint background worker. Disabled because it is of little
+      // utility to Source, and produced many false positives.
+      // If this is ever enabled again: the *frontend* needs to provide the URL of
+      // the worker to Ace:
+      //
+      // import jsWorkerUrl from "file-loader!ace-builds/src-noconflict/javascript_worker";
+      // ace.config.setModuleUrl("ace/mode/javascript_worker", jsWorkerUrl)
+      //
+      // Note: some lint disabling may be needed for the above
 
-        // @ts-ignore
-        worker.on('annotate', function (results) {
-          session.setAnnotations(results.data)
-        })
-
-        worker.on('terminate', function () {
-          session.clearAnnotations()
-        })
-
-        return worker
-      }
+      // // @ts-ignore
+      // this.createWorker = function (session) {
+      //   var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
+      //   worker.attachToDocument(session.getDocument())
+      //
+      //   // @ts-ignore
+      //   worker.on('annotate', function (results) {
+      //     session.setAnnotations(results.data)
+      //   })
+      //
+      //   worker.on('terminate', function () {
+      //     session.clearAnnotations()
+      //   })
+      //
+      //   return worker
+      // }
 
       // @ts-ignore
       this.$id = 'ace/mode/source' + name
