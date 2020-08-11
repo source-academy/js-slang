@@ -32990,6 +32990,7 @@ Array [
                 "type": "Identifier",
               },
               "init": Object {
+                "loc": undefined,
                 "name": "undefined",
                 "type": "Identifier",
               },
@@ -33050,6 +33051,7 @@ Array [
                 "type": "Identifier",
               },
               "init": Object {
+                "loc": undefined,
                 "name": "undefined",
                 "type": "Identifier",
               },
@@ -33096,6 +33098,7 @@ Array [
       "body": Array [
         Object {
           "expression": Object {
+            "loc": undefined,
             "name": "undefined",
             "type": "Identifier",
           },
@@ -33118,6 +33121,7 @@ Array [
       "body": Array [
         Object {
           "expression": Object {
+            "loc": undefined,
             "name": "undefined",
             "type": "Identifier",
           },
@@ -45349,6 +45353,7 @@ Array [
             },
             "operator": "+",
             "right": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },
@@ -45429,6 +45434,7 @@ Array [
             },
             "operator": "+",
             "right": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },
@@ -45483,6 +45489,7 @@ Array [
             },
             "operator": "+",
             "right": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },
@@ -45537,6 +45544,7 @@ Array [
             },
             "operator": "+",
             "right": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },
@@ -53816,6 +53824,7 @@ Array [
         Object {
           "expression": Object {
             "left": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },
@@ -53855,6 +53864,7 @@ Array [
         Object {
           "expression": Object {
             "left": Object {
+              "loc": undefined,
               "name": "undefined",
               "type": "Identifier",
             },

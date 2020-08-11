@@ -7,12 +7,16 @@ export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
 export const locationDummyNode = (line: number, column: number) =>
   literal('Dummy', { start: { line, column }, end: { line, column } })
 
-export const identifier = (name: string): es.Identifier => ({
+export const identifier = (name: string, loc?: es.SourceLocation | null): es.Identifier => ({
   type: 'Identifier',
-  name
+  name,
+  loc
 })
 
-export const literal = (value: string | number | boolean, loc?: es.SourceLocation): es.Literal => ({
+export const literal = (
+  value: string | number | boolean,
+  loc?: es.SourceLocation | null
+): es.Literal => ({
   type: 'Literal',
   value,
   loc
@@ -33,7 +37,7 @@ export const declaration = (
   name: string,
   kind: AllowedDeclarations,
   init: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.VariableDeclaration => ({
   type: 'VariableDeclaration',
   declarations: [
@@ -47,13 +51,16 @@ export const declaration = (
   loc
 })
 
-export const constantDeclaration = (name: string, init: es.Expression, loc?: es.SourceLocation) =>
-  declaration(name, 'const', init, loc)
+export const constantDeclaration = (
+  name: string,
+  init: es.Expression,
+  loc?: es.SourceLocation | null
+) => declaration(name, 'const', init, loc)
 
 export const callExpression = (
   callee: es.Expression,
   args: es.Expression[],
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.CallExpression => ({
   type: 'CallExpression',
   callee,
@@ -70,7 +77,7 @@ export const expressionStatement = (expression: es.Expression): es.ExpressionSta
 export const blockArrowFunction = (
   params: es.Identifier[],
   body: es.Statement[] | es.BlockStatement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',
   expression: false,
@@ -83,7 +90,7 @@ export const blockArrowFunction = (
 export const functionExpression = (
   params: es.Identifier[],
   body: es.Statement[] | es.BlockStatement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.FunctionExpression => ({
   type: 'FunctionExpression',
   id: null,
@@ -107,7 +114,7 @@ export const program = (body: es.Statement[]): es.Program => ({
 
 export const returnStatement = (
   argument: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.ReturnStatement => ({
   type: 'ReturnStatement',
   argument,
@@ -180,7 +187,7 @@ export const logicalExpression = (
   operator: es.LogicalOperator,
   left: es.Expression,
   right: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.LogicalExpression => ({
   type: 'LogicalExpression',
   operator,
@@ -193,7 +200,7 @@ export const conditionalExpression = (
   test: es.Expression,
   consequent: es.Expression,
   alternate: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.ConditionalExpression => ({
   type: 'ConditionalExpression',
   test,
@@ -221,7 +228,7 @@ export const binaryExpression = (
   operator: es.BinaryOperator,
   left: es.Expression,
   right: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.BinaryExpression => ({
   type: 'BinaryExpression',
   operator,
@@ -233,7 +240,7 @@ export const binaryExpression = (
 export const unaryExpression = (
   operator: es.UnaryOperator,
   argument: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.UnaryExpression => ({
   type: 'UnaryExpression',
   operator,
@@ -251,7 +258,7 @@ export const functionDeclarationExpression = (
   id: es.Identifier,
   params: es.Pattern[],
   body: es.BlockStatement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): FunctionDeclarationExpression => ({
   type: 'FunctionExpression',
   id,
@@ -264,7 +271,7 @@ export const functionDeclaration = (
   id: es.Identifier | null,
   params: es.Pattern[],
   body: es.BlockStatement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.FunctionDeclaration => ({
   type: 'FunctionDeclaration',
   id,
@@ -275,7 +282,7 @@ export const functionDeclaration = (
 
 export const blockExpression = (
   body: es.Statement[],
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): BlockExpression => ({
   type: 'BlockExpression',
   body,
@@ -285,7 +292,7 @@ export const blockExpression = (
 export const arrowFunctionExpression = (
   params: es.Pattern[],
   body: es.Expression | es.BlockStatement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',
   expression: body.type !== 'BlockStatement',
@@ -297,7 +304,7 @@ export const arrowFunctionExpression = (
 
 export const variableDeclaration = (
   declarations: es.VariableDeclarator[],
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.VariableDeclaration => ({
   type: 'VariableDeclaration',
   kind: 'const',
@@ -308,7 +315,7 @@ export const variableDeclaration = (
 export const variableDeclarator = (
   id: es.Pattern,
   init: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.VariableDeclarator => ({
   type: 'VariableDeclarator',
   id,
@@ -320,7 +327,7 @@ export const ifStatement = (
   test: es.Expression,
   consequent: es.BlockStatement,
   alternate: es.Statement,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.IfStatement => ({
   type: 'IfStatement',
   test,
@@ -332,7 +339,7 @@ export const ifStatement = (
 export const whileStatement = (
   body: es.BlockStatement,
   test: es.Expression,
-  loc?: es.SourceLocation
+  loc?: es.SourceLocation | null
 ): es.WhileStatement => ({
   type: 'WhileStatement',
   test,

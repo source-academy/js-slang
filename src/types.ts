@@ -184,6 +184,12 @@ export interface Environment {
   thisContext?: Value
 }
 
+export interface Thunk {
+  value: any
+  isMemoized: boolean
+  f: () => any
+}
+
 export interface Error {
   status: 'error'
 }
