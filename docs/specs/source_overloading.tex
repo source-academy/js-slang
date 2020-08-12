@@ -1,0 +1,55 @@
+\section{Function Attributes}
+
+This feature may only be used in modules other than the main module.
+
+Function declarations may be annotated with attributes.  Attributes are a key-value map that modify the function declaration that it is applied to.  The exact syntax of attributes are unstable, but their semantics are unlikely to change.  The following attributes are recognised:
+
+\begin{itemize}
+
+\item \lstinline{direct}:  This attribute key should be specified without a value.  If present, the function declaration it is applied to shall not capture any non top-level variables, and shall behave as if it is declared as the first statement of the scope that it is in.  Such functions are called \textit{direct} functions.  Implementations are encouraged to emit direct calls instead of indirect calls.
+
+\item \lstinline{constraint}:  The value shall be a map that specifies the signature of the function declaration that it is applied to (for example \lstinline{x:number,y:number} specifies that the parameters \lstinline{x} and \lstinline{y} are both numbers).  If a parameter is not mentioned in this attribute value, the type defaults to \lstinline{any}, meaning that there is no constraint on the parameter value.  A function declaration with a \lstinline{constraint} attribute must also be a direct function.  Implementations are required to raise a runtime error if such a function is called with wrong actual argument types.
+
+\end{itemize}
+
+\subsection*{Runtime overloading}
+
+Multiple declarations of direct functions with the same name are allowed, subject to the rules described in this section.
+
+At runtime, a call expression is said to \textit{match} a direct function if the call expression has the same number of arguments as the direct function, and the actual argument values of the call expression have types that fit into each parameter type of the direct function.
+
+A direct function \lstinline{f} is said to \textit{shadow} a direct function \lstinline{g} if \lstinline{f} and \lstinline{g} have the same name and every call expression that matches \lstinline{g} also matches \lstinline{f}.
+
+Two direct functions \lstinline{f} and \lstinline{g} with the same name, where \lstinline{f} appears earlier than \lstinline{g}, are allowed to coexist only if, either:
+
+\begin{itemize}
+
+\item \lstinline{f} and \lstinline{g} are not in the same scope (and hence would not have been subject to the usual ECMAScript repeated-declaration rules), or
+
+\item \lstinline{g} does not shadow \lstinline{f}.
+
+\end{itemize}
+
+\subsubsection*{Overload resolution}
+
+At runtime, when a call expression is encountered that attempts to call a function \lstinline{f}, the following algorithm is used to determine the overload to call:
+
+\begin{enumerate}
+
+\item If there is a variable \lstinline{f} accessible from the current scope, the normal behaviour of ECMAScript is used - we assert that \lstinline{f} is indeed a function, and then try to call it.
+
+\item Otherwise, we do the following:
+
+\begin{enumerate}
+
+\item Collect all direct function declarations of \lstinline{f} into a list, ordered so that earlier (i.e. further) declarations come before later (i.e. nearer) declarations.  Declarations in imports are also collected and ordered in a manner such that declarations from the file being imported come before declarations from the file containing the import statement.  The import ordering rule applies transitively to chains of imports.  Where multiple orderings satisfy the above constraints, implementations may use any valid ordering.
+
+\item If there is at least one matching function declaration, the latest matching declaration is used.  Otherwise, an error is raised.
+
+\end{enumerate}
+
+\end{enumerate}
+
+A name that refers to a possibly overloaded direct function may appear in an expression or statement at any position (called the \textit{bind} site) where a lambda expression would have been valid.  Such a value behaves as if it is a non-direct function, except that when it is invoked, the actual arguments at the call site are matched against the function declarations visible at the bind site, using the overload resolution rules above.
+
+The exact implementation details of binding direct functions is left unspecified.  Implementations are encouraged to perform overload resolution at the call site in $O(n)$ time, where $n$ is the number of function declarations in the list; and construct the overloaded function value at the bind site in $O(1)$ time.

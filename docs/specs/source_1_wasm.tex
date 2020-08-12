@@ -26,32 +26,39 @@
 	\docheader{2021}{Source}{\S 1 WebAssembly}{Bernard Teo Zhi Yi}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This document specifies the dialect of Source \S 1 used in Sourceror, an experimental compiler from Source \S 1 to WebAssembly.  This dialect is a subset of Source \S 1.
+\input source_intro.tex
+
+Source \S 1 WebAssembly is the dialect of Source \S 1 used in Sourceror, an experimental compiler from Source \S 1 to WebAssembly.  This dialect is mostly similar to Source \S 1.
 
 \section{Changes compared to Vanilla Source \S 1}
 
 \subsection*{Language}  
 
-All language features of Source \S 1 are supported except for proper tail calls and
-import directives.
+All language features of Source \S 1 are supported except for proper tail calls.
+
+Source \S 1 WebAssembly additionally supports proper modules -- it is possible to import external modules from the web, and such modules are also written in Source \S 1 WebAssembly.  The import and export syntax follow that of ECMAScript modules.
 
 \subsection*{Libraries}
 
-Libraries (MISC and MATH, and other external libraries) are not yet supported.
+The standard libraries (MISC and MATH) are supported with explicit import statements.  There are two differences:  Source \S 1 WebAssembly does not support true varargs, so functions like \lstinline{math_max()} only support up to two arguments; and stringifying a function does not output the literal function body.
+
+Other self-hosted libraries may also be used as long as they are implemented in Source \S 1 WebAssembly.
 
 \subsection*{Error Handling}
 
 Compilation errors produce error messages with line numbers, just like in Source \S 1.  Runtime type errors currently produce error messages without any location information.
 
-\input source_intro.tex
-
 \input source_bnf.tex
 
-\input source_1_bnf_without_import.tex
+\input source_1_bnf_with_import_export.tex
 
 \newpage
 
 \input source_return
+
+\input source_import_wasm
+
+\input source_export
 
 \input source_boolean_operators
 
@@ -63,13 +70,23 @@ Compilation errors produce error messages with line numbers, just like in Source
 
 \input source_comments
 
+\input source_overloading
+
 \input source_typing
+
+\input source_import_syntax
 
 \section{Standard Libraries}
 
-The following library is always available in this language.
+The following libraries are always available in this language.
+
+Names must be imported explicitly before being used.  The MISC library can be imported as "std/misc" and the MATH library can be imported as "std/math".
+
+For example, \lstinline[language=javascript]!import { get_time } from "std/misc";! will import the \lstinline{get_time()} function.
 
 \input source_misc
+
+\input source_math
 
 \input source_js_differences
 

@@ -1,0 +1,19 @@
+\subsection*{Import directives}
+
+Import directives allow programs to import values from modules and bind them to names, whose scope
+is the entire program in which the import directive occurs.  Import directives can only appear at the top-level.  All names that appear in import directives
+must be distinct, and must also be distinct from all top-level variables.
+
+The import graph must not contain cycles.
+
+\subsubsection*{Importable module types}
+
+The module being imported must either be a Source \S 1 WebAssembly module (the usual kind of module) or a Source Imports module.
+
+\subsubsection*{Import filenames}
+
+The module name can be an absolute URL (e.g. \nolinkurl{https://www.example.com/my_modules/module.source}) or a relative URL (e.g. \nolinkurl{std/misc.source}).  If the file extension is ".source", it may be omitted.
+
+An absolute URL will fetch the module from the specified URL.
+
+A relative URL will fetch the module from an implementation-defined location.

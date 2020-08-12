@@ -1,0 +1,35 @@
+\section{Source Imports Modules}
+
+Source Imports modules provide a foreign function interface from Source to the host environment.
+
+A Source Imports module declares functions that are implemented in the host environment, allowing Source programs to use them.  It is satisfies the following syntax:
+
+\begin{itemize}
+
+\item The first line must be exactly \texttt{\textbf{@SourceImports}}.
+\item Subsequent lines are either empty, or are \emph{foreign-import-statement}s that satisfy the following syntax
+
+\end{itemize}
+
+\begin{alignat*}{9}
+&& \textit{foreign-import-statement}    &&\quad ::= &\quad && \textit{exported-name} \ \textit{host-namespace} && \textrm{FFI import statement} \\ 
+&&  && &\quad && \ \textit{host-entity} \ \textit{return-type} \ \textit{param-types} && \\[1mm]
+&& \textit{exported-name}    &&\quad ::= &\quad && \textit{name}
+                                                           && \textrm{exported name} \\[1mm]
+&& \textit{host-namespace}  && ::= &\quad && \textit{name}
+                                                           && \textrm{host namespace name} \\[1mm]
+&& \textit{host-entity}  && ::= &\quad && \textit{name}
+                                                           && \textrm{host entity name} \\[1mm]
+&& \textit{return-type}  && ::= &\quad && \textbf{\texttt{undefined}}\ | \ \textbf{\texttt{number}}\ | \ \textbf{\texttt{string}}
+                                                            && \textrm{return type} \\[1mm]
+&& \textit{param-types}  && ::= &\quad && \textit{param-type} \ldots
+                                                            && \textrm{export name declarations} \\[1mm]
+&& \textit{param-type}  && ::= &\quad && \textbf{\texttt{number}}\ | \ \textbf{\texttt{string}}
+                                                            && \textrm{param type}
+\end{alignat*}
+
+Each \textit{foreign-import-statement} declares the signature of a host-implemented function identified by the pair (\textit{host-namespace}, \textit{host-entity}), and exports it from the current Source Imports module as \textit{exported-name} as if it was a direct function.
+
+Overloading behaves in the same way as direct functions.
+
+The list of host-implemented functions available to Source \S 1 WebAssembly is implementation-defined, and behaviour is often dependent on the host environment.
