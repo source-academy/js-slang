@@ -141,7 +141,7 @@ class GPUTransformer {
 
     // 5. we transpile the loop to a function call, __createKernelSource
     const kernelFunction = create.blockArrowFunction(
-      this.counters.map(create.identifier),
+      this.counters.map(name => create.identifier(name)),
       this.targetBody
     )
     const createKernelSourceCall = create.callExpression(

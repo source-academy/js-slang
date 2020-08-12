@@ -14,7 +14,8 @@ import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import * as rttc from './rttc'
 import { LazyBuiltIn } from '../createContext'
-import { NativeStorage } from '../types'
+import { NativeStorage, Thunk } from '../types'
+import { makeWrapper } from '../utils/makeWrapper'
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -31,13 +32,13 @@ export function throwIfTimeout(
   }
 }
 
-export function forceIt(val: any): any {
-  if (val !== undefined && val !== null && val.isThunk === true) {
+export function forceIt(val: Thunk | any): any {
+  if (val !== undefined && val !== null && val.isMemoized !== undefined) {
     if (val.isMemoized) {
       return val.memoizedValue
     }
 
-    const evaluatedValue = forceIt(val.expr())
+    const evaluatedValue = forceIt(val.f())
 
     val.isMemoized = true
     val.memoizedValue = evaluatedValue
@@ -46,6 +47,41 @@ export function forceIt(val: any): any {
   } else {
     return val
   }
+}
+
+export function delayIt(f: () => any): Thunk {
+  return {
+    isMemoized: false,
+    value: undefined,
+    f
+  }
+}
+
+export function wrapLazyCallee(candidate: any) {
+  candidate = forceIt(candidate)
+  if (typeof candidate === 'function') {
+    const wrapped: any = (...args: any[]) => candidate(...args.map(forceIt))
+    makeWrapper(candidate, wrapped)
+    wrapped[Symbol.toStringTag] = () => candidate.toString()
+    wrapped.toString = () => candidate.toString()
+    return wrapped
+  } else if (candidate instanceof LazyBuiltIn) {
+    if (candidate.evaluateArgs) {
+      const wrapped: any = (...args: any[]) => candidate.func(...args.map(forceIt))
+      makeWrapper(candidate.func, wrapped)
+      wrapped[Symbol.toStringTag] = () => candidate.toString()
+      wrapped.toString = () => candidate.toString()
+      return wrapped
+    } else {
+      return candidate
+    }
+  }
+  // doesn't look like a function, not our business to error now
+  return candidate
+}
+
+export function makeLazyFunction(candidate: any) {
+  return new LazyBuiltIn(candidate, false)
 }
 
 export function callIfFuncAndRightArgs(
@@ -58,8 +94,6 @@ export function callIfFuncAndRightArgs(
     start: { line, column },
     end: { line, column }
   })
-
-  candidate = forceIt(candidate)
 
   if (typeof candidate === 'function') {
     if (candidate.transformedFunction === undefined) {
@@ -281,6 +315,7 @@ export const wrap = (
   nativeStorage: NativeStorage
 ) => {
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
+  makeWrapper(f, wrapped)
   wrapped.transformedFunction = f
   wrapped[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified
