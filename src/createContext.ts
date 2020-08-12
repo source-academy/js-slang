@@ -148,11 +148,11 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
   const rawDisplay = (v: Value, s: string) =>
-    externalBuiltIns.rawDisplay(v, s, context.externalContext)  
+    externalBuiltIns.rawDisplay(v, s, context.externalContext)
   const display = (v: Value, ...args: any) => {
     const s = args[0]
     if (args.length >= 1) {
-      if (typeof s !== "string")
+      if (typeof s !== 'string')
         throw new TypeError('display expects the second argument to be a string')
     }
     return rawDisplay(stringify(v), s), v
