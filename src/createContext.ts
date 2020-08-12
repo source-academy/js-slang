@@ -271,6 +271,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
   }
+
+  if (context.variant === 'lazy') {
+    defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
+    defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
+    defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
+    defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
+  }
 }
 
 function importPrelude(context: Context) {

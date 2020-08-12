@@ -1,25 +1,36 @@
 #!/usr/bin/env node
-import { createContext } from '../index'
+import { createContext, parseError } from '../index'
 import { Variant } from '../types'
 import { sourceLanguages } from '../constants'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import { transpileToGPU } from '../gpu/gpu'
+import { transpileToLazy } from '../lazy/lazy'
 import { validateAndAnnotate } from '../validator/validator'
 import { Program } from 'estree'
+import { generate } from 'astring'
 
-function transpileCode(chapter = 1, variant: Variant = 'default', code = '') {
+function transpileCode(chapter = 1, variant: Variant = 'default', code = '', pretranspile = false) {
   // use defaults for everything
   const context = createContext(chapter, variant, undefined, undefined)
   const program = parse(code, context)
   if (program === undefined) {
-    throw Error('Parse error')
+    throw Error(parseError(context.errors, true))
   }
   validateAndAnnotate(program as Program, context)
-  if (variant === 'gpu') {
-    transpileToGPU(program)
+  switch (variant) {
+    case 'gpu':
+      transpileToGPU(program)
+      break
+    case 'lazy':
+      transpileToLazy(program)
+      break
   }
-  return transpile(program as Program, context, false, context.variant).transpiled
+  if (pretranspile) {
+    return generate(program)
+  } else {
+    return transpile(program as Program, context, false).transpiled
+  }
 }
 
 /**
@@ -38,6 +49,11 @@ function main() {
     .create([
       ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
       [
+        'p',
+        'pretranspile',
+        "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
+      ],
+      [
         'v',
         'variant=VARIANT',
         'set the Source variant (i.e., default, interpreter, substituter, lazy, non-det, concurrent, wasm, gpu)',
@@ -49,6 +65,7 @@ function main() {
     .setHelp('Usage: js-slang-transpiler [OPTION]\n\n[[OPTIONS]]')
     .parseSystem()
 
+  const pretranspile = opt.options.pretranspile
   const variant = opt.options.variant
   const chapter = parseInt(opt.options.chapter, 10)
   const valid = validChapterVariant(chapter, variant)
@@ -64,7 +81,7 @@ function main() {
   })
   process.stdin.on('end', () => {
     const code = Buffer.concat(chunks).toString('utf-8')
-    const transpiled = transpileCode(chapter, variant, code)
+    const transpiled = transpileCode(chapter, variant, code, pretranspile)
     process.stdout.write(transpiled)
   })
 }
