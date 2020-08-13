@@ -1,0 +1,45 @@
+
+\section{Dynamic Type Checking}
+
+Expressions evaluate to numbers, boolean values or functions. Implementations
+of Source generate error messages when unexpected values are used as follows.
+
+Only functions can be applied using the syntax:
+
+\begin{eqnarray*}
+ \textit{expression}    
+                                   & ::=   &  \textit{name}
+                                               \texttt{\textbf{(}}\  \textit{expressions} \
+                                               \texttt{\textbf{)}}\\ 
+\end{eqnarray*}
+
+For compound functions, implementations need to check that the number of \textit{expressions}
+matches the number of parameters.
+
+The following table specifies what arguments Source's operators
+take and what results they return. Implementations need to check the types of arguments and
+generate an error message when the types do not match.
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+operator & argument 1 & argument 2 & result\\ \hline
+\texttt{\textbf{+}} & number   & number     & number\\
+\texttt{\textbf{-}} & number   & number     & number\\
+\texttt{\textbf{*}} & number   & number     & number\\
+\texttt{\textbf{/}} & number   & number     & number\\
+\texttt{\textbf{\%}} & number   & number     & number\\
+\texttt{\textbf{===}} & number   & number     & bool\\
+\texttt{\textbf{!==}} & number   & number     & bool\\
+\texttt{\textbf{>}} & number   & number     & bool\\
+\texttt{\textbf{<}} & number   & number     & bool\\
+\texttt{\textbf{>=}} & number   & number     & bool\\
+\texttt{\textbf{<=}}    & number   & number     & bool\\
+\texttt{\textbf{\&\&}} & bool & any & any\\
+\texttt{\textbf{||}}   & bool & any & any\\
+\texttt{\textbf{!}}    & bool &      & bool\\
+\texttt{\textbf{-}}    & number &    & number
+\end{tabular}
+\end{center}
+
+Preceding \texttt{\textbf{?}}, Source only allows
+boolean expressions.
