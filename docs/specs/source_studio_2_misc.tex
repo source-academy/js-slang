@@ -1,0 +1,25 @@
+\subsection*{MISC Library}
+
+
+In addition to names that
+are declared using \texttt{\textbf{const}}, \texttt{\textbf{function}},
+$\texttt{\textbf{=>}}$ (and \texttt{\textbf{let}} in Source \S3 and 4), the following
+names refer to primitive functions and constants:
+\begin{itemize}
+\item \href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p8}{\lstinline{math_}$\textit{name}$},
+where $\textit{name}$ is any name specified in the
+JavaScript
+\texttt{Math} library, see\\
+\href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-math-object}{\color{DarkBlue}ECMAScript Specification, Section 20.2}. Examples:
+\begin{itemize}
+\item \verb#math_PI#: Refers to the mathematical constant $\pi$,
+\item \verb#math_sqrt#\texttt{(n)}: Returns the square root of the \emph{number} \texttt{n}.
+\end{itemize}
+\item 
+  \texttt{\href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-value-properties-of-the-global-object-nan}{\color{DarkBlue}NaN}}, \texttt{\href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-value-properties-of-the-global-object-infinity}{\color{DarkBlue}Infinity}}: Refer to JavaScript's 
+NaN (``Not a Number'') and Infinity values, respectively.
+\item \href{https://source-academy.github.io/sicp/chapters/4.1.2.html\#p2}{\lstinline{is_boolean(x)}}, \href{https://source-academy.github.io/sicp/chapters/2.3.2.html\#p5}{\lstinline{is_number(x)}},
+  \verb#is_function#\texttt{(x)}:
+        return \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. Following
+        JavaScript, we specify that \verb#is_number# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
+\end{itemize}

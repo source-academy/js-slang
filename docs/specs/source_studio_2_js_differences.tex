@@ -1,0 +1,64 @@
+\section*{Deviations from JavaScript}
+
+We intend the 
+Source language to be a conservative extension
+of JavaScript: Every correct
+Source program should behave \emph{exactly} the same
+using a Source implementation, as it does using a JavaScript
+implementation. We assume, of course, that suitable libraries are
+used by the JavaScript implementation, to account for the predefined names
+of each Source language.
+
+This section lists some exceptions where we think a Source implementation
+should be allowed to deviate from the JavaScript specification, for the
+sake of internal consistency and esthetics.
+
+\begin{description}
+\item[\href{https://source-academy.github.io/sicp/chapters/4.1.1.html\#footnote-4}{Evaluation result of programs:}]
+  % from SICP JS 4.1.2, last exercise
+JavaScript statically
+        distinguishes between \emph{value-producing} and
+	\emph{non-value-producing statements}. All declarations are
+	non-value-producing, and all 
+	expression statements, conditional statements and assignments are
+	value-producing.
+	A block is value-producing if its body statement
+	is value-producing, and then its value is the value of its body
+	statement. A sequence is value-producing if any of
+	its component statements is value-producing, and then its value is
+	the value of its \emph{last} value-producing component statement.
+	The value of an expression statement is the value of the expression.
+	The value of a conditional statement is the value of the branch that
+	gets executed, or the value
+	\lstinline{undefined} if that branch is
+	not value-producing.
+	The value of an assignment is the value of the expression
+	to the right of its \lstinline{=} sign.
+	Finally, if the whole
+	program	is not value-producing, its value is the value
+        \lstinline{undefined}.        
+
+  Example 1:
+  \begin{lstlisting}
+1;
+{
+  // empty block
+}
+  \end{lstlisting}
+  The result of evaluating this program in JavaScript is 1.
+
+  Implementations of Source are currently allowed to opt for a simpler scheme. 
+
+\item[\href{https://source-academy.github.io/sicp/chapters/1.3.2.html\#footnote-2}{Hoisting of function declarations:}] In JavaScript, function declarations
+  are ``hoisted''
+  (\href{https://source-academy.github.io/sicp/chapters/4.3.1.html#footnote-4}{automagically} moved)
+  to the beginning of the block in which
+  they appear (in Studio 2: the beginning of the program, because there are no blocks yet).
+  This means that applications of functions that are declared
+  with function declaration statements never fail because the name is not
+  yet assigned to their function value. The specification of Source does 
+  not include this hoisting. 
+  As a consequence, application of functions declared with function declaration
+  may fail in Source if the name that appears as function expression is not yet
+  assigned to the function value it is supposed to refer to.
+\end{description}
