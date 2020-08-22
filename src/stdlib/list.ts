@@ -1,4 +1,5 @@
-import { stringify } from '../utils/stringify'
+import { stringify, ArrayLike } from '../utils/stringify'
+import { Value } from '../types'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
@@ -117,4 +118,66 @@ export function set_tail(xs: any, x: any) {
       'set_tail(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
     )
   }
+}
+
+export function rawDisplayList(display: any, xs: Value, prepend: string) {
+  const visited: Set<Value> = new Set() // Everything is put into this set, values, arrays, and even objects if they exist
+  const asListObjects: Map<NonEmptyList, NonEmptyList | ListObject> = new Map() // maps original list nodes to new list nodes
+
+  // We will convert list-like structures in xs to ListObject.
+  class ListObject implements ArrayLike {
+    replPrefix = 'list('
+    replSuffix = ')'
+    replArrayContents(): Value[] {
+      const result: Value[] = []
+      let curXs = this.listNode
+      while (curXs !== null) {
+        result.push(head(curXs))
+        curXs = tail(curXs)
+      }
+      return result
+    }
+    listNode: List
+
+    constructor(listNode: List) {
+      this.listNode = listNode
+    }
+  }
+  function visit(curXs: Value): Value {
+    if (visited.has(curXs)) {
+      // `visit` doubles as an wrapper to access the new nodes/old nodes if they don't exist
+      return asListObjects.get(curXs) || curXs
+    }
+    visited.add(curXs)
+    if (!is_pair(curXs)) {
+      return curXs
+    }
+    const h = head(curXs)
+    const t = tail(curXs)
+    visit(h)
+    const newTail = visit(t)
+    const newXs = is_null(newTail)
+      ? new ListObject(pair(h, t))
+      : newTail instanceof ListObject
+      ? new ListObject(pair(h, t))
+      : pair(h, t)
+    asListObjects.set(curXs, newXs)
+    return newXs
+  }
+  visit(xs)
+  for (const curXs of asListObjects.values()) {
+    if (is_pair(curXs)) {
+      set_head(curXs, visit(head(curXs)))
+      set_tail(curXs, visit(tail(curXs)))
+    } else if (curXs instanceof ListObject) {
+      set_head(curXs.listNode, visit(head(curXs.listNode)))
+      let newTail = visit(tail(curXs.listNode))
+      if (newTail instanceof ListObject) {
+        newTail = newTail.listNode
+      }
+      set_tail(curXs.listNode, newTail)
+    }
+  }
+  display(visit(xs), prepend)
+  return xs
 }

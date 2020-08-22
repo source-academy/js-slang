@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectDisplayResult, expectParsedError, expectResult } from '../../utils/testing'
 
 test('list creates list', () => {
   return expectResult(
@@ -560,5 +560,281 @@ describe('These tests are reporting weird line numbers, as list functions are no
     ).toMatchInlineSnapshot(
       `"Line 157: Expected string on right hand side of operation, got number."`
     )
+  })
+})
+
+describe('display_list', () => {
+  test('standard acyclic', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(5, i=>i));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(0, 1, 2, 3, 4)",
+              ]
+            `)
+  })
+
+  test('standard acyclic 2', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(5, i=>build_list(i, j=>j)));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
+              ]
+            `)
+  })
+
+  test('returns argument', () => {
+    return expectResult(
+      stripIndent`
+        const xs = build_list(5, i=>i);
+        xs === display_list(xs);
+        // Note reference equality
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`true`)
+  })
+
+  test('returns cyclic argument', () => {
+    return expectResult(
+      stripIndent`
+        const build_inf = (i, f) => {
+          const t = list(f(i));
+          let p = t;
+          for (let n = i - 1; n >= 0; n = n - 1) {
+            p = pair(f(n), p);
+          }
+          set_tail(t, p);
+          return p;
+        };
+        const xs = build_inf(5, i=>i);
+        xs === display_list(xs);
+        // Note reference equality
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`true`)
+  })
+
+  test('supports prepend string', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(5, i=>i), "build_list:");
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "build_list: list(0, 1, 2, 3, 4)",
+              ]
+            `)
+  })
+
+  test('checks prepend type', () => {
+    return expectParsedError(
+      stripIndent`
+        display_list(build_list(5, i=>i), true);
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(
+      `"Line 1: TypeError: display_list expects the second argument to be a string"`
+    )
+  })
+
+  test('MCE fuzz test', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(parse('const twice = f => x => {const result = f(f(x)); return two;};'));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 4, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(\\"constant_declaration\\",
+                   list(\\"name\\", \\"twice\\"),
+                   list(\\"lambda_expression\\",
+                        list(list(\\"name\\", \\"f\\")),
+                        list(\\"return_statement\\",
+                             list(\\"lambda_expression\\",
+                                  list(list(\\"name\\", \\"x\\")),
+                                  list(\\"block\\",
+                                       list(\\"sequence\\",
+                                            list(list(\\"constant_declaration\\",
+                                                      list(\\"name\\", \\"result\\"),
+                                                      list(\\"application\\",
+                                                           list(\\"name\\", \\"f\\"),
+                                                           list(list(\\"application\\", list(\\"name\\", \\"f\\"), list(list(\\"name\\", \\"x\\")))))),
+                                                 list(\\"return_statement\\", list(\\"name\\", \\"two\\")))))))))",
+              ]
+            `)
+  })
+
+  test('standard acyclic multiline', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(20, i=>build_list(i, j=>j)));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(null,
+                   list(0),
+                   list(0, 1),
+                   list(0, 1, 2),
+                   list(0, 1, 2, 3),
+                   list(0, 1, 2, 3, 4),
+                   list(0, 1, 2, 3, 4, 5),
+                   list(0, 1, 2, 3, 4, 5, 6),
+                   list(0, 1, 2, 3, 4, 5, 6, 7),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17),
+                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))",
+              ]
+            `)
+  })
+
+  test('infinite list', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const p = list(1);
+        set_tail(p, p);
+        display_list(p);
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "[1, ...<circular>]",
+              ]
+            `)
+  })
+
+  test('infinite list 2', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const p = list(1, 2, 3);
+        set_tail(tail(tail(p)), p);
+        display_list(p);
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "[1, [2, [3, ...<circular>]]]",
+              ]
+            `)
+  })
+
+  test('reusing lists', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const p = list(1);
+        const p2 = pair(p, p);
+        const p3 = list(p, p2);
+        display_list(p3);
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(list(1), list(list(1), 1))",
+              ]
+            `)
+  })
+
+  test('list of infinite list', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const build_inf = i => {
+          const t = list(i);
+          let p = t;
+          for (let n = i - 1; n >= 0; n = n - 1) {
+            p = pair(n, p);
+          }
+          set_tail(t, p);
+          return p;
+        };
+        display_list(build_list(5, build_inf));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list([0, ...<circular>],
+                   [0, [1, ...<circular>]],
+                   [0, [1, [2, ...<circular>]]],
+                   [0, [1, [2, [3, ...<circular>]]]],
+                   [0, [1, [2, [3, [4, ...<circular>]]]]])",
+              ]
+            `)
+  })
+
+  test('list of infinite list of list', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const build_inf = (i, f) => {
+          const t = list(f(i));
+          let p = t;
+          for (let n = i - 1; n >= 0; n = n - 1) {
+            p = pair(f(n), p);
+          }
+          set_tail(t, p);
+          return p;
+        };
+        display_list(build_list(3, i => build_inf(i, i => build_list(i, i=>i))));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list([null, ...<circular>],
+                   [null, [list(0), ...<circular>]],
+                   [null, [list(0), [list(0, 1), ...<circular>]]])",
+              ]
+            `)
+  })
+
+  test('infinite list of list of infinite list', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const build_inf = (i, f) => {
+          const t = list(f(i));
+          let p = t;
+          for (let n = i - 1; n >= 0; n = n - 1) {
+            p = pair(f(n), p);
+          }
+          set_tail(t, p);
+          return p;
+        };
+        display_list(build_inf(3, i => build_list(i, i => build_inf(i, i=>i))));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 3, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "[ null,
+              [ list([0, ...<circular>]),
+              [ list([0, ...<circular>], [0, [1, ...<circular>]]),
+              [ list([0, ...<circular>], [0, [1, ...<circular>]], [0, [1, [2, ...<circular>]]]),
+              ...<circular>]]]]",
+              ]
+            `)
   })
 })

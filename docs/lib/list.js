@@ -382,4 +382,13 @@ function accumulate(f, initial, xs) {
             accumulate(f, initial, tail(xs)));
 }
 
+/**
+ *  Optional second argument.
+ *  Similar to <CODE>display</CODE>, but formats well-formed lists nicely if detected.
+ * @param {value} xs - list structure to be displayed
+ * @param {string} s to be displayed, preceding <CODE>xs</CODE>
+ * @returns {value} xs, the first argument value
+ */
+function display_list(xs, s) {}
+
 // \end{lstlisting} // \texttt{list.js END}
