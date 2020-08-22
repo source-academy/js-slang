@@ -37,8 +37,8 @@ export const stringify = (
   const indentString = makeIndent(indent)
   const arrPrefix = '[' + indentString.substring(1)
   const objPrefix = '{' + indentString.substring(1)
-  const arrSuffix = indentString.substring(0, indentString.length - 1) + ']'
-  const objSuffix = indentString.substring(0, indentString.length - 1) + '}'
+  const arrSuffix = ']'
+  const objSuffix = '}'
 
   // Util functions
 

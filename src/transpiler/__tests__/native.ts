@@ -19,7 +19,7 @@ test('Proper stringify-ing of arguments during potentially infinite iterative fu
   [ function f(x) {
       return f(x);
     },
-  [() => 1, [[1, 2, 3], null]] ] ] ]) ...`)
+  [() => 1, [[1, 2, 3], null]]]]]) ...`)
 })
 
 test('test increasing time limit for functions', async () => {
