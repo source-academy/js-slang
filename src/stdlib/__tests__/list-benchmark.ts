@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { expectResult } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 import * as list from '../list'
 
 test('display_list is linear runtime', () => {
@@ -11,8 +11,9 @@ test('display_list is linear runtime', () => {
     return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
   }
 
-  return expectResult(
-    stripIndent`
+  return expect(
+    testSuccess(
+      stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
         let p = t;
@@ -101,15 +102,16 @@ test('display_list is linear runtime', () => {
       const slope = head(line);
       slope;
     `,
-    {
-      chapter: 3,
-      native: false, // we're measuring a builtin, no need for native
-      testBuiltins: {
-        no_display_list: noDisplayList
+      {
+        chapter: 3,
+        native: false, // we're measuring a builtin, no need for native
+        testBuiltins: {
+          no_display_list: noDisplayList
+        }
       }
-    }
-    // ).toMatchInlineSnapshot(`1.0463991530659391`)
-  ).toBeLessThan(1.2)
+      // ).toMatchInlineSnapshot(`1.0463991530659391`)
+    ).then(testResult => testResult.result)
+  ).resolves.toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
