@@ -592,6 +592,42 @@ describe('display_list', () => {
             `)
   })
 
+  test('standard acyclic with pairs', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(5, i=>build_list(i, j=>pair(j, j))));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(null,
+                   list([0, 0]),
+                   list([0, 0], [1, 1]),
+                   list([0, 0], [1, 1], [2, 2]),
+                   list([0, 0], [1, 1], [2, 2], [3, 3]))",
+              ]
+            `)
+  })
+
+  test('standard acyclic with pairs 2', () => {
+    return expectDisplayResult(
+      stripIndent`
+        display_list(build_list(5, i=>build_list(i, j=>pair(build_list(j, k=>k), j))));
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(null,
+                   list([null, 0]),
+                   list([null, 0], [list(0), 1]),
+                   list([null, 0], [list(0), 1], [list(0, 1), 2]),
+                   list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
+              ]
+            `)
+  })
+
   test('returns argument', () => {
     return expectResult(
       stripIndent`
@@ -648,6 +684,10 @@ describe('display_list', () => {
       `"Line 1: TypeError: display_list expects the second argument to be a string"`
     )
   })
+
+  /**************
+   * FUZZ TESTS *
+   **************/
 
   test('MCE fuzz test', () => {
     return expectDisplayResult(
@@ -759,6 +799,22 @@ describe('display_list', () => {
             `)
   })
 
+  test('reusing lists 2', () => {
+    return expectDisplayResult(
+      stripIndent`
+        const p1 = pair(1, null);
+        const p2 = pair(2, p1);
+        const p3 = list(p1, p2);
+        display_list(p3);
+        0; // suppress long result in snapshot
+      `,
+      { chapter: 2, native: true }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "list(list(1), list(2, 1))",
+              ]
+            `)
+  })
   test('list of infinite list', () => {
     return expectDisplayResult(
       stripIndent`

@@ -143,41 +143,62 @@ export function rawDisplayList(display: any, xs: Value, prepend: string) {
       this.listNode = listNode
     }
   }
-  function visit(curXs: Value): Value {
+  function getListObject(curXs: Value): Value {
+    return asListObjects.get(curXs) || curXs
+  }
+
+  const pairsToProcess: Value[] = []
+  let i = 0
+  pairsToProcess.push(xs)
+  // we need the guarantee that if there are any proper lists,
+  // then the nodes of the proper list appear as a subsequence of this array.
+  // We ensure this by always adding the tail after the current node is processed.
+  // This means that sometimes, we add the same pair more than once!
+  // But because we only process each pair once due to the visited check,
+  // and each pair can only contribute to at most 3 items in this array,
+  // this array has O(n) elements.
+  while (i < pairsToProcess.length) {
+    const curXs = pairsToProcess[i]
+    i++
     if (visited.has(curXs)) {
-      // `visit` doubles as an wrapper to access the new nodes/old nodes if they don't exist
-      return asListObjects.get(curXs) || curXs
+      continue
     }
     visited.add(curXs)
     if (!is_pair(curXs)) {
-      return curXs
+      continue
+    }
+    pairsToProcess.push(head(curXs), tail(curXs))
+  }
+
+  // go through pairs in reverse to ensure the dependencies are resolved first
+  while (pairsToProcess.length > 0) {
+    const curXs = pairsToProcess.pop()
+    if (!is_pair(curXs)) {
+      continue
     }
     const h = head(curXs)
     const t = tail(curXs)
-    visit(h)
-    const newTail = visit(t)
-    const newXs = is_null(newTail)
-      ? new ListObject(pair(h, t))
-      : newTail instanceof ListObject
-      ? new ListObject(pair(h, t))
-      : pair(h, t)
+    const newTail = getListObject(t) // the reason why we need the above guarantee
+    const newXs =
+      is_null(newTail) || newTail instanceof ListObject
+        ? new ListObject(pair(h, t)) // tail is a proper list
+        : pair(h, t) // it's not a proper list, make a copy of the pair so we can change references below
     asListObjects.set(curXs, newXs)
-    return newXs
   }
-  visit(xs)
+
   for (const curXs of asListObjects.values()) {
     if (is_pair(curXs)) {
-      set_head(curXs, visit(head(curXs)))
-      set_tail(curXs, visit(tail(curXs)))
+      set_head(curXs, getListObject(head(curXs)))
+      set_tail(curXs, getListObject(tail(curXs)))
     } else if (curXs instanceof ListObject) {
-      set_head(curXs.listNode, visit(head(curXs.listNode)))
-      let newTail = visit(tail(curXs.listNode))
+      set_head(curXs.listNode, getListObject(head(curXs.listNode)))
+      let newTail = getListObject(tail(curXs.listNode))
       if (newTail instanceof ListObject) {
         newTail = newTail.listNode
       }
       set_tail(curXs.listNode, newTail)
     }
   }
-  display(visit(xs), prepend)
+  display(getListObject(xs), prepend)
   return xs
 }
