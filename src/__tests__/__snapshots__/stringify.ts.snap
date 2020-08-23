@@ -106,7 +106,7 @@ stringify(o);",
   \\"k\\": 0,
   \\"l\\": 0,
   \\"m\\": 0,
-  \\"n\\": 0 }",
+  \\"n\\": 0}",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -422,7 +422,7 @@ stringify(arr);",
   96,
   97,
   98,
-  99 ]",
+  99]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -560,7 +560,7 @@ Object {
 [ 86,
 [ 87,
 [ 88,
-[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]",
+[89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1019,7 +1019,7 @@ Object {
   "pretranspiled": "",
   "result": "[... \\"lambda_expression\\",
 [... [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1053,7 +1053,7 @@ Object {
   "pretranspiled": "",
   "result": "[ \\"lambda_expression\\",
 [ [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1087,7 +1087,7 @@ Object {
   "pretranspiled": "",
   "result": "[.........\\"lambda_expression\\",
 [.........[[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1121,7 +1121,7 @@ Object {
   "pretranspiled": "",
   "result": "[         \\"lambda_expression\\",
 [         [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]",
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");

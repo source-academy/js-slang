@@ -1,4 +1,5 @@
-import { stringify } from '../utils/stringify'
+import { stringify, ArrayLike } from '../utils/stringify'
+import { Value } from '../types'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)
@@ -117,4 +118,87 @@ export function set_tail(xs: any, x: any) {
       'set_tail(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
     )
   }
+}
+
+export function rawDisplayList(display: any, xs: Value, prepend: string) {
+  const visited: Set<Value> = new Set() // Everything is put into this set, values, arrays, and even objects if they exist
+  const asListObjects: Map<NonEmptyList, NonEmptyList | ListObject> = new Map() // maps original list nodes to new list nodes
+
+  // We will convert list-like structures in xs to ListObject.
+  class ListObject implements ArrayLike {
+    replPrefix = 'list('
+    replSuffix = ')'
+    replArrayContents(): Value[] {
+      const result: Value[] = []
+      let curXs = this.listNode
+      while (curXs !== null) {
+        result.push(head(curXs))
+        curXs = tail(curXs)
+      }
+      return result
+    }
+    listNode: List
+
+    constructor(listNode: List) {
+      this.listNode = listNode
+    }
+  }
+  function getListObject(curXs: Value): Value {
+    return asListObjects.get(curXs) || curXs
+  }
+
+  const pairsToProcess: Value[] = []
+  let i = 0
+  pairsToProcess.push(xs)
+  // we need the guarantee that if there are any proper lists,
+  // then the nodes of the proper list appear as a subsequence of this array.
+  // We ensure this by always adding the tail after the current node is processed.
+  // This means that sometimes, we add the same pair more than once!
+  // But because we only process each pair once due to the visited check,
+  // and each pair can only contribute to at most 3 items in this array,
+  // this array has O(n) elements.
+  while (i < pairsToProcess.length) {
+    const curXs = pairsToProcess[i]
+    i++
+    if (visited.has(curXs)) {
+      continue
+    }
+    visited.add(curXs)
+    if (!is_pair(curXs)) {
+      continue
+    }
+    pairsToProcess.push(head(curXs), tail(curXs))
+  }
+
+  // go through pairs in reverse to ensure the dependencies are resolved first
+  while (pairsToProcess.length > 0) {
+    const curXs = pairsToProcess.pop()
+    if (!is_pair(curXs)) {
+      continue
+    }
+    const h = head(curXs)
+    const t = tail(curXs)
+    const newTail = getListObject(t) // the reason why we need the above guarantee
+    const newXs =
+      is_null(newTail) || newTail instanceof ListObject
+        ? new ListObject(pair(h, t)) // tail is a proper list
+        : pair(h, t) // it's not a proper list, make a copy of the pair so we can change references below
+    asListObjects.set(curXs, newXs)
+  }
+
+  for (const curXs of asListObjects.values()) {
+    if (is_pair(curXs)) {
+      set_head(curXs, getListObject(head(curXs)))
+      set_tail(curXs, getListObject(tail(curXs)))
+    } else if (curXs instanceof ListObject) {
+      set_head(curXs.listNode, getListObject(head(curXs.listNode)))
+      let newTail = getListObject(tail(curXs.listNode))
+      if (newTail instanceof ListObject) {
+        newTail = newTail.listNode
+      }
+      set_tail(curXs.listNode, newTail)
+    }
+  }
+  display(getListObject(xs), prepend)
+  return xs
 }

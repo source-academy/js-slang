@@ -24,6 +24,20 @@ function indentify(indent: string, s: string): string {
     .join('\n')
 }
 
+export interface ArrayLike {
+  replPrefix: string
+  replSuffix: string
+  replArrayContents: () => Value[]
+}
+
+function isArrayLike(v: Value) {
+  return (
+    typeof v.replPrefix === 'string' &&
+    typeof v.replSuffix === 'string' &&
+    typeof v.replArrayContents === 'function'
+  )
+}
+
 export const stringify = (
   value: Value,
   indent: number | string = 2,
@@ -37,8 +51,8 @@ export const stringify = (
   const indentString = makeIndent(indent)
   const arrPrefix = '[' + indentString.substring(1)
   const objPrefix = '{' + indentString.substring(1)
-  const arrSuffix = indentString.substring(0, indentString.length - 1) + ']'
-  const objSuffix = indentString.substring(0, indentString.length - 1) + '}'
+  const arrSuffix = ']'
+  const objSuffix = '}'
 
   // Util functions
 
@@ -76,6 +90,28 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       }
     } else {
       return `[${valueStrs.join(', ')}]`
+    }
+  }
+
+  const stringifyArrayLike = (arrayLike: ArrayLike, indentLevel: number) => {
+    const prefix = arrayLike.replPrefix
+    const suffix = arrayLike.replSuffix
+    const prefixIndented = prefix + indentString.substring(prefix.length)
+    const suffixIndented = suffix
+    const xs = arrayLike.replArrayContents()
+
+    ancestors.add(arrayLike)
+    const valueStrs = xs.map(x => stringifyValue(x, 0))
+    ancestors.delete(arrayLike)
+
+    if (shouldMultiline(valueStrs)) {
+      // indent second element onwards to match with first element
+      return `${prefixIndented}${indentify(
+        indentString.repeat(indentLevel) + ' '.repeat(prefixIndented.length),
+        valueStrs.join(',\n')
+      ).substring(prefixIndented.length)}${suffixIndented}`
+    } else {
+      return `${prefix}${valueStrs.join(', ')}${suffix}`
     }
   }
 
@@ -121,6 +157,8 @@ ${indentify(indentString.repeat(indentLevel), valueStrs[1])}${arrSuffix}`
       return v.toReplString()
     } else if (Array.isArray(v)) {
       return stringifyArray(v, indentLevel)
+    } else if (isArrayLike(v)) {
+      return stringifyArrayLike(v, indentLevel)
     } else {
       return stringifyObject(v, indentLevel)
     }

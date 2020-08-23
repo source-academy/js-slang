@@ -156,6 +156,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
     return rawDisplay(stringify(v), s === placeholder ? undefined : s), v
   }
+  const displayList = (v: Value, s: any = placeholder) => {
+    if (s !== placeholder && typeof s !== 'string') {
+      throw new TypeError('display_list expects the second argument to be a string')
+    }
+    return list.rawDisplayList(display, v, s === placeholder ? undefined : s)
+  }
   const prompt = (v: Value) => {
     const start = Date.now()
     const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
@@ -224,6 +230,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'is_null(val)', list.is_null)
       defineBuiltin(context, 'list(...values)', list.list)
       defineBuiltin(context, 'draw_data(xs)', visualiseList)
+      defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList)
     }
   }
 
