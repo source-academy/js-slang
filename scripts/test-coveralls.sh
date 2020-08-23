@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-jest --coverage --coverageReporters=text-lcov | \
+jest --coverage --coverageReporters=text-lcov --testPathIgnorePatterns='.*benchmark.*' | \
   coveralls
