@@ -32,9 +32,9 @@ export interface ArrayLike {
 
 function isArrayLike(v: Value) {
   return (
-    typeof v.replPrefix !== 'undefined' &&
-    typeof v.replSuffix !== 'undefined' &&
-    typeof v.replArrayContents !== 'undefined'
+    typeof v.replPrefix === 'string' &&
+    typeof v.replSuffix === 'string' &&
+    typeof v.replArrayContents === 'function'
   )
 }
 
