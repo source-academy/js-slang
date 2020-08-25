@@ -2,8 +2,14 @@
 
 Strings are of the form \texttt{"}$ \textit{double-quote-characters} $\texttt{"},
 where $\textit{double-quote-characters}$ is a possibly empty sequence of characters without
-the character \texttt{"}, 
-and of the form
+the character \texttt{"} and without the newline character, 
+of the form
 \texttt{'}$ \textit{single-quote-characters} $\texttt{'},
 where $\textit{single-quote-characters}$ is a possibly empty sequence of characters without
-the character~\texttt{'}, 
+the character~\texttt{'} and without the newline character,
+and of the form
+\texttt{`}$ \textit{backquote-characters} $\texttt{`},
+where $\textit{backquote-characters}$ is a possibly empty sequence of characters without
+the character~\texttt{`}. Note that newline characters are allowed as
+$\textit{backquote-characters}$.
+

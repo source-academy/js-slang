@@ -1198,14 +1198,6 @@ test('no interface - verbose', () => {
           `)
 })
 
-test('no template literals', () => {
-  return expectParsedError('`hi`', { chapter: 100 }).toMatchInlineSnapshot(`
-            "Line 1: Missing semicolon at the end of statement
-            Line 1: Template elements are not allowed
-            Line 1: Template literals are not allowed"
-          `)
-})
-
 test('no template literals - verbose', () => {
   return expectParsedError(
     `
