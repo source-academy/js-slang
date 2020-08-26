@@ -27,6 +27,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     <li>
       <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
     </li>
+    <li>
+      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
+    </li>
   </ul>
 
 ## What can you do in Source §1?
