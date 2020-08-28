@@ -228,7 +228,8 @@ export const nodeToSym: { [nodeType: string]: Executor } = {
   CallExpression(node: es.CallExpression, store: Map<string, stype.SSymbol>[]) {
     if (node.callee.type === 'Identifier') {
       const checkShadowed = getFromStore(node.callee.name, store)
-      if (checkShadowed?.type === 'SkipSymbol') {
+      if (checkShadowed !== undefined) {
+        // only make function symbol if callee is not a parameter or defined in the function's scope.
         return stype.skipSymbol
       }
       return stype.makeFunctionSymbol(
