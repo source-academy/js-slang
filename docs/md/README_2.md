@@ -35,6 +35,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     <li>
       <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
     </li>
+    <li>
+      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
+    </li>
   </ul>
 
 ## What can you do in Source §2?

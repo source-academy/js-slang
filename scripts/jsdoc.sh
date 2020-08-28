@@ -263,6 +263,14 @@ run() {
 	     -R ${MD}/VIDEO_README.md \
 	     ${LIB}/video_lib.js 
     
+   # GAME
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -d "${DST}/GAME/" \
+	     -R ${MD}/GAME_README.md \
+	     ${LIB}/game.js 
+    
     # External
     
     ${JSDOC} -r -t ${TMPL}/ \
@@ -273,6 +281,7 @@ run() {
 	     ${LIB}/webGLcurve.js \
 	     ${LIB}/webGLhi_graph.js \
 	     ${LIB}/video_lib.js \
+	     ${LIB}/game.js \
 	     ${LIB}/sound
     
 }

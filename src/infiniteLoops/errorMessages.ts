@@ -6,7 +6,7 @@ export enum InfiniteLoopErrorMessage {
   source_protection_recursion = 'Potential infinite recursion detected'
 }
 
-enum StackOverflowMessages {
+export enum StackOverflowMessages {
   firefox = 'InternalError: too much recursion',
   // webkit: chrome + safari
   webkit = 'RangeError: Maximum call stack size exceeded',
@@ -20,11 +20,13 @@ enum StackOverflowMessages {
  * @returns {string} string containing the infinite loop classification.
  * @returns {string} empty string, if the error is not an infinite loop.
  */
-export function infiniteLoopErrorType(errorString: string): string {
-  const infiniteLoopTypes = Object.keys(InfiniteLoopErrorMessage)
-  const stackOverflowStrings = Object.keys(StackOverflowMessages).map(x => StackOverflowMessages[x])
-  for (const key of infiniteLoopTypes) {
-    if (errorString.includes(InfiniteLoopErrorMessage[key])) return key
+export function infiniteLoopErrorType(
+  errorString: string
+): keyof typeof InfiniteLoopErrorMessage | 'stack_overflow' | '' {
+  const infiniteLoopTypes = Object.entries(InfiniteLoopErrorMessage)
+  const stackOverflowStrings = Object.values(StackOverflowMessages)
+  for (const [type, message] of infiniteLoopTypes) {
+    if (errorString.includes(message)) return type as keyof typeof InfiniteLoopErrorMessage
   }
   for (const message of stackOverflowStrings) {
     if (errorString === message) return 'stack_overflow'

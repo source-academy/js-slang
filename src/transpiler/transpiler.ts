@@ -1,12 +1,16 @@
-import { ancestor, make, RecursiveVisitors, simple } from 'acorn-walk/dist/walk'
+import { ancestor, simple } from 'acorn-walk/dist/walk'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { AllowedDeclarations, Context, NativeStorage, ValueWrapper, Variant } from '../types'
+import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { loadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
-import { transpileToGPU } from '../gpu/gpu'
+import {
+  getUniqueId,
+  getIdentifiersInProgram,
+  getIdentifiersInNativeStorage
+} from '../utils/uniqueIds'
 import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 /**
@@ -15,24 +19,8 @@ import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
  * There should be an explanation on it coming up soon.
  */
 
-function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
-  while (usedIdentifiers.has(uniqueId)) {
-    const start = uniqueId.slice(0, -1)
-    const end = uniqueId[uniqueId.length - 1]
-    const endToDigit = Number(end)
-    if (Number.isNaN(endToDigit) || endToDigit === 9) {
-      uniqueId += '0'
-    } else {
-      uniqueId = start + String(endToDigit + 1)
-    }
-  }
-  usedIdentifiers.add(uniqueId)
-  return uniqueId
-}
-
 const globalIdNames = [
   'native',
-  'forceIt',
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
@@ -258,11 +246,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
  *
  * conditional and logical expressions will be recursively looped through as well
  */
-function transformReturnStatementsToAllowProperTailCalls(
-  program: es.Program,
-  variant: Variant,
-  ignoreWalker: RecursiveVisitors<any>
-) {
+function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   function transformLogicalExpression(expression: es.Expression): es.Expression {
     switch (expression.type) {
       case 'LogicalExpression':
@@ -285,13 +269,7 @@ function transformReturnStatementsToAllowProperTailCalls(
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
 
-        const args = variant !== 'lazy' ? expression.arguments : ([] as es.Expression[])
-
-        if (variant === 'lazy') {
-          for (const arg of expression.arguments) {
-            args.push(delayIt(arg as es.Expression))
-          }
-        }
+        const args = expression.arguments
 
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
@@ -309,84 +287,41 @@ function transformReturnStatementsToAllowProperTailCalls(
     }
   }
 
-  simple(
-    program,
-    {
-      ReturnStatement(node: es.ReturnStatement) {
-        node.argument = transformLogicalExpression(node.argument!)
-      },
-      ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-        if (node.expression) {
-          node.body = transformLogicalExpression(node.body as es.Expression)
-        }
-      }
+  simple(program, {
+    ReturnStatement(node: es.ReturnStatement) {
+      node.argument = transformLogicalExpression(node.argument!)
     },
-    ignoreWalker
-  )
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      if (node.expression) {
+        node.body = transformLogicalExpression(node.body as es.Expression)
+      }
+    }
+  })
 }
 
-function delayIt(expr: es.Expression) {
-  const exprThunked = create.blockArrowFunction(
-    [],
-    [create.returnStatement(expr)],
-    expr.loc === null ? undefined : expr.loc
-  )
+function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
+  simple(program, {
+    CallExpression(node: es.CallExpression) {
+      const { line, column } = node.loc!.start
+      const args = node.arguments
 
-  return create.objectExpression([
-    create.property('isThunk', create.literal(true)),
-    create.property('memoizedValue', create.literal(0)),
-    create.property('isMemoized', create.literal(false)),
-    create.property('expr', exprThunked)
-  ])
-}
+      node.arguments = [
+        node.callee as es.Expression,
+        create.literal(line),
+        create.literal(column),
+        ...args
+      ]
 
-function transformCallExpressionsToCheckIfFunction(
-  program: es.Program,
-  variant: Variant,
-  globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>,
-  blacklist: string[]
-) {
-  simple(
-    program,
-    {
-      CallExpression(node: es.CallExpression) {
-        // ignore this function
-        if (node.callee.type === 'Identifier') {
-          if (blacklist.includes(node.callee.name)) {
-            return
-          }
-        }
-        const { line, column } = node.loc!.start
-        const args = variant !== 'lazy' ? node.arguments : ([] as es.Expression[])
-
-        if (variant === 'lazy') {
-          for (const arg of node.arguments) {
-            args.push(delayIt(arg as es.Expression))
-          }
-        }
-
-        node.arguments = [
-          node.callee as es.Expression,
-          create.literal(line),
-          create.literal(column),
-          ...args
-        ]
-
-        node.callee = globalIds.callIfFuncAndRightArgs
-      }
-    },
-    ignoreWalker
-  )
+      node.callee = globalIds.callIfFuncAndRightArgs
+    }
+  })
 }
 
 export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
   program: es.Program,
   skipErrors = false,
   nativeStorage: NativeStorage,
-  globalIds: NativeIds,
-  gpuInternalNames: Set<string>,
-  ignoreWalker: RecursiveVisitors<any>
+  globalIds: NativeIds
 ) {
   const globalEnvironment = nativeStorage.globals
   const previousVariablesToAst = new Map<
@@ -444,37 +379,33 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
     )
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
-  ancestor(
-    program,
-    {
-      Program: processBlock,
-      BlockStatement: processBlock,
-      FunctionDeclaration: processFunction,
-      ArrowFunctionExpression: processFunction,
-      ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-        const init = forStatement.init!
-        if (init.type === 'VariableDeclaration') {
-          identifiersIntroducedByNode.set(
-            forStatement,
-            new Set([(init.declarations[0].id as es.Identifier).name])
-          )
-        }
-      },
-      Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
-        identifiersToAncestors.set(identifier, [...ancestors])
-      },
-      Pattern(node: es.Pattern, ancestors: es.Node[]) {
-        if (node.type === 'Identifier') {
-          identifiersToAncestors.set(node, [...ancestors])
-        } else if (node.type === 'MemberExpression') {
-          if (node.object.type === 'Identifier') {
-            identifiersToAncestors.set(node.object, [...ancestors])
-          }
-        }
+  ancestor(program, {
+    Program: processBlock,
+    BlockStatement: processBlock,
+    FunctionDeclaration: processFunction,
+    ArrowFunctionExpression: processFunction,
+    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+      const init = forStatement.init!
+      if (init.type === 'VariableDeclaration') {
+        identifiersIntroducedByNode.set(
+          forStatement,
+          new Set([(init.declarations[0].id as es.Identifier).name])
+        )
       }
     },
-    ignoreWalker
-  )
+    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+      identifiersToAncestors.set(identifier, [...ancestors])
+    },
+    Pattern(node: es.Pattern, ancestors: es.Node[]) {
+      if (node.type === 'Identifier') {
+        identifiersToAncestors.set(node, [...ancestors])
+      } else if (node.type === 'MemberExpression') {
+        if (node.object.type === 'Identifier') {
+          identifiersToAncestors.set(node.object, [...ancestors])
+        }
+      }
+    }
+  })
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
 
   for (const [identifier, ancestors] of identifiersToAncestors) {
@@ -542,7 +473,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
             )
           }
         }
-      } else if (!nativeInternalNames.has(name) && !gpuInternalNames.has(name)) {
+      } else if (!nativeInternalNames.has(name)) {
         if (!skipErrors) {
           throw new UndefinedVariable(name, identifier)
         }
@@ -551,11 +482,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
 }
 
-function transformSomeExpressionsToCheckIfBoolean(
-  program: es.Program,
-  globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>
-) {
+function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
   function transform(
     node:
       | es.IfStatement
@@ -573,17 +500,13 @@ function transformSomeExpressionsToCheckIfBoolean(
     ])
   }
 
-  simple(
-    program,
-    {
-      IfStatement: transform,
-      ConditionalExpression: transform,
-      LogicalExpression: transform,
-      ForStatement: transform,
-      WhileStatement: transform
-    },
-    ignoreWalker
-  )
+  simple(program, {
+    IfStatement: transform,
+    ConditionalExpression: transform,
+    LogicalExpression: transform,
+    ForStatement: transform,
+    WhileStatement: transform
+  })
 }
 
 function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
@@ -592,32 +515,6 @@ function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): Native
     globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }
   return globalIds as NativeIds
-}
-
-function getAllIdentifiersUsed(program: es.Program, nativeStorage: NativeStorage) {
-  const identifiers = new Set<string>()
-  let variableScope = nativeStorage.globals
-  while (variableScope !== null) {
-    for (const name of variableScope.variables.keys()) {
-      identifiers.add(name)
-    }
-    variableScope = variableScope.previousScope
-  }
-  simple(program, {
-    Identifier(node: es.Identifier) {
-      identifiers.add(node.name)
-    },
-    Pattern(node: es.Pattern) {
-      if (node.type === 'Identifier') {
-        identifiers.add(node.name)
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiers.add(node.object.name)
-        }
-      }
-    }
-  })
-  return identifiers
 }
 
 /**
@@ -672,104 +569,84 @@ function splitLastStatementIntoStorageOfResultAndAccessorPair(
 function transformUnaryAndBinaryOperationsToFunctionCalls(
   program: es.Program,
   globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>
+  chapter: number
 ) {
-  simple(
-    program,
-    {
-      BinaryExpression(node: es.BinaryExpression) {
-        const { line, column } = node.loc!.start
-        const { operator, left, right } = node
-        create.mutateToCallExpression(node, globalIds.binaryOp, [
-          create.literal(operator),
-          left,
-          right,
-          create.literal(line),
-          create.literal(column)
-        ])
-      },
-      UnaryExpression(node: es.UnaryExpression) {
-        const { line, column } = node.loc!.start
-        const { operator, argument } = node as es.UnaryExpression
-        create.mutateToCallExpression(node, globalIds.unaryOp, [
-          create.literal(operator),
-          argument,
-          create.literal(line),
-          create.literal(column)
-        ])
-      }
+  simple(program, {
+    BinaryExpression(node: es.BinaryExpression) {
+      const { line, column } = node.loc!.start
+      const { operator, left, right } = node
+      create.mutateToCallExpression(node, globalIds.binaryOp, [
+        create.literal(operator),
+        create.literal(chapter),
+        left,
+        right,
+        create.literal(line),
+        create.literal(column)
+      ])
     },
-    ignoreWalker
-  )
+    UnaryExpression(node: es.UnaryExpression) {
+      const { line, column } = node.loc!.start
+      const { operator, argument } = node as es.UnaryExpression
+      create.mutateToCallExpression(node, globalIds.unaryOp, [
+        create.literal(operator),
+        argument,
+        create.literal(line),
+        create.literal(column)
+      ])
+    }
+  })
 }
 
 function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
   return computed ? property : create.literal((property as es.Identifier).name)
 }
 
-function transformPropertyAssignment(
-  program: es.Program,
-  globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>
-) {
-  simple(
-    program,
-    {
-      AssignmentExpression(node: es.AssignmentExpression) {
-        if (node.left.type === 'MemberExpression') {
-          const { object, property, computed, loc } = node.left
-          const { line, column } = loc!.start
-          create.mutateToCallExpression(node, globalIds.setProp, [
-            object as es.Expression,
-            getComputedProperty(computed, property),
-            node.right,
-            create.literal(line),
-            create.literal(column)
-          ])
-        }
-      }
-    },
-    ignoreWalker
-  )
-}
-
-function transformPropertyAccess(
-  program: es.Program,
-  globalIds: NativeIds,
-  ignoreWalker: RecursiveVisitors<any>
-) {
-  simple(
-    program,
-    {
-      MemberExpression(node: es.MemberExpression) {
-        const { object, property, computed, loc } = node
+function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) {
+  simple(program, {
+    AssignmentExpression(node: es.AssignmentExpression) {
+      if (node.left.type === 'MemberExpression') {
+        const { object, property, computed, loc } = node.left
         const { line, column } = loc!.start
-        create.mutateToCallExpression(node, globalIds.getProp, [
+        create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
           getComputedProperty(computed, property),
+          node.right,
           create.literal(line),
           create.literal(column)
         ])
       }
-    },
-    ignoreWalker
-  )
+    }
+  })
+}
+
+function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
+  simple(program, {
+    MemberExpression(node: es.MemberExpression) {
+      const { object, property, computed, loc } = node
+      const { line, column } = loc!.start
+      create.mutateToCallExpression(node, globalIds.getProp, [
+        object as es.Expression,
+        getComputedProperty(computed, property),
+        create.literal(line),
+        create.literal(column)
+      ])
+    }
+  })
 }
 
 function addInfiniteLoopProtection(
   program: es.Program,
   globalIds: NativeIds,
-  usedIdentifiers: Set<string>,
-  ignoreWalker: RecursiveVisitors<any>
+  usedIdentifiers: Set<string>
 ) {
-  const getRuntimeAst = () => create.callExpression(create.identifier('runtime'), [])
+  const getTimeAst = () => create.callExpression(create.identifier('get_time'), [])
 
   function instrumentLoops(node: es.Program | es.BlockStatement) {
     const newStatements = []
     for (const statement of node.body) {
       if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
         const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
-        newStatements.push(create.constantDeclaration(startTimeConst, getRuntimeAst()))
+        newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
           const { line, column } = statement.loc!.start
           statement.body.body.unshift(
@@ -777,7 +654,7 @@ function addInfiniteLoopProtection(
               create.callExpression(globalIds.throwIfTimeout, [
                 globalIds.native,
                 create.identifier(startTimeConst),
-                getRuntimeAst(),
+                getTimeAst(),
                 create.literal(line),
                 create.literal(column)
               ])
@@ -790,23 +667,21 @@ function addInfiniteLoopProtection(
     node.body = newStatements
   }
 
-  simple(
-    program,
-    {
-      Program: instrumentLoops,
-      BlockStatement: instrumentLoops
-    },
-    ignoreWalker
-  )
+  simple(program, {
+    Program: instrumentLoops,
+    BlockStatement: instrumentLoops
+  })
 }
 
 export function transpile(
   program: es.Program,
   context: Context,
-  skipUndefinedVariableErrors = false,
-  variant: Variant = 'default'
+  skipUndefinedVariableErrors = false
 ) {
-  const usedIdentifiers = getAllIdentifiersUsed(program, context.nativeStorage)
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage)
+  ])
   const globalIds = getNativeIds(program, usedIdentifiers)
   context.nativeStorage.globals = {
     variables: new Map(),
@@ -815,54 +690,24 @@ export function transpile(
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
+
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
-  let gpuDisplayStatements: es.Statement[] = []
-  let gpuInternalNames: Set<string> = new Set()
-  let gpuInternalFunctions: es.Statement[] = []
-
-  /*  BLACKLIST - any functions here will be ignored by transpiler */
-  const blacklist: string[] = []
-  const ignoreWalker: RecursiveVisitors<any> = make({
-    CallExpression: (node: es.CallExpression, st: any, c: any) => {
-      if (node.callee.type === 'Identifier') {
-        if (blacklist.includes(node.callee.name)) {
-          return
-        }
-      }
-
-      c(node.callee, st, 'Expression')
-      if (node.arguments) for (const arg of node.arguments) c(arg, st, 'Expression')
-    }
-  })
-
-  if (variant === 'gpu') {
-    const kernelFunction = getUniqueId(usedIdentifiers, '__createKernel')
-    blacklist.push(kernelFunction)
-    ;({ gpuDisplayStatements, gpuInternalNames, gpuInternalFunctions } = transpileToGPU(
-      program,
-      globalIds,
-      kernelFunction
-    ))
-  }
-
-  transformReturnStatementsToAllowProperTailCalls(program, variant, ignoreWalker)
-  transformCallExpressionsToCheckIfFunction(program, variant, globalIds, ignoreWalker, blacklist)
-  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, ignoreWalker)
-  transformSomeExpressionsToCheckIfBoolean(program, globalIds, ignoreWalker)
-  transformPropertyAssignment(program, globalIds, ignoreWalker)
-  transformPropertyAccess(program, globalIds, ignoreWalker)
+  transformReturnStatementsToAllowProperTailCalls(program)
+  transformCallExpressionsToCheckIfFunction(program, globalIds)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter)
+  transformSomeExpressionsToCheckIfBoolean(program, globalIds)
+  transformPropertyAssignment(program, globalIds)
+  transformPropertyAccess(program, globalIds)
   checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
     program,
     skipUndefinedVariableErrors,
     context.nativeStorage,
-    globalIds,
-    gpuInternalNames,
-    ignoreWalker
+    globalIds
   )
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
-  addInfiniteLoopProtection(program, globalIds, usedIdentifiers, ignoreWalker)
+  addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(
@@ -879,25 +724,14 @@ export function transpile(
 
   const body = [
     wrapWithPreviouslyDeclaredGlobals(
-      [
-        ...gpuDisplayStatements,
-        ...statements,
-        lastStatementStoredInResult,
-        ...statementsToSaveDeclaredGlobals
-      ],
+      [...statements, lastStatementStoredInResult, ...statementsToSaveDeclaredGlobals],
       context.nativeStorage,
       globalIds
     ),
-    create.expressionStatement(
-      create.callExpression(globalIds.forceIt, [globalIds.lastStatementResult])
-    )
+    create.expressionStatement(globalIds.lastStatementResult)
   ]
 
-  program.body = [
-    ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    ...gpuInternalFunctions,
-    ...body
-  ]
+  program.body = [...getDeclarationsToAccessTranspilerInternals(globalIds), ...body]
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })

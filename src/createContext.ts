@@ -93,7 +93,7 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-const defineSymbol = (context: Context, name: string, value: Value) => {
+export const defineSymbol = (context: Context, name: string, value: Value) => {
   const globalEnvironment = context.runtime.environments[0]
   Object.defineProperty(globalEnvironment.head, name, {
     value,
@@ -117,12 +117,12 @@ const defineSymbol = (context: Context, name: string, value: Value) => {
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export const defineBuiltin = (context: Context, name: string, value: Value) => {
   if (typeof value === 'function') {
-    const wrapped = (...args: any) => value(...args)
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
-    wrapped.toString = () => repr
+    value.toString = () => repr
+    value.hasVarArgs = name.includes('...') || name.includes('=')
 
-    defineSymbol(context, funName, wrapped)
+    defineSymbol(context, funName, value)
   } else if (value instanceof LazyBuiltIn) {
     const wrapped = (...args: any) => value.func(...args)
     const funName = name.split('(')[0].trim()
@@ -147,10 +147,21 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
-
+  const placeholder = Symbol()
   const rawDisplay = (v: Value, s: string) =>
     externalBuiltIns.rawDisplay(v, s, context.externalContext)
-  const display = (v: Value, s: string) => (rawDisplay(stringify(v), s), v)
+  const display = (v: Value, s: any = placeholder) => {
+    if (s !== placeholder && typeof s !== 'string') {
+      throw new TypeError('display expects the second argument to be a string')
+    }
+    return rawDisplay(stringify(v), s === placeholder ? undefined : s), v
+  }
+  const displayList = (v: Value, s: any = placeholder) => {
+    if (s !== placeholder && typeof s !== 'string') {
+      throw new TypeError('display_list expects the second argument to be a string')
+    }
+    return list.rawDisplayList(display, v, s === placeholder ? undefined : s)
+  }
   const prompt = (v: Value) => {
     const start = Date.now()
     const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
@@ -165,11 +176,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   const visualiseList = (v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
 
   if (context.chapter >= 1) {
-    defineBuiltin(context, 'runtime()', misc.runtime)
-    defineBuiltin(context, 'display(val)', display)
-    defineBuiltin(context, 'raw_display(str)', rawDisplay)
-    defineBuiltin(context, 'stringify(val)', stringify)
-    defineBuiltin(context, 'error(str)', misc.error_message)
+    defineBuiltin(context, 'get_time()', misc.get_time)
+    defineBuiltin(context, 'display(val, prepend = undefined)', display)
+    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay)
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify)
+    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message)
     defineBuiltin(context, 'prompt(str)', prompt)
     defineBuiltin(context, 'is_number(val)', misc.is_number)
     defineBuiltin(context, 'is_string(val)', misc.is_string)
@@ -181,9 +192,22 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)
     // Define all Math libraries
-    const props = Object.getOwnPropertyNames(Math)
-    for (const prop of props) {
-      defineBuiltin(context, 'math_' + prop, Math[prop])
+    const mathLibraryNames = Object.getOwnPropertyNames(Math)
+    // Short param names for stringified version of math functions
+    const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
+    for (const name of mathLibraryNames) {
+      const value = Math[name]
+      if (typeof value === 'function') {
+        let paramString: string
+        if (name === 'max' || 'min') {
+          paramString = '...values'
+        } else {
+          paramString = parameterNames.slice(0, value.length).join(', ')
+        }
+        defineBuiltin(context, `math_${name}(${paramString})`, value)
+      } else {
+        defineBuiltin(context, `math_${name}`, value)
+      }
     }
   }
 
@@ -206,6 +230,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'is_null(val)', list.is_null)
       defineBuiltin(context, 'list(...values)', list.list)
       defineBuiltin(context, 'draw_data(xs)', visualiseList)
+      defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList)
     }
   }
 
@@ -231,6 +256,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       // tslint:disable-next-line:ban-types
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
+
+    if (context.variant === 'gpu') {
+      defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
+      defineBuiltin(
+        context,
+        '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
+        gpu_lib.__createKernelSource
+      )
+    }
   }
 
   if (context.chapter >= 100) {
@@ -242,6 +276,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
+  }
+
+  if (context.variant === 'lazy') {
+    defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
+    defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
+    defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
+    defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
 }
 

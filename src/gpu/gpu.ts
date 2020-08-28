@@ -1,22 +1,34 @@
 import GPUTransformer from './transfomer'
-import { AllowedDeclarations } from '../types'
 import * as create from '../utils/astCreator'
 import * as es from 'estree'
-import { NativeIds } from '../transpiler/transpiler'
+import { getIdentifiersInProgram } from '../utils/uniqueIds'
 
 // top-level gpu functions that call our code
 
-// transpiles if possible and returns display statements to end user
-export function transpileToGPU(
-  program: es.Program,
-  globalIds: NativeIds,
-  kernelFunction: string
-): {
-  gpuDisplayStatements: es.Statement[]
-  gpuInternalNames: Set<string>
-  gpuInternalFunctions: es.Statement[]
-} {
-  const transformer = new GPUTransformer(program, create.identifier(kernelFunction))
+// transpiles if possible and modifies program to a Source program that makes use of the GPU primitives
+export function transpileToGPU(program: es.Program) {
+  const identifiers = getIdentifiersInProgram(program)
+  if (identifiers.has('__createKernelSource') || identifiers.has('__clearKernelCache')) {
+    program.body.unshift(
+      create.expressionStatement(
+        create.callExpression(
+          create.identifier('display'),
+          [
+            create.literal(
+              'Manual use of GPU library symbols detected, turning off automatic GPU optimizations.'
+            )
+          ],
+          {
+            start: { line: 0, column: 0 },
+            end: { line: 0, column: 0 }
+          }
+        )
+      )
+    )
+    return
+  }
+
+  const transformer = new GPUTransformer(program, create.identifier('__createKernelSource'))
   const res = transformer.transform()
 
   const gpuDisplayStatements = []
@@ -29,29 +41,21 @@ export function transpileToGPU(
       }
       gpuDisplayStatements.push(
         create.expressionStatement(
-          create.callExpression(create.identifier('display'), [create.literal(debug)])
+          create.callExpression(create.identifier('display'), [create.literal(debug)], {
+            start: { line: 0, column: 0 },
+            end: { line: 0, column: 0 }
+          })
         )
       )
     }
   }
-  return {
-    gpuDisplayStatements,
-    gpuInternalNames: getInternalNamesForGPU(transformer),
-    gpuInternalFunctions: getInternalFunctionsForGPU(globalIds, transformer)
-  }
-}
 
-export function getInternalNamesForGPU(gpuTransformer: GPUTransformer): Set<string> {
-  return new Set(Object.entries(gpuTransformer.globalIds).map(([key, { name }]) => key))
-}
+  const clearKernelCacheStatement = create.expressionStatement(
+    create.callExpression(create.identifier('__clearKernelCache'), [], {
+      start: { line: 0, column: 0 },
+      end: { line: 0, column: 0 }
+    })
+  )
 
-export function getInternalFunctionsForGPU(globalIds: NativeIds, gpuTransformer: GPUTransformer) {
-  return Object.entries(gpuTransformer.globalIds).map(([key, { name }]) => {
-    const kind: AllowedDeclarations = 'const'
-    const value: es.Expression = create.callExpression(
-      create.memberExpression(create.memberExpression(globalIds.native, 'gpu'), 'get'),
-      [create.literal(key)]
-    )
-    return create.declaration(name, kind, value)
-  })
+  program.body = [...gpuDisplayStatements, clearKernelCacheStatement, ...program.body]
 }

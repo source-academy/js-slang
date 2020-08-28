@@ -23,6 +23,11 @@ test('Single string self-evaluates to itself', () => {
   return expectResult("'42';").toBe('42')
 })
 
+test('Multiline string self-evaluates to itself', () => {
+  return expectResult('`1\n1`;').toBe(`1
+1`)
+})
+
 test('Allow display to return value it is displaying', () => {
   return expectResult('25*(display(1+1));').toBe(50)
 })
@@ -112,6 +117,12 @@ test('Factorial arrow function', () => {
 test('parseError for missing semicolon', () => {
   return expectParsedError('42').toMatchInlineSnapshot(
     `"Line 1: Missing semicolon at the end of statement"`
+  )
+})
+
+test('parseError for template literals with expressions', () => {
+  return expectParsedError('`${1}`;').toMatchInlineSnapshot(
+    `"Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"`
   )
 })
 
@@ -218,7 +229,7 @@ test('Functions passed into non-source functions remain equal', () => {
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: 1, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
+    { chapter: 3, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
   ).toBe(true)
 })
 

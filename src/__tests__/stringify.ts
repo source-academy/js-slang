@@ -190,7 +190,7 @@ test('String representation of huge lists are nice', () => {
             [ 86,
             [ 87,
             [ 88,
-            [89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]"
+            [89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
           `)
 })
 // tslint:enable:max-line-length
@@ -305,7 +305,7 @@ test('String representation of huge arrays are nice', () => {
               96,
               97,
               98,
-              99 ]"
+              99]"
           `)
 })
 
@@ -317,6 +317,16 @@ test('String representation of objects are nice', () => {
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
+})
+
+test('String representation of objects with toReplString member calls toReplString', () => {
+  return expectResult(
+    stripIndent`
+  const o = { toReplString: () => '<RUNE>' };
+  stringify(o);
+  `,
+    { chapter: 100, native: true }
+  ).toMatchInlineSnapshot(`"<RUNE>"`)
 })
 
 test('String representation of nested objects are nice', () => {
@@ -350,7 +360,7 @@ test('String representation of big objects are nice', () => {
               \\"k\\": 0,
               \\"l\\": 0,
               \\"m\\": 0,
-              \\"n\\": 0 }"
+              \\"n\\": 0}"
           `)
 })
 
@@ -430,7 +440,7 @@ test('String representation with default (2 space) indent', () => {
   ).toMatchInlineSnapshot(`
             "[ \\"lambda_expression\\",
             [ [[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ] ]"
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
 })
 
@@ -443,7 +453,7 @@ test('String representation with more than 10 space indent should trim to 10 spa
   ).toMatchInlineSnapshot(`
             "[         \\"lambda_expression\\",
             [         [[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]         ]         ]"
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
 })
 
@@ -456,7 +466,7 @@ test('String representation with custom indent', () => {
   ).toMatchInlineSnapshot(`
             "[... \\"lambda_expression\\",
             [... [[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null] ...] ...]"
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
 })
 
@@ -469,7 +479,7 @@ test('String representation with long custom indent gets trimmed to 10 character
   ).toMatchInlineSnapshot(`
             "[.........\\"lambda_expression\\",
             [.........[[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null].........].........]"
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
 })
 // tslint:enable:max-line-length

@@ -21,10 +21,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -40,16 +40,16 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 6, 22), 6, 6); i = binaryOp(\\"+\\", i, 1, 6, 35)) {
-        throwIfTimeout(native, startTime, runtime(), 6, 6);
+      const startTime = get_time();
+      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 6, 22), 6, 6); i = binaryOp(\\"+\\", 3, i, 1, 6, 35)) {
+        throwIfTimeout(native, startTime, get_time(), 6, 6);
         return {
           isTail: false,
-          value: binaryOp(\\"+\\", i, 1, 7, 15)
+          value: binaryOp(\\"+\\", 3, i, 1, 7, 15)
         };
         callIfFuncAndRightArgs(unreachable, 8, 8);
       }
@@ -75,7 +75,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -102,10 +102,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -121,7 +121,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const f = wrap(() => {
@@ -154,7 +154,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -181,10 +181,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -200,13 +200,13 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
+      const startTime = get_time();
       while (boolOrErr(true, 6, 6)) {
-        throwIfTimeout(native, startTime, runtime(), 6, 6);
+        throwIfTimeout(native, startTime, get_time(), 6, 6);
         return {
           isTail: false,
           value: 1
@@ -235,7 +235,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -259,10 +259,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -278,7 +278,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const f = wrap(() => {
@@ -308,7 +308,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -375,10 +375,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 3,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -394,7 +394,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -404,12 +404,12 @@ const globals = native.globals;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", i, 1, 9, 35)) {
-        throwIfTimeout(native, startTime, runtime(), 9, 6);
+      const startTime = get_time();
+      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
+        throwIfTimeout(native, startTime, get_time(), 9, 6);
         return {
           isTail: false,
-          value: binaryOp(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, binaryOp(\\"+\\", i, 1, 10, 18)), callIfFuncAndRightArgs(id, 10, 25, binaryOp(\\"+\\", i, 2, 10, 28)), 10, 15)
+          value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, binaryOp(\\"+\\", 3, i, 1, 10, 18)), callIfFuncAndRightArgs(id, 10, 25, binaryOp(\\"+\\", 3, i, 2, 10, 28)), 10, 15)
         };
       }
       return {
@@ -438,7 +438,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -468,10 +468,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 3,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -487,7 +487,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -500,7 +500,7 @@ const globals = native.globals;
       if (boolOrErr(true, 9, 6)) {
         return {
           isTail: false,
-          value: binaryOp(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
+          value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
         };
         callIfFuncAndRightArgs(unreachable, 11, 8);
       } else {}
@@ -532,7 +532,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -562,10 +562,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 3,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -581,7 +581,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -591,12 +591,12 @@ const globals = native.globals;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
+      const startTime = get_time();
       while (boolOrErr(true, 9, 6)) {
-        throwIfTimeout(native, startTime, runtime(), 9, 6);
+        throwIfTimeout(native, startTime, get_time(), 9, 6);
         return {
           isTail: false,
-          value: binaryOp(\\"+\\", callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
+          value: binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(id, 10, 15, 1), callIfFuncAndRightArgs(id, 10, 23, 2), 10, 15)
         };
         callIfFuncAndRightArgs(unreachable, 11, 8);
       }
@@ -628,7 +628,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -655,10 +655,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 3,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -674,7 +674,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -686,7 +686,7 @@ const globals = native.globals;
     const f = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"+\\", callIfFuncAndRightArgs(id, 9, 13, 1), callIfFuncAndRightArgs(id, 9, 21, 2), 9, 13)
+        value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(id, 9, 13, 1), callIfFuncAndRightArgs(id, 9, 21, 2), 9, 13)
       };
       callIfFuncAndRightArgs(unreachable, 10, 6);
       return {
@@ -716,7 +716,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -746,10 +746,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -765,7 +765,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -775,14 +775,14 @@ const globals = native.globals;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
-      for (let i = 0; boolOrErr(binaryOp(\\"<\\", i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", i, 1, 9, 35)) {
-        throwIfTimeout(native, startTime, runtime(), 9, 6);
+      const startTime = get_time();
+      for (let i = 0; boolOrErr(binaryOp(\\"<\\", 3, i, 100, 9, 22), 9, 6); i = binaryOp(\\"+\\", 3, i, 1, 9, 35)) {
+        throwIfTimeout(native, startTime, get_time(), 9, 6);
         return {
           isTail: true,
           function: id,
           functionName: \\"id\\",
-          arguments: [binaryOp(\\"+\\", i, 1, 10, 18)],
+          arguments: [binaryOp(\\"+\\", 3, i, 1, 10, 18)],
           line: 10,
           column: 15
         };
@@ -816,7 +816,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -846,10 +846,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -865,7 +865,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -914,7 +914,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -944,10 +944,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -963,7 +963,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 3, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -973,9 +973,9 @@ const globals = native.globals;
       };
     }, \\"function id(x) {\\\\n  return x;\\\\n}\\", native);
     const f = wrap(() => {
-      const startTime = runtime();
+      const startTime = get_time();
       while (boolOrErr(true, 9, 6)) {
-        throwIfTimeout(native, startTime, runtime(), 9, 6);
+        throwIfTimeout(native, startTime, get_time(), 9, 6);
         return {
           isTail: true,
           function: id,
@@ -1014,7 +1014,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1041,10 +1041,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1060,7 +1060,7 @@ const globals = native.globals;
     const unreachable = wrap(() => {
       return {
         isTail: false,
-        value: binaryOp(\\"<\\", 1, true, 3, 13)
+        value: binaryOp(\\"<\\", 1, 1, true, 3, 13)
       };
     }, \\"function unreachable() {\\\\n  return 1 < true;\\\\n}\\", native);
     const id = wrap(x => {
@@ -1106,7 +1106,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }

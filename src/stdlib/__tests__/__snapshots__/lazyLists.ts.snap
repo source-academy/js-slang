@@ -7,10 +7,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(accumulate)(delayIt(() => (curr, acc) => forceIt(curr) + forceIt(acc)), delayIt(() => 0), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 1))));
+",
   "result": 10,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -23,10 +24,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(accumulate, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return wrap((curr, acc) => ({       isTail: false,       value: binaryOp(\\\\\\"+\\\\\\", curr, acc, 1, 26)     }), \\\\\\"(curr, acc) => curr + acc\\\\\\", native);   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 0;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 41, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, accumulate), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 11, wrap(() => ({   isTail: false,   value: wrap((curr, acc) => ({     isTail: false,     value: binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 1, 26, curr), callIfFuncAndRightArgs(forceIt, 1, 33, acc), 1, 26)   }), \\\\\\"(curr, acc) => forceIt(curr) + forceIt(acc)\\\\\\", native) }), \\\\\\"() => (curr, acc) => forceIt(curr) + forceIt(acc)\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 38, wrap(() => ({   isTail: false,   value: 0 }), \\\\\\"() => 0\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 41, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 41, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 46, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 49, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 52, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 55, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native))],   line: 1,   column: 41 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 1))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -41,10 +42,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+const b = wrapLazyCallee(append)(delayIt(() => a), delayIt(() => wrapLazyCallee(list)(delayIt(() => 3), delayIt(() => 4))));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -57,51 +61,31 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    const b = callIfFuncAndRightArgs(append, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return callIfFuncAndRightArgs(list, 2, 20, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 3;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 4;
-          }
-        });
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, append), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)), callIfFuncAndRightArgs(delayIt, 2, 20, wrap(() => ({
+      isTail: true,
+      function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 20, list),
+      functionName: \\"<anonymous>\\",
+      arguments: [callIfFuncAndRightArgs(delayIt, 2, 25, wrap(() => ({
+        isTail: false,
+        value: 3
+      }), \\"() => 3\\", native)), callIfFuncAndRightArgs(delayIt, 2, 27, wrap(() => ({
+        isTail: false,
+        value: 4
+      }), \\"() => 4\\", native))],
+      line: 2,
+      column: 20
+    }), \\"() => wrapLazyCallee(list)(delayIt(() => 3), delayIt(() => 4))\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -116,7 +100,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -131,10 +115,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+const b = wrapLazyCallee(append)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 3), delayIt(() => 4))), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -147,51 +134,31 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    const b = callIfFuncAndRightArgs(append, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return callIfFuncAndRightArgs(list, 2, 17, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 3;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 4;
-          }
-        });
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, append), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 17, wrap(() => ({
+      isTail: true,
+      function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 17, list),
+      functionName: \\"<anonymous>\\",
+      arguments: [callIfFuncAndRightArgs(delayIt, 2, 22, wrap(() => ({
+        isTail: false,
+        value: 3
+      }), \\"() => 3\\", native)), callIfFuncAndRightArgs(delayIt, 2, 24, wrap(() => ({
+        isTail: false,
+        value: 4
+      }), \\"() => 4\\", native))],
+      line: 2,
+      column: 17
+    }), \\"() => wrapLazyCallee(list)(delayIt(() => 3), delayIt(() => 4))\\", native)), callIfFuncAndRightArgs(delayIt, 2, 27, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -206,7 +173,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -215,14 +182,15 @@ forceIt(lastStatementResult);
 exports[`append: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(append(list(\\"string\\", 123), list(456, null, undefined)), list(\\"string\\", 123, 456, null, undefined));",
+  "code": "equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(append)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => 123))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 456), delayIt(() => 456), delayIt(() => 456))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => 123), delayIt(() => 456), delayIt(() => 456), delayIt(() => 456))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -235,10 +203,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(append, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 13, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 34, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 63, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, append),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 13, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 13, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 18, wrap(() => ({       isTail: false,       value: 123     }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 23, wrap(() => ({       isTail: false,       value: 123     }), \\\\\\"() => 123\\\\\\", native))],     line: 1,     column: 13   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => 123))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 29, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 29, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 34, wrap(() => ({       isTail: false,       value: 456     }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 39, wrap(() => ({       isTail: false,       value: 456     }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 44, wrap(() => ({       isTail: false,       value: 456     }), \\\\\\"() => 456\\\\\\", native))],     line: 1,     column: 29   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 456), delayIt(() => 456), delayIt(() => 456))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(append)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => 123))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 456), delayIt(() => 456), delayIt(() => 456))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 51, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 51, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 56, wrap(() => ({     isTail: false,     value: 123   }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 61, wrap(() => ({     isTail: false,     value: 123   }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 66, wrap(() => ({     isTail: false,     value: 456   }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 71, wrap(() => ({     isTail: false,     value: 456   }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 76, wrap(() => ({     isTail: false,     value: 456   }), \\\\\\"() => 456\\\\\\", native))],   line: 1,   column: 51 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => 123), delayIt(() => 456), delayIt(() => 456), delayIt(() => 456))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -251,10 +219,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -267,10 +236,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 5, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(head, 1, 12, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         });       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, head), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 5, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 5, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 12, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 12, head),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({       isTail: false,       value: null     }), \\\\\\"() => null\\\\\\", native))],     line: 1,     column: 12   }), \\\\\\"() => wrapLazyCallee(head)(delayIt(() => null))\\\\\\", native))],   line: 1,   column: 5 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -283,10 +252,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -299,10 +269,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(pair, 1, 5, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(head, 1, 12, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         });       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, head), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 5, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 5, pair),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 12, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 12, head),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({       isTail: false,       value: null     }), \\\\\\"() => null\\\\\\", native))],     line: 1,     column: 12   }), \\\\\\"() => wrapLazyCallee(head)(delayIt(() => null))\\\\\\", native))],   line: 1,   column: 5 }), \\\\\\"() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -319,22 +289,23 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "pretranspiled": "wrapLazyCallee(list_ref)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))), delayIt(() => 3));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -347,10 +318,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 3;   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_ref), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({   isTail: false,   value: 3 }), \\\\\\"() => 3\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -367,22 +338,23 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "pretranspiled": "wrapLazyCallee(list_ref)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))), delayIt(() => -forceIt(1)));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -395,10 +367,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return unaryOp(\\\\\\"-\\\\\\", 1, 1, 24);   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_ref), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({   isTail: false,   value: unaryOp(\\\\\\"-\\\\\\", callIfFuncAndRightArgs(forceIt, 1, 25, 1), 1, 24) }), \\\\\\"() => -forceIt(1)\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -415,22 +387,23 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 23,
-          "line": 148,
+          "line": 158,
         },
         "start": Position {
           "column": 15,
-          "line": 148,
+          "line": 158,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "pretranspiled": "wrapLazyCallee(list_ref)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))), delayIt(() => 1.5));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -443,10 +416,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1.5;   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_ref), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({   isTail: false,   value: 1.5 }), \\\\\\"() => 1.5\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -459,28 +432,29 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     TypeError {
-      "expected": "number",
-      "got": "string",
+      "expected": "string",
+      "got": "number",
       "location": SourceLocation {
         "end": Position {
-          "column": 50,
-          "line": 149,
+          "column": 16,
+          "line": 159,
         },
         "start": Position {
-          "column": 45,
-          "line": 149,
+          "column": 9,
+          "line": 159,
         },
       },
       "severity": "Error",
-      "side": " on left hand side of operation",
+      "side": " on right hand side of operation",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 149: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 159: Expected string on right hand side of operation, got number.",
+  "pretranspiled": "wrapLazyCallee(list_ref)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))), delayIt(() => '1'));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -493,10 +467,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '1';   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_ref), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({   isTail: false,   value: '1' }), \\\\\\"() => '1'\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -514,11 +488,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 45,
+          "line": 55,
         },
         "start": Position {
           "column": 15,
-          "line": 45,
+          "line": 55,
         },
       },
       "severity": "Error",
@@ -526,11 +500,12 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 45: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 55: Expected number on left hand side of operation, got string.",
+  "pretranspiled": "wrapLazyCallee(build_list)(delayIt(() => '1'), delayIt(() => x => x));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -543,10 +518,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(build_list, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '1';   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return wrap(x => ({       isTail: false,       value: x     }), \\\\\\"x => x\\\\\\", native);   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, build_list), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 11, wrap(() => ({   isTail: false,   value: '1' }), \\\\\\"() => '1'\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({   isTail: false,   value: wrap(x => ({     isTail: false,     value: x   }), \\\\\\"x => x\\\\\\", native) }), \\\\\\"() => x => x\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -564,11 +539,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 28,
-          "line": 139,
+          "line": 149,
         },
         "start": Position {
           "column": 19,
-          "line": 139,
+          "line": 149,
         },
       },
       "severity": "Error",
@@ -576,11 +551,12 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
+  "pretranspiled": "wrapLazyCallee(enum_list)(delayIt(() => '1'), delayIt(() => '5'));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -593,10 +569,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '1';   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '5';   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, enum_list), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({   isTail: false,   value: '1' }), \\\\\\"() => '1'\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({   isTail: false,   value: '5' }), \\\\\\"() => '5'\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -614,11 +590,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 28,
-          "line": 139,
+          "line": 149,
         },
         "start": Position {
           "column": 19,
-          "line": 139,
+          "line": 149,
         },
       },
       "severity": "Error",
@@ -626,11 +602,12 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 139: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
+  "pretranspiled": "wrapLazyCallee(enum_list)(delayIt(() => '1'), delayIt(() => 5));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -643,10 +620,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '1';   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 5;   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, enum_list), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({   isTail: false,   value: '1' }), \\\\\\"() => '1'\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({   isTail: false,   value: 5 }), \\\\\\"() => 5\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -664,11 +641,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 140,
+          "line": 150,
         },
         "start": Position {
           "column": 9,
-          "line": 140,
+          "line": 150,
         },
       },
       "severity": "Error",
@@ -676,11 +653,12 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 140: Expected number on right hand side of operation, got string.",
+  "parsedErrors": "Line 150: Expected number on right hand side of operation, got string.",
+  "pretranspiled": "wrapLazyCallee(enum_list)(delayIt(() => 1), delayIt(() => '5'));
+",
   "result": undefined,
   "resultStatus": "error",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -693,10 +671,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(enum_list, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return '5';   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, enum_list), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({   isTail: false,   value: 1 }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 13, wrap(() => ({   isTail: false,   value: '5' }), \\\\\\"() => '5'\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -709,10 +687,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(build_list)(delayIt(() => 5), delayIt(() => x => forceIt(x) * forceIt(x)))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 0), delayIt(() => 1), delayIt(() => 4), delayIt(() => 9), delayIt(() => 16))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -725,10 +704,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(build_list, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", x, x, 1, 25)         }), \\\\\\"x => x * x\\\\\\", native);       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 33, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 0;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 9;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 16;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, build_list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 5   }), \\\\\\"() => 5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"*\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 1, 25, x), callIfFuncAndRightArgs(forceIt, 1, 29, x), 1, 25)     }), \\\\\\"x => forceIt(x) * forceIt(x)\\\\\\", native)   }), \\\\\\"() => x => forceIt(x) * forceIt(x)\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(build_list)(delayIt(() => 5), delayIt(() => x => forceIt(x) * forceIt(x)))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 33, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 33, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 38, wrap(() => ({     isTail: false,     value: 0   }), \\\\\\"() => 0\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 41, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 44, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 47, wrap(() => ({     isTail: false,     value: 9   }), \\\\\\"() => 9\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 50, wrap(() => ({     isTail: false,     value: 16   }), \\\\\\"() => 16\\\\\\", native))],   line: 1,   column: 33 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 0), delayIt(() => 1), delayIt(() => 4), delayIt(() => 9), delayIt(() => 16))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -741,10 +720,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(list)();
+",
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -757,10 +737,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 1, 0);\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list), 1, 0);\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -773,10 +753,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(enum_list)(delayIt(() => 1.5), delayIt(() => 5))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1.5), delayIt(() => 2.5), delayIt(() => 3.5), delayIt(() => 4.5))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -789,10 +770,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(enum_list, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1.5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 25, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1.5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2.5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3.5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4.5;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, enum_list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({     isTail: false,     value: 1.5   }), \\\\\\"() => 1.5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 21, wrap(() => ({     isTail: false,     value: 5   }), \\\\\\"() => 5\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(enum_list)(delayIt(() => 1.5), delayIt(() => 5))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 25, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 25, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 30, wrap(() => ({     isTail: false,     value: 1.5   }), \\\\\\"() => 1.5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 35, wrap(() => ({     isTail: false,     value: 2.5   }), \\\\\\"() => 2.5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 40, wrap(() => ({     isTail: false,     value: 3.5   }), \\\\\\"() => 3.5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 45, wrap(() => ({     isTail: false,     value: 4.5   }), \\\\\\"() => 4.5\\\\\\", native))],   line: 1,   column: 25 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1.5), delayIt(() => 2.5), delayIt(() => 3.5), delayIt(() => 4.5))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -805,10 +786,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(enum_list)(delayIt(() => 1), delayIt(() => 5))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 5))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -821,10 +803,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(enum_list, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 23, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, enum_list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 19, wrap(() => ({     isTail: false,     value: 5   }), \\\\\\"() => 5\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(enum_list)(delayIt(() => 1), delayIt(() => 5))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 23, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 23, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 28, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 34, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 37, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 40, wrap(() => ({     isTail: false,     value: 5   }), \\\\\\"() => 5\\\\\\", native))],   line: 1,   column: 23 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 5))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -839,10 +821,13 @@ list_ref(b,1);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => wrapLazyCallee(pair)(delayIt(() => 2), delayIt(() => a))));
+const b = wrapLazyCallee(filter)(delayIt(() => x => forceIt(forceIt(x) % forceIt(2)) === forceIt(0)), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 1));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -855,54 +840,34 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return callIfFuncAndRightArgs(pair, 1, 17, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 2;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return a;
-          }
-        });
-      }
-    });
-    const b = callIfFuncAndRightArgs(filter, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return wrap(x => ({
-          isTail: false,
-          value: binaryOp(\\"===\\", binaryOp(\\"%\\", x, 2, 2, 22), 0, 2, 22)
-        }), \\"x => x % 2 === 0\\", native);
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: true,
+      function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 17, pair),
+      functionName: \\"<anonymous>\\",
+      arguments: [callIfFuncAndRightArgs(delayIt, 1, 22, wrap(() => ({
+        isTail: false,
+        value: 2
+      }), \\"() => 2\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({
+        isTail: false,
+        value: a
+      }), \\"() => a\\", native))],
+      line: 1,
+      column: 17
+    }), \\"() => wrapLazyCallee(pair)(delayIt(() => 2), delayIt(() => a))\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, filter), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 17, wrap(() => ({
+      isTail: false,
+      value: wrap(x => ({
+        isTail: false,
+        value: binaryOp(\\"===\\", 2, callIfFuncAndRightArgs(forceIt, 2, 22, binaryOp(\\"%\\", 2, callIfFuncAndRightArgs(forceIt, 2, 22, x), callIfFuncAndRightArgs(forceIt, 2, 26, 2), 2, 22)), callIfFuncAndRightArgs(forceIt, 2, 32, 0), 2, 22)
+      }), \\"x => forceIt(forceIt(x) % forceIt(2)) === forceIt(0)\\", native)
+    }), \\"() => x => forceIt(forceIt(x) % forceIt(2)) === forceIt(0)\\", native)), callIfFuncAndRightArgs(delayIt, 2, 34, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 1 }), \\\\\\"() => 1\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -917,7 +882,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -930,10 +895,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(filter)(delayIt(() => x => forceIt(x) <= forceIt(4)), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 10), delayIt(() => 1000), delayIt(() => 1), delayIt(() => 3), delayIt(() => 100), delayIt(() => 4), delayIt(() => 5), delayIt(() => 2), delayIt(() => 1000))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 1), delayIt(() => 3), delayIt(() => 4), delayIt(() => 2))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -946,10 +912,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(filter, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"<=\\\\\\", x, 4, 1, 18)         }), \\\\\\"x => x <= 4\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 26, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 10;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 100;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1000;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 72, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, filter),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 13, wrap(() => ({     isTail: false,     value: wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"<=\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 1, 18, x), callIfFuncAndRightArgs(forceIt, 1, 23, 4), 1, 18)     }), \\\\\\"x => forceIt(x) <= forceIt(4)\\\\\\", native)   }), \\\\\\"() => x => forceIt(x) <= forceIt(4)\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 26, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 26, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({       isTail: false,       value: 2     }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 34, wrap(() => ({       isTail: false,       value: 10     }), \\\\\\"() => 10\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 38, wrap(() => ({       isTail: false,       value: 1000     }), \\\\\\"() => 1000\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 44, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 47, wrap(() => ({       isTail: false,       value: 3     }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 50, wrap(() => ({       isTail: false,       value: 100     }), \\\\\\"() => 100\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 55, wrap(() => ({       isTail: false,       value: 4     }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 58, wrap(() => ({       isTail: false,       value: 5     }), \\\\\\"() => 5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 61, wrap(() => ({       isTail: false,       value: 2     }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 64, wrap(() => ({       isTail: false,       value: 1000     }), \\\\\\"() => 1000\\\\\\", native))],     line: 1,     column: 26   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 10), delayIt(() => 1000), delayIt(() => 1), delayIt(() => 3), delayIt(() => 100), delayIt(() => 4), delayIt(() => 5), delayIt(() => 2), delayIt(() => 1000))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(filter)(delayIt(() => x => forceIt(x) <= forceIt(4)), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 10), delayIt(() => 1000), delayIt(() => 1), delayIt(() => 3), delayIt(() => 100), delayIt(() => 4), delayIt(() => 5), delayIt(() => 2), delayIt(() => 1000))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 72, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 72, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 77, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 80, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 83, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 86, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 89, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native))],   line: 1,   column: 72 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 1), delayIt(() => 3), delayIt(() => 4), delayIt(() => 2))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -966,10 +932,15 @@ sum;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "let sum = 0;
+wrapLazyCallee(for_each)(delayIt(() => x => {
+  sum = forceIt(sum) + forceIt(x);
+}), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))));
+sum;
+",
   "result": 6,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -983,44 +954,28 @@ const globals = native.globals;
 {
   {
     let sum = 0;
-    callIfFuncAndRightArgs(for_each, 2, 0, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return wrap(x => {
-          sum = binaryOp(\\"+\\", sum, x, 3, 8);
-        }, \\"x => {\\\\n  sum = sum + x;\\\\n}\\", native);
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return callIfFuncAndRightArgs(list, 4, 3, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 1;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 2;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 3;
-          }
-        });
-      }
-    });
+    callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, for_each), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 9, wrap(() => ({
+      isTail: false,
+      value: wrap(x => {
+        sum = binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(forceIt, 3, 8, sum), callIfFuncAndRightArgs(forceIt, 3, 14, x), 3, 8);
+      }, \\"x => {\\\\n  sum = forceIt(sum) + forceIt(x);\\\\n}\\", native)
+    }), \\"() => x => {\\\\n  sum = forceIt(sum) + forceIt(x);\\\\n}\\", native)), callIfFuncAndRightArgs(delayIt, 4, 3, wrap(() => ({
+      isTail: true,
+      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 3, list),
+      functionName: \\"<anonymous>\\",
+      arguments: [callIfFuncAndRightArgs(delayIt, 4, 8, wrap(() => ({
+        isTail: false,
+        value: 1
+      }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 4, 11, wrap(() => ({
+        isTail: false,
+        value: 2
+      }), \\"() => 2\\", native)), callIfFuncAndRightArgs(delayIt, 4, 14, wrap(() => ({
+        isTail: false,
+        value: 3
+      }), \\"() => 3\\", native))],
+      line: 4,
+      column: 3
+    }), \\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\", native)));
     lastStatementResult = eval(\\"sum;\\");
     globals.variables.set(\\"sum\\", {
       kind: \\"let\\",
@@ -1033,7 +988,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1046,10 +1001,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\"\\"'))));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1062,10 +1018,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(head, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(pair, 1, 5, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 'a string \\\\\\"\\\\\\"';       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, head), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 5, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 5, pair),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 13, wrap(() => ({     isTail: false,     value: 'a string \\\\\\"\\\\\\"'   }), \\\\\\"() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'\\\\\\", native))],   line: 1,   column: 5 }), \\\\\\"() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1079,10 +1035,12 @@ is_list(a);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => a));
+wrapLazyCallee(is_list)(delayIt(() => a));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1095,22 +1053,14 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(list, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_list, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, list), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, is_list), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 8, wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1119,7 +1069,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1133,10 +1083,12 @@ list_ref(a,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => a), delayIt(() => 200));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1149,22 +1101,14 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, list_ref), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 9, wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1173,7 +1117,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1186,10 +1130,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(list_ref)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => \\"4\\"), delayIt(() => 4))), delayIt(() => 4));
+",
   "result": 4,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1202,10 +1147,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"4\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 4;   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_ref), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 23, wrap(() => ({     isTail: false,     value: \\\\\\"4\\\\\\"   }), \\\\\\"() => \\\\\\\\\\\\\\"4\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 28, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => \\\\\\\\\\\\\\"4\\\\\\\\\\\\\\"), delayIt(() => 4))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 32, wrap(() => ({   isTail: false,   value: 4 }), \\\\\\"() => 4\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1218,10 +1163,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(list_to_string)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))));
+",
   "result": "[1,[2,[3,null]]]",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1234,10 +1180,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_to_string, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, list_to_string), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 15, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 23, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 26, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native))],   line: 1,   column: 15 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1252,10 +1198,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+const b = wrapLazyCallee(map)(delayIt(() => x => forceIt(2) * forceIt(x)), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1268,40 +1217,24 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    const b = callIfFuncAndRightArgs(map, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return wrap(x => ({
-          isTail: false,
-          value: binaryOp(\\"*\\", 2, x, 2, 19)
-        }), \\"x => 2 * x\\", native);
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, map), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 14, wrap(() => ({
+      isTail: false,
+      value: wrap(x => ({
+        isTail: false,
+        value: binaryOp(\\"*\\", 2, callIfFuncAndRightArgs(forceIt, 2, 19, 2), callIfFuncAndRightArgs(forceIt, 2, 23, x), 2, 19)
+      }), \\"x => forceIt(2) * forceIt(x)\\", native)
+    }), \\"() => x => forceIt(2) * forceIt(x)\\", native)), callIfFuncAndRightArgs(delayIt, 2, 26, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1316,7 +1249,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1331,10 +1264,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+const b = wrapLazyCallee(map)(delayIt(() => x => forceIt(2) * forceIt(x)), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1347,40 +1283,24 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    const b = callIfFuncAndRightArgs(map, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return wrap(x => ({
-          isTail: false,
-          value: binaryOp(\\"*\\", 2, x, 2, 19)
-        }), \\"x => 2 * x\\", native);
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, map), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 14, wrap(() => ({
+      isTail: false,
+      value: wrap(x => ({
+        isTail: false,
+        value: binaryOp(\\"*\\", 2, callIfFuncAndRightArgs(forceIt, 2, 19, 2), callIfFuncAndRightArgs(forceIt, 2, 23, x), 2, 19)
+      }), \\"x => forceIt(2) * forceIt(x)\\", native)
+    }), \\"() => x => forceIt(2) * forceIt(x)\\", native)), callIfFuncAndRightArgs(delayIt, 2, 26, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1395,7 +1315,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1408,10 +1328,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(map)(delayIt(() => x => forceIt(2) * forceIt(x)), delayIt(() => wrapLazyCallee(list)(delayIt(() => 12), delayIt(() => 11), delayIt(() => 3))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 24), delayIt(() => 22), delayIt(() => 6))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1424,10 +1345,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(map, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return wrap(x => ({           isTail: false,           value: binaryOp(\\\\\\"*\\\\\\", 2, x, 1, 15)         }), \\\\\\"x => 2 * x\\\\\\", native);       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 22, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 12;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 11;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 40, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 24;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 22;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, map),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: wrap(x => ({       isTail: false,       value: binaryOp(\\\\\\"*\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 1, 15, 2), callIfFuncAndRightArgs(forceIt, 1, 19, x), 1, 15)     }), \\\\\\"x => forceIt(2) * forceIt(x)\\\\\\", native)   }), \\\\\\"() => x => forceIt(2) * forceIt(x)\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 22, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 22, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 27, wrap(() => ({       isTail: false,       value: 12     }), \\\\\\"() => 12\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({       isTail: false,       value: 11     }), \\\\\\"() => 11\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 35, wrap(() => ({       isTail: false,       value: 3     }), \\\\\\"() => 3\\\\\\", native))],     line: 1,     column: 22   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 12), delayIt(() => 11), delayIt(() => 3))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(map)(delayIt(() => x => forceIt(2) * forceIt(x)), delayIt(() => wrapLazyCallee(list)(delayIt(() => 12), delayIt(() => 11), delayIt(() => 3))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 40, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 40, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 45, wrap(() => ({     isTail: false,     value: 24   }), \\\\\\"() => 24\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 49, wrap(() => ({     isTail: false,     value: 22   }), \\\\\\"() => 22\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 53, wrap(() => ({     isTail: false,     value: 6   }), \\\\\\"() => 6\\\\\\", native))],   line: 1,   column: 40 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 24), delayIt(() => 22), delayIt(() => 6))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1437,15 +1358,16 @@ exports[`member: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "equal(
-  member(\\"string\\", list(1, 2, 3, \\"string\\", 123, 456, null, undefined)),
-  list(\\"string\\", 123, 456, null, undefined));",
+  member(4, list(1, 2, 3, 4, 123, 456, 789)),
+  list(4, 123, 456, 789));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(member)(delayIt(() => 4), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 123), delayIt(() => 456), delayIt(() => 789))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 4), delayIt(() => 123), delayIt(() => 456), delayIt(() => 789))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1458,10 +1380,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(member, 2, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 2, 19, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 456;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 3, 2, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 456;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 2, 2, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 2, member),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 2, 9, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 12, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 12, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 2, 17, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 20, wrap(() => ({       isTail: false,       value: 2     }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 23, wrap(() => ({       isTail: false,       value: 3     }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 26, wrap(() => ({       isTail: false,       value: 4     }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 29, wrap(() => ({       isTail: false,       value: 123     }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 34, wrap(() => ({       isTail: false,       value: 456     }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 2, 39, wrap(() => ({       isTail: false,       value: 789     }), \\\\\\"() => 789\\\\\\", native))],     line: 2,     column: 12   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 123), delayIt(() => 456), delayIt(() => 789))\\\\\\", native))],   line: 2,   column: 2 }), \\\\\\"() => wrapLazyCallee(member)(delayIt(() => 4), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 123), delayIt(() => 456), delayIt(() => 789))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 2, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 3, 2, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 3, 7, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 10, wrap(() => ({     isTail: false,     value: 123   }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 15, wrap(() => ({     isTail: false,     value: 456   }), \\\\\\"() => 456\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 20, wrap(() => ({     isTail: false,     value: 789   }), \\\\\\"() => 789\\\\\\", native))],   line: 3,   column: 2 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 4), delayIt(() => 123), delayIt(() => 456), delayIt(() => 789))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1474,10 +1396,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(is_pair)(delayIt(() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\"\\"'))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1490,10 +1413,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_pair, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(pair, 1, 9, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 'a string \\\\\\"\\\\\\"';       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, is_pair), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 9, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 9, pair),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 'a string \\\\\\"\\\\\\"'   }), \\\\\\"() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'\\\\\\", native))],   line: 1,   column: 9 }), \\\\\\"() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1507,10 +1430,12 @@ head(a) + head(head(tail(a)));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => a));
+forceIt(wrapLazyCallee(head)(delayIt(() => a))) + forceIt(wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(tail)(delayIt(() => a)))))));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1523,22 +1448,14 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(list, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(tail, 2, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return a;           }         });       }     });   } }), 2, 0);\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, list), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 18, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 2, 0, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, head), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 5, wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\", native)))), callIfFuncAndRightArgs(forceIt, 2, 10, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, head), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 15, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 15, head),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 2, 20, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 20, tail),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 2, 25, wrap(() => ({       isTail: false,       value: a     }), \\\\\\"() => a\\\\\\", native))],     line: 2,     column: 20   }), \\\\\\"() => wrapLazyCallee(tail)(delayIt(() => a))\\\\\\", native))],   line: 2,   column: 15 }), \\\\\\"() => wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(tail)(delayIt(() => a))))\\\\\\", native)))), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1547,7 +1464,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1561,10 +1478,12 @@ tail(a) + tail(head(a));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => a), delayIt(() => 1));
+forceIt(wrapLazyCallee(tail)(delayIt(() => a))) + forceIt(wrapLazyCallee(tail)(delayIt(() => wrapLazyCallee(head)(delayIt(() => a)))));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1577,22 +1496,14 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(tail, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(tail, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(head, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)), callIfFuncAndRightArgs(delayIt, 1, 18, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)));
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 2, 0, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, tail), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 5, wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\", native)))), callIfFuncAndRightArgs(forceIt, 2, 10, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, tail), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 15, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 15, head),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 2, 20, wrap(() => ({     isTail: false,     value: a   }), \\\\\\"() => a\\\\\\", native))],   line: 2,   column: 15 }), \\\\\\"() => wrapLazyCallee(head)(delayIt(() => a))\\\\\\", native)))), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1601,7 +1512,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1615,10 +1526,12 @@ head(a) + head(tail(a));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+forceIt(wrapLazyCallee(head)(delayIt(() => a))) + forceIt(wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(tail)(delayIt(() => a)))));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1631,22 +1544,14 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", callIfFuncAndRightArgs(head, 2, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return a;   } }), callIfFuncAndRightArgs(head, 2, 10, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(tail, 2, 15, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return a;       }     });   } }), 2, 0);\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 16, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 18, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 2, callIfFuncAndRightArgs(forceIt, 2, 0, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 0, head), 2, 0, callIfFuncAndRightArgs(delayIt, 2, 5, wrap(() => ({   isTail: false,   value: a }), \\\\\\"() => a\\\\\\", native)))), callIfFuncAndRightArgs(forceIt, 2, 10, callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, head), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 15, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 15, tail),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 2, 20, wrap(() => ({     isTail: false,     value: a   }), \\\\\\"() => a\\\\\\", native))],   line: 2,   column: 15 }), \\\\\\"() => wrapLazyCallee(tail)(delayIt(() => a))\\\\\\", native)))), 2, 0);\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1655,7 +1560,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1670,10 +1575,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => wrapLazyCallee(pair)(delayIt(() => 2), delayIt(() => a))));
+const b = wrapLazyCallee(remove_all)(delayIt(() => 1), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 2,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1686,51 +1594,31 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return callIfFuncAndRightArgs(pair, 1, 17, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return 2;
-          }
-        }, {
-          isThunk: true,
-          memoizedValue: 0,
-          isMemoized: false,
-          expr: () => {
-            return a;
-          }
-        });
-      }
-    });
-    const b = callIfFuncAndRightArgs(remove_all, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: true,
+      function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 17, pair),
+      functionName: \\"<anonymous>\\",
+      arguments: [callIfFuncAndRightArgs(delayIt, 1, 22, wrap(() => ({
+        isTail: false,
+        value: 2
+      }), \\"() => 2\\", native)), callIfFuncAndRightArgs(delayIt, 1, 24, wrap(() => ({
+        isTail: false,
+        value: a
+      }), \\"() => a\\", native))],
+      line: 1,
+      column: 17
+    }), \\"() => wrapLazyCallee(pair)(delayIt(() => 2), delayIt(() => a))\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, remove_all), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 21, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 2, 23, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1745,7 +1633,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1758,10 +1646,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(remove)(delayIt(() => 2), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1774,10 +1663,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove, 1, 7, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 17, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 26, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 7, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 7, remove),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 17, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 22, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native))],     line: 1,     column: 17   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1))\\\\\\", native))],   line: 1,   column: 7 }), \\\\\\"() => wrapLazyCallee(remove)(delayIt(() => 2), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 26, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 26, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native))],   line: 1,   column: 26 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1792,10 +1681,13 @@ list_ref(b,200);",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "const a = wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => a));
+const b = wrapLazyCallee(remove)(delayIt(() => 1), delayIt(() => a));
+wrapLazyCallee(list_ref)(delayIt(() => b), delayIt(() => 200));
+",
   "result": 1,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1808,37 +1700,21 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const a = callIfFuncAndRightArgs(pair, 1, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    const b = callIfFuncAndRightArgs(remove, 2, 10, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return 1;
-      }
-    }, {
-      isThunk: true,
-      memoizedValue: 0,
-      isMemoized: false,
-      expr: () => {
-        return a;
-      }
-    });
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list_ref, 3, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return b;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 200;   } });\\");
+    const a = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, pair), 1, 10, callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    const b = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 10, remove), 2, 10, callIfFuncAndRightArgs(delayIt, 2, 17, wrap(() => ({
+      isTail: false,
+      value: 1
+    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 2, 19, wrap(() => ({
+      isTail: false,
+      value: a
+    }), \\"() => a\\", native)));
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 3, 0, list_ref), 3, 0, callIfFuncAndRightArgs(delayIt, 3, 9, wrap(() => ({   isTail: false,   value: b }), \\\\\\"() => b\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 3, 11, wrap(() => ({   isTail: false,   value: 200 }), \\\\\\"() => 200\\\\\\", native)));\\");
     globals.variables.set(\\"a\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1853,7 +1729,7 @@ const globals = native.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1866,10 +1742,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(remove)(delayIt(() => 1), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1))));
+",
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1882,10 +1759,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(remove, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return 1;   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 10, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, remove), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 7, wrap(() => ({   isTail: false,   value: 1 }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 10, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 15, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native))],   line: 1,   column: 10 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1894,14 +1771,15 @@ forceIt(lastStatementResult);
 exports[`remove_all not found: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(remove_all(1, list(2, 3, \\"1\\")), list(2, 3, \\"1\\"));",
+  "code": "equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(remove_all)(delayIt(() => 1), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1914,10 +1792,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"1\\\\\\";           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 38, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"1\\\\\\";       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, remove_all),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 20, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 25, wrap(() => ({       isTail: false,       value: 2     }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 28, wrap(() => ({       isTail: false,       value: 3     }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({       isTail: false,       value: 4     }), \\\\\\"() => 4\\\\\\", native))],     line: 1,     column: 20   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(remove_all)(delayIt(() => 1), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 36, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 36, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 41, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 44, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 47, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native))],   line: 1,   column: 36 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1926,14 +1804,15 @@ forceIt(lastStatementResult);
 exports[`remove_all: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, \\"1\\", 5, 1, 1, 6)), list(2, 3, 4, \\"1\\", 5, 6));",
+  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(remove_all)(delayIt(() => 1), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 1), delayIt(() => 1), delayIt(() => 1), delayIt(() => 5), delayIt(() => 1), delayIt(() => 1), delayIt(() => 6))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 5), delayIt(() => 6))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1946,10 +1825,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(remove_all, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 20, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 2;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 3;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 4;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"1\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 5;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 1;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 6;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 62, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 2;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 3;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 4;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"1\\\\\\";       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 5;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 6;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, remove_all),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 17, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 20, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 20, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 25, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 28, wrap(() => ({       isTail: false,       value: 2     }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 31, wrap(() => ({       isTail: false,       value: 3     }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 34, wrap(() => ({       isTail: false,       value: 4     }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 37, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 40, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 43, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 46, wrap(() => ({       isTail: false,       value: 5     }), \\\\\\"() => 5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 49, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 52, wrap(() => ({       isTail: false,       value: 1     }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 55, wrap(() => ({       isTail: false,       value: 6     }), \\\\\\"() => 6\\\\\\", native))],     line: 1,     column: 20   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 1), delayIt(() => 1), delayIt(() => 1), delayIt(() => 5), delayIt(() => 1), delayIt(() => 1), delayIt(() => 6))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(remove_all)(delayIt(() => 1), delayIt(() => wrapLazyCallee(list)(delayIt(() => 1), delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 1), delayIt(() => 1), delayIt(() => 1), delayIt(() => 5), delayIt(() => 1), delayIt(() => 1), delayIt(() => 6))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 60, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 60, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 65, wrap(() => ({     isTail: false,     value: 2   }), \\\\\\"() => 2\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 68, wrap(() => ({     isTail: false,     value: 3   }), \\\\\\"() => 3\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 71, wrap(() => ({     isTail: false,     value: 4   }), \\\\\\"() => 4\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 74, wrap(() => ({     isTail: false,     value: 5   }), \\\\\\"() => 5\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 77, wrap(() => ({     isTail: false,     value: 6   }), \\\\\\"() => 6\\\\\\", native))],   line: 1,   column: 60 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 2), delayIt(() => 3), delayIt(() => 4), delayIt(() => 5), delayIt(() => 6))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1958,14 +1837,15 @@ forceIt(lastStatementResult);
 exports[`reverse: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(reverse(list(\\"string\\", null, undefined, null, 123)), list(123, null, undefined, null, \\"string\\"));",
+  "code": "equal(reverse(list(\\"string\\", \\"null\\", \\"undefined\\", \\"null\\", 123)), list(123, \\"null\\", \\"undefined\\", \\"null\\", \\"string\\"));",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(equal)(delayIt(() => wrapLazyCallee(reverse)(delayIt(() => wrapLazyCallee(list)(delayIt(() => \\"string\\"), delayIt(() => \\"null\\"), delayIt(() => \\"undefined\\"), delayIt(() => \\"null\\"), delayIt(() => 123))))), delayIt(() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => \\"null\\"), delayIt(() => \\"undefined\\"), delayIt(() => \\"null\\"), delayIt(() => \\"string\\"))));
+",
   "result": true,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -1978,10 +1858,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(reverse, 1, 6, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return callIfFuncAndRightArgs(list, 1, 14, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return \\\\\\"string\\\\\\";           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return undefined;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return null;           }         }, {           isThunk: true,           memoizedValue: 0,           isMemoized: false,           expr: () => {             return 123;           }         });       }     });   } }, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 59, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 123;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return undefined;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return null;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return \\\\\\"string\\\\\\";       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, equal), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 6, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 6, reverse),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 14, wrap(() => ({     isTail: true,     function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 14, list),     functionName: \\\\\\"<anonymous>\\\\\\",     arguments: [callIfFuncAndRightArgs(delayIt, 1, 19, wrap(() => ({       isTail: false,       value: \\\\\\"string\\\\\\"     }), \\\\\\"() => \\\\\\\\\\\\\\"string\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 29, wrap(() => ({       isTail: false,       value: \\\\\\"null\\\\\\"     }), \\\\\\"() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 37, wrap(() => ({       isTail: false,       value: \\\\\\"undefined\\\\\\"     }), \\\\\\"() => \\\\\\\\\\\\\\"undefined\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 50, wrap(() => ({       isTail: false,       value: \\\\\\"null\\\\\\"     }), \\\\\\"() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 58, wrap(() => ({       isTail: false,       value: 123     }), \\\\\\"() => 123\\\\\\", native))],     line: 1,     column: 14   }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => \\\\\\\\\\\\\\"string\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"undefined\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => 123))\\\\\\", native))],   line: 1,   column: 6 }), \\\\\\"() => wrapLazyCallee(reverse)(delayIt(() => wrapLazyCallee(list)(delayIt(() => \\\\\\\\\\\\\\"string\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"undefined\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => 123))))\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 65, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 65, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 70, wrap(() => ({     isTail: false,     value: 123   }), \\\\\\"() => 123\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 75, wrap(() => ({     isTail: false,     value: \\\\\\"null\\\\\\"   }), \\\\\\"() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 83, wrap(() => ({     isTail: false,     value: \\\\\\"undefined\\\\\\"   }), \\\\\\"() => \\\\\\\\\\\\\\"undefined\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 96, wrap(() => ({     isTail: false,     value: \\\\\\"null\\\\\\"   }), \\\\\\"() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 104, wrap(() => ({     isTail: false,     value: \\\\\\"string\\\\\\"   }), \\\\\\"() => \\\\\\\\\\\\\\"string\\\\\\\\\\\\\\"\\\\\\", native))],   line: 1,   column: 65 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 123), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"undefined\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"null\\\\\\\\\\\\\\"), delayIt(() => \\\\\\\\\\\\\\"string\\\\\\\\\\\\\\"))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -1994,10 +1874,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(tail)(delayIt(() => wrapLazyCallee(list)(delayIt(() => 1))));
+",
   "result": null,
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -2010,10 +1891,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(tail, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(list, 1, 5, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, tail), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 5, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 5, list),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native))],   line: 1,   column: 5 }), \\\\\\"() => wrapLazyCallee(list)(delayIt(() => 1))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }
@@ -2026,10 +1907,11 @@ Object {
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
+  "pretranspiled": "wrapLazyCallee(tail)(delayIt(() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\"\\"'))));
+",
   "result": "a string \\"\\"",
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -2042,10 +1924,10 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(tail, 1, 0, {   isThunk: true,   memoizedValue: 0,   isMemoized: false,   expr: () => {     return callIfFuncAndRightArgs(pair, 1, 5, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 1;       }     }, {       isThunk: true,       memoizedValue: 0,       isMemoized: false,       expr: () => {         return 'a string \\\\\\"\\\\\\"';       }     });   } });\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 1, 0, tail), 1, 0, callIfFuncAndRightArgs(delayIt, 1, 5, wrap(() => ({   isTail: true,   function: callIfFuncAndRightArgs(wrapLazyCallee, 1, 5, pair),   functionName: \\\\\\"<anonymous>\\\\\\",   arguments: [callIfFuncAndRightArgs(delayIt, 1, 10, wrap(() => ({     isTail: false,     value: 1   }), \\\\\\"() => 1\\\\\\", native)), callIfFuncAndRightArgs(delayIt, 1, 13, wrap(() => ({     isTail: false,     value: 'a string \\\\\\"\\\\\\"'   }), \\\\\\"() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'\\\\\\", native))],   line: 1,   column: 5 }), \\\\\\"() => wrapLazyCallee(pair)(delayIt(() => 1), delayIt(() => 'a string \\\\\\\\\\\\\\"\\\\\\\\\\\\\\"'))\\\\\\", native)));\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
   "visualiseListResult": Array [],
 }

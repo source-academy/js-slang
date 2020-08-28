@@ -220,15 +220,24 @@ const setVariable = (context: Context, name: string, value: any) => {
 
 const checkNumberOfArguments = (
   context: Context,
-  callee: Closure,
+  callee: Closure | Value,
   args: Value[],
   exp: es.CallExpression
 ) => {
-  if (callee.node.params.length !== args.length) {
-    return handleRuntimeError(
-      context,
-      new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
-    )
+  if (callee instanceof Closure) {
+    if (callee.node.params.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
+      )
+    }
+  } else {
+    if (callee.hasVarArgs === false && callee.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, callee.length, args.length)
+      )
+    }
   }
   return undefined
 }
@@ -304,6 +313,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return node.value
   },
 
+  TemplateLiteral: function*(node: es.TemplateLiteral) {
+    // Expressions like `${1}` are not allowed, so no processing needed
+    return node.quasis[0].value.cooked
+  },
+
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
     return context.runtime.environments[0].thisContext
   },
@@ -374,8 +388,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   BinaryExpression: function*(node: es.BinaryExpression, context: Context) {
     const left = yield* actualValue(node.left, context)
     const right = yield* actualValue(node.right, context)
-
-    const error = rttc.checkBinaryExpression(node, node.operator, left, right)
+    const error = rttc.checkBinaryExpression(node, node.operator, context.chapter, left, right)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -650,14 +663,17 @@ export function* apply(
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
       const environment = createEnvironment(fun, args, node)
-      environment.thisContext = thisContext
       if (result instanceof TailCallReturnValue) {
         replaceEnvironment(context, environment)
       } else {
         pushEnvironment(context, environment)
         total++
       }
+      const bodyEnvironment = createBlockEnvironment(context, 'functionBodyEnvironment')
+      bodyEnvironment.thisContext = thisContext
+      pushEnvironment(context, bodyEnvironment)
       result = yield* evaluateBlockSatement(context, fun.node.body as es.BlockStatement)
+      popEnvironment(context)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee
         node = result.node
@@ -694,6 +710,7 @@ export function* apply(
         throw e
       }
     } else if (typeof fun === 'function') {
+      checkNumberOfArguments(context, fun, args, node!)
       try {
         const forcedArgs = []
 

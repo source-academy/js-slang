@@ -4,24 +4,25 @@ import * as create from '../utils/astCreator'
 import GPULoopVerifier from './verification/loopVerifier'
 import GPUBodyVerifier from './verification/bodyVerifier'
 
+let currentKernelId = 0
 /*
  * GPU Transformer runs through the program and transpiles for loops to GPU code
  * Upon termination, the AST would be mutated accordingly
  * e.g.
- * let res = 0;
+ * let res = [];
  * for (let i = 0; i < 5; i = i + 1) {
  *    res[i] = 5;
  * }
  * would become:
  * let res = 0;
- * __createKernel(....)
+ * __createKernelSource(....)
  */
 class GPUTransformer {
   // program to mutate
   program: es.Program
 
   // helps reference the main function
-  globalIds: { __createKernel: es.Identifier }
+  globalIds: { __createKernelSource: es.Identifier }
 
   outputArray: es.Identifier
   innerBody: any
@@ -32,10 +33,10 @@ class GPUTransformer {
   outerVariables: any
   targetBody: any
 
-  constructor(program: es.Program, createKernel: es.Identifier) {
+  constructor(program: es.Program, createKernelSource: es.Identifier) {
     this.program = program
     this.globalIds = {
-      __createKernel: createKernel
+      __createKernelSource: createKernelSource
     }
   }
 
@@ -68,10 +69,7 @@ class GPUTransformer {
    * 2. Get external variables + target body (body to be run across gpu threads)
    * 3. Build a AST Node for (2) - this will be given to (8)
    * 4. Change assignment in body to a return statement
-   * 5. In body, update all math_* calls to become Math.* calls
-   * 6. In body, update all external variable references
-   * 7. In body, update reference to counters
-   * 8. Call __createKernel and assign it to our external variable
+   * 5. Call __createKernelSource and assign it to our external variable
    */
   gpuTranspile = (node: es.ForStatement): number => {
     // initialize our class variables
@@ -100,14 +98,14 @@ class GPUTransformer {
     this.getTargetBody(node)
 
     // 3. Build a AST Node of all outer variables
-    const externObject: es.Property[] = []
+    const externEntries: [es.Literal, es.Expression][] = []
     for (const key in this.outerVariables) {
       if (this.outerVariables.hasOwnProperty(key)) {
         const val = this.outerVariables[key]
 
         // push in a deep copy of the identifier
         // this is needed cos we modify it later
-        externObject.push(create.property(key, JSON.parse(JSON.stringify(val))))
+        externEntries.push([create.literal(key), JSON.parse(JSON.stringify(val))])
       }
     }
 
@@ -140,100 +138,26 @@ class GPUTransformer {
     for (let i = 0; i < this.state; i++) {
       params.push(create.identifier(this.counters[i]))
     }
-    const tempNode = create.functionExpression(params, JSON.parse(JSON.stringify(this.targetBody)))
 
-    // 5. Update all math_* calls to become Math.*
-    simple(this.targetBody, {
-      CallExpression(nx: es.CallExpression) {
-        if (nx.callee.type !== 'Identifier') {
-          return
-        }
-
-        const functionName = nx.callee.name
-        const term = functionName.split('_')[1]
-        const args: es.Expression[] = nx.arguments as any
-
-        create.mutateToCallExpression(
-          nx,
-          create.memberExpression(create.identifier('Math'), term),
-          args
-        )
-      }
-    })
-
-    // 6. Update all external variable references in body
-    // e.g. let res = 1 + y; where y is an external variable
-    // becomes let res = 1 + this.constants.y;
-
-    const names = [this.outputArray.name, ...this.counters, 'Math']
-    simple(this.targetBody, {
-      Identifier(nx: es.Identifier) {
-        // ignore these names
-        if (names.includes(nx.name) || locals.has(nx.name)) {
-          return
-        }
-
-        create.mutateToMemberExpression(
-          nx,
-          create.memberExpression(create.identifier('this'), 'constants'),
-          create.identifier(nx.name)
-        )
-      }
-    })
-
-    // 7. Update reference to counters
-    // e.g. let res = 1 + i; where i is a counter
-    // becomes let res = 1 + this.thread.x;
-
-    // depending on state the mappings will change
-    let threads = ['x']
-    if (this.state === 2) threads = ['y', 'x']
-    if (this.state === 3) threads = ['z', 'y', 'x']
-
-    const counters: string[] = []
-    for (let i = 0; i < this.state; i = i + 1) {
-      counters.push(this.counters[i])
-    }
-
-    simple(this.targetBody, {
-      Identifier(nx: es.Identifier) {
-        let x = -1
-        for (let i = 0; i < counters.length; i = i + 1) {
-          if (nx.name === counters[i]) {
-            x = i
-            break
-          }
-        }
-
-        if (x === -1) {
-          return
-        }
-
-        const id = threads[x]
-        create.mutateToMemberExpression(
-          nx,
-          create.memberExpression(create.identifier('this'), 'thread'),
-          create.identifier(id)
-        )
-      }
-    })
-
-    // 8. we transpile the loop to a function call, __createKernel
-    const kernelFunction = create.functionExpression([], this.targetBody)
-    create.mutateToExpressionStatement(
-      node,
-      create.callExpression(
-        this.globalIds.__createKernel,
-        [
-          create.arrayExpression(this.end),
-          create.objectExpression(externObject),
-          kernelFunction,
-          this.outputArray,
-          tempNode
-        ],
-        node.loc!
-      )
+    // 5. we transpile the loop to a function call, __createKernelSource
+    const kernelFunction = create.blockArrowFunction(
+      this.counters.map(name => create.identifier(name)),
+      this.targetBody
     )
+    const createKernelSourceCall = create.callExpression(
+      this.globalIds.__createKernelSource,
+      [
+        create.arrayExpression(this.end),
+        create.arrayExpression(externEntries.map(create.arrayExpression)),
+        create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
+        this.outputArray,
+        kernelFunction,
+        create.literal(currentKernelId++)
+      ],
+      node.loc!
+    )
+
+    create.mutateToExpressionStatement(node, createKernelSourceCall)
 
     return this.state
   }
@@ -316,6 +240,100 @@ class GPUTransformer {
     })
     this.outerVariables = varDefinitions
   }
+}
+
+/*
+ * Here we transpile a source-syntax kernel function to a gpu.js kernel function
+ * 0. No need for validity checks, as that is done at compile time in gpuTranspile
+ * 1. In body, update all math_* calls to become Math.* calls
+ * 2. In body, update all external variable references
+ * 3. In body, update reference to counters
+ */
+export function gpuRuntimeTranspile(
+  node: es.ArrowFunctionExpression,
+  localNames: Set<string>
+): es.BlockStatement {
+  // Contains counters
+  const params = (node.params as es.Identifier[]).map(v => v.name)
+
+  // body here is the loop body transformed into a function of the indices.
+  // We need to finish the transformation to a gpu.js kernel function by renaming stuff.
+  const body = node.body as es.BlockStatement
+
+  // 1. Update all math_* calls to become Math.*
+  simple(body, {
+    CallExpression(nx: es.CallExpression) {
+      if (nx.callee.type !== 'Identifier') {
+        return
+      }
+
+      const functionName = nx.callee.name
+      const term = functionName.split('_')[1]
+      const args: es.Expression[] = nx.arguments as any
+
+      create.mutateToCallExpression(
+        nx,
+        create.memberExpression(create.identifier('Math'), term),
+        args
+      )
+    }
+  })
+
+  // 2. Update all external variable references in body
+  // e.g. let res = 1 + y; where y is an external variable
+  // becomes let res = 1 + this.constants.y;
+
+  const ignoredNames: Set<string> = new Set([...params, 'Math'])
+  simple(body, {
+    Identifier(nx: es.Identifier) {
+      // ignore these names
+      if (ignoredNames.has(nx.name) || localNames.has(nx.name)) {
+        return
+      }
+
+      create.mutateToMemberExpression(
+        nx,
+        create.memberExpression(create.identifier('this'), 'constants'),
+        create.identifier(nx.name)
+      )
+    }
+  })
+
+  // 3. Update reference to counters
+  // e.g. let res = 1 + i; where i is a counter
+  // becomes let res = 1 + this.thread.x;
+
+  // depending on state the mappings will change
+  let threads = ['x']
+  if (params.length === 2) threads = ['y', 'x']
+  if (params.length === 3) threads = ['z', 'y', 'x']
+
+  const counters: string[] = params.slice()
+
+  simple(body, {
+    Identifier(nx: es.Identifier) {
+      let x = -1
+      for (let i = 0; i < counters.length; i = i + 1) {
+        if (nx.name === counters[i]) {
+          x = i
+          break
+        }
+      }
+
+      if (x === -1) {
+        return
+      }
+
+      const id = threads[x]
+      create.mutateToMemberExpression(
+        nx,
+        create.memberExpression(create.identifier('this'), 'thread'),
+        create.identifier(id)
+      )
+    }
+  })
+
+  return body
 }
 
 export default GPUTransformer

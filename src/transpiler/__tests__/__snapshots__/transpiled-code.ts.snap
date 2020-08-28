@@ -2,7 +2,6 @@
 
 exports[`Ensure no name clashes 1`] = `
 "const native0 = nativeStorage;
-const forceIt = native0.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs0 = native0.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr0 = native0.operators.get(\\"boolOrErr\\");
 const wrap90 = native0.operators.get(\\"wrap\\");
@@ -14,7 +13,7 @@ const getProp = native0.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native0.globals;
 {
-  const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+  const get_time = globals.previousScope.variables.get(\\"get_time\\").getValue();
   const display = globals.previousScope.variables.get(\\"display\\").getValue();
   const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
   const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
@@ -79,6 +78,7 @@ const globals = native0.globals;
   const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
   const list = globals.previousScope.variables.get(\\"list\\").getValue();
   const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+  const display_list = globals.previousScope.variables.get(\\"display_list\\").getValue();
   const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
   const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
   const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
@@ -125,7 +125,7 @@ const globals = native0.globals;
     });
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 "
 `;
 
@@ -133,7 +133,6 @@ exports[`builtins do get prepended 1`] = `
 Object {
   "code": "\\"ensure_builtins\\";",
   "transpiled": "const native = nativeStorage;
-const forceIt = native.operators.get(\\"forceIt\\");
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
 const boolOrErr = native.operators.get(\\"boolOrErr\\");
 const wrap = native.operators.get(\\"wrap\\");
@@ -145,7 +144,7 @@ const getProp = native.operators.get(\\"getProp\\");
 let lastStatementResult = undefined;
 const globals = native.globals;
 {
-  const runtime = globals.previousScope.variables.get(\\"runtime\\").getValue();
+  const get_time = globals.previousScope.variables.get(\\"get_time\\").getValue();
   const display = globals.previousScope.variables.get(\\"display\\").getValue();
   const raw_display = globals.previousScope.variables.get(\\"raw_display\\").getValue();
   const stringify = globals.previousScope.variables.get(\\"stringify\\").getValue();
@@ -210,6 +209,7 @@ const globals = native.globals;
   const is_null = globals.previousScope.variables.get(\\"is_null\\").getValue();
   const list = globals.previousScope.variables.get(\\"list\\").getValue();
   const draw_data = globals.previousScope.variables.get(\\"draw_data\\").getValue();
+  const display_list = globals.previousScope.variables.get(\\"display_list\\").getValue();
   const set_head = globals.previousScope.variables.get(\\"set_head\\").getValue();
   const set_tail = globals.previousScope.variables.get(\\"set_tail\\").getValue();
   const array_length = globals.previousScope.variables.get(\\"array_length\\").getValue();
@@ -223,7 +223,7 @@ const globals = native.globals;
     lastStatementResult = eval(\\"\\\\\\"ensure_builtins\\\\\\";\\");
   }
 }
-forceIt(lastStatementResult);
+lastStatementResult;
 ",
 }
 `;

@@ -48,6 +48,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     <li>
     <a href="../PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
     </li>
+    <li>
+      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
+    </li>
   </ul>
 
 ## What can you do in Source §4 GPU?
@@ -76,7 +79,7 @@ for (let r = 0; r < size; r = r + 1) {
     res[r] = [];
 }
 
-const startTime = runtime();
+const startTime = get_time();
 for (let r = 0; r < size; r = r + 1) {
     for (let c = 0; c < size; c = c + 1) {
         let sum = 0;
@@ -87,7 +90,7 @@ for (let r = 0; r < size; r = r + 1) {
     }
 }
 
-const endTime = runtime();
+const endTime = get_time();
 const elapsed = endTime - startTime;
 
 display(res);

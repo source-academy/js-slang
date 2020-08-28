@@ -57,6 +57,7 @@ export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, 
 export const checkBinaryExpression = (
   node: es.Node,
   operator: es.BinaryOperator,
+  chapter: number,
   left: Value,
   right: Value
 ) => {
@@ -77,6 +78,11 @@ export const checkBinaryExpression = (
     case '<=':
     case '>':
     case '>=':
+    case '!==':
+    case '===':
+      if (chapter > 2 && (operator === '===' || operator === '!==')) {
+        return
+      }
       if (isNumber(left)) {
         return isNumber(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right))
       } else if (isString(left)) {
@@ -84,8 +90,6 @@ export const checkBinaryExpression = (
       } else {
         return new TypeError(node, LHS, 'string or number', typeOf(left))
       }
-    case '!==':
-    case '===':
     default:
       return
   }

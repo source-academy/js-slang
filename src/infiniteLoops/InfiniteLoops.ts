@@ -200,7 +200,7 @@ const evaluators: { [nodeType: string]: (node: es.Node, envs: SimpleEnv[]) => an
   BinaryExpression(node: es.BinaryExpression, envs: SimpleEnv[]) {
     const left = simpleEval(node.left, envs)
     const right = simpleEval(node.right, envs)
-    if (checkBinaryExpression(node, node.operator, left, right)) {
+    if (checkBinaryExpression(node, node.operator, 2, left, right)) {
       return undefined
     } else {
       return evaluateBinaryExpression(node.operator, left, right)

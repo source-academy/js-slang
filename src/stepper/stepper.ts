@@ -755,7 +755,13 @@ function reduceMain(
             return [valueToExpression(left === right), context, paths, explain(node)]
           }
           const [leftValue, rightValue] = [left, right].map(nodeToValue)
-          const error = rttc.checkBinaryExpression(node, operator, leftValue, rightValue)
+          const error = rttc.checkBinaryExpression(
+            node,
+            operator,
+            context.chapter,
+            leftValue,
+            rightValue
+          )
           if (error === undefined) {
             const lit = evaluateBinaryExpression(operator, leftValue, rightValue)
             return [valueToExpression(lit, context), context, paths, explain(node)]
@@ -2092,10 +2098,12 @@ function substPredefinedConstants(program: es.Program): es.Program {
 // the context here is for builtins
 export function getEvaluationSteps(
   program: es.Program,
-  context: Context
+  context: Context,
+  stepLimit: number | undefined
 ): [es.Program, string[][], string][] {
   const steps: [es.Program, string[][], string][] = []
   try {
+    const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns.
@@ -2117,7 +2125,7 @@ export function getEvaluationSteps(
         reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
         reducedWithPath[3]
       ])
-      if (steps.length === 999) {
+      if (steps.length === limit - 1) {
         steps[i][1] = reducedWithPath[2]
         steps[i][2] = reducedWithPath[3]
         steps.push([ast.program([]), [], 'Maximum number of steps exceeded'])
@@ -2131,7 +2139,7 @@ export function getEvaluationSteps(
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (steps.length !== 1000) {
+    if (steps.length !== limit) {
       steps[steps.length - 1][2] = 'Evaluation complete'
     }
     return steps
