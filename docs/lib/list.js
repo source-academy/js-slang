@@ -82,7 +82,7 @@ function draw_data(x) {}
  * need to be that same. If both are <CODE>undefined</CODE> or both are
  * <CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared
  * with <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the
- * respective Source language in use. Time, space:
+ * respective Source language in use). Time, space:
  * <CODE>O(n)</CODE>, where <CODE>n</CODE> is the number of pairs in
  * <CODE>x</CODE>.
  * @param {value} x - given value
