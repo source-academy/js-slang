@@ -98,7 +98,7 @@ function arc(t) {
 // SOME CURVE-TRANSFORMS
 
 /**
- * this function is a unary Curve operator: a function from a
+ * this function is a Curve transformation: a function from a
  * Curve to a Curve. The points of the result Curve are
  * the same points as the points of the original Curve, but
  * in reverse: The result Curve applied to 0 is the original Curve
@@ -114,7 +114,7 @@ function invert(curve) {
 }
 
 /**
- * this function is a unary Curve operator: a function from a
+ * this function is a Curve transformation: a function from a
  * Curve to a Curve. The result Curve is the original Curve
  * rotated by 90 degrees in counterclockwise direction around
  * the origin.
@@ -133,16 +133,16 @@ function rotate_pi_over_2(curve) {
 // TRANSLATE is of type (JS-Num, JS-Num --> Curve-Transform)
 
 /**
- * this function returns a unary Curve operator: 
+ * this function returns a Curve transformation: 
  * It takes an x-value x0 and a y-value y0 as arguments and returns a
- * unary Curve operator that
+ * Curve transformation that
  * takes a Curve as argument and returns
  * a new Curve, by translating the original by x0 in x-direction
  * and by y0 in y-direction.
  * 
  * @param {number} x0 - x-value
  * @param {number} y0 - y-value
- * @returns {function} unary Curve operator
+ * @returns {function} Curve transformation
  */
 function translate(x0, y0) {
   return curve => 
@@ -155,7 +155,7 @@ function translate(x0, y0) {
 // ROTATE-AROUND-ORIGIN is of type (JS-Num --> Curve-Transform)
 /**
  * this function 
- * takes an angle theta as parameter and returns a unary Curve operator:
+ * takes an angle theta as parameter and returns a Curve transformation:
  * a function that takes
  * a Curve a argument and returns
  * a new Curve, which is the original Curve rotated by the given angle
@@ -189,7 +189,7 @@ function deriv_t(n) {
 
 /**
  * this function takes scaling factors <CODE>a</CODE> and <CODE>b</CODE> as arguments 
- * and returns a unary Curve operator that
+ * and returns a Curve transformation that
  * scales a given Curve by <CODE>a</CODE> in x-direction and by <CODE>b</CODE> 
  * in y-direction.
  * 
@@ -207,7 +207,7 @@ function scale_x_y(a, b) {
 
 /**
  * this function takes a scaling factor s argument and returns a
- * unary Curve operator that
+ * Curve transformation that
  * scales a given Curve by s in x and y direction.
  * 
  * @param {number} s - scaling factor
@@ -281,7 +281,7 @@ function full_view_proportional(xlo, xhi, ylo, yhi) {
 // Behavior is unspecified on closed curves (with start-point = end-point).
 
 /**
- * this function is a unary Curve operator: It
+ * this function is a Curve transformation: It
  * takes a Curve as argument and returns
  * a new Curve, as follows.
  * A Curve is in <EM>standard position</EM> if it starts at (0,0) ends at (1,0).
@@ -371,7 +371,7 @@ function connect_ends(curve1, curve2) {
 
 
 /**
- * this function is a unary Curve operator: It
+ * this function is a Curve transformation: It
  * takes a Curve as argument and returns
  * a new Curve, according to the Gosper operation.
  * 
@@ -431,7 +431,7 @@ function param_gosper(level, angle_at) {
 }
 
 /**
- * this function takes an angle theta and returns a unary Curve operator:
+ * this function takes an angle theta and returns a Curve transformation:
  * A function that takes a Curve as argument and returns
  * a new Curve, according to the Gosper operation, modified
  * with the given angle theta
