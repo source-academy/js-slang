@@ -83,6 +83,17 @@ if (typeof window !== 'undefined') {
 
 let verboseErrors = false
 const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
+const stepperErrorPromise = Promise.resolve({
+  status: 'finished',
+  value: [
+    {
+      code: '',
+      redex: '',
+      explanation:
+        'Error occurred; please check your code in the editor before running it in the stepper!'
+    }
+  ]
+} as Result)
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
@@ -401,12 +412,12 @@ export async function runInContext(
   verboseErrors = getFirstLine(code) === 'enable verbose'
   const program = parse(code, context)
   if (!program) {
-    return resolvedErrorPromise
+    return options.useSubst ? stepperErrorPromise : resolvedErrorPromise
   }
   validateAndAnnotate(program as Program, context)
   typeCheck(program, context)
   if (context.errors.length > 0) {
-    return resolvedErrorPromise
+    return options.useSubst ? stepperErrorPromise : resolvedErrorPromise
   }
   if (context.variant === 'concurrent') {
     if (previousCode === code) {
@@ -431,6 +442,10 @@ export async function runInContext(
   }
   if (options.useSubst) {
     const steps = getEvaluationSteps(program, context, options.stepLimit)
+    const result = runInContext(code, context, { ...options, useSubst: false })
+    if ((await result).status === 'error') {
+      return stepperErrorPromise
+    }
     const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
       const redexed = redexify(step[0], step[1])
