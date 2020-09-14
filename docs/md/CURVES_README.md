@@ -96,10 +96,10 @@ which is the same as:
 
 Number → (Number → Point)
 
-## Unary Curve Operators
+## Curve Transformations
 
-A unary Curve operator is a function that takes a curve as argument and returns
-a Curve. The following function `up_a_bit` is a unary Curve operator that moves
+A Curve transformation is a function that takes a curve as argument and returns
+a Curve. The following function `up_a_bit` is a Curve transformation that moves
 a given curve up by 0.3.
 <a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABCADgfQIZoEYygCghACcA3AUwEpEBvAKEUcWPKhKSkQF4A%2BRAWwwBrcmhRwYYAgA80cYIRIV8USpQA0iBkx269%2BxAE85ComXIq1iANSIADADoAzJQDcdAL50ICAM6cACwwAG2A0AHcMY2DJcm5kMDw0GLBRDAJHAFY3bz9OVPDk2PjUTBw8fCDQiKii1JyAE2IMQp8wVOhyBvwARjs7SnwCuqpXIA">
 ```
