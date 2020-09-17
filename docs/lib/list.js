@@ -78,11 +78,11 @@ function draw_data(x) {}
  * and identical values at corresponding leave positions (places that are not 
  * themselves pairs), and <CODE>false</CODE> otherwise. For the "identical",
  * the values need to have the same type, otherwise the result is 
- * <CODE>false</CODE. If corresponding leaves are boolean values, these values
+ * <CODE>false</CODE>. If corresponding leaves are boolean values, these values
  * need to be that same. If both are <CODE>undefined</CODE> or both are
- * <CODE>null</CODE>, the result is <CODE>true. Otherwise they are compared
+ * <CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared
  * with <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the
- * respective Source language in use. Time, space:
+ * respective Source language in use). Time, space:
  * <CODE>O(n)</CODE>, where <CODE>n</CODE> is the number of pairs in
  * <CODE>x</CODE>.
  * @param {value} x - given value
