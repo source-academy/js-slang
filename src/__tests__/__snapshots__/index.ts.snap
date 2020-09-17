@@ -831,6 +831,21 @@ lastStatementResult;
 }
 `;
 
+exports[`Multiline string self-evaluates to itself: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\`1
+1\`;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "1
+1",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Objects toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
@@ -1434,6 +1449,100 @@ Object {
     },
   ],
   "parsedErrors": "Line 1: Missing semicolon at the end of statement",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`parseError for template literals with expressions: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\`\${1}\`;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoTemplateExpressionError {
+      "node": Node {
+        "end": 6,
+        "expressions": Array [
+          Node {
+            "end": 4,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 3,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 3,
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 6,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "quasis": Array [
+          Node {
+            "end": 1,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 1,
+                "line": 1,
+              },
+            },
+            "start": 1,
+            "tail": false,
+            "type": "TemplateElement",
+            "value": Object {
+              "cooked": "",
+              "raw": "",
+            },
+          },
+          Node {
+            "end": 5,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 5,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 5,
+                "line": 1,
+              },
+            },
+            "start": 5,
+            "tail": true,
+            "type": "TemplateElement",
+            "value": Object {
+              "cooked": "",
+              "raw": "",
+            },
+          },
+        ],
+        "start": 0,
+        "type": "TemplateLiteral",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Expressions are not allowed in template literals (\`multiline strings\`)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

@@ -37,6 +37,9 @@ comes with the following <a href="External libraries/">external libraries</a>:
 <li>
 <a href="PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
 </li>
+<li>
+<a href="GAME/index.html">GAME</a>: Library for Source Academy game
+</li>
 </ul>
 
 ### Style guide

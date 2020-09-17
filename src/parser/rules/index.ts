@@ -19,6 +19,7 @@ import noUnspecifiedOperator from './noUnspecifiedOperator'
 import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
+import noTemplateExpression from './noTemplateExpression'
 
 const rules: Rule<es.Node>[] = [
   bracesAroundFor,
@@ -37,7 +38,8 @@ const rules: Rule<es.Node>[] = [
   noUpdateAssignment,
   noVar,
   singleVariableDeclaration,
-  noEval
+  noEval,
+  noTemplateExpression
 ]
 
 export default rules

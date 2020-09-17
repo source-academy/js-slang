@@ -22,4 +22,7 @@ library in the Source Academy interface.
 <li>
 <a href="../PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
 </li>
+<li>
+<a href="../GAME/index.html">GAME</a>: Source Academy game
+</li>
 </ul>

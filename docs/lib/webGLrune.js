@@ -427,13 +427,13 @@ function show(rune) {
 }
 
 /**
- * turns a given Rune into an Anaglyph
+ * turns a given Rune into an anaglyph Picture
  * @param {Rune} rune - given Rune
  * @return {Picture}
- * If the result of evaluating a program is an Anaglyph,
+ * If the result of evaluating a program is a Picture,
  * the REPL displays it graphically, using anaglyph
  * technology, instead of textually. Use your 3D-glasses
- * to view the Anaglyph.
+ * to view the anaglyph Picture.
  */
 function anaglyph(rune) {
   const frame = open_pixmap('frame', viewport_size, viewport_size, true);
@@ -446,9 +446,7 @@ function anaglyph(rune) {
 }
 
 var hollusionTimeout
-/* // to view documentation, put two * in this line
- * // currently, this function is not documented; 
- * // animation not working
+/**
  * turns a given Rune into Hollusion
  * @param {Rune} rune - given Rune
  * @return {Picture}

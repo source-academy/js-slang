@@ -313,6 +313,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return node.value
   },
 
+  TemplateLiteral: function*(node: es.TemplateLiteral) {
+    // Expressions like `${1}` are not allowed, so no processing needed
+    return node.quasis[0].value.cooked
+  },
+
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
     return context.runtime.environments[0].thisContext
   },
