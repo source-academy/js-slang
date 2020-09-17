@@ -5,7 +5,7 @@
 
 /**
  * returns an empty binary tree, represented by the empty list null
- * @return {binarytree} empty binary tree
+ * @return {binary_tree} empty binary tree
  */
 
 function make_empty_tree() {
@@ -32,7 +32,7 @@ function is_tree(t) {
  * @param {value} val - value of the node
  * @param {binary_tree} left - left subtree
  * @param {binary_tree} right - right subtree
- * @returns {boolean} 
+ * @returns {binary_tree} 
  */
 function make_tree(value, left, right) {
   if (!is_tree(left)) {
